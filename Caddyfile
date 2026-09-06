@@ -3,3 +3,16 @@ mingli.example.com {
     encode gzip zstd
     reverse_proxy web:8000
 }
+
+# OpenClaw 接入点：公网可访问（随机子域 + 配对 token 保护），回程走 Tailscale 隧道
+# 上游用 Tailscale IP + 显式 SNI（容器内无法解析 MagicDNS 域名）
+bb3a.mingli.example.com {
+    reverse_proxy https://<你的 Tailscale IP>:443 {
+        transport http {
+            tls_insecure_skip_verify
+            tls_server_name <你的 Tailscale 主机名>
+        }
+        header_up Host {http.request.host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

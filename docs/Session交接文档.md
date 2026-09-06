@@ -127,7 +127,7 @@ docker compose ps && docker compose logs -f web
 
 ### ⚠️ 服务器运维注意事项（勿回滚，详见 `ops/deploy/README.md`「服务器运维注意事项」）
 
-1. **DNS 已改为公共 DNS**：阿里云新加坡 ECS 默认 DNS `100.100.2.136` 在新加坡不可达，已通过 netplan 持久化为 `223.5.5.5 / 223.6.6.6`。**勿改回 100.100.2.x**，否则 DNS 解析 + Caddy 证书续期会再次失败。
+1. **DNS 已改为海外公共 DNS**：阿里云新加坡 ECS 默认 DNS `100.100.2.136` 在新加坡不可达，国内 `223.5.5.5` 跨境会超时（卡死 sshd），已通过 netplan 持久化为 `8.8.8.8 / 1.1.1.1` 并关 sshd `UseDNS no`。**勿改回 100.100.2.x 或 223.5.5.5**。
 2. **OpenClaw 接入点 `bb3a.mingli.example.com`（公网可访问 + 回程走 Tailscale）**：Caddy 上游用 Tailscale IP `<你的 Tailscale IP>:443` + `tls_server_name <你的 Tailscale 主机名>`（容器内无法解析 MagicDNS 域名，故用 IP+SNI）。**此入口公网可达，靠随机子域 + 配对 token 保护，勿移除配对 token。**
 3. **证书续期**：`bb3a` 子域 DNS 指向公网 IP，HTTP-01 续期正常，无需特殊处理。
 4. **SSH 已改密钥登录**：已禁用密码登录，仅可用 `~/.ssh/<你的私钥文件>` 登录。
