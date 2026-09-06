@@ -1793,7 +1793,7 @@ function CasesPage({
     }
   }, "暂无档案，点击新建开始") : caseList.map(c => {
     const failed = c.status === 'failed';
-    const mainLabel = c.hasReport ? '查看解读' : (c.methodCount || 0) < 9 ? '继续命盘' : '继续';
+    const mainLabel = c.hasReport ? '查看解读' : c.status === 'calibrated' ? '生成解读' : (c.methodCount || 0) >= 9 ? '继续校准' : '继续命盘';
     // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
     const methodCount = c.methodCount || 0;
     const totalMethods = c.totalMethods || 9;
@@ -1914,7 +1914,7 @@ function CasesPage({
       }
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-primary",
-      onClick: () => onNavigate(c.hasReport || (c.methodCount || 0) >= 9 ? 'predict' : 'waiting', {
+      onClick: () => onNavigate(c.hasReport ? 'predict' : c.status === 'calibrated' ? 'predict' : (c.methodCount || 0) >= 9 ? 'calibration' : 'waiting', {
         caseId: c.caseId
       })
     }, mainLabel), /*#__PURE__*/React.createElement("button", {
@@ -3859,6 +3859,25 @@ function ZiweiPlate({
 }
 
 // —— 占星盘 ——
+const PLANET_CN = {
+  Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星', Jupiter: '木星',
+  Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星',
+  Ceres: '谷神星', Juno: '婚神星', Vesta: '灶神星', Pallas: '智神星', Chiron: '凯龙星',
+  'North Node': '北交点', 'True North Node': '北交点', 'South Node': '南交点', 'True Lilith': '莉莉丝',
+  'Part of Fortune': '福点', 'Part of Spirit': '灵点'
+};
+const PATTERN_CN = {
+  kite: '风筝', t_square: 'T型三角', stellium_sign: '星群'
+};
+const translatePattern = p => {
+  const s = String(p || '');
+  const idx = s.indexOf(':');
+  const type = idx >= 0 ? s.slice(0, idx).trim() : s;
+  const bodies = idx >= 0 ? s.slice(idx + 1) : '';
+  const typeCn = PATTERN_CN[type] || type;
+  const bodiesCn = bodies.split(',').map(b => PLANET_CN[b.trim()] || b.trim()).filter(Boolean).join('、');
+  return bodiesCn ? typeCn + '：' + bodiesCn : typeCn;
+};
 function WesternSummary({
   s
 }) {
@@ -3870,7 +3889,7 @@ function WesternSummary({
     className: "aux-line"
   }, /*#__PURE__*/React.createElement("b", null, "逆行："), s.retrograde.join('、')) : null, s.patterns && s.patterns.length ? /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, /*#__PURE__*/React.createElement("b", null, "格局："), s.patterns.join('、')) : null);
+  }, /*#__PURE__*/React.createElement("b", null, "格局："), s.patterns.map(translatePattern).join('、')) : null);
 }
 function WesternPlate({
   d,
