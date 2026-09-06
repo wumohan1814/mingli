@@ -357,6 +357,9 @@
     /* ===== 通用卡片 / 标签 ===== */
     .tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--skin-accent-soft);color:var(--skin-accent)}
     .pay-hint{font-size:12px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:6px 10px;margin-top:8px}
+.tag.sel{background:var(--skin-accent);color:var(--skin-accent-ink)}
+.interp-title{font-size:14px;font-weight:700;color:var(--skin-accent);margin-top:14px}
+.interp-body{font-size:13px;color:var(--text-2);line-height:1.8;white-space:pre-wrap;background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:10px 12px;margin-top:6px}
     .row-gap{display:flex;gap:10px;flex-wrap:wrap}
     .back-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 
@@ -394,12 +397,26 @@
 
     /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
-    .tarot-card{width:104px;height:168px;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.22);position:relative;background:#5B4B8A}
-    .tarot-card.reversed{transform:rotate(180deg)}
-    .tarot-card .tc-roman{font-size:18px;font-weight:700;opacity:.9}
-    .tarot-card .tc-name{font-size:13px;font-weight:700;text-align:center;line-height:1.25}
-    .tarot-card .tc-ph{width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.85}
-    .tarot-card .tc-kw{font-size:10px;opacity:.9;text-align:center;line-height:1.3;max-height:34px;overflow:hidden}
+    .tarot-card{width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tarot-card .tc-imgwrap{width:104px;height:168px;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.22);background:#5B4B8A;position:relative;box-sizing:border-box}
+.tarot-card.suit-major .tc-imgwrap{border:2px solid #5B4B8A}
+.tarot-card.suit-wands .tc-imgwrap{border:2px solid #b8893e}
+.tarot-card.suit-cups .tc-imgwrap{border:2px solid #c0392b}
+.tarot-card.suit-swords .tc-imgwrap{border:2px solid #2c3e6e}
+.tarot-card.suit-pentacles .tc-imgwrap{border:2px solid #4a7c59}
+.tarot-card.suit-hearts .tc-imgwrap{border:2px solid #b94a4a}
+.tarot-card.suit-diamonds .tc-imgwrap{border:2px solid #3a6ea5}
+.tarot-card.suit-spades .tc-imgwrap{border:2px solid #2c2c2c}
+.tarot-card.suit-clubs .tc-imgwrap{border:2px solid #4a8a5e}
+.tarot-card .tc-img{width:100%;height:100%;object-fit:cover;display:block}
+.tarot-card.reversed .tc-imgwrap{transform:rotate(180deg)}
+.tarot-card .tc-name{font-size:13px;font-weight:700;text-align:center;line-height:1.25;color:var(--text-1)}
+.tarot-card .tc-kw{font-size:11px;color:var(--text-2);text-align:center;line-height:1.45}
+.tarot-card .tc-element{font-size:10px;color:var(--text-3);text-align:center}
+.tarot-card .tc-ph{display:flex;width:100%;height:100%;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;padding:6px;text-align:center;box-sizing:border-box}
+.tarot-deck-back{display:flex;align-items:center;gap:12px;margin:4px 0 10px;padding:8px 10px;background:var(--skin-accent-soft);border-radius:var(--radius-sm)}
+.tarot-back{width:64px;height:104px;border-radius:8px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.tarot-deck-meta{font-size:12px;color:var(--text-2);line-height:1.4}
     .suit-wands{background:#C96A3B}.suit-cups{background:#3B7BB0}.suit-swords{background:#8A93A6}.suit-pentacles{background:#C9A24B}.suit-major{background:#5B4B8A}
     .tc-pos{font-size:12px;color:var(--skin-accent);font-weight:600;text-align:center;margin-bottom:4px}
 
@@ -459,7 +476,7 @@
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/babel">
+  <script>
 const {
   useState,
   useEffect,
@@ -4755,7 +4772,9 @@ function ZodiacPage({
     '风险关系': 'rel-risk',
     '中性关系': 'rel-neutral'
   })[c] || 'rel-neutral';
-  const conflicts = data && data.conflicts && data.conflicts.length ? data.conflicts : [{ type: '平顺无冲' }];
+  const conflicts = data && data.conflicts && data.conflicts.length ? data.conflicts : [{
+    type: '平顺无冲'
+  }];
   const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? data.yearGanZhi + ' · ' + data.taiSui.star + '星君' : '';
   const elemCls = relCls(data && data.elementRelation && data.elementRelation.classification);
   return /*#__PURE__*/React.createElement("div", {
@@ -4930,186 +4949,598 @@ const DIVIN_METHODS = [{
   desc: '时家奇门',
   todo: true
 }];
-const DEMO_DIVINATION = {
-  liuyao: {
-    lines: [['老阳', '乾为天'], ['少阳', ''], ['少阴', ''], ['老阴', ''], ['少阳', ''], ['少阴', '']],
-    name: '乾为天（初爻动）',
-    text: '六爻以六爻阴阳与动变推演事体。当前得乾卦，初爻发动，主事初起、刚健前行，宜把握先机。'
-  },
-  meihua: {
-    up: '乾',
-    down: '坤',
-    dong: '三爻',
-    text: '上乾下坤，天地否之象；三爻动，体用相克，先难后易，宜静待时机转化。'
-  },
-  xiaoliuren: {
-    point: '速喜',
-    text: '掌诀落「速喜」：主喜事将近、消息速达，事宜速决，忌拖延。'
-  },
-  sign: {
-    no: 38,
-    poem: '_sign_demo_ 月出皎兮，人约黄昏；谋望有成，喜气临门。',
-    text: '第三十八签（中平）：谋事可成，宜守正待时，贵人暗助。'
+
+const DIVIN_API_METHOD = { sign: 'ssgw' };
+const YAO_LABEL = ['初', '二', '三', '四', '五', '上'];
+function yaoView(v) {
+  const n = typeof v === 'number' ? v : null;
+  const s = String(v);
+  if (n === 9 || s === '老阳') return { name: '老阳', cls: 'old-yang', moving: true };
+  if (n === 6 || s === '老阴') return { name: '老阴', cls: 'old-yin', moving: true };
+  if (n === 8 || s === '少阴' || s === '阴') return { name: '少阴', cls: 'yin', moving: false };
+  if (n === 7 || s === '少阳' || s === '阳') return { name: '少阳', cls: '', moving: false };
+  return { name: s || '爻', cls: '', moving: /老|动/.test(s) };
+}
+function DivLiuyaoView(res) {
+  const changing = {};
+  (Array.isArray(res.changingYaos) ? res.changingYaos : []).forEach(function (y) {
+    if (y && y.position != null) changing[y.position] = true;
+  });
+  const arr = Array.isArray(res.yaoArray) ? res.yaoArray : null;
+  const oldLines = Array.isArray(res.lines) ? res.lines : null;
+  const rows = [];
+  if (arr || oldLines) {
+    const src = arr || oldLines;
+    for (let i = 0; i < Math.min(src.length, 6); i++) {
+      const raw = arr ? src[i] : (Array.isArray(src[i]) ? src[i][0] : src[i]);
+      const info = yaoView(raw);
+      const mv = changing[i + 1] || info.moving;
+      rows.push(React.createElement('div', { key: i, className: 'yao-line' },
+        React.createElement('span', { style: { width: 30, color: 'var(--text-3)' } }, YAO_LABEL[i] + '爻'),
+        React.createElement('span', { className: 'yao-bar ' + info.cls }),
+        React.createElement('span', null, info.name + (mv ? '（动）' : ''))));
+    }
   }
-};
+  const nameText = res.originalName ? (res.originalName + (res.changedName ? ' 之 ' + res.changedName : '') + (res.interName && !res.changedName ? '（互卦 ' + res.interName + '）' : '')) : (res.name || '');
+  const palaceText = res.palace ? ((res.palace.name || '') + (res.palace.wuxing ? '（' + res.palace.wuxing + '）' : '') + (res.palaceStage ? ' · ' + res.palaceStage : '')) : (res.palaceStage || '');
+  const ganzhiText = res.ganzhi ? [res.ganzhi.year, res.ganzhi.month, res.ganzhi.day, res.ganzhi.hour].filter(Boolean).join(' ') : '';
+  const meta = [];
+  if (palaceText) meta.push(React.createElement('div', { key: 'p' }, '宫位：' + palaceText));
+  if (ganzhiText) meta.push(React.createElement('div', { key: 'g' }, '干支：' + ganzhiText));
+  return React.createElement('div', null,
+    rows.length ? rows : null,
+    nameText ? React.createElement('div', { style: { fontWeight: 700, marginTop: rows.length ? 6 : 0 } }, nameText) : null,
+    meta.length ? React.createElement('div', { style: { marginTop: 6, fontSize: 12, color: 'var(--text-2)', lineHeight: 1.7 } }, meta) : null);
+}
+function DivMeihuaView(res) {
+  const gua = function (g) { return g && g.name ? g.name + (g.element ? '（' + g.element + '）' : '') : ''; };
+  const head = [];
+  if (res.originalName) head.push('本卦 ' + res.originalName);
+  if (res.interName) head.push('互卦 ' + res.interName);
+  if (res.changedName) head.push('变卦 ' + res.changedName);
+  const detail = [];
+  const ti = res.tiGua || {};
+  const yo = res.yongGua || {};
+  if (ti.name || yo.name) detail.push('体卦 ' + gua(res.tiGua) + (yo.name ? ' · 用卦 ' + gua(res.yongGua) : ''));
+  const mv = res.movingYao || {};
+  if (mv.description || mv.yaoName || mv.position) detail.push('动爻：' + (mv.description || '第' + mv.position + '爻动'));
+  const an = res.analysis || {};
+  if (an.tiYongRelation) detail.push('体用关系：' + an.tiYongRelation + (an.tiYongSeasonEvaluation ? '；' + an.tiYongSeasonEvaluation : ''));
+  if (res.up || res.down || res.dong) detail.push('上卦 ' + res.up + ' · 下卦 ' + res.down + ' · 动爻 ' + res.dong);
+  const items = [];
+  if (head.length) items.push(React.createElement('div', { key: 'head', style: { fontWeight: 700 } }, head.join(' · ')));
+  detail.forEach(function (t, i) {
+    items.push(React.createElement('div', { key: 'd' + i, style: { marginTop: 6, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7 } }, t));
+  });
+  return React.createElement('div', null, items);
+}
+function DivXiaoliurenView(res) {
+  const primary = res.primary || {};
+  const point = primary.name || res.point || '？';
+  const seq = res.sequence || {};
+  const seqNames = [seq.month, seq.day, seq.hour].map(function (p) { return p && p.name ? p.name : ''; }).filter(Boolean);
+  const items = [];
+  items.push(React.createElement('div', { key: 'disk', className: 'palm-disk' }, React.createElement('span', { className: 'pd-point hit' }, point)));
+  if (seqNames.length) items.push(React.createElement('div', { key: 'seq', style: { textAlign: 'center', fontSize: 13, color: 'var(--text-2)', marginBottom: 4 } }, '月 ' + seqNames[0] + (seqNames[1] ? ' → 日 ' + seqNames[1] : '') + (seqNames[2] ? ' → 时 ' + seqNames[2] : '')));
+  const meta = [];
+  if (res.methodLabel) meta.push(res.methodLabel);
+  if (res.hourLabel) meta.push('时辰 ' + res.hourLabel);
+  if (res.lunarMonth) meta.push('农历 ' + res.lunarMonth + '月' + (res.lunarDay != null ? res.lunarDay + '日' : ''));
+  if (meta.length) items.push(React.createElement('div', { key: 'meta', style: { textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 2 } }, meta.join(' · ')));
+  if (primary.verse) items.push(React.createElement('div', { key: 'verse', style: { marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8 } }, primary.verse));
+  return React.createElement('div', null, items);
+}
+function DivSsgwView(res) {
+  const number = res.number != null ? res.number : (res.no != null ? res.no : null);
+  const items = [];
+  items.push(React.createElement('div', { key: 'no', style: { fontWeight: 700, fontSize: 16 } }, (number != null ? '第 ' + number + ' 签' : '灵签') + (res.title ? ' · ' + res.title : '')));
+  if (res.poem) items.push(React.createElement('div', { key: 'poem', style: { fontStyle: 'italic', color: 'var(--text-2)', marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.8 } }, String(res.poem)));
+  const draw = res.draw || {};
+  const extra = [];
+  if (res.number != null && draw.poolSize) extra.push('签池共 ' + draw.poolSize + ' 支');
+  if (draw.method) extra.push('抽签方式：' + String(draw.method));
+  if (extra.length) items.push(React.createElement('div', { key: 'extra', style: { marginTop: 8, fontSize: 12, color: 'var(--text-3)' } }, extra.join(' · ')));
+  return React.createElement('div', null, items);
+}
 function DivinationPage({
   onNavigate
 }) {
   const [method, setMethod] = useState('liuyao');
-  const [res, setRes] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const run = () => {
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const apiMethod = DIVIN_API_METHOD[method] || method;
+  const run = async () => {
+    if (loading) return;
     setLoading(true);
-    setRes(null);
-    setTimeout(() => {
-      setRes(DEMO_DIVINATION[method] || {
-        text: '（该起卦方式的确定性结果演示）'
+    setErrored('');
+    setData(null);
+    setInterp('');
+    setInterpErr('');
+    try {
+      const res = await api('/divinations', {
+        method: 'POST',
+        body: JSON.stringify({ method: apiMethod, case_id: null, seed: {} })
       });
+      setData((res && res.data) || res);
+    } catch (e) {
+      setErrored((e && e.message) || '起卦失败，请重试。');
+    } finally {
       setLoading(false);
-    }, 700);
+    }
+  };
+  const interpret = async () => {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无断卦内容）');
+    } catch (e) {
+      setInterpErr((e && e.message) || '深度断卦失败，请重试。');
+    } finally {
+      setInterpLoading(false);
+    }
   };
   const m = DIVIN_METHODS.find(x => x.id === method);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "orbit",
-    size: 22
-  }), " 临时起卦"), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "选择起卦方式"), /*#__PURE__*/React.createElement("div", {
-    className: "method-grid"
-  }, DIVIN_METHODS.map(x => /*#__PURE__*/React.createElement("div", {
-    key: x.id,
-    className: 'method-cell' + (method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
-    onClick: () => x.todo ? toast('「' + x.name + '」敬请期待') : setMethod(x.id)
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mn"
-  }, x.name), /*#__PURE__*/React.createElement("div", {
-    className: "md"
-  }, x.desc)))), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    style: {
-      marginTop: 14
-    },
-    disabled: loading,
-    onClick: run
-  }, loading ? '起卦中…' : '开始起卦')), loading && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "skeleton sk-line"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "skeleton sk-line",
-    style: {
-      width: '60%'
-    }
-  })), res && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "卦象结果（", m.name, "）"), method === 'liuyao' && /*#__PURE__*/React.createElement("div", null, res.lines.map((ln, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "yao-line"
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      width: 30,
-      color: 'var(--text-3)'
-    }
-  }, ['初', '二', '三', '四', '五', '上'][i], "爻"), /*#__PURE__*/React.createElement("span", {
-    className: 'yao-bar ' + (ln[0] === '老阳' ? 'old-yang' : ln[0] === '老阴' ? 'old-yin' : ln[0] === '阴' || ln[0] === '少阴' ? 'yin' : '')
-  }), /*#__PURE__*/React.createElement("span", null, ln[0]))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontWeight: 700,
-      marginTop: 6
-    }
-  }, res.name)), method === 'meihua' && /*#__PURE__*/React.createElement("div", null, "上卦 ", /*#__PURE__*/React.createElement("b", null, res.up), " · 下卦 ", /*#__PURE__*/React.createElement("b", null, res.down), " · 动爻 ", /*#__PURE__*/React.createElement("b", null, res.dong)), method === 'xiaoliuren' && /*#__PURE__*/React.createElement("div", {
-    className: "palm-disk"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "pd-point hit"
-  }, res.point)), method === 'sign' && /*#__PURE__*/React.createElement("div", null, "第 ", /*#__PURE__*/React.createElement("b", null, res.no), " 签", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontStyle: 'italic',
-      color: 'var(--text-2)'
-    }
-  }, res.poem)), /*#__PURE__*/React.createElement("p", {
-    style: {
-      marginTop: 8,
-      color: 'var(--text-2)',
-      lineHeight: 1.7
-    }
-  }, res.text), /*#__PURE__*/React.createElement("div", {
-    className: "pay-hint"
-  }, "深度断卦为付费 LLM 解读，约 12 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
-    className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: run
-  }, "重新起卦"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => onNavigate('guoxue-hub')
-  }, "回到 Hub"))));
+  const result = (data && data.result) || null;
+  let view = null;
+  if (result && typeof result === 'object') {
+    if (method === 'liuyao') view = DivLiuyaoView(result);
+    else if (method === 'meihua') view = DivMeihuaView(result);
+    else if (method === 'xiaoliuren') view = DivXiaoliurenView(result);
+    else if (method === 'sign' || apiMethod === 'ssgw') view = DivSsgwView(result);
+  }
+  if (result != null && view == null) {
+    view = React.createElement('pre', { style: { fontSize: 11, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: 'var(--text-2)' } }, JSON.stringify(result, null, 2));
+  }
+  let body = null;
+  if (loading) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    body = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '起卦失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: run }, '重试'));
+  } else if (data) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
+      view,
+      result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
+      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+      React.createElement('div', { className: 'pay-hint' }, '深度断卦为付费 LLM 解读，约 12 积分（点击前将预检余额）'),
+      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '断卦中…' : '深度断卦（付费）'),
+      interp ? React.createElement(React.Fragment, null,
+        React.createElement('div', { className: 'interp-title' }, '断卦结果'),
+        React.createElement('div', { className: 'interp-body' }, interp)) : null);
+  }
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
+    React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, '选择起卦方式'),
+      React.createElement('div', { className: 'method-grid' }, DIVIN_METHODS.map(function (x) {
+        return React.createElement('div', {
+          key: x.id,
+          className: 'method-cell' + (method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
+          onClick: function () {
+            if (x.todo) toast('「' + x.name + '」敬请期待');
+            else if (!loading) {
+              setMethod(x.id);
+              setData(null);
+              setInterp('');
+              setInterpErr('');
+            }
+          }
+        }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
+      })),
+      React.createElement('button', {
+        className: 'btn btn-primary',
+        style: { marginTop: 14 },
+        disabled: loading,
+        onClick: run
+      }, loading ? '起卦中…' : '开始起卦')),
+    body,
+    React.createElement('div', { className: 'back-row' },
+      data ? React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: run }, '重新起卦') : null,
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('guoxue-hub'); } }, '回到 Hub')));
 }
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
 const TAROT_DECK = [{
   name: '愚者',
   roman: '0',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/00_Fool.jpg'
 }, {
   name: '魔术师',
   roman: 'I',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/01_Magician.jpg'
 }, {
   name: '女祭司',
   roman: 'II',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/02_High_Priestess.jpg'
 }, {
   name: '皇后',
   roman: 'III',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/03_Empress.jpg'
 }, {
   name: '皇帝',
   roman: 'IV',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/04_Emperor.jpg'
+}, {
+  name: '教皇',
+  roman: 'V',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/05_Hierophant.jpg'
 }, {
   name: '恋人',
   roman: 'VI',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/06_Lovers.jpg'
+}, {
+  name: '战车',
+  roman: 'VII',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/07_Chariot.jpg'
 }, {
   name: '力量',
   roman: 'VIII',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/08_Strength.jpg'
+}, {
+  name: '隐士',
+  roman: 'IX',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/09_Hermit.jpg'
+}, {
+  name: '命运之轮',
+  roman: 'X',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/10_Wheel_of_Fortune.jpg'
+}, {
+  name: '正义',
+  roman: 'XI',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/11_Justice.jpg'
+}, {
+  name: '倒吊人',
+  roman: 'XII',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/12_Hanged_Man.jpg'
+}, {
+  name: '死神',
+  roman: 'XIII',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/13_Death.jpg'
+}, {
+  name: '节制',
+  roman: 'XIV',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/14_Temperance.jpg'
+}, {
+  name: '恶魔',
+  roman: 'XV',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/15_Devil.jpg'
+}, {
+  name: '高塔',
+  roman: 'XVI',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/16_Tower.jpg'
 }, {
   name: '星星',
   roman: 'XVII',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/17_Star.jpg'
 }, {
   name: '月亮',
   roman: 'XVIII',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/18_Moon.jpg'
+}, {
+  name: '太阳',
+  roman: 'XIX',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/19_Sun.jpg'
+}, {
+  name: '审判',
+  roman: 'XX',
+  suit: 'major',
+  img: './tarot/rider-waite/720px/20_Judgement.jpg'
 }, {
   name: '世界',
   roman: 'XXI',
-  suit: 'major'
+  suit: 'major',
+  img: './tarot/rider-waite/720px/21_World.jpg'
 }, {
   name: '权杖王牌',
   roman: 'A',
-  suit: 'wands'
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands01.jpg'
+}, {
+  name: '权杖二',
+  roman: '2',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands02.jpg'
+}, {
+  name: '权杖三',
+  roman: '3',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands03.jpg'
+}, {
+  name: '权杖四',
+  roman: '4',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands04.jpg'
+}, {
+  name: '权杖五',
+  roman: '5',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands05.jpg'
+}, {
+  name: '权杖六',
+  roman: '6',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands06.jpg'
+}, {
+  name: '权杖七',
+  roman: '7',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands07.jpg'
+}, {
+  name: '权杖八',
+  roman: '8',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands08.jpg'
+}, {
+  name: '权杖九',
+  roman: '9',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands09.jpg'
+}, {
+  name: '权杖十',
+  roman: '10',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands10.jpg'
+}, {
+  name: '权杖侍从',
+  roman: 'Pa',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands11.jpg'
+}, {
+  name: '权杖骑士',
+  roman: 'Kn',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands12.jpg'
+}, {
+  name: '权杖王后',
+  roman: 'Q',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands13.jpg'
+}, {
+  name: '权杖国王',
+  roman: 'K',
+  suit: 'wands',
+  img: './tarot/rider-waite/720px/Wands14.jpg'
+}, {
+  name: '圣杯王牌',
+  roman: 'A',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups01.jpg'
+}, {
+  name: '圣杯二',
+  roman: '2',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups02.jpg'
+}, {
+  name: '圣杯三',
+  roman: '3',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups03.jpg'
+}, {
+  name: '圣杯四',
+  roman: '4',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups04.jpg'
+}, {
+  name: '圣杯五',
+  roman: '5',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups05.jpg'
 }, {
   name: '圣杯六',
   roman: '6',
-  suit: 'cups'
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups06.jpg'
+}, {
+  name: '圣杯七',
+  roman: '7',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups07.jpg'
+}, {
+  name: '圣杯八',
+  roman: '8',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups08.jpg'
+}, {
+  name: '圣杯九',
+  roman: '9',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups09.jpg'
+}, {
+  name: '圣杯十',
+  roman: '10',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups10.jpg'
+}, {
+  name: '圣杯侍从',
+  roman: 'Pa',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups11.jpg'
+}, {
+  name: '圣杯骑士',
+  roman: 'Kn',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups12.jpg'
+}, {
+  name: '圣杯王后',
+  roman: 'Q',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups13.jpg'
+}, {
+  name: '圣杯国王',
+  roman: 'K',
+  suit: 'cups',
+  img: './tarot/rider-waite/720px/Cups14.jpg'
+}, {
+  name: '宝剑王牌',
+  roman: 'A',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords01.jpg'
+}, {
+  name: '宝剑二',
+  roman: '2',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords02.jpg'
+}, {
+  name: '宝剑三',
+  roman: '3',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords03.jpg'
+}, {
+  name: '宝剑四',
+  roman: '4',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords04.jpg'
+}, {
+  name: '宝剑五',
+  roman: '5',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords05.jpg'
+}, {
+  name: '宝剑六',
+  roman: '6',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords06.jpg'
+}, {
+  name: '宝剑七',
+  roman: '7',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords07.jpg'
+}, {
+  name: '宝剑八',
+  roman: '8',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords08.jpg'
+}, {
+  name: '宝剑九',
+  roman: '9',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords09.jpg'
 }, {
   name: '宝剑十',
   roman: '10',
-  suit: 'swords'
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords10.jpg'
+}, {
+  name: '宝剑侍从',
+  roman: 'Pa',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords11.jpg'
+}, {
+  name: '宝剑骑士',
+  roman: 'Kn',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords12.jpg'
+}, {
+  name: '宝剑王后',
+  roman: 'Q',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords13.jpg'
+}, {
+  name: '宝剑国王',
+  roman: 'K',
+  suit: 'swords',
+  img: './tarot/rider-waite/720px/Swords14.jpg'
+}, {
+  name: '钱币王牌',
+  roman: 'A',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents01.jpg'
 }, {
   name: '钱币二',
   roman: '2',
-  suit: 'pentacles'
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents02.jpg'
+}, {
+  name: '钱币三',
+  roman: '3',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents03.jpg'
+}, {
+  name: '钱币四',
+  roman: '4',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents04.jpg'
+}, {
+  name: '钱币五',
+  roman: '5',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents05.jpg'
+}, {
+  name: '钱币六',
+  roman: '6',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents06.jpg'
+}, {
+  name: '钱币七',
+  roman: '7',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents07.jpg'
+}, {
+  name: '钱币八',
+  roman: '8',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents08.jpg'
+}, {
+  name: '钱币九',
+  roman: '9',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents09.jpg'
+}, {
+  name: '钱币十',
+  roman: '10',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents10.jpg'
+}, {
+  name: '钱币侍从',
+  roman: 'Pa',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents11.jpg'
+}, {
+  name: '钱币骑士',
+  roman: 'Kn',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents12.jpg'
+}, {
+  name: '钱币王后',
+  roman: 'Q',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents13.jpg'
+}, {
+  name: '钱币国王',
+  roman: 'K',
+  suit: 'pentacles',
+  img: './tarot/rider-waite/720px/Pents14.jpg'
 }];
 const TAROT_SPREADS = [{
   id: 'single',
@@ -5122,123 +5553,413 @@ const TAROT_SPREADS = [{
 }, {
   id: 'love',
   name: '爱情',
-  pos: ['你', '对方', '关系']
+  pos: ['你的内心', '对方的内心', '关系现状', '发展建议', '未来走向']
 }, {
   id: 'career',
   name: '事业',
-  pos: ['现状', '挑战', '方向']
+  pos: ['当前状况', '优势', '挑战', '机会', '行动建议', '结果']
+}, {
+  id: 'decision',
+  name: '选择（二择一）',
+  pos: ['现状', '选择A', '选择A结果', '选择B', '选择B结果', '最佳建议']
 }];
-function TarotPlaceholderCard({
-  card,
-  pos,
-  reversed
+/* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
+const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔' };
+const TAROT_SUIT_COLOR = { major: '#5B4B8A', wands: '#b8893e', cups: '#c0392b', swords: '#2c3e6e', pentacles: '#4a7c59' };
+function tarotDeckMatch(name) {
+  if (!name) return null;
+  return TAROT_DECK.find(d => d.name === (TAROT_NAME_ALIAS[name] || name)) || TAROT_DECK.find(d => d.name === name) || null;
+}
+function tarotSuitOf(name) {
+  if (!name) return 'major';
+  if (name.indexOf('权杖') === 0) return 'wands';
+  if (name.indexOf('圣杯') === 0) return 'cups';
+  if (name.indexOf('宝剑') === 0) return 'swords';
+  if (name.indexOf('钱币') === 0) return 'pentacles';
+  return 'major';
+}
+function normTarotCard(c) {
+  const src = c && c.card && typeof c.card === 'object' ? c.card : c;
+  const name = (src && (src.name || src.cardName)) || '';
+  const pos = (c && (c.position || c.pos)) || '';
+  const reversed = c ? (typeof c.reversed === 'boolean' ? c.reversed : (c.orientation === '逆位') || false) : false;
+  const keywords = Array.isArray(src && src.keywords) ? src.keywords : (Array.isArray(c && c.keywords) ? c.keywords : []);
+  const deck = tarotDeckMatch(name);
+  return {
+    name: name,
+    pos: pos,
+    reversed: !!reversed,
+    keywords: keywords,
+    element: (src && src.element) || '',
+    archetype: (src && src.archetype) || '',
+    suit: (deck && deck.suit) || tarotSuitOf(name),
+    img: (deck && deck.img) || ''
+  };
+}
+function TarotCard({
+  item
 }) {
-  return /*#__PURE__*/React.createElement("div", {
+  const rev = !!(item && item.reversed);
+  const suit = (item && item.suit) || 'major';
+  const name = (item && item.name) || '牌';
+  return React.createElement('div', {
     style: {
       textAlign: 'center'
     }
-  }, pos && /*#__PURE__*/React.createElement("div", {
-    className: "tc-pos"
-  }, pos), /*#__PURE__*/React.createElement("div", {
-    className: 'tarot-card suit-' + card.suit + (reversed ? ' reversed' : '')
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "tc-roman"
-  }, card.roman), /*#__PURE__*/React.createElement("div", {
-    className: "tc-ph"
-  }, "?"), /*#__PURE__*/React.createElement("div", {
-    className: "tc-name"
-  }, card.name), /*#__PURE__*/React.createElement("div", {
-    className: "tc-kw"
-  }, "（卡面美术待补充）")));
+  }, item && item.pos ? React.createElement('div', {
+    className: 'tc-pos'
+  }, item.pos) : null, React.createElement('div', {
+    className: 'tarot-card suit-' + suit + (rev ? ' reversed' : '')
+  }, React.createElement('div', {
+    className: 'tc-imgwrap'
+  }, item && item.img ? React.createElement('img', {
+    className: 'tc-img',
+    src: item.img,
+    alt: name,
+    loading: 'lazy',
+    decoding: 'async'
+  }) : React.createElement('div', {
+    className: 'tc-ph',
+    style: {
+      background: TAROT_SUIT_COLOR[suit] || '#5B4B8A'
+    }
+  }, name)), React.createElement('div', {
+    className: 'tc-name'
+  }, name, rev ? '（逆位）' : ''), item && item.keywords && item.keywords.length ? React.createElement('div', {
+    className: 'tc-kw'
+  }, item.keywords.join(' · ')) : null));
 }
 function TarotPage({
   onNavigate
 }) {
-  const [step, setStep] = useState('menu'); // menu -> spread -> draw
+  const [step, setStep] = useState('menu'); // menu -> draw
   const [spread, setSpread] = useState(null);
-  const [cards, setCards] = useState([]);
-  const draw = sp => {
+  const [dir, setDir] = useState('');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const DIRS = ['爱情', '事业', '财运', '综合', '成长'];
+  const draw = async sp => {
+    if (loading || !sp) return;
     setSpread(sp);
-    const pool = TAROT_DECK.slice();
-    const picks = [];
-    for (let i = 0; i < sp.pos.length; i++) {
-      const idx = Math.floor(Math.random() * pool.length);
-      picks.push({
-        card: pool.splice(idx, 1)[0],
-        reversed: Math.random() < 0.4
-      });
-    }
-    setCards(picks);
     setStep('draw');
+    setData(null);
+    setErrored('');
+    setInterp('');
+    setInterpErr('');
+    setLoading(true);
+    try {
+      const res = await api('/tarot/draw', {
+        method: 'POST',
+        body: JSON.stringify({ spread_type: sp.id, question: dir ? '占问方向：' + dir : null })
+      });
+      setData((res && res.data) || res);
+    } catch (e) {
+      setErrored((e && e.message) || '塔罗抽牌失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
   };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "spark",
-    size: 22
-  }), " 塔罗牌"), step === 'menu' && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "选择预测方向"), /*#__PURE__*/React.createElement("div", {
-    className: "row-gap"
-  }, ['爱情', '事业', '财运', '综合', '成长'].map(d => /*#__PURE__*/React.createElement("span", {
-    key: d,
-    className: "tag",
-    style: {
-      cursor: 'pointer'
-    },
-    onClick: () => toast('方向已记录：' + d)
-  }, d))), /*#__PURE__*/React.createElement("div", {
-    className: "section-title",
-    style: {
-      marginTop: 14
+  const interpret = async () => {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/tarot/readings' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无解读内容）');
+    } catch (e) {
+      setInterpErr((e && e.message) || '综合解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
     }
-  }, "选择牌阵"), /*#__PURE__*/React.createElement("div", {
-    className: "method-grid"
-  }, TAROT_SPREADS.map(s => /*#__PURE__*/React.createElement("div", {
-    key: s.id,
-    className: "method-cell",
-    onClick: () => draw(s)
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mn"
-  }, s.name))))), step === 'draw' && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, spread.name, " · 抽卡结果"), /*#__PURE__*/React.createElement("div", {
-    className: "card-fan"
-  }, cards.map((p, i) => /*#__PURE__*/React.createElement(TarotPlaceholderCard, {
-    key: i,
-    card: p.card,
-    pos: spread.pos[i],
-    reversed: p.reversed
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "pay-hint"
-  }, "综合解读为付费 LLM，约 20 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
-    className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => draw(spread)
-  }, "重新抽卡"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => setStep('menu')
-  }, "重选牌阵"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => onNavigate('xishi-hub')
-  }, "回到 Hub"))), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 11,
-      color: 'var(--text-3)',
-      textAlign: 'center'
-    }
-  }, "卡面为占位（空白+文字），正式美术将后续补充。"));
+  };
+  const backMenu = () => {
+    setStep('menu');
+    setSpread(null);
+    setData(null);
+    setErrored('');
+    setInterp('');
+    setInterpErr('');
+  };
+  const drawData = (data && data.draw) || null;
+  const cards = drawData && Array.isArray(drawData.cards) ? drawData.cards : [];
+  const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || '抽卡结果';
+  let drawBody = null;
+  if (loading) {
+    drawBody = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, spreadName, ' · 抽卡中'),
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    drawBody = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '抽牌失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: function () { draw(spread); } }, '重试'));
+  } else if (data) {
+    drawBody = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, spreadName, dir ? ' · ' + dir : ''),
+      React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
+        return React.createElement(TarotCard, { key: i, item: normTarotCard(c) });
+      })),
+      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+      React.createElement('div', { className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'),
+      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '综合解读（付费）'),
+      interp ? React.createElement(React.Fragment, null,
+        React.createElement('div', { className: 'interp-title' }, '综合解读'),
+        React.createElement('div', { className: 'interp-body' }, interp)) : null);
+  }
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
+    step === 'menu' ? React.createElement(React.Fragment, null,
+      React.createElement('div', { className: 'tarot-deck-back' },
+        React.createElement('img', { className: 'tarot-back', src: './tarot/rider-waite/720px/Cover.jpg', alt: '牌背' }),
+        React.createElement('div', { className: 'tarot-deck-meta' }, '牌库 · Rider-Waite-Smith（1909，公版）')),
+      React.createElement('div', { className: 'card' },
+        React.createElement('div', { className: 'section-title' }, '选择预测方向'),
+        React.createElement('div', { className: 'row-gap' }, DIRS.map(function (d) {
+          return React.createElement('span', {
+            key: d,
+            className: 'tag' + (dir === d ? ' sel' : ''),
+            style: { cursor: 'pointer' },
+            onClick: function () { setDir(dir === d ? '' : d); }
+          }, d);
+        })),
+        React.createElement('div', { className: 'section-title', style: { marginTop: 14 } }, '选择牌阵'),
+        React.createElement('div', { className: 'method-grid' }, TAROT_SPREADS.map(function (s) {
+          return React.createElement('div', {
+            key: s.id,
+            className: 'method-cell',
+            onClick: function () { draw(s); }
+          }, React.createElement('div', { className: 'mn' }, s.name));
+        })))) : React.createElement(React.Fragment, null,
+      drawBody,
+      React.createElement('div', { className: 'back-row' },
+        React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { draw(spread); } }, '重新抽卡'),
+        React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: backMenu }, '重选牌阵'),
+        React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '回到 Hub'))));
 }
 
 /* ---------- 雷诺曼（36 张占位卡） ---------- */
-const LENORMAND_DECK = ['骑手', '三叶草', '船', '房子', '树', '云', '蛇', '棺材', '花束', '镰刀', '鞭子', '鸟', '小孩', '狐狸', '熊', '星星', '鹳', '狗', '塔', '花园', '山', '路口', '老鼠', '心', '戒指', '书', '信', '男人', '女人', '百合', '太阳', '月亮', '钥匙', '鱼', '锚', '十字'];
+const LENORMAND_DECK = [{
+  num: 1,
+  name: '骑手',
+  suit: 'Hearts',
+  kw: '消息 / 到来',
+  img: './lenormand/01-Rider.png'
+}, {
+  num: 2,
+  name: '三叶草',
+  suit: 'Diamonds',
+  kw: '小确幸',
+  img: './lenormand/02-Clover.png'
+}, {
+  num: 3,
+  name: '船',
+  suit: 'Spades',
+  kw: '远方 / 旅行',
+  img: './lenormand/03-Ship.png'
+}, {
+  num: 4,
+  name: '房子',
+  suit: 'Hearts',
+  kw: '家',
+  img: './lenormand/04-House.png'
+}, {
+  num: 5,
+  name: '树',
+  suit: 'Hearts',
+  kw: '健康 / 成长',
+  img: './lenormand/05-Tree.png'
+}, {
+  num: 6,
+  name: '云',
+  suit: 'Clubs',
+  kw: '困惑',
+  img: './lenormand/06-Clouds.png'
+}, {
+  num: 7,
+  name: '蛇',
+  suit: 'Clubs',
+  kw: '智慧 / 隐忧',
+  img: './lenormand/07-Snake.png'
+}, {
+  num: 8,
+  name: '棺材',
+  suit: 'Diamonds',
+  kw: '终结 / 转化',
+  img: './lenormand/08-Coffin.png'
+}, {
+  num: 9,
+  name: '花束',
+  suit: 'Spades',
+  kw: '礼物 / 喜悦',
+  img: './lenormand/09-Bouquet.png'
+}, {
+  num: 10,
+  name: '镰刀',
+  suit: 'Diamonds',
+  kw: '突发 / 切断',
+  img: './lenormand/10-Scythe.png'
+}, {
+  num: 11,
+  name: '鞭子',
+  suit: 'Clubs',
+  kw: '冲突 / 反复',
+  img: './lenormand/11-Whip.png'
+}, {
+  num: 12,
+  name: '鸟',
+  suit: 'Diamonds',
+  kw: '闲谈 / 焦虑',
+  img: './lenormand/12-Birds.png'
+}, {
+  num: 13,
+  name: '小孩',
+  suit: 'Spades',
+  kw: '纯真 / 新事',
+  img: './lenormand/13-Child.png'
+}, {
+  num: 14,
+  name: '狐狸',
+  suit: 'Clubs',
+  kw: '机敏 / 自保',
+  img: './lenormand/14-Fox.png'
+}, {
+  num: 15,
+  name: '熊',
+  suit: 'Clubs',
+  kw: '力量 / 保护',
+  img: './lenormand/15-Bear.png'
+}, {
+  num: 16,
+  name: '星星',
+  suit: 'Hearts',
+  kw: '希望 / 指引',
+  img: './lenormand/16-Stars.png'
+}, {
+  num: 17,
+  name: '鹳',
+  suit: 'Hearts',
+  kw: '转变 / 更新',
+  img: './lenormand/17-Stork.png'
+}, {
+  num: 18,
+  name: '狗',
+  suit: 'Hearts',
+  kw: '忠诚 / 朋友',
+  img: './lenormand/18-Dog.png'
+}, {
+  num: 19,
+  name: '塔',
+  suit: 'Spades',
+  kw: '孤独 / 权威',
+  img: './lenormand/19-Tower.png'
+}, {
+  num: 20,
+  name: '花园',
+  suit: 'Spades',
+  kw: '公开 / 社交',
+  img: './lenormand/20-Garden.png'
+}, {
+  num: 21,
+  name: '山',
+  suit: 'Clubs',
+  kw: '障碍 / 延迟',
+  img: './lenormand/21-Mountain.png'
+}, {
+  num: 22,
+  name: '路口',
+  suit: 'Diamonds',
+  kw: '选择',
+  img: './lenormand/22-Crossroads.png'
+}, {
+  num: 23,
+  name: '老鼠',
+  suit: 'Clubs',
+  kw: '损耗 / 担忧',
+  img: './lenormand/23-Mice.png'
+}, {
+  num: 24,
+  name: '心',
+  suit: 'Hearts',
+  kw: '爱 / 情感',
+  img: './lenormand/24-Heart.png'
+}, {
+  num: 25,
+  name: '戒指',
+  suit: 'Clubs',
+  kw: '承诺 / 循环',
+  img: './lenormand/25-Ring.png'
+}, {
+  num: 26,
+  name: '书',
+  suit: 'Diamonds',
+  kw: '学问 / 秘密',
+  img: './lenormand/26-Book.png'
+}, {
+  num: 27,
+  name: '信',
+  suit: 'Spades',
+  kw: '消息 / 文件',
+  img: './lenormand/27-Letter.png'
+}, {
+  num: 28,
+  name: '男人',
+  suit: 'Hearts',
+  kw: '男士',
+  img: './lenormand/28-Man.png'
+}, {
+  num: 29,
+  name: '女人',
+  suit: 'Spades',
+  kw: '女士',
+  img: './lenormand/29-Woman.png'
+}, {
+  num: 30,
+  name: '百合',
+  suit: 'Spades',
+  kw: '纯洁 / 成熟',
+  img: './lenormand/30-Lily.png'
+}, {
+  num: 31,
+  name: '太阳',
+  suit: 'Diamonds',
+  kw: '成功 / 活力',
+  img: './lenormand/31-Sun.png'
+}, {
+  num: 32,
+  name: '月亮',
+  suit: 'Hearts',
+  kw: '情绪 / 名声',
+  img: './lenormand/32-Moon.png'
+}, {
+  num: 33,
+  name: '钥匙',
+  suit: 'Diamonds',
+  kw: '解答 / 开启',
+  img: './lenormand/33-Key.png'
+}, {
+  num: 34,
+  name: '鱼',
+  suit: 'Diamonds',
+  kw: '财富 / 充裕',
+  img: './lenormand/34-Fish.png'
+}, {
+  num: 35,
+  name: '锚',
+  suit: 'Spades',
+  kw: '稳定 / 坚持',
+  img: './lenormand/35-Anchor.png'
+}, {
+  num: 36,
+  name: '十字',
+  suit: 'Clubs',
+  kw: '命运 / 负担',
+  img: './lenormand/36-Cross.png'
+}];
 const LENORMAND_SPREADS = [{
   id: 'single',
   name: '单张',
@@ -5252,72 +5973,117 @@ const LENORMAND_SPREADS = [{
   name: '九宫格',
   n: 9
 }];
+/* 后端雷诺曼牌名 → 前端 LENORMAND_DECK 卡面映射（个别译名差异） */
+const LN_NAME_ALIAS = { '骑士': '骑手', '孩子': '小孩', '路': '路口', '男士': '男人', '女士': '女人', '十字架': '十字' };
+const LN_SUIT_COLOR = { hearts: '#b94a4a', diamonds: '#3a6ea5', spades: '#2c2c2c', clubs: '#4a8a5e' };
+function lnCardOf(c) {
+  const name = (c && (c.name || c.cardName)) || '';
+  const pos = (c && (c.position || c.pos)) || '';
+  const deck = name ? (LENORMAND_DECK.find(d => d.name === (LN_NAME_ALIAS[name] || name)) || LENORMAND_DECK.find(d => d.name === name) || null) : null;
+  return {
+    name: name || '？',
+    pos: pos,
+    img: deck ? deck.img : '',
+    suit: deck ? String(deck.suit).toLowerCase() : 'hearts',
+    kw: deck ? deck.kw : '',
+    keywords: Array.isArray(c && c.keywords) && c.keywords.length ? c.keywords.slice(0, 3) : (deck && deck.kw ? deck.kw.split('/') : [])
+  };
+}
+function lnCardEl(item, idx) {
+  return React.createElement('div', { key: idx, style: { textAlign: 'center' } },
+    item.pos ? React.createElement('div', { className: 'tc-pos' }, item.pos) : null,
+    React.createElement('div', { className: 'tarot-card suit-' + item.suit },
+      React.createElement('div', { className: 'tc-imgwrap' },
+        item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || '#3E7C6B' } }, item.name)),
+      React.createElement('div', { className: 'tc-name' }, item.name),
+      React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
+}
 function LenormandPage({
   onNavigate
 }) {
   const [spread, setSpread] = useState(null);
-  const [cards, setCards] = useState([]);
-  const draw = sp => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const load = async sp => {
+    if (loading || !sp) return;
+    const apiType = sp.id === 'grid' ? 'nine' : (sp.id || 'single');
     setSpread(sp);
-    const pool = LENORMAND_DECK.slice();
-    const picks = [];
-    for (let i = 0; i < sp.n; i++) {
-      const idx = Math.floor(Math.random() * pool.length);
-      picks.push(pool.splice(idx, 1)[0]);
+    setData(null);
+    setErrored('');
+    setInterp('');
+    setInterpErr('');
+    setLoading(true);
+    try {
+      const res = await api('/divinations', {
+        method: 'POST',
+        body: JSON.stringify({ method: 'lenormand', case_id: null, seed: { spreadType: apiType } })
+      });
+      setData((res && res.data) || res);
+    } catch (e) {
+      setErrored((e && e.message) || '雷诺曼抽牌失败，请重试。');
+    } finally {
+      setLoading(false);
     }
-    setCards(picks);
   };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "nine",
-    size: 22
-  }), " 雷诺曼"), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "选择牌阵"), /*#__PURE__*/React.createElement("div", {
-    className: "method-grid"
-  }, LENORMAND_SPREADS.map(s => /*#__PURE__*/React.createElement("div", {
-    key: s.id,
-    className: "method-cell",
-    onClick: () => draw(s)
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mn"
-  }, s.name))))), cards.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, spread.name, " · 抽牌结果"), /*#__PURE__*/React.createElement("div", {
-    className: "card-fan"
-  }, cards.map((nm, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    style: {
-      textAlign: 'center'
+  const interpret = async () => {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无解读内容）');
+    } catch (e) {
+      setInterpErr((e && e.message) || '深度解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "tarot-card suit-major"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "tc-roman"
-  }, i + 1), /*#__PURE__*/React.createElement("div", {
-    className: "tc-ph"
-  }, "?"), /*#__PURE__*/React.createElement("div", {
-    className: "tc-name"
-  }, nm), /*#__PURE__*/React.createElement("div", {
-    className: "tc-kw"
-  }, "（占位）"))))), /*#__PURE__*/React.createElement("div", {
-    className: "pay-hint"
-  }, "深度解读为付费 LLM，约 15 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
-    className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => draw(spread)
-  }, "重新抽牌"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => onNavigate('xishi-hub')
-  }, "回到 Hub"))));
+  };
+  const result = (data && data.result) || null;
+  const cards = result && Array.isArray(result.cards) ? result.cards : [];
+  const spreadName = (result && result.spreadName) || (spread && spread.name) || '抽牌结果';
+  let body = null;
+  if (loading) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, spreadName, ' · 抽牌中'),
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    body = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '抽牌失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: function () { load(spread); } }, '重试'));
+  } else if (data) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, spreadName),
+      React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
+        return lnCardEl(lnCardOf(c), i);
+      })),
+      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+      React.createElement('div', { className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'),
+      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '深度解读（付费）'),
+      interp ? React.createElement(React.Fragment, null,
+        React.createElement('div', { className: 'interp-title' }, '深度解读'),
+        React.createElement('div', { className: 'interp-body' }, interp)) : null);
+  }
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'nine', size: 22 }), ' 雷诺曼'),
+    React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'section-title' }, '选择牌阵'),
+      React.createElement('div', { className: 'method-grid' }, LENORMAND_SPREADS.map(function (s) {
+        return React.createElement('div', {
+          key: s.id,
+          className: 'method-cell',
+          onClick: function () { load(s); }
+        }, React.createElement('div', { className: 'mn' }, s.name));
+      }))),
+    body,
+    React.createElement('div', { className: 'back-row' },
+      data ? React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { load(spread); } }, '重新抽牌') : null,
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '回到 Hub')));
 }
 
 /* ---------- 星座预测（SVG 星盘，纯前端自绘） ---------- */
