@@ -6769,411 +6769,237 @@ function AstrologyPage({
   }, '回到首页')));
 }
 
-/* ---------- MBTI 人格测试 ---------- */
-const MBTI_Q = [{
-  q: '聚会后你通常感到？',
-  a: ['精力充沛（E）', 'E'],
-  b: ['需要独处恢复（I）', 'I']
-}, {
-  q: '你更信任？',
-  a: ['实际经验（S）', 'S'],
-  b: ['直觉灵感（N）', 'N']
-}, {
-  q: '做决定时你偏重？',
-  a: ['逻辑与公平（T）', 'T'],
-  b: ['人情与和谐（F）', 'F']
-}, {
-  q: '你的生活方式？',
-  a: ['计划有序（J）', 'J'],
-  b: ['灵活开放（P）', 'P']
-}, {
-  q: '你更愿意？',
-  a: ['多与人交流（E）', 'E'],
-  b: ['安静地思考（I）', 'I']
-}, {
-  q: '接收信息时你关注？',
-  a: ['细节与事实（S）', 'S'],
-  b: ['整体与可能（N）', 'N']
-}, {
-  q: '面对他人情绪你倾向？',
-  a: ['分析成因（T）', 'T'],
-  b: ['共情回应（F）', 'F']
-}, {
-  q: ' deadlines 让你？',
-  a: ['有动力完成（J）', 'J'],
-  b: ['最后冲刺（P）', 'P']
-}, {
-  q: '新环境里你？',
-  a: ['主动结识（E）', 'E'],
-  b: ['先观察（I）', 'I']
-}, {
-  q: '你描述事情更喜欢？',
-  a: ['具体例子（S）', 'S'],
-  b: ['比喻联想（N）', 'N']
-}, {
-  q: '批评对你来说多是？',
-  a: ['改进依据（T）', 'T'],
-  b: ['情感冲击（F）', 'F']
-}, {
-  q: '旅行你偏好？',
-  a: ['行程固定（J）', 'J'],
-  b: ['随性探索（P）', 'P']
-}, {
-  q: '团队中你常是？',
-  a: ['气氛带动者（E）', 'E'],
-  b: ['幕后支撑（I）', 'I']
-}, {
-  q: '学习时你更爱？',
-  a: ['逐步演练（S）', 'S'],
-  b: ['跳跃涉猎（N）', 'N']
-}, {
-  q: '劝人时你先讲？',
-  a: ['利害逻辑（T）', 'T'],
-  b: ['对方感受（F）', 'F']
-}, {
-  q: '桌面/日程你？',
-  a: ['整齐规划（J）', 'J'],
-  b: ['随放随用（P）', 'P']
-}];
-const MBTI_TYPES = {
-  INTJ: {
-    a: '建筑师',
-    s: '独立深思，长远布局',
-    b: '易显疏离',
-    w: '适合战略与研究',
-    r: '重深度联结',
-    g: '落地行动，别只构想'
-  },
-  INTP: {
-    a: '逻辑学者',
-    s: '抽象建模，追根问底',
-    b: '忽视琐事',
-    w: '研发与架构',
-    r: '需表达感受',
-    g: '完成闭环'
-  },
-  ENTJ: {
-    a: '指挥官',
-    s: '目标驱动，统筹全局',
-    b: '压迫感强',
-    w: '领导与创业',
-    r: '留白倾听',
-    g: '柔化沟通'
-  },
-  ENTP: {
-    a: '辩论家',
-    s: '点子密集，善于破局',
-    b: '易半途而废',
-    w: '创新与谈判',
-    r: '稳定陪伴',
-    g: '聚焦执行'
-  },
-  INFJ: {
-    a: '提倡者',
-    s: '洞察人心，理想主义',
-    b: '内耗严重',
-    w: '咨询与公益',
-    r: '坦诚交流',
-    g: '保护自己'
-  },
-  INFP: {
-    a: '调停者',
-    s: '价值导向，富有共情',
-    b: '回避冲突',
-    w: '创作与疗愈',
-    r: '真诚相待',
-    g: '接受现实'
-  },
-  ENFJ: {
-    a: '主人公',
-    s: '鼓舞他人，组织力强',
-    b: '过度付出',
-    w: '教育与带领',
-    r: '双向奔赴',
-    g: '设立边界'
-  },
-  ENFP: {
-    a: '活动家',
-    s: '热情好奇，联结广泛',
-    b: '注意力分散',
-    w: '品牌与社群',
-    r: '深度关系',
-    g: '坚持收尾'
-  },
-  ISTJ: {
-    a: '物流师',
-    s: '可靠守诺，注重秩序',
-    b: '抗拒变动',
-    w: '运营与合规',
-    r: '明确表达',
-    g: '适度弹性'
-  },
-  ISFJ: {
-    a: '守卫者',
-    s: '细致体贴，默默守护',
-    b: '积压委屈',
-    w: '服务与支持',
-    r: '被看见',
-    g: '说出需求'
-  },
-  ESTJ: {
-    a: '总经理',
-    s: '高效执行，规则清晰',
-    b: '缺乏变通',
-    w: '管理与制度',
-    r: '尊重差异',
-    g: '倾听异议'
-  },
-  ESFP: {
-    a: '表演者',
-    s: '活泼感染，活在当下',
-    b: '回避长远',
-    w: '展示与销售',
-    r: '稳定陪伴',
-    g: '规划储蓄'
-  },
-  ISTP: {
-    a: '鉴赏家',
-    s: '冷静实操，临场应变',
-    b: '情感疏离',
-    w: '技术与急救',
-    r: '言语确认',
-    g: '表达规划'
-  },
-  ISFP: {
-    a: '探险家',
-    s: '审美敏感，温和自由',
-    b: '回避冲突',
-    w: '艺术与手作',
-    r: '直接沟通',
-    g: '坚持主张'
-  },
-  ESTP: {
-    a: '企业家',
-    s: '行动派，随机应变',
-    b: '易冲动',
-    w: '商务与销售',
-    r: '稳定关系',
-    g: '三思后行'
-  }
-};
-MBTI_TYPES.ESFJ = {
-  a: '执政官',
-  s: '热心周到，维系和谐',
-  b: '怕被否定',
-  w: '服务与运营',
-  r: '真实反馈',
-  g: '守住自我'
-};
+/* ---------- MBTI 人格测试（后端题库 /api/mbti/questions · 计分 /api/mbti/score · 文案 /api/mbti/results） ---------- */
 const ALL_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
-function MBTIPage({
+const MBTI_DIMS = [{k: 'EI', l: 'E', r: 'I'}, {k: 'SN', l: 'S', r: 'N'}, {k: 'TF', l: 'T', r: 'F'}, {k: 'JP', l: 'J', r: 'P'}];
+const MBTI_FIELDS = [['strengths', '优势'], ['blindspots', '盲点'], ['career', '职场'], ['relationships', '关系'], ['growth', '成长建议']];
+function MbtiPage({
   onNavigate
 }) {
-  const [mode, setMode] = useState('menu'); // menu | quiz | result | input
+  const el = React.createElement;
+  const [view, setView] = useState('quiz'); // quiz | grid | result
+  const [questions, setQuestions] = useState([]);
+  const [qLoading, setQLoading] = useState(true);
+  const [qErrored, setQErrored] = useState('');
   const [idx, setIdx] = useState(0);
-  const [ans, setAns] = useState([]);
-  const [type, setType] = useState(null);
-  const choose = pole => {
-    const next = ans.slice();
-    next[idx] = pole;
-    if (idx + 1 < MBTI_Q.length) {
-      setAns(next);
-      setIdx(idx + 1);
-    } else {
-      finish(next);
+  const [answers, setAnswers] = useState([]); // [{question_id, choice}]
+  const [scoring, setScoring] = useState(false);
+  const [scoreErr, setScoreErr] = useState('');
+  const [result, setResult] = useState(null); // {id,type,scores,mode:'scored'|'manual'}
+  const [info, setInfo] = useState(null); // type_info {alias,strengths,blindspots,career,relationships,growth}
+  const [infoLoading, setInfoLoading] = useState(false);
+  const [infoErr, setInfoErr] = useState('');
+  const total = questions && questions.length ? questions.length : 0;
+  // —— 拉取题库（GET /api/mbti/questions）——
+  const load = async () => {
+    setQLoading(true);
+    setQErrored('');
+    try {
+      const res = await api('/mbti/questions');
+      const d = res && res.data || res || {};
+      const list = d.questions || [];
+      if (!list.length) throw new Error('题库为空');
+      setQuestions(list);
+    } catch (e) {
+      setQErrored(e && e.message || '题库加载失败，请重试。');
+    } finally {
+      setQLoading(false);
     }
   };
-  const finish = a => {
-    const c = {
-      E: 0,
-      I: 0,
-      S: 0,
-      N: 0,
-      T: 0,
-      F: 0,
-      J: 0,
-      P: 0
+  useEffect(() => {
+    load();
+  }, []);
+  // —— 拉取判型文案（GET /api/mbti/results/{id}）——
+  const fetchInfo = async id => {
+    if (!id) return;
+    setInfoLoading(true);
+    setInfoErr('');
+    try {
+      const rr = await api('/mbti/results' + '/' + encodeURIComponent(id));
+      const dd = rr && rr.data || rr || {};
+      setInfo(dd.type_info || null);
+    } catch (e) {
+      setInfoErr(e && e.message || '类型文案加载失败，请重试。');
+    } finally {
+      setInfoLoading(false);
+    }
+  };
+  // —— 提交答案并判型（POST /api/mbti/score）——
+  const submitScore = async list => {
+    if (!list || !total || list.length !== total) return;
+    setScoring(true);
+    setScoreErr('');
+    try {
+      const res = await api('/mbti/score', {
+        method: 'POST',
+        body: JSON.stringify({answers: list})
+      });
+      const d = res && res.data || res || {};
+      if (!d || !d.type) throw new Error(d && d.message || '判型失败，请重试。');
+      setResult({id: d.id || null, type: d.type, scores: d.scores || {}, mode: 'scored'});
+      setInfo(null);
+      setInfoLoading(false);
+      setInfoErr('');
+      setView('result');
+      if (d.id) fetchInfo(d.id);
+    } catch (e) {
+      setScoreErr(e && e.message || '判型失败，请重试。');
+    } finally {
+      setScoring(false);
+    }
+  };
+  // 点击选项：记录该题答案（{question_id, choice}）并自动进入下一题；最后一题则自动判型
+  const choose = key => {
+    if (scoring || !total) return;
+    const q = questions[idx];
+    if (!q) return;
+    const next = answers.slice();
+    next[idx] = {question_id: q.id, choice: key};
+    setAnswers(next);
+    if (idx + 1 < total) setIdx(idx + 1); else submitScore(next);
+  };
+  // —— 回到阶段 1：清空答案与结果 ——
+  const reset = () => {
+    setView('quiz');
+    setIdx(0);
+    setAnswers([]);
+    setResult(null);
+    setInfo(null);
+    setInfoLoading(false);
+    setInfoErr('');
+    setScoring(false);
+    setScoreErr('');
+  };
+  // —— 我已知道类型：直接输入 ——
+  const pickType = t => {
+    setResult({id: null, type: t, scores: null, mode: 'manual'});
+    setInfo(null);
+    setInfoLoading(false);
+    setInfoErr('');
+    setView('result');
+  };
+  // —— 五栏文案值 → 段落行数组（兼容 string / string[] / 换行分隔）——
+  const toLines = v => {
+    const out = [];
+    const push = s => {
+      if (s == null) return;
+      String(s).split('\n').forEach(x => {
+        x = x.trim();
+        if (x) out.push(x);
+      });
     };
-    a.forEach(p => c[p]++);
-    const t = (c.E >= c.I ? 'E' : 'I') + (c.S >= c.N ? 'S' : 'N') + (c.T >= c.F ? 'T' : 'F') + (c.J >= c.P ? 'J' : 'P');
-    setType({
-      t,
-      c
-    });
-    setMode('result');
+    if (Array.isArray(v)) v.forEach(push); else push(v);
+    return out;
   };
-  const bars = type ? [{
-    L: 'E',
-    R: 'I',
-    l: c => c.E,
-    r: c => c.I
-  }, {
-    L: 'S',
-    R: 'N',
-    l: c => c.S,
-    r: c => c.N
-  }, {
-    L: 'T',
-    R: 'F',
-    l: c => c.T,
-    r: c => c.F
-  }, {
-    L: 'J',
-    R: 'P',
-    l: c => c.J,
-    r: c => c.P
-  }] : [];
-  const info = type ? MBTI_TYPES[type.t] : null;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "spark",
-    size: 22
-  }), " MBTI 人格测试"), mode === 'menu' && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("p", {
-    style: {
-      color: 'var(--text-2)',
-      lineHeight: 1.7
+  const cur = view === 'quiz' && total ? questions[idx] : null;
+  const isManual = result && result.mode === 'manual';
+  const alias = isManual ? '—' : infoLoading && !info ? '加载中…' : info && info.alias ? info.alias : '—';
+  // —— 结果页：单维双向比例条（左端计数 / 右端计数 / 中间双向填充）——
+  const bar = d => {
+    const s = result && result.scores ? result.scores[d.k] || {} : {};
+    const lc = s[d.l] || 0;
+    const rc = s[d.r] || 0;
+    const sum = lc + rc || 1;
+    const lp = Math.round(lc / sum * 100);
+    const rp = 100 - lp;
+    return el('div', {key: d.k, className: 'mbti-bar'},
+      el('span', {className: 'bb-label', style: {width: 'auto', minWidth: 44, textAlign: 'left'}}, d.l + ' ' + lc),
+      el('span', {className: 'bb-track'},
+        el('span', {className: 'bb-fill', style: {left: 0, width: lp + '%', background: 'var(--skin-accent)'}}),
+        el('span', {className: 'bb-fill', style: {right: 0, width: rp + '%', background: 'var(--skin-accent-soft)'}})),
+      el('span', {className: 'bb-label', style: {width: 'auto', minWidth: 44, textAlign: 'right'}}, d.r + ' ' + rc));
+  };
+  // —— 结果页：16 型宫格（仅当前结果，点其它类型提示敬请期待）——
+  const typeGrid = (t) => el('div', {className: 'mbti-grid', style: {marginTop: 10}}, ALL_TYPES.map(x =>
+    el('div', {key: x, className: 'mbti-cell' + (x === t ? ' cur' : ''), onClick: () => { if (x !== t) toast('查看其它类型敬请期待'); }}, x)));
+  // —— 结果页主体 ——
+  let body;
+  if (view === 'grid') {
+    body = el('div', {className: 'card'},
+      el('div', {className: 'section-title'}, '选择你的人格类型'),
+      el('div', {className: 'grid16'}, ALL_TYPES.map(t =>
+        el('div', {key: t, className: 'g', onClick: () => pickType(t)}, t))),
+      total > 0 ? el('div', {className: 'back-row'},
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('quiz')}, '返回答题')) : qErrored ? el('div', {className: 'back-row'},
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => {
+          setView('quiz');
+          load();
+        }}, '返回重试题库')) : null);
+  } else if (view === 'result' && result) {
+    const t = result.type || 'INTJ';
+    const colsCard = isManual ? el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}}, '（手动输入类型，暂无详细文案）')
+      : info ? el('div', {className: 'card'}, MBTI_FIELDS.map(f => {
+          const lines = toLines(info[f[0]]);
+          return el('div', {key: f[0], style: {margin: '6px 0'}},
+            el('div', {className: 'section-title', style: {marginBottom: 4}}, f[1]),
+            lines.length ? lines.map((x, i) => el('p', {key: i, style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8}}, '· ' + x)) : el('p', {style: {fontSize: 13, color: 'var(--text-3)'}}, '—'));
+        }))
+      : el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}},
+          infoLoading ? '类型文案加载中…' : (infoErr || '暂无类型文案'), result.id ? el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => fetchInfo(result.id)}, '重新加载文案')) : null);
+    const barsCard = isManual || !result.scores ? el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}}, '手动输入类型（未答题），暂无倾向数据')
+      : el('div', {className: 'card'},
+          el('div', {className: 'section-title'}, '四维倾向（各维度答题数）'),
+          MBTI_DIMS.map(bar));
+    body = el(React.Fragment, null,
+      el('div', {className: 'card', style: {textAlign: 'center'}},
+        el('div', {className: 'mbti-type-big'}, t),
+        el('div', {className: 'mbti-alias'}, alias),
+        isManual ? el('div', {style: {fontSize: 12, color: 'var(--text-3)'}}, '手动输入类型') : null),
+      barsCard, colsCard,
+      el('div', {className: 'card'},
+        el('div', {className: 'section-title'}, '16 型人格'),
+        typeGrid(t)),
+      el('div', {className: 'back-row'},
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '重新测试'),
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+  } else {
+    // —— 阶段 1：答题 ——
+    if (qLoading) {
+      body = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px'}}, '题库加载中…');
+    } else if (qErrored) {
+      body = el('div', {className: 'card failed-box'},
+        el('div', {className: 'section-title'}, '题库加载失败'),
+        el('div', {className: 'error'}, qErrored),
+        el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+          el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: load}, '重试'),
+          el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
+    } else if (!cur) {
+      body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
+    } else {
+      const answered = Math.min(answers.length, total);
+      const pct = total ? Math.round(answered / total * 100) : 0;
+      body = el('div', {className: 'card'},
+        el('div', {style: {display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-3)', marginBottom: 2}},
+          el('span', null, '第 ' + (idx + 1) + ' / ' + total + ' 题'),
+          el('button', {style: {fontSize: 12, color: 'var(--skin-accent)', fontWeight: 600}, onClick: () => setView('grid')}, '我已知道类型，直接输入')),
+        el('div', {className: 'mbti-progress'}, el('i', {style: {width: pct + '%'}})),
+        scoring ? el('div', {style: {textAlign: 'center', color: 'var(--text-2)', padding: '18px 0'}}, '判型中…') : el(React.Fragment, null,
+          el('div', {style: {fontSize: 17, fontWeight: 700, color: 'var(--text-1)', lineHeight: 1.6, margin: '10px 0'}}, cur.text),
+          el('div', {style: {display: 'flex', flexDirection: 'column', gap: 10}},
+            (cur.options || []).map(o => el('button', {key: o.key, className: 'btn btn-outline', onClick: () => choose(o.key)}, o.key + '. ' + o.text))),
+          el('div', {className: 'back-row'},
+            idx > 0 ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setIdx(idx - 1)}, '上一题') : null,
+            el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => {
+              setIdx(0);
+              setAnswers([]);
+              setScoreErr('');
+            }}, '重新开始'))),
+        scoreErr ? el('div', {className: 'card failed-box', style: {margin: '10px 0 0'}},
+          el('div', {className: 'section-title'}, '判型失败'),
+          el('div', {className: 'error'}, scoreErr),
+          el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => submitScore(answers)}, '重试判型'),
+            idx > 0 ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setIdx(idx - 1)}, '返回上一题') : null,
+            el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '重新开始'))) : null);
     }
-  }, "16 型人格测评，零 LLM，本地即时判型。共 ", MBTI_Q.length, " 题，约 3 分钟。"), /*#__PURE__*/React.createElement("div", {
-    className: "row-gap",
-    style: {
-      marginTop: 12
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    onClick: () => {
-      setAns([]);
-      setIdx(0);
-      setMode('quiz');
-    }
-  }, "开始答题"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => setMode('input')
-  }, "我已知道类型"))), mode === 'quiz' && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mbti-progress"
-  }, /*#__PURE__*/React.createElement("i", {
-    style: {
-      width: idx / MBTI_Q.length * 100 + '%'
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: 'var(--text-3)',
-      marginBottom: 6
-    }
-  }, "第 ", idx + 1, " / ", MBTI_Q.length, " 题"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 16,
-      fontWeight: 700,
-      color: 'var(--text-1)',
-      marginBottom: 14
-    }
-  }, MBTI_Q[idx].q), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => choose(MBTI_Q[idx].a[1])
-  }, MBTI_Q[idx].a[0]), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => choose(MBTI_Q[idx].b[1])
-  }, MBTI_Q[idx].b[0])), idx > 0 && /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    style: {
-      marginTop: 12
-    },
-    onClick: () => setIdx(idx - 1)
-  }, "上一题")), mode === 'input' && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "选择你的人格类型"), /*#__PURE__*/React.createElement("div", {
-    className: "grid16"
-  }, ALL_TYPES.map(t => /*#__PURE__*/React.createElement("div", {
-    key: t,
-    className: "g",
-    onClick: () => {
-      setType({
-        t,
-        c: {}
-      });
-      setMode('result');
-    }
-  }, t)))), mode === 'result' && type && info && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "card",
-    style: {
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mbti-type-big"
-  }, type.t), /*#__PURE__*/React.createElement("div", {
-    className: "mbti-alias"
-  }, info.a), bars.map((b, i) => {
-    const total = b.l(type.c) + b.r(type.c) || 1;
-    const lp = Math.round(b.l(type.c) / total * 100);
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      className: "mbti-bar"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "bb-label"
-    }, b.L), /*#__PURE__*/React.createElement("span", {
-      className: "bb-track"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "bb-fill",
-      style: {
-        left: 0,
-        width: lp + '%'
-      }
-    })), /*#__PURE__*/React.createElement("span", {
-      className: "bb-label"
-    }, b.R));
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "特征"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: 'var(--text-2)',
-      lineHeight: 1.8
-    }
-  }, /*#__PURE__*/React.createElement("b", null, "优势"), "：", info.s, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "盲点"), "：", info.b, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "职场"), "：", info.w, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "关系"), "：", info.r, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "成长"), "：", info.g)), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "横向对比其他类型"), /*#__PURE__*/React.createElement("div", {
-    className: "grid16"
-  }, ALL_TYPES.map(t => /*#__PURE__*/React.createElement("div", {
-    key: t,
-    className: 'g' + (t === type.t ? ' cur' : ''),
-    onClick: () => {
-      setType({
-        t,
-        c: type.c
-      });
-    }
-  }, t)))), /*#__PURE__*/React.createElement("div", {
-    className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => {
-      setMode('menu');
-      setType(null);
-    }
-  }, "重新测试"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    onClick: () => onNavigate('landing')
-  }, "回到首页"))));
+  }
+  return el('div', {className: 'container'},
+    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
+    el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, '16 型人格测评 · 60 题 · 判型与文案由后端接口提供'),
+    body);
 }
+
 
 // ---- App Router ----
 function App() {
@@ -7319,7 +7145,7 @@ function App() {
     astrology: /*#__PURE__*/React.createElement(AstrologyPage, {
       onNavigate: navigate
     }),
-    mbti: /*#__PURE__*/React.createElement(MBTIPage, {
+    mbti: /*#__PURE__*/React.createElement(MbtiPage, {
       onNavigate: navigate
     })
   };
