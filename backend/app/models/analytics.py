@@ -244,3 +244,22 @@ class RegisterLimit(Base):
     ip = Column(String(64), index=True)
     device_fingerprint = Column(String(128), index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Divination(Base):
+    """临时起卦（divinations，Phase B）：确定性起卦免费落库 + LLM 断卦可选付费缓存。
+
+    seed_json / result_json 均可为 None（转发 Node 失败时不落库，故正常行两者非空）；
+    interpretation_json 由 POST /divinations/{id}/interpret 写入（{"content": 断卦文本}），
+    命中即为缓存，二次 interpret 零 LLM 零扣费直接返回。
+    """
+    __tablename__ = "divinations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=True, index=True)  # 起卦关联国学档案
+    method = Column(String(32), nullable=False)        # liuyao|meihua|xiaoliuren|ssgw|lenormand|...
+    seed_json = Column(JSON, nullable=True)            # 报数/时间/摇卦结果
+    result_json = Column(JSON, nullable=True)          # 卦象/课式/签文（确定性）
+    interpretation_json = Column(JSON, nullable=True)  # LLM 断卦（可选付费，缓存于此）
+    created_at = Column(DateTime, default=datetime.utcnow)
