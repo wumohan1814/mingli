@@ -17,6 +17,7 @@ WORKDIR /app
 
 # 2. 复制后端（含 pyproject.toml、app/ 代码、paipan-node/ 排盘 Node 依赖）并安装 Python 依赖
 COPY backend/ /app/backend/
+RUN cd /app/backend/paipan-node && npm install --no-audit --no-fund
 RUN pip install --no-cache-dir /app/backend/
 
 # 3. 复制前端免构建静态文件（frontend/public 由 FastAPI 直接托管）
