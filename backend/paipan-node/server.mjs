@@ -23,6 +23,15 @@
  *        relation, elementRelation, noble, meeting, conflicts, evidenceGrade,
  *        interpretationBoundary, favorableRelations, riskRelations, actionSignals}
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"ssgw",
+ *                      customDate?:"ISO 字符串", options?:{}, settings?:{}, params?:{}}
+ *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/灵签签文，
+ *       已 stripInternal）。method 决定取参位置：
+ *       - liuyao      → generateLiuyao(customDate, options)（options 可带手工爻值等）
+ *       - meihua      → generateMeihua(customDate, settings)（settings 即报数等）
+ *       - xiaoliuren  → generateXiaoliuren(params)（params.customDate 亦接受字符串）
+ *       - ssgw        → drawRandomSign(options)（随机抽签）
+ *       输入缺 method / method 非法 / customDate 无效 → 400（客户端错误）。
  *
  * 出错返回非 200（JSON {"error": ...}），并把错误打到 stderr，供调用方降级。
  * 监听 127.0.0.1，端口取环境变量 PAIPAN_NODE_PORT，默认 9317。
@@ -64,6 +73,10 @@ import { calculateBirthChartBundle } from 'mingyu-core';
 import { calculateWuyunLiuqi } from 'mingyu-core/wuyun-liuqi';
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { calculateZodiacYearFortune, getYearTaiSui } from './vendor/mingyu-core/dist/zodiac/index.js';
+import { generateLiuyao } from './vendor/mingyu-core/dist/divination/algorithms/liuyao.js';
+import { generateMeihua } from './vendor/mingyu-core/dist/divination/algorithms/meihua/index.js';
+import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorithms/xiaoliuren.js';
+import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -230,6 +243,60 @@ function computeZodiac(input) {
   return result;
 }
 
+/* ---------- /divination：临时起卦（vendored mingyu-core divination） ---------- */
+
+function toCustomDate(value) {
+  // customDate 从前端 JSON 过来是字符串；各 generate* 要求 Date 或 undefined
+  if (value === undefined || value === null || value === '') return undefined;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) {
+    throw Object.assign(new Error(`Invalid customDate: ${value}`), { clientError: true });
+  }
+  return d;
+}
+
+function computeDivination(input) {
+  // 必填校验：input 非对象 / method 缺失或非字符串 → 客户端错误（对齐 /ziwei 校验风格）
+  if (!input || typeof input !== 'object' || Array.isArray(input)
+      || typeof input.method !== 'string' || !input.method.trim()) {
+    throw Object.assign(new Error('Missing required input field: method'), { clientError: true });
+  }
+
+  const method = input.method.trim();
+  const customDate = toCustomDate(input.customDate);
+  let raw;
+  switch (method) {
+    case 'liuyao':
+      // 时间起卦默认（customDate 省略用当前时间）；options 可带手工爻值/铜钱记录
+      raw = generateLiuyao(customDate, input.options);
+      break;
+    case 'meihua':
+      // settings 即报数等起卦设置（缺省 {} → 时间起卦）
+      raw = generateMeihua(customDate, input.settings || {});
+      break;
+    case 'xiaoliuren': {
+      // 时间起课；params 内 customDate 同样允许字符串
+      const params = (input.params && typeof input.params === 'object' && !Array.isArray(input.params))
+        ? { ...input.params }
+        : {};
+      params.customDate = toCustomDate(params.customDate);
+      raw = generateXiaoliuren(params);
+      break;
+    }
+    case 'ssgw': {
+      // 灵签随机抽签；options 可带 seed/replay 以确定性重放
+      const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
+        ? input.options
+        : {};
+      raw = drawRandomSign(options);
+      break;
+    }
+    default:
+      throw Object.assign(new Error(`Unknown divination method: ${method}`), { clientError: true });
+  }
+  return stripInternal(raw);
+}
+
 // ---------------------------------------------------------------------------
 // HTTP 服务
 // ---------------------------------------------------------------------------
@@ -305,8 +372,11 @@ async function handleRequest(req, res) {
     } else if (pathname === '/zodiac') {
       const result = computeZodiac(input); // 生肖流年同步 API，直接返回
       sendJson(res, 200, result);
+    } else if (pathname === '/divination') {
+      const result = computeDivination(input); // 临时起卦同步 API，直接返回
+      sendJson(res, 200, result);
     } else {
-      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra or /zodiac.`);
+      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra, /zodiac or /divination.`);
     }
   } catch (e) {
     // 与子进程脚本一致：ziwei 必填校验 / 计算失败均属调用方可降级的错误
