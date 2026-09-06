@@ -1,0 +1,1848 @@
+{
+  "qimen_lifetime": {
+    "schemaVersion": "1.0.0",
+    "input": {
+      "birthDateTime": "1990-05-12T14:00:00",
+      "timeZoneId": "Asia/Shanghai",
+      "location": {
+        "longitude": 116.4,
+        "latitude": 39.9,
+        "locationName": "北京"
+      },
+      "calendarType": "solar",
+      "timeStandard": "civil",
+      "method": "zhuanpan",
+      "juMethod": "chaibu"
+    },
+    "basis": {
+      "calendar": "公历",
+      "solarTerm": "立夏",
+      "timeStandard": "法定民用时",
+      "timeZoneUsed": "Asia/Shanghai (UTC+9)",
+      "method": "zhuanpan",
+      "juMethod": "chaibu",
+      "stagePolicy": {
+        "model": "pillarFourLimits",
+        "anchorRule": "birthInstant",
+        "ageSystem": "fullYears",
+        "yearsPerStage": 15
+      }
+    },
+    "baseChart": {
+      "method": "zhuanpan",
+      "scope": "hour",
+      "juMethod": "chaibu",
+      "timeInfo": {
+        "solarTerm": "立夏",
+        "juTerm": "立夏",
+        "epoch": "下元",
+        "juMethod": "chaibu",
+        "fuTou": "甲戌",
+        "fuTouDate": "1990-05-09",
+        "chaoShenOrJieQi": "接气",
+        "isZhiRun": "false",
+        "juMethodNote": "拆补法定局：甲戌为甲己符头，按日干支五日一元定下元，不置闰"
+      },
+      "ganzhi": {
+        "year": "庚午",
+        "month": "辛巳",
+        "day": "丁丑",
+        "hour": "丁未"
+      },
+      "isYangDun": true,
+      "juShu": 7,
+      "zhiFu": "天芮",
+      "zhiShi": "死门",
+      "patternTags": [
+        "门伏吟",
+        "三奇得（丁奇（星奇）合生门于艮八宫）",
+        "三奇游六仪（甲辰壬值符加丁奇（星奇）于巽四宫，游甲寅癸）",
+        "马星（驿马落巽四宫）"
+      ],
+      "patternDetails": [
+        {
+          "tag": "门伏吟",
+          "summary": "八门回原位，事项推进迟滞，宜耐心等待。"
+        },
+        {
+          "tag": "三奇得（丁奇（星奇）合生门于艮八宫）",
+          "summary": "三奇与开休生吉门同宫，主该宫方位得奇门会合之助，可借助该方位推进事项。"
+        },
+        {
+          "tag": "三奇游六仪（甲辰壬值符加丁奇（星奇）于巽四宫，游甲寅癸）",
+          "summary": "当旬值符所带六仪加到地盘三奇，主资源转换成助力，适合请托、协商和争取机会。"
+        },
+        {
+          "tag": "马星（驿马落巽四宫）",
+          "summary": "驿马所在宫提示移动、变动或远行线索，是否加速需结合值符、值使和用事宫位。"
+        }
+      ],
+      "palaceInsights": [
+        {
+          "gong": 1,
+          "name": "坎一宫",
+          "level": "风险",
+          "summary": "玄武同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 1,
+          "name": "坎一宫",
+          "level": "有利",
+          "summary": "休门同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 2,
+          "name": "坤二宫",
+          "level": "风险",
+          "summary": "死门同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 2,
+          "name": "坤二宫",
+          "level": "有利",
+          "summary": "值使（死门）在坤二宫，门气正旺，是行动重点方位。"
+        },
+        {
+          "gong": 2,
+          "name": "坤二宫",
+          "level": "有利",
+          "summary": "太阴同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 3,
+          "name": "震三宫",
+          "level": "风险",
+          "summary": "伤门同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 3,
+          "name": "震三宫",
+          "level": "有利",
+          "summary": "九天同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 4,
+          "name": "巽四宫",
+          "level": "关注",
+          "summary": "值符落巽四宫，是当前局的核心观察位。"
+        },
+        {
+          "gong": 4,
+          "name": "巽四宫",
+          "level": "有利",
+          "summary": "值符同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 6,
+          "name": "乾六宫",
+          "level": "风险",
+          "summary": "白虎同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 6,
+          "name": "乾六宫",
+          "level": "有利",
+          "summary": "开门同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 7,
+          "name": "兑七宫",
+          "level": "风险",
+          "summary": "惊门同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 7,
+          "name": "兑七宫",
+          "level": "有利",
+          "summary": "六合同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 8,
+          "name": "艮八宫",
+          "level": "有利",
+          "summary": "生门同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 9,
+          "name": "离九宫",
+          "level": "风险",
+          "summary": "螣蛇同宫，宜防阻力、口舌或反复。"
+        }
+      ],
+      "voidBranches": [
+        "寅",
+        "卯"
+      ],
+      "voidPalaces": [
+        {
+          "branch": "寅",
+          "palace": 8,
+          "name": "艮八宫"
+        },
+        {
+          "branch": "卯",
+          "palace": 3,
+          "name": "震三宫"
+        }
+      ],
+      "horseStar": {
+        "branch": "巳",
+        "palace": 4,
+        "name": "巽四宫",
+        "sourceBranch": "未"
+      },
+      "specialConditions": {
+        "isLiuJiaHour": false,
+        "isLiuGuiHour": false,
+        "isShiGanRuMu": false,
+        "isWuBuYuShi": false,
+        "description": ""
+      },
+      "seasonality": {
+        "currentJieQi": "立夏",
+        "seasonalElement": "火",
+        "jieQiPhase": {
+          "jieQi": "立夏",
+          "phase": "中元",
+          "phaseIndex": 1,
+          "solarTermEvidence": {
+            "key": "solar-term:1990:9:立夏",
+            "status": "历表已采用并独立核验",
+            "name": "立夏",
+            "index": 9,
+            "isJie": true,
+            "targetLongitudeDegrees": 45,
+            "utcTimestamp": 641932526000,
+            "utcDateTime": "1990-05-05T18:35:26.000Z",
+            "julianDayUtc": 2448017.274606482,
+            "modelRootUtcTimestamp": 641932353000,
+            "modelRootUtcDateTime": "1990-05-05T18:32:33.000Z",
+            "solarLongitudeDegrees": 45.0019373,
+            "residualDegrees": 0.0019373,
+            "seedUtcDateTime": "1990-05-05T18:35:26.000Z",
+            "seedDifferenceSeconds": -173,
+            "searchWindowHours": 18,
+            "refinementToleranceSeconds": 1,
+            "refinementIterations": 17,
+            "method": "排盘采用 tyme4ts 节气历表；另以前后 18 小时包围搜索，对 Meeus/NOAA 低阶太阳视黄经二分至 1 秒区间作独立核验",
+            "source": "节气定义采用太阳视运动每隔 15° 的回归黄经；太阳视黄经采用 Meeus/NOAA 低阶公式，tyme4ts 提供独立历表初值",
+            "calculationSteps": [
+              {
+                "key": "solar-term:1990:9:calculation:target",
+                "stage": "目标黄经",
+                "status": "已计算",
+                "dependsOnStepKeys": [],
+                "inputs": {
+                  "year": 1990,
+                  "index": 9,
+                  "name": "立夏"
+                },
+                "result": {
+                  "targetLongitudeDegrees": 45,
+                  "isJie": true
+                },
+                "promptText": "立夏按二十四节气序列定位目标回归黄经45°",
+                "limitation": "节气计算步骤只证明目标黄经、采用历表、低阶模型求根和两者差值如何形成；不得把二分区间或输出小数位解释为观测级精度"
+              },
+              {
+                "key": "solar-term:1990:9:calculation:adopted-table",
+                "stage": "历表时刻",
+                "status": "已采用",
+                "dependsOnStepKeys": [
+                  "solar-term:1990:9:calculation:target"
+                ],
+                "inputs": {
+                  "year": 1990,
+                  "index": 9
+                },
+                "result": {
+                  "utcDateTime": "1990-05-05T18:35:26.000Z",
+                  "utcTimestamp": 641932526000
+                },
+                "promptText": "排盘边界采用 tyme4ts 历表 UTC 1990-05-05T18:35:26.000Z",
+                "limitation": "节气计算步骤只证明目标黄经、采用历表、低阶模型求根和两者差值如何形成；不得把二分区间或输出小数位解释为观测级精度"
+              },
+              {
+                "key": "solar-term:1990:9:calculation:model-root",
+                "stage": "独立求根",
+                "status": "已计算",
+                "dependsOnStepKeys": [
+                  "solar-term:1990:9:calculation:target"
+                ],
+                "inputs": {
+                  "searchWindowHours": 18,
+                  "refinementToleranceSeconds": 1,
+                  "targetLongitudeDegrees": 45
+                },
+                "result": {
+                  "modelRootUtcDateTime": "1990-05-05T18:32:33.000Z",
+                  "refinementIterations": 17,
+                  "residualDegrees": 0.0019373028758309374
+                },
+                "promptText": "Meeus/NOAA 低阶太阳视黄经在前后18小时窗口二分至1秒区间，独立求根为1990-05-05T18:32:33.000Z",
+                "limitation": "节气计算步骤只证明目标黄经、采用历表、低阶模型求根和两者差值如何形成；不得把二分区间或输出小数位解释为观测级精度"
+              },
+              {
+                "key": "solar-term:1990:9:calculation:comparison",
+                "stage": "差值核验",
+                "status": "已计算",
+                "dependsOnStepKeys": [
+                  "solar-term:1990:9:calculation:adopted-table",
+                  "solar-term:1990:9:calculation:model-root"
+                ],
+                "inputs": {
+                  "adoptedUtcDateTime": "1990-05-05T18:35:26.000Z",
+                  "modelRootUtcDateTime": "1990-05-05T18:32:33.000Z"
+                },
+                "result": {
+                  "seedDifferenceSeconds": -173
+                },
+                "promptText": "独立模型与采用历表相差-173.0秒",
+                "limitation": "节气计算步骤只证明目标黄经、采用历表、低阶模型求根和两者差值如何形成；不得把二分区间或输出小数位解释为观测级精度"
+              }
+            ],
+            "verificationFact": {
+              "key": "solar-term:1990:9:verification",
+              "status": "已记录差值",
+              "adoptedStepKey": "solar-term:1990:9:calculation:adopted-table",
+              "modelStepKey": "solar-term:1990:9:calculation:model-root",
+              "seedDifferenceSeconds": -173,
+              "promptText": "采用历表与独立低阶模型差值为-173.0秒；排盘仍采用历表",
+              "limitation": "独立模型差值只用于核验采用历表没有明显偏离节气定义；不得用低阶模型覆盖采用历表，也不得据差值生成可信度百分比"
+            },
+            "summaryFact": {
+              "key": "solar-term:1990:9:evidence-summary",
+              "status": "历表已采用并完成独立核验",
+              "factKeys": [
+                "solar-term:1990:9:calculation:target",
+                "solar-term:1990:9:calculation:adopted-table",
+                "solar-term:1990:9:calculation:model-root",
+                "solar-term:1990:9:calculation:comparison",
+                "solar-term:1990:9:verification",
+                "solar-term:1990:9:limitation:numerical-root",
+                "solar-term:1990:9:limitation:ephemeris"
+              ],
+              "calculationStepCount": 4,
+              "verificationFactCount": 1,
+              "limitationFactCount": 2,
+              "promptText": "立夏节气证据已采用历表并完成独立低阶模型核验；记录计算步骤4项、差值核验1项、限制2项",
+              "limitation": "节气证据汇总只统计目标黄经、采用历表、独立低阶模型求根、差值核验与限制覆盖；不得按差值大小或数值位数生成可信度百分比、观测精度声明、现实吉凶或固定应期"
+            },
+            "limitations": [
+              "Meeus/NOAA 低阶太阳公式适合民用历法级节气核验，但二分到 1 秒只表示数值求根区间，不等于观测级一秒精度。",
+              "未接入实时 UT1、完整章动项或 JPL 高精度星历；保留与 tyme4ts 历表的差值。出生时间无法满足排盘精度要求时应拒绝进入排盘流程，不生成候选盘。"
+            ],
+            "limitationFacts": [
+              {
+                "key": "solar-term:1990:9:limitation:numerical-root",
+                "type": "数值求根精度",
+                "status": "适用",
+                "ownerFactKeys": [
+                  "solar-term:1990:9:verification"
+                ],
+                "ownerStepKeys": [
+                  "solar-term:1990:9:calculation:model-root"
+                ],
+                "promptText": "Meeus/NOAA 低阶太阳公式适合民用历法级节气核验，但二分到 1 秒只表示数值求根区间，不等于观测级一秒精度。",
+                "limitation": "限制事实用于约束节气历表与独立太阳黄经核验可以支持的精度声明，不得被反向当作现实事件、吉凶或应期证据"
+              },
+              {
+                "key": "solar-term:1990:9:limitation:ephemeris",
+                "type": "星历模型边界",
+                "status": "适用",
+                "ownerFactKeys": [
+                  "solar-term:1990:9:verification"
+                ],
+                "ownerStepKeys": [
+                  "solar-term:1990:9:calculation:adopted-table",
+                  "solar-term:1990:9:calculation:model-root"
+                ],
+                "promptText": "未接入实时 UT1、完整章动项或 JPL 高精度星历；保留与 tyme4ts 历表的差值。出生时间无法满足排盘精度要求时应拒绝进入排盘流程，不生成候选盘。",
+                "limitation": "限制事实用于约束节气历表与独立太阳黄经核验可以支持的精度声明，不得被反向当作现实事件、吉凶或应期证据"
+              }
+            ],
+            "promptText": "节气交接证据：立夏定义为太阳回归黄经45°，排盘采用 tyme4ts 历表 UTC 1990-05-05T18:35:26.000Z；该时刻按 Meeus/NOAA 低阶公式得视黄经45.001937°，差目标0.001937°。独立模型求根为1990-05-05T18:32:33.000Z，与采用历表相差-173.0秒，迭代17次。计算链：立夏按二十四节气序列定位目标回归黄经45° → 排盘边界采用 tyme4ts 历表 UTC 1990-05-05T18:35:26.000Z → Meeus/NOAA 低阶太阳视黄经在前后18小时窗口二分至1秒区间，独立求根为1990-05-05T18:32:33.000Z → 独立模型与采用历表相差-173.0秒。差值核验：采用历表与独立低阶模型差值为-173.0秒；排盘仍采用历表。证据汇总：立夏节气证据已采用历表并完成独立低阶模型核验；记录计算步骤4项、差值核验1项、限制2项。方法：排盘采用 tyme4ts 节气历表；另以前后 18 小时包围搜索，对 Meeus/NOAA 低阶太阳视黄经二分至 1 秒区间作独立核验。来源：节气定义采用太阳视运动每隔 15° 的回归黄经；太阳视黄经采用 Meeus/NOAA 低阶公式，tyme4ts 提供独立历表初值。限制：Meeus/NOAA 低阶太阳公式适合民用历法级节气核验，但二分到 1 秒只表示数值求根区间，不等于观测级一秒精度。；未接入实时 UT1、完整章动项或 JPL 高精度星历；保留与 tyme4ts 历表的差值。出生时间无法满足排盘精度要求时应拒绝进入排盘流程，不生成候选盘。"
+          }
+        },
+        "dayStem": "丁",
+        "dayElement": "火",
+        "seasonRelation": "得时",
+        "seasonRelationDescription": "丁属火，与节令火比和，当令而旺。",
+        "lunarPhase": "下弦",
+        "lunarPhaseDetail": "亏凸月",
+        "moonPhaseEvidence": {
+          "key": "moon-phase:642484800000",
+          "status": "已计算",
+          "utcTimestamp": 642484800000,
+          "utcDateTime": "1990-05-12T04:00:00.000Z",
+          "julianDayUtc": 2448023.666666667,
+          "sunLongitudeDegrees": 51.1800364,
+          "moonLongitudeDegrees": 256.87813494,
+          "phaseAngleDegrees": 205.69809854,
+          "elongationDegrees": 154.30190146,
+          "illuminationFraction": 0.95054571,
+          "illuminationPercent": 95.055,
+          "waxing": false,
+          "eightPhaseName": "亏凸月",
+          "approximateMoonAgeDays": 16.8733,
+          "previousPrincipalPhase": {
+            "key": "四正月相:望:642281446000",
+            "name": "望",
+            "status": "已求根",
+            "targetAngleDegrees": 180,
+            "utcTimestamp": 642281446000,
+            "utcDateTime": "1990-05-09T19:30:46.000Z",
+            "residualDegrees": 3.041e-05,
+            "refinementIterations": 19,
+            "ownerFactKeys": [
+              "moon-phase:calculation:previous-principal"
+            ],
+            "calculationStepKeys": [
+              "moon-phase:calculation:previous-principal"
+            ],
+            "promptText": "望事件：UTC 1990-05-09T19:30:46.000Z，目标日月黄经差180°，求根残差0.00003041°，迭代19次",
+            "calculation": "以平均朔望月估计望初值1990-05-10T01:24:28.804Z，在前后各2日窗口内对日月地心黄经差=180°执行二分求根，迭代19次后区间小于等于1秒",
+            "limitation": "四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期"
+          },
+          "nextPrincipalPhase": {
+            "key": "四正月相:下弦:642973492000",
+            "name": "下弦",
+            "status": "已求根",
+            "targetAngleDegrees": 270,
+            "utcTimestamp": 642973492000,
+            "utcDateTime": "1990-05-17T19:44:52.000Z",
+            "residualDegrees": 2.874e-05,
+            "refinementIterations": 19,
+            "ownerFactKeys": [
+              "moon-phase:calculation:next-principal"
+            ],
+            "calculationStepKeys": [
+              "moon-phase:calculation:next-principal"
+            ],
+            "promptText": "下弦事件：UTC 1990-05-17T19:44:52.000Z，目标日月黄经差270°，求根残差0.00002874°，迭代19次",
+            "calculation": "以平均朔望月估计下弦初值1990-05-17T10:35:29.523Z，在前后各2日窗口内对日月地心黄经差=270°执行二分求根，迭代19次后区间小于等于1秒",
+            "limitation": "四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期"
+          },
+          "method": "以日月地心黄经差计算 0-360° 月相角；照明比例采用 (1-cos相位角)/2；前后朔弦望按平均朔望月估计初值后二分求根至 1 秒区间",
+          "source": "日月黄经由 Caelus 星历计算；朔望月均值采用 29.530588861 日",
+          "calculationSteps": [
+            {
+              "key": "moon-phase:calculation:positions",
+              "stage": "日月位置",
+              "status": "已计算",
+              "dependsOnStepKeys": [],
+              "inputs": {
+                "utcTimestamp": 642484800000,
+                "utcDateTime": "1990-05-12T04:00:00.000Z"
+              },
+              "result": {
+                "julianDayUtc": 2448023.666666667,
+                "sunLongitudeDegrees": 51.1800364,
+                "moonLongitudeDegrees": 256.87813494
+              },
+              "promptText": "按 Caelus 计算 UTC 1990-05-12T04:00:00.000Z 的日月地心黄经：太阳51.180036°、月亮256.878135°",
+              "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
+            },
+            {
+              "key": "moon-phase:calculation:angle-illumination",
+              "stage": "月相角与照明",
+              "status": "已计算",
+              "dependsOnStepKeys": [
+                "moon-phase:calculation:positions"
+              ],
+              "inputs": {
+                "sunLongitudeDegrees": 51.1800364,
+                "moonLongitudeDegrees": 256.87813494
+              },
+              "result": {
+                "phaseAngleDegrees": 205.69809854,
+                "illuminationPercent": 95.055,
+                "approximateMoonAgeDays": 16.8733
+              },
+              "promptText": "由日月地心黄经差205.698099°计算亏凸月、亏与照明95.055%",
+              "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
+            },
+            {
+              "key": "moon-phase:calculation:previous-principal",
+              "stage": "前一四正相位",
+              "status": "已求根",
+              "dependsOnStepKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "inputs": {
+                "utcTimestamp": 642484800000,
+                "phaseAngleDegrees": 205.69809853754123
+              },
+              "result": {
+                "eventKey": "四正月相:望:642281446000",
+                "utcDateTime": "1990-05-09T19:30:46.000Z"
+              },
+              "promptText": "以前一相邻目标角度180°为初值，二分求根得到望 1990-05-09T19:30:46.000Z",
+              "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
+            },
+            {
+              "key": "moon-phase:calculation:next-principal",
+              "stage": "下一四正相位",
+              "status": "已求根",
+              "dependsOnStepKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "inputs": {
+                "utcTimestamp": 642484800000,
+                "phaseAngleDegrees": 205.69809853754123
+              },
+              "result": {
+                "eventKey": "四正月相:下弦:642973492000",
+                "utcDateTime": "1990-05-17T19:44:52.000Z"
+              },
+              "promptText": "以后一相邻目标角度270°为初值，二分求根得到下弦 1990-05-17T19:44:52.000Z",
+              "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
+            }
+          ],
+          "eventSummaryFact": {
+            "key": "moon-phase:event-summary",
+            "status": "已记录前后四正相位",
+            "previousEventKey": "四正月相:望:642281446000",
+            "nextEventKey": "四正月相:下弦:642973492000",
+            "factKeys": [
+              "四正月相:望:642281446000",
+              "四正月相:下弦:642973492000",
+              "moon-phase:calculation:previous-principal",
+              "moon-phase:calculation:next-principal"
+            ],
+            "ownerFactKeys": [
+              "moon-phase:calculation:previous-principal",
+              "moon-phase:calculation:next-principal"
+            ],
+            "calculationStepKeys": [
+              "moon-phase:calculation:previous-principal",
+              "moon-phase:calculation:next-principal"
+            ],
+            "promptText": "前一四正相位为望（1990-05-09T19:30:46.000Z），下一四正相位为下弦（1990-05-17T19:44:52.000Z）",
+            "limitation": "事件汇总只说明当前时刻前后相邻的四正月相，不等于观测地点可见性、月食判断或现实应期"
+          },
+          "summaryFact": {
+            "key": "moon-phase:evidence-summary",
+            "status": "证据链完整",
+            "factKeys": [
+              "moon-phase:calculation:positions",
+              "moon-phase:calculation:angle-illumination",
+              "moon-phase:calculation:previous-principal",
+              "moon-phase:calculation:next-principal",
+              "四正月相:望:642281446000",
+              "四正月相:下弦:642973492000",
+              "moon-phase:event-summary",
+              "moon-phase:limitation:mean-age",
+              "moon-phase:limitation:illumination",
+              "moon-phase:limitation:ephemeris"
+            ],
+            "calculationStepCount": 4,
+            "principalEventCount": 2,
+            "limitationFactCount": 3,
+            "promptText": "月相证据链记录计算步骤4项、前后四正事件2项、限制3项",
+            "limitation": "月相证据汇总只统计日月黄经、月相角、几何照明、前后四正事件与限制覆盖；不得按数量生成月相吉凶、月食可见性、可信度或现实应期"
+          },
+          "limitations": [
+            "月龄由相位角按平均朔望月线性换算，只是便于理解的近似值，不等于从真实朔时刻起算的严格月龄。",
+            "照明比例采用几何近似，未加入地形、视差、大气和观测地点条件；不得用于月食可见性判断。",
+            "求根到 1 秒只表示数值区间，实际精度仍受底层日月星历模型限制，不宣称达到 JPL 或观测级精度。"
+          ],
+          "limitationFacts": [
+            {
+              "key": "moon-phase:limitation:mean-age",
+              "type": "平均月龄近似",
+              "status": "适用",
+              "ownerFactKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "ownerStepKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "promptText": "月龄由相位角按平均朔望月线性换算，只是便于理解的近似值，不等于从真实朔时刻起算的严格月龄。",
+              "limitation": "限制事实用于约束月相角、照明比例、近似月龄与四正事件可以支持的解释范围，不得被反向当作月食、天气、吉凶或固定应期证据"
+            },
+            {
+              "key": "moon-phase:limitation:illumination",
+              "type": "几何照明近似",
+              "status": "适用",
+              "ownerFactKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "ownerStepKeys": [
+                "moon-phase:calculation:angle-illumination"
+              ],
+              "promptText": "照明比例采用几何近似，未加入地形、视差、大气和观测地点条件；不得用于月食可见性判断。",
+              "limitation": "限制事实用于约束月相角、照明比例、近似月龄与四正事件可以支持的解释范围，不得被反向当作月食、天气、吉凶或固定应期证据"
+            },
+            {
+              "key": "moon-phase:limitation:ephemeris",
+              "type": "星历精度边界",
+              "status": "适用",
+              "ownerFactKeys": [
+                "moon-phase:calculation:positions",
+                "moon-phase:calculation:previous-principal",
+                "moon-phase:calculation:next-principal"
+              ],
+              "ownerStepKeys": [
+                "moon-phase:calculation:positions",
+                "moon-phase:calculation:previous-principal",
+                "moon-phase:calculation:next-principal"
+              ],
+              "promptText": "求根到 1 秒只表示数值区间，实际精度仍受底层日月星历模型限制，不宣称达到 JPL 或观测级精度。",
+              "limitation": "限制事实用于约束月相角、照明比例、近似月龄与四正事件可以支持的解释范围，不得被反向当作月食、天气、吉凶或固定应期证据"
+            }
+          ],
+          "promptText": "月相证据：UTC 1990-05-12T04:00:00.000Z 日月黄经差205.698°，最小距角154.302°，亏凸月、亏，照明约95.1%，近似月龄16.87日；计算链：按 Caelus 计算 UTC 1990-05-12T04:00:00.000Z 的日月地心黄经：太阳51.180036°、月亮256.878135° → 由日月地心黄经差205.698099°计算亏凸月、亏与照明95.055% → 以前一相邻目标角度180°为初值，二分求根得到望 1990-05-09T19:30:46.000Z → 以后一相邻目标角度270°为初值，二分求根得到下弦 1990-05-17T19:44:52.000Z；前一四正相位：望事件：UTC 1990-05-09T19:30:46.000Z，目标日月黄经差180°，求根残差0.00003041°，迭代19次；下一四正相位：下弦事件：UTC 1990-05-17T19:44:52.000Z，目标日月黄经差270°，求根残差0.00002874°，迭代19次；事件汇总：前一四正相位为望（1990-05-09T19:30:46.000Z），下一四正相位为下弦（1990-05-17T19:44:52.000Z）；证据汇总：月相证据链记录计算步骤4项、前后四正事件2项、限制3项；四正事件统一边界：四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期。方法：以日月地心黄经差计算 0-360° 月相角；照明比例采用 (1-cos相位角)/2；前后朔弦望按平均朔望月估计初值后二分求根至 1 秒区间。来源：日月黄经由 Caelus 星历计算；朔望月均值采用 29.530588861 日。限制：月龄由相位角按平均朔望月线性换算，只是便于理解的近似值，不等于从真实朔时刻起算的严格月龄。；照明比例采用几何近似，未加入地形、视差、大气和观测地点条件；不得用于月食可见性判断。；求根到 1 秒只表示数值区间，实际精度仍受底层日月星历模型限制，不宣称达到 JPL 或观测级精度。"
+        },
+        "lunarPhaseConsistency": true,
+        "dayOfficer": "成",
+        "dayOfficerFortuneLabel": "吉",
+        "dayOfficerAdvice": "成为天府，宜开市、嫁娶、签约，忌词讼出行",
+        "ganzhiInteractions": [
+          {
+            "type": "相害",
+            "pillars": [
+              "year",
+              "day"
+            ],
+            "values": [
+              "午",
+              "丑"
+            ],
+            "description": "年柱午与日柱丑相害，主暗伤不利。"
+          },
+          {
+            "type": "六合",
+            "pillars": [
+              "year",
+              "hour"
+            ],
+            "values": [
+              "午",
+              "未"
+            ],
+            "description": "年柱午与时柱未六合，主和合顺利。"
+          },
+          {
+            "type": "六冲",
+            "pillars": [
+              "day",
+              "hour"
+            ],
+            "values": [
+              "丑",
+              "未"
+            ],
+            "description": "日柱丑与时柱未六冲，主冲突变动。"
+          },
+          {
+            "type": "相刑",
+            "pillars": [
+              "day",
+              "hour"
+            ],
+            "values": [
+              "丑",
+              "未"
+            ],
+            "description": "日柱丑与时柱未恃势之刑，主是非官非。"
+          },
+          {
+            "type": "半合",
+            "pillars": [
+              "month",
+              "day"
+            ],
+            "values": [
+              "巳",
+              "丑"
+            ],
+            "description": "巳、丑半合金局，合而不全，有合作之意但力未足。"
+          }
+        ]
+      },
+      "jiuGongGe": [
+        {
+          "gong": 1,
+          "name": "坎一宫",
+          "direction": "正北",
+          "element": "水",
+          "tianPan": {
+            "star": "天冲",
+            "stem": "癸"
+          },
+          "diPan": {
+            "stem": "辛"
+          },
+          "renPan": {
+            "door": "休门"
+          },
+          "shenPan": {
+            "god": "玄武"
+          }
+        },
+        {
+          "gong": 2,
+          "name": "坤二宫",
+          "direction": "西南",
+          "element": "土",
+          "tianPan": {
+            "star": "天心",
+            "stem": "乙"
+          },
+          "diPan": {
+            "stem": "壬"
+          },
+          "renPan": {
+            "door": "死门"
+          },
+          "shenPan": {
+            "god": "太阴"
+          }
+        },
+        {
+          "gong": 3,
+          "name": "震三宫",
+          "direction": "正东",
+          "element": "木",
+          "tianPan": {
+            "star": "天英",
+            "stem": "庚"
+          },
+          "diPan": {
+            "stem": "癸"
+          },
+          "renPan": {
+            "door": "伤门"
+          },
+          "shenPan": {
+            "god": "九天"
+          }
+        },
+        {
+          "gong": 4,
+          "name": "巽四宫",
+          "direction": "东南",
+          "element": "木",
+          "tianPan": {
+            "star": "天芮",
+            "stem": "壬",
+            "companionStar": "天禽",
+            "companionStem": "丙"
+          },
+          "diPan": {
+            "stem": "丁"
+          },
+          "renPan": {
+            "door": "杜门"
+          },
+          "shenPan": {
+            "god": "值符"
+          }
+        },
+        {
+          "gong": 5,
+          "name": "中五宫",
+          "direction": "中央",
+          "element": "土",
+          "tianPan": {
+            "star": "",
+            "stem": ""
+          },
+          "diPan": {
+            "stem": "丙"
+          },
+          "renPan": {
+            "door": ""
+          },
+          "shenPan": {
+            "god": ""
+          }
+        },
+        {
+          "gong": 6,
+          "name": "乾六宫",
+          "direction": "西北",
+          "element": "金",
+          "tianPan": {
+            "star": "天任",
+            "stem": "己"
+          },
+          "diPan": {
+            "stem": "乙"
+          },
+          "renPan": {
+            "door": "开门"
+          },
+          "shenPan": {
+            "god": "白虎"
+          }
+        },
+        {
+          "gong": 7,
+          "name": "兑七宫",
+          "direction": "正西",
+          "element": "金",
+          "tianPan": {
+            "star": "天蓬",
+            "stem": "辛"
+          },
+          "diPan": {
+            "stem": "戊"
+          },
+          "renPan": {
+            "door": "惊门"
+          },
+          "shenPan": {
+            "god": "六合"
+          }
+        },
+        {
+          "gong": 8,
+          "name": "艮八宫",
+          "direction": "东北",
+          "element": "土",
+          "tianPan": {
+            "star": "天辅",
+            "stem": "丁"
+          },
+          "diPan": {
+            "stem": "己"
+          },
+          "renPan": {
+            "door": "生门"
+          },
+          "shenPan": {
+            "god": "九地"
+          }
+        },
+        {
+          "gong": 9,
+          "name": "离九宫",
+          "direction": "正南",
+          "element": "火",
+          "tianPan": {
+            "star": "天柱",
+            "stem": "戊"
+          },
+          "diPan": {
+            "stem": "庚"
+          },
+          "renPan": {
+            "door": "景门"
+          },
+          "shenPan": {
+            "god": "螣蛇"
+          }
+        }
+      ],
+      "classicPatterns": [
+        {
+          "name": "三奇游六仪",
+          "type": "good",
+          "summary": "甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "重诈",
+          "type": "good",
+          "summary": "丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。",
+          "palaces": [
+            8
+          ]
+        },
+        {
+          "name": "日奇入墓",
+          "type": "bad",
+          "summary": "乙奇入坤二宫（三奇墓在未），日奇入墓，主协商不力。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "星奇入墓",
+          "type": "bad",
+          "summary": "丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
+          "palaces": [
+            8
+          ]
+        },
+        {
+          "name": "相佐",
+          "type": "good",
+          "summary": "值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "日干勃格",
+          "type": "bad",
+          "summary": "天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "时干勃格",
+          "type": "bad",
+          "summary": "天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "地罗遮蔽",
+          "type": "bad",
+          "summary": "天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "壬击刑",
+          "type": "bad",
+          "summary": "壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "乙入墓",
+          "type": "bad",
+          "summary": "乙在坤二宫入墓（墓在未），主能量收敛、事情停滞或难以施展。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "壬入墓",
+          "type": "bad",
+          "summary": "壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "丁入墓",
+          "type": "bad",
+          "summary": "丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
+          "palaces": [
+            8
+          ]
+        },
+        {
+          "name": "狱入天牢",
+          "type": "bad",
+          "summary": "天盘癸加地盘辛于坎一宫，癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。",
+          "palaces": [
+            1
+          ]
+        },
+        {
+          "name": "万事皆屯",
+          "type": "bad",
+          "summary": "天盘乙加地盘壬于坤二宫，乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "大格",
+          "type": "bad",
+          "summary": "天盘庚加地盘癸于震三宫，庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。",
+          "palaces": [
+            3
+          ]
+        },
+        {
+          "name": "干合蛇刑",
+          "type": "neutral",
+          "summary": "天盘壬加地盘丁于巽四宫，壬加地盘丁为干合蛇刑，主文书财喜，宜阴人，贵人官禄，常人平平。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "奇入朱雀",
+          "type": "neutral",
+          "summary": "天盘丙加地盘丁于巽四宫，丙加地盘丁为奇入朱雀，主文书亨通，贵占权握，常人衣禄退剥。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "墓入不明",
+          "type": "bad",
+          "summary": "天盘己加地盘乙于乾六宫，己加地盘乙为墓入不明，星门合吉尚可平稳，不合则事难成。",
+          "palaces": [
+            6
+          ]
+        },
+        {
+          "name": "龙困遭伤",
+          "type": "bad",
+          "summary": "天盘辛加地盘戊于兑七宫，辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。",
+          "palaces": [
+            7
+          ]
+        },
+        {
+          "name": "火入勾神",
+          "type": "bad",
+          "summary": "天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。",
+          "palaces": [
+            8
+          ]
+        },
+        {
+          "name": "青龙符格",
+          "type": "bad",
+          "summary": "天盘戊加地盘庚于离九宫，六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。",
+          "palaces": [
+            9
+          ]
+        }
+      ],
+      "stemRelations": [
+        {
+          "gong": 1,
+          "heavenStem": "癸",
+          "earthStem": "辛",
+          "relation": "命名格局",
+          "pattern": "狱入天牢：癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。"
+        },
+        {
+          "gong": 2,
+          "heavenStem": "乙",
+          "earthStem": "壬",
+          "relation": "命名格局",
+          "pattern": "万事皆屯：乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。"
+        },
+        {
+          "gong": 3,
+          "heavenStem": "庚",
+          "earthStem": "癸",
+          "relation": "命名格局",
+          "pattern": "大格：庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。"
+        },
+        {
+          "gong": 4,
+          "heavenStem": "壬",
+          "earthStem": "丁",
+          "relation": "命名格局",
+          "pattern": "干合蛇刑：壬加地盘丁为干合蛇刑，主文书财喜，宜阴人，贵人官禄，常人平平。"
+        },
+        {
+          "gong": 4,
+          "heavenStem": "丙",
+          "earthStem": "丁",
+          "relation": "命名格局",
+          "pattern": "奇入朱雀：丙加地盘丁为奇入朱雀，主文书亨通，贵占权握，常人衣禄退剥。"
+        },
+        {
+          "gong": 6,
+          "heavenStem": "己",
+          "earthStem": "乙",
+          "relation": "命名格局",
+          "pattern": "墓入不明：己加地盘乙为墓入不明，星门合吉尚可平稳，不合则事难成。"
+        },
+        {
+          "gong": 7,
+          "heavenStem": "辛",
+          "earthStem": "戊",
+          "relation": "命名格局",
+          "pattern": "龙困遭伤：辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。"
+        },
+        {
+          "gong": 8,
+          "heavenStem": "丁",
+          "earthStem": "己",
+          "relation": "命名格局",
+          "pattern": "火入勾神：丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。"
+        },
+        {
+          "gong": 9,
+          "heavenStem": "戊",
+          "earthStem": "庚",
+          "relation": "命名格局",
+          "pattern": "青龙符格：六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。"
+        }
+      ],
+      "patternCombos": [
+        {
+          "key": "combo:mixed:4",
+          "name": "巽四宫吉凶混杂",
+          "tone": "mixed",
+          "summary": "巽四宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "palace": 4
+        },
+        {
+          "key": "combo:mixed:8",
+          "name": "艮八宫吉凶混杂",
+          "tone": "mixed",
+          "summary": "艮八宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "palace": 8
+        },
+        {
+          "key": "combo:triBad:2",
+          "name": "坤二宫三凶集结",
+          "tone": "super-bad",
+          "summary": "坤二宫聚集3个凶格，凶象叠加。",
+          "palace": 2
+        },
+        {
+          "key": "combo:fuyinPlusBad",
+          "name": "伏吟带凶",
+          "tone": "super-bad",
+          "summary": "伏吟主迟滞，又见明确凶格，阻滞与凶象并见。"
+        },
+        {
+          "key": "combo:fuyinPlusHorse",
+          "name": "静中藏动",
+          "tone": "mixed",
+          "summary": "伏吟主静，驿马主动，表面停滞而内有变化。"
+        },
+        {
+          "key": "combo:xingDeKaiHe:立夏:未:天芮",
+          "name": "刑德开阖",
+          "tone": "mixed",
+          "summary": "立夏属立夏三气，德在未、刑在丑；丁未属甲辰旬（季甲），丁未时支未为德在门，值符天芮为阴星，判为半开，宜动宜战。坐阳德取未支坤二宫，击阴刑取丑支艮八宫；偏三甲兵事、主客与动静参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:starPalaceHostGuest:1宫生星:2宫生星:3宫生星:4宫克星:4宫克星:6星生宫:7宫生星:8星克宫:9宫克星",
+          "name": "星宫主客",
+          "tone": "mixed",
+          "summary": "九星与落宫形成主客取向：天冲木落坎一宫（水），宫生星，利客；天心金落坤二宫（土），宫生星，利客；天英火落震三宫（木），宫生星，利客；天芮土落巽四宫（木），宫克星，利主；天禽土落巽四宫（木），宫克星，利主；天任土落乾六宫（金），星生宫，利主；天蓬水落兑七宫（金），宫生星，利客；天辅木落艮八宫（土），星克宫，利客；天柱金落离九宫（火），宫克星，利主。宫为主，星为客；此为兵事主客强弱参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:doorPalaceHostGuest:1门宫比和:2门宫比和:3门宫比和:4门宫比和:6门宫比和:7门宫比和:8门宫比和:9门宫比和",
+          "name": "门宫主客",
+          "tone": "mixed",
+          "summary": "八门与落宫形成主客取向：休门水落坎一宫（水），门宫比和，势均；死门土落坤二宫（土），门宫比和，势均；伤门木落震三宫（木），门宫比和，势均；杜门木落巽四宫（木），门宫比和，势均；开门金落乾六宫（金），门宫比和，势均；惊门金落兑七宫（金），门宫比和，势均；生门土落艮八宫（土），门宫比和，势均；景门火落离九宫（火），门宫比和，势均。宫为主，门为客；此为兵事主客强弱参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:doorSeasonQi:巳:1:2:3:4:6:7:8:9",
+          "name": "八门余气",
+          "tone": "mixed",
+          "summary": "巳月属火，八门余气为：坎一宫休门属水为休；坤二宫死门属土为废；震三宫伤门属木为相；巽四宫杜门属木为相；乾六宫开门属金为囚；兑七宫惊门属金为囚；艮八宫生门属土为废；离九宫景门属火为旺。合“当时者为旺，我生者为相，我克者为休，克我者为囚，生我者为废”；偏用门旺衰和兵事进退参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:objectClues:1癸天冲玄武休门:2乙天心太阴死门:3庚天英九天伤门:4壬丙天芮天禽值符杜门:6己天任白虎开门:7辛天蓬六合惊门:8丁天辅九地生门:9戊天柱螣蛇景门",
+          "name": "射覆物象克应",
+          "tone": "mixed",
+          "summary": "按天盘干、九星、八神、八门取射覆物象：坎一宫：天盘癸主水族纹曲、苍黑，兼鳞甲珍珠；天冲主碧色木象；玄武主水族胎形、字迹纹曲、秽污之物；休门主坑坎包裹、休息聚藏；坤二宫：天盘乙主木性直瘦、青蓝，兼丝麻布帛花果；天心主白色金象；太阴主雕琢文书、羽毛飞物；死门主废缺不活、吊死行刑；震三宫：天盘庚主金性圆坚洁白，兼铁石有声；天英主紫赤火象；九天主利器盘旋、有声有足、光亮之物；伤门主转动有声、震动捕获；巽四宫：天盘壬主水族纹曲、苍黑，兼鳞甲珍珠；天盘丙主火性尖斜华彩、赤紫，兼文书羽毛；天芮主黑色土象；天禽主黄色土象；值符主贵物财帛、首领之物；杜门主闭塞难通、未成隐藏；乾六宫：天盘己主土性方厚盘旋，兼沙土陶瓷；天任主白黄土象；白虎主伤损金石、锋芒破危；开门主通利刚健、圆转能动；兑七宫：天盘辛主金性圆坚洁白，兼铁石有声；天蓬主白色水象；六合主布帛果实、两体交连；惊门主损伤缺口、歪斜惊惶；艮八宫：天盘丁主火性尖斜华彩、赤紫，兼文书羽毛；天辅主绿色木象；九地主深藏旧物、神祇暗昧；生门主初成高大、发生隆起；离九宫：天盘戊主土性方厚盘旋，兼沙土陶瓷；天柱主赤色金象；螣蛇主怪异虚花、歪斜之物；景门主华彩光芒、投书发扬。偏物形、颜色、材质、状态线索参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:zhiFuOpenClose:4",
+          "name": "值符开通闭塞",
+          "tone": "super-good",
+          "summary": "值符星天芮落巽四宫，符临4宫为开通；逢开利以有为，宜主动推进。此为《奇门宝鉴御定》开合时机参考，不作通用吉凶评分。",
+          "palace": 4
+        },
+        {
+          "key": "combo:sanShengDi",
+          "name": "三胜地",
+          "tone": "super-good",
+          "summary": "值符星落巽四宫、九天在震三宫、生门在艮八宫，为三胜所取之地，可作为争取主动与择方参考。"
+        },
+        {
+          "key": "combo:tianYiJiChong",
+          "name": "天乙击冲",
+          "tone": "mixed",
+          "summary": "值符星天芮落巽四宫为天乙宫，兵事宜居其方、击其对冲乾六宫；此为坐击取向参考，不作通用吉凶评分。",
+          "palace": 4
+        },
+        {
+          "key": "combo:wuBuJi",
+          "name": "五不击",
+          "tone": "mixed",
+          "summary": "值符星、九天、生门、九地和值使所在宫为五不击，偏兵事攻守禁忌；宜据守借势，不宜把这些方位作为攻击对象。"
+        },
+        {
+          "key": "combo:baJiangHuiMen:2",
+          "name": "八将会门",
+          "tone": "mixed",
+          "summary": "值使死门落坤二宫，上临太阴，为太阴会死门；古法收用天盘不用地盘，偏天时、行兵、捕捉等场景参考，不作通用吉凶评分。",
+          "palace": 2
+        },
+        {
+          "key": "combo:youDuLuDu",
+          "name": "游都鲁都",
+          "tone": "mixed",
+          "summary": "丁日游都在巳支巽四宫，对冲鲁都在亥支乾六宫，偏兵事背击与择方参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:tianMuDiEr",
+          "name": "天目地耳",
+          "tone": "mixed",
+          "summary": "丁未属甲辰旬，天目为庚戌（乾六宫），地耳为戊申（坤二宫），偏兵事“背天目击地耳”参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:xunGuXu",
+          "name": "孤虚",
+          "tone": "mixed",
+          "summary": "丁未属甲辰旬，孤在寅支艮八宫、卯支震三宫，虚在申支坤二宫、酉支兑七宫；偏兵事“背孤击虚”、博弈坐向与远行避忌参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:tianMaDirection",
+          "name": "天马方",
+          "tone": "mixed",
+          "summary": "巳月未时以月将申加时支，顺数至卯为太冲天马方：太冲天马在寅支艮八宫；偏急难逃避与出行择方参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:tianGangTime",
+          "name": "天罡时",
+          "tone": "mixed",
+          "summary": "巳月未时以月将申加时支，上盘天罡所临为斗星方：斗星天罡在卯支震三宫；偏行兵破阵与择方参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:lostRoute",
+          "name": "迷路法",
+          "tone": "mixed",
+          "summary": "巳月未时以月将申加时支，天罡临卯支震三宫，属仲位，中道通；偏行军迷路、择道参考，不作通用吉凶评分。",
+          "palace": 3
+        },
+        {
+          "key": "combo:tianSanMenDiSiHu",
+          "name": "天三门地四户",
+          "tone": "mixed",
+          "summary": "巳月未时以月将申加时支，天三门为太冲在寅支艮八宫、小吉在午支离九宫、从魁在申支坤二宫；以月建加时支，地四户为除在申支坤二宫、定在亥支乾六宫、危在寅支艮八宫、开在巳支巽四宫；偏出行、避难与择方参考，遇三奇吉门更佳，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:earthPrivateDoor",
+          "name": "地私门",
+          "tone": "mixed",
+          "summary": "丁丑日取阳贵亥，巳月未时以月将申加时支，贵人落戌支乾六宫，逆行排十二天将，地私门为六合在未支坤二宫、太常在寅支艮八宫、太阴在子支坎一宫；偏出行、隐避与败军出走参考，遇奇门相照更佳，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:tingTingBaiJian",
+          "name": "亭亭白奸",
+          "tone": "mixed",
+          "summary": "巳月未时以月将申加时支，神后所临为亭亭方：亭亭（神后）在亥支乾六宫；功曹、胜光、天罡所临为白奸方：白奸功曹在丑支艮八宫、白奸胜光在巳支巽四宫、白奸天罡在卯支震三宫；合于巳亥宜战，格于寅申宜守，其余偏“背亭亭击白奸”参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:tianMenDiHuTaiYinQingLong",
+          "name": "天门地户太阴青龙",
+          "tone": "mixed",
+          "summary": "丁未属甲辰旬，出天门取天盘戊所在离九宫，入地户取天盘己所在乾六宫，过太阴取天盘丁所在艮八宫，居青龙取本旬六甲遁壬所在巽四宫；偏出行避难与兵事用方参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:campLayout",
+          "name": "下营法",
+          "tone": "mixed",
+          "summary": "丁未属甲辰旬，大将取本旬六甲遁壬所在巽四宫，旗鼓取天盘乙所在坤二宫，士卒取天盘丙所在巽四宫，伏兵取天盘丁所在艮八宫，判断取天盘辛所在兑七宫，囚系粮储取天盘壬所在巽四宫，所藏取天盘癸所在坎一宫；偏行军下营分工参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:yangYinHourHostGuest",
+          "name": "五阳五阴主客",
+          "tone": "mixed",
+          "summary": "丁时属五阳时，兵事利客、宜先举；用局重看天盘奇仪星门是否强盛，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:daJiangJunDirection",
+          "name": "大将军方",
+          "tone": "mixed",
+          "summary": "午年大将军在卯支震三宫，偏兵事背击与避犯参考，不作通用吉凶评分。",
+          "palace": 3
+        },
+        {
+          "key": "combo:taiSuiDirection",
+          "name": "太岁方",
+          "tone": "mixed",
+          "summary": "午年太岁在地盘午支离九宫，偏兵事背击与避犯参考，不作通用吉凶评分。",
+          "palace": 9
+        },
+        {
+          "key": "combo:yueJianDirection",
+          "name": "月建方",
+          "tone": "mixed",
+          "summary": "巳月月建在地盘巳支巽四宫，偏兵事背击与避犯参考，不作通用吉凶评分。",
+          "palace": 4
+        },
+        {
+          "key": "combo:taiYinDirection",
+          "name": "太阴方",
+          "tone": "mixed",
+          "summary": "八神太阴在坤二宫，偏兵事背击、伏藏与避犯参考，不作通用吉凶评分。",
+          "palace": 2
+        },
+        {
+          "key": "combo:fourGodDirections",
+          "name": "四神用方",
+          "tone": "mixed",
+          "summary": "九天在震三宫宜扬兵，九地在艮八宫宜潜藏立营，太阴在坤二宫宜伏兵，六合在兑七宫宜逃形谋议；偏兵事与隐遁取向参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:heKuiDirection",
+          "name": "河魁方",
+          "tone": "mixed",
+          "summary": "河魁为戌支，落地盘戌支乾六宫，偏兵事背击与避犯参考，不作通用吉凶评分。",
+          "palace": 6
+        },
+        {
+          "key": "combo:wuJiangDirection",
+          "name": "五将方",
+          "tone": "mixed",
+          "summary": "丑日五将方在北方（坎一宫），偏兵事遇敌避犯与择利反击参考，不作通用吉凶评分。",
+          "palace": 1
+        },
+        {
+          "key": "combo:xiongCiDirection",
+          "name": "雄雌方",
+          "tone": "mixed",
+          "summary": "巳月以巳支巽四宫为雄，对冲亥支乾六宫为雌，偏兵事“背雄击雌”参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:dayStemAttackAvoidance",
+          "name": "日干攻方避忌",
+          "tone": "mixed",
+          "summary": "丁日不宜攻正北（坎一宫），偏兵事攻方避忌；只作攻守参考，不作通用吉凶评分。"
+        }
+      ],
+      "directions": {
+        "goodDirections": [],
+        "avoidDirections": [
+          {
+            "gong": 1,
+            "name": "坎一宫",
+            "direction": "正北",
+            "use": "宜避之方",
+            "reasons": [
+              "玄武",
+              "凶格:狱入天牢"
+            ]
+          },
+          {
+            "gong": 2,
+            "name": "坤二宫",
+            "direction": "西南",
+            "use": "宜避之方",
+            "reasons": [
+              "死门",
+              "凶格:日奇入墓",
+              "凶格:乙入墓",
+              "凶格:万事皆屯"
+            ]
+          },
+          {
+            "gong": 3,
+            "name": "震三宫",
+            "direction": "正东",
+            "use": "宜避之方",
+            "reasons": [
+              "伤门",
+              "空亡",
+              "凶格:大格"
+            ]
+          },
+          {
+            "gong": 4,
+            "name": "巽四宫",
+            "direction": "东南",
+            "use": "宜避之方",
+            "reasons": [
+              "凶格:日干勃格",
+              "凶格:时干勃格",
+              "凶格:地罗遮蔽",
+              "凶格:壬击刑",
+              "凶格:壬入墓"
+            ]
+          },
+          {
+            "gong": 6,
+            "name": "乾六宫",
+            "direction": "西北",
+            "use": "宜避之方",
+            "reasons": [
+              "白虎",
+              "凶格:墓入不明"
+            ]
+          },
+          {
+            "gong": 7,
+            "name": "兑七宫",
+            "direction": "正西",
+            "use": "宜避之方",
+            "reasons": [
+              "惊门",
+              "凶格:龙困遭伤"
+            ]
+          },
+          {
+            "gong": 8,
+            "name": "艮八宫",
+            "direction": "东北",
+            "use": "宜避之方",
+            "reasons": [
+              "空亡",
+              "凶格:星奇入墓",
+              "凶格:丁入墓",
+              "凶格:火入勾神"
+            ]
+          },
+          {
+            "gong": 9,
+            "name": "离九宫",
+            "direction": "正南",
+            "use": "宜避之方",
+            "reasons": [
+              "螣蛇",
+              "凶格:青龙符格"
+            ]
+          }
+        ]
+      },
+      "yingQi": {
+        "rhythm": "中",
+        "triggerConditions": [
+          "阴日（丁日）见庚在天盘3宫，逢卯冲酉应",
+          "驿马发动，出现行动、迁移、消息流转时更容易触发进展"
+        ],
+        "limitations": [
+          "快、中、慢只表示盘内相对节奏，不对应固定日数、月数或公历日期",
+          "庚格、空亡、马星等只给候选触发条件，必须结合问题期限和现实事件核验",
+          "未按具体问题选定用神时，本结果只能作为值符落宫的通用参考"
+        ],
+        "description": "盘内应期节奏为中，不机械换算固定天数。马星冲动，应期较快，宜主动把握时机。伏吟局主迟滞，需反复推动或等待外因触发。"
+      }
+    },
+    "personalMarkers": [
+      {
+        "markerType": "yearStem",
+        "value": "庚",
+        "palace": 3,
+        "palaceName": "震三宫",
+        "layer": "tianPan",
+        "traditionalSignificance": "年干天盘落宫（庚）：表外在社会名位、长辈福荫、名声根基与时代大势"
+      },
+      {
+        "markerType": "yearStem",
+        "value": "庚",
+        "palace": 9,
+        "palaceName": "离九宫",
+        "layer": "diPan",
+        "traditionalSignificance": "年干地盘落宫（庚）：表先天祖业沉淀、内在家族根基与深层心理安全感"
+      },
+      {
+        "markerType": "yearBranch",
+        "value": "午",
+        "palace": 9,
+        "palaceName": "离九宫",
+        "layer": "baseGong",
+        "traditionalSignificance": "年支本宫（午在离九宫）：身体元气与先天命基之寄托本原"
+      },
+      {
+        "markerType": "dayStem",
+        "value": "丁",
+        "palace": 4,
+        "palaceName": "巽四宫",
+        "layer": "diPan",
+        "traditionalSignificance": "日干地盘落宫（丁）：本人内心隐秘居所、精神寄托与底层支撑"
+      },
+      {
+        "markerType": "dayStem",
+        "value": "丁",
+        "palace": 8,
+        "palaceName": "艮八宫",
+        "layer": "tianPan",
+        "traditionalSignificance": "日干天盘落宫（丁）：求测者本人显性行藏、心智精力与中年主要作为"
+      },
+      {
+        "markerType": "hourStem",
+        "value": "丁",
+        "palace": 4,
+        "palaceName": "巽四宫",
+        "layer": "diPan",
+        "traditionalSignificance": "时干地盘落宫（丁）：晚运蓄势储备与底层执行承载"
+      },
+      {
+        "markerType": "hourStem",
+        "value": "丁",
+        "palace": 8,
+        "palaceName": "艮八宫",
+        "layer": "tianPan",
+        "traditionalSignificance": "时干天盘落宫（丁）：晚景运势、具体事业产出、下属晚辈及事态最终归宿"
+      },
+      {
+        "markerType": "zhiFuStar",
+        "value": "天芮",
+        "palace": 4,
+        "palaceName": "巽四宫",
+        "layer": "tianPan",
+        "traditionalSignificance": "值符星落宫（天芮）：一身大纲领，时代机遇与贵人庇佑之枢纽"
+      },
+      {
+        "markerType": "zhiShiDoor",
+        "value": "死门",
+        "palace": 2,
+        "palaceName": "坤二宫",
+        "layer": "renPan",
+        "traditionalSignificance": "值使门落宫（死门）：人事具体权柄、行动落地与办事主宰"
+      },
+      {
+        "markerType": "companionStem",
+        "value": "丙",
+        "palace": 4,
+        "palaceName": "巽四宫",
+        "layer": "tianPan",
+        "traditionalSignificance": "天禽寄宫携干（丙）：中五厚土兼化之隐性能量"
+      }
+    ],
+    "topicCandidates": [
+      {
+        "topic": "career",
+        "topicName": "事业官禄",
+        "primaryPalaces": [
+          6,
+          4,
+          8
+        ],
+        "secondaryPalaces": [
+          9,
+          3
+        ],
+        "basis": "《统宗》开门专司官爵仕途，值符为百官尊长，克我者官鬼司名权威柄，景门司文书名望",
+        "patternSummary": [
+          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
+          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
+          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+        ]
+      },
+      {
+        "topic": "wealth",
+        "topicName": "资产财帛",
+        "primaryPalaces": [
+          8,
+          9,
+          2
+        ],
+        "secondaryPalaces": [
+          1
+        ],
+        "basis": "《统宗》生门专司财帛产业，甲子戊为青龙钱财资本，我克者妻财司日常资产，九地主储蓄",
+        "patternSummary": [
+          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)",
+          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
+          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)"
+        ]
+      },
+      {
+        "topic": "marriage",
+        "topicName": "婚恋配偶",
+        "primaryPalaces": [
+          7,
+          2
+        ],
+        "secondaryPalaces": [
+          1,
+          3
+        ],
+        "basis": "《统宗》六合专司媒约婚姻，男取我克之妻财、女取克我之官鬼，乙庚为阴阳夫妇正配，休门司家庭",
+        "patternSummary": [
+          "兑七宫: 人盘惊门，神盘六合，天盘天蓬，干组合: 辛+戊，格局:龙困遭伤(凶)",
+          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)"
+        ]
+      },
+      {
+        "topic": "health",
+        "topicName": "身体疾厄",
+        "primaryPalaces": [
+          4,
+          2,
+          8
+        ],
+        "secondaryPalaces": [
+          3
+        ],
+        "basis": "《统宗》天芮星为疾病根源病灶，死门主气机滞塞，克我者官鬼疾厄司病患侵袭，伤门司外伤手术",
+        "patternSummary": [
+          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
+          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)",
+          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+        ]
+      },
+      {
+        "topic": "academic",
+        "topicName": "学业进修",
+        "primaryPalaces": [
+          5,
+          6,
+          9,
+          8
+        ],
+        "secondaryPalaces": [
+          3
+        ],
+        "basis": "《统宗》生我者父母司学业文凭庇荫，天辅为文曲导师，景门司试卷考选，丁奇为文书玉印",
+        "patternSummary": [
+          "中五宫: 干组合: +丙",
+          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
+          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
+          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+        ]
+      },
+      {
+        "topic": "relocation",
+        "topicName": "居所差旅",
+        "primaryPalaces": [
+          4,
+          3,
+          6
+        ],
+        "secondaryPalaces": [],
+        "basis": "《烟波钓叟歌》天马为动应之神，九天主升迁远行迁徙，开门司通达，伤门司车马动迁",
+        "patternSummary": [
+          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
+          "震三宫: 人盘伤门，神盘九天，天盘天英，干组合: 庚+癸，临旬空，格局:大格(凶)",
+          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)"
+        ]
+      },
+      {
+        "topic": "family",
+        "topicName": "原生家庭",
+        "primaryPalaces": [
+          5,
+          6,
+          9,
+          1
+        ],
+        "secondaryPalaces": [
+          3
+        ],
+        "basis": "《统宗》生我者为父母长辈，年干为宗族根基，休门为宅舍庇护之宫",
+        "patternSummary": [
+          "中五宫: 干组合: +丙",
+          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
+          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
+          "坎一宫: 人盘休门，神盘玄武，天盘天冲，干组合: 癸+辛，格局:狱入天牢(凶)"
+        ]
+      },
+      {
+        "topic": "children",
+        "topicName": "晚辈后嗣",
+        "primaryPalaces": [
+          1,
+          4,
+          8
+        ],
+        "secondaryPalaces": [],
+        "basis": "《统宗》我生者子息司晚辈团队，时干司晚运终局与具体事态产出",
+        "patternSummary": [
+          "坎一宫: 人盘休门，神盘玄武，天盘天冲，干组合: 癸+辛，格局:狱入天牢(凶)",
+          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
+          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+        ]
+      },
+      {
+        "topic": "partnership",
+        "topicName": "合伙合作",
+        "primaryPalaces": [
+          3,
+          7
+        ],
+        "secondaryPalaces": [
+          6
+        ],
+        "basis": "《统宗》比肩者兄弟司同侪伙伴与合伙人，六合主契约协议合作共事",
+        "patternSummary": [
+          "震三宫: 人盘伤门，神盘九天，天盘天英，干组合: 庚+癸，临旬空，格局:大格(凶)",
+          "兑七宫: 人盘惊门，神盘六合，天盘天蓬，干组合: 辛+戊，格局:龙困遭伤(凶)"
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "stageIndex": 0,
+        "title": "初限·早年根基",
+        "ageStart": 0,
+        "ageEnd": 16,
+        "calendarStart": "1990-05-12",
+        "calendarEnd": "2006-05-12",
+        "dominantPalaces": [
+          {
+            "palace": 3,
+            "name": "震三宫"
+          },
+          {
+            "palace": 9,
+            "name": "离九宫"
+          }
+        ],
+        "associatedMarkers": [
+          "年干庚",
+          "年支午"
+        ],
+        "stageTheme": "年柱主限：主家庭原生教养、长辈福荫护持、学识基础与先天命质形成。",
+        "supportFacts": [
+          "得吉神九天护持，贵人引路、协同有方",
+          "临景门，主文书声誉、名气外显与合同机遇"
+        ],
+        "constraintFacts": [
+          "临凶门伤门，需防滞塞阻力、言语是非或折伤耗散",
+          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
+          "逢凶格「大格」：天盘庚加地盘癸于震三宫，庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。",
+          "值螣蛇乘临，警惕暗耗、口舌争执或意外波动",
+          "逢凶格「青龙符格」：天盘戊加地盘庚于离九宫，六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。"
+        ],
+        "limitations": [
+          "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
+        ]
+      },
+      {
+        "stageIndex": 1,
+        "title": "中前限·青年立业",
+        "ageStart": 17,
+        "ageEnd": 32,
+        "calendarStart": "2007-05-12",
+        "calendarEnd": "2022-05-12",
+        "dominantPalaces": [
+          {
+            "palace": 1,
+            "name": "坎一宫"
+          },
+          {
+            "palace": 7,
+            "name": "兑七宫"
+          },
+          {
+            "palace": 4,
+            "name": "巽四宫"
+          }
+        ],
+        "associatedMarkers": [
+          "月干辛",
+          "月支巳"
+        ],
+        "stageTheme": "月柱主限：走出家庭踏入社会、人际圈层开拓、事业基石奠定与青年自我认知。",
+        "supportFacts": [
+          "临三大吉门之休门，人事实质通达顺畅",
+          "得吉神六合护持，贵人引路、协同有方",
+          "得吉神值符护持，贵人引路、协同有方",
+          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
+          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
+          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。"
+        ],
+        "constraintFacts": [
+          "值玄武乘临，警惕暗耗、口舌争执或意外波动",
+          "逢凶格「狱入天牢」：天盘癸加地盘辛于坎一宫，癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。",
+          "临凶门惊门，需防滞塞阻力、言语是非或折伤耗散",
+          "逢凶格「龙困遭伤」：天盘辛加地盘戊于兑七宫，辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。",
+          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
+          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
+          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
+          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。"
+        ],
+        "limitations": [
+          "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
+        ]
+      },
+      {
+        "stageIndex": 2,
+        "title": "中后限·中年鼎盛",
+        "ageStart": 33,
+        "ageEnd": 48,
+        "calendarStart": "2023-05-12",
+        "calendarEnd": "2038-05-12",
+        "dominantPalaces": [
+          {
+            "palace": 4,
+            "name": "巽四宫"
+          },
+          {
+            "palace": 8,
+            "name": "艮八宫"
+          }
+        ],
+        "associatedMarkers": [
+          "日干丁"
+        ],
+        "stageTheme": "日柱主限：人生核心建树期，自身心力智慧完全展现，家庭与社会中流砥柱。",
+        "supportFacts": [
+          "得吉神值符护持，贵人引路、协同有方",
+          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
+          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
+          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
+          "临三大吉门之生门，人事实质通达顺畅",
+          "得吉神九地护持，贵人引路、协同有方",
+          "成吉格「重诈」：丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。"
+        ],
+        "constraintFacts": [
+          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
+          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
+          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
+          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
+          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
+          "逢凶格「星奇入墓」：丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
+          "逢凶格「丁入墓」：丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
+          "逢凶格「火入勾神」：天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。"
+        ],
+        "limitations": [
+          "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
+        ]
+      },
+      {
+        "stageIndex": 3,
+        "title": "末限·晚景安泰",
+        "ageStart": 49,
+        "ageEnd": 80,
+        "calendarStart": "2039-05-12",
+        "calendarEnd": "2070-05-12",
+        "dominantPalaces": [
+          {
+            "palace": 4,
+            "name": "巽四宫"
+          },
+          {
+            "palace": 8,
+            "name": "艮八宫"
+          },
+          {
+            "palace": 2,
+            "name": "坤二宫"
+          }
+        ],
+        "associatedMarkers": [
+          "时干丁",
+          "值使死门"
+        ],
+        "stageTheme": "时柱主限：事业收获定型、后辈晚生接班、生活闲适自洽与精神安泰归宿。",
+        "supportFacts": [
+          "得吉神值符护持，贵人引路、协同有方",
+          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
+          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
+          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
+          "临三大吉门之生门，人事实质通达顺畅",
+          "得吉神九地护持，贵人引路、协同有方",
+          "成吉格「重诈」：丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。",
+          "得吉神太阴护持，贵人引路、协同有方"
+        ],
+        "constraintFacts": [
+          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
+          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
+          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
+          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
+          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
+          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
+          "逢凶格「星奇入墓」：丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
+          "逢凶格「丁入墓」：丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
+          "逢凶格「火入勾神」：天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。",
+          "临凶门死门，需防滞塞阻力、言语是非或折伤耗散",
+          "逢凶格「日奇入墓」：乙奇入坤二宫（三奇墓在未），日奇入墓，主协商不力。",
+          "逢凶格「乙入墓」：乙在坤二宫入墓（墓在未），主能量收敛、事情停滞或难以施展。",
+          "逢凶格「万事皆屯」：天盘乙加地盘壬于坤二宫，乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。"
+        ],
+        "limitations": [
+          "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
+        ]
+      }
+    ]
+  }
+}

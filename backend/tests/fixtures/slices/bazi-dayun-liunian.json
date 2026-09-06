@@ -1,0 +1,1145 @@
+{
+  "bazi": {
+    "qi_yun": {
+      "forward": true,
+      "start": "1998-08-01 14:30:00",
+      "start_age": 8
+    },
+    "da_yun": [
+      {
+        "index": 1,
+        "ganzhi": "壬午",
+        "start_year": 1998,
+        "end_year": 2007,
+        "age_start": 9,
+        "age_end": 18,
+        "liu_nian": [
+          {
+            "year": 1998,
+            "age": 9,
+            "ganzhi": "戊寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 1999,
+            "age": 10,
+            "ganzhi": "己卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2000,
+            "age": 11,
+            "ganzhi": "庚辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2001,
+            "age": 12,
+            "ganzhi": "辛巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2002,
+            "age": 13,
+            "ganzhi": "壬午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2003,
+            "age": 14,
+            "ganzhi": "癸未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2004,
+            "age": 15,
+            "ganzhi": "甲申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2005,
+            "age": 16,
+            "ganzhi": "乙酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2006,
+            "age": 17,
+            "ganzhi": "丙戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2007,
+            "age": 18,
+            "ganzhi": "丁亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "ganzhi": "癸未",
+        "start_year": 2008,
+        "end_year": 2017,
+        "age_start": 19,
+        "age_end": 28,
+        "liu_nian": [
+          {
+            "year": 2008,
+            "age": 19,
+            "ganzhi": "戊子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2009,
+            "age": 20,
+            "ganzhi": "己丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2010,
+            "age": 21,
+            "ganzhi": "庚寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2011,
+            "age": 22,
+            "ganzhi": "辛卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2012,
+            "age": 23,
+            "ganzhi": "壬辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2013,
+            "age": 24,
+            "ganzhi": "癸巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2014,
+            "age": 25,
+            "ganzhi": "甲午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2015,
+            "age": 26,
+            "ganzhi": "乙未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2016,
+            "age": 27,
+            "ganzhi": "丙申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2017,
+            "age": 28,
+            "ganzhi": "丁酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "ganzhi": "甲申",
+        "start_year": 2018,
+        "end_year": 2027,
+        "age_start": 29,
+        "age_end": 38,
+        "liu_nian": [
+          {
+            "year": 2018,
+            "age": 29,
+            "ganzhi": "戊戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2019,
+            "age": 30,
+            "ganzhi": "己亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2020,
+            "age": 31,
+            "ganzhi": "庚子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2021,
+            "age": 32,
+            "ganzhi": "辛丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2022,
+            "age": 33,
+            "ganzhi": "壬寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2023,
+            "age": 34,
+            "ganzhi": "癸卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2024,
+            "age": 35,
+            "ganzhi": "甲辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2025,
+            "age": 36,
+            "ganzhi": "乙巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2026,
+            "age": 37,
+            "ganzhi": "丙午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2027,
+            "age": 38,
+            "ganzhi": "丁未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "ganzhi": "乙酉",
+        "start_year": 2028,
+        "end_year": 2037,
+        "age_start": 39,
+        "age_end": 48,
+        "liu_nian": [
+          {
+            "year": 2028,
+            "age": 39,
+            "ganzhi": "戊申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2029,
+            "age": 40,
+            "ganzhi": "己酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2030,
+            "age": 41,
+            "ganzhi": "庚戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2031,
+            "age": 42,
+            "ganzhi": "辛亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2032,
+            "age": 43,
+            "ganzhi": "壬子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2033,
+            "age": 44,
+            "ganzhi": "癸丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2034,
+            "age": 45,
+            "ganzhi": "甲寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2035,
+            "age": 46,
+            "ganzhi": "乙卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2036,
+            "age": 47,
+            "ganzhi": "丙辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2037,
+            "age": 48,
+            "ganzhi": "丁巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "ganzhi": "丙戌",
+        "start_year": 2038,
+        "end_year": 2047,
+        "age_start": 49,
+        "age_end": 58,
+        "liu_nian": [
+          {
+            "year": 2038,
+            "age": 49,
+            "ganzhi": "戊午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2039,
+            "age": 50,
+            "ganzhi": "己未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2040,
+            "age": 51,
+            "ganzhi": "庚申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2041,
+            "age": 52,
+            "ganzhi": "辛酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2042,
+            "age": 53,
+            "ganzhi": "壬戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2043,
+            "age": 54,
+            "ganzhi": "癸亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2044,
+            "age": 55,
+            "ganzhi": "甲子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2045,
+            "age": 56,
+            "ganzhi": "乙丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2046,
+            "age": 57,
+            "ganzhi": "丙寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2047,
+            "age": 58,
+            "ganzhi": "丁卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "ganzhi": "丁亥",
+        "start_year": 2048,
+        "end_year": 2057,
+        "age_start": 59,
+        "age_end": 68,
+        "liu_nian": [
+          {
+            "year": 2048,
+            "age": 59,
+            "ganzhi": "戊辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2049,
+            "age": 60,
+            "ganzhi": "己巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2050,
+            "age": 61,
+            "ganzhi": "庚午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2051,
+            "age": 62,
+            "ganzhi": "辛未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2052,
+            "age": 63,
+            "ganzhi": "壬申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2053,
+            "age": 64,
+            "ganzhi": "癸酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2054,
+            "age": 65,
+            "ganzhi": "甲戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2055,
+            "age": 66,
+            "ganzhi": "乙亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2056,
+            "age": 67,
+            "ganzhi": "丙子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2057,
+            "age": 68,
+            "ganzhi": "丁丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "ganzhi": "戊子",
+        "start_year": 2058,
+        "end_year": 2067,
+        "age_start": 69,
+        "age_end": 78,
+        "liu_nian": [
+          {
+            "year": 2058,
+            "age": 69,
+            "ganzhi": "戊寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2059,
+            "age": 70,
+            "ganzhi": "己卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2060,
+            "age": 71,
+            "ganzhi": "庚辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2061,
+            "age": 72,
+            "ganzhi": "辛巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2062,
+            "age": 73,
+            "ganzhi": "壬午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2063,
+            "age": 74,
+            "ganzhi": "癸未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2064,
+            "age": 75,
+            "ganzhi": "甲申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2065,
+            "age": 76,
+            "ganzhi": "乙酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2066,
+            "age": 77,
+            "ganzhi": "丙戌",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2067,
+            "age": 78,
+            "ganzhi": "丁亥",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "ganzhi": "己丑",
+        "start_year": 2068,
+        "end_year": 2077,
+        "age_start": 79,
+        "age_end": 88,
+        "liu_nian": [
+          {
+            "year": 2068,
+            "age": 79,
+            "ganzhi": "戊子",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2069,
+            "age": 80,
+            "ganzhi": "己丑",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2070,
+            "age": 81,
+            "ganzhi": "庚寅",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2071,
+            "age": 82,
+            "ganzhi": "辛卯",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2072,
+            "age": 83,
+            "ganzhi": "壬辰",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2073,
+            "age": 84,
+            "ganzhi": "癸巳",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2074,
+            "age": 85,
+            "ganzhi": "甲午",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2075,
+            "age": 86,
+            "ganzhi": "乙未",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2076,
+            "age": 87,
+            "ganzhi": "丙申",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          },
+          {
+            "year": 2077,
+            "age": 88,
+            "ganzhi": "丁酉",
+            "shishen": "",
+            "shensha": [],
+            "relations": []
+          }
+        ]
+      }
+    ]
+  },
+  "timeline_20y": [
+    {
+      "year": 2007,
+      "age": 18,
+      "da_yun_ganzhi": "壬午",
+      "liu_nian_ganzhi": "丁亥",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支亥与月支巳相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支亥与时支未三合"
+        }
+      ]
+    },
+    {
+      "year": 2008,
+      "age": 19,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "戊子",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支子与年支午相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支子与日支丑相合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支子与时支未相害"
+        }
+      ]
+    },
+    {
+      "year": 2009,
+      "age": 20,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "己丑",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支丑与年支午相害"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支丑与月支巳三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支丑与时支未相冲"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见华盖"
+        }
+      ]
+    },
+    {
+      "year": 2010,
+      "age": 21,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "庚寅",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支寅与年支午三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支寅与月支巳相刑"
+        }
+      ]
+    },
+    {
+      "year": 2011,
+      "age": 22,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "辛卯",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支卯与年支午相破"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支卯与时支未三合"
+        }
+      ]
+    },
+    {
+      "year": 2012,
+      "age": 23,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "壬辰",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年壬与日主丁相合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干壬与时干丁合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支辰与日支丑相破"
+        }
+      ]
+    },
+    {
+      "year": 2013,
+      "age": 24,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "癸巳",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年癸与日主丁相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干癸与时干丁冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支巳与日支丑三合"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见羊刃"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见亡神"
+        }
+      ]
+    },
+    {
+      "year": 2014,
+      "age": 25,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "甲午",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干甲与年干庚冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支午与日支丑相害"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支午与时支未相合"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见桃花"
+        }
+      ]
+    },
+    {
+      "year": 2015,
+      "age": 26,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "乙未",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干乙与年干庚合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干乙与月干辛冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支未与年支午相合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支未与日支丑相冲"
+        }
+      ]
+    },
+    {
+      "year": 2016,
+      "age": 27,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "丙申",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干丙与月干辛合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支申与月支巳相合"
+        }
+      ]
+    },
+    {
+      "year": 2017,
+      "age": 28,
+      "da_yun_ganzhi": "癸未",
+      "liu_nian_ganzhi": "丁酉",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支酉与月支巳三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支酉与日支丑三合"
+        }
+      ]
+    },
+    {
+      "year": 2018,
+      "age": 29,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "戊戌",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支戌与年支午三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支戌与时支未相刑"
+        }
+      ]
+    },
+    {
+      "year": 2019,
+      "age": 30,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "己亥",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支亥与月支巳相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支亥与时支未三合"
+        }
+      ]
+    },
+    {
+      "year": 2020,
+      "age": 31,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "庚子",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支子与年支午相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支子与日支丑相合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支子与时支未相害"
+        }
+      ]
+    },
+    {
+      "year": 2021,
+      "age": 32,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "辛丑",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年支丑与年支午相害"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支丑与月支巳三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支丑与时支未相冲"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见华盖"
+        }
+      ]
+    },
+    {
+      "year": 2022,
+      "age": 33,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "壬寅",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年壬与日主丁相合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干壬与时干丁合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支寅与年支午三合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支寅与月支巳相刑"
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "age": 34,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "癸卯",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年癸与日主丁相冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干癸与时干丁冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支卯与年支午相破"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支卯与时支未三合"
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "age": 35,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "甲辰",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干甲与年干庚冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支辰与日支丑相破"
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "age": 36,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "乙巳",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干乙与年干庚合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年干乙与月干辛冲"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支巳与日支丑三合"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见羊刃"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见亡神"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "age": 37,
+      "da_yun_ganzhi": "甲申",
+      "liu_nian_ganzhi": "丙午",
+      "events": [
+        {
+          "type": "冲合",
+          "desc": "流年干丙与月干辛合"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支午与日支丑相害"
+        },
+        {
+          "type": "冲合",
+          "desc": "流年支午与时支未相合"
+        },
+        {
+          "type": "神煞",
+          "desc": "流年见桃花"
+        }
+      ]
+    }
+  ]
+}

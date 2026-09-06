@@ -1,0 +1,119 @@
+{
+  "bazi": {
+    "pillars": {
+      "year": {
+        "gan": "庚",
+        "zhi": "午",
+        "nayin": "路旁土"
+      },
+      "month": {
+        "gan": "辛",
+        "zhi": "巳",
+        "nayin": "白蜡金"
+      },
+      "day": {
+        "gan": "丁",
+        "zhi": "丑",
+        "nayin": "涧下水"
+      },
+      "hour": {
+        "gan": "丁",
+        "zhi": "未",
+        "nayin": "天河水"
+      }
+    },
+    "shensha": [
+      {
+        "name": "亡神",
+        "category": "亡神",
+        "pillars": [
+          "month"
+        ],
+        "target": "巳",
+        "note": "申子辰见亥，寅午戌见巳，巳酉丑见申，亥卯未见寅"
+      },
+      {
+        "name": "将星",
+        "category": "将星",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "申子辰见子，寅午戌见午，巳酉丑见酉，亥卯未见卯"
+      },
+      {
+        "name": "桃花",
+        "category": "桃花",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "申子辰见酉，寅午戌见卯，巳酉丑见午，亥卯未见子"
+      },
+      {
+        "name": "华盖",
+        "category": "华盖",
+        "pillars": [
+          "day"
+        ],
+        "target": "丑",
+        "note": "申子辰见辰，寅午戌见戌，巳酉丑见丑，亥卯未见未"
+      },
+      {
+        "name": "天乙贵人",
+        "category": "贵人",
+        "pillars": [
+          "day"
+        ],
+        "target": "丑",
+        "note": "以年干庚查，见丑"
+      },
+      {
+        "name": "天乙贵人",
+        "category": "贵人",
+        "pillars": [
+          "hour"
+        ],
+        "target": "未",
+        "note": "以年干庚查，见未"
+      },
+      {
+        "name": "禄神",
+        "category": "禄",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "以日干丁查，见午"
+      },
+      {
+        "name": "羊刃",
+        "category": "羊刃",
+        "pillars": [
+          "month"
+        ],
+        "target": "巳",
+        "note": "以日干丁查，见巳"
+      },
+      {
+        "name": "天德",
+        "category": "吉神",
+        "pillars": [
+          "month"
+        ],
+        "target": "辛",
+        "note": "以月支巳查，见天干辛"
+      },
+      {
+        "name": "月德",
+        "category": "吉神",
+        "pillars": [
+          "year"
+        ],
+        "target": "庚",
+        "note": "以月支巳查，见天干庚"
+      }
+    ],
+    "xun_kong": "申酉"
+  }
+}

@@ -1,0 +1,139 @@
+/* 太初 H5 · 设计令牌（星象式神秘奢华 v1.2）
+ * 来源：docs/太初H5界面设计方案.md
+ * 用途：src/styles 全局主题变量；与 Tailwind/原生 CSS 变量共用。
+ * 配色 hex 与字体沿用 v1.0 确认值；v1.2 新增「统一基底 + 多文化皮肤」：
+ *   基底（深蓝+金+象牙+西文衬线）始终共用，皮肤仅替换 --skin-* 签名变量。
+ */
+
+:root {
+  /* —— 主色 墨蓝 / 靛青 —— */
+  --ink-50: #EEF1F8;
+  --ink-100: #D6DCEF;
+  --ink-200: #AEB9DE;
+  --ink-300: #8493CB;
+  --ink-400: #5E6FB3;
+  --ink-500: #44558F;
+  --ink-600: #364573;
+  --ink-700: #2C385C;  /* 标题深墨（替代纯黑） */
+  --ink-800: #232C49;
+  --ink-900: #1A2138;  /* 深空幕底 */
+
+  /* —— 辅助色 —— */
+  --gold-300: #E6CF9A;
+  --gold-500: #B8893E;  /* 星点 / 金线 / 星印 / 品牌点缀 */
+  --gold-600: #9C6E2E;
+  --gold-700: #7E5824;  /* 金作文字时用，保对比 */
+  --jade-400: #6FAE9B;
+  --jade-500: #3E7C6B;  /* 趋势向好 / 吉；文字用 600 深玉 */
+  --jade-600: #3E7C6B;
+  --cinnabar: #B23A3A;  /* 免责星印 / 禁区 / 警示 */
+  --cinnabar-600: #973131;
+  --error: #C0392B;
+
+  /* —— 中性色 宣纸暖灰 —— */
+  --paper: #F7F4EC;       /* 全局底（移动端） */
+  --surface: #FFFFFF;     /* 卡片 / 表单底 */
+  --surface-warm: #FEFCF8;
+  --text-1: #1F1F26;      /* 正文主色 */
+  --text-2: #5C5C68;      /* 辅助说明 */
+  --text-3: #8A8A94;      /* 极弱提示 / 时间戳 */
+  --border: #E5E0D4;      /* 暖灰分割线 */
+
+  /* —— 字体 —— */
+  --font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+  --font-sans: "Noto Sans SC", "Inter", system-ui, sans-serif;
+  --font-latin-serif: "Cormorant Garamond", "Noto Serif SC", serif;
+  --font-latin-sans: "Inter", "Noto Sans SC", sans-serif;
+
+  /* —— 字号层级（8px 模块化） —— */
+  --fs-display: 32px;
+  --fs-h1: 28px;
+  --fs-h2: 22px;
+  --fs-h3: 18px;
+  --fs-body-l: 16px;
+  --fs-body: 14px;
+  --fs-caption: 12px;
+  --fs-disclaimer: 11px;
+
+  /* —— 字重 —— */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* —— 间距（8px 基线） —— */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-6: 48px;
+
+  /* —— 圆角 —— */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* —— 阴影（单层极淡，浮于星空） —— */
+  --shadow-card: 0 2px 12px rgba(26, 33, 56, 0.10);
+
+  /* —— 断点（参考，CSS 中用 min-width 实现） —— */
+  /* 320 基线 / 576 / 768 / 992 / 1200 */
+  --content-max: 960px;
+  --rail-width: 340px;
+
+  /* —— 多文化皮肤签名色（v1.2.7 最终，与 frontend/public/index.html 一致）——
+   * 基底（深蓝+金+象牙+西文衬线）始终共用；皮肤仅替换 --skin-* 签名变量。
+   * 内部标识色 = --skin-accent（按钮 / 吉 / 描边）；顶部 Banner + 底部胶囊 = --skin-banner。
+   * 默认皮肤 = 国学：内部=玉青 #3E7C6B，Banner=朱砂 #B23A3A。 */
+  --skin-accent: #3E7C6B;        /* 国学=玉青（内部标识：按钮/描边/辉光/吉卡） */
+  --skin-accent-soft: rgba(62,124,107,.14);
+  --skin-accent-ink: #F7F4EC;    /* 签名色之上的文字 */
+  --skin-banner: #B23A3A;        /* 国学顶部 Banner=朱砂红 */
+  --skin-banner-ink: #F7F4EC;    /* 朱砂红底文字（浅） */
+  --skin-tag-bg: rgba(0,0,0,.16);
+  --skin-motif: "star-chart";     /* 装饰母题：star-chart | zodiac | orb */
+
+  /* —— 动效 —— */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur: 220ms;
+}
+
+/* 深空幕（星象沉浸栏 / 宇宙幕母版） */
+.cosmic-field {
+  background: var(--ink-900);
+}
+
+/* 吉凶三要素：图标 + 文字 + 颜色，不依赖颜色传达（随皮肤变化） */
+.trend-good { color: var(--skin-accent); }
+.trend-bad  { color: var(--cinnabar); }
+.trend-flat { color: var(--ink-500); }
+
+/* 签名色工具类：随 --skin-* 变化，用于状态点 / 标签 / 母题描边 */
+.skin-accent        { color: var(--skin-accent); }
+.skin-accent-bg     { background: var(--skin-accent); color: var(--skin-accent-ink); }
+.skin-accent-stroke { stroke: var(--skin-accent); }
+/* 顶部 Banner / 底部胶囊切换器使用 --skin-banner（随皮肤换色） */
+.skin-banner        { background: var(--skin-banner); color: var(--skin-banner-ink); }
+
+/* —— 皮肤覆盖：西式占星 / 塔罗（基底不变，只换签名；与 index.html 同步） —— */
+/* 占星：内部=深空蓝 #2A3A5C；顶部 Banner=月银 #C9CBD3 */
+[data-skin="astrology"] {
+  --skin-accent: #2A3A5C;
+  --skin-accent-soft: rgba(42,58,92,.14);
+  --skin-accent-ink: #F7F4EC;
+  --skin-banner: #C9CBD3;
+  --skin-banner-ink: #1F1F26;
+  --skin-tag-bg: rgba(255,255,255,.55);
+  --skin-motif: "zodiac";
+}
+/* 塔罗：内部=琥珀 #C9A24B；顶部 Banner=紫晶 #5B4B8A（修正早期紫晶/琥珀写反） */
+[data-skin="tarot"] {
+  --skin-accent: #C9A24B;
+  --skin-accent-soft: rgba(201,162,75,.18);
+  --skin-accent-ink: #1F1F26;
+  --skin-banner: #5B4B8A;
+  --skin-banner-ink: #F7F4EC;
+  --skin-tag-bg: rgba(0,0,0,.16);
+  --skin-motif: "orb";
+}

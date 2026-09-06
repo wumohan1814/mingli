@@ -1,0 +1,272 @@
+{
+  "ziwei": {
+    "soul": "禄存",
+    "body": "火星",
+    "soul_palace": "戌",
+    "body_palace": "子",
+    "five_elements_class": "土五局",
+    "lunar_date": "一九九〇年四月十八",
+    "time_range": "13:00~15:00",
+    "sihua": [
+      {
+        "star": "天同",
+        "mutagen": "忌",
+        "palace": "官禄"
+      },
+      {
+        "star": "武曲",
+        "mutagen": "权",
+        "palace": "仆役"
+      },
+      {
+        "star": "太阳",
+        "mutagen": "禄",
+        "palace": "迁移"
+      },
+      {
+        "star": "太阴",
+        "mutagen": "科",
+        "palace": "命宫"
+      }
+    ],
+    "palaces": [
+      {
+        "index": 0,
+        "name": "官禄",
+        "heavenly_stem": "戊",
+        "earthly_branch": "寅",
+        "major_stars": [
+          "天同",
+          "天梁"
+        ],
+        "minor_stars": [],
+        "adjective_stars": [
+          "八座",
+          "天厨",
+          "天月",
+          "蜚廉"
+        ],
+        "sihua": [
+          "天同忌"
+        ],
+        "is_body_palace": false
+      },
+      {
+        "index": 1,
+        "name": "仆役",
+        "heavenly_stem": "己",
+        "earthly_branch": "卯",
+        "major_stars": [
+          "武曲",
+          "七杀"
+        ],
+        "minor_stars": [
+          "文昌"
+        ],
+        "adjective_stars": [
+          "天喜",
+          "咸池",
+          "天贵",
+          "天德",
+          "天伤"
+        ],
+        "sihua": [
+          "武曲权"
+        ],
+        "is_body_palace": false
+      },
+      {
+        "index": 2,
+        "name": "迁移",
+        "heavenly_stem": "庚",
+        "earthly_branch": "辰",
+        "major_stars": [
+          "太阳"
+        ],
+        "minor_stars": [
+          "地空"
+        ],
+        "adjective_stars": [
+          "天姚",
+          "凤阁",
+          "天才",
+          "寡宿",
+          "年解"
+        ],
+        "sihua": [
+          "太阳禄"
+        ],
+        "is_body_palace": false
+      },
+      {
+        "index": 3,
+        "name": "疾厄",
+        "heavenly_stem": "辛",
+        "earthly_branch": "巳",
+        "major_stars": [],
+        "minor_stars": [],
+        "adjective_stars": [
+          "破碎",
+          "天使"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 4,
+        "name": "财帛",
+        "heavenly_stem": "壬",
+        "earthly_branch": "午",
+        "major_stars": [
+          "天机"
+        ],
+        "minor_stars": [
+          "地劫"
+        ],
+        "adjective_stars": [
+          "天寿",
+          "天福",
+          "截路"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 5,
+        "name": "子女",
+        "heavenly_stem": "癸",
+        "earthly_branch": "未",
+        "major_stars": [
+          "紫微",
+          "破军"
+        ],
+        "minor_stars": [
+          "左辅",
+          "右弼",
+          "天钺",
+          "陀罗"
+        ],
+        "adjective_stars": [
+          "恩光",
+          "天空",
+          "空亡"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 6,
+        "name": "夫妻",
+        "heavenly_stem": "甲",
+        "earthly_branch": "申",
+        "major_stars": [],
+        "minor_stars": [
+          "禄存",
+          "天马",
+          "火星"
+        ],
+        "adjective_stars": [
+          "孤辰",
+          "阴煞"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 7,
+        "name": "兄弟",
+        "heavenly_stem": "乙",
+        "earthly_branch": "酉",
+        "major_stars": [
+          "天府"
+        ],
+        "minor_stars": [
+          "擎羊"
+        ],
+        "adjective_stars": [
+          "红鸾",
+          "封诰"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 8,
+        "name": "命宫",
+        "heavenly_stem": "丙",
+        "earthly_branch": "戌",
+        "major_stars": [
+          "太阴"
+        ],
+        "minor_stars": [
+          "铃星"
+        ],
+        "adjective_stars": [
+          "解神",
+          "龙池",
+          "华盖",
+          "旬空"
+        ],
+        "sihua": [
+          "太阴科"
+        ],
+        "is_body_palace": false
+      },
+      {
+        "index": 9,
+        "name": "父母",
+        "heavenly_stem": "丁",
+        "earthly_branch": "亥",
+        "major_stars": [
+          "廉贞",
+          "贪狼"
+        ],
+        "minor_stars": [
+          "文曲"
+        ],
+        "adjective_stars": [
+          "天巫",
+          "天官",
+          "月德"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      },
+      {
+        "index": 10,
+        "name": "福德",
+        "heavenly_stem": "戊",
+        "earthly_branch": "子",
+        "major_stars": [
+          "巨门"
+        ],
+        "minor_stars": [],
+        "adjective_stars": [
+          "三台",
+          "天刑",
+          "天哭",
+          "天虚"
+        ],
+        "sihua": [],
+        "is_body_palace": true
+      },
+      {
+        "index": 11,
+        "name": "田宅",
+        "heavenly_stem": "己",
+        "earthly_branch": "丑",
+        "major_stars": [
+          "天相"
+        ],
+        "minor_stars": [
+          "天魁"
+        ],
+        "adjective_stars": [
+          "台辅"
+        ],
+        "sihua": [],
+        "is_body_palace": false
+      }
+    ]
+  }
+}

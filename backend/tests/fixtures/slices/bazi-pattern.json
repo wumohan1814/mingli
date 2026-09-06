@@ -1,0 +1,227 @@
+{
+  "input": {
+    "calendar": "solar",
+    "year": 1990,
+    "month": 5,
+    "day": 12,
+    "hour": 14,
+    "minute": 30,
+    "gender": "男",
+    "birthplace_name": "北京",
+    "longitude": 116.4,
+    "latitude": 39.9,
+    "true_solar_time": false,
+    "sect": 2,
+    "yun_sect": 1,
+    "name": "测试"
+  },
+  "bazi": {
+    "pillars": {
+      "year": {
+        "gan": "庚",
+        "zhi": "午",
+        "gan_wuxing": "金",
+        "zhi_wuxing": "火",
+        "nayin": "路旁土",
+        "shishen_gan": "正财",
+        "shishen_zhi": [
+          "比肩",
+          "食神"
+        ],
+        "hide_gan": [
+          {
+            "gan": "丁",
+            "shishen": "比肩"
+          },
+          {
+            "gan": "己",
+            "shishen": "食神"
+          }
+        ],
+        "dish": "临官"
+      },
+      "month": {
+        "gan": "辛",
+        "zhi": "巳",
+        "gan_wuxing": "金",
+        "zhi_wuxing": "火",
+        "nayin": "白蜡金",
+        "shishen_gan": "偏财",
+        "shishen_zhi": [
+          "劫财",
+          "正财",
+          "伤官"
+        ],
+        "hide_gan": [
+          {
+            "gan": "丙",
+            "shishen": "劫财"
+          },
+          {
+            "gan": "庚",
+            "shishen": "正财"
+          },
+          {
+            "gan": "戊",
+            "shishen": "伤官"
+          }
+        ],
+        "dish": "帝旺"
+      },
+      "day": {
+        "gan": "丁",
+        "zhi": "丑",
+        "gan_wuxing": "火",
+        "zhi_wuxing": "土",
+        "nayin": "涧下水",
+        "shishen_gan": "日主",
+        "shishen_zhi": [
+          "食神",
+          "七杀",
+          "偏财"
+        ],
+        "hide_gan": [
+          {
+            "gan": "己",
+            "shishen": "食神"
+          },
+          {
+            "gan": "癸",
+            "shishen": "七杀"
+          },
+          {
+            "gan": "辛",
+            "shishen": "偏财"
+          }
+        ],
+        "dish": "墓"
+      },
+      "hour": {
+        "gan": "丁",
+        "zhi": "未",
+        "gan_wuxing": "火",
+        "zhi_wuxing": "土",
+        "nayin": "天河水",
+        "shishen_gan": "比肩",
+        "shishen_zhi": [
+          "食神",
+          "比肩",
+          "偏印"
+        ],
+        "hide_gan": [
+          {
+            "gan": "己",
+            "shishen": "食神"
+          },
+          {
+            "gan": "丁",
+            "shishen": "比肩"
+          },
+          {
+            "gan": "乙",
+            "shishen": "偏印"
+          }
+        ],
+        "dish": "冠带"
+      }
+    },
+    "day_master": "丁",
+    "day_master_wuxing": "火",
+    "ming_gong": "辛巳",
+    "shen_gong": "己丑",
+    "tai_yuan": "壬申",
+    "xun_kong": "申酉",
+    "shensha": [
+      {
+        "name": "亡神",
+        "category": "亡神",
+        "pillars": [
+          "month"
+        ],
+        "target": "巳",
+        "note": "申子辰见亥，寅午戌见巳，巳酉丑见申，亥卯未见寅"
+      },
+      {
+        "name": "将星",
+        "category": "将星",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "申子辰见子，寅午戌见午，巳酉丑见酉，亥卯未见卯"
+      },
+      {
+        "name": "桃花",
+        "category": "桃花",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "申子辰见酉，寅午戌见卯，巳酉丑见午，亥卯未见子"
+      },
+      {
+        "name": "华盖",
+        "category": "华盖",
+        "pillars": [
+          "day"
+        ],
+        "target": "丑",
+        "note": "申子辰见辰，寅午戌见戌，巳酉丑见丑，亥卯未见未"
+      },
+      {
+        "name": "天乙贵人",
+        "category": "贵人",
+        "pillars": [
+          "day"
+        ],
+        "target": "丑",
+        "note": "以年干庚查，见丑"
+      },
+      {
+        "name": "天乙贵人",
+        "category": "贵人",
+        "pillars": [
+          "hour"
+        ],
+        "target": "未",
+        "note": "以年干庚查，见未"
+      },
+      {
+        "name": "禄神",
+        "category": "禄",
+        "pillars": [
+          "year"
+        ],
+        "target": "午",
+        "note": "以日干丁查，见午"
+      },
+      {
+        "name": "羊刃",
+        "category": "羊刃",
+        "pillars": [
+          "month"
+        ],
+        "target": "巳",
+        "note": "以日干丁查，见巳"
+      },
+      {
+        "name": "天德",
+        "category": "吉神",
+        "pillars": [
+          "month"
+        ],
+        "target": "辛",
+        "note": "以月支巳查，见天干辛"
+      },
+      {
+        "name": "月德",
+        "category": "吉神",
+        "pillars": [
+          "year"
+        ],
+        "target": "庚",
+        "note": "以月支巳查，见天干庚"
+      }
+    ]
+  }
+}

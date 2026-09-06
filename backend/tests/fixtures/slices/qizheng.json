@@ -1,0 +1,814 @@
+{
+  "qizheng": {
+    "stars": [
+      {
+        "name": "太阳",
+        "kind": "七政",
+        "tropicalLongitude": 51.26018945747779,
+        "longitude": 51.26018945747779,
+        "xiu": "胃",
+        "sevenStar": "土",
+        "xiuDegree": 4.456507834920785,
+        "signIndex": 1,
+        "signBranch": "酉",
+        "palace": "迁移",
+        "retrograde": false,
+        "dignity": "平",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "太阴",
+        "kind": "七政",
+        "tropicalLongitude": 257.8711819233563,
+        "longitude": 257.8711819233563,
+        "xiu": "尾",
+        "sevenStar": "火",
+        "xiuDegree": 1.846990692551742,
+        "signIndex": 8,
+        "signBranch": "寅",
+        "palace": "财帛",
+        "retrograde": false,
+        "dignity": "平",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "辰星(水)",
+        "kind": "七政",
+        "tropicalLongitude": 38.78752864445829,
+        "longitude": 38.78752864445829,
+        "xiu": "娄",
+        "sevenStar": "金",
+        "xiuDegree": 4.949008490419658,
+        "signIndex": 1,
+        "signBranch": "酉",
+        "palace": "迁移",
+        "retrograde": true,
+        "dignity": "平",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "太白(金)",
+        "kind": "七政",
+        "tropicalLongitude": 9.120178631761632,
+        "longitude": 9.120178631761632,
+        "xiu": "壁",
+        "sevenStar": "水",
+        "xiuDegree": 0.09534630543629419,
+        "signIndex": 0,
+        "signBranch": "戌",
+        "palace": "官禄",
+        "retrograde": false,
+        "dignity": "平",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "荧惑(火)",
+        "kind": "七政",
+        "tropicalLongitude": 345.9183336116812,
+        "longitude": 345.9183336116812,
+        "xiu": "危",
+        "sevenStar": "月",
+        "xiuDegree": 12.697178262917646,
+        "signIndex": 11,
+        "signBranch": "亥",
+        "palace": "福德",
+        "retrograde": false,
+        "dignity": "平",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "岁星(木)",
+        "kind": "七政",
+        "tropicalLongitude": 98.9336524343388,
+        "longitude": 98.9336524343388,
+        "xiu": "井",
+        "sevenStar": "木",
+        "xiuDegree": 3.7634129425887295,
+        "signIndex": 3,
+        "signBranch": "未",
+        "palace": "妻妾",
+        "retrograde": false,
+        "dignity": "旺/喜",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "镇星(土)",
+        "kind": "七政",
+        "tropicalLongitude": 295.29591278088094,
+        "longitude": 295.29591278088094,
+        "xiu": "斗",
+        "sevenStar": "木",
+        "xiuDegree": 15.246205375378224,
+        "signIndex": 9,
+        "signBranch": "丑",
+        "palace": "命宫",
+        "retrograde": true,
+        "dignity": "庙/乐",
+        "sourceId": "astronomy-engine-planets",
+        "sourceLabel": "astronomy-engine 2.1.19",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "罗睺(火余)",
+        "kind": "四余",
+        "tropicalLongitude": 310.55009646069857,
+        "longitude": 310.55009646069857,
+        "xiu": "牛",
+        "sevenStar": "金",
+        "xiuDegree": 6.63427266265694,
+        "signIndex": 10,
+        "signBranch": "子",
+        "palace": "相貌",
+        "dignity": "—",
+        "sourceId": "astronomy-engine-true-node",
+        "sourceLabel": "astronomy-engine GeoMoonState + ECT",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "计都(土余)",
+        "kind": "四余",
+        "tropicalLongitude": 130.5500964606985,
+        "longitude": 130.5500964606985,
+        "xiu": "柳",
+        "sevenStar": "土",
+        "xiuDegree": 0.37687091462481703,
+        "signIndex": 4,
+        "signBranch": "午",
+        "palace": "奴仆",
+        "dignity": "—",
+        "sourceId": "astronomy-engine-true-node",
+        "sourceLabel": "astronomy-engine GeoMoonState + ECT",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "月孛(水余)",
+        "kind": "四余",
+        "tropicalLongitude": 231.11148364142264,
+        "longitude": 231.11148364142264,
+        "xiu": "氐",
+        "sevenStar": "土",
+        "xiuDegree": 6.160099423528891,
+        "signIndex": 7,
+        "signBranch": "卯",
+        "palace": "兄弟",
+        "retrograde": false,
+        "dignity": "—",
+        "sourceId": "moshier-mean-lilith",
+        "sourceLabel": "Moshier 平均月球根数",
+        "precisionClass": "现代天文计算"
+      },
+      {
+        "name": "紫炁(木余)",
+        "kind": "四余",
+        "tropicalLongitude": 164.57033028213152,
+        "longitude": 164.57033028213152,
+        "xiu": "张",
+        "sevenStar": "月",
+        "xiuDegree": 9.010162707685936,
+        "signIndex": 5,
+        "signBranch": "巳",
+        "palace": "男女",
+        "retrograde": false,
+        "dignity": "—",
+        "sourceId": "qizhengsuan-ziqi",
+        "sourceLabel": "《七政算内篇》紫炁古法均速",
+        "precisionClass": "传统均速模型"
+      }
+    ],
+    "aspects": [
+      {
+        "star1": "罗睺(火余)",
+        "star2": "计都(土余)",
+        "type": "对照",
+        "exactAngle": 180,
+        "actualAngle": 180,
+        "orb": 0,
+        "allowedOrb": 8,
+        "orbRatio": 0,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "罗睺(火余)与计都(土余)目标日期黄经最小夹角及对照容许度"
+      },
+      {
+        "star1": "太阳",
+        "star2": "月孛(水余)",
+        "type": "对照",
+        "exactAngle": 180,
+        "actualAngle": 179.8513,
+        "orb": 0.1487,
+        "allowedOrb": 8,
+        "orbRatio": 0.0186,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "太阳与月孛(水余)目标日期黄经最小夹角及对照容许度"
+      },
+      {
+        "star1": "太白(金)",
+        "star2": "岁星(木)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 89.8135,
+        "orb": 0.1865,
+        "allowedOrb": 6,
+        "orbRatio": 0.0311,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "太白(金)与岁星(木)目标日期黄经最小夹角及四正容许度"
+      },
+      {
+        "star1": "辰星(水)",
+        "star2": "岁星(木)",
+        "type": "六合",
+        "exactAngle": 60,
+        "actualAngle": 60.1461,
+        "orb": 0.1461,
+        "allowedOrb": 4,
+        "orbRatio": 0.0365,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "辰星(水)与岁星(木)目标日期黄经最小夹角及六合容许度"
+      },
+      {
+        "star1": "荧惑(火)",
+        "star2": "紫炁(木余)",
+        "type": "对照",
+        "exactAngle": 180,
+        "actualAngle": 178.652,
+        "orb": 1.348,
+        "allowedOrb": 8,
+        "orbRatio": 0.1685,
+        "closeness": "紧密",
+        "precisionClass": "混合模型",
+        "source": "荧惑(火)与紫炁(木余)目标日期黄经最小夹角及对照容许度"
+      },
+      {
+        "star1": "太白(金)",
+        "star2": "计都(土余)",
+        "type": "三方",
+        "exactAngle": 120,
+        "actualAngle": 121.4299,
+        "orb": 1.4299,
+        "allowedOrb": 6,
+        "orbRatio": 0.2383,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "太白(金)与计都(土余)目标日期黄经最小夹角及三方容许度"
+      },
+      {
+        "star1": "辰星(水)",
+        "star2": "罗睺(火余)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 88.2374,
+        "orb": 1.7626,
+        "allowedOrb": 6,
+        "orbRatio": 0.2938,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "辰星(水)与罗睺(火余)目标日期黄经最小夹角及四正容许度"
+      },
+      {
+        "star1": "辰星(水)",
+        "star2": "计都(土余)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 91.7626,
+        "orb": 1.7626,
+        "allowedOrb": 6,
+        "orbRatio": 0.2938,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "辰星(水)与计都(土余)目标日期黄经最小夹角及四正容许度"
+      },
+      {
+        "star1": "太阴",
+        "star2": "荧惑(火)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 88.0472,
+        "orb": 1.9528,
+        "allowedOrb": 6,
+        "orbRatio": 0.3255,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "太阴与荧惑(火)目标日期黄经最小夹角及四正容许度"
+      },
+      {
+        "star1": "太白(金)",
+        "star2": "罗睺(火余)",
+        "type": "六合",
+        "exactAngle": 60,
+        "actualAngle": 58.5701,
+        "orb": 1.4299,
+        "allowedOrb": 4,
+        "orbRatio": 0.3575,
+        "closeness": "中等",
+        "precisionClass": "同层现代天文",
+        "source": "太白(金)与罗睺(火余)目标日期黄经最小夹角及六合容许度"
+      },
+      {
+        "star1": "太阴",
+        "star2": "紫炁(木余)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 93.3009,
+        "orb": 3.3009,
+        "allowedOrb": 6,
+        "orbRatio": 0.5501,
+        "closeness": "中等",
+        "precisionClass": "混合模型",
+        "source": "太阴与紫炁(木余)目标日期黄经最小夹角及四正容许度"
+      },
+      {
+        "star1": "太阳",
+        "star2": "镇星(土)",
+        "type": "三方",
+        "exactAngle": 120,
+        "actualAngle": 115.9643,
+        "orb": 4.0357,
+        "allowedOrb": 6,
+        "orbRatio": 0.6726,
+        "closeness": "宽松",
+        "precisionClass": "同层现代天文",
+        "source": "太阳与镇星(土)目标日期黄经最小夹角及三方容许度"
+      },
+      {
+        "star1": "荧惑(火)",
+        "star2": "月孛(水余)",
+        "type": "三方",
+        "exactAngle": 120,
+        "actualAngle": 114.8068,
+        "orb": 5.1932,
+        "allowedOrb": 6,
+        "orbRatio": 0.8655,
+        "closeness": "宽松",
+        "precisionClass": "同层现代天文",
+        "source": "荧惑(火)与月孛(水余)目标日期黄经最小夹角及三方容许度"
+      },
+      {
+        "star1": "辰星(水)",
+        "star2": "紫炁(木余)",
+        "type": "三方",
+        "exactAngle": 120,
+        "actualAngle": 125.7828,
+        "orb": 5.7828,
+        "allowedOrb": 6,
+        "orbRatio": 0.9638,
+        "closeness": "宽松",
+        "precisionClass": "混合模型",
+        "source": "辰星(水)与紫炁(木余)目标日期黄经最小夹角及三方容许度"
+      }
+    ],
+    "mingGong": 9,
+    "shenGong": 6,
+    "mingZhu": "土",
+    "twelvePalaces": [
+      {
+        "palace": "命宫",
+        "signIndex": 9,
+        "signBranch": "丑"
+      },
+      {
+        "palace": "财帛",
+        "signIndex": 8,
+        "signBranch": "寅"
+      },
+      {
+        "palace": "兄弟",
+        "signIndex": 7,
+        "signBranch": "卯"
+      },
+      {
+        "palace": "田宅",
+        "signIndex": 6,
+        "signBranch": "辰"
+      },
+      {
+        "palace": "男女",
+        "signIndex": 5,
+        "signBranch": "巳"
+      },
+      {
+        "palace": "奴仆",
+        "signIndex": 4,
+        "signBranch": "午"
+      },
+      {
+        "palace": "妻妾",
+        "signIndex": 3,
+        "signBranch": "未"
+      },
+      {
+        "palace": "疾厄",
+        "signIndex": 2,
+        "signBranch": "申"
+      },
+      {
+        "palace": "迁移",
+        "signIndex": 1,
+        "signBranch": "酉"
+      },
+      {
+        "palace": "官禄",
+        "signIndex": 0,
+        "signBranch": "戌"
+      },
+      {
+        "palace": "福德",
+        "signIndex": 11,
+        "signBranch": "亥"
+      },
+      {
+        "palace": "相貌",
+        "signIndex": 10,
+        "signBranch": "子"
+      }
+    ],
+    "shensha": [
+      {
+        "name": "天乙贵人",
+        "value": "亥酉"
+      },
+      {
+        "name": "驿马",
+        "value": "申"
+      },
+      {
+        "name": "劫煞",
+        "value": "亥"
+      },
+      {
+        "name": "咸池",
+        "value": "卯"
+      },
+      {
+        "name": "华盖",
+        "value": "戌"
+      },
+      {
+        "name": "孤辰",
+        "value": "申"
+      },
+      {
+        "name": "寡宿",
+        "value": "辰"
+      }
+    ],
+    "ziqiModel": {
+      "id": "qizhengsuan-naepyeon-mean-motion",
+      "name": "《七政算内篇》紫炁古法均速",
+      "direction": "顺行",
+      "cycleYears": 28,
+      "periodDays": 10227.1792,
+      "dailyMotionDegrees": 0.035200321903032655,
+      "classicalDegreeRate": "二十八日一度",
+      "classicalDailyMotion": "三分五十七秒一四二九",
+      "classicalEpoch": "大元至元十八年立元前天正冬至（1280年冬至）",
+      "classicalWinterSolsticeOffsetDays": 1256.5224,
+      "modernEpochUtc": "1995-12-31T00:00:00.000Z",
+      "modernEpochTropicalLongitude": 237.038993,
+      "formula": "回归黄经 = 归一化(237.038993° + 距1995-12-31T00:00:00Z日数 × 360° / 10227.1792日)",
+      "coordinate": "先算传统均速回归黄经，再与同日二十八宿距星真黄经边界比较得到宿度",
+      "precision": "可按输入分钟稳定复现古法均速值；误差边界来自古法均速假设、历元现代复原和宿度坐标，不宣称现代天体测量的角秒精度"
+    },
+    "ziqi": {
+      "tropicalLongitude": 164.57033028213152,
+      "siderealLongitude": 164.70499315599818,
+      "direction": "顺行",
+      "dailyMotionDegrees": 0.035200321903032655,
+      "cycleProgress": 0.4571398063392542,
+      "daysSinceZeroLongitude": 4675.250718884849,
+      "daysUntilZeroLongitude": 5551.928481115151
+    },
+    "mansionBoundaries": [
+      {
+        "mansion": "壁",
+        "chineseName": "壁宿一",
+        "simbadId": "* gam Peg",
+        "raJ2000Degrees": 3.308968120905,
+        "decJ2000Degrees": 15.183598429594,
+        "pmRaMasPerYear": 0.492,
+        "pmDecMasPerYear": -10.73,
+        "longitude": 9.024832326325338,
+        "widthDegrees": 13.220169929093117
+      },
+      {
+        "mansion": "奎",
+        "chineseName": "奎宿一",
+        "simbadId": "* eta And",
+        "raJ2000Degrees": 14.301667830111,
+        "decJ2000Degrees": 23.417650023124,
+        "pmRaMasPerYear": -43.008,
+        "pmDecMasPerYear": -45.254,
+        "longitude": 22.245002255418456,
+        "widthDegrees": 11.593517898620178
+      },
+      {
+        "mansion": "娄",
+        "chineseName": "娄宿一",
+        "simbadId": "* bet Ari",
+        "raJ2000Degrees": 28.660045788845,
+        "decJ2000Degrees": 20.808031471916,
+        "pmRaMasPerYear": 98.74,
+        "pmDecMasPerYear": -110.41,
+        "longitude": 33.83852015403863,
+        "widthDegrees": 12.965161468518374
+      },
+      {
+        "mansion": "胃",
+        "chineseName": "胃宿一",
+        "simbadId": "* 35 Ari",
+        "raJ2000Degrees": 40.8629761644,
+        "decJ2000Degrees": 27.70714940929,
+        "pmRaMasPerYear": 8.502,
+        "pmDecMasPerYear": -11.433,
+        "longitude": 46.80368162255701,
+        "widthDegrees": 12.476752410638767
+      },
+      {
+        "mansion": "昴",
+        "chineseName": "昴宿一",
+        "simbadId": "* 17 Tau",
+        "raJ2000Degrees": 56.218904540788,
+        "decJ2000Degrees": 24.11333785002,
+        "pmRaMasPerYear": 20.542,
+        "pmDecMasPerYear": -46.081,
+        "longitude": 59.280434033195775,
+        "widthDegrees": 9.0528316674567
+      },
+      {
+        "mansion": "毕",
+        "chineseName": "毕宿一",
+        "simbadId": "* eps Tau",
+        "raJ2000Degrees": 67.154167729665,
+        "decJ2000Degrees": 19.180434205814,
+        "pmRaMasPerYear": 107.526,
+        "pmDecMasPerYear": -36.2,
+        "longitude": 68.33326570065248,
+        "widthDegrees": 15.242067344713178
+      },
+      {
+        "mansion": "觜",
+        "chineseName": "觜宿一",
+        "simbadId": "* lam Ori",
+        "raJ2000Degrees": 83.784490021032,
+        "decJ2000Degrees": 9.934155874167,
+        "pmRaMasPerYear": -0.34,
+        "pmDecMasPerYear": -2.94,
+        "longitude": 83.57533304536565,
+        "widthDegrees": 0.9744845116443912
+      },
+      {
+        "mansion": "参",
+        "chineseName": "参宿一",
+        "simbadId": "* zet Ori",
+        "raJ2000Degrees": 85.189694427931,
+        "decJ2000Degrees": -1.942573585972,
+        "pmRaMasPerYear": 3.19,
+        "pmDecMasPerYear": 2.03,
+        "longitude": 84.54981755701004,
+        "widthDegrees": 10.620421934740023
+      },
+      {
+        "mansion": "井",
+        "chineseName": "井宿一",
+        "simbadId": "* mu. Gem",
+        "raJ2000Degrees": 95.740111926196,
+        "decJ2000Degrees": 22.513582745904,
+        "pmRaMasPerYear": 56.39,
+        "pmDecMasPerYear": -110.03,
+        "longitude": 95.17023949175007,
+        "widthDegrees": 30.426826816901496
+      },
+      {
+        "mansion": "鬼",
+        "chineseName": "鬼宿一",
+        "simbadId": "* tet Cnc",
+        "raJ2000Degrees": 127.89887483425,
+        "decJ2000Degrees": 18.09441817296,
+        "pmRaMasPerYear": -59.639,
+        "pmDecMasPerYear": -56.615,
+        "longitude": 125.59706630865156,
+        "widthDegrees": 4.576159237422132
+      },
+      {
+        "mansion": "柳",
+        "chineseName": "柳宿一",
+        "simbadId": "* del Hya",
+        "raJ2000Degrees": 129.41403113663,
+        "decJ2000Degrees": 5.70378776223,
+        "pmRaMasPerYear": -68.867,
+        "pmDecMasPerYear": -7.551,
+        "longitude": 130.1732255460737,
+        "widthDegrees": 16.97502410572929
+      },
+      {
+        "mansion": "星",
+        "chineseName": "星宿一",
+        "simbadId": "* alf Hya",
+        "raJ2000Degrees": 141.896844595859,
+        "decJ2000Degrees": -8.658599531746,
+        "pmRaMasPerYear": -15.23,
+        "pmDecMasPerYear": 34.37,
+        "longitude": 147.14824965180298,
+        "widthDegrees": 8.411917922642601
+      },
+      {
+        "mansion": "张",
+        "chineseName": "张宿一",
+        "simbadId": "* ups01 Hya",
+        "raJ2000Degrees": 147.869479078842,
+        "decJ2000Degrees": -14.846628713347,
+        "pmRaMasPerYear": 31.037,
+        "pmDecMasPerYear": -26.862,
+        "longitude": 155.5601675744456,
+        "widthDegrees": 17.99968063074789
+      },
+      {
+        "mansion": "翼",
+        "chineseName": "翼宿一",
+        "simbadId": "* alf Crt",
+        "raJ2000Degrees": 164.943604815762,
+        "decJ2000Degrees": -18.298786220616,
+        "pmRaMasPerYear": -462.303,
+        "pmDecMasPerYear": 128.614,
+        "longitude": 173.55984820519348,
+        "widthDegrees": 17.03502719793721
+      },
+      {
+        "mansion": "轸",
+        "chineseName": "轸宿一",
+        "simbadId": "* gam Crv",
+        "raJ2000Degrees": 183.951545037377,
+        "decJ2000Degrees": -17.541930457603,
+        "pmRaMasPerYear": -158.61,
+        "pmDecMasPerYear": 21.86,
+        "longitude": 190.59487540313071,
+        "widthDegrees": 13.115104471604184
+      },
+      {
+        "mansion": "角",
+        "chineseName": "角宿一",
+        "simbadId": "* alf Vir",
+        "raJ2000Degrees": 201.298247361563,
+        "decJ2000Degrees": -11.161319485112,
+        "pmRaMasPerYear": -42.35,
+        "pmDecMasPerYear": -30.67,
+        "longitude": 203.7099798747349,
+        "widthDegrees": 10.652306208379173
+      },
+      {
+        "mansion": "亢",
+        "chineseName": "亢宿一",
+        "simbadId": "* kap Vir",
+        "raJ2000Degrees": 213.223936885957,
+        "decJ2000Degrees": -10.273703461482,
+        "pmRaMasPerYear": 6.674,
+        "pmDecMasPerYear": 138.987,
+        "longitude": 214.36228608311407,
+        "widthDegrees": 10.589098134779647
+      },
+      {
+        "mansion": "氐",
+        "chineseName": "氐宿一",
+        "simbadId": "* alf Lib",
+        "raJ2000Degrees": 222.71963789158,
+        "decJ2000Degrees": -16.041776519834,
+        "pmRaMasPerYear": -105.68,
+        "pmDecMasPerYear": -68.4,
+        "longitude": 224.95138421789375,
+        "widthDegrees": 17.857062091516752
+      },
+      {
+        "mansion": "房",
+        "chineseName": "房宿一",
+        "simbadId": "* pi Sco",
+        "raJ2000Degrees": 239.712971824167,
+        "decJ2000Degrees": -26.114107945,
+        "pmRaMasPerYear": -11.42,
+        "pmDecMasPerYear": -26.83,
+        "longitude": 242.8084463094105,
+        "widthDegrees": 4.859705945194264
+      },
+      {
+        "mansion": "心",
+        "chineseName": "心宿一",
+        "simbadId": "* sig Sco",
+        "raJ2000Degrees": 245.297148805833,
+        "decJ2000Degrees": -25.592792076667,
+        "pmRaMasPerYear": -10.6,
+        "pmDecMasPerYear": -16.28,
+        "longitude": 247.66815225460476,
+        "widthDegrees": 8.356038976199784
+      },
+      {
+        "mansion": "尾",
+        "chineseName": "尾宿一",
+        "simbadId": "* mu.01 Sco",
+        "raJ2000Degrees": 252.96761814529,
+        "decJ2000Degrees": -38.047399464,
+        "pmRaMasPerYear": -10.451,
+        "pmDecMasPerYear": -18.315,
+        "longitude": 256.02419123080455,
+        "widthDegrees": 15.105872974247916
+      },
+      {
+        "mansion": "箕",
+        "chineseName": "箕宿一",
+        "simbadId": "* gam Sgr",
+        "raJ2000Degrees": 271.452033745,
+        "decJ2000Degrees": -30.424089849444,
+        "pmRaMasPerYear": -48.839,
+        "pmDecMasPerYear": -204.86,
+        "longitude": 271.13006420505246,
+        "widthDegrees": 8.919643200450253
+      },
+      {
+        "mansion": "斗",
+        "chineseName": "斗宿一",
+        "simbadId": "* phi Sgr",
+        "raJ2000Degrees": 281.414123094121,
+        "decJ2000Degrees": -26.990782645111,
+        "pmRaMasPerYear": 49.919,
+        "pmDecMasPerYear": -0.09,
+        "longitude": 280.0497074055027,
+        "widthDegrees": 23.866116392538913
+      },
+      {
+        "mansion": "牛",
+        "chineseName": "牛宿一",
+        "simbadId": "* bet Cap",
+        "raJ2000Degrees": 305.25277749238,
+        "decJ2000Degrees": -14.78140760208,
+        "pmRaMasPerYear": 44.133,
+        "pmDecMasPerYear": 0.36,
+        "longitude": 303.91582379804163,
+        "widthDegrees": 7.675931735590268
+      },
+      {
+        "mansion": "女",
+        "chineseName": "女宿一",
+        "simbadId": "* eps Aqr",
+        "raJ2000Degrees": 311.918956553417,
+        "decJ2000Degrees": -9.495776926901,
+        "pmRaMasPerYear": 33.923,
+        "pmDecMasPerYear": -34.936,
+        "longitude": 311.5917555336319,
+        "widthDegrees": 11.671940233692396
+      },
+      {
+        "mansion": "虚",
+        "chineseName": "虚宿一",
+        "simbadId": "* bet Aqr",
+        "raJ2000Degrees": 322.889716983479,
+        "decJ2000Degrees": -5.571174828064,
+        "pmRaMasPerYear": 19.214,
+        "pmDecMasPerYear": -8.163,
+        "longitude": 323.2636957673243,
+        "widthDegrees": 9.957459581439252
+      },
+      {
+        "mansion": "危",
+        "chineseName": "危宿一",
+        "simbadId": "* alf Aqr",
+        "raJ2000Degrees": 331.445981440948,
+        "decJ2000Degrees": -0.319850955424,
+        "pmRaMasPerYear": 18.59,
+        "pmDecMasPerYear": -10.45,
+        "longitude": 333.22115534876355,
+        "widthDegrees": 20.13328878526852
+      },
+      {
+        "mansion": "室",
+        "chineseName": "室宿一",
+        "simbadId": "* alf Peg",
+        "raJ2000Degrees": 346.190222691426,
+        "decJ2000Degrees": 15.205267147928,
+        "pmRaMasPerYear": 60.4,
+        "pmDecMasPerYear": -41.3,
+        "longitude": 353.35444413403206,
+        "widthDegrees": 15.670388192293274
+      }
+    ],
+    "mansionModel": {
+      "id": "qizheng-mansion-stars-simbad-astronomy-engine",
+      "catalogEpoch": "J2000.0 / ICRS",
+      "mappingSource": "https://zh.wikipedia.org/w/index.php?title=二十八宿&oldid=92223725",
+      "astrometrySource": "SIMBAD TAP basic 表（ra、dec、pmra、pmdec；查询日期 2026-07-27）",
+      "transformSource": "Astronomy Engine 2.1.19 同口径内置变换：IAU 2006 岁差与 IAU 2000B 章动，将 J2000 平赤道坐标转为目标日期真黄道坐标",
+      "limitation": "宿界按距星目标日期真黄经至下一距星真黄经的实际弧段划分；这是可复算的现代坐标复原，不等同于某一历史历元的古赤道距度表，也不证明占星解释有效。"
+    }
+  }
+}

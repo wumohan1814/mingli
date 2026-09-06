@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="guoxue">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>太初 · 事业运势趋势参考</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="./vendor/react.production.min.js"></script>
+  <script src="./vendor/react-dom.production.min.js"></script>
+  <script src="./vendor/babel.min.js"></script>
+  <style>
+    :root{
+      /* 主色 墨蓝 / 靛青 */
+      --ink-400:#5E6FB3; --ink-500:#44558F; --ink-600:#364573; --ink-700:#2C385C; --ink-900:#1A2138;
+      /* 金 / 玉 / 朱砂 */
+      --gold-300:#E6CF9A; --gold-500:#B8893E; --gold-600:#9C6E2E;
+      --jade-500:#3E7C6B; --cinnabar:#B23A3A; --error:#C0392B;
+      /* 中性 宣纸暖灰 */
+      --paper:#F7F4EC; --surface:#FFFFFF; --text-1:#1F1F26; --text-2:#5C5C68; --text-3:#8A8A94; --border:#E5E0D4;
+      /* 字体 */
+      --font-serif:"Noto Serif SC","Cormorant Garamond",serif;
+      --font-sans:"Noto Sans SC","Inter",system-ui,sans-serif;
+      --font-latin-serif:"Cormorant Garamond","Noto Serif SC",serif;
+      /* 圆角 / 阴影 */
+      --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+      --shadow-card:0 2px 12px rgba(26,33,56,.10);
+      --dur:.22s; --ease:cubic-bezier(.4,0,.2,1);
+
+      /* ===== 多文化皮肤（v1.2.7 最终）：内部标识色=玉青（按钮/吉），顶部 Banner + 底部胶囊=朱砂红 ===== */
+      --skin-accent:#3E7C6B;
+      --skin-accent-soft:rgba(62,124,107,.14);
+      --skin-accent-ink:#F7F4EC;
+      --skin-banner:#B23A3A;
+      --skin-banner-ink:#F7F4EC;
+      --skin-tag-bg:rgba(0,0,0,.16);
+    }
+    /* 西式占星：内部=深空蓝；顶部 Banner=月银 */
+    [data-skin="astrology"]{
+      --skin-accent:#2A3A5C; --skin-accent-soft:rgba(42,58,92,.14); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9CBD3; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(255,255,255,.55);
+    }
+    /* 塔罗：内部=琥珀；顶部 Banner=紫晶 */
+    [data-skin="tarot"]{
+      --skin-accent:#C9A24B; --skin-accent-soft:rgba(201,162,75,.18); --skin-accent-ink:#1F1F26;
+      --skin-banner:#5B4B8A; --skin-banner-ink:#F7F4EC; --skin-tag-bg:rgba(0,0,0,.16);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{font-family:var(--font-sans);color:var(--text-1);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+    .serif{font-family:var(--font-serif)}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    input,select,textarea{font-family:inherit}
+
+    /* 星点背景（星象式沉浸感，低透明度不影响阅读） */
+    .starfield{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.55;
+      background:
+        radial-gradient(1px 1px at 18% 28%, rgba(230,207,154,.8), transparent),
+        radial-gradient(1px 1px at 76% 18%, rgba(230,207,154,.55), transparent),
+        radial-gradient(1.6px 1.6px at 52% 62%, rgba(255,255,255,.55), transparent),
+        radial-gradient(1px 1px at 86% 74%, rgba(230,207,154,.65), transparent),
+        radial-gradient(1.2px 1.2px at 12% 82%, rgba(255,255,255,.45), transparent),
+        radial-gradient(1.4px 1.4px at 33% 12%, rgba(230,207,154,.5), transparent);
+      background-repeat:no-repeat;animation:twinkle 6s ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.35}50%{opacity:.7}}
+
+    .app-shell{position:relative;z-index:1;min-height:100vh;padding-top:58px;padding-bottom:104px}
+    .container{max-width:480px;margin:0 auto;padding:24px 20px}
+
+    /* 顶部固定 Banner（随主题换色） */
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+      padding:12px 20px;background:var(--skin-banner);color:var(--skin-banner-ink);
+      box-shadow:0 1px 0 var(--gold-500),0 6px 18px rgba(26,33,56,.18);transition:background var(--dur) var(--ease)}
+    .brand{font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.04em}
+    .brand .dot{color:var(--gold-300);margin:0 2px}
+    .topbar .tagline{font-size:12px;opacity:.85}
+
+    /* 底部皮肤切换胶囊（随主题换色） */
+    .skin-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:20;display:flex;gap:6px;
+      padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);
+      box-shadow:0 6px 18px rgba(26,33,56,.14)}
+    .skin-switch button{padding:8px 16px;border-radius:var(--radius-pill);font-size:13px;color:var(--text-2);font-weight:500;position:relative;transition:background var(--dur) var(--ease)}
+    .skin-switch button.active{background:var(--skin-banner);color:var(--skin-banner-ink)}
+    .skin-switch button:disabled{opacity:.5;cursor:not-allowed}
+    .skin-switch button .soon{display:block;font-size:9px;opacity:.7;font-weight:400}
+
+    /* 卡片 / 按钮 / 表单 */
+    .card{background:var(--surface);border-radius:var(--radius-lg);padding:24px;margin:12px 0;box-shadow:var(--shadow-card);border:1px solid rgba(26,33,56,.04)}
+    .feature{border-left:3px solid var(--skin-accent)}
+    .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--skin-accent);color:var(--skin-accent-ink);box-shadow:0 4px 16px rgba(26,33,56,.18)}
+    .btn-gold{background:var(--gold-500);color:#fff}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-1)}
+    .input{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:16px;margin:8px 0;background:var(--surface);color:var(--text-1)}
+    .input:focus{outline:none;border-color:var(--skin-accent)}
+    .label{font-size:13px;color:var(--text-2);margin-top:12px;display:block}
+    .title{font-family:var(--font-serif);font-size:24px;color:var(--ink-700);text-align:center;margin:8px 0 16px;font-weight:600}
+    .subtitle{font-size:14px;color:var(--text-2);text-align:center;margin-bottom:24px}
+    .error{background:#FFF0F0;color:var(--cinnabar);padding:12px;border-radius:var(--radius-sm);font-size:13px}
+    .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius-pill);background:var(--skin-tag-bg);color:var(--skin-banner-ink);margin-right:4px}
+
+    /* 免责星印（跨皮肤合规标记，硬编码朱砂） */
+    .disclaimer{font-size:11px;color:var(--cinnabar);text-align:center;margin:0 auto;padding:18px 20px;max-width:480px;line-height:1.6}
+    .disclaimer .star{margin-right:4px}
+
+    .progress{height:6px;background:var(--border);border-radius:3px;margin:16px 0;overflow:hidden}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--skin-accent),var(--gold-500));border-radius:3px;transition:width .5s var(--ease)}
+    .trend-ji{border-left:3px solid var(--skin-accent)}
+    .trend-xiong{border-left:3px solid var(--cinnabar)}
+    .trend-ping{border-left:3px solid var(--ink-400)}
+
+    .flex-row{display:flex;gap:8px}
+    .flex-row > *{flex:1}
+
+    /* 开关 / 提示 / 修正输入 / 失败态 / 登出 / 双列 */
+    .switch-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+    .switch{position:relative;width:44px;height:24px;flex:none}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:999px;transition:.2s}
+    .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+    .switch input:checked + .slider{background:var(--skin-accent)}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+    .coord-hint{font-size:11px;color:var(--skin-accent);margin:2px 0 0}
+    .note-input{width:100%;min-height:64px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin-top:8px;resize:vertical;font-family:inherit}
+    .failed-box{text-align:center}
+    .failed-box .error{margin-bottom:12px;text-align:left}
+    .logout-bar{display:flex;justify-content:flex-end;gap:16px;margin-top:8px}
+    .logout-link{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;padding:4px}
+    .field-row{display:flex;gap:8px}
+    .field-row > div{flex:1}
+    .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .kv:last-child{border-bottom:none}
+    .kv .k{color:var(--text-2)}
+    .kv .v{color:var(--text-1);font-weight:600}
+    .section-title{font-size:15px;color:var(--ink-700);margin:4px 0 8px;font-weight:600}
+
+    /* 断前尘星象轨道动画（C1） */
+    .dqc-stage{margin:8px auto 0;max-width:520px;padding:32px 20px 28px;border-radius:var(--radius-lg);
+      background:radial-gradient(120% 90% at 50% 25%, #232C49 0%, var(--ink-900) 80%);box-shadow:var(--shadow-card)}
+    .dqc-plate{width:240px;height:240px;margin:0 auto;display:block}
+    .dqc-rings{transform-box:fill-box;transform-origin:center;animation:spin 70s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .gold{fill:var(--gold-500)}
+    .gold-stroke{stroke:var(--gold-500)}
+    .ring-stroke{stroke:#3A4470}
+    .s-pending{fill:var(--ink-700);opacity:.55}
+    .s-active{fill:var(--gold-500);animation:pulse 1.2s ease-in-out infinite}
+    .s-done{fill:var(--gold-300)}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+    .dqc-progress{text-align:center;margin-top:16px;font-family:var(--font-serif);font-size:20px;color:var(--gold-300);letter-spacing:.05em}
+    .dqc-method{text-align:center;margin-top:6px;font-size:14px;color:#C9C6DA}
+    .dqc-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.12);margin:14px auto 0;max-width:360px;overflow:hidden}
+    .dqc-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-600),var(--gold-300));transition:width .5s var(--ease)}
+    .dqc-status{text-align:center;margin-top:10px;font-size:12px;color:#8E8AA6;font-family:var(--font-latin-serif);letter-spacing:.04em}
+    .dqc-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px auto 0;max-width:420px}
+    .dqc-list span{font-size:12px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(255,255,255,.06);color:#9FA3BC}
+    .dqc-list span.done{background:var(--skin-accent-soft);color:#fff}
+    .dqc-list span.active{background:var(--gold-600);color:#fff}
+
+    /* 轻提示 */
+    .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(10px);background:var(--ink-900);color:#fff;
+      padding:10px 18px;border-radius:var(--radius-pill);font-size:13px;opacity:0;pointer-events:none;transition:.25s var(--ease);z-index:40}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* 骨架屏（shimmer 加载占位） */
+    .skeleton{position:relative;overflow:hidden;background:var(--border);border-radius:6px}
+    .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);animation:shimmer 1.3s infinite}
+    @keyframes shimmer{100%{transform:translateX(100%)}}
+    .sk-line{height:12px;margin:10px 0}
+    .sk-title{height:22px;width:55%;margin:6px 0 16px}
+    .sk-card{background:var(--surface);border-radius:var(--radius-lg);padding:22px;margin:12px 0;box-shadow:var(--shadow-card);border:1px solid rgba(26,33,56,.04);overflow:hidden}
+
+    /* 页面切换过渡（key=page 重挂载触发） */
+    .view-enter{animation:viewEnter .34s var(--ease) both}
+    @keyframes viewEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+    /* 图标 / 卡片 hover 微交互 */
+    .icon{display:inline-flex;vertical-align:middle}
+    .card{transition:box-shadow .25s var(--ease),transform .25s var(--ease)}
+    .card:hover{box-shadow:0 6px 22px rgba(26,33,56,.14)}
+    .btn-primary:hover{box-shadow:0 6px 20px rgba(26,33,56,.26)}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+    const API = '/api';
+    let token = '';
+    let refreshToken = '';
+    let onUnauthorized = null;
+
+    // 内置城市坐标表：出生地命中时自动填入经纬度（免外部 API，离线可用）
+    const CITY_COORDS = {
+      '北京': [116.41, 39.90], '上海': [121.47, 31.23], '广州': [113.26, 23.13], '深圳': [114.06, 22.55],
+      '杭州': [120.15, 30.27], '成都': [104.07, 30.57], '武汉': [114.30, 30.59], '南京': [118.80, 32.06],
+      '西安': [108.95, 34.27], '重庆': [106.55, 29.56], '天津': [117.20, 39.13], '苏州': [120.62, 31.30],
+      '郑州': [113.65, 34.76], '长沙': [112.94, 28.23], '沈阳': [123.43, 41.80], '青岛': [120.38, 36.07],
+      '大连': [121.62, 38.92], '厦门': [118.09, 24.48], '昆明': [102.83, 24.88], '哈尔滨': [126.53, 45.80],
+      '济南': [117.00, 36.65], '福州': [119.30, 26.08], '太原': [112.55, 37.87], '合肥': [117.27, 31.86],
+      '南昌': [115.86, 28.68], '贵阳': [106.71, 26.65], '南宁': [108.37, 22.82], '兰州': [103.83, 36.06],
+      '乌鲁木齐': [87.62, 43.82], '拉萨': [91.14, 29.65], '呼和浩特': [111.75, 40.84], '银川': [106.27, 38.47],
+      '西宁': [101.78, 36.62], '石家庄': [114.51, 38.04], '香港': [114.17, 22.32], '澳门': [113.54, 22.19],
+      '台北': [121.56, 25.03]
+    };
+
+    // 断前尘九法（轨道动画节点）
+    const DQC_METHODS = ['八字','紫微斗数','六爻','奇门遁甲','大六壬','太乙神数','七政四余','铁板神数','果老星宗'];
+
+    // 后端 report.trend / details[].direction 均为「吉/凶/平」，映射到现有 trend-* 样式、方向图标与文案
+    const TREND_META = {
+      '吉': { cls: 'trend-ji', icon: 'up', color: 'var(--skin-accent)', label: '温和上扬' },
+      '凶': { cls: 'trend-xiong', icon: 'down', color: 'var(--cinnabar)', label: '谨慎下行' },
+      '平': { cls: 'trend-ping', icon: 'flat', color: 'var(--ink-400)', label: '平稳过渡' },
+    };
+    function trendMeta(v) { return TREND_META[v] || TREND_META['平']; }
+
+    function api(path, options = {}) {
+      const headers = { 'Content-Type': 'application/json', ...options.headers };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      return fetch(API + path, { ...options, headers }).then(r => {
+        if (r.status === 401) {
+          token = ''; refreshToken = '';
+          localStorage.removeItem('taichu_token');
+          localStorage.removeItem('taichu_refresh_token');
+          if (onUnauthorized) onUnauthorized();
+          throw new Error('登录已过期，请重新登录');
+        }
+        return r.ok ? r.json() : r.json().then(e => { throw new Error(e.detail || '请求失败'); });
+      });
+    }
+
+    function logout() {
+      token = ''; refreshToken = '';
+      localStorage.removeItem('taichu_token');
+      localStorage.removeItem('taichu_refresh_token');
+      if (onUnauthorized) onUnauthorized();
+    }
+
+    // 全局轻提示
+    function toast(msg) {
+      let t = document.getElementById('taichu-toast');
+      if (!t) { t = document.createElement('div'); t.id = 'taichu-toast'; t.className = 'toast'; document.body.appendChild(t); }
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    // 轨道引擎（C1）：构建星盘 + 按真实进度点亮节点
+    function svgEl(tag, attrs, parent) {
+      const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const k in attrs) { if (k === 'class') e.setAttribute('class', attrs[k]); else e.setAttribute(k, attrs[k]); }
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function buildOrbit(svgId, methods) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      svg.innerHTML = '';
+      const cx = 120, cy = 120;
+      const g = svgEl('g', { class: 'dqc-rings' }, svg);
+      [40, 78, 112].forEach((r, idx) => {
+        svgEl('circle', { cx, cy, r, fill: 'none', class: idx === 2 ? 'gold-stroke' : 'ring-stroke', 'stroke-width': idx === 2 ? 1.4 : 1, opacity: idx === 2 ? .8 : .5 }, g);
+      });
+      methods.forEach((m, i) => {
+        const ang = (i / methods.length) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + 88 * Math.cos(ang), y = cy + 88 * Math.sin(ang);
+        const c = svgEl('circle', { cx: x, cy: y, r: 6, class: 's-pending', 'data-i': i }, g);
+        c.dataset.method = m;
+      });
+      svgEl('circle', { cx, cy, r: 8, class: 'gold' }, svg);
+    }
+    function setOrbitProgress(svgId, methods, done, total) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      const nodes = [...svg.querySelectorAll('[data-i]')];
+      const lit = Math.min(methods.length, Math.round((done / total) * methods.length));
+      nodes.forEach((s, i) => {
+        if (i < lit) s.setAttribute('class', 's-done');
+        else if (i === lit && done < total) s.setAttribute('class', 's-active');
+        else s.setAttribute('class', 's-pending');
+      });
+    }
+
+    // 全局末行免责（合规要求：每页末行免责必须存在；硬编码朱砂，跨皮肤一致）
+    function DisclaimerFooter() {
+      return (
+        <div className="disclaimer" role="contentinfo">
+          <span className="star"><Icon name="spark" size={14} /></span>本结果为运势趋势参考，不构成医疗、法律或投资建议。重大现实决策请咨询相关专业人士。
+        </div>
+      );
+    }
+
+    // 内联 SVG 图标组件（替代原 Unicode 字符）
+    function Icon({ name, size = 22, stroke = 1.7, color }) {
+      const common = {
+        width: size, height: size, viewBox: '0 0 24 24',
+        fill: 'none', stroke: color || 'currentColor',
+        strokeWidth: stroke, strokeLinecap: 'round', strokeLinejoin: 'round',
+        className: 'icon'
+      };
+      switch (name) {
+        case 'nine': {
+          const dots = [];
+          let k = 0;
+          for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+            dots.push(<circle key={k++} cx={4 + c * 8} cy={4 + r * 8} r={2.3} />);
+          }
+          return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className="icon">{dots}</svg>;
+        }
+        case 'pencil':
+          return <svg {...common}><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>;
+        case 'chat':
+          return <svg {...common}><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z" /></svg>;
+        case 'up':
+          return <svg {...common}><path d="M12 19V5" /><path d="M6 11l6-6 6 6" /></svg>;
+        case 'down':
+          return <svg {...common}><path d="M12 5v14" /><path d="M6 13l6 6 6-6" /></svg>;
+        case 'flat':
+          return <svg {...common}><path d="M5 12h14" /></svg>;
+        case 'check':
+          return <svg {...common}><path d="M20 6 9 17l-5-5" /></svg>;
+        case 'cross':
+          return <svg {...common}><path d="M18 6 6 18" /><path d="M6 6l12 12" /></svg>;
+        case 'spark':
+          return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className="icon"><path d="M12 2l2.3 6.5L21 10l-6.7 1.5L12 18l-2.3-6.5L3 10l6.7-1.5z" /></svg>;
+        case 'orbit':
+          return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color || 'currentColor'} strokeWidth={1.6} className="icon"><circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(28 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(-28 12 12)" /></svg>;
+        default:
+          return null;
+      }
+    }
+
+    // 皮肤切换胶囊（MVP 仅国学可切，占星/塔罗置灰）
+    function SkinSwitcher({ skin, onPick }) {
+      const items = [
+        { id: 'guoxue', name: '国学', enabled: true },
+        { id: 'astrology', name: '西式占星', enabled: false },
+        { id: 'tarot', name: '塔罗', enabled: false },
+      ];
+      return (
+        <nav className="skin-switch" aria-label="文化皮肤切换">
+          {items.map(it => (
+            <button key={it.id} data-skin-btn={it.id}
+              className={skin === it.id ? 'active' : ''}
+              aria-pressed={skin === it.id ? 'true' : 'false'}
+              disabled={!it.enabled}
+              onClick={() => it.enabled ? onPick(it.id) : toast('西式占星 / 塔罗为 Phase 2，敬请期待')}>
+              {it.name}{!it.enabled && <span className="soon">敬请期待</span>}
+            </button>
+          ))}
+        </nav>
+      );
+    }
+
+    // ---- Pages ----
+    function LandingPage({ onNavigate }) {
+      return (
+        <div className="container">
+          <div className="card" style={{ textAlign: 'center' }}>
+            <h1 className="title">太初 · 事业运势趋势参考</h1>
+            <p className="subtitle">多流派综合 · 可修正 · 随时问</p>
+            <p style={{ color: 'var(--text-2)', fontSize: 13, marginBottom: 24 }}>
+              基于九大流派的命理综合推演，为您的事业决策提供趋势参考
+            </p>
+            <button className="btn btn-primary" onClick={() => onNavigate('auth')}>开始我的事业运势</button>
+          </div>
+          <div className="flex-row" style={{ marginTop: 16 }}>
+            <div className="card feature" style={{ textAlign: 'center' }}>
+              <div style={{ color: 'var(--skin-accent)', display: 'flex', justifyContent: 'center', marginBottom: 4 }}><Icon name="nine" size={30} /></div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>多流派综合</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>九法交叉验证</div>
+            </div>
+            <div className="card feature" style={{ textAlign: 'center' }}>
+              <div style={{ color: 'var(--skin-accent)', display: 'flex', justifyContent: 'center', marginBottom: 4 }}><Icon name="pencil" size={26} /></div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>可修正</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>校准断言再测算</div>
+            </div>
+            <div className="card feature" style={{ textAlign: 'center' }}>
+              <div style={{ color: 'var(--skin-accent)', display: 'flex', justifyContent: 'center', marginBottom: 4 }}><Icon name="chat" size={26} /></div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>随时问</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>不限次数追问</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function AuthPage({ onNavigate }) {
+      const [isLogin, setIsLogin] = useState(true);
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState('');
+      const [loading, setLoading] = useState(false);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+          const res = await api(isLogin ? '/auth/login' : '/auth/register', {
+            method: 'POST',
+            body: JSON.stringify({ username, password })
+          });
+          // 注意：auth 接口返回裸 {access_token, refresh_token}，非 {code,data} 信封
+          token = res.access_token || (res.data && res.data.access_token);
+          refreshToken = res.refresh_token || (res.data && res.data.refresh_token);
+          localStorage.setItem('taichu_token', token || '');
+          localStorage.setItem('taichu_refresh_token', refreshToken || '');
+          onNavigate('onboarding');
+        } catch (e) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="container">
+          <div className="card">
+            <h2 className="title">{isLogin ? '登录' : '注册'}</h2>
+            {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
+            <form onSubmit={handleSubmit}>
+              <label className="label" htmlFor="auth-user">用户名</label>
+              <input id="auth-user" className="input" value={username} onChange={e => setUsername(e.target.value)} placeholder="请输入用户名" required />
+              <label className="label" htmlFor="auth-pass">密码</label>
+              <input id="auth-pass" className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="请输入密码（至少6位）" required minLength={6} />
+              <button className="btn btn-primary" type="submit" disabled={loading} style={{ marginTop: 16 }}>
+                {loading ? '处理中...' : (isLogin ? '登录' : '注册')}
+              </button>
+            </form>
+            <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: 'var(--text-3)', cursor: 'pointer' }} onClick={() => setIsLogin(!isLogin)}>
+              {isLogin ? '没有账号？去注册' : '已有账号？去登录'}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    function OnboardingPage({ onNavigate }) {
+      const [form, setForm] = useState({
+        birth_year: '', birth_month: '', birth_day: '', birth_hour: '0',
+        gender: 'male', birthplace: '', longitude: '', latitude: '', true_solar_time: false
+      });
+      const [coordTouched, setCoordTouched] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState('');
+
+      const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+      const updateBirthplace = (e) => {
+        const v = e.target.value;
+        const next = { ...form, birthplace: v };
+        if (!coordTouched) {
+          const hit = Object.keys(CITY_COORDS).find(c => v && v.indexOf(c) !== -1);
+          if (hit) {
+            next.longitude = String(CITY_COORDS[hit][0]);
+            next.latitude = String(CITY_COORDS[hit][1]);
+          }
+        }
+        setForm(next);
+      };
+      const updateCoord = (k) => (e) => {
+        setCoordTouched(true);
+        setForm({ ...form, [k]: e.target.value });
+      };
+      const toggleSolar = (e) => setForm({ ...form, true_solar_time: e.target.checked });
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        const y = +form.birth_year, m = +form.birth_month, d = +form.birth_day, h = +form.birth_hour;
+        if (!y || y < 1900 || y > 2100) { setError('出生年需在 1900–2100 之间'); setLoading(false); return; }
+        if (!m || m < 1 || m > 12) { setError('出生月需在 1–12 之间'); setLoading(false); return; }
+        if (!d || d < 1 || d > 31) { setError('出生日需在 1–31 之间'); setLoading(false); return; }
+        if (h < 0 || h > 23 || isNaN(h)) { setError('出生时辰需在 0–23 之间'); setLoading(false); return; }
+        try {
+          const res = await api('/cases', {
+            method: 'POST',
+            body: JSON.stringify({
+              birth_year: y, birth_month: m, birth_day: d, birth_hour: h,
+              gender: form.gender, birthplace: form.birthplace,
+              longitude: form.longitude ? +form.longitude : null,
+              latitude: form.latitude ? +form.latitude : null,
+              true_solar_time: !!form.true_solar_time,
+              question: '事业运势'
+            })
+          });
+          // 注意：cases 接口返回 {code,data:{caseId}} 信封
+          const caseId = (res.data && res.data.caseId) || res.caseId;
+          await api('/cases/' + caseId + '/paipan', { method: 'POST' });
+          onNavigate('waiting', { caseId });
+        } catch (e) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="container">
+          <div className="card">
+            <h2 className="title">建档 · 输入生辰信息</h2>
+            {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
+            <form onSubmit={handleSubmit}>
+              <label className="label" htmlFor="f_year">出生年</label>
+              <input id="f_year" className="input" type="number" value={form.birth_year} onChange={update('birth_year')} placeholder="如 1990" required />
+              <label className="label" htmlFor="f_month">出生月</label>
+              <input id="f_month" className="input" type="number" value={form.birth_month} onChange={update('birth_month')} placeholder="1-12" required />
+              <label className="label" htmlFor="f_day">出生日</label>
+              <input id="f_day" className="input" type="number" value={form.birth_day} onChange={update('birth_day')} placeholder="1-31" required />
+              <label className="label" htmlFor="f_hour">出生时辰（0-23）</label>
+              <input id="f_hour" className="input" type="number" value={form.birth_hour} onChange={update('birth_hour')} placeholder="如 14" />
+              <label className="label" htmlFor="f_gender">性别</label>
+              <select id="f_gender" className="input" value={form.gender} onChange={update('gender')}>
+                <option value="male">男</option>
+                <option value="female">女</option>
+              </select>
+              <label className="label" htmlFor="f_birthplace">出生地</label>
+              <input id="f_birthplace" className="input" value={form.birthplace} onChange={updateBirthplace} placeholder="如 北京（命中后自动填入经纬度）" />
+
+              <div className="field-row">
+                <div>
+                  <label className="label" htmlFor="f_lng">经度（可选）</label>
+                  <input id="f_lng" className="input" type="number" step="0.0001" value={form.longitude} onChange={updateCoord('longitude')} placeholder="如 116.41" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="f_lat">纬度（可选）</label>
+                  <input id="f_lat" className="input" type="number" step="0.0001" value={form.latitude} onChange={updateCoord('latitude')} placeholder="如 39.90" />
+                </div>
+              </div>
+              {!coordTouched && form.longitude && form.latitude &&
+                <p className="coord-hint">已根据出生地自动填入经纬度，可手动修改（留空则占星/七政/奇门/五运六气将降级）。</p>}
+
+              <div className="switch-row">
+                <label className="switch">
+                  <input type="checkbox" id="f_solar" checked={form.true_solar_time} onChange={toggleSolar} />
+                  <span className="slider"></span>
+                </label>
+                <label htmlFor="f_solar" style={{ fontSize: 13, color: 'var(--text-2)' }}>使用真太阳时（按经度修正时差，更精准）</label>
+              </div>
+
+              <button className="btn btn-primary" type="submit" disabled={loading} style={{ marginTop: 16 }}>
+                {loading ? '提交中...' : '开始排盘'}
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    function WaitingPage({ caseId, onNavigate }) {
+      const [progress, setProgress] = useState(0);
+      const [total, setTotal] = useState(9);
+      const [status, setStatus] = useState('pending');
+      const [errored, setErrored] = useState('');
+      const ref = useRef({ timer: null, timeout: null, done: false });
+
+      const stop = () => { clearInterval(ref.current.timer); clearTimeout(ref.current.timeout); };
+
+      // 轨道动画随真实进度点亮
+      useEffect(() => {
+        if (errored) return;
+        const svg = document.getElementById('dqcPlate');
+        if (svg && !svg.dataset.built) { buildOrbit('dqcPlate', DQC_METHODS); svg.dataset.built = '1'; }
+        setOrbitProgress('dqcPlate', DQC_METHODS, progress, total || 9);
+      }, [progress, total, errored, caseId]);
+
+      const start = async () => {
+        stop();
+        ref.current.done = false;
+        setErrored(''); setStatus('pending'); setProgress(0); setTotal(9);
+        try {
+          const res = await api('/cases/' + caseId + '/duan-qian-chen', { method: 'POST' });
+          const jobId = (res.data && res.data.jobId) || res.jobId;
+          ref.current.timer = setInterval(async () => {
+            try {
+              const job = await api('/jobs/' + jobId);
+              const data = job.data || job;
+              setProgress(data.completed); setTotal(data.total); setStatus(data.status);
+              if (data.status === 'succeeded') {
+                ref.current.done = true; stop();
+                setTimeout(() => onNavigate('calibration', { caseId }), 500);
+              } else if (data.status === 'failed') {
+                ref.current.done = true; stop();
+                setErrored('推演任务失败，请点击重试。');
+              }
+            } catch (e) {
+              ref.current.done = true; stop();
+              setErrored(e.message || '网络异常，请重试。');
+            }
+          }, 2000);
+          // 硬超时：断前尘 10 分钟（§5.1）
+          ref.current.timeout = setTimeout(() => {
+            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('等待超时（约 10 分钟），请重试。'); }
+          }, 600000);
+        } catch (e) {
+          ref.current.done = true; stop();
+          setErrored(e.message || '启动推演失败。');
+        }
+      };
+
+      useEffect(() => { start(); return stop; }, [caseId]);
+
+      const pct = total > 0 ? Math.round(progress / total * 100) : 0;
+      const lit = Math.min(DQC_METHODS.length, Math.round((progress / (total || 9)) * DQC_METHODS.length));
+
+      if (errored) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">推演未完成</h2>
+              <div className="error">{errored}</div>
+              <button className="btn btn-primary" onClick={start}>重试</button>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate('onboarding')}>返回建档</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="container">
+          <div className="dqc-stage">
+            <svg id="dqcPlate" className="dqc-plate" viewBox="0 0 240 240"></svg>
+            <div className="dqc-progress">{progress} / {total}</div>
+            <div className="dqc-method">{status === 'succeeded' ? '九法推演完成' : '正在综合九流派推演'}</div>
+            <div className="dqc-bar"><i style={{ width: pct + '%' }}></i></div>
+            <div className="dqc-status">{status === 'succeeded' ? 'jobs.status: succeeded' : 'jobs.status: running · polling…'}</div>
+            <div className="dqc-list">
+              {DQC_METHODS.map((m, i) => {
+                const cls = i < lit ? 'done' : (i === lit && progress < total ? 'active' : '');
+                return <span key={i} className={cls}>{m}</span>;
+              })}
+            </div>
+          </div>
+          <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-2)', marginTop: 14 }}>
+            {status === 'succeeded' ? '推演完成，正在进入问卷校准...' : '已完成 ' + progress + ' / ' + total + '，请稍候...'}
+          </p>
+        </div>
+      );
+    }
+
+    function CalibrationPage({ caseId, onNavigate }) {
+      const [propositions, setPropositions] = useState([]);
+      const [feedback, setFeedback] = useState([]);
+      const [correcting, setCorrecting] = useState(false);
+      const [note, setNote] = useState('');
+      // 校准提交结果过渡态：{ fit, complete }，用于短暂展示契合度后再跳预测
+      const [calibResult, setCalibResult] = useState(null);
+      // 问卷加载状态机：loading 读取中 / empty 后端无命题 / error 失败 / ready 正常展示
+      const [loadState, setLoadState] = useState('loading');
+      const [loadError, setLoadError] = useState('');
+      const ref = useRef({ timer: null, timeout: null, done: false });
+
+      const stop = () => { clearInterval(ref.current.timer); clearTimeout(ref.current.timeout); clearTimeout(ref.current.navTimer); };
+
+      // 后端命题字段 method/domain/claim/year_range/confidence_level → 卡片所需 method/domain/claim/yearRange/confidence
+      const mapPropositions = (list) => (list || []).map(p => ({
+        method: p.method || '',
+        domain: p.domain || '',
+        claim: p.claim || '',
+        yearRange: p.year_range || '',
+        confidence: p.confidence_level || '',
+      })).filter(p => p.claim);
+
+      const start = async () => {
+        stop();
+        ref.current.done = false;
+        setLoadState('loading'); setLoadError('');
+        try {
+          // Phase 4：发起断前尘任务取真实问卷（各法结果后端已落库缓存，重复进入走缓存快速返回）
+          const res = await api('/cases/' + caseId + '/duan-qian-chen', { method: 'POST' });
+          const jobId = (res.data && res.data.jobId) || res.jobId;
+          ref.current.timer = setInterval(async () => {
+            try {
+              const job = await api('/jobs/' + jobId);
+              const data = job.data || job;
+              if (data.status === 'succeeded') {
+                ref.current.done = true; stop();
+                const result = data.result || {};
+                const props = mapPropositions(result.propositions);
+                if (!props.length) setLoadState('empty');
+                else { setPropositions(props); setLoadState('ready'); }
+              } else if (data.status === 'failed') {
+                ref.current.done = true; stop();
+                setLoadState('error'); setLoadError('问卷推演任务失败，请点击重试。');
+              }
+            } catch (e) {
+              ref.current.done = true; stop();
+              setLoadState('error'); setLoadError(e.message || '网络异常，请重试。');
+            }
+          }, 2000);
+          // 硬超时：断前尘 10 分钟（§5.1）
+          ref.current.timeout = setTimeout(() => {
+            if (!ref.current.done) { ref.current.done = true; stop(); setLoadState('error'); setLoadError('等待问卷超时（约 10 分钟），请重试。'); }
+          }, 600000);
+        } catch (e) {
+          ref.current.done = true; stop();
+          setLoadState('error'); setLoadError(e.message || '启动问卷推演失败。');
+        }
+      };
+
+      useEffect(() => { start(); return stop; }, [caseId]);
+
+      const handleFeedback = (idx, type, noteText) => {
+        const prop = propositions[idx];
+        const fb = { method: prop.method, domain: prop.domain, claim: prop.claim, feedback: type };
+        if (type === 'corrected' && noteText) fb.user_note = noteText;
+        setFeedback([...feedback, fb]);
+        const newProps = [...propositions];
+        newProps.splice(idx, 1);
+        setPropositions(newProps);
+        setCorrecting(false);
+        setNote('');
+      };
+
+      const submitCorrect = () => handleFeedback(0, 'corrected', note.trim());
+
+      const handleSubmit = async () => {
+        if (calibResult) return; // 防重复提交
+        try {
+          const res = await api('/cases/' + caseId + '/calibration', {
+            method: 'POST',
+            body: JSON.stringify({ feedback })
+          });
+          const data = (res.data || res);
+          // 双信封：取返回 fit（数值 0–1）与 complete；兼容字符串数字
+          const rawFit = data && data.fit;
+          const fitNum = typeof rawFit === 'number' ? rawFit : (typeof rawFit === 'string' && rawFit !== '' ? Number(rawFit) : NaN);
+          if (isFinite(fitNum)) {
+            // 有 fit：短暂展示「校准完成 · 契合度 x%」后再跳转 predict
+            setCalibResult({ fit: fitNum, complete: !!(data && data.complete) });
+            ref.current.navTimer = setTimeout(() => onNavigate('predict', { caseId }), 1500);
+          } else {
+            // 兜底：返回无 fit 时沿用直接跳转行为
+            onNavigate('predict', { caseId });
+          }
+        } catch (e) {
+          alert(e.message || '提交失败');
+        }
+      };
+
+      // 读取问卷中
+      if (loadState === 'loading') {
+        return (
+          <div className="container">
+            <div className="sk-card">
+              <div className="skeleton sk-title" />
+              <div className="skeleton sk-line" style={{ width: '90%' }} />
+              <div className="skeleton sk-line" style={{ width: '70%' }} />
+              <div className="skeleton sk-line" style={{ width: '85%' }} />
+            </div>
+            <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-2)' }}>正在读取校准断言…</p>
+          </div>
+        );
+      }
+
+      // 拉取/推演失败
+      if (loadState === 'error') {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">问卷加载失败</h2>
+              <div className="error">{loadError}</div>
+              <button className="btn btn-primary" onClick={start}>重试</button>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate('landing')}>返回首页</button>
+            </div>
+          </div>
+        );
+      }
+
+      // 后端无待校准断言：友好空态 + 跳过校准
+      if (loadState === 'empty') {
+        return (
+          <div className="container">
+            <div className="card" style={{ textAlign: 'center' }}>
+              <h2 className="title">问卷校准</h2>
+              <p style={{ color: 'var(--text-2)', marginBottom: 16 }}>暂无待校准断言，可直接查看预测</p>
+              <button className="btn btn-primary" onClick={() => onNavigate('predict', { caseId })}>跳过校准</button>
+            </div>
+          </div>
+        );
+      }
+
+      // 已逐条确认/否认/修正完 → 提交反馈后短暂展示契合度，再进入预测
+      if (propositions.length === 0) {
+        return (
+          <div className="container">
+            <div className="card" style={{ textAlign: 'center' }}>
+              <h2 className="title">校准完成</h2>
+              {calibResult ? (
+                <div>
+                  <p style={{ fontSize: 20, fontWeight: 600, color: 'var(--skin-accent)', margin: '8px 0 4px' }}>
+                    校准完成 · 契合度 {Math.round((calibResult.fit || 0) * 100)}%
+                  </p>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13, marginBottom: 16 }}>
+                    {calibResult.complete ? '校准已完成，正在为您生成预测…' : '正在为您生成预测…'}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p style={{ color: 'var(--text-2)', marginBottom: 16 }}>已确认 {feedback.length} 条断言</p>
+                  <button className="btn btn-primary" onClick={handleSubmit}>查看预测结果</button>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      const prop = propositions[0];
+
+      return (
+        <div className="container">
+          <div className="card">
+            <h2 className="title">问卷校准</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 16 }}>
+              剩余 {propositions.length} 条 · 已确认 {feedback.length} 条
+            </p>
+            <div className="progress">
+              <div className="progress-bar" style={{ width: (feedback.length / (feedback.length + propositions.length) * 100) + '%' }} />
+            </div>
+            <div className="card" style={{ marginTop: 16, border: '1px solid var(--border)' }}>
+              <div style={{ marginBottom: 8 }}>
+                <span className="tag">{prop.method}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>{prop.domain}</span>
+                {prop.yearRange && <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>{prop.yearRange}</span>}
+                {prop.confidence && <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>置信度 {prop.confidence === 'high' ? '高' : prop.confidence === 'medium' ? '中' : prop.confidence}</span>}
+              </div>
+              <p style={{ fontSize: 15, margin: '12px 0' }}>{prop.claim}</p>
+              {correcting ? (
+                <div>
+                  <textarea className="note-input" value={note} onChange={e => setNote(e.target.value)} placeholder="请说明您认为更准确的实际情况，例如具体年份或事件..." />
+                  <div className="flex-row" style={{ marginTop: 8 }}>
+                    <button className="btn btn-primary" onClick={submitCorrect}>提交修正</button>
+                    <button className="btn btn-outline" onClick={() => { setCorrecting(false); setNote(''); }}>取消</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-row" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
+                  <button className="btn btn-outline" style={{ background: 'var(--skin-accent-soft)', color: 'var(--skin-accent)', fontWeight: 600, borderColor: 'var(--skin-accent)' }} onClick={() => handleFeedback(0, 'confirmed')}><Icon name="check" size={15} />确认</button>
+                  <button className="btn btn-outline" style={{ background: '#FFF0F0', color: 'var(--cinnabar)', fontWeight: 600 }} onClick={() => handleFeedback(0, 'denied')}><Icon name="cross" size={15} />否认</button>
+                  <button className="btn btn-outline" onClick={() => setCorrecting(true)}><Icon name="pencil" size={15} />修正</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function PredictPage({ caseId, onNavigate }) {
+      const [report, setReport] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+      const ref = useRef({ timer: null, timeout: null, done: false });
+
+      const stop = () => { clearInterval(ref.current.timer); clearTimeout(ref.current.timeout); };
+
+      const start = async () => {
+        stop();
+        ref.current.done = false;
+        setErrored(''); setLoading(true);
+        try {
+          const res = await api('/cases/' + caseId + '/predict', { method: 'POST' });
+          const jobId = (res.data && res.data.jobId) || res.jobId;
+          ref.current.timer = setInterval(async () => {
+            try {
+              const job = await api('/jobs/' + jobId);
+              const data = job.data || job;
+              if (data.status === 'succeeded') {
+                ref.current.done = true; stop();
+                // Phase 4：取真实 job result 里的 report（summary/trend/details）
+                if (data.result && data.result.report) {
+                  setReport(data.result.report);
+                } else {
+                  // result 或 report 缺失 → 错误态 + 重试
+                  setErrored('预测任务已完成但报告数据缺失，请点击重试。');
+                }
+                setLoading(false);
+              } else if (data.status === 'failed') {
+                ref.current.done = true; stop();
+                setErrored('预测任务失败，请点击重试。');
+                setLoading(false);
+              }
+            } catch (e) {
+              ref.current.done = true; stop();
+              setErrored(e.message || '网络异常，请重试。');
+              setLoading(false);
+            }
+          }, 2000);
+          // 硬超时：预测 3 分钟（§5.1）
+          ref.current.timeout = setTimeout(() => {
+            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('等待超时（约 3 分钟），请重试。'); setLoading(false); }
+          }, 180000);
+        } catch (e) {
+          ref.current.done = true; stop();
+          setErrored(e.message || '启动预测失败。');
+          setLoading(false);
+        }
+      };
+
+      useEffect(() => { start(); return stop; }, [caseId]);
+
+      if (errored) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">解读未完成</h2>
+              <div className="error">{errored}</div>
+              <button className="btn btn-primary" onClick={start}>重试</button>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate('landing')}>返回首页</button>
+            </div>
+          </div>
+        );
+      }
+
+      if (loading) {
+        return (
+          <div className="container">
+            <div className="sk-card">
+              <div className="skeleton sk-title" />
+              <div className="skeleton sk-line" style={{ width: '90%' }} />
+              <div className="skeleton sk-line" style={{ width: '75%' }} />
+              <div className="skeleton sk-line" style={{ width: '85%' }} />
+            </div>
+            <div className="sk-card">
+              <div className="skeleton sk-line" style={{ width: '40%' }} />
+              <div className="skeleton sk-line" style={{ width: '95%' }} />
+              <div className="skeleton sk-line" style={{ width: '60%' }} />
+            </div>
+            <div className="sk-card">
+              <div className="skeleton sk-line" style={{ width: '40%' }} />
+              <div className="skeleton sk-line" style={{ width: '95%' }} />
+              <div className="skeleton sk-line" style={{ width: '60%' }} />
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="container">
+          <div className="card" style={{ textAlign: 'center', borderLeft: '3px solid var(--gold-500)' }}>
+            <h2 className="title">综合解读</h2>
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 4px', color: 'var(--gold-500)' }}><Icon name="orbit" size={48} /></div>
+            <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--skin-accent)' }}>总体趋势：温和上扬</p>
+            <p style={{ color: 'var(--text-2)', fontSize: 14, marginTop: 8 }}>{report?.summary}</p>
+          </div>
+          {(report?.details || []).map((d, i) => (
+            <div key={i} className={'card trend-' + (d.direction === '吉' ? 'ji' : d.direction === '凶' ? 'xiong' : 'ping')}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 24, color: d.direction === '吉' ? 'var(--skin-accent)' : d.direction === '凶' ? 'var(--cinnabar)' : 'var(--ink-400)' }}><Icon name={d.direction === '吉' ? 'up' : d.direction === '凶' ? 'down' : 'flat'} size={24} /></span>
+                <div>
+                  <h4>{d.title}</h4>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>{d.description}</p>
+                  <span style={{ fontSize: 11, color: 'var(--text-3)' }}>置信度: {d.confidence}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="flex-row">
+            <button className="btn btn-primary" onClick={() => onNavigate('revise', { caseId })}>追问修正</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
+          </div>
+          <div className="flex-row">
+            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>返回首页</button>
+            <button className="btn btn-outline" onClick={logout}>退出登录</button>
+          </div>
+        </div>
+      );
+    }
+
+    function RevisePage({ caseId, onNavigate }) {
+      const [messages, setMessages] = useState([{ role: 'assistant', content: '您好，我是太初。关于您的事业运势，还有什么想了解的？' }]);
+      const [input, setInput] = useState('');
+
+      const handleSend = async () => {
+        if (!input.trim()) return;
+        const userMsg = { role: 'user', content: input };
+        setMessages([...messages, userMsg]);
+        setInput('');
+        try {
+          const res = await api('/cases/' + caseId + '/revise', {
+            method: 'POST',
+            body: JSON.stringify({ message: input })
+          });
+          const reply = (res.data && res.data.reply) || res.reply || '根据您的命盘综合来看，建议保持耐心，等待时机成熟。';
+          setMessages(msgs => [...msgs, { role: 'assistant', content: reply }]);
+        } catch (e) {
+          setMessages(msgs => [...msgs, { role: 'assistant', content: '抱歉，暂时无法回复，请稍后重试。' }]);
+        }
+      };
+
+      return (
+        <div className="container">
+          <div className="card">
+            <h2 className="title">追问修正</h2>
+            <div style={{ maxHeight: 400, overflowY: 'auto', marginBottom: 12 }}>
+              {messages.map((m, i) => (
+                <div key={i} style={{
+                  padding: '8px 12px',
+                  margin: '4px 0',
+                  borderRadius: 12,
+                  background: m.role === 'user' ? 'var(--skin-accent)' : 'var(--paper)',
+                  color: m.role === 'user' ? 'var(--skin-accent-ink)' : 'var(--text-1)',
+                  alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                  maxWidth: '80%',
+                  marginLeft: m.role === 'user' ? 'auto' : '0',
+                }}>
+                  {m.content}
+                </div>
+              ))}
+            </div>
+            <div className="flex-row">
+              <input className="input" value={input} onChange={e => setInput(e.target.value)} placeholder="输入您的问题..." onKeyDown={e => e.key === 'Enter' && handleSend()} />
+              <button className="btn btn-primary" style={{ width: 80 }} onClick={handleSend}>发送</button>
+            </div>
+            <div className="flex-row" style={{ marginTop: 12 }}>
+              <button className="btn btn-outline" onClick={() => onNavigate('predict', { caseId })}>返回解读</button>
+              <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
+            </div>
+            <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={logout}>退出登录</button>
+          </div>
+        </div>
+      );
+    }
+
+    function ArchivePage({ caseId, onNavigate }) {
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+
+      useEffect(() => {
+        const load = async () => {
+          try {
+            const res = await api('/cases/' + caseId + '/archive');
+            setData(res.data || res);
+          } catch (e) {
+            setErrored(e.message || '加载档案失败');
+          } finally {
+            setLoading(false);
+          }
+        };
+        load();
+      }, [caseId]);
+
+      if (loading) {
+        return (
+          <div className="container">
+            <div className="sk-card">
+              <div className="skeleton sk-title" />
+              <div className="skeleton sk-line" style={{ width: '70%' }} />
+              <div className="skeleton sk-line" style={{ width: '50%' }} />
+              <div className="skeleton sk-line" style={{ width: '80%' }} />
+              <div className="skeleton sk-line" style={{ width: '65%' }} />
+              <div className="skeleton sk-line" style={{ width: '55%' }} />
+            </div>
+          </div>
+        );
+      }
+
+      if (errored) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">档案加载失败</h2>
+              <div className="error">{errored}</div>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate('landing')}>返回首页</button>
+            </div>
+          </div>
+        );
+      }
+
+      const inp = (data && data.input) || {};
+      const statusMap = { created: '已建档', paipan_done: '已排盘', calibrated: '已校准', predicted: '已预测' };
+      const genderText = inp.gender === 'female' ? '女' : inp.gender === 'male' ? '男' : (inp.gender || '-');
+      const rows = [
+        ['出生年', inp.birth_year], ['出生月', inp.birth_month], ['出生日', inp.birth_day],
+        ['出生时辰', inp.birth_hour], ['性别', genderText], ['出生地', inp.birthplace || '-'],
+        ['经度', inp.longitude != null ? inp.longitude : '未提供'],
+        ['纬度', inp.latitude != null ? inp.latitude : '未提供'],
+        ['真太阳时', inp.true_solar_time ? '是' : '否'],
+      ];
+
+      // 盘面摘要：chart.data 各字段缺失则省略对应行（防御性访问）
+      const chart = (data && data.chart) || {};
+      const chartData = (chart.data || {});
+      const bazi = chartData.bazi || {};
+      const calendar = chartData.calendar || {};
+      const chartRows = [];
+      if (bazi.day_master) chartRows.push(['日主', bazi.day_master]);
+      if (bazi.day_master_wuxing) chartRows.push(['日主五行', bazi.day_master_wuxing]);
+      if (calendar.lunar) chartRows.push(['农历', calendar.lunar]);
+      const degradedList = Array.isArray(chart.degraded) ? chart.degraded : (chart.degraded ? [chart.degraded] : []);
+
+      // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
+      // 整体契合度若能取到数值则展示，否则只展示反馈条数
+      const calib = (data && data.calibrations) || {};
+      const calibCount = Array.isArray(calib.record) ? calib.record.length : (typeof calib.record === 'number' ? calib.record : null);
+      const probeNum = (v) => (typeof v === 'number' && isFinite(v) ? v : null);
+      const calibFit = (() => {
+        const f = calib.fit;
+        if (f == null) return null;
+        if (typeof f === 'number' && isFinite(f)) return f;
+        if (probeNum(f.fit) != null) return probeNum(f.fit);
+        if (probeNum(f.score) != null) return probeNum(f.score);
+        if (probeNum(f.overall) != null) return probeNum(f.overall);
+        const inner = (f.fit && typeof f.fit === 'object') ? f.fit : null;
+        if (inner) {
+          const hit = ['fit', 'score', 'value', 'overall', 'accuracy'].map(k => probeNum(inner[k])).find(v => v != null);
+          if (hit != null) return hit;
+        }
+        return null;
+      })();
+      const calibFitText = calibFit == null ? null : (calibFit <= 1 ? Math.round(calibFit * 100) + '%' : String(calibFit));
+
+      // 对话历史：仅最近 10 条
+      const convos = (data && Array.isArray(data.conversations))
+        ? data.conversations.slice(-10).filter(m => m && m.content) : [];
+
+      return (
+        <div className="container">
+          <div className="card">
+            <h2 className="title">我的命理档案</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 8 }}>
+              档案编号：{caseId} · 状态：{statusMap[data && data.status] || (data && data.status) || '-'}
+            </p>
+            <div className="section-title">建档信息</div>
+            {rows.map((r, i) => (
+              <div className="kv" key={i}><span className="k">{r[0]}</span><span className="v">{r[1] != null && r[1] !== '' ? r[1] : '-'}</span></div>
+            ))}
+            {(!inp.longitude || !inp.latitude) &&
+              <p className="coord-hint" style={{ marginTop: 8 }}>提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。</p>}
+          </div>
+
+          {/* 盘面摘要：chart 存在且有可展示内容时才渲染 */}
+          {data && data.chart && (chartRows.length > 0 || degradedList.length > 0) && (
+            <div className="card">
+              <div className="section-title">盘面摘要</div>
+              {chartRows.map((r, i) => (
+                <div className="kv" key={i}><span className="k">{r[0]}</span><span className="v">{r[1] != null && r[1] !== '' ? r[1] : '-'}</span></div>
+              ))}
+              {degradedList.length > 0 &&
+                <p className="coord-hint" style={{ marginTop: 8 }}>已降级方法：{degradedList.join('、')}</p>}
+            </div>
+          )}
+
+          {/* 校准记录：record 反馈条数 + 整体契合度（拿不到契合度则只展示条数） */}
+          {data && data.calibrations && (calibCount != null || calibFitText != null) && (
+            <div className="card">
+              <div className="section-title">校准记录</div>
+              {calibCount != null &&
+                <div className="kv"><span className="k">用户反馈</span><span className="v">{calibCount} 条断言</span></div>}
+              {calibFitText != null &&
+                <div className="kv"><span className="k">整体契合度</span><span className="v">{calibFitText}</span></div>}
+            </div>
+          )}
+
+          {/* 对话历史：最近 10 条，role 用「我 / 助手」标签 */}
+          {convos.length > 0 && (
+            <div className="card">
+              <div className="section-title">对话历史</div>
+              {convos.map((m, i) => {
+                const isUser = m.role === 'user';
+                return (
+                  <div key={i} style={{ display: 'flex', margin: '4px 0', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
+                    <div style={{
+                      maxWidth: '85%', padding: '8px 12px', borderRadius: 12,
+                      background: isUser ? 'var(--skin-accent)' : 'var(--paper)',
+                      color: isUser ? 'var(--skin-accent-ink)' : 'var(--text-1)',
+                    }}>
+                      <div style={{ fontSize: 11, opacity: .65, marginBottom: 2 }}>{isUser ? '我' : '助手'}</div>
+                      <div style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{m.content}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="flex-row">
+            <button className="btn btn-primary" onClick={() => onNavigate('predict', { caseId })}>查看解读</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>返回首页</button>
+          </div>
+          <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={logout}>退出登录</button>
+        </div>
+      );
+    }
+
+    // ---- App Router ----
+    function App() {
+      const [page, setPage] = useState('landing');
+      const [params, setParams] = useState({});
+      const [skin, setSkin] = useState(() => localStorage.getItem('taichu_skin') || 'guoxue');
+
+      useEffect(() => {
+        const saved = localStorage.getItem('taichu_token');
+        if (saved) {
+          token = saved;
+          const savedR = localStorage.getItem('taichu_refresh_token');
+          if (savedR) refreshToken = savedR;
+          setPage('onboarding'); // 已登录自动跳转
+        }
+      }, []);
+
+      useEffect(() => { document.documentElement.setAttribute('data-skin', skin); }, [skin]);
+
+      onUnauthorized = () => setPage('auth');
+
+      const navigate = (p, p2 = {}) => { setPage(p); setParams(p2); };
+      const applySkin = (s) => { setSkin(s); localStorage.setItem('taichu_skin', s); };
+
+      const pages = {
+        landing: <LandingPage onNavigate={navigate} />,
+        auth: <AuthPage onNavigate={navigate} />,
+        onboarding: <OnboardingPage onNavigate={navigate} />,
+        waiting: <WaitingPage caseId={params.caseId} onNavigate={navigate} />,
+        calibration: <CalibrationPage caseId={params.caseId} onNavigate={navigate} />,
+        predict: <PredictPage caseId={params.caseId} onNavigate={navigate} />,
+        revise: <RevisePage caseId={params.caseId} onNavigate={navigate} />,
+        archive: <ArchivePage caseId={params.caseId} onNavigate={navigate} />,
+      };
+
+      return (
+        <div>
+          <div className="starfield" aria-hidden="true"></div>
+          <header className="topbar">
+            <span className="brand">太初<span className="dot">·</span></span>
+            <span className="tagline">事业运势趋势参考</span>
+          </header>
+          <div className="app-shell">
+            <div className="view-enter" key={page}>
+              {pages[page] || pages.landing}
+            </div>
+            <DisclaimerFooter />
+          </div>
+          <SkinSwitcher skin={skin} onPick={applySkin} />
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>

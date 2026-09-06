@@ -1,0 +1,818 @@
+{
+  "wuyun_liuqi": {
+    "birth_year": {
+      "input": {
+        "year": 1990,
+        "yearGanZhi": "庚午",
+        "yearGanZhiSource": "公历年年中换算"
+      },
+      "annualMovement": {
+        "stem": "庚",
+        "element": "金",
+        "name": "金运",
+        "tone": "商",
+        "toneStrength": "太",
+        "toneName": "太商",
+        "yinYang": "阳",
+        "strength": "太过",
+        "basis": "庚干化金运；阳干为太过，五音为太商。"
+      },
+      "sitian": {
+        "name": "少阴君火",
+        "phase": "少阴",
+        "qi": "君火",
+        "element": "火"
+      },
+      "zaiquan": {
+        "name": "阳明燥金",
+        "phase": "阳明",
+        "qi": "燥",
+        "element": "金"
+      },
+      "annualRelation": {
+        "kind": "天刑",
+        "movementElement": "金",
+        "sitianElement": "火",
+        "basis": "司天火克中运金，为天刑。"
+      },
+      "annualConformities": {
+        "names": [
+          "同天符"
+        ],
+        "tianfu": false,
+        "suihui": false,
+        "taiyiTianfu": false,
+        "tongTianfu": true,
+        "tongSuihui": false,
+        "facts": [
+          {
+            "name": "天符",
+            "matched": false,
+            "rule": "中运五行与司天五行相同。",
+            "basis": "中运为金，司天为火，两者不同气。"
+          },
+          {
+            "name": "岁会",
+            "matched": false,
+            "rule": "本运临本支之位：木卯、火午、土辰戌丑未、金酉、水子。",
+            "basis": "午支本位五行为火，中运为金，不相合。"
+          },
+          {
+            "name": "太乙天符",
+            "matched": false,
+            "rule": "同一年同时构成天符与岁会。",
+            "basis": "天符不成立，岁会不成立。"
+          },
+          {
+            "name": "同天符",
+            "matched": true,
+            "rule": "阳干年中运五行与在泉五行相同。",
+            "basis": "阳干年，中运为金，在泉为金，符合同天符。"
+          },
+          {
+            "name": "同岁会",
+            "matched": false,
+            "rule": "阴干年中运五行与在泉五行相同。",
+            "basis": "阳干年，中运为金，在泉为金，不符合同岁会。"
+          }
+        ],
+        "sourceReconciliation": {
+          "distinctYearsByListedRules": 26,
+          "sourceSummaryYears": 28,
+          "handling": "吴谦《运气要诀》逐项名单按六十甲子去重为26年，与原文“二十八年”汇总不一致；计算采用逐项定义和逐年名单，不用汇总数反改规则。"
+        }
+      },
+      "movementSteps": [
+        {
+          "order": 1,
+          "label": "初运",
+          "startBoundary": {
+            "solarTerm": "大寒",
+            "offsetDays": 0,
+            "description": "大寒日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "大寒日起，至春分后第12日",
+          "hostMovement": {
+            "element": "木",
+            "tone": "角",
+            "toneStrength": "少",
+            "toneName": "少角",
+            "strength": "不及",
+            "climateQi": "风"
+          },
+          "guestMovement": {
+            "element": "金",
+            "tone": "商",
+            "toneStrength": "太",
+            "toneName": "太商",
+            "strength": "太过",
+            "climateQi": "燥"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客运金克主运木。"
+          },
+          "guestRole": "中运起点"
+        },
+        {
+          "order": 2,
+          "label": "二运",
+          "startBoundary": {
+            "solarTerm": "春分",
+            "offsetDays": 13,
+            "description": "春分后第13日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "春分后第13日起，至芒种后第9日",
+          "hostMovement": {
+            "element": "火",
+            "tone": "徵",
+            "toneStrength": "太",
+            "toneName": "太徵",
+            "strength": "太过",
+            "climateQi": "热"
+          },
+          "guestMovement": {
+            "element": "水",
+            "tone": "羽",
+            "toneStrength": "少",
+            "toneName": "少羽",
+            "strength": "不及",
+            "climateQi": "寒"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客运水克主运火。"
+          }
+        },
+        {
+          "order": 3,
+          "label": "三运",
+          "startBoundary": {
+            "solarTerm": "芒种",
+            "offsetDays": 10,
+            "description": "芒种后第10日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "芒种后第10日起，至处暑后第6日",
+          "hostMovement": {
+            "element": "土",
+            "tone": "宫",
+            "toneStrength": "少",
+            "toneName": "少宫",
+            "strength": "不及",
+            "climateQi": "湿"
+          },
+          "guestMovement": {
+            "element": "木",
+            "tone": "角",
+            "toneStrength": "太",
+            "toneName": "太角",
+            "strength": "太过",
+            "climateQi": "风"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客运木克主运土。"
+          }
+        },
+        {
+          "order": 4,
+          "label": "四运",
+          "startBoundary": {
+            "solarTerm": "处暑",
+            "offsetDays": 7,
+            "description": "处暑后第7日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "处暑后第7日起，至立冬后第3日",
+          "hostMovement": {
+            "element": "金",
+            "tone": "商",
+            "toneStrength": "太",
+            "toneName": "太商",
+            "strength": "太过",
+            "climateQi": "燥"
+          },
+          "guestMovement": {
+            "element": "火",
+            "tone": "徵",
+            "toneStrength": "少",
+            "toneName": "少徵",
+            "strength": "不及",
+            "climateQi": "热"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客运火克主运金。"
+          }
+        },
+        {
+          "order": 5,
+          "label": "五运",
+          "startBoundary": {
+            "solarTerm": "立冬",
+            "offsetDays": 4,
+            "description": "立冬后第4日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "立冬后第4日起，至小寒末日",
+          "hostMovement": {
+            "element": "水",
+            "tone": "羽",
+            "toneStrength": "少",
+            "toneName": "少羽",
+            "strength": "不及",
+            "climateQi": "寒"
+          },
+          "guestMovement": {
+            "element": "土",
+            "tone": "宫",
+            "toneStrength": "太",
+            "toneName": "太宫",
+            "strength": "太过",
+            "climateQi": "湿"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客运土克主运水。"
+          }
+        }
+      ],
+      "qiSteps": [
+        {
+          "order": 1,
+          "label": "初之气",
+          "solarTerms": [
+            "大寒",
+            "立春",
+            "雨水",
+            "惊蛰"
+          ],
+          "hostQi": {
+            "name": "厥阴风木",
+            "phase": "厥阴",
+            "qi": "风",
+            "element": "木"
+          },
+          "guestQi": {
+            "name": "太阳寒水",
+            "phase": "太阳",
+            "qi": "寒",
+            "element": "水"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气水生主气木。"
+          }
+        },
+        {
+          "order": 2,
+          "label": "二之气",
+          "solarTerms": [
+            "春分",
+            "清明",
+            "谷雨",
+            "立夏"
+          ],
+          "hostQi": {
+            "name": "少阴君火",
+            "phase": "少阴",
+            "qi": "君火",
+            "element": "火"
+          },
+          "guestQi": {
+            "name": "厥阴风木",
+            "phase": "厥阴",
+            "qi": "风",
+            "element": "木"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气木生主气火。"
+          }
+        },
+        {
+          "order": 3,
+          "label": "三之气",
+          "solarTerms": [
+            "小满",
+            "芒种",
+            "夏至",
+            "小暑"
+          ],
+          "hostQi": {
+            "name": "少阳相火",
+            "phase": "少阳",
+            "qi": "相火",
+            "element": "火"
+          },
+          "guestQi": {
+            "name": "少阴君火",
+            "phase": "少阴",
+            "qi": "君火",
+            "element": "火"
+          },
+          "hostGuestRelation": {
+            "kind": "同气",
+            "basis": "客气火与主气火同气。"
+          },
+          "guestRole": "司天"
+        },
+        {
+          "order": 4,
+          "label": "四之气",
+          "solarTerms": [
+            "大暑",
+            "立秋",
+            "处暑",
+            "白露"
+          ],
+          "hostQi": {
+            "name": "太阴湿土",
+            "phase": "太阴",
+            "qi": "湿",
+            "element": "土"
+          },
+          "guestQi": {
+            "name": "太阴湿土",
+            "phase": "太阴",
+            "qi": "湿",
+            "element": "土"
+          },
+          "hostGuestRelation": {
+            "kind": "同气",
+            "basis": "客气土与主气土同气。"
+          }
+        },
+        {
+          "order": 5,
+          "label": "五之气",
+          "solarTerms": [
+            "秋分",
+            "寒露",
+            "霜降",
+            "立冬"
+          ],
+          "hostQi": {
+            "name": "阳明燥金",
+            "phase": "阳明",
+            "qi": "燥",
+            "element": "金"
+          },
+          "guestQi": {
+            "name": "少阳相火",
+            "phase": "少阳",
+            "qi": "相火",
+            "element": "火"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客气火克主气金。"
+          }
+        },
+        {
+          "order": 6,
+          "label": "终之气",
+          "solarTerms": [
+            "小雪",
+            "大雪",
+            "冬至",
+            "小寒"
+          ],
+          "hostQi": {
+            "name": "太阳寒水",
+            "phase": "太阳",
+            "qi": "寒",
+            "element": "水"
+          },
+          "guestQi": {
+            "name": "阳明燥金",
+            "phase": "阳明",
+            "qi": "燥",
+            "element": "金"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气金生主气水。"
+          },
+          "guestRole": "在泉"
+        }
+      ],
+      "limitations": [
+        "五步交司按《运气要诀》所列传统日期序号表达，不把“节气后第几日”换算成现代精确到时分秒的交运时刻。",
+        "结果为年度传统节律结构，不含逐日气候计算。",
+        "传统运气模型不能替代地域气象资料、个人健康资料或医疗诊断。",
+        "符会与气运关系按吴谦《运气要诀》通行口径核验，不延伸为疾病轻重或现实事件预测。",
+        "吴谦《运气要诀》逐项名单按六十甲子去重为26年，与原文“二十八年”汇总不一致；计算采用逐项定义和逐年名单，不用汇总数反改规则。"
+      ]
+    },
+    "current_year": {
+      "input": {
+        "year": 2026,
+        "yearGanZhi": "丙午",
+        "yearGanZhiSource": "公历年年中换算"
+      },
+      "annualMovement": {
+        "stem": "丙",
+        "element": "水",
+        "name": "水运",
+        "tone": "羽",
+        "toneStrength": "太",
+        "toneName": "太羽",
+        "yinYang": "阳",
+        "strength": "太过",
+        "basis": "丙干化水运；阳干为太过，五音为太羽。"
+      },
+      "sitian": {
+        "name": "少阴君火",
+        "phase": "少阴",
+        "qi": "君火",
+        "element": "火"
+      },
+      "zaiquan": {
+        "name": "阳明燥金",
+        "phase": "阳明",
+        "qi": "燥",
+        "element": "金"
+      },
+      "annualRelation": {
+        "kind": "不和",
+        "movementElement": "水",
+        "sitianElement": "火",
+        "basis": "中运水克司天火，为不和。"
+      },
+      "annualConformities": {
+        "names": [],
+        "tianfu": false,
+        "suihui": false,
+        "taiyiTianfu": false,
+        "tongTianfu": false,
+        "tongSuihui": false,
+        "facts": [
+          {
+            "name": "天符",
+            "matched": false,
+            "rule": "中运五行与司天五行相同。",
+            "basis": "中运为水，司天为火，两者不同气。"
+          },
+          {
+            "name": "岁会",
+            "matched": false,
+            "rule": "本运临本支之位：木卯、火午、土辰戌丑未、金酉、水子。",
+            "basis": "午支本位五行为火，中运为水，不相合。"
+          },
+          {
+            "name": "太乙天符",
+            "matched": false,
+            "rule": "同一年同时构成天符与岁会。",
+            "basis": "天符不成立，岁会不成立。"
+          },
+          {
+            "name": "同天符",
+            "matched": false,
+            "rule": "阳干年中运五行与在泉五行相同。",
+            "basis": "阳干年，中运为水，在泉为金，不符合同天符。"
+          },
+          {
+            "name": "同岁会",
+            "matched": false,
+            "rule": "阴干年中运五行与在泉五行相同。",
+            "basis": "阳干年，中运为水，在泉为金，不符合同岁会。"
+          }
+        ],
+        "sourceReconciliation": {
+          "distinctYearsByListedRules": 26,
+          "sourceSummaryYears": 28,
+          "handling": "吴谦《运气要诀》逐项名单按六十甲子去重为26年，与原文“二十八年”汇总不一致；计算采用逐项定义和逐年名单，不用汇总数反改规则。"
+        }
+      },
+      "movementSteps": [
+        {
+          "order": 1,
+          "label": "初运",
+          "startBoundary": {
+            "solarTerm": "大寒",
+            "offsetDays": 0,
+            "description": "大寒日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "大寒日起，至春分后第12日",
+          "hostMovement": {
+            "element": "木",
+            "tone": "角",
+            "toneStrength": "太",
+            "toneName": "太角",
+            "strength": "太过",
+            "climateQi": "风"
+          },
+          "guestMovement": {
+            "element": "水",
+            "tone": "羽",
+            "toneStrength": "太",
+            "toneName": "太羽",
+            "strength": "太过",
+            "climateQi": "寒"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客运水生主运木。"
+          },
+          "guestRole": "中运起点"
+        },
+        {
+          "order": 2,
+          "label": "二运",
+          "startBoundary": {
+            "solarTerm": "春分",
+            "offsetDays": 13,
+            "description": "春分后第13日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "春分后第13日起，至芒种后第9日",
+          "hostMovement": {
+            "element": "火",
+            "tone": "徵",
+            "toneStrength": "少",
+            "toneName": "少徵",
+            "strength": "不及",
+            "climateQi": "热"
+          },
+          "guestMovement": {
+            "element": "木",
+            "tone": "角",
+            "toneStrength": "少",
+            "toneName": "少角",
+            "strength": "不及",
+            "climateQi": "风"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客运木生主运火。"
+          }
+        },
+        {
+          "order": 3,
+          "label": "三运",
+          "startBoundary": {
+            "solarTerm": "芒种",
+            "offsetDays": 10,
+            "description": "芒种后第10日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "芒种后第10日起，至处暑后第6日",
+          "hostMovement": {
+            "element": "土",
+            "tone": "宫",
+            "toneStrength": "太",
+            "toneName": "太宫",
+            "strength": "太过",
+            "climateQi": "湿"
+          },
+          "guestMovement": {
+            "element": "火",
+            "tone": "徵",
+            "toneStrength": "太",
+            "toneName": "太徵",
+            "strength": "太过",
+            "climateQi": "热"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客运火生主运土。"
+          }
+        },
+        {
+          "order": 4,
+          "label": "四运",
+          "startBoundary": {
+            "solarTerm": "处暑",
+            "offsetDays": 7,
+            "description": "处暑后第7日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "处暑后第7日起，至立冬后第3日",
+          "hostMovement": {
+            "element": "金",
+            "tone": "商",
+            "toneStrength": "少",
+            "toneName": "少商",
+            "strength": "不及",
+            "climateQi": "燥"
+          },
+          "guestMovement": {
+            "element": "土",
+            "tone": "宫",
+            "toneStrength": "少",
+            "toneName": "少宫",
+            "strength": "不及",
+            "climateQi": "湿"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客运土生主运金。"
+          }
+        },
+        {
+          "order": 5,
+          "label": "五运",
+          "startBoundary": {
+            "solarTerm": "立冬",
+            "offsetDays": 4,
+            "description": "立冬后第4日起",
+            "precision": "传统日期序号"
+          },
+          "periodRule": "立冬后第4日起，至小寒末日",
+          "hostMovement": {
+            "element": "水",
+            "tone": "羽",
+            "toneStrength": "太",
+            "toneName": "太羽",
+            "strength": "太过",
+            "climateQi": "寒"
+          },
+          "guestMovement": {
+            "element": "金",
+            "tone": "商",
+            "toneStrength": "太",
+            "toneName": "太商",
+            "strength": "太过",
+            "climateQi": "燥"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客运金生主运水。"
+          }
+        }
+      ],
+      "qiSteps": [
+        {
+          "order": 1,
+          "label": "初之气",
+          "solarTerms": [
+            "大寒",
+            "立春",
+            "雨水",
+            "惊蛰"
+          ],
+          "hostQi": {
+            "name": "厥阴风木",
+            "phase": "厥阴",
+            "qi": "风",
+            "element": "木"
+          },
+          "guestQi": {
+            "name": "太阳寒水",
+            "phase": "太阳",
+            "qi": "寒",
+            "element": "水"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气水生主气木。"
+          }
+        },
+        {
+          "order": 2,
+          "label": "二之气",
+          "solarTerms": [
+            "春分",
+            "清明",
+            "谷雨",
+            "立夏"
+          ],
+          "hostQi": {
+            "name": "少阴君火",
+            "phase": "少阴",
+            "qi": "君火",
+            "element": "火"
+          },
+          "guestQi": {
+            "name": "厥阴风木",
+            "phase": "厥阴",
+            "qi": "风",
+            "element": "木"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气木生主气火。"
+          }
+        },
+        {
+          "order": 3,
+          "label": "三之气",
+          "solarTerms": [
+            "小满",
+            "芒种",
+            "夏至",
+            "小暑"
+          ],
+          "hostQi": {
+            "name": "少阳相火",
+            "phase": "少阳",
+            "qi": "相火",
+            "element": "火"
+          },
+          "guestQi": {
+            "name": "少阴君火",
+            "phase": "少阴",
+            "qi": "君火",
+            "element": "火"
+          },
+          "hostGuestRelation": {
+            "kind": "同气",
+            "basis": "客气火与主气火同气。"
+          },
+          "guestRole": "司天"
+        },
+        {
+          "order": 4,
+          "label": "四之气",
+          "solarTerms": [
+            "大暑",
+            "立秋",
+            "处暑",
+            "白露"
+          ],
+          "hostQi": {
+            "name": "太阴湿土",
+            "phase": "太阴",
+            "qi": "湿",
+            "element": "土"
+          },
+          "guestQi": {
+            "name": "太阴湿土",
+            "phase": "太阴",
+            "qi": "湿",
+            "element": "土"
+          },
+          "hostGuestRelation": {
+            "kind": "同气",
+            "basis": "客气土与主气土同气。"
+          }
+        },
+        {
+          "order": 5,
+          "label": "五之气",
+          "solarTerms": [
+            "秋分",
+            "寒露",
+            "霜降",
+            "立冬"
+          ],
+          "hostQi": {
+            "name": "阳明燥金",
+            "phase": "阳明",
+            "qi": "燥",
+            "element": "金"
+          },
+          "guestQi": {
+            "name": "少阳相火",
+            "phase": "少阳",
+            "qi": "相火",
+            "element": "火"
+          },
+          "hostGuestRelation": {
+            "kind": "客克主",
+            "basis": "客气火克主气金。"
+          }
+        },
+        {
+          "order": 6,
+          "label": "终之气",
+          "solarTerms": [
+            "小雪",
+            "大雪",
+            "冬至",
+            "小寒"
+          ],
+          "hostQi": {
+            "name": "太阳寒水",
+            "phase": "太阳",
+            "qi": "寒",
+            "element": "水"
+          },
+          "guestQi": {
+            "name": "阳明燥金",
+            "phase": "阳明",
+            "qi": "燥",
+            "element": "金"
+          },
+          "hostGuestRelation": {
+            "kind": "客生主",
+            "basis": "客气金生主气水。"
+          },
+          "guestRole": "在泉"
+        }
+      ],
+      "limitations": [
+        "五步交司按《运气要诀》所列传统日期序号表达，不把“节气后第几日”换算成现代精确到时分秒的交运时刻。",
+        "结果为年度传统节律结构，不含逐日气候计算。",
+        "传统运气模型不能替代地域气象资料、个人健康资料或医疗诊断。",
+        "符会与气运关系按吴谦《运气要诀》通行口径核验，不延伸为疾病轻重或现实事件预测。",
+        "吴谦《运气要诀》逐项名单按六十甲子去重为26年，与原文“二十八年”汇总不一致；计算采用逐项定义和逐年名单，不用汇总数反改规则。"
+      ]
+    }
+  }
+}

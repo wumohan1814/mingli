@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="zh-CN" data-skin="guoxue">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>太初 · 运势 H5 原型（8 页 / 8 组件 / 3 皮肤）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink-50:#EEF1F8; --ink-100:#D6DCEF; --ink-200:#AEB9DE; --ink-300:#8493CB;
+    --ink-400:#5E6FB3; --ink-500:#44558F; --ink-600:#364573; --ink-700:#2C385C;
+    --ink-800:#232C49; --ink-900:#1A2138;
+    --gold-300:#E6CF9A; --gold-500:#B8893E; --gold-600:#9C6E2E; --gold-700:#7E5824;
+    --jade-400:#6FAE9B; --jade-500:#3E7C6B; --jade-600:#3E7C6B;
+    --cinnabar:#B23A3A; --cinnabar-600:#973131; --error:#C0392B;
+    --paper:#F7F4EC; --surface:#FFFFFF; --text-1:#1F1F26; --text-2:#5C5C68;
+    --text-3:#8A8A94; --border:#E5E0D4;
+    --font-serif:"Noto Serif SC","Cormorant Garamond",serif;
+    --font-sans:"Noto Sans SC","Inter",system-ui,sans-serif;
+    --font-latin-serif:"Cormorant Garamond","Noto Serif SC",serif;
+    --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+    --shadow-card:0 2px 12px rgba(26,33,56,.10);
+    --content-max:960px; --rail-width:340px; --dur:.2s;
+    --ease:cubic-bezier(.4,0,.2,1);
+
+    /* 多文化皮肤（v1.2.3 · 国学玉青/朱砂对调）：内部标识色=玉青（按钮等）
+       顶部 Banner + 底部胶囊切换=朱砂红 */
+    --skin-accent:#3E7C6B;        /* 国学=玉青（内部标识：按钮/描边/辉光/吉卡） */
+    --skin-accent-soft:rgba(62,124,107,.14);
+    --skin-accent-ink:#F7F4EC;    /* 玉青底按钮文字（浅） */
+    --skin-banner:#B23A3A;        /* 国学顶部 Banner=朱砂红 */
+    --skin-banner-ink:#F7F4EC;    /* 朱砂红底文字（浅） */
+    --skin-tag-bg:rgba(0,0,0,.16);
+  }
+  /* 西式占星：内部=深空蓝；顶部 Banner=月银 */
+  [data-skin="astrology"]{
+    --skin-accent:#2A3A5C;
+    --skin-accent-soft:rgba(42,58,92,.14);
+    --skin-accent-ink:#F7F4EC;
+    --skin-banner:#C9CBD3;
+    --skin-banner-ink:#1F1F26;
+    --skin-tag-bg:rgba(255,255,255,.55);
+  }
+  /* 塔罗：内部=琥珀；顶部 Banner=紫晶 */
+  [data-skin="tarot"]{
+    --skin-accent:#C9A24B;
+    --skin-accent-soft:rgba(201,162,75,.18);
+    --skin-accent-ink:#1F1F26;
+    --skin-banner:#5B4B8A;
+    --skin-banner-ink:#F7F4EC;
+    --skin-tag-bg:rgba(0,0,0,.16);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-sans);color:var(--text-1);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .serif{font-family:var(--font-serif)}
+  .hidden{display:none !important}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  input,select{font-family:inherit}
+
+  /* SVG 配色工具类（随皮肤变化） */
+  .acc{fill:var(--skin-accent)}
+  .acc-stroke{stroke:var(--skin-accent)}
+  .gold{fill:var(--gold-500)}
+  .gold-stroke{stroke:var(--gold-500)}
+  .ring-stroke{stroke:#3A4470}
+
+  /* ===== 布局 ===== */
+  .app{display:block;min-height:100vh}
+  .rail{display:none}
+  .content{min-height:100vh}
+  .wrap{max-width:var(--content-max);margin:0 auto;padding:0 20px 96px}
+
+  /* ===== 顶部固定 Banner（随主题换色，移动/平板端） ===== */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;position:sticky;top:0;z-index:6;
+    background:var(--skin-banner);color:var(--skin-banner-ink);
+    box-shadow:0 1px 0 var(--gold-500), 0 6px 18px rgba(26,33,56,.20);
+  }
+  .brand{font-family:var(--font-serif);font-weight:700;font-size:18px;color:var(--skin-banner-ink);letter-spacing:.04em}
+  .brand .dot{color:var(--gold-300)}
+  .menu-trigger{font-size:20px;color:var(--skin-banner-ink);padding:4px 8px;border-radius:var(--radius-sm);border:1px solid currentColor;line-height:1}
+
+  /* 移动端页面菜单 */
+  .page-menu{position:fixed;top:56px;right:12px;z-index:30;width:220px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+    box-shadow:0 12px 30px rgba(26,33,56,.18);overflow:hidden;display:none}
+  .page-menu.open{display:block}
+  .page-menu a{display:block;padding:12px 18px;font-size:14px;color:var(--ink-600);border-bottom:1px solid var(--border)}
+  .page-menu a:last-child{border-bottom:none}
+  .page-menu a.active{background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:600}
+  .page-menu a:hover{background:var(--ink-50)}
+
+  /* ===== 星象沉浸栏（桌面） ===== */
+  .rail{background:radial-gradient(120% 90% at 50% 0%, #232C49 0%, var(--ink-900) 70%);
+    color:#EDEAF6;flex-direction:column;position:sticky;top:0;height:100vh;padding:0;overflow:hidden}
+  .rail-head{background:var(--skin-banner);color:var(--skin-banner-ink);padding:28px 28px 22px;position:relative;flex:none}
+  .rail-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold-300);opacity:.6}
+  .rail-head .brand{color:var(--skin-banner-ink);font-size:22px}
+  .rail-head .brand .dot{color:var(--gold-300)}
+  .rail-mode{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 14px;border-radius:var(--radius-pill);
+    background:var(--skin-tag-bg);color:var(--skin-banner-ink);border:1px solid currentColor;font-size:13px;font-weight:500;align-self:flex-start;opacity:.94}
+  .rail-mode .dotm{width:8px;height:8px;border-radius:50%;background:var(--skin-banner-ink)}
+  .rail-nav{display:flex;flex-direction:column;gap:6px;margin-top:24px;font-size:15px;padding:0 18px}
+  .rail-nav a{color:#C9C6DA;padding:9px 12px;border-radius:var(--radius-sm);transition:.2s var(--ease)}
+  .rail-nav a.active{color:#fff;background:rgba(184,137,62,.16);font-weight:600}
+  .rail-nav a:hover{color:#fff;background:rgba(184,137,62,.10)}
+  .starfield{position:absolute;inset:0;pointer-events:none;z-index:0}
+  .star{position:absolute;border-radius:50%;background:var(--gold-500);opacity:.5;animation:twinkle 4s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.18}50%{opacity:.7}}
+  .rail-inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;padding:28px}
+  .rail-foot{margin-top:auto;font-size:11px;color:#8E8AA6;line-height:1.7}
+  .rail-foot .seal{display:inline-flex;align-items:center;gap:8px;color:var(--gold-300)}
+
+  /* ===== 通用组件 ===== */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;
+    border-radius:var(--radius-md);font-size:16px;font-weight:500;transition:transform var(--dur) var(--ease),background .2s}
+  .btn:active{transform:scale(.95)}
+  .btn-primary{background:var(--skin-accent);color:var(--skin-accent-ink);box-shadow:0 4px 16px rgba(26,33,56,.20)}
+  .btn-primary:hover{filter:brightness(1.07);transform:scale(1.03)}
+  .btn-block{width:100%}
+  .btn-ghost{color:var(--ink-500);border:1px solid var(--border);background:var(--surface);padding:12px 22px;font-size:14px}
+  .btn-ghost:hover{border-color:var(--ink-300)}
+  .btn-sm{padding:9px 16px;font-size:14px}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+  .eyebrow{font-size:12px;letter-spacing:.18em;color:var(--gold-600);text-transform:uppercase;font-weight:500}
+  .eyebrow.cn{letter-spacing:.3em}
+  .page-title{font-family:var(--font-serif);font-weight:700;font-size:26px;color:var(--ink-700);margin:8px 0 4px}
+  .page-sub{font-size:14px;color:var(--text-2);margin-bottom:24px}
+  .crumb{font-size:13px;color:var(--text-3);padding:24px 0 4px}
+  .crumb a{color:var(--ink-500)}
+
+  /* ===== 落地页 ===== */
+  .hero{padding:40px 0 16px;display:grid;gap:32px;grid-template-columns:1fr;position:relative;z-index:0}
+  .hero::before{content:"";position:absolute;z-index:-1;top:-28px;right:-28px;width:300px;height:300px;border-radius:50%;
+    background:radial-gradient(circle,var(--skin-accent-soft),transparent 68%);pointer-events:none}
+  .hero h1{font-family:var(--font-serif);font-weight:700;font-size:32px;color:var(--ink-700);line-height:1.25;margin:12px 0}
+  .hero .tag{display:inline-block;font-size:13px;letter-spacing:.04em;margin-bottom:12px;padding:6px 14px;border-radius:var(--radius-pill);
+    background:var(--skin-accent-soft);color:var(--skin-accent);border:1px solid var(--skin-accent);font-weight:500}
+  .hero p.lead{font-size:16px;color:var(--text-2);max-width:46ch}
+  .hero .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;align-items:center}
+  .hero .note{font-size:12px;color:var(--text-3)}
+  .rail-mode-mini{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 14px;border-radius:var(--radius-pill);
+    background:var(--skin-tag-bg);color:var(--skin-banner-ink);border:1px solid currentColor;font-size:13px;font-weight:500}
+  .rail-mode-mini .dotm{width:8px;height:8px;border-radius:50%;background:var(--skin-banner-ink)}
+  .starmap{width:100%;max-width:340px;margin:0 auto;aspect-ratio:1}
+  .features{display:grid;gap:16px;grid-template-columns:1fr;margin:32px 0}
+  .feature{padding:20px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--skin-accent);box-shadow:var(--shadow-card)}
+  .feature .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--skin-accent-soft);color:var(--skin-accent);margin-bottom:12px;font-size:18px}
+  .feature h3{font-family:var(--font-serif);font-size:18px;color:var(--ink-700);font-weight:600;margin-bottom:6px}
+  .feature p{font-size:14px;color:var(--text-2)}
+
+  /* ===== 命盘 / 综合解读 ===== */
+  .result-grid{display:grid;gap:24px;grid-template-columns:1fr;margin-top:8px;position:relative;z-index:0}
+  .result-grid::before{content:"";position:absolute;z-index:-1;top:-10px;left:-20px;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,var(--skin-accent-soft),transparent 70%);pointer-events:none}
+  .plate-card{padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative}
+  .fate-plate{width:100%;max-width:320px;aspect-ratio:1}
+  .plate-cap{font-family:var(--font-serif);font-size:15px;color:var(--ink-700);letter-spacing:.08em}
+  .trend-card{padding:20px 22px;margin-bottom:16px;border-left:3px solid var(--skin-accent)}
+  .trend-good{background:var(--skin-accent-soft)}
+  .trend-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .trend-badge{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none}
+  .trend-good .trend-badge{background:var(--skin-accent-soft);color:var(--skin-accent)}
+  .trend-flat .trend-badge{background:var(--ink-50);color:var(--ink-500)}
+  .trend-bad .trend-badge{background:rgba(178,58,58,.10);color:var(--cinnabar)}
+  .trend-title{font-family:var(--font-serif);font-size:18px;font-weight:600;color:var(--ink-700)}
+  .trend-card p{font-size:15px;color:var(--text-2)}
+  .trend-good .trend-title{color:var(--skin-accent)}
+  .trend-flat .trend-title{color:var(--ink-600)}
+  .trend-bad .trend-title{color:var(--cinnabar-600)}
+  .ask{border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;gap:10px;background:var(--surface)}
+  .ask input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;background:transparent;color:var(--text-1)}
+  .ask .send{background:var(--skin-accent);color:var(--skin-accent-ink);border-radius:var(--radius-sm);padding:8px 16px;font-size:14px}
+
+  /* 免责星印（C8 通用封印意象） */
+  .disclaimer{display:flex;gap:12px;align-items:flex-start;margin-top:24px;padding:14px 16px;border:1px dashed var(--cinnabar);border-radius:var(--radius-md);background:rgba(178,58,58,.04)}
+  .seal{flex:none;width:30px;height:30px;border-radius:50%;background:var(--cinnabar);color:#fff;display:grid;place-items:center;font-family:var(--font-serif);font-size:14px;font-weight:700}
+  .disclaimer p{font-size:12px;color:var(--cinnabar-600);line-height:1.6}
+
+  /* ===== 注册 / 登录（页面 2） ===== */
+  .auth-wrap{max-width:380px;margin:48px auto 0;padding:0 16px}
+  .auth-card{padding:32px 28px}
+  .auth-tabs{display:flex;gap:8px;margin-bottom:22px}
+  .auth-tabs button{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:14px;color:var(--text-2);border:1px solid var(--border);background:var(--surface)}
+  .auth-tabs button.active{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);font-weight:600}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;color:var(--text-2);margin-bottom:6px}
+  .field input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;background:var(--surface);color:var(--text-1)}
+  .field input:focus{outline:none;border-color:var(--skin-accent)}
+  .captcha{display:none;gap:10px;align-items:center;margin-bottom:16px}
+  .captcha.show{display:flex}
+  .captcha .cap-box{width:96px;height:40px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--ink-700),var(--ink-900));
+    color:var(--gold-300);font-family:var(--font-latin-serif);font-size:20px;letter-spacing:.2em;display:grid;place-items:center;border:1px solid var(--gold-600)}
+  .captcha input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px}
+  .auth-hint{font-size:12px;color:var(--text-3);margin-top:14px;text-align:center}
+  .auth-hint.warn{color:var(--error)}
+
+  /* ===== 建档表单（页面 3 · 含 C2 步骤指示器） ===== */
+  .stepper{display:flex;align-items:center;gap:0;overflow-x:auto;padding:24px 0 8px;margin-bottom:8px;scrollbar-width:none}
+  .stepper::-webkit-scrollbar{display:none}
+  .step-node{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none}
+  .step-dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;
+    background:var(--surface);border:2px solid var(--border);color:var(--text-3);transition:.2s var(--ease)}
+  .step-node.active .step-dot{background:var(--skin-accent);border-color:var(--skin-accent);color:var(--skin-accent-ink);transform:scale(1.12);box-shadow:0 0 0 4px var(--skin-accent-soft)}
+  .step-node.done .step-dot{background:var(--skin-accent-soft);border-color:var(--skin-accent);color:var(--skin-accent)}
+  .step-label{font-size:11px;color:var(--text-3);white-space:nowrap}
+  .step-node.active .step-label,.step-node.done .step-label{color:var(--skin-accent)}
+  .step-line{width:34px;height:2px;background:var(--border);flex:none;margin:0 -2px 18px}
+  .step-line.done{background:var(--skin-accent)}
+  .step-panel{display:none;animation:fade .3s var(--ease)}
+  .step-panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .form-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .form-row .field{flex:1;min-width:120px;margin-bottom:0}
+  .computed{display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px dashed var(--skin-accent);border-radius:var(--radius-md);
+    background:var(--skin-accent-soft);color:var(--skin-accent);font-size:14px;margin-bottom:16px}
+  .computed .ic{font-size:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{padding:10px 16px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);font-size:14px;color:var(--text-2);transition:.2s var(--ease)}
+  .chip.active{background:var(--skin-accent);border-color:var(--skin-accent);color:var(--skin-accent-ink);font-weight:600}
+  .radio-row{display:flex;gap:12px}
+  .radio-row label{flex:1;padding:14px;border:1px solid var(--border);border-radius:var(--radius-md);text-align:center;cursor:pointer;font-size:15px;color:var(--text-2)}
+  .radio-row input{display:none}
+  .radio-row input:checked + span{color:var(--skin-accent);font-weight:600}
+  .radio-row label:has(input:checked){border-color:var(--skin-accent);background:var(--skin-accent-soft)}
+
+  /* ===== 断前尘等待（页面 4 · 含 C1 星象等待动画） ===== */
+  .dqc-stage{margin:32px auto 0;max-width:520px;padding:36px 24px;border-radius:var(--radius-lg);
+    background:radial-gradient(120% 90% at 50% 30%, #232C49 0%, var(--ink-900) 78%);color:#EDEAF6;box-shadow:var(--shadow-card)}
+  .dqc-plate{width:240px;height:240px;margin:0 auto;display:block}
+  .dqc-rings{transform-box:fill-box;transform-origin:center;animation:spin 70s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .s-pending{fill:var(--ink-700);opacity:.55}
+  .s-active{fill:var(--gold-500)}
+  .s-active-ring{fill:none;stroke:var(--gold-300);stroke-width:2;opacity:.9;animation:pulse 1.2s ease-in-out infinite}
+  .s-done{fill:var(--gold-300)}
+  @keyframes pulse{0%,100%{opacity:.3;r:9}50%{opacity:.9;r:13}}
+  .dqc-progress{text-align:center;margin-top:22px;font-family:var(--font-serif);font-size:20px;color:var(--gold-300);letter-spacing:.05em}
+  .dqc-method{text-align:center;margin-top:6px;font-size:14px;color:#C9C6DA}
+  .dqc-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.12);margin:18px auto 0;max-width:360px;overflow:hidden}
+  .dqc-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-600),var(--gold-300));transition:width .5s var(--ease)}
+  .dqc-status{text-align:center;margin-top:12px;font-size:12px;color:#8E8AA6;font-family:var(--font-latin-serif);letter-spacing:.04em}
+  .dqc-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;max-width:420px;margin-left:auto;margin-right:auto}
+  .dqc-list span{font-size:12px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(255,255,255,.06);color:#9FA3BC}
+  .dqc-list span.done{background:var(--skin-accent-soft);color:#fff}
+  .dqc-list span.active{background:var(--gold-600);color:#fff}
+
+  /* ===== 问卷校准（页面 5 · 含 C3 断言卡片） ===== */
+  .calib-summary{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 16px;border-radius:var(--radius-md);
+    background:var(--skin-accent-soft);color:var(--skin-accent);margin-bottom:20px;font-size:14px}
+  .calib-summary b{font-family:var(--font-serif);font-size:16px}
+  .calib-summary .gate{margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--radius-pill);
+    background:rgba(0,0,0,.12);color:inherit}
+  .calib-summary.ready .gate{background:var(--skin-accent);color:var(--skin-accent-ink)}
+  .assert{display:flex;gap:14px;padding:18px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);margin-bottom:14px;box-shadow:var(--shadow-card)}
+  .assert .domain{flex:none;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:12px;
+    background:var(--ink-50);color:var(--ink-500);line-height:1.2;padding:4px}
+  .assert .body{flex:1;min-width:0}
+  .assert .text{font-size:15px;color:var(--ink-700);margin-bottom:6px}
+  .assert .conf{font-size:12px;color:var(--text-3);margin-bottom:12px}
+  .assert .conf b{color:var(--skin-accent)}
+  .assert .acts{display:flex;gap:8px}
+  .act{flex:1;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);font-size:13px;color:var(--text-2);transition:.2s var(--ease)}
+  .act:hover{border-color:var(--ink-300)}
+  .act.sel-yes{background:var(--skin-accent);border-color:var(--skin-accent);color:var(--skin-accent-ink);font-weight:600}
+  .act.sel-no{background:var(--cinnabar);border-color:var(--cinnabar);color:#fff;font-weight:600}
+  .act.sel-edit{background:var(--gold-600);border-color:var(--gold-600);color:#fff;font-weight:600}
+  .assert .edit-box{margin-top:10px;display:none}
+  .assert .edit-box.show{display:block}
+  .assert .edit-box input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px}
+
+  /* ===== 修正对话（页面 7 · 含 C5 对话气泡） ===== */
+  .revise-grid{display:grid;gap:24px;grid-template-columns:1fr;margin-top:8px}
+  .chat{display:flex;flex-direction:column;gap:14px;max-height:60vh;overflow-y:auto;padding:4px}
+  .bubble{max-width:80%;padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.55}
+  .bubble .who{font-size:11px;opacity:.6;margin-bottom:4px;display:block}
+  .bubble.user{align-self:flex-end;background:var(--skin-accent);color:var(--skin-accent-ink);border-bottom-right-radius:4px}
+  .bubble.taichu{align-self:flex-start;background:var(--surface);border:1px solid var(--border);color:var(--text-1);border-bottom-left-radius:4px;position:relative}
+  .bubble.taichu::before{content:"";position:absolute;left:14px;top:-6px;width:10px;height:10px;border-radius:50%;
+    background:radial-gradient(circle,var(--gold-300) 0 2px,transparent 3px) , radial-gradient(circle,#fff 0 2px,transparent 3px);
+    background-size:5px 5px;opacity:.5}
+  .summary-card{padding:20px;position:sticky;top:88px}
+  .summary-card .mini-plate{width:120px;height:120px;margin:0 auto 12px;display:block}
+  .summary-card .kv{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)}
+  .summary-card .kv:last-child{border-bottom:none}
+  .summary-card .kv span:first-child{color:var(--text-3)}
+  .summary-card .kv span:last-child{color:var(--ink-700);font-weight:500}
+
+  /* ===== 命理档案（页面 8） ===== */
+  .archive-grid{display:grid;gap:16px;grid-template-columns:1fr;margin-top:8px}
+  .case-card{display:flex;gap:16px;padding:18px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);box-shadow:var(--shadow-card);cursor:pointer;transition:.2s var(--ease)}
+  .case-card:hover{border-color:var(--skin-accent);transform:translateY(-2px)}
+  .case-thumb{flex:none;width:64px;height:64px;border-radius:var(--radius-md);background:radial-gradient(120% 90% at 50% 30%,#232C49,var(--ink-900));display:grid;place-items:center}
+  .case-thumb svg{width:48px;height:48px}
+  .case-body{flex:1;min-width:0}
+  .case-date{font-size:12px;color:var(--text-3)}
+  .case-q{font-family:var(--font-serif);font-size:16px;color:var(--ink-700);margin:2px 0 6px}
+  .case-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-2)}
+  .case-tag{padding:3px 10px;border-radius:var(--radius-pill);background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:500}
+  .case-arrow{color:var(--text-3);align-self:center}
+
+  /* ===== 皮肤切换器（C7） ===== */
+  .skin-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:40;
+    display:flex;gap:4px;padding:5px;background:rgba(247,244,236,.92);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-radius:999px;box-shadow:var(--shadow-card)}
+  .skin-switch button{font-size:13px;padding:8px 16px;border-radius:999px;color:var(--text-2);transition:.2s var(--ease)}
+  .skin-switch button:hover{color:var(--ink-700)}
+  .skin-switch button.active{background:var(--skin-banner);color:var(--skin-banner-ink)}
+
+  /* ===== 响应式 ===== */
+  @media(min-width:576px){.features{grid-template-columns:repeat(3,1fr)}}
+  @media(min-width:992px){
+    .hero{grid-template-columns:1.05fr .95fr;align-items:center}
+    .archive-grid{grid-template-columns:1fr 1fr}
+  }
+  @media(min-width:1200px){
+    .app{display:grid;grid-template-columns:var(--rail-width) 1fr}
+    .rail{display:flex}
+    .topbar,.page-menu{display:none}
+    .wrap{max-width:var(--content-max)}
+    .result-grid{grid-template-columns:1fr 1fr;align-items:start}
+    .plate-card{position:sticky;top:88px}
+    .revise-grid{grid-template-columns:1fr 320px;align-items:start}
+    .summary-card{position:sticky;top:88px}
+  }
+  /* ===== 全局 Toast 轻提示 ===== */
+  .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:84px;z-index:90;background:var(--ink-800);color:#F3EEDF;
+    padding:12px 20px;border-radius:var(--radius-pill);font-size:13.5px;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.24);
+    opacity:0;pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease);max-width:88vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== P2-1 皮肤切换器置灰（MVP 仅国学） ===== */
+  .skin-switch button:disabled{opacity:.38;cursor:not-allowed;color:var(--text-3)!important;background:transparent!important}
+  .skin-switch button .soon{font-size:10px;opacity:.7;margin-left:4px;letter-spacing:.02em}
+
+  /* ===== P1-4 降级法提示 ===== */
+  .degraded-note{display:none;align-items:flex-start;gap:10px;padding:14px 16px;margin:0 0 18px;border-radius:var(--radius-md);
+    background:rgba(192,57,43,.07);border:1px solid rgba(192,57,43,.26)}
+  .degraded-note.show{display:flex}
+  .degraded-note .di{flex:none;font-size:18px;line-height:1.3;color:var(--error)}
+  .degraded-note b{color:var(--error)}
+  .chk-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);margin:10px 0 4px;cursor:pointer}
+
+  /* ===== P1-2 登录锁定提示 ===== */
+  .lock-banner{display:none;margin-top:12px;padding:12px 14px;border-radius:var(--radius-md);background:rgba(192,57,43,.08);
+    border:1px solid rgba(192,57,43,.3);font-size:13px;color:var(--error);text-align:center}
+  .lock-banner.show{display:block}
+  .lock-banner b{font-variant-numeric:tabular-nums}
+  .auth-session{margin-top:10px;text-align:center;font-size:12px;color:var(--text-3)}
+  .auth-session a{color:var(--gold-600);cursor:pointer;text-decoration:underline dotted}
+
+  /* ===== P2-3 两段式进度（本地排盘→九法推演） ===== */
+  .two-stage{display:flex;align-items:center;gap:10px;margin:6px 0 28px;flex-wrap:wrap}
+  .ts-step{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text-3)}
+  .ts-dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:var(--ink-50);color:var(--text-3);border:1px solid var(--border)}
+  .ts-step.done .ts-dot{background:var(--skin-accent);color:#fff;border-color:var(--skin-accent)}
+  .ts-step.active .ts-dot{background:var(--gold-500);color:#1F1F26;border-color:var(--gold-500);box-shadow:0 0 0 3px rgba(184,137,62,.22)}
+  .ts-step.done,.ts-step.active{color:var(--ink-700)}
+  .ts-line{width:36px;height:1px;background:var(--border)}
+
+  /* ===== P2-2 修正页质疑标记 ===== */
+  .bubble .flag-btn{float:right;margin:-2px 0 0 10px;border:1px solid var(--border);background:var(--surface);border-radius:999px;
+    font-size:11px;padding:2px 9px;color:var(--text-2);cursor:pointer;transition:.2s var(--ease)}
+  .bubble .flag-btn:hover{border-color:var(--error);color:var(--error)}
+  .bubble.flagged{border-color:var(--error)!important;background:rgba(192,57,43,.05)!important}
+  .bubble.flagged .flag-btn{background:var(--error);color:#fff;border-color:var(--error)}
+  .flag-summary{font-size:12.5px;color:var(--text-2);margin-top:12px;display:none}
+  .flag-summary.show{display:block}
+  .flag-summary b{color:var(--error)}
+
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 星象沉浸栏（桌面） -->
+  <aside class="rail">
+    <div class="starfield" id="starfield"></div>
+    <div class="rail-inner">
+      <div class="rail-head">
+        <div class="brand" data-brand>太初<span class="dot">·</span>国学运势</div>
+        <div class="rail-mode" id="railMode"><span class="dotm"></span><span id="railModeName">国学运势</span></div>
+      </div>
+      <nav class="rail-nav" id="railNav">
+        <a href="#" data-nav="landing" class="active">① 落地页</a>
+        <a href="#" data-nav="auth">② 注册 / 登录</a>
+        <a href="#" data-nav="onboard">③ 建档表单</a>
+        <a href="#" data-nav="duanqianchen">④ 断前尘等待</a>
+        <a href="#" data-nav="calibrate">⑤ 问卷校准</a>
+        <a href="#" data-nav="result">⑥ 命盘解读</a>
+        <a href="#" data-nav="revise">⑦ 修正对话</a>
+        <a href="#" data-nav="archive">⑧ 命理档案</a>
+      </nav>
+      <div class="rail-foot">
+        <div class="seal">印</div>
+        <div>本结果为运势趋势参考，非确定结论；<br/>禁医疗、投资、司法预测。</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 内容区 -->
+  <main class="content">
+    <div class="topbar">
+      <div class="brand" data-brand>太初<span class="dot">·</span>国学运势</div>
+      <button class="menu-trigger" id="menuTrigger" aria-label="页面菜单">☰</button>
+    </div>
+    <div class="page-menu" id="pageMenu">
+      <a href="#" data-nav="landing" class="active">① 落地页</a>
+      <a href="#" data-nav="auth">② 注册 / 登录</a>
+      <a href="#" data-nav="onboard">③ 建档表单</a>
+      <a href="#" data-nav="duanqianchen">④ 断前尘等待</a>
+      <a href="#" data-nav="calibrate">⑤ 问卷校准</a>
+      <a href="#" data-nav="result">⑥ 命盘解读</a>
+      <a href="#" data-nav="revise">⑦ 修正对话</a>
+      <a href="#" data-nav="archive">⑧ 命理档案</a>
+    </div>
+
+    <!-- ① 落地页 -->
+    <section id="view-landing" class="view">
+      <div class="wrap">
+        <div class="hero">
+          <div class="hero-text">
+            <div class="tag serif" id="heroTag">多流派综合 · 可修正 · 随时问</div>
+            <h1 class="serif" id="heroH1">事业运势<br/>趋势参考</h1>
+            <p class="lead" id="heroLead">融合八字、紫微、六爻等多家流派，为您推演事业运势的方向与节奏。结果仅作文化参考，不承诺确定性结论，可随信息补充持续修正。</p>
+            <div class="cta-row">
+              <button class="btn btn-primary" id="startBtn">开始我的事业运势</button>
+              <a class="note" href="#" data-nav="archive">已有档案？查看命理档案</a>
+            </div>
+            <div class="rail-mode-mini" id="heroMode"><span class="dotm"></span><span>当前：国学运势</span></div>
+          </div>
+          <div class="hero-visual">
+            <svg class="starmap" id="heroMap" viewBox="0 0 340 340" role="img" aria-label="星象示意"></svg>
+          </div>
+        </div>
+        <div class="features" id="features"></div>
+        <div class="disclaimer">
+          <div class="seal">印</div>
+          <p>本平台提供命理文化与国学运势的<b>趋势参考</b>，不构成医疗、投资、司法预测，亦不承诺具体结果。请理性看待，仅供文化娱乐参考。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ② 注册 / 登录 -->
+    <section id="view-auth" class="view hidden">
+      <div class="wrap">
+        <div class="auth-wrap">
+          <div class="card auth-card">
+            <div class="eyebrow cn">太初 · 账户</div>
+            <h2 class="page-title" id="authTitle">登录</h2>
+            <div class="auth-tabs">
+              <button id="tabLogin" class="active" data-mode="login">登录</button>
+              <button id="tabReg" data-mode="register">注册</button>
+            </div>
+            <div class="field">
+              <label>用户名 / 手机号</label>
+              <input type="text" placeholder="请输入用户名" aria-label="用户名" />
+            </div>
+            <div class="field" id="regField" style="display:none">
+              <label>确认密码</label>
+              <input type="password" placeholder="请再次输入密码" aria-label="确认密码" />
+            </div>
+            <div class="field">
+              <label>密码</label>
+              <input type="password" placeholder="请输入密码" aria-label="密码" />
+            </div>
+            <div class="captcha" id="captcha">
+              <div class="cap-box" id="capCode">8K2P</div>
+              <input type="text" id="capInput" placeholder="输入图中字符" aria-label="验证码" />
+            </div>
+            <button class="btn btn-primary btn-block" id="authSubmit">登录</button>
+            <div class="lock-banner" id="lockBanner"></div>
+            <div class="auth-hint" id="authHint">登录失败 3 次将触发图形验证码（演示：输入正确码 8K2P 后通过）。</div>
+            <div class="auth-session"><a id="simSession">模拟会话过期 / refresh 失败</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ 建档表单 -->
+    <section id="view-onboard" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="landing">首页</a> / 建档表单</div>
+        <div class="eyebrow cn">太初 · 立命</div>
+        <h2 class="page-title">建立您的命理档案</h2>
+        <div class="page-sub">信息用于本地排盘推演，全程加密，可作趋势参考。</div>
+
+        <div class="stepper" id="stepper"></div>
+
+        <div class="card" style="padding:24px">
+          <!-- step 0 生辰 -->
+          <div class="step-panel active" data-step="0">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">出生时间</h3>
+            <div class="form-row">
+              <div class="field"><label>出生日期</label><input type="date" value="1990-05-12" aria-label="出生日期" /></div>
+              <div class="field"><label>出生时辰</label>
+                <select aria-label="出生时辰" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:#fff">
+                  <option>子时 23–1</option><option>丑时 1–3</option><option selected>卯时 5–7</option>
+                  <option>辰时 7–9</option><option>巳时 9–11</option><option>午时 11–13</option><option>未时 13–15</option><option>申时 15–17</option><option>酉时 17–19</option><option>戌时 19–21</option><option>亥时 21–23</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- step 1 性别 -->
+          <div class="step-panel" data-step="1">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">性别</h3>
+            <div class="radio-row">
+              <label><input type="radio" name="gender" checked /><span>男</span></label>
+              <label><input type="radio" name="gender" /><span>女</span></label>
+            </div>
+          </div>
+          <!-- step 2 出生地 -->
+          <div class="step-panel" data-step="2">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">出生地</h3>
+            <div class="field"><label>城市 / 地区</label><input type="text" value="北京" aria-label="出生地" id="birthPlace" /></div>
+            <div class="computed"><span class="ic">⌖</span><span>已据出生地自动解析经纬度（下一步展示）</span></div>
+          </div>
+          <!-- step 3 经纬度 -->
+          <div class="step-panel" data-step="3">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">经纬度（自动解析）</h3>
+            <div class="computed"><span class="ic">⌖</span><span>东经 116.40° · 北纬 39.90°（据「北京」自动解析，可手动微调）</span></div>
+            <label class="chk-row"><input type="checkbox" id="degToggle" /> 模拟缺失经纬度（降级演示：占星 / 七政维度暂不可用）</label>
+            <div class="form-row">
+              <div class="field"><label>经度</label><input type="text" value="116.40" aria-label="经度" /></div>
+              <div class="field"><label>纬度</label><input type="text" value="39.90" aria-label="纬度" /></div>
+            </div>
+          </div>
+          <!-- step 4 真太阳时 -->
+          <div class="step-panel" data-step="4">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">真太阳时（自动校正）</h3>
+            <div class="computed"><span class="ic">☉</span><span>真太阳时：卯时（已据生辰 + 经度校正，平太阳时偏差 −14 分）</span></div>
+          </div>
+          <!-- step 5 主问 -->
+          <div class="step-panel" data-step="5">
+            <h3 class="serif" style="font-size:18px;color:var(--ink-700);margin-bottom:16px">本次主问方向</h3>
+            <div class="chips" id="mainAsk">
+              <button class="chip active">事业运势</button>
+              <button class="chip">人际运势</button>
+              <button class="chip">财运</button>
+              <button class="chip">感情家庭</button>
+              <button class="chip">健康</button>
+              <button class="chip">学业</button>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:24px;margin-bottom:0">
+            <button class="btn btn-ghost btn-sm" id="stepBack" disabled>上一步</button>
+            <button class="btn btn-primary btn-sm" id="stepNext" style="margin-left:auto">下一步</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ④ 断前尘等待 -->
+    <section id="view-duanqianchen" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="onboard">建档</a> / 断前尘</div>
+        <div class="eyebrow cn">太初 · 断前尘</div>
+        <h2 class="page-title">多流派并行推演中</h2>
+        <div class="page-sub">本地确定性排盘 + 多流派综合，逐法点亮，预计数十秒。</div>
+        <div class="two-stage">
+          <div class="ts-step" id="stage1"><span class="ts-dot">1</span>本地排盘完成（秒级）</div>
+          <div class="ts-line"></div>
+          <div class="ts-step" id="stage2"><span class="ts-dot">2</span>九法并行推演中</div>
+        </div>
+        <div class="dqc-stage">
+          <svg class="dqc-plate" id="dqcPlate" viewBox="0 0 240 240" role="img" aria-label="九法推演星盘"></svg>
+          <div class="dqc-progress" id="dqcProgress">已完成 0 / 9</div>
+          <div class="dqc-method" id="dqcMethod">正在推演：八字</div>
+          <div class="dqc-bar"><i id="dqcBar"></i></div>
+          <div class="dqc-status" id="dqcStatus">jobs.status: running · polling…</div>
+          <div class="dqc-list" id="dqcList"></div>
+        </div>
+        <div style="text-align:center;margin-top:24px">
+          <button class="btn btn-primary" id="dqcEnter" style="display:none">进入问卷校准 →</button>
+          <button class="btn btn-ghost btn-sm" id="dqcFail" style="margin-left:8px">⚠ 模拟长任务失败</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤ 问卷校准 -->
+    <section id="view-calibrate" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="duanqianchen">断前尘</a> / 问卷校准</div>
+        <div class="eyebrow cn">太初 · 校准</div>
+        <h2 class="page-title">校准您的命盘</h2>
+        <div class="page-sub">以下为系统推断，请确认、否认或修正，以提升推演贴合度。</div>
+        <div class="calib-summary" id="calibSummary">
+          <span>已确认 <b id="cYes">0</b></span>
+          <span>已否认 <b id="cNo">0</b></span>
+          <span>待校准 <b id="cPend">7</b></span>
+          <span>命中率 <b id="cHit">0%</b></span>
+          <span class="gate" id="calibGate">未达放行 · 需命中率≥70% 且确认「盘对了」</span>
+        </div>
+        <div id="assertList"></div>
+        <!-- P0-2 校准完备门控 + 兜底 -->
+        <div style="margin-bottom:20px">
+          <button class="btn btn-ghost btn-sm" id="plateConfirm">我确认命盘基本准确 ✓</button>
+        </div>
+        <div class="card" id="gatePanel" style="display:none;padding:20px;margin-bottom:20px;border-color:var(--cinnabar)">
+          <div class="serif" style="font-size:16px;color:var(--cinnabar-600);margin-bottom:8px">校准未达放行条件</div>
+          <p style="font-size:14px;color:var(--text-2);margin-bottom:14px" id="gateReason"></p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <button class="btn btn-ghost btn-sm" id="fbAbandon">放弃对盘 · 直接解读（降置信度）</button>
+            <button class="btn btn-ghost btn-sm" id="fbReorder">系统性不中 · ±1 时辰重排对比</button>
+            <button class="btn btn-ghost btn-sm" id="fbTerminate">盘对不上 · 终止并返回建档</button>
+          </div>
+          <div class="card" id="reorderPanel" style="display:none;margin-top:14px;padding:14px;background:var(--skin-accent-soft);border-color:var(--skin-accent)">
+            <div style="font-size:14px;color:var(--ink-700)">重排对比（演示）</div>
+            <div style="font-size:13px;color:var(--text-2);margin:6px 0">原推演时辰：卯时（05–07） → 重排后：辰时（07–09）</div>
+            <button class="btn btn-primary btn-sm" id="reorderGo">据此继续推演 →</button>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:20px">
+          <button class="btn btn-primary" id="calibDone">查看综合解读 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤·⅔ 预测异步等待态（P0-1：校准后 → 趋势推演 → 命盘解读） -->
+    <section id="view-forecast" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="calibrate">问卷校准</a> / 趋势推演</div>
+        <div class="eyebrow cn">太初 · 趋势推演</div>
+        <h2 class="page-title">综合运势推演中</h2>
+        <div class="page-sub">依据校准命盘，多维度综合推演事业运势趋势，预计数十秒。</div>
+        <div class="dqc-stage">
+          <svg class="dqc-plate" id="fcPlate" viewBox="0 0 240 240" role="img" aria-label="趋势推演星盘"></svg>
+          <div class="dqc-progress" id="fcProgress">已完成 0 / 6</div>
+          <div class="dqc-method" id="fcMethod">正在推演：事业运势</div>
+          <div class="dqc-bar"><i id="fcBar"></i></div>
+          <div class="dqc-status" id="fcStatus">jobs.status: running · polling…</div>
+          <div class="dqc-list" id="fcList"></div>
+        </div>
+        <div style="text-align:center;margin-top:24px">
+          <button class="btn btn-primary" id="fcEnter" style="display:none">进入综合解读 →</button>
+          <button class="btn btn-ghost btn-sm" id="fcFail" style="margin-left:8px">⚠ 模拟长任务失败</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 长任务失败 / 超时态兜底页（P0-3） -->
+    <section id="view-fallback" class="view hidden">
+      <div class="wrap">
+        <div class="card" style="max-width:460px;margin:64px auto 0;padding:32px;text-align:center">
+          <div class="seal" style="margin:0 auto 16px;width:46px;height:46px;font-size:20px">⚠</div>
+          <h2 class="page-title" id="fbTitle">推演任务未成功</h2>
+          <p class="page-sub" id="fbDesc" style="margin-bottom:20px"></p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" id="fbRetry">重新推演</button>
+            <button class="btn btn-ghost" id="fbBack">返回建档</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑥ 命盘 / 综合解读 -->
+    <section id="view-result" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="forecast">趋势推演</a> / 命盘解读</div>
+        <div class="degraded-note" id="degNote"><span class="di">⚠</span><div><b>部分维度暂不可用：</b>检测到缺少经度信息，占星 / 七政四余等依赖经纬的流派维度已屏蔽；依赖时辰的前三柱置信度下降。以下解读仅基于可用维度，仅供参考。</div></div>
+        <div class="result-grid">
+          <div class="card plate-card">
+            <svg class="fate-plate" id="fatePlate" viewBox="0 0 320 320" role="img" aria-label="命盘可视化"></svg>
+            <div class="plate-cap serif" id="plateCap">命盘星盘 · 九法并行</div>
+          </div>
+          <div class="result-detail">
+          <div class="card" id="lowConfNote" style="display:none;padding:14px 16px;margin-bottom:16px;border-left:3px solid var(--cinnabar);background:rgba(178,58,58,.06)">
+            <div class="serif" style="font-size:15px;color:var(--cinnabar-600)">校准置信度偏低 · 仅供参考</div>
+            <p style="font-size:13px;color:var(--text-2);margin-top:4px">命盘校准未完全达到放行条件，以下解读为低置信度参考，建议补全信息后重新推演。</p>
+          </div>
+            <div class="card trend-card trend-good">
+              <div class="trend-head">
+                <div class="trend-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l7-7 7 7"/></svg></div>
+                <div class="trend-title serif">总体趋势 · 温和上扬</div>
+              </div>
+              <p>多流派综合显示，未来一年事业运势整体呈温和上扬趋势，宜把握春季关键节点，循序渐进。</p>
+            </div>
+            <div class="card trend-card trend-flat">
+              <div class="trend-head">
+                <div class="trend-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></div>
+                <div class="trend-title serif">事业运势趋势参考</div>
+              </div>
+              <p>人际与贵人运势存在阶段性波动，建议以稳为主、避免冒进；可随您补充的反馈持续修正推演。以上为趋势参考，非确定结论。</p>
+            </div>
+            <div class="card trend-card trend-bad">
+              <div class="trend-head">
+                <div class="trend-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+                <div class="trend-title serif">风险提示 · 忌冒进</div>
+              </div>
+              <p>第四季度易因急于求成而出现判断偏差，重大决定建议多方验证，本平台不作投资引导。</p>
+            </div>
+            <div class="ask">
+              <input placeholder="就事业运势继续追问或修正…" aria-label="追问修正" />
+              <button class="send" data-go="revise">发送</button>
+            </div>
+            <div class="disclaimer">
+              <div class="seal">印</div>
+              <p>本结果为运势趋势参考，非确定结论；禁医疗、投资、司法预测。命理文化仅供娱乐与自我观照。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑦ 修正对话 -->
+    <section id="view-revise" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="result">命盘解读</a> / 修正对话</div>
+        <div class="revise-grid">
+          <div>
+            <div class="card" style="padding:20px">
+              <div class="eyebrow cn">太初 · 追问</div>
+              <h2 class="page-title" style="font-size:22px">随时问 · 持续修正</h2>
+              <div class="chat" id="chat">
+                <div class="bubble taichu"><span class="who">太初</span>根据您的命盘与校准信息，事业运势整体呈温和上扬。您想就哪方面进一步追问？</div>
+                <div class="bubble user"><span class="who">您</span>我今年想换工作，时机合适吗？</div>
+                <div class="bubble taichu"><span class="who">太初</span>综合多流派推演，今秋贵人运走强，宜在农历七月后启动。可补充行业方向，推演更精准。</div>
+              </div>
+              <div class="flag-summary" id="flagSummary"></div>
+              <div class="ask" style="margin-top:14px">
+                <input id="chatInput" placeholder="继续追问或修正…" aria-label="追问输入" />
+                <button class="send" id="chatSend">发送</button>
+              </div>
+            </div>
+          </div>
+          <div class="card summary-card">
+            <svg class="mini-plate" id="miniPlate" viewBox="0 0 320 320" role="img" aria-label="命盘缩略"></svg>
+            <div class="kv"><span>生辰</span><span>1990-05-12 卯时</span></div>
+            <div class="kv"><span>真太阳时</span><span>卯时</span></div>
+            <div class="kv"><span>命宫</span><span>紫微 · 寅</span></div>
+            <div class="kv"><span>主问</span><span>事业运势</span></div>
+            <div class="kv"><span>流派</span><span>多流派综合</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑧ 命理档案 -->
+    <section id="view-archive" class="view hidden">
+      <div class="wrap">
+        <div class="crumb"><a href="#" data-nav="result">命盘解读</a> / 命理档案</div>
+        <div class="eyebrow cn">太初 · 档案</div>
+        <h2 class="page-title">我的命理档案</h2>
+        <div class="page-sub">历次推演记录，可随时回看与继续追问。</div>
+        <div class="archive-grid" id="archiveGrid"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 皮肤切换器（C7） -->
+<div class="skin-switch" role="group" aria-label="预测手段皮肤切换">
+  <button data-skin-btn="guoxue" class="active" aria-pressed="true">国学</button>
+  <button data-skin-btn="astrology" aria-pressed="false" disabled>西式占星<span class="soon">敬请期待</span></button>
+  <button data-skin-btn="tarot" aria-pressed="false" disabled>塔罗<span class="soon">敬请期待</span></button>
+</div>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const rand = (a,b)=>a+Math.random()*(b-a);
+  const el = (tag, attrs, parent)=>{
+    const e = document.createElementNS(NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    if(parent) parent.appendChild(e);
+    return e;
+  };
+
+  // 各皮肤文案与母题配置
+  const SKIN = {
+    guoxue:{
+      brand:'国学运势', modeName:'国学运势', tag:'多流派综合 · 可修正 · 随时问',
+      h1a:'事业运势', h1b:'趋势参考',
+      lead:'融合八字、紫微、六爻等多家流派，为您推演事业运势的方向与节奏。结果仅作文化参考，不承诺确定性结论，可随信息补充持续修正。',
+      plateCap:'命盘星盘 · 九法并行',
+      loader:'正在为您综合九流派推演…', modeLabel:'当前：国学运势',
+      features:[
+        {ic:'✶',h:'多流派综合',p:'八字 / 紫微 / 六爻等并行推演，单一师傅通常只精一种，我们综合呈现。'},
+        {ic:'◑',h:'可修正',p:'补充信息后结果可迭代收敛，逐步贴近您预期的“准”，而非一次定论。'},
+        {ic:'☾',h:'随时问',p:'线上服务突破预约与时空限制，事业起伏时随时回来追问与修正。'}
+      ]
+    },
+    astrology:{
+      brand:'西式占星', modeName:'西式占星', tag:'星盘推演 · 可修正 · 随时问',
+      h1a:'事业运势', h1b:'星盘参考',
+      lead:'依据您的出生星盘，综合太阳、上升与十行星相位，推演事业运势的节律与关键天象。结果仅为趋势参考，可随信息补充持续修正。',
+      plateCap:'本命星盘 · 十二宫',
+      loader:'正在为您排布本命星盘…', modeLabel:'当前：西式占星',
+      features:[
+        {ic:'☉',h:'多星体综合',p:'太阳 / 上升 / 十行星与十二宫并行推演，单一视角通常只取一面，我们综合呈现。'},
+        {ic:'◑',h:'可修正',p:'补充准确出生时间与地点后，星盘与相位可迭代收敛，而非一次定论。'},
+        {ic:'☾',h:'随时问',p:'线上服务突破预约与时空限制，天象流转时随时回来追问与修正。'}
+      ]
+    },
+    tarot:{
+      brand:'塔罗指引', modeName:'塔罗指引', tag:'牌阵指引 · 可修正 · 随时问',
+      h1a:'事业运势', h1b:'牌阵参考',
+      lead:'以经典牌阵为引，结合象征与直觉，为您映照事业运势的方向与卡点。结果仅为趋势参考，可随问题深化持续修正。',
+      plateCap:'牌阵天球 · 指引',
+      loader:'正在为您抽取牌阵…', modeLabel:'当前：塔罗指引',
+      features:[
+        {ic:'✦',h:'多牌阵综合',p:'大阿尔克纳 / 时间流 / 关系阵并行映照，单一牌往往只显一面，我们综合呈现。'},
+        {ic:'◑',h:'可修正',p:'更换提问角度或补充背景后，牌阵解读可迭代收敛，而非一次定论。'},
+        {ic:'☾',h:'随时问',p:'线上服务突破时空限制，心绪起伏时随时回来抽牌与追问。'}
+      ]
+    }
+  };
+
+  // 星幕（沉浸栏）
+  function starfield(){
+    const box = document.getElementById('starfield');
+    for(let i=0;i<70;i++){
+      const s = document.createElement('span');
+      s.className='star';
+      s.style.width = s.style.height = rand(1,2.6)+'px';
+      s.style.left = rand(0,100)+'%';
+      s.style.top = rand(0,100)+'%';
+      s.style.animationDelay = rand(0,4)+'s';
+      box.appendChild(s);
+    }
+  }
+
+  // 命盘可视化（C6 · 按皮肤切换母题）
+  function buildPlate(svg, skin){
+    const cx=160, cy=160;
+    svg.innerHTML='';
+    if(skin==='astrology'){
+      el('circle',{cx,cy,r:140,fill:'none',class:'gold-stroke','stroke-width':1.4,opacity:.85},svg);
+      el('circle',{cx,cy,r:112,fill:'none',class:'ring-stroke','stroke-width':1,opacity:.5},svg);
+      el('circle',{cx,cy,r:42,fill:'none',class:'acc-stroke','stroke-width':1.4,opacity:.85},svg);
+      const glyphs=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+      for(let i=0;i<12;i++){
+        const ang=(i/12)*Math.PI*2 - Math.PI/2;
+        const x1=cx+46*Math.cos(ang), y1=cy+46*Math.sin(ang);
+        const x2=cx+140*Math.cos(ang), y2=cy+140*Math.sin(ang);
+        el('line',{x1,y1,x2,y2,class:'gold-stroke','stroke-width':.7,opacity:.35},svg);
+        const gx=cx+126*Math.cos(ang), gy=cy+126*Math.sin(ang);
+        const t=el('text',{x:gx,y:gy+5,'text-anchor':'middle','font-size':15,fill:'#C9CBD3'},svg);
+        t.textContent=glyphs[i];
+      }
+      el('circle',{cx,cy,r:30,fill:'none',class:'acc-stroke','stroke-width':1.4},svg);
+      const sun=el('text',{x:cx,y:cy+8,'text-anchor':'middle','font-size':22,class:'acc'},svg);
+      sun.textContent='☉';
+    } else if(skin==='tarot'){
+      el('circle',{cx,cy,r:140,fill:'none',class:'gold-stroke','stroke-width':1.4,opacity:.85},svg);
+      el('circle',{cx,cy,r:118,fill:'none',class:'acc-stroke','stroke-width':1,opacity:.7},svg);
+      el('rect',{x:cx-44,y:cy-62,width:88,height:124,rx:10,fill:'none',class:'acc-stroke','stroke-width':1.4,opacity:.9},svg);
+      el('rect',{x:cx-36,y:cy-54,width:72,height:108,rx:7,fill:'none',class:'gold-stroke','stroke-width':.8,opacity:.5},svg);
+      for(let i=0;i<8;i++){
+        const ang=(i/8)*Math.PI*2;
+        const x=cx+100*Math.cos(ang), y=cy+100*Math.sin(ang);
+        const s=el('text',{x,y:y+5,'text-anchor':'middle','font-size':16,class:'acc'},svg);
+        s.textContent='✦';
+      }
+      const star=el('text',{x:cx,y:cy+8,'text-anchor':'middle','font-size':24,class:'acc'},svg);
+      star.textContent='✦';
+    } else {
+      [50,95,140].forEach((r,i)=>{
+        el('circle',{cx,cy,r,fill:'none',class:i===2?'gold-stroke':'ring-stroke','stroke-width':i===2?1.4:1,opacity:i===2?.8:.5},svg);
+      });
+      for(let i=0;i<9;i++){
+        const ang=(i/9)*Math.PI*2 - Math.PI/2;
+        const x=cx+110*Math.cos(ang), y=cy+110*Math.sin(ang);
+        el('circle',{cx:x,cy:y,r:4.5,class:'acc',opacity:1},svg);
+      }
+      el('circle',{cx,cy,r:7,class:'gold'},svg);
+      const label=el('text',{x:cx,y:cy+4,'text-anchor':'middle',fill:'#F3EEDF','font-size':11,'font-family':'var(--font-serif)'},svg);
+      label.textContent='事业';
+    }
+  }
+
+  // 落地页星象插画
+  function buildHeroMap(skin){
+    const svg = document.getElementById('heroMap');
+    const cx=170, cy=170;
+    svg.innerHTML='';
+    [55,100,145].forEach((r,idx)=>{
+      el('circle',{cx,cy,r,fill:'none',class:idx===2?'gold-stroke':'ring-stroke','stroke-width':idx===2?1.4:1,opacity:idx===2?.7:.4},svg);
+    });
+    if(skin==='astrology'){
+      const glyphs=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+      for(let i=0;i<12;i++){
+        const ang=(i/12)*Math.PI*2;
+        const x=cx+128*Math.cos(ang), y=cy+128*Math.sin(ang);
+        const t=el('text',{x,y:y+5,'text-anchor':'middle','font-size':15,fill:'#C9CBD3'},svg);
+        t.textContent=glyphs[i];
+      }
+    } else if(skin==='tarot'){
+      for(let i=0;i<10;i++){
+        const ang=rand(0,Math.PI*2), rr=rand(30,150);
+        const x=cx+rr*Math.cos(ang), y=cy+rr*Math.sin(ang);
+        const s=el('text',{x,y:y+4,'text-anchor':'middle','font-size':14,class:'acc'},svg);
+        s.textContent='✦';
+      }
+    } else {
+      for(let i=0;i<34;i++){
+        const ang=rand(0,Math.PI*2), rr=rand(20,150);
+        const x=cx+rr*Math.cos(ang), y=cy+rr*Math.sin(ang);
+        el('circle',{cx:x,cy:y,r:rand(.8,2),class:'gold',opacity:rand(.25,.9)},svg);
+      }
+    }
+    el('circle',{cx,cy,r:9,class:'gold'},svg);
+  }
+
+  // 轨道推演作业引擎（C1 通用：断前尘 / 预测；状态 pending/active/done；支持失败/超时兜底 · P0-1/P0-3）
+  const DQC_METHODS = ['八字','紫微斗数','六爻','奇门遁甲','大六壬','太乙神数','七政四余','铁板神数','果老星宗'];
+  const FC_METHODS  = ['事业运势','人际运势','财运','感情家庭','健康','学业'];
+  function buildOrbit(svgId, methods){
+    const svg=document.getElementById(svgId);
+    const cx=120,cy=120;
+    svg.innerHTML='';
+    const g=el('g',{class:'dqc-rings'},svg);
+    [40,78,112].forEach((r,idx)=>{
+      el('circle',{cx,cy,r,fill:'none',class:idx===2?'gold-stroke':'ring-stroke','stroke-width':idx===2?1.4:1,opacity:idx===2?.8:.5},g);
+    });
+    methods.forEach((m,i)=>{
+      const ang=(i/methods.length)*Math.PI*2 - Math.PI/2;
+      const x=cx+88*Math.cos(ang), y=cy+88*Math.sin(ang);
+      const c=el('circle',{cx:x,cy:y,r:6,class:'s-pending','data-i':i},g);
+      c.dataset.method=m;
+    });
+    el('circle',{cx,cy,r:8,class:'gold'},svg);
+  }
+  let orbitTimer=null, activeOrbit=null;
+  function startOrbit(o){
+    if(orbitTimer){clearInterval(orbitTimer);orbitTimer=null;}
+    o.forceFail=false;
+    buildOrbit(o.svg, o.methods);
+    document.getElementById(o.enter).style.display='none';
+    document.getElementById(o.list).innerHTML = o.methods.map(m=>'<span>'+m+'</span>').join('');
+    activeOrbit=o;
+    const svg=document.getElementById(o.svg);
+    const stars=[...svg.querySelectorAll('circle[data-i]')];
+    let idx=0; const N=o.methods.length;
+    const setBar=(n)=>{document.getElementById(o.bar).style.width=(n/N*100)+'%';document.getElementById(o.prog).textContent='已完成 '+n+' / '+N;};
+    const tick=()=>{
+      if(o.forceFail){clearInterval(orbitTimer);orbitTimer=null;showFallback(o.stage);return;}
+      stars.forEach((s,i)=>{
+        if(i<idx) s.setAttribute('class','s-done');
+        else if(i===idx) s.setAttribute('class','s-active');
+        else s.setAttribute('class','s-pending');
+      });
+      const list=document.getElementById(o.list).children;
+      for(let i=0;i<list.length;i++){ list[i].className = i<idx?'done':(i===idx?'active':''); }
+      setBar(idx);
+      document.getElementById(o.method).textContent = idx<N ? ('正在推演：'+o.methods[idx]) : '推演完成';
+      document.getElementById(o.status).textContent = idx<N ? ('jobs.status: running · polling… progress '+idx+'/'+N) : 'jobs.status: succeeded';
+      if(idx>=N){clearInterval(orbitTimer);orbitTimer=null;document.getElementById(o.enter).style.display='inline-flex';return;}
+      idx++;
+    };
+    tick();
+    orbitTimer=setInterval(tick,760);
+  }
+  function stopOrbit(){ if(orbitTimer){clearInterval(orbitTimer);orbitTimer=null;} activeOrbit=null; }
+
+  const dqcCfg={svg:'dqcPlate',methods:DQC_METHODS,prog:'dqcProgress',method:'dqcMethod',bar:'dqcBar',status:'dqcStatus',list:'dqcList',enter:'dqcEnter',stage:'duanqianchen'};
+  const fcCfg ={svg:'fcPlate',methods:FC_METHODS,prog:'fcProgress',method:'fcMethod',bar:'fcBar',status:'fcStatus',list:'fcList',enter:'fcEnter',stage:'forecast'};
+
+  // 长任务失败 / 超时态兜底页（P0-3）
+  function showFallback(stage){
+    const map={
+      duanqianchen:{t:'断前尘推演未成功',d:'排盘/推演任务返回 failed，或超出硬超时（断前尘 10 分钟）。可重试，或返回建档核对生辰信息。'},
+      forecast:{t:'趋势推演未成功',d:'预测任务返回 failed，或超出硬超时（预测 3 分钟）。可重试，或返回建档重新校准。'}
+    };
+    const m=map[stage]||{t:'任务未成功',d:'长任务失败或超时。'};
+    document.getElementById('fbTitle').textContent=m.t;
+    document.getElementById('fbDesc').textContent=m.d;
+    document.getElementById('fbRetry').onclick=()=>{ if(activeOrbit) startOrbit(activeOrbit); showView(stage); };
+    document.getElementById('fbBack').onclick=()=>showView('onboard');
+    showView('fallback');
+  }
+
+  // 应用皮肤：仅换签名色 / 母题 / 文案，布局不变
+  function applySkin(skin){
+    document.documentElement.setAttribute('data-skin', skin);
+    const cfg = SKIN[skin];
+    document.querySelectorAll('[data-brand]').forEach(b=>{ b.innerHTML = '太初<span class="dot">·</span>' + cfg.brand; });
+    document.getElementById('heroTag').textContent = cfg.tag;
+    document.getElementById('railModeName').textContent = cfg.modeName;
+    document.getElementById('heroMode').innerHTML = '<span class="dotm"></span><span>'+cfg.modeLabel+'</span>';
+    document.getElementById('heroH1').innerHTML = cfg.h1a + '<br/>' + cfg.h1b;
+    document.getElementById('heroLead').textContent = cfg.lead;
+    document.getElementById('plateCap').textContent = cfg.plateCap;
+    const fc = document.getElementById('features');
+    fc.innerHTML = '';
+    cfg.features.forEach(f=>{
+      const d=document.createElement('div'); d.className='feature';
+      d.innerHTML = '<div class="ic">'+f.ic+'</div><h3 class="serif">'+f.h+'</h3><p>'+f.p+'</p>';
+      fc.appendChild(d);
+    });
+    buildHeroMap(skin);
+    if(!document.getElementById('view-result').classList.contains('hidden')) buildPlate(document.getElementById('fatePlate'), skin);
+    if(!document.getElementById('view-revise').classList.contains('hidden')) buildPlate(document.getElementById('miniPlate'), skin);
+    document.querySelectorAll('[data-skin-btn]').forEach(b=>{
+      const on = b.dataset.skinBtn===skin;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on?'true':'false');
+    });
+  }
+
+  // 全局 Toast 轻提示
+  function toast(msg){
+    let t=document.getElementById('toast');
+    if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),2600);
+  }
+
+  // 修正页：标记“不准”
+  function bindFlags(){
+    document.querySelectorAll('#chat .bubble.taichu').forEach(b=>{
+      if(b.querySelector('.flag-btn')) return;
+      const f=document.createElement('button'); f.className='flag-btn'; f.textContent='不准?';
+      f.addEventListener('click',()=>{
+        const flagged=b.classList.toggle('flagged');
+        window.__flags=(window.__flags||0)+(flagged?1:-1);
+        const sum=document.getElementById('flagSummary');
+        sum.classList.add('show');
+        sum.innerHTML='已标记 <b>'+window.__flags+'</b> 条解读为“不准”，将提交至跨用户质疑库（演示）。';
+        toast(flagged?'已标记该条为“不准”':'已取消标记');
+      });
+      b.appendChild(f);
+    });
+  }
+
+  // 导航切换
+  function showView(name){
+    const views=['landing','auth','onboard','duanqianchen','calibrate','forecast','result','revise','archive','fallback'];
+    views.forEach(v=>document.getElementById('view-'+v).classList.toggle('hidden', v!==name));
+    document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('active', a.dataset.nav===name));
+    document.getElementById('pageMenu').classList.remove('open');
+    if(name==='result'){
+      buildPlate(document.getElementById('fatePlate'), document.documentElement.dataset.skin);
+      document.getElementById('lowConfNote').style.display = window.__lowConf ? 'block':'none';
+      document.getElementById('degNote').classList.toggle('show', !!window.__degraded);
+    }
+    if(name==='revise'){ buildPlate(document.getElementById('miniPlate'), document.documentElement.dataset.skin); bindFlags(); }
+    if(name==='duanqianchen'){ window.__lowConf=false; startOrbit(dqcCfg);
+      document.getElementById('stage1').className='ts-step done';
+      document.getElementById('stage2').className='ts-step active';
+    }
+    else if(name==='forecast'){ startOrbit(fcCfg); }
+    else { stopOrbit(); }
+    if(name==='onboard'){ window.__lowConf=false; }
+    if(name==='calibrate'){ plateConfirmed=false; const pc=document.getElementById('plateConfirm'); pc.classList.remove('sel-yes','btn-primary'); pc.classList.add('btn-ghost'); document.getElementById('gatePanel').style.display='none'; }
+    window.scrollTo({top:0});
+  }
+  document.querySelectorAll('[data-nav]').forEach(a=>{
+    a.addEventListener('click',e=>{e.preventDefault();showView(a.dataset.nav);});
+  });
+  // 皮肤切换（MVP 仅国学可切，占星/塔罗 置灰）
+  document.querySelectorAll('[data-skin-btn]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(b.disabled){ toast('西式占星 / 塔罗为 Phase 2，敬请期待'); return; }
+      applySkin(b.dataset.skinBtn);
+    });
+  });
+  // 降级法开关（P1-4）：建档缺失经纬度 → 命盘横幅
+  document.getElementById('degToggle').addEventListener('change',e=>{ window.__degraded=e.target.checked; });
+  // 移动端菜单
+  document.getElementById('menuTrigger').addEventListener('click',()=>{
+    document.getElementById('pageMenu').classList.toggle('open');
+  });
+  document.addEventListener('click',e=>{
+    const m=document.getElementById('pageMenu');
+    if(m.classList.contains('open') && !m.contains(e.target) && e.target.id!=='menuTrigger') m.classList.remove('open');
+  });
+
+  // 落地页 CTA -> 建档
+  document.getElementById('startBtn').addEventListener('click',()=>showView('onboard'));
+
+  // 断前尘 -> 校准
+  document.getElementById('dqcEnter').addEventListener('click',()=>showView('calibrate'));
+
+  // 预测等待态 -> 命盘解读（P0-1）
+  document.getElementById('fcEnter').addEventListener('click',()=>showView('result'));
+
+  // 长任务失败 / 超时态 · 模拟入口（P0-3）
+  document.getElementById('dqcFail').addEventListener('click',()=>{ if(activeOrbit) activeOrbit.forceFail=true; });
+  document.getElementById('fcFail').addEventListener('click',()=>{ if(activeOrbit) activeOrbit.forceFail=true; });
+
+  // ② 注册/登录：tab + 三次失败验证码
+  let authFails=0, lockedUntil=0;
+  document.getElementById('tabLogin').addEventListener('click',()=>{
+    document.getElementById('tabLogin').classList.add('active');document.getElementById('tabReg').classList.remove('active');
+    document.getElementById('authTitle').textContent='登录';document.getElementById('authSubmit').textContent='登录';
+    document.getElementById('regField').style.display='none';
+  });
+  document.getElementById('tabReg').addEventListener('click',()=>{
+    document.getElementById('tabReg').classList.add('active');document.getElementById('tabLogin').classList.remove('active');
+    document.getElementById('authTitle').textContent='注册';document.getElementById('authSubmit').textContent='注册并建档';
+    document.getElementById('regField').style.display='block';
+  });
+  const capAnswer='8K2P';
+  function authLocked(){ return Date.now()<lockedUntil; }
+  function refreshLockUI(){
+    const lb=document.getElementById('lockBanner');
+    if(authLocked()){
+      const sec=Math.ceil((lockedUntil-Date.now())/1000);
+      lb.innerHTML='账户已锁定，请于 <b>'+sec+'</b> 秒后重试（演示锁定 15 分钟）。';
+      lb.classList.add('show');
+    } else if(lb.classList.contains('show')){ lb.classList.remove('show'); }
+  }
+  document.getElementById('simSession').addEventListener('click',(e)=>{
+    e.preventDefault();
+    toast('会话已过期，请重新登录（refresh 失败）');
+    setTimeout(()=>showView('auth'),900);
+  });
+  document.getElementById('authSubmit').addEventListener('click',()=>{
+    const cap=document.getElementById('captcha'), hint=document.getElementById('authHint');
+    if(authLocked()){ refreshLockUI(); return; }
+    const isReg=document.getElementById('tabReg').classList.contains('active');
+    if(isReg){
+      const pws=document.querySelectorAll('#view-auth input[type=password]');
+      if(pws.length<2 || !pws[0].value || pws[0].value!==pws[1].value){
+        hint.textContent='请填写密码并确认两次一致。'; hint.classList.add('warn'); return;
+      }
+    }
+    if(cap.classList.contains('show')){
+      const v=(document.getElementById('capInput').value||'').trim().toUpperCase();
+      if(v!==capAnswer){
+        authFails++;
+        if(authFails>=5){ lockedUntil=Date.now()+15*60*1000; refreshLockUI(); }
+        hint.textContent='验证码错误，请重新输入。'; hint.classList.add('warn'); return;
+      }
+      hint.classList.remove('warn'); hint.textContent='验证通过（演示），进入建档…';
+      setTimeout(()=>{ showView('onboard'); authFails=0; cap.classList.remove('show'); },400);
+      return;
+    }
+    authFails++;
+    if(authFails>=5){ lockedUntil=Date.now()+15*60*1000; cap.classList.add('show'); refreshLockUI();
+      hint.textContent='失败次数过多，账户已锁定 15 分钟。'; hint.classList.add('warn'); return; }
+    if(authFails>=3){ cap.classList.add('show'); hint.textContent='已触发图形验证码，请输入图中字符后重试。'; hint.classList.add('warn'); return; }
+    hint.textContent='（演示）登录校验未通过，再试 '+(3-authFails)+' 次将出现验证码。';
+    if(authFails>=2) hint.classList.add('warn');
+  });
+  setInterval(refreshLockUI,1000);
+
+  // ③ 建档：步骤指示器 + 步骤切换
+  const STEP_LABELS=['生辰','性别','出生地','经纬度','真太阳时','主问'];
+  (function buildStepper(){
+    const st=document.getElementById('stepper');
+    STEP_LABELS.forEach((lab,i)=>{
+      if(i>0){ const line=document.createElement('div'); line.className='step-line'; line.dataset.line=i-1; st.appendChild(line); }
+      const node=document.createElement('div'); node.className='step-node'+(i===0?' active':''); node.dataset.node=i;
+      node.innerHTML='<div class="step-dot">'+(i+1)+'</div><div class="step-label">'+lab+'</div>';
+      st.appendChild(node);
+    });
+  })();
+  let curStep=0;
+  function gotoStep(i){
+    curStep=i;
+    document.querySelectorAll('.step-panel').forEach(p=>p.classList.toggle('active', +p.dataset.step===i));
+    document.querySelectorAll('.step-node').forEach(n=>{
+      const ni=+n.dataset.node;
+      n.classList.toggle('active', ni===i);
+      n.classList.toggle('done', ni<i);
+    });
+    document.querySelectorAll('.step-line').forEach(l=>l.classList.toggle('done', +l.dataset.line<i));
+    document.getElementById('stepBack').disabled = i===0;
+    const next=document.getElementById('stepNext');
+    next.textContent = i===STEP_LABELS.length-1 ? '开始断前尘推演 →' : '下一步';
+  }
+  document.getElementById('stepBack').addEventListener('click',()=>{ if(curStep>0) gotoStep(curStep-1); });
+  document.getElementById('stepNext').addEventListener('click',()=>{
+    if(curStep<STEP_LABELS.length-1) gotoStep(curStep+1);
+    else showView('duanqianchen');
+  });
+  document.querySelectorAll('#mainAsk .chip').forEach(c=>{
+    c.addEventListener('click',()=>{ document.querySelectorAll('#mainAsk .chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); });
+  });
+
+  // ⑤ 问卷校准：断言卡片三态 + 进度摘要
+  const ASSERTS=[
+    {d:'性格',t:'命主性格偏内敛沉稳，行事有章法。',c:.86},
+    {d:'学业',t:'早年学业平顺，得长辈助力。',c:.74},
+    {d:'事业',t:'现处事业平台期，有变动之机。',c:.81},
+    {d:'人际',t:'人际中易遇贵人居中调和。',c:.69},
+    {d:'财运',t:'财运稳中有进，忌冒进投机。',c:.77},
+    {d:'感情',t:'近一年感情 / 家庭多有牵绊。',c:.63},
+    {d:'健康',t:'健康需注意作息与肝胆。',c:.71}
+  ];
+  (function buildAsserts(){
+    const box=document.getElementById('assertList');
+    ASSERTS.forEach((a,i)=>{
+      const card=document.createElement('div'); card.className='assert'; card.dataset.idx=i;
+      card.innerHTML=
+        '<div class="domain">'+a.d+'</div>'+
+        '<div class="body">'+
+          '<div class="text">'+a.t+'</div>'+
+          '<div class="conf">命中率 <b>'+Math.round(a.c*100)+'%</b></div>'+
+          '<div class="acts">'+
+            '<button class="act" data-act="yes">确认 ✓</button>'+
+            '<button class="act" data-act="no">否认 ✗</button>'+
+            '<button class="act" data-act="edit">修正 ✎</button>'+
+          '</div>'+
+          '<div class="edit-box"><input placeholder="请描述更准确的表述…" aria-label="修正输入" /></div>'+
+        '</div>';
+      box.appendChild(card);
+    });
+  })();
+  // P0-2 校准完备门控：命中率≥70% & 已确认领域≥3 & 用户确认「盘对了」
+  let plateConfirmed=false;
+  function computeGate(){
+    const cards=[...document.querySelectorAll('.assert')];
+    let yes=0,no=0,pend=0,hitSum=0;
+    cards.forEach(c=>{
+      const sel=c.dataset.sel;
+      if(sel==='yes'){yes++;hitSum+=+ASSERTS[+c.dataset.idx].c;}
+      else if(sel==='no'){no++;}
+      else pend++;
+    });
+    const hit = yes>0 ? Math.round(hitSum/yes*100) : 0;
+    const reasons=[];
+    if(hit<70) reasons.push('命中率需≥70%（当前'+hit+'%）');
+    if(yes<3) reasons.push('已确认领域需≥3（当前'+yes+'）');
+    if(!plateConfirmed) reasons.push('需点击「我确认命盘基本准确」');
+    return {yes,no,pend,hit,ready:reasons.length===0,
+      reason: reasons.length ? ('未满足：'+reasons.join('；')+'。可走下方兜底流程。') : '已达放行，可进入综合解读。'};
+  }
+  function updateCalib(){
+    const g=computeGate();
+    document.getElementById('cYes').textContent=g.yes;
+    document.getElementById('cNo').textContent=g.no;
+    document.getElementById('cPend').textContent=g.pend;
+    document.getElementById('cHit').textContent=g.hit+'%';
+    const sum=document.getElementById('calibSummary');
+    sum.classList.toggle('ready',g.ready);
+    document.getElementById('calibGate').textContent = g.ready ? '已达放行 · 可进入解读' : '未达放行 · 需命中率≥70% 且确认「盘对了」';
+  }
+  document.querySelectorAll('.assert').forEach(card=>{
+    card.querySelectorAll('.act').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        card.querySelectorAll('.act').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-edit'));
+        const act=btn.dataset.act;
+        btn.classList.add(act==='yes'?'sel-yes':act==='no'?'sel-no':'sel-edit');
+        card.dataset.sel=act;
+        card.querySelector('.edit-box').classList.toggle('show', act==='edit');
+        updateCalib();
+      });
+    });
+  });
+  // P0-2 闸门 + 三套兜底
+  document.getElementById('plateConfirm').addEventListener('click',()=>{
+    plateConfirmed=!plateConfirmed;
+    const b=document.getElementById('plateConfirm');
+    b.classList.toggle('btn-primary',plateConfirmed);
+    b.classList.toggle('btn-ghost',!plateConfirmed);
+    updateCalib();
+  });
+  document.getElementById('calibDone').addEventListener('click',()=>{
+    const g=computeGate();
+    if(g.ready){ document.getElementById('gatePanel').style.display='none'; showView('forecast'); }
+    else { document.getElementById('gateReason').textContent=g.reason; document.getElementById('gatePanel').style.display='block'; }
+  });
+  document.getElementById('fbAbandon').addEventListener('click',()=>{ window.__lowConf=true; showView('forecast'); });
+  document.getElementById('fbReorder').addEventListener('click',()=>{ document.getElementById('reorderPanel').style.display='block'; });
+  document.getElementById('reorderGo').addEventListener('click',()=>{ window.__lowConf=false; showView('forecast'); });
+  document.getElementById('fbTerminate').addEventListener('click',()=>{ showView('onboard'); });
+
+  // ⑥ 命盘：追问 -> 修正对话
+  document.querySelectorAll('[data-go="revise"]').forEach(b=>{
+    b.addEventListener('click',()=>showView('revise'));
+  });
+
+  // ⑦ 修正对话：发送追加气泡
+  function sendChat(){
+    const inp=document.getElementById('chatInput');
+    const v=inp.value.trim(); if(!v) return;
+    const chat=document.getElementById('chat');
+    const u=document.createElement('div'); u.className='bubble user';
+    u.innerHTML='<span class="who">您</span>'+v;
+    chat.appendChild(u);
+    inp.value='';
+    setTimeout(()=>{
+      const t=document.createElement('div'); t.className='bubble taichu';
+      t.innerHTML='<span class="who">太初</span>收到。结合您的命盘，建议从「行业属性」与「起步时机」两端细化，我可据此进一步推演方向。';
+      chat.appendChild(t); chat.scrollTop=chat.scrollHeight;
+    },500);
+    chat.scrollTop=chat.scrollHeight;
+  }
+  document.getElementById('chatSend').addEventListener('click',sendChat);
+  document.getElementById('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter') sendChat(); });
+
+  // ⑧ 命理档案：案例卡
+  const CASES=[
+    {date:'2026-08-20',q:'事业运势 · 年内是否宜变动',skin:'guoxue',tag:'国学'},
+    {date:'2026-07-11',q:'人际运势 · 团队关系走向',skin:'guoxue',tag:'国学'},
+    {date:'2026-06-02',q:'转岗 timing 是否可取',skin:'astrology',tag:'西式占星'},
+    {date:'2026-04-18',q:'创业启动时机参考',skin:'tarot',tag:'塔罗'}
+  ];
+  function thumbSVG(){
+    let s='<svg viewBox="0 0 48 48">';
+    const pts=[[24,8],[38,18],[34,36],[14,36],[10,18],[24,24]];
+    pts.forEach(p=>{ s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.4" fill="#E6CF9A"/>'; });
+    s+='<circle cx="24" cy="24" r="14" fill="none" stroke="#B8893E" stroke-width="1" opacity=".6"/>';
+    s+='</svg>'; return s;
+  }
+  (function buildArchive(){
+    const grid=document.getElementById('archiveGrid');
+    CASES.forEach(c=>{
+      const card=document.createElement('div'); card.className='case-card';
+      card.innerHTML=
+        '<div class="case-thumb">'+thumbSVG()+'</div>'+
+        '<div class="case-body">'+
+          '<div class="case-date">'+c.date+'</div>'+
+          '<div class="case-q">'+c.q+'</div>'+
+          '<div class="case-meta"><span class="case-tag">'+c.tag+'</span><span>多流派综合</span></div>'+
+        '</div>'+
+        '<div class="case-arrow">›</div>';
+      card.addEventListener('click',()=>showView('result'));
+      grid.appendChild(card);
+    });
+  })();
+
+  // 初始化
+  starfield();
+  applySkin('guoxue');
+  showView('landing');
+</script>
+</body>
+</html>

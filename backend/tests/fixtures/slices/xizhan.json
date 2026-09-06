@@ -1,0 +1,1771 @@
+{
+  "western": {
+    "birth": {
+      "name": "测试",
+      "gender": "男",
+      "dateTime": "1990-05-12 14:00",
+      "location": "北京（39.9000, 116.4000）",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "timezone": 8,
+      "standardDateTime": "1990-05-12 14:00",
+      "isTrueSolarTime": false
+    },
+    "planets": [
+      {
+        "name": "Sun",
+        "label": "太阳",
+        "longitude": 51.26048964317812,
+        "sign": "金牛座",
+        "degree": 21,
+        "minute": 15,
+        "house": 9,
+        "formatted": "金牛座21°15′",
+        "retrograde": false
+      },
+      {
+        "name": "Moon",
+        "label": "月亮",
+        "longitude": 257.87134621620964,
+        "sign": "射手座",
+        "degree": 17,
+        "minute": 52,
+        "house": 4,
+        "formatted": "射手座17°52′",
+        "retrograde": false
+      },
+      {
+        "name": "Mercury",
+        "label": "水星",
+        "longitude": 38.787562909421126,
+        "sign": "金牛座",
+        "degree": 8,
+        "minute": 47,
+        "house": 8,
+        "formatted": "金牛座8°47′",
+        "retrograde": true
+      },
+      {
+        "name": "Venus",
+        "label": "金星",
+        "longitude": 9.12005325428754,
+        "sign": "白羊座",
+        "degree": 9,
+        "minute": 7,
+        "house": 7,
+        "formatted": "白羊座9°07′",
+        "retrograde": false
+      },
+      {
+        "name": "Mars",
+        "label": "火星",
+        "longitude": 345.91803958260266,
+        "sign": "双鱼座",
+        "degree": 15,
+        "minute": 55,
+        "house": 6,
+        "formatted": "双鱼座15°55′",
+        "retrograde": false
+      },
+      {
+        "name": "Jupiter",
+        "label": "木星",
+        "longitude": 98.93356936618,
+        "sign": "巨蟹座",
+        "degree": 8,
+        "minute": 56,
+        "house": 10,
+        "formatted": "巨蟹座8°56′",
+        "retrograde": false
+      },
+      {
+        "name": "Saturn",
+        "label": "土星",
+        "longitude": 295.295979240914,
+        "sign": "摩羯座",
+        "degree": 25,
+        "minute": 17,
+        "house": 5,
+        "formatted": "摩羯座25°17′",
+        "retrograde": true
+      },
+      {
+        "name": "Uranus",
+        "label": "天王星",
+        "longitude": 279.260324906666,
+        "sign": "摩羯座",
+        "degree": 9,
+        "minute": 15,
+        "house": 4,
+        "formatted": "摩羯座9°15′",
+        "retrograde": true
+      },
+      {
+        "name": "Neptune",
+        "label": "海王星",
+        "longitude": 284.3984189306018,
+        "sign": "摩羯座",
+        "degree": 14,
+        "minute": 23,
+        "house": 4,
+        "formatted": "摩羯座14°23′",
+        "retrograde": true
+      },
+      {
+        "name": "Pluto",
+        "label": "冥王星",
+        "longitude": 226.2578777606783,
+        "sign": "天蝎座",
+        "degree": 16,
+        "minute": 15,
+        "house": 3,
+        "formatted": "天蝎座16°15′",
+        "retrograde": true
+      },
+      {
+        "name": "Chiron",
+        "label": "凯龙星",
+        "longitude": 102.9575586690899,
+        "sign": "巨蟹座",
+        "degree": 12,
+        "minute": 57,
+        "house": 10,
+        "formatted": "巨蟹座12°57′",
+        "retrograde": false
+      },
+      {
+        "name": "Ceres",
+        "label": "谷神星",
+        "longitude": 103.93157355688095,
+        "sign": "巨蟹座",
+        "degree": 13,
+        "minute": 55,
+        "house": 10,
+        "formatted": "巨蟹座13°55′",
+        "retrograde": false
+      },
+      {
+        "name": "Pallas",
+        "label": "智神星",
+        "longitude": 56.67131736295164,
+        "sign": "金牛座",
+        "degree": 26,
+        "minute": 40,
+        "house": 9,
+        "formatted": "金牛座26°40′",
+        "retrograde": false
+      },
+      {
+        "name": "Juno",
+        "label": "婚神星",
+        "longitude": 226.36067144916058,
+        "sign": "天蝎座",
+        "degree": 16,
+        "minute": 21,
+        "house": 3,
+        "formatted": "天蝎座16°21′",
+        "retrograde": true
+      },
+      {
+        "name": "Vesta",
+        "label": "灶神星",
+        "longitude": 20.19654676634599,
+        "sign": "白羊座",
+        "degree": 20,
+        "minute": 11,
+        "house": 8,
+        "formatted": "白羊座20°11′",
+        "retrograde": false
+      },
+      {
+        "name": "North Node",
+        "label": "北交点",
+        "longitude": 310.54461043306605,
+        "sign": "水瓶座",
+        "degree": 10,
+        "minute": 32,
+        "house": 5,
+        "formatted": "水瓶座10°32′",
+        "retrograde": false
+      },
+      {
+        "name": "South Node",
+        "label": "南交点",
+        "longitude": 130.54461043306605,
+        "sign": "狮子座",
+        "degree": 10,
+        "minute": 32,
+        "house": 11,
+        "formatted": "狮子座10°32′",
+        "retrograde": false
+      },
+      {
+        "name": "True Lilith",
+        "label": "莉莉丝",
+        "longitude": 238.0648154049925,
+        "sign": "天蝎座",
+        "degree": 28,
+        "minute": 3,
+        "house": 3,
+        "formatted": "天蝎座28°03′",
+        "retrograde": false
+      },
+      {
+        "name": "Part of Fortune",
+        "label": "福点",
+        "longitude": 15.542113079886462,
+        "sign": "白羊座",
+        "degree": 15,
+        "minute": 32,
+        "house": 8,
+        "formatted": "白羊座15°32′",
+        "retrograde": false
+      },
+      {
+        "name": "Part of Spirit",
+        "label": "精神点",
+        "longitude": 322.3203999338234,
+        "sign": "水瓶座",
+        "degree": 22,
+        "minute": 19,
+        "house": 6,
+        "formatted": "水瓶座22°19′",
+        "retrograde": false
+      }
+    ],
+    "angles": [
+      {
+        "name": "Ascendant",
+        "label": "上升",
+        "longitude": 168.93125650685488,
+        "sign": "处女座",
+        "degree": 18,
+        "minute": 55,
+        "house": 0,
+        "formatted": "处女座18°55′"
+      },
+      {
+        "name": "Midheaven",
+        "label": "天顶",
+        "longitude": 77.25676184526117,
+        "sign": "双子座",
+        "degree": 17,
+        "minute": 15,
+        "house": 0,
+        "formatted": "双子座17°15′"
+      },
+      {
+        "name": "Descendant",
+        "label": "下降",
+        "longitude": 348.9312565068549,
+        "sign": "双鱼座",
+        "degree": 18,
+        "minute": 55,
+        "house": 0,
+        "formatted": "双鱼座18°55′"
+      },
+      {
+        "name": "Imum Coeli",
+        "label": "天底",
+        "longitude": 257.25676184526117,
+        "sign": "射手座",
+        "degree": 17,
+        "minute": 15,
+        "house": 0,
+        "formatted": "射手座17°15′"
+      }
+    ],
+    "houses": [
+      {
+        "name": "House 1",
+        "label": "第1宫",
+        "longitude": 168.93125650685488,
+        "sign": "处女座",
+        "degree": 18,
+        "minute": 55,
+        "house": 1,
+        "formatted": "处女座18°55′"
+      },
+      {
+        "name": "House 2",
+        "label": "第2宫",
+        "longitude": 194.1542334257564,
+        "sign": "天秤座",
+        "degree": 14,
+        "minute": 9,
+        "house": 2,
+        "formatted": "天秤座14°09′"
+      },
+      {
+        "name": "House 3",
+        "label": "第3宫",
+        "longitude": 223.9770412908033,
+        "sign": "天蝎座",
+        "degree": 13,
+        "minute": 58,
+        "house": 3,
+        "formatted": "天蝎座13°58′"
+      },
+      {
+        "name": "House 4",
+        "label": "第4宫",
+        "longitude": 257.25676184526117,
+        "sign": "射手座",
+        "degree": 17,
+        "minute": 15,
+        "house": 4,
+        "formatted": "射手座17°15′"
+      },
+      {
+        "name": "House 5",
+        "label": "第5宫",
+        "longitude": 290.9656997090201,
+        "sign": "摩羯座",
+        "degree": 20,
+        "minute": 57,
+        "house": 5,
+        "formatted": "摩羯座20°57′"
+      },
+      {
+        "name": "House 6",
+        "label": "第6宫",
+        "longitude": 321.92749648530685,
+        "sign": "水瓶座",
+        "degree": 21,
+        "minute": 55,
+        "house": 6,
+        "formatted": "水瓶座21°55′"
+      },
+      {
+        "name": "House 7",
+        "label": "第7宫",
+        "longitude": 348.9312565068549,
+        "sign": "双鱼座",
+        "degree": 18,
+        "minute": 55,
+        "house": 7,
+        "formatted": "双鱼座18°55′"
+      },
+      {
+        "name": "House 8",
+        "label": "第8宫",
+        "longitude": 14.154233425756445,
+        "sign": "白羊座",
+        "degree": 14,
+        "minute": 9,
+        "house": 8,
+        "formatted": "白羊座14°09′"
+      },
+      {
+        "name": "House 9",
+        "label": "第9宫",
+        "longitude": 43.97704129080324,
+        "sign": "金牛座",
+        "degree": 13,
+        "minute": 58,
+        "house": 9,
+        "formatted": "金牛座13°58′"
+      },
+      {
+        "name": "House 10",
+        "label": "第10宫",
+        "longitude": 77.25676184526117,
+        "sign": "双子座",
+        "degree": 17,
+        "minute": 15,
+        "house": 10,
+        "formatted": "双子座17°15′"
+      },
+      {
+        "name": "House 11",
+        "label": "第11宫",
+        "longitude": 110.9656997090201,
+        "sign": "巨蟹座",
+        "degree": 20,
+        "minute": 57,
+        "house": 11,
+        "formatted": "巨蟹座20°57′"
+      },
+      {
+        "name": "House 12",
+        "label": "第12宫",
+        "longitude": 141.92749648530673,
+        "sign": "狮子座",
+        "degree": 21,
+        "minute": 55,
+        "house": 12,
+        "formatted": "狮子座21°55′"
+      }
+    ],
+    "aspects": [
+      {
+        "body1": "冥王星",
+        "body2": "婚神星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 0.1028,
+        "orb": 0.1,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0128,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "金星",
+        "body2": "天王星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 89.8597,
+        "orb": 0.14,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.02,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "水星",
+        "body2": "木星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 60.146,
+        "orb": 0.15,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0243,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "金星",
+        "body2": "木星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 89.8135,
+        "orb": 0.19,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0266,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "木星",
+        "body2": "天王星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 179.6732,
+        "orb": 0.33,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0408,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "火星",
+        "body2": "冥王星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 119.6602,
+        "orb": 0.34,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0425,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "凯龙星",
+        "body2": "莉莉丝",
+        "type": "补八分相",
+        "symbol": "⚼",
+        "exactAngle": 135,
+        "actualAngle": 135.1073,
+        "orb": 0.11,
+        "allowedOrb": 2,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0536,
+        "isOutOfSign": true,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "火星",
+        "body2": "婚神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 119.5574,
+        "orb": 0.44,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0553,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "谷神星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 179.5332,
+        "orb": 0.47,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0584,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "水星",
+        "body2": "天王星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 119.5272,
+        "orb": 0.47,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0591,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "凯龙星",
+        "body2": "谷神星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 0.974,
+        "orb": 0.97,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.1218,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "水星",
+        "body2": "金星",
+        "type": "半六合",
+        "symbol": "⚺",
+        "exactAngle": 30,
+        "actualAngle": 29.6675,
+        "orb": 0.33,
+        "allowedOrb": 2,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.1662,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "土星",
+        "body2": "智神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 121.3753,
+        "orb": 1.38,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.1719,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "智神星",
+        "body2": "莉莉丝",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 178.6065,
+        "orb": 1.39,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.1742,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "凯龙星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 178.5591,
+        "orb": 1.44,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.1801,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "金星",
+        "body2": "北交点",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 58.5754,
+        "orb": 1.42,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2374,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "北交点",
+        "body2": "莉莉丝",
+        "type": "五分相",
+        "symbol": "Q",
+        "exactAngle": 72,
+        "actualAngle": 72.4798,
+        "orb": 0.48,
+        "allowedOrb": 2,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2399,
+        "isOutOfSign": true,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": null
+      },
+      {
+        "body1": "火星",
+        "body2": "谷神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 118.0135,
+        "orb": 1.99,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2483,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "水星",
+        "body2": "北交点",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 88.243,
+        "orb": 1.76,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.251,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "火星",
+        "body2": "海王星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 61.5196,
+        "orb": 1.52,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2533,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "月亮",
+        "body2": "火星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 88.0467,
+        "orb": 1.95,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.279,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "月亮",
+        "body2": "灶神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 122.3252,
+        "orb": 2.33,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2907,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "冥王星",
+        "body2": "谷神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 122.3263,
+        "orb": 2.33,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2908,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "谷神星",
+        "body2": "婚神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 122.4291,
+        "orb": 2.43,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.3036,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "冥王星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 58.1405,
+        "orb": 1.86,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.3099,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "婚神星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 58.0377,
+        "orb": 1.96,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.327,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "火星",
+        "body2": "凯龙星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 117.0395,
+        "orb": 2.96,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.3701,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "冥王星",
+        "body2": "凯龙星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 123.3003,
+        "orb": 3.3,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4125,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "凯龙星",
+        "body2": "婚神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 123.4031,
+        "orb": 3.4,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4254,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "谷神星",
+        "body2": "莉莉丝",
+        "type": "补八分相",
+        "symbol": "⚼",
+        "exactAngle": 135,
+        "actualAngle": 134.1332,
+        "orb": 0.87,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4334,
+        "isOutOfSign": true,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "土星",
+        "body2": "莉莉丝",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 57.2312,
+        "orb": 2.77,
+        "allowedOrb": 6,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4615,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "天王星",
+        "body2": "凯龙星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 176.3028,
+        "orb": 3.7,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4622,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "木星",
+        "body2": "凯龙星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 4.024,
+        "orb": 4.02,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.503,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "太阳",
+        "body2": "土星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 115.9645,
+        "orb": 4.04,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5044,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "太阳",
+        "body2": "灶神星",
+        "type": "半六合",
+        "symbol": "⚺",
+        "exactAngle": 30,
+        "actualAngle": 31.0639,
+        "orb": 1.06,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.532,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "金星",
+        "body2": "凯龙星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 93.8375,
+        "orb": 3.84,
+        "allowedOrb": 7,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5482,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "金星",
+        "body2": "冥王星",
+        "type": "倍五分相",
+        "symbol": "bQ",
+        "exactAngle": 144,
+        "actualAngle": 142.8622,
+        "orb": 1.14,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5689,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "天王星",
+        "body2": "谷神星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 175.3288,
+        "orb": 4.67,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5839,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "太阳",
+        "body2": "婚神星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 175.1002,
+        "orb": 4.9,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6125,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "金星",
+        "body2": "婚神星",
+        "type": "倍五分相",
+        "symbol": "bQ",
+        "exactAngle": 144,
+        "actualAngle": 142.7594,
+        "orb": 1.24,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6203,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "火星",
+        "body2": "智神星",
+        "type": "五分相",
+        "symbol": "Q",
+        "exactAngle": 72,
+        "actualAngle": 70.7533,
+        "orb": 1.25,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6234,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "木星",
+        "body2": "谷神星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 4.998,
+        "orb": 5,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6248,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "太阳",
+        "body2": "冥王星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 174.9974,
+        "orb": 5,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6253,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "天王星",
+        "body2": "北交点",
+        "type": "半六合",
+        "symbol": "⚺",
+        "exactAngle": 30,
+        "actualAngle": 31.2843,
+        "orb": 1.28,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6421,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "天王星",
+        "body2": "海王星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 5.1381,
+        "orb": 5.14,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6423,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "凯龙星",
+        "body2": "智神星",
+        "type": "半刑",
+        "symbol": "∠",
+        "exactAngle": 45,
+        "actualAngle": 46.2862,
+        "orb": 1.29,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6431,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "莉莉丝",
+        "type": "半刑",
+        "symbol": "∠",
+        "exactAngle": 45,
+        "actualAngle": 46.3336,
+        "orb": 1.33,
+        "allowedOrb": 2,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.6668,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "太阳",
+        "body2": "智神星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 5.4108,
+        "orb": 5.41,
+        "allowedOrb": 8,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.6764,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "木星",
+        "body2": "海王星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 174.5352,
+        "orb": 5.46,
+        "allowedOrb": 8,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.6831,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "金星",
+        "body2": "谷神星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 94.8115,
+        "orb": 4.81,
+        "allowedOrb": 7,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.6874,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "水星",
+        "body2": "凯龙星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 64.17,
+        "orb": 4.17,
+        "allowedOrb": 6,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.695,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      }
+    ],
+    "solarIllumination": {
+      "key": "solar-illumination:1990-05-12:39.9:116.4",
+      "status": "已计算",
+      "localDate": "1990-05-12",
+      "referenceLocalDateTime": "1990-05-12 14:00:00",
+      "referenceUtcDateTime": "1990-05-12 06:00:00Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "timezone": 8,
+      "solarAltitudeDegrees": 57.6935,
+      "solarAzimuthDegrees": 234.9627,
+      "solarDeclinationDegrees": 17.864278,
+      "equationOfTimeMinutes": 3.8871,
+      "apparentSolarNoonUtcDateTime": "1990-05-12T04:10:30.920Z",
+      "apparentSolarNoonLocalDateTime": "1990-05-12 12:10:30",
+      "astronomicalTime": {
+        "key": "astronomical-time:1990-05-12 14:00:00:8",
+        "status": "已计算",
+        "localDateTime": "1990-05-12 14:00:00",
+        "timezone": 8,
+        "utcDateTime": "1990-05-12 06:00:00Z",
+        "unixMilliseconds": 642492000000,
+        "julianDayUtc": 2448023.75,
+        "julianDayUtApprox": 2448023.75,
+        "deltaTSeconds": 57.13,
+        "julianDayTtApprox": 2448023.750661227,
+        "decimalYear": 1990.359589,
+        "deltaTModel": "Espenak-Meeus 分段多项式（1900-2200）",
+        "precisionLevel": "历史拟合",
+        "assumptions": [
+          "输入 timezone 视为该时刻已经确认的法定 UTC 偏移，不自动推断地点历史时区。",
+          "缺少实时 DUT1 数据时使用 UT1≈UTC，误差上限通常小于 0.9 秒。"
+        ],
+        "assumptionFacts": [
+          {
+            "key": "astronomical-time:assumption:1",
+            "status": "适用",
+            "ownerStepKeys": [
+              "astronomical-time:calculation:timezone"
+            ],
+            "ownerFactKeys": [
+              "astronomical-time:calculation:timezone"
+            ],
+            "promptText": "输入 timezone 视为该时刻已经确认的法定 UTC 偏移，不自动推断地点历史时区。",
+            "limitation": "假设事实只说明时区与 UT1 近似的计算前提；不得当作地点历史时区、实时 DUT1 或观测精度已经被独立证明"
+          },
+          {
+            "key": "astronomical-time:assumption:2",
+            "status": "适用",
+            "ownerStepKeys": [
+              "astronomical-time:calculation:ut1"
+            ],
+            "ownerFactKeys": [
+              "astronomical-time:calculation:ut1"
+            ],
+            "promptText": "缺少实时 DUT1 数据时使用 UT1≈UTC，误差上限通常小于 0.9 秒。",
+            "limitation": "假设事实只说明时区与 UT1 近似的计算前提；不得当作地点历史时区、实时 DUT1 或观测精度已经被独立证明"
+          }
+        ],
+        "calculationSteps": [
+          {
+            "key": "astronomical-time:calculation:timezone",
+            "stage": "时区解析",
+            "status": "已计算",
+            "dependsOnStepKeys": [],
+            "inputs": {
+              "localDateTime": "1990-05-12 14:00:00",
+              "fixedOffsetHours": 8
+            },
+            "result": {
+              "timezone": 8
+            },
+            "promptText": "采用明确给定的法定偏移 UTC+8",
+            "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
+          },
+          {
+            "key": "astronomical-time:calculation:utc",
+            "stage": "UTC换算",
+            "status": "已计算",
+            "dependsOnStepKeys": [
+              "astronomical-time:calculation:timezone"
+            ],
+            "inputs": {
+              "localDateTime": "1990-05-12 14:00:00",
+              "timezone": 8
+            },
+            "result": {
+              "utcDateTime": "1990-05-12 06:00:00Z",
+              "unixMilliseconds": 642492000000
+            },
+            "promptText": "当地钟表时间1990-05-12 14:00:00按 UTC+8换算为1990-05-12 06:00:00Z",
+            "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
+          },
+          {
+            "key": "astronomical-time:calculation:jd-utc",
+            "stage": "UTC儒略日",
+            "status": "已计算",
+            "dependsOnStepKeys": [
+              "astronomical-time:calculation:utc"
+            ],
+            "inputs": {
+              "unixMilliseconds": 642492000000
+            },
+            "result": {
+              "julianDayUtc": 2448023.75
+            },
+            "promptText": "UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.750000000",
+            "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
+          },
+          {
+            "key": "astronomical-time:calculation:ut1",
+            "stage": "UT1近似",
+            "status": "近似",
+            "dependsOnStepKeys": [
+              "astronomical-time:calculation:jd-utc"
+            ],
+            "inputs": {
+              "julianDayUtc": 2448023.75
+            },
+            "result": {
+              "julianDayUtApprox": 2448023.75
+            },
+            "promptText": "缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.750000000",
+            "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
+          },
+          {
+            "key": "astronomical-time:calculation:tt",
+            "stage": "ΔT与TT",
+            "status": "已计算",
+            "dependsOnStepKeys": [
+              "astronomical-time:calculation:ut1"
+            ],
+            "inputs": {
+              "decimalYear": 1990.359589
+            },
+            "result": {
+              "deltaTSeconds": 57.13,
+              "julianDayTtApprox": 2448023.750661227,
+              "precisionLevel": "历史拟合"
+            },
+            "promptText": "按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.750661227，模型等级历史拟合",
+            "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
+          }
+        ],
+        "counterEvidence": [
+          "未提供实时 DUT1，UT1 以 UTC 近似",
+          "ΔT 使用历史拟合分段模型，不是逐日观测值"
+        ],
+        "counterEvidenceFacts": [
+          {
+            "key": "astronomical-time:counter:ut1-approximation",
+            "type": "UT1近似",
+            "status": "近似",
+            "ownerFactKeys": [
+              "astronomical-time:calculation:ut1"
+            ],
+            "ownerStepKeys": [
+              "astronomical-time:calculation:ut1"
+            ],
+            "promptText": "未提供实时 DUT1，UT1 以 UTC 近似",
+            "limitation": "反证事实只记录 UT1≈UTC 与 ΔT 分段模型的近似或外推状态；不得据模型等级生成可信度百分比或宣称达到观测精度"
+          },
+          {
+            "key": "astronomical-time:counter:delta-t-model",
+            "type": "ΔT模型等级",
+            "status": "历史拟合",
+            "ownerFactKeys": [
+              "astronomical-time:calculation:tt"
+            ],
+            "ownerStepKeys": [
+              "astronomical-time:calculation:tt"
+            ],
+            "promptText": "ΔT 使用历史拟合分段模型，不是逐日观测值",
+            "limitation": "反证事实只记录 UT1≈UTC 与 ΔT 分段模型的近似或外推状态；不得据模型等级生成可信度百分比或宣称达到观测精度"
+          }
+        ],
+        "counterSummaryFact": {
+          "key": "astronomical-time:counter-summary",
+          "status": "存在时间尺度近似",
+          "factKeys": [
+            "astronomical-time:counter:ut1-approximation",
+            "astronomical-time:counter:delta-t-model"
+          ],
+          "promptText": "时间尺度含 UT1≈UTC 与 ΔT 历史拟合模型；数值可用于当前民用历法计算，但不得宣称观测级精度",
+          "limitation": "反证汇总只提醒时间尺度中存在近似或外推，不否定民用历法用途，也不证明观测级精度"
+        },
+        "limitations": [
+          "ΔT 是分段多项式估计值，不是逐日观测值；未来年份的不确定性会逐渐增大。",
+          "TT 儒略日用于说明天文计算时间尺度，不代表底层依赖库一定采用同一星历或同一时间模型。"
+        ],
+        "limitationFacts": [
+          {
+            "key": "astronomical-time:limitation:delta-t",
+            "type": "ΔT估算边界",
+            "status": "适用",
+            "ownerFactKeys": [
+              "astronomical-time:calculation:tt"
+            ],
+            "ownerStepKeys": [
+              "astronomical-time:calculation:tt"
+            ],
+            "promptText": "ΔT 是分段多项式估计值，不是逐日观测值；未来年份的不确定性会逐渐增大。",
+            "limitation": "限制事实用于约束 UTC、UT1、ΔT 与 TT 数值可以支持的精度声明，不得被反向当作天文事件或现实结果证据"
+          },
+          {
+            "key": "astronomical-time:limitation:ephemeris",
+            "type": "底层星历边界",
+            "status": "适用",
+            "ownerFactKeys": [
+              "astronomical-time:calculation:jd-utc",
+              "astronomical-time:calculation:tt"
+            ],
+            "ownerStepKeys": [
+              "astronomical-time:calculation:jd-utc",
+              "astronomical-time:calculation:tt"
+            ],
+            "promptText": "TT 儒略日用于说明天文计算时间尺度，不代表底层依赖库一定采用同一星历或同一时间模型。",
+            "limitation": "限制事实用于约束 UTC、UT1、ΔT 与 TT 数值可以支持的精度声明，不得被反向当作天文事件或现实结果证据"
+          }
+        ],
+        "summaryFact": {
+          "key": "astronomical-time:evidence-summary",
+          "status": "民用时间链完整",
+          "factKeys": [
+            "astronomical-time:calculation:timezone",
+            "astronomical-time:calculation:utc",
+            "astronomical-time:calculation:jd-utc",
+            "astronomical-time:calculation:ut1",
+            "astronomical-time:calculation:tt",
+            "astronomical-time:assumption:1",
+            "astronomical-time:assumption:2",
+            "astronomical-time:counter:ut1-approximation",
+            "astronomical-time:counter:delta-t-model",
+            "astronomical-time:counter-summary",
+            "astronomical-time:limitation:delta-t",
+            "astronomical-time:limitation:ephemeris"
+          ],
+          "calculationStepCount": 5,
+          "assumptionFactCount": 2,
+          "counterEvidenceCount": 2,
+          "limitationFactCount": 2,
+          "promptText": "天文时间证据状态为民用时间链完整；记录计算步骤5项、计算假设2项、反证2项、限制2项",
+          "limitation": "天文时间证据汇总只统计时区、UTC、儒略日、UT1近似、ΔT模型、反证与限制覆盖；不得按状态生成可信度百分比、观测精度声明或现实结论"
+        },
+        "source": "UTC 儒略日采用 Unix 纪元换算；ΔT 采用 NASA/Espenak-Meeus 1900-2200 分段多项式",
+        "promptText": "天文时间尺度：当地钟表时间1990-05-12 14:00:00（UTC+8）→ UTC 1990-05-12 06:00:00Z；JD(UTC)=2448023.750000，在 UT1≈UTC 假设下 JD(UT)≈2448023.750000；ΔT≈57.130秒，JD(TT)≈2448023.750661。模型等级：历史拟合。计算链：采用明确给定的法定偏移 UTC+8 → 当地钟表时间1990-05-12 14:00:00按 UTC+8换算为1990-05-12 06:00:00Z → UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.750000000 → 缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.750000000 → 按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.750661227，模型等级历史拟合。反证汇总：时间尺度含 UT1≈UTC 与 ΔT 历史拟合模型；数值可用于当前民用历法计算，但不得宣称观测级精度。证据汇总：天文时间证据状态为民用时间链完整；记录计算步骤5项、计算假设2项、反证2项、限制2项。来源：UTC 儒略日采用 Unix 纪元换算；ΔT 采用 NASA/Espenak-Meeus 1900-2200 分段多项式。限制：输入 timezone 视为该时刻已经确认的法定 UTC 偏移，不自动推断地点历史时区。；缺少实时 DUT1 数据时使用 UT1≈UTC，误差上限通常小于 0.9 秒。；ΔT 是分段多项式估计值，不是逐日观测值；未来年份的不确定性会逐渐增大。；TT 儒略日用于说明天文计算时间尺度，不代表底层依赖库一定采用同一星历或同一时间模型。"
+      },
+      "sunriseSunset": {
+        "key": "光照交点:日出/日落",
+        "name": "日出/日落",
+        "solarAltitudeDegrees": -0.833,
+        "status": "正常交点",
+        "morningUtcDateTime": "1990-05-11T21:03:18.668Z",
+        "eveningUtcDateTime": "1990-05-12T11:17:43.173Z",
+        "morningLocalDateTime": "1990-05-12 05:03:18",
+        "eveningLocalDateTime": "1990-05-12 19:17:43",
+        "promptText": "日出/日落：太阳高度-0.833°阈值的当地上午交点为1990-05-12 05:03:18、下午交点为1990-05-12 19:17:43",
+        "ownerFactKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculationStepKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculation": "以太阳中心高度-0.833°为阈值，结合纬度39.9°、经度116.4°、时区UTC+8、时间方程3.8847分钟与太阳赤纬17.842824°求时角交点；余弦时角位于[-1,1]，解得上午与下午两个交点",
+        "limitation": "太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果"
+      },
+      "civilTwilight": {
+        "key": "光照交点:民用曙暮光",
+        "name": "民用曙暮光",
+        "solarAltitudeDegrees": -6,
+        "status": "正常交点",
+        "morningUtcDateTime": "1990-05-11T20:33:07.379Z",
+        "eveningUtcDateTime": "1990-05-12T11:47:54.461Z",
+        "morningLocalDateTime": "1990-05-12 04:33:07",
+        "eveningLocalDateTime": "1990-05-12 19:47:54",
+        "promptText": "民用曙暮光：太阳高度-6°阈值的当地上午交点为1990-05-12 04:33:07、下午交点为1990-05-12 19:47:54",
+        "ownerFactKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculationStepKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculation": "以太阳中心高度-6°为阈值，结合纬度39.9°、经度116.4°、时区UTC+8、时间方程3.8847分钟与太阳赤纬17.842824°求时角交点；余弦时角位于[-1,1]，解得上午与下午两个交点",
+        "limitation": "太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果"
+      },
+      "nauticalTwilight": {
+        "key": "光照交点:航海曙暮光",
+        "name": "航海曙暮光",
+        "solarAltitudeDegrees": -12,
+        "status": "正常交点",
+        "morningUtcDateTime": "1990-05-11T19:55:59.373Z",
+        "eveningUtcDateTime": "1990-05-12T12:25:02.468Z",
+        "morningLocalDateTime": "1990-05-12 03:55:59",
+        "eveningLocalDateTime": "1990-05-12 20:25:02",
+        "promptText": "航海曙暮光：太阳高度-12°阈值的当地上午交点为1990-05-12 03:55:59、下午交点为1990-05-12 20:25:02",
+        "ownerFactKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculationStepKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculation": "以太阳中心高度-12°为阈值，结合纬度39.9°、经度116.4°、时区UTC+8、时间方程3.8847分钟与太阳赤纬17.842824°求时角交点；余弦时角位于[-1,1]，解得上午与下午两个交点",
+        "limitation": "太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果"
+      },
+      "astronomicalTwilight": {
+        "key": "光照交点:天文曙暮光",
+        "name": "天文曙暮光",
+        "solarAltitudeDegrees": -18,
+        "status": "正常交点",
+        "morningUtcDateTime": "1990-05-11T19:15:15.956Z",
+        "eveningUtcDateTime": "1990-05-12T13:05:45.885Z",
+        "morningLocalDateTime": "1990-05-12 03:15:15",
+        "eveningLocalDateTime": "1990-05-12 21:05:45",
+        "promptText": "天文曙暮光：太阳高度-18°阈值的当地上午交点为1990-05-12 03:15:15、下午交点为1990-05-12 21:05:45",
+        "ownerFactKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculationStepKeys": [
+          "solar-illumination:calculation:crossings"
+        ],
+        "calculation": "以太阳中心高度-18°为阈值，结合纬度39.9°、经度116.4°、时区UTC+8、时间方程3.8847分钟与太阳赤纬17.842824°求时角交点；余弦时角位于[-1,1]，解得上午与下午两个交点",
+        "limitation": "太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果"
+      },
+      "method": "采用 NOAA/Meeus 低阶太阳赤纬与时间方程；日出日落以太阳中心高度 -0.833°，民用、航海、天文曙暮光分别以 -6°、-12°、-18° 求时角交点",
+      "source": "NOAA Solar Calculator equations，核心公式源自 Meeus《Astronomical Algorithms》",
+      "calculationSteps": [
+        {
+          "key": "solar-illumination:calculation:astronomical-time",
+          "stage": "天文时间",
+          "status": "已计算",
+          "dependsOnStepKeys": [],
+          "inputs": {
+            "referenceLocalDateTime": "1990-05-12 14:00:00",
+            "timezone": 8
+          },
+          "result": {
+            "referenceUtcDateTime": "1990-05-12 06:00:00Z",
+            "unixMilliseconds": 642492000000
+          },
+          "promptText": "将参考当地时间1990-05-12 14:00:00换算为 UTC 1990-05-12 06:00:00Z",
+          "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
+        },
+        {
+          "key": "solar-illumination:calculation:reference-position",
+          "stage": "参考太阳位置",
+          "status": "已计算",
+          "dependsOnStepKeys": [
+            "solar-illumination:calculation:astronomical-time"
+          ],
+          "inputs": {
+            "latitude": 39.9,
+            "longitude": 116.4,
+            "referenceUtcDateTime": "1990-05-12 06:00:00Z"
+          },
+          "result": {
+            "solarAltitudeDegrees": 57.6935,
+            "solarAzimuthDegrees": 234.9627,
+            "solarDeclinationDegrees": 17.864278,
+            "equationOfTimeMinutes": 3.8871
+          },
+          "promptText": "按 NOAA/Meeus 低阶模型计算参考时刻太阳高度57.6935°、方位234.9627°、赤纬17.864278°",
+          "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
+        },
+        {
+          "key": "solar-illumination:calculation:solar-noon",
+          "stage": "视太阳正午",
+          "status": "已计算",
+          "dependsOnStepKeys": [
+            "solar-illumination:calculation:reference-position"
+          ],
+          "inputs": {
+            "localDate": "1990-05-12",
+            "latitude": 39.9,
+            "longitude": 116.4,
+            "timezone": 8
+          },
+          "result": {
+            "apparentSolarNoonUtcDateTime": "1990-05-12T04:10:30.920Z",
+            "apparentSolarNoonLocalDateTime": "1990-05-12 12:10:30"
+          },
+          "promptText": "按经度、时区与时间方程求视太阳正午：当地1990-05-12 12:10:30",
+          "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
+        },
+        {
+          "key": "solar-illumination:calculation:crossings",
+          "stage": "阈值交点",
+          "status": "已计算",
+          "dependsOnStepKeys": [
+            "solar-illumination:calculation:reference-position",
+            "solar-illumination:calculation:solar-noon"
+          ],
+          "inputs": {
+            "localDate": "1990-05-12",
+            "latitude": 39.9,
+            "longitude": 116.4,
+            "timezone": 8
+          },
+          "result": {
+            "crossingCount": 4,
+            "normalCrossingCount": 4
+          },
+          "promptText": "以 -0.833°、-6°、-12°、-18° 四个太阳高度阈值求日出日落与曙暮光交点，并记录全天状态",
+          "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
+        }
+      ],
+      "assumptions": [
+        "日出日落的 -0.833° 阈值包含标准太阳半径与近地平大气折射近似。",
+        "同一民用日期内采用参考时刻解析出的 UTC 偏移计算事件。"
+      ],
+      "assumptionFacts": [
+        {
+          "key": "solar-illumination:assumption:1",
+          "status": "适用",
+          "ownerStepKeys": [
+            "solar-illumination:calculation:crossings"
+          ],
+          "ownerFactKeys": [
+            "solar-illumination:calculation:crossings"
+          ],
+          "promptText": "日出日落的 -0.833° 阈值包含标准太阳半径与近地平大气折射近似。",
+          "limitation": "假设事实只说明标准太阳半径、折射近似与单日时区偏移的计算前提；不得当作实际天气、遮挡或时区切换影响已经排除"
+        },
+        {
+          "key": "solar-illumination:assumption:2",
+          "status": "适用",
+          "ownerStepKeys": [
+            "solar-illumination:calculation:astronomical-time",
+            "solar-illumination:calculation:crossings"
+          ],
+          "ownerFactKeys": [
+            "solar-illumination:calculation:astronomical-time",
+            "solar-illumination:calculation:crossings"
+          ],
+          "promptText": "同一民用日期内采用参考时刻解析出的 UTC 偏移计算事件。",
+          "limitation": "假设事实只说明标准太阳半径、折射近似与单日时区偏移的计算前提；不得当作实际天气、遮挡或时区切换影响已经排除"
+        }
+      ],
+      "crossingSummaryFact": {
+        "key": "solar-illumination:crossing-summary",
+        "status": "均有正常交点",
+        "factKeys": [
+          "solar-illumination:calculation:crossings",
+          "光照交点:日出/日落",
+          "光照交点:民用曙暮光",
+          "光照交点:航海曙暮光",
+          "光照交点:天文曙暮光"
+        ],
+        "crossingFactKeys": [
+          "光照交点:日出/日落",
+          "光照交点:民用曙暮光",
+          "光照交点:航海曙暮光",
+          "光照交点:天文曙暮光"
+        ],
+        "promptText": "四类太阳高度阈值均找到上午和下午正常交点",
+        "limitation": "交点汇总只说明四类太阳高度阈值在该民用日期是否存在正常交点；全天状态不是错误，也不得直接解释为现实吉凶或居住效果"
+      },
+      "summaryFact": {
+        "key": "solar-illumination:evidence-summary",
+        "status": "证据链完整",
+        "factKeys": [
+          "astronomical-time:1990-05-12 14:00:00:8",
+          "astronomical-time:evidence-summary",
+          "solar-illumination:calculation:astronomical-time",
+          "solar-illumination:calculation:reference-position",
+          "solar-illumination:calculation:solar-noon",
+          "solar-illumination:calculation:crossings",
+          "光照交点:日出/日落",
+          "光照交点:民用曙暮光",
+          "光照交点:航海曙暮光",
+          "光照交点:天文曙暮光",
+          "solar-illumination:crossing-summary",
+          "solar-illumination:assumption:1",
+          "solar-illumination:assumption:2",
+          "solar-illumination:limitation:visibility",
+          "solar-illumination:limitation:timezone-transition",
+          "solar-illumination:limitation:model-precision"
+        ],
+        "calculationStepCount": 4,
+        "normalCrossingCount": 4,
+        "allDayStateCount": 0,
+        "assumptionFactCount": 2,
+        "limitationFactCount": 3,
+        "promptText": "太阳光照证据状态为证据链完整；记录计算步骤4项、正常交点阈值4类、全天状态0类、假设2项、限制3项",
+        "limitation": "太阳光照证据汇总只统计天文时间、太阳位置、视太阳正午、阈值交点、全天状态、假设与限制覆盖；不得按状态生成采光评分、天气结论、吉凶或事件保证"
+      },
+      "limitations": [
+        "未考虑实际海拔、山体与建筑遮挡、逐时气象折射和局部地平线起伏，实际可见时刻可能偏移。",
+        "IANA 时区在当天发生偏移切换时，事件当地时间仍按参考时刻偏移表达，应结合时区诊断复核。",
+        "低阶模型适合民用历法和光照背景，不宣称达到观测级或导航级精度。"
+      ],
+      "limitationFacts": [
+        {
+          "key": "solar-illumination:limitation:visibility",
+          "type": "现场可见性边界",
+          "status": "适用",
+          "ownerFactKeys": [
+            "solar-illumination:calculation:crossings"
+          ],
+          "ownerStepKeys": [
+            "solar-illumination:calculation:crossings"
+          ],
+          "promptText": "未考虑实际海拔、山体与建筑遮挡、逐时气象折射和局部地平线起伏，实际可见时刻可能偏移。",
+          "limitation": "限制事实用于约束太阳高度、方位、日出日落和曙暮光结果可以支持的解释范围，不得被反向当作天气、建筑性能、吉凶或事件证据"
+        },
+        {
+          "key": "solar-illumination:limitation:timezone-transition",
+          "type": "时区切换边界",
+          "status": "适用",
+          "ownerFactKeys": [
+            "solar-illumination:calculation:astronomical-time",
+            "solar-illumination:calculation:crossings"
+          ],
+          "ownerStepKeys": [
+            "solar-illumination:calculation:astronomical-time",
+            "solar-illumination:calculation:crossings"
+          ],
+          "promptText": "IANA 时区在当天发生偏移切换时，事件当地时间仍按参考时刻偏移表达，应结合时区诊断复核。",
+          "limitation": "限制事实用于约束太阳高度、方位、日出日落和曙暮光结果可以支持的解释范围，不得被反向当作天气、建筑性能、吉凶或事件证据"
+        },
+        {
+          "key": "solar-illumination:limitation:model-precision",
+          "type": "模型精度边界",
+          "status": "适用",
+          "ownerFactKeys": [
+            "solar-illumination:calculation:reference-position",
+            "solar-illumination:calculation:crossings"
+          ],
+          "ownerStepKeys": [
+            "solar-illumination:calculation:reference-position",
+            "solar-illumination:calculation:crossings"
+          ],
+          "promptText": "低阶模型适合民用历法和光照背景，不宣称达到观测级或导航级精度。",
+          "limitation": "限制事实用于约束太阳高度、方位、日出日落和曙暮光结果可以支持的解释范围，不得被反向当作天气、建筑性能、吉凶或事件证据"
+        }
+      ],
+      "promptText": "太阳光照证据：1990-05-12，纬度39.9°、经度116.4°，参考当地时间1990-05-12 14:00:00太阳高度57.69°、方位角234.96°（真北起顺时针），视太阳正午1990-05-12 12:10:30；计算链：将参考当地时间1990-05-12 14:00:00换算为 UTC 1990-05-12 06:00:00Z → 按 NOAA/Meeus 低阶模型计算参考时刻太阳高度57.6935°、方位234.9627°、赤纬17.864278° → 按经度、时区与时间方程求视太阳正午：当地1990-05-12 12:10:30 → 以 -0.833°、-6°、-12°、-18° 四个太阳高度阈值求日出日落与曙暮光交点，并记录全天状态；日出/日落：太阳高度-0.833°阈值的当地上午交点为1990-05-12 05:03:18、下午交点为1990-05-12 19:17:43；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；民用曙暮光：太阳高度-6°阈值的当地上午交点为1990-05-12 04:33:07、下午交点为1990-05-12 19:47:54；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；航海曙暮光：太阳高度-12°阈值的当地上午交点为1990-05-12 03:55:59、下午交点为1990-05-12 20:25:02；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；天文曙暮光：太阳高度-18°阈值的当地上午交点为1990-05-12 03:15:15、下午交点为1990-05-12 21:05:45；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果。交点汇总：四类太阳高度阈值均找到上午和下午正常交点。证据汇总：太阳光照证据状态为证据链完整；记录计算步骤4项、正常交点阈值4类、全天状态0类、假设2项、限制3项。方法：采用 NOAA/Meeus 低阶太阳赤纬与时间方程；日出日落以太阳中心高度 -0.833°，民用、航海、天文曙暮光分别以 -6°、-12°、-18° 求时角交点。来源：NOAA Solar Calculator equations，核心公式源自 Meeus《Astronomical Algorithms》。假设：日出日落的 -0.833° 阈值包含标准太阳半径与近地平大气折射近似。；同一民用日期内采用参考时刻解析出的 UTC 偏移计算事件。。限制：未考虑实际海拔、山体与建筑遮挡、逐时气象折射和局部地平线起伏，实际可见时刻可能偏移。；IANA 时区在当天发生偏移切换时，事件当地时间仍按参考时刻偏移表达，应结合时区诊断复核。；低阶模型适合民用历法和光照背景，不宣称达到观测级或导航级精度。"
+    },
+    "summary": {
+      "elements": {
+        "火": [
+          "月亮",
+          "金星"
+        ],
+        "土": [
+          "太阳",
+          "水星",
+          "土星",
+          "天王星",
+          "海王星"
+        ],
+        "风": [],
+        "水": [
+          "火星",
+          "木星",
+          "冥王星"
+        ]
+      },
+      "modalities": {
+        "开创": [
+          "金星",
+          "木星",
+          "土星",
+          "天王星",
+          "海王星"
+        ],
+        "固定": [
+          "太阳",
+          "水星",
+          "冥王星"
+        ],
+        "变动": [
+          "月亮",
+          "火星"
+        ]
+      },
+      "retrograde": [
+        "水星",
+        "土星",
+        "天王星",
+        "海王星",
+        "冥王星",
+        "婚神星"
+      ],
+      "patterns": [
+        "kite: Ceres, Juno, Mars, Neptune",
+        "kite: Ceres, Mars, Neptune, Pluto",
+        "kite: Chiron, Juno, Mars, Neptune",
+        "kite: Chiron, Mars, Neptune, Pluto",
+        "t_square: Ceres, Neptune, Venus",
+        "t_square: Ceres, Neptune, Vesta",
+        "t_square: Ceres, Uranus, Venus",
+        "t_square: Chiron, Neptune, Venus",
+        "t_square: Chiron, Uranus, Venus",
+        "t_square: Juno, Mercury, True North Node",
+        "t_square: Jupiter, Neptune, Venus",
+        "t_square: Jupiter, Uranus, Venus",
+        "t_square: Mercury, Pluto, True North Node",
+        "stellium_sign: Ceres, Chiron, Jupiter",
+        "stellium_sign: Juno, Pluto, True Lilith",
+        "stellium_sign: Mercury, Pallas, Sun",
+        "stellium_sign: Neptune, Saturn, Uranus"
+      ]
+    }
+  }
+}

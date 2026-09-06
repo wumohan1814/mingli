@@ -1,0 +1,10 @@
+{
+  "name": "taichu-paipan-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "太初排盘引擎的 Node 运行时：紫微 iztro@^2.5.0；占星/七政/五运六气 mingyu-core@^0.2.1；奇门终身局经 scripts/vendor 的 0.2.2 构建产物提供。",
+  "dependencies": {
+    "iztro": "^2.5.0",
+    "mingyu-core": "^0.2.1"
+  }
+}

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+venv/
+
+# Node
+node_modules/
+frontend/dist/
+
+# 环境变量 / 敏感本地文件
+.env
+token.txt
+
+# 数据库（SQLite 本地文件，任何位置）
+*.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 参考项目（不参与构建，含嵌套 git）/ 临时产物 / 工具目录
+reference/
+temp/
+.workbuddy/
+
