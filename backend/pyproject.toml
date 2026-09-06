@@ -20,6 +20,7 @@ dependencies = [
     "lunar-python>=1.4.8",
     "python-multipart>=0.0.12",
     "apscheduler>=3.10.0",
+    "pillow>=10.0.0",
 ]
 
 [project.optional-dependencies]
