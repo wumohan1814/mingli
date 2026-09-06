@@ -15,6 +15,9 @@ services:
       TAICHU_JWT_SECRET: ${TAICHU_JWT_SECRET}
       TAICHU_JINSHUJU_ACCESS_TOKEN: ${TAICHU_JINSHUJU_ACCESS_TOKEN:-}
       TAICHU_JINSHUJU_ALLOW_MOCK: ${TAICHU_JINSHUJU_ALLOW_MOCK:-false}
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     volumes:
       # SQLite 文件持久化到宿主机 /opt/taichu/data
       - /opt/taichu/data:/app/data
