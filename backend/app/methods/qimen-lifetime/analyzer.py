@@ -4,5 +4,5 @@ from app.methods.base import analyze_method
 METHOD_KEY = "qimen-lifetime"
 
 
-async def analyze(phase: str, slice_data: dict, user_question: str = "", calibration_feedback: dict = None) -> dict | None:
-    return await analyze_method(METHOD_KEY, phase, slice_data, user_question, calibration_feedback)
+async def analyze(phase: str, slice_data: dict, user_question: str = "", calibration_feedback: dict = None, continuation: str = None) -> dict | None:
+    return await analyze_method(METHOD_KEY, phase, slice_data, user_question, calibration_feedback, continuation=continuation)

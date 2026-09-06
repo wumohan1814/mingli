@@ -80,6 +80,22 @@ def _charge_after_run(job_id: int, user_id: int, total_tokens, label: str) -> No
                      label, job_id, user_id, tokens, exc)
 
 
+def _charge_method(user_id: int, tokens, ref: str) -> None:
+    """逐法扣费：该法 LLM 已调用（usage 账本已累加）即按 tokens 扣积分。
+
+    容错口径与 `_charge_after_run` 一致：扣费失败只记日志、不阻断任务进度。
+    tokens <= 0（未产生消耗，如 LLMError 未成功返回）直接跳过。
+    """
+    tokens = int(tokens or 0)
+    if tokens <= 0:
+        return
+    try:
+        consume(user_id, tokens, ref=ref)
+    except Exception as exc:
+        logger.error("逐法扣费失败 user_id=%s tokens=%s ref=%s error=%s",
+                     user_id, tokens, ref, exc)
+
+
 def _build_slices(chart: dict) -> dict[str, dict]:
     """缺省 8 片 + 补 bazi-hunyin-caiyun 第 9 片，合并成 key → fragment。"""
     slices = slice_chart(chart)
@@ -130,6 +146,21 @@ async def run_duan_qian_chen(job_id: int) -> None:
         failed_methods: list[str] = []
         llm_fail_streak = 0
 
+        # 续跑检测（断点续跑语义）：统计该 case 该 phase 已落库非空结果的方法数。
+        # 0 < done_count < total 说明是服务重启后中断续跑 → 对剩余方法注入
+        # continuation 上下文（已完成方法仍走缓存命中跳过，不重复调 LLM）。
+        done_rows = (
+            session.query(MethodResult)
+            .filter_by(case_id=job.case_id, user_id=job.user_id, phase=DQC_PHASE)
+            .all()
+        )
+        done_count = sum(1 for r in done_rows if r.result_json)
+        continuation = (
+            "该档案之前的推演被服务器重启中断，请继续完成剩余方法的分析，不要重复已完成的结论。"
+            if 0 < done_count < (job.total or 9)
+            else None
+        )
+
         # 串行遍历 9 个注册方法
         for key in METHOD_KEYS:
             if key in degraded or key not in ANALYZERS:
@@ -156,10 +187,17 @@ async def run_duan_qian_chen(job_id: int) -> None:
                 logger.info("断前尘缓存命中 method_key=%s job_id=%s", key, job_id)
                 continue
 
+            # 逐法扣费：进入该法前快照进程内 usage 账本，方法处理完（成功或抛
+            # ValueError——LLM 已成功返回但解析失败）后按差值立即扣费；
+            # LLMError（chat 未成功返回，usage 未累加）差值通常为 0，不产生扣费。
+            before = get_usage().get("total_tokens") or 0
             try:
-                result = await ANALYZERS[key]("duan-qian-chen", slices.get(key), user_question)
+                result = await ANALYZERS[key](
+                    "duan-qian-chen", slices.get(key), user_question,
+                    continuation=continuation,
+                )
                 if not isinstance(result, dict):
-                    # prompt 缺失 / slice 空 → 该方法降级，跳过落库
+                    # prompt 缺失 / slice 空 → 该方法降级，跳过落库（未调 LLM，无 token 消耗）
                     logger.warning("断前尘方法降级 method_key=%s（analyze 返回空）", key)
                     job.completed = (job.completed or 0) + 1
                     session.commit()
@@ -183,7 +221,15 @@ async def run_duan_qian_chen(job_id: int) -> None:
                 else:
                     llm_fail_streak = 0
                 session.commit()
+                # 失败也按差值立即扣费：ValueError 时 LLM 已成功返回（usage 已累加）；
+                # LLMError 差值通常为 0，由 _charge_method 内部跳过
+                _charge_method(job.user_id, get_usage().get("total_tokens") - before,
+                               f"job:{job_id}:{key}")
                 continue
+
+            # 成功路径（分析 + 校验均完成）：该法答案已生成 → 按差值立即扣费
+            _charge_method(job.user_id, get_usage().get("total_tokens") - before,
+                           f"job:{job_id}:{key}")
 
             # 校验成功后落库（覆盖命中但 result 为空的残留行，避免重复行）
             if existing is not None:
@@ -211,7 +257,6 @@ async def run_duan_qian_chen(job_id: int) -> None:
         questionnaire["_usage"] = usage
         job.result_json = questionnaire
         job.completed = job.total if job.total is not None else job.completed
-        _charge_after_run(job_id, job.user_id, usage.get("total_tokens"), "断前尘")
         job.status = JobStatus.succeeded
         session.commit()
         logger.info(
@@ -331,8 +376,20 @@ async def run_predict(job_id: int) -> None:
             .all()
         }
 
+        # 续跑检测（与断前尘同语义）：0 < done_count < total 说明是服务重启后中断
+        # 续跑 → 对本次 analyze 注入 continuation 上下文（已完成方法仍复用缓存结果）。
+        done_count = sum(1 for r in cache_rows.values() if r.result_json)
+        continuation = (
+            "该档案之前的推演被服务器重启中断，请继续完成剩余方法的分析，不要重复已完成的结论。"
+            if 0 < done_count < (job.total or 0)
+            else None
+        )
+
         async def _call_analyze(key: str):
-            return await ANALYZERS[key]("prediction", slices.get(key), user_question)
+            return await ANALYZERS[key](
+                "prediction", slices.get(key), user_question,
+                continuation=continuation,
+            )
 
         # 并行扇出：return_exceptions=True 兜底，单法异常不整体崩
         coros = {key: _call_analyze(key) for key in pending}
@@ -402,6 +459,12 @@ async def run_predict(job_id: int) -> None:
     except Exception as exc:  # 任何未捕获异常 → failed
         try:
             session.rollback()
+            # 尽力扣费：任务异常中断未走正常收尾，已消耗的 LLM token 仍按实际 usage
+            # 尽力扣掉（失败只记日志，不阻断置 failed）
+            try:
+                _charge_after_run(job_id, job.user_id, get_usage().get("total_tokens"), "预测")
+            except Exception as charge_exc:  # pragma: no cover - 兜底日志
+                logger.error("预测异常兜底扣费失败 job_id=%s error=%s", job_id, charge_exc)
             job_ref = session.query(Job).filter_by(id=job_id).first()
             if job_ref is not None:
                 job_ref.status = JobStatus.failed
