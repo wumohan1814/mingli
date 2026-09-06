@@ -4601,6 +4601,7 @@ function TopbarMenu({
   loggedIn,
   onAuth,
   onPickModule,
+  onCases,
   onLogout
 }) {
   const [open, setOpen] = useState(false);
@@ -4659,7 +4660,19 @@ function TopbarMenu({
     style: {
       background: m.color
     }
-  }), m.label)), /*#__PURE__*/React.createElement("div", {
+  }), m.label)), /*#__PURE__*/React.createElement("button", {
+    className: "menu-item",
+    role: "menuitem",
+    onClick: () => {
+      setOpen(false);
+      onCases();
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mi-dot",
+    style: {
+      background: '#3E7C6B'
+    }
+  }), "档案管理"), /*#__PURE__*/React.createElement("div", {
     className: "menu-sep"
   }), /*#__PURE__*/React.createElement("button", {
     className: "menu-item logout",
@@ -4730,7 +4743,7 @@ function XishiHubPage({
   applySkin
 }) {
   const cards = [{
-    name: '星座预测',
+    name: '星座',
     sub: '本命盘 · 行运 · 日返 · 次限',
     bar: '#2A3A5C',
     ico: 'orbit',
@@ -6151,7 +6164,7 @@ function LenormandPage({
       React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
 }
 
-/* ---------- 星座预测（SVG 星盘，纯前端自绘） ---------- */
+/* ---------- 星座（SVG 星盘，纯前端自绘） ---------- */
 const SIGN_SYM = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
 const PLANET_SYM = {
   '太阳': '☉',
@@ -6176,22 +6189,7 @@ const PLANET_SYM = {
   '上升': 'ASC',
   '天顶': 'MC'
 };
-/* 星座星盘页：出生信息表单默认值 / 年份选项（参考建档页可简化，1940~当前年-18） */
-const ASTRO_YEAR_MIN = 1940;
-const ASTRO_YEAR_MAX = Math.max(ASTRO_YEAR_MIN, new Date().getFullYear() - 18);
-const ASTRO_YEARS = [];
-for (let _ay = ASTRO_YEAR_MIN; _ay <= ASTRO_YEAR_MAX; _ay++) ASTRO_YEARS.push(_ay);
-const ASTRO_DEFAULT_YEAR = Math.max(ASTRO_YEAR_MIN, Math.min(ASTRO_YEAR_MAX, new Date().getFullYear() - 25));
-const ASTRO_DEFAULT_LONGITUDE = '116.4'; // 北京
-const ASTRO_DEFAULT_LATITUDE = '39.9'; // 北京
-
-function astroFin(v) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-function astroDaysInMonth(y, m) {
-  return new Date(y, m, 0).getDate();
-}
+/* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
 /* 把后端 natal / 单盘结构归一化成前端渲染结构（兼容 DEMO 字段与真实字段，缺字段不崩） */
 function astroNorm(scope) {
   const emptySum = {
@@ -6412,15 +6410,10 @@ function AstrologyPage({
 }) {
   const el = React.createElement;
   const [tab, setTab] = useState('natal');
-  const [year, setYear] = useState(ASTRO_DEFAULT_YEAR);
-  const [month, setMonth] = useState(6);
-  const [day, setDay] = useState(15);
-  const [hour, setHour] = useState(12);
-  const [minute, setMinute] = useState(0);
-  const [gender, setGender] = useState('male');
-  const [birthplace, setBirthplace] = useState('');
-  const [longitude, setLongitude] = useState(ASTRO_DEFAULT_LONGITUDE);
-  const [latitude, setLatitude] = useState(ASTRO_DEFAULT_LATITUDE);
+  const [caseList, setCaseList] = useState([]);
+  const [caseLoading, setCaseLoading] = useState(true);
+  const [caseErrored, setCaseErrored] = useState('');
+  const [caseId, setCaseId] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errored, setErrored] = useState('');
@@ -6428,58 +6421,39 @@ function AstrologyPage({
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
   const TAB_LIST = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日']];
-  const cpt = {
-    padding: '8px 6px',
-    fontSize: 14,
-    margin: '4px 0'
-  };
   const chart = data && data.chart ? data.chart : null;
   const natalRaw = chart && chart.natal ? chart.natal : null;
   const natal = astroNorm(natalRaw);
   const birthInfo = natal.birth || {};
-  const onYear = v => {
-    setYear(v);
-    if (day > astroDaysInMonth(v, month)) setDay(astroDaysInMonth(v, month));
-  };
-  const onMonth = v => {
-    setMonth(v);
-    if (day > astroDaysInMonth(year, v)) setDay(astroDaysInMonth(year, v));
-  };
-  const opt = (v, label) => el('option', {
-    key: v,
-    value: v
-  }, label == null ? String(v) : label);
-  const numOpts = (from, to, suffix) => {
-    const arr = [];
-    for (let i = from; i <= to; i++) arr.push(opt(i, i + (suffix || '')));
-    return arr;
-  };
-  const field = (label, node) => el('div', null, el('span', {
-    className: 'label',
-    style: {
-      marginTop: 6,
-      fontSize: 12
+  // 星盘复用国学档案：挂载时拉档案列表，生辰（出生日期/时间/性别/出生地经纬度）由后端从档案读取
+  const loadCases = async () => {
+    setCaseLoading(true);
+    setCaseErrored('');
+    try {
+      const res = await api('/cases', {
+        method: 'GET'
+      });
+      const list = res && res.data && res.data.cases || res && res.cases || [];
+      setCaseList(list);
+    } catch (e) {
+      setCaseErrored(e && e.message ? e.message : '档案列表加载失败，请重试。');
+    } finally {
+      setCaseLoading(false);
     }
-  }, label), node);
-  const maxDay = astroDaysInMonth(year, month);
+  };
+  useEffect(() => {
+    loadCases();
+  }, []);
 
-  // 生成星盘：确定性计算免费；经纬度后端必填（缺省北京由表单默认值兜底）
+  // 生成星盘：选档案 → POST /astrology/chart，生辰由后端从档案 case.input_json 取
   const load = async scope => {
     const sc = scope || 'natal';
-    const lngTxt = String(longitude == null ? '' : longitude).trim();
-    const latTxt = String(latitude == null ? '' : latitude).trim();
-    const lng = astroFin(lngTxt);
-    const lat = astroFin(latTxt);
     setErrored('');
     setData(null);
     setInterp('');
     setInterpErr('');
-    if (!lngTxt || !latTxt || lng === null || lat === null) {
-      setErrored('请填写有效的出生地经度与纬度（数字，如北京 116.4 / 39.9）');
-      return;
-    }
-    if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
-      setErrored('经纬度越界：经度 -180~180，纬度 -90~90');
+    if (!caseId) {
+      setErrored('请先选择一份档案');
       return;
     }
     setLoading(true);
@@ -6487,16 +6461,7 @@ function AstrologyPage({
       const res = await api('/astrology/chart', {
         method: 'POST',
         body: JSON.stringify({
-          year: Number(year),
-          month: Number(month),
-          day: Number(day),
-          hour: Number(hour),
-          minute: Number(minute),
-          gender: gender,
-          birthplace: String(birthplace || '').trim(),
-          longitude: lng,
-          latitude: lat,
-          true_solar: false,
+          case_id: Number(caseId),
           scope: sc
         })
       });
@@ -6526,100 +6491,102 @@ function AstrologyPage({
     }
   };
 
-  // ---- 表单 ----
-  const yearSel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: year,
-    onChange: ev => onYear(Number(ev.target.value))
-  }, ASTRO_YEARS.map(v => opt(v, v + ' 年')));
-  const monthSel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: month,
-    onChange: ev => onMonth(Number(ev.target.value))
-  }, numOpts(1, 12, ' 月'));
-  const daySel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: day,
-    onChange: ev => setDay(Number(ev.target.value))
-  }, numOpts(1, maxDay, ' 日'));
-  const hourSel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: hour,
-    onChange: ev => setHour(Number(ev.target.value))
-  }, numOpts(0, 23, ' 时'));
-  const minuteSel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: minute,
-    onChange: ev => setMinute(Number(ev.target.value))
-  }, numOpts(0, 59, ' 分'));
-  const genderSel = el('select', {
-    className: 'input',
-    style: cpt,
-    value: gender,
-    onChange: ev => setGender(ev.target.value)
-  }, el('option', {
-    value: 'male'
-  }, '男'), el('option', {
-    value: 'female'
-  }, '女'));
-  const lngInput = el('input', {
-    className: 'input',
-    style: cpt,
-    type: 'text',
-    inputMode: 'decimal',
-    value: longitude,
-    placeholder: '116.4（东经为正）',
-    onChange: ev => setLongitude(ev.target.value)
-  });
-  const latInput = el('input', {
-    className: 'input',
-    style: cpt,
-    type: 'text',
-    inputMode: 'decimal',
-    value: latitude,
-    placeholder: '39.9（北纬为正）',
-    onChange: ev => setLatitude(ev.target.value)
-  });
-  const placeInput = el('input', {
-    className: 'input',
-    style: {
-      padding: '9px 10px',
-      fontSize: 14,
-      margin: '4px 0'
-    },
-    type: 'text',
-    value: birthplace,
-    placeholder: '出生地（可选，仅作展示，如：北京）',
-    onChange: ev => setBirthplace(ev.target.value)
-  });
+  // ---- 档案选择卡片（生辰自动取自档案，不再单独填出生表单） ----
+  let casePick = null;
+  if (caseLoading) {
+    casePick = el('div', {
+      style: {
+        textAlign: 'center',
+        color: 'var(--text-3)',
+        fontSize: 13,
+        padding: '14px 0'
+      }
+    }, '档案加载中…');
+  } else if (caseErrored && !caseList.length) {
+    casePick = el('div', null, el('div', {
+      className: 'error'
+    }, caseErrored), el('div', {
+      className: 'back-row',
+      style: {
+        justifyContent: 'center'
+      }
+    }, el('button', {
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto'
+      },
+      onClick: loadCases
+    }, '重试档案')));
+  } else if (!caseList.length) {
+    casePick = el('div', {
+      style: {
+        textAlign: 'center',
+        padding: '16px 8px'
+      }
+    }, el('div', {
+      style: {
+        fontSize: 14,
+        color: 'var(--text-2)',
+        lineHeight: 1.8,
+        marginBottom: 10
+      }
+    }, '暂无档案：请先在「国学预测」中建立出生档案（含出生时间与出生地经纬度），星盘将复用档案生辰，无需重复填写。'), el('div', {
+      className: 'back-row',
+      style: {
+        justifyContent: 'center'
+      }
+    }, el('button', {
+      className: 'btn btn-primary',
+      style: {
+        width: 'auto'
+      },
+      onClick: () => onNavigate('onboarding')
+    }, '去建档'), el('button', {
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto'
+      },
+      onClick: () => onNavigate('cases')
+    }, '管理档案')));
+  } else {
+    casePick = el('div', null, el('div', {
+      className: 'row-gap',
+      style: {
+        margin: '6px 0 2px'
+      }
+    }, caseList.map(c => {
+      const sel = caseId != null && Number(caseId) === Number(c.caseId);
+      const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ');
+      return el('button', {
+        key: c.caseId,
+        type: 'button',
+        className: 'tag' + (sel ? ' sel' : ''),
+        style: {
+          cursor: 'pointer',
+          border: '1px solid ' + (sel ? 'var(--skin-accent)' : 'var(--border)'),
+          fontWeight: 500
+        },
+        onClick: () => setCaseId(c.caseId)
+      }, (c.name || '档案 ' + c.caseId) + (meta ? '（' + meta + '）' : ''));
+    })));
+  }
   const formCard = el('div', {
     className: 'card'
   }, el('div', {
     className: 'section-title'
-  }, '出生信息 · 生成免费本命盘'), el('div', {
-    className: 'field-row'
-  }, field('出生年', yearSel), field('出生月', monthSel), field('出生日', daySel)), el('div', {
-    className: 'field-row'
-  }, field('出生时（0-23）', hourSel), field('出生分（0-59）', minuteSel), field('性别', genderSel)), field('出生地（可选）', placeInput), el('div', {
-    className: 'field-row'
-  }, field('经度', lngInput), field('纬度', latInput)), el('div', {
+  }, '选择档案 · 生成免费本命盘'), el('div', {
     style: {
       fontSize: 11,
       color: 'var(--text-3)',
       lineHeight: 1.7,
-      marginTop: 2
+      marginBottom: 4
     }
-  }, '经纬度用于生成本命盘，必填；缺省北京 116.4 / 39.9。出生时间按东八区公历计，排盘为确定性计算、免费。'), el('button', {
+  }, '生辰信息自动取自所选档案（出生日期 / 时间 / 性别 / 出生地经纬度），排盘为确定性计算、免费。'), casePick, el('button', {
     className: 'btn btn-primary',
     style: {
       marginTop: 12
     },
-    disabled: loading,
+    disabled: loading || !caseId,
     onClick: () => load('natal')
   }, loading ? '星盘生成中…' : '生成星盘'));
 
@@ -6801,7 +6768,7 @@ function AstrologyPage({
         color: 'var(--text-3)',
         padding: '22px 16px'
       }
-    }, '输入出生日期、时间与经纬度后点击「生成星盘」，即可免费查看行星落座、四轴、相位与元素格局。');
+    }, '在上方选择一份档案并点击「生成星盘」（生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
   }
 
   return el('div', {
@@ -6811,7 +6778,7 @@ function AstrologyPage({
   }, el(Icon, {
     name: 'orbit',
     size: 22
-  }), ' 星座预测'), formCard, tabsNode, body, el('div', {
+  }), ' 星座'), formCard, tabsNode, body, el('div', {
     className: 'back-row'
   }, data ? el('button', {
     className: 'btn btn-outline',
@@ -6854,6 +6821,10 @@ function MbtiPage({
   const [info, setInfo] = useState(null); // type_info {alias,strengths,blindspots,career,relationships,growth}
   const [infoLoading, setInfoLoading] = useState(false);
   const [infoErr, setInfoErr] = useState('');
+  const [caseList, setCaseList] = useState([]);
+  const [caseLoading, setCaseLoading] = useState(true);
+  const [caseErrored, setCaseErrored] = useState('');
+  const [caseId, setCaseId] = useState(null); // 判型结果将回写该档案 case.mbti_type
   const total = questions && questions.length ? questions.length : 0;
   // —— 拉取题库（GET /api/mbti/questions）——
   const load = async () => {
@@ -6871,8 +6842,25 @@ function MbtiPage({
       setQLoading(false);
     }
   };
+  // —— 拉取档案列表（GET /api/cases）：判型需写入档案 mbti_type ——
+  const loadCases = async () => {
+    setCaseLoading(true);
+    setCaseErrored('');
+    try {
+      const res = await api('/cases', {
+        method: 'GET'
+      });
+      const list = res && res.data && res.data.cases || res && res.cases || [];
+      setCaseList(list);
+    } catch (e) {
+      setCaseErrored(e && e.message ? e.message : '档案列表加载失败，请重试。');
+    } finally {
+      setCaseLoading(false);
+    }
+  };
   useEffect(() => {
     load();
+    loadCases();
   }, []);
   // —— 拉取判型文案（GET /api/mbti/results/{id}）——
   const fetchInfo = async id => {
@@ -6889,15 +6877,22 @@ function MbtiPage({
       setInfoLoading(false);
     }
   };
-  // —— 提交答案并判型（POST /api/mbti/score）——
+  // —— 提交答案并判型（POST /api/mbti/score，case_id 必填；判型结果回写档案 mbti_type）——
   const submitScore = async list => {
     if (!list || !total || list.length !== total) return;
+    if (!caseId) {
+      setScoreErr('请先选择一份档案（判型结果需写入档案）');
+      return;
+    }
     setScoring(true);
     setScoreErr('');
     try {
       const res = await api('/mbti/score', {
         method: 'POST',
-        body: JSON.stringify({answers: list})
+        body: JSON.stringify({
+          case_id: Number(caseId),
+          answers: list
+        })
       });
       const d = res && res.data || res || {};
       if (!d || !d.type) throw new Error(d && d.message || '判型失败，请重试。');
@@ -6916,6 +6911,10 @@ function MbtiPage({
   // 点击选项：记录该题答案（{question_id, choice}）并自动进入下一题；最后一题则自动判型
   const choose = key => {
     if (scoring || !total) return;
+    if (!caseId) {
+      toast('请先选择用于记录结果的档案');
+      return;
+    }
     const q = questions[idx];
     if (!q) return;
     const next = answers.slice();
@@ -7031,13 +7030,53 @@ function MbtiPage({
           el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
     } else if (!cur) {
       body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
+    } else if (!caseId) {
+      // 答题前先选档案：判型结果需回写档案 mbti_type（无档案时提示去建档）
+      let gate = null;
+      if (caseLoading) {
+        gate = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '24px 16px'}}, '档案列表加载中…');
+      } else if (caseErrored && !caseList.length) {
+        gate = el('div', {className: 'card failed-box'},
+          el('div', {className: 'section-title'}, '档案列表加载失败'),
+          el('div', {className: 'error'}, caseErrored),
+          el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: loadCases}, '重试')));
+      } else if (!caseList.length) {
+        gate = el('div', {className: 'card', style: {textAlign: 'center', padding: '22px 16px'}},
+          el('div', {style: {fontSize: 15, fontWeight: 700, marginBottom: 8}}, '请先在国学预测中建档'),
+          el('p', {style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8, marginBottom: 4}}, 'MBTI 判型结果会写入档案的 mbti_type。你还没有任何档案，请先建立一份出生档案再回来测试。'),
+          el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('onboarding')}, '去建档'),
+            el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'),
+            el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
+      } else {
+        gate = el('div', {className: 'card'},
+          el('div', {className: 'section-title'}, '选择档案 · 开始答题'),
+          el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案的 mbti_type，选择后自动开始答题。'),
+          el('div', {className: 'row-gap', style: {margin: '6px 0 2px'}},
+            caseList.map(c => {
+              const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ');
+              return el('button', {key: c.caseId, type: 'button', className: 'tag', style: {cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 500}, onClick: () => setCaseId(c.caseId)}, (c.name || '档案 ' + c.caseId) + (meta ? '（' + meta + '）' : ''));
+            })),
+          el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => onNavigate('cases')}, '管理档案'),
+            el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
+      }
+      body = gate;
     } else {
       const answered = Math.min(answers.length, total);
       const pct = total ? Math.round(answered / total * 100) : 0;
       body = el('div', {className: 'card'},
-        el('div', {style: {display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-3)', marginBottom: 2}},
+        el('div', {style: {display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, fontSize: 12, color: 'var(--text-3)', marginBottom: 2}},
           el('span', null, '第 ' + (idx + 1) + ' / ' + total + ' 题'),
-          el('button', {style: {fontSize: 12, color: 'var(--skin-accent)', fontWeight: 600}, onClick: () => setView('grid')}, '我已知道类型，直接输入')),
+          el('span', {style: {display: 'flex', gap: 10, alignItems: 'center'}},
+            el('button', {style: {fontSize: 12, color: 'var(--skin-accent)', fontWeight: 600}, onClick: () => {
+              setIdx(0);
+              setAnswers([]);
+              setScoreErr('');
+              setCaseId(null);
+            }}, '更换档案'),
+            el('button', {style: {fontSize: 12, color: 'var(--skin-accent)', fontWeight: 600}, onClick: () => setView('grid')}, '我已知道类型，直接输入'))),
         el('div', {className: 'mbti-progress'}, el('i', {style: {width: pct + '%'}})),
         scoring ? el('div', {style: {textAlign: 'center', color: 'var(--text-2)', padding: '18px 0'}}, '判型中…') : el(React.Fragment, null,
           el('div', {style: {fontSize: 17, fontWeight: 700, color: 'var(--text-1)', lineHeight: 1.6, margin: '10px 0'}}, cur.text),
@@ -7242,6 +7281,7 @@ function App() {
     loggedIn: !!token,
     onAuth: () => navigate('auth'),
     onPickModule: selectModule,
+    onCases: () => navigate('cases'),
     onLogout: () => logout()
   })), /*#__PURE__*/React.createElement("div", {
     className: "app-shell"
