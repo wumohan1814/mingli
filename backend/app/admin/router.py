@@ -62,6 +62,33 @@ FUNNEL_STEPS = [
     "predict_done",
 ]
 
+# 埋点 event_name → 报表展示中文名（仅展示层映射；未收录的英文名原样返回不丢失）
+EVENT_NAME_ZH = {
+    "page_view": "页面浏览",
+    "auth_register": "注册",
+    "auth_login": "登录",
+    "case_create": "建档",
+    "paipan": "排盘",
+    "dqc_start": "断前尘开始",
+    "dqc_done": "断前尘完成",
+    "calibration_submit": "校准提交",
+    "predict_start": "预测开始",
+    "predict_done": "预测完成",
+    "revise": "追问",
+    "archive_view": "查看档案",
+    "llm_call": "LLM 调用",
+    "error": "错误",
+    "api_request": "API 请求",
+    "credit_consume": "积分消耗",
+    "credit_recharge": "积分充值",
+    "credit_insufficient": "积分不足",
+}
+
+
+def _event_zh(name: str) -> str:
+    """event_name → 报表展示中文名；未收录（或空）时原样返回，保证不丢数据。"""
+    return EVENT_NAME_ZH.get(name, name) if name else name
+
 
 # --- 请求模型 ---
 class AdminLoginRequest(BaseModel):
@@ -138,7 +165,14 @@ def _metric_overview(db: Session, days: int, now: datetime) -> list[dict]:
 
 
 def _metric_funnel(db: Session, days: int, now: datetime) -> list[dict]:
-    """funnel：核心漏斗各阶段事件计数（auth_register → … → predict_done）。"""
+    """funnel：核心漏斗各阶段事件计数（auth_register → … → predict_done）。
+
+    返回的每项含：
+      - event_key：埋点英文原名（对账用，不变）；
+      - event_name：报表展示名（优先中文映射，未收录则原样返回英文）；
+      - count：该阶段事件数。
+    只做展示前映射，不改底层聚合 SQL。
+    """
     start = _window_start(days, now)
     counts = {name: 0 for name in FUNNEL_STEPS}
     placeholders = ", ".join(f":k{i}" for i in range(len(FUNNEL_STEPS)))
@@ -155,7 +189,14 @@ def _metric_funnel(db: Session, days: int, now: datetime) -> list[dict]:
     for name, cnt in rows:
         if name in counts:
             counts[name] = int(cnt)
-    return [{"event": name, "count": counts[name]} for name in FUNNEL_STEPS]
+    return [
+        {
+            "event_key": name,          # 英文原值，便于对账
+            "event_name": _event_zh(name),  # 中文展示名（未映射则原样英文）
+            "count": counts[name],
+        }
+        for name in FUNNEL_STEPS
+    ]
 
 
 def _metric_llm_cost(db: Session, days: int, now: datetime) -> list[dict]:
