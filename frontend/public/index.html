@@ -4971,7 +4971,7 @@ function ZodiacPage({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('guoxue-hub')
-  }, "回到 Hub"), /*#__PURE__*/React.createElement("button", {
+  }, "返回"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, "回到首页")));
@@ -5212,7 +5212,7 @@ function DivinationPage({
     body,
     React.createElement('div', { className: 'back-row' },
       data ? React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: run }, '重新起卦') : null,
-      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('guoxue-hub'); } }, '回到 Hub')));
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('guoxue-hub'); } }, '返回')));
 }
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
@@ -5804,7 +5804,7 @@ function TarotPage({
       React.createElement('div', { className: 'back-row' },
         React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { draw(spread); } }, '重新抽卡'),
         React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: backMenu }, '重选牌阵'),
-        React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '回到 Hub'))));
+        React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '返回'))));
 }
 
 /* ---------- 雷诺曼（36 张占位卡） ---------- */
@@ -6148,7 +6148,7 @@ function LenormandPage({
     body,
     React.createElement('div', { className: 'back-row' },
       data ? React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { load(spread); } }, '重新抽牌') : null,
-      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '回到 Hub')));
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('xishi-hub'); } }, '返回')));
 }
 
 /* ---------- 星座预测（SVG 星盘，纯前端自绘） ---------- */
@@ -6825,7 +6825,7 @@ function AstrologyPage({
       width: 'auto'
     },
     onClick: () => onNavigate('xishi-hub')
-  }, '回到 Hub'), el('button', {
+  }, '返回'), el('button', {
     className: 'btn btn-outline',
     style: {
       width: 'auto'
