@@ -1734,7 +1734,7 @@ function CasesPage({
     }
   }, "暂无档案，点击新建开始") : caseList.map(c => {
     const failed = c.status === 'failed';
-    const mainLabel = c.hasReport ? '查看解读' : (c.methodCount || 0) < 9 ? '继续排盘' : '继续';
+    const mainLabel = c.hasReport ? '查看解读' : (c.methodCount || 0) < 9 ? '继续命盘' : '继续';
     // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
     const methodCount = c.methodCount || 0;
     const totalMethods = c.totalMethods || 9;
@@ -1863,7 +1863,7 @@ function CasesPage({
       onClick: () => onNavigate('archive', {
         caseId: c.caseId
       })
-    }, "排盘")), /*#__PURE__*/React.createElement("div", {
+    }, "命盘")), /*#__PURE__*/React.createElement("div", {
       className: "flex-row",
       style: {
         marginTop: 8
@@ -3517,7 +3517,7 @@ function EmptyNote({
 }) {
   return /*#__PURE__*/React.createElement("div", {
     className: "empty-note"
-  }, name, "：", deg ? '本次建档未提供经纬度，该盘未排（已降级）。' : '暂无数据。');
+  }, name, "：", deg ? '该盘未排，相关数据缺失。' : '暂无数据。');
 }
 
 // —— 八字盘（最核心）——
@@ -4010,7 +4010,7 @@ function ChartView({
     className: "section-title"
   }, "完整盘面"), deg.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "deg-banner"
-  }, "已降级方法：", arr(degraded).join('、'), "（未提供经纬度，相关盘面数据缺失，对应标签页将提示未排）。"), /*#__PURE__*/React.createElement("div", {
+  }, "已降级方法：", arr(degraded).join('、'), "（相关盘面数据缺失，对应标签页将提示未排）。"), /*#__PURE__*/React.createElement("div", {
     className: "chart-tabs"
   }, tabs.map(t => /*#__PURE__*/React.createElement("button", {
     key: t.id,
@@ -4276,6 +4276,7 @@ function App() {
       const savedR = localStorage.getItem('taichu_refresh_token');
       if (savedR) refreshToken = savedR;
       setPage('cases'); // 已登录自动进入档案列表
+      window.history.replaceState({ p: 'cases', p2: {} }, '');
       resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
     }
   }, []);
@@ -4292,10 +4293,27 @@ function App() {
   const navigate = (p, p2 = {}) => {
     setPage(p);
     setParams(p2);
+    try {
+      window.history.pushState({ p: p, p2: p2 }, '');
+    } catch (e) {}
     track('page_view', {
       page: p
     });
   };
+  useEffect(() => {
+    const onPop = ev => {
+      const st = ev && ev.state;
+      if (st && st.p) {
+        setPage(st.p);
+        setParams(st.p2 || {});
+      } else {
+        setPage('landing');
+        setParams({});
+      }
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const applySkin = s => {
     setSkin(s);
     localStorage.setItem('taichu_skin', s);
