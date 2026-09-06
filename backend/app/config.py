@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     # 积分系统
     credit_per_token: int = 1000            # TAICHU_CREDIT_PER_TOKEN：1 积分 = 1000 tokens
     # alias 使环境变量名为 TAICHU_FREE_CREDIT（与字段名 free_credit_on_register 不完全对应）
-    free_credit_on_register: int = Field(default=100, validation_alias="TAICHU_FREE_CREDIT")  # 新用户注册赠送积分
+    free_credit_on_register: int = Field(default=220, validation_alias="TAICHU_FREE_CREDIT")  # 新用户注册赠送积分（220 = 22万 tokens ≈ 9盘首跑 + 3次追问）
     recharge_rate: float = 10.0             # TAICHU_RECHARGE_RATE：1 元 = 10 积分（默认，后台 system_configs 可动态改）
 
     # 金数据支付（充值表单 K4kgC7，小金商务助手；字段映射已锁定，见 docs/架构设计-支付系统-金数据.md §9.2）
