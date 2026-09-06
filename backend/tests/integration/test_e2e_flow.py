@@ -140,8 +140,28 @@ def test_full_main_flow(e2e_client):
     client = e2e_client
 
     # 1) register：裸 TokenResponse（非信封），拿 access_token 构造鉴权头
+    #    注册需图形验证码：先 GET /api/auth/captcha 拿到 captcha_id，再白盒读进程内
+    #    内存 _store 取明文（单进程内存验证码，属测试内部实现细节），带上后再注册。
     username = f"e2e_{uuid.uuid4().hex[:10]}"
-    resp = client.post("/api/auth/register", json={"username": username, "password": "pass1234"})
+    cap_resp = client.get("/api/auth/captcha")
+    assert cap_resp.status_code == 200, cap_resp.text
+    cap_body = cap_resp.json()
+    assert cap_body["code"] == 0, cap_body
+    cap_data = cap_body["data"]
+    assert cap_data["image"].startswith("data:image/png;base64,"), cap_data["image"][:40]
+    from app.auth.captcha import _store
+
+    captcha_id = cap_data["captcha_id"]
+    captcha_code = _store[captcha_id][0]
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "password": "pass1234",
+            "captcha_id": captcha_id,
+            "captcha_code": captcha_code,
+        },
+    )
     assert resp.status_code == 200, resp.text
     token_body = resp.json()
     assert isinstance(token_body, dict) and "access_token" in token_body, (
