@@ -15,7 +15,9 @@ import asyncio
 import logging
 
 from app.compliance.guardrails import append_disclaimer, check_output
+from app.credits.service import check_balance, consume
 from app.database import AnalyticsSession
+from app.errors import BizError, ERR_INSUFFICIENT_CREDIT
 from app.llm import LLMError
 from app.llm.client import get_usage, reset_usage
 from app.methods import ANALYZERS, METHOD_KEYS
@@ -42,6 +44,40 @@ PRED_PHASE = Phase.prediction
 _KEEP_CONFIDENCE = {"high", "medium"}
 # 问卷条数上限
 _MAX_PROPOSITIONS = 10
+
+
+def _check_balance_or_fail(session, job: Job, label: str) -> bool:
+    """计费预检（任务开头）：余额不足（BizError 5002）→ job=failed("积分不足")，
+    commit 后返回 False（不跑 LLM）；余额充足返回 True。
+
+    非 5002 的 BizError 原样上抛，交给外层 except 统一置 failed 并记录真实原因。
+    """
+    try:
+        check_balance(job.user_id)
+    except BizError as exc:
+        if exc.code != ERR_INSUFFICIENT_CREDIT:
+            raise
+        job.status = JobStatus.failed
+        job.error = "积分不足"
+        session.commit()
+        logger.warning("%s任务因积分不足未执行 job_id=%s user_id=%s",
+                       label, job.id, job.user_id)
+        return False
+    return True
+
+
+def _charge_after_run(job_id: int, user_id: int, total_tokens, label: str) -> None:
+    """任务收尾计费：LLM 已调用，按实际 token 扣费；扣费失败只记日志不阻断
+    成功落库（架构 §6.3：扣费失败但 LLM 已调用 → 记日志对账）。"""
+    tokens = int(total_tokens or 0)
+    if tokens <= 0:
+        logger.info("%s无 LLM token 消耗，跳过扣费 job_id=%s", label, job_id)
+        return
+    try:
+        consume(user_id, tokens, ref=f"job:{job_id}")
+    except Exception as exc:
+        logger.error("%s扣费失败 job_id=%s user_id=%s tokens=%s error=%s",
+                     label, job_id, user_id, tokens, exc)
 
 
 def _build_slices(chart: dict) -> dict[str, dict]:
@@ -79,6 +115,9 @@ async def run_duan_qian_chen(job_id: int) -> None:
     session = AnalyticsSession()
     try:
         job, case, chart_row = _query_common(session, job_id)
+        # 计费预检：余额不足 → failed，不跑 LLM
+        if not _check_balance_or_fail(session, job, "断前尘"):
+            return
         job.status = JobStatus.running
         session.commit()
 
@@ -172,6 +211,7 @@ async def run_duan_qian_chen(job_id: int) -> None:
         questionnaire["_usage"] = usage
         job.result_json = questionnaire
         job.completed = job.total if job.total is not None else job.completed
+        _charge_after_run(job_id, job.user_id, usage.get("total_tokens"), "断前尘")
         job.status = JobStatus.succeeded
         session.commit()
         logger.info(
@@ -247,6 +287,9 @@ async def run_predict(job_id: int) -> None:
     session = AnalyticsSession()
     try:
         job, case, chart_row = _query_common(session, job_id)
+        # 计费预检：余额不足 → failed，不跑 LLM
+        if not _check_balance_or_fail(session, job, "预测"):
+            return
         job.status = JobStatus.running
         session.commit()
 
@@ -349,6 +392,7 @@ async def run_predict(job_id: int) -> None:
             "failed_methods": failed_methods,
         }
         job.completed = job.total if job.total is not None else len(results)
+        _charge_after_run(job_id, job.user_id, usage.get("total_tokens"), "预测")
         job.status = JobStatus.succeeded
         session.commit()
         logger.info(

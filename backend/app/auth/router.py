@@ -1,4 +1,5 @@
 """认证模块：注册/登录/JWT/限流"""
+import logging
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -9,6 +10,8 @@ from jose import jwt, JWTError
 from app.config import settings
 from app.database import get_analytics_db
 from app.models import User, RefreshToken, LoginAttempt
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["auth"])
 
@@ -146,6 +149,13 @@ async def register(req: RegisterRequest, db: Session = Depends(get_analytics_db)
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    # 注册赠送积分（架构 §4.4：free_credit_on_register 默认 100）：失败只记日志，不阻断注册
+    try:
+        from app.credits.service import recharge
+        recharge(user.id, settings.free_credit_on_register, "free", note="注册赠送")
+    except Exception:
+        logger.exception("注册赠送积分失败 user_id=%s username=%s", user.id, req.username)
 
     access_token = create_access_token(user.id)
     refresh_token = create_refresh_token(user.id, db)

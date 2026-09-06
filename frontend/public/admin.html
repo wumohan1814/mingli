@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>太初 · 后台管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="./vendor/react.production.min.js"></script>
+  <script src="./vendor/react-dom.production.min.js"></script>
+  <script src="./vendor/babel.min.js"></script>
+  <style>
+    :root{
+      /* 国学皮肤配色（与 C 端一致） */
+      --jade:#3E7C6B; --jade-deep:#2F5F52; --jade-soft:rgba(62,124,107,.12);
+      --cinnabar:#B23A3A; --cinnabar-soft:rgba(178,58,58,.08);
+      --paper:#F7F4EC; --card:#FFFFFF; --line:#E5E0D4;
+      --ink-1:#1F1F26; --ink-2:#5C5C68; --ink-3:#8A8A94;
+      --gold:#B8893E;
+      --font-serif:"Noto Serif SC","Cormorant Garamond",serif;
+      --font-sans:"Noto Sans SC","Inter",system-ui,sans-serif;
+      --radius-s:6px; --radius-m:10px; --radius-l:14px;
+      --shadow:0 2px 10px rgba(26,33,56,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{font-family:var(--font-sans);color:var(--ink-1);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    input,select,textarea{font-family:inherit}
+    a{color:inherit}
+
+    /* 顶栏（玉青） */
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:10px 20px;background:var(--jade);color:#F7F4EC;box-shadow:0 2px 12px rgba(26,33,56,.16)}
+    .brand{font-family:var(--font-serif);font-weight:700;font-size:19px;letter-spacing:.05em;display:flex;align-items:center;gap:8px}
+    .brand .dot{color:#F7F4EC;opacity:.75;font-size:12px}
+    .brand .sub{font-family:var(--font-sans);font-size:12px;font-weight:400;opacity:.85}
+    .top-right{display:flex;align-items:center;gap:10px}
+    .role-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.35);padding:4px 12px;border-radius:999px;color:#F7F4EC}
+    .role-chip b{font-weight:600}
+    .logout-btn{font-size:13px;color:#F7F4EC;border:1px solid rgba(255,255,255,.55);border-radius:8px;
+      padding:5px 14px;transition:.18s}
+    .logout-btn:hover{background:var(--cinnabar);border-color:var(--cinnabar)}
+
+    /* 主体左右布局：侧栏 + 内容 */
+    .admin-body{display:flex;align-items:flex-start;min-height:calc(100vh - 54px)}
+    .sidebar{flex:0 0 200px;background:var(--card);border-right:1px solid var(--line);min-height:calc(100vh - 54px);padding:18px 12px}
+    .side-title{font-size:11px;color:var(--ink-3);letter-spacing:.1em;margin:0 8px 10px;text-transform:uppercase}
+    .nav-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:10px 12px;margin-bottom:4px;
+      border-radius:var(--radius-m);font-size:14px;color:var(--ink-2);transition:.16s}
+    .nav-item:hover{background:var(--paper);color:var(--jade-deep)}
+    .nav-item.active{background:var(--jade);color:#F7F4EC;font-weight:600}
+    .nav-item .nav-icon{flex:none;font-size:15px}
+    .admin-main{flex:1;min-width:0;padding:22px 26px 48px}
+    .page-title{font-family:var(--font-serif);font-size:21px;font-weight:700;color:var(--jade-deep);margin-bottom:4px}
+    .page-desc{font-size:12.5px;color:var(--ink-3);margin-bottom:16px}
+    .view-enter{animation:viewEnter .3s ease both}
+    @keyframes viewEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+    /* 卡片 / 通用控件 */
+    .card{background:var(--card);border:1px solid rgba(26,33,56,.05);border-radius:var(--radius-l);
+      box-shadow:var(--shadow);padding:18px 20px;margin-bottom:16px}
+    .card h3{margin:0 0 10px;font-size:15px;color:var(--jade-deep);font-weight:600}
+    .section-title{font-size:13.5px;font-weight:600;color:var(--jade-deep);margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+    .section-title::before{content:"";width:3px;height:13px;background:var(--jade);border-radius:2px}
+    .btn{padding:9px 18px;border-radius:var(--radius-m);font-size:13.5px;font-weight:600;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn-primary{background:var(--jade);color:#F7F4EC}
+    .btn-primary:hover{background:var(--jade-deep)}
+    .btn-outline{background:transparent;border:1px solid var(--line);color:var(--ink-1)}
+    .btn-outline:hover{border-color:var(--jade);color:var(--jade-deep)}
+    .btn-danger{background:transparent;border:1px solid var(--cinnabar);color:var(--cinnabar)}
+    .btn-danger:hover{background:var(--cinnabar);color:#fff}
+    .btn-mini{padding:5px 12px;font-size:12.5px;border-radius:var(--radius-s)}
+    .input{width:100%;max-width:420px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-m);
+      font-size:14px;background:var(--card);color:var(--ink-1)}
+    .input:focus{outline:none;border-color:var(--jade)}
+    .label{display:block;font-size:12.5px;color:var(--ink-2);margin:10px 0 4px}
+    .error-box{background:#FFF0F0;border:1px solid rgba(178,58,58,.35);color:var(--cinnabar);padding:10px 14px;
+      border-radius:var(--radius-m);font-size:13px;margin:0 0 14px}
+    .ok-box{background:rgba(62,124,107,.1);border:1px solid rgba(62,124,107,.35);color:var(--jade-deep);
+      padding:10px 14px;border-radius:var(--radius-m);font-size:13px;margin:0 0 14px}
+    .hint{font-size:12px;color:var(--ink-3);line-height:1.7}
+    .kv{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+    .kv:last-child{border-bottom:none}
+    .kv .k{color:var(--ink-2);flex:none}
+    .kv .v{color:var(--ink-1);font-weight:600;text-align:right;word-break:break-all;min-width:0}
+
+    /* 表格 */
+    .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-m)}
+    table.admin-table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+    .admin-table th{background:#f1ece0;color:var(--ink-2);text-align:left;padding:9px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line)}
+    .admin-table td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-1);word-break:break-word}
+    .admin-table tr:last-child td{border-bottom:none}
+    .admin-table tbody tr.clickable{cursor:pointer}
+    .admin-table tbody tr.clickable:hover{background:var(--jade-soft)}
+    .row-count{font-size:12px;color:var(--ink-3);margin:0 0 8px}
+    .empty-note{font-size:13px;color:var(--ink-3);background:var(--card);border:1px dashed var(--line);
+      border-radius:var(--radius-m);padding:20px;text-align:center}
+    .json-pre{background:#f4f0e6;border:1px solid var(--line);border-radius:var(--radius-m);padding:10px 12px;
+      font-family:Consolas,Menlo,monospace;font-size:11.5px;line-height:1.5;white-space:pre-wrap;word-break:break-all;
+      max-height:340px;overflow:auto;margin-top:8px}
+
+    /* 标签 / 进度小元素 */
+    .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+    .tag.ok{background:var(--jade-soft);color:var(--jade-deep)}
+    .tag.bad{background:var(--cinnabar-soft);color:var(--cinnabar)}
+    .tag.gray{background:#EFEBE2;color:var(--ink-2)}
+    .tag.gold{background:rgba(184,137,62,.16);color:#8a6427}
+    .tag.clickable{cursor:pointer}
+    .tag.clickable:hover{box-shadow:0 0 0 1px currentColor}
+
+    /* 报表页 tab */
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .tab{padding:7px 16px;border:1px solid var(--line);background:var(--card);border-radius:999px;
+      font-size:13px;color:var(--ink-2);transition:.15s}
+    .tab:hover{border-color:var(--jade);color:var(--jade-deep)}
+    .tab.active{background:var(--jade);border-color:var(--jade);color:#F7F4EC;font-weight:600}
+
+    /* 登录页 */
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .login-card{width:100%;max-width:380px}
+    .login-brand{font-family:var(--font-serif);font-size:24px;font-weight:700;color:var(--jade-deep);text-align:center;margin-bottom:4px}
+    .login-sub{font-size:13px;color:var(--ink-3);text-align:center;margin-bottom:20px}
+
+    /* 用户 / 提示词 行内结构 */
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+    .toolbar .spacer{flex:1}
+    .bubble-row{display:flex;margin:5px 0;justify-content:flex-end}
+    .bubble-row.left{justify-content:flex-start}
+    .bubble{max-width:82%;padding:8px 13px;border-radius:12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+    .bubble .who{font-size:11px;opacity:.62;margin-bottom:2px}
+    .bubble.user{background:var(--jade);color:#F7F4EC;border-top-right-radius:3px}
+    .bubble.assistant{background:#F1ECE0;color:var(--ink-1);border-top-left-radius:3px}
+    .crumb{font-size:13px;color:var(--ink-2);margin-bottom:12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+    .crumb a{color:var(--jade);cursor:pointer;text-decoration:none}
+    .crumb a:hover{text-decoration:underline}
+    .crumb .sep{color:var(--ink-3)}
+    details.raw{border:1px solid var(--line);border-radius:var(--radius-m);margin-top:8px;background:var(--card)}
+    details.raw summary{cursor:pointer;padding:7px 12px;font-size:12px;color:var(--ink-2);list-style:none}
+    details.raw summary:hover{color:var(--jade-deep)}
+    details.raw .json-pre{border:none;margin:0;border-top:1px solid var(--line);border-radius:0 0 var(--radius-m) var(--radius-m)}
+    .kv-row{font-size:13px;margin:5px 0}
+    .kv-row b{color:var(--ink-1);font-weight:600}
+
+    /* 轻提示 */
+    .toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(10px);background:#2C385C;color:#fff;
+      padding:9px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.22s;z-index:60}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const TOKEN_KEY = 'taichu_admin_token';
+    const ROLE_KEY = 'taichu_admin_role';
+    let onUnauthorized = null; // 由 App 注册：401 时回登录页
+
+    const STATUS_TEXT = { created: '已建档', paipan_done: '已排盘', calibrated: '已校准', predicted: '已预测', predict_done: '已解读', failed: '失败' };
+
+    function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+    function logoutLocal() { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(ROLE_KEY); }
+
+    // 轻提示
+    function toast(msg) {
+      let t = document.getElementById('taichu-admin-toast');
+      if (!t) { t = document.createElement('div'); t.id = 'taichu-admin-toast'; t.className = 'toast'; document.body.appendChild(t); }
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._tm); t._tm = setTimeout(function () { t.classList.remove('show'); }, 2400);
+    }
+
+    // 统一请求：path 传完整 /admin/... 路径；响应 {code,data} 信封，code!==0 抛错；401 自动登出
+    async function api(path, options) {
+      options = options || {};
+      const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+      const tk = getToken();
+      if (tk) headers['Authorization'] = 'Bearer ' + tk;
+      let res;
+      try {
+        res = await fetch(path, Object.assign({}, options, { headers: headers }));
+      } catch (e) {
+        throw new Error('网络错误，无法连接服务器');
+      }
+      let body = null;
+      try { body = await res.json(); } catch (e) { /* 非 JSON 响应 */ }
+      const pickMsg = function (b) {
+        if (!b) return '';
+        const d = b.detail;
+        if (typeof d === 'string' && d) return d;
+        if (Array.isArray(d) && d.length) return d.map(function (x) { return (x && x.msg) || JSON.stringify(x); }).join('；');
+        if (typeof b.message === 'string' && b.message) return b.message;
+        if (typeof b.msg === 'string' && b.msg) return b.msg;
+        return '';
+      };
+      if (res.status === 401) {
+        logoutLocal();
+        if (onUnauthorized) onUnauthorized();
+        throw new Error('登录已过期或无权访问，请重新登录');
+      }
+      if (!res.ok) throw new Error(pickMsg(body) || '请求失败（HTTP ' + res.status + '）');
+      const code = body && typeof body.code === 'number' ? body.code : 0;
+      if (code !== 0) throw new Error(pickMsg(body) || '操作失败（code ' + code + '）');
+      return body;
+    }
+    // 解 {code,data} 信封
+    function pickData(res) { return (res && res.data != null) ? res.data : (res || {}); }
+    // 时间显示（ISO / 时间戳 容错）
+    function fmtTime(t) {
+      if (t == null || t === '') return '-';
+      const s = String(t).replace('T', ' ').replace('Z', '').trim();
+      return s.slice(0, 19) || s;
+    }
+    function statusText(s) { return STATUS_TEXT[s] || s || '-'; }
+    function statusTag(s) {
+      const cls = s === 'failed' ? 'bad' : (s && s.indexOf('done') >= 0 ? 'ok' : 'gray');
+      return <span className={'tag ' + cls}>{statusText(s)}</span>;
+    }
+
+    /* ============ 登录页 ============ */
+    function LoginPage({ onLoggedIn }) {
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState('');
+      const [busy, setBusy] = useState(false);
+
+      const submit = async function (e) {
+        e.preventDefault();
+        setError(''); setBusy(true);
+        try {
+          const res = await api('/admin/login', {
+            method: 'POST',
+            body: JSON.stringify({ username: username, password: password })
+          });
+          const d = pickData(res);
+          if (!d.token) throw new Error('登录失败：未返回令牌');
+          localStorage.setItem(TOKEN_KEY, d.token);
+          if (d.role) localStorage.setItem(ROLE_KEY, d.role);
+          toast('登录成功');
+          onLoggedIn(d.token, d.role || localStorage.getItem(ROLE_KEY) || '');
+        } catch (err) {
+          setError(err.message || '登录失败，请重试。');
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      return (
+        <div className="login-wrap" style={{ background: 'var(--paper)' }}>
+          <form className="card login-card" onSubmit={submit}>
+            <div className="login-brand">太初 · 后台管理</div>
+            <p className="login-sub">管理端仅限授权账号登录</p>
+            {error && <div className="error-box">{error}</div>}
+            <label className="label" htmlFor="admin-user">用户名</label>
+            <input id="admin-user" className="input" value={username}
+              onChange={function (e) { setUsername(e.target.value); }} placeholder="请输入管理员用户名" autoComplete="username" required />
+            <label className="label" htmlFor="admin-pass">密码</label>
+            <input id="admin-pass" className="input" type="password" value={password}
+              onChange={function (e) { setPassword(e.target.value); }} placeholder="请输入密码" autoComplete="current-password" required />
+            <button className="btn btn-primary" type="submit" disabled={busy}
+              style={{ width: '100%', marginTop: 20, padding: '12px' }}>
+              {busy ? '登录中…' : '登录'}
+            </button>
+          </form>
+        </div>
+      );
+    }
+
+    /* ============ 报表（4 个 metric，表格渲染） ============ */
+    const REPORT_TABS = [
+      { key: 'overview', label: '概览', desc: '整体业务概览' },
+      { key: 'funnel', label: '漏斗', desc: '各环节转化漏斗' },
+      { key: 'llm_cost', label: 'LLM 成本', desc: '大模型调用成本统计' },
+      { key: 'errors', label: '错误', desc: '错误统计' },
+    ];
+
+    // 通用表格：items 为对象数组，列按首次出现顺序展开；对象/数组值 JSON 序列化
+    function GenericTable({ items }) {
+      const list = Array.isArray(items) ? items : [];
+      const cols = [];
+      const seen = {};
+      list.forEach(function (it) {
+        if (it && typeof it === 'object') {
+          Object.keys(it).forEach(function (k) {
+            if (!seen[k]) { seen[k] = true; cols.push(k); }
+          });
+        }
+      });
+      if (list.length === 0) return <div className="empty-note">暂无数据</div>;
+      if (cols.length === 0) {
+        // 纯标量列表 → 单列展示
+        return (
+          <table className="admin-table">
+            <tbody>
+              {list.map(function (it, i) {
+                return (
+                  <tr key={i}><td style={{ textAlign: 'left' }}>{String(it)}</td></tr>
+                );
+              })}
+            </tbody>
+          </table>
+        );
+      }
+      const cellText = function (v) {
+        if (v == null || v === '') return '-';
+        if (typeof v === 'object') {
+          try { return JSON.stringify(v); } catch (e) { return String(v); }
+        }
+        return String(v);
+      };
+      return (
+        <table className="admin-table">
+          <thead>
+            <tr>{cols.map(function (c) { return <th key={c}>{c}</th>; })}</tr>
+          </thead>
+          <tbody>
+            {list.map(function (it, i) {
+              return (
+                <tr key={i}>
+                  {cols.map(function (c) {
+                    const txt = cellText(it[c]);
+                    return <td key={c} title={txt}>{txt}</td>;
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      );
+    }
+
+    function ReportsSection() {
+      const [metric, setMetric] = useState('overview');
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+
+      useEffect(function () {
+        let alive = true;
+        setLoading(true); setErrored(''); setData(null);
+        (async function () {
+          try {
+            const res = await api('/admin/reports/' + metric);
+            if (alive) { setData(pickData(res)); setLoading(false); }
+          } catch (e) {
+            if (alive) { setErrored(e.message || '报表加载失败'); setLoading(false); }
+          }
+        })();
+        return function () { alive = false; };
+      }, [metric]);
+
+      const active = REPORT_TABS.filter(function (t) { return t.key === metric; })[0] || REPORT_TABS[0];
+      const items = (data && Array.isArray(data.items)) ? data.items : [];
+      return (
+        <div>
+          <h2 className="page-title">报表</h2>
+          <p className="page-desc">按维度查看运营统计（MVP 以表格展示原始 items）</p>
+          <div className="tabs">
+            {REPORT_TABS.map(function (t) {
+              return (
+                <button key={t.key} className={'tab' + (metric === t.key ? ' active' : '')}
+                  onClick={function () { setMetric(t.key); }}>{t.label}</button>
+              );
+            })}
+          </div>
+          <div className="card">
+            <h3>{active.label}<span style={{ fontWeight: 400, fontSize: 12, color: 'var(--ink-3)', marginLeft: 10 }}>{active.desc}</span></h3>
+            <p className="hint" style={{ marginBottom: 12 }}>接口：/admin/reports/{metric} · {items.length} 条</p>
+            {errored && <div className="error-box">{errored}</div>}
+            {loading && <p className="hint">正在加载报表…</p>}
+            {!loading && !errored && <div className="table-scroll"><GenericTable items={items} /></div>}
+          </div>
+        </div>
+      );
+    }
+
+    /* ============ 档案展示（用户 case 详情） ============ */
+    function fmtInput(k, v) {
+      if (k === 'gender') return v === 'male' ? '男' : v === 'female' ? '女' : (v || '-');
+      if (v == null || v === '') return '-';
+      if (typeof v === 'boolean') return v ? '是' : '否';
+      if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+      return String(v);
+    }
+    const INPUT_LABELS = {
+      name: '档案名', birth_year: '出生年', birth_month: '出生月', birth_day: '出生日',
+      birth_hour: '出生时辰', gender: '性别', birthplace: '出生地', longitude: '经度',
+      latitude: '纬度', true_solar_time: '真太阳时', created_at: '建档时间', case_id: '档案编号'
+    };
+    function inputRows(inp) {
+      const obj = (inp && typeof inp === 'object') ? inp : {};
+      const knownOrder = ['name', 'birth_year', 'birth_month', 'birth_day', 'birth_hour', 'gender', 'birthplace', 'longitude', 'latitude', 'true_solar_time', 'created_at'];
+      const rows = [];
+      const used = {};
+      knownOrder.forEach(function (k) {
+        if (k in obj) { used[k] = true; rows.push([INPUT_LABELS[k] || k, fmtInput(k, obj[k])]); }
+      });
+      Object.keys(obj).forEach(function (k) {
+        if (!used[k]) rows.push([INPUT_LABELS[k] || k, fmtInput(k, obj[k])]);
+      });
+      return rows;
+    }
+    // 契合度数值提取（与 C 端 archive 一致）
+    function probeNum(v) { return (typeof v === 'number' && isFinite(v)) ? v : null; }
+    function calibFitValue(calib) {
+      const f = (calib && calib.fit) != null ? calib.fit : null;
+      if (f == null) return null;
+      if (probeNum(f) != null) return probeNum(f);
+      if (typeof f !== 'object') return null;
+      const keys = ['fit', 'score', 'overall', 'value', 'accuracy'];
+      for (let i = 0; i < keys.length; i++) {
+        const hit = probeNum(f[keys[i]]);
+        if (hit != null) return hit;
+      }
+      const inner = (f.fit && typeof f.fit === 'object') ? f.fit : null;
+      if (inner) {
+        for (let i = 0; i < keys.length; i++) {
+          const hit = probeNum(inner[keys[i]]);
+          if (hit != null) return hit;
+        }
+      }
+      return null;
+    }
+    function calibCountOf(calib) {
+      if (!calib) return null;
+      const r = calib.record;
+      if (Array.isArray(r)) return r.length;
+      if (typeof r === 'number') return r;
+      if (typeof r === 'object' && Array.isArray(r.items)) return r.items.length;
+      return null;
+    }
+    // 盘面摘要：尽力提取文本型摘要；未知结构时给原始 JSON 折叠
+    function chartSummary(chart) {
+      if (!chart || typeof chart !== 'object') return '';
+      const src = (chart.data && typeof chart.data === 'object') ? chart.data : chart;
+      const lines = [];
+      if (typeof src.summary === 'string' && src.summary) lines.push(src.summary);
+      else if (src.summary && typeof src.summary === 'object') {
+        try { lines.push(JSON.stringify(src.summary)); } catch (e) {}
+      }
+      if (src.dayMaster) lines.push('日主：' + src.dayMaster + (src.dayMasterWuxing || ''));
+      if (typeof src.lunar === 'string' && src.lunar) lines.push('农历 ' + src.lunar);
+      if (Array.isArray(chart.degraded) && chart.degraded.length) lines.push('已降级方法：' + chart.degraded.join('、'));
+      return lines.join('　');
+    }
+    function RawJson({ data, label }) {
+      let txt = '';
+      try { txt = JSON.stringify(data, null, 2); } catch (e) { txt = String(data); }
+      return (
+        <details className="raw">
+          <summary>{label || '查看原始数据'}</summary>
+          <pre className="json-pre">{txt}</pre>
+        </details>
+      );
+    }
+    function methodName(m, i) {
+      if (!m || typeof m !== 'object') return '方法 ' + (i + 1);
+      return String(m.method || m.name || m.key || m.method_name || ('方法 ' + (i + 1)));
+    }
+
+    function CaseArchive({ userId, caseId, onBack }) {
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+
+      useEffect(function () {
+        let alive = true;
+        setLoading(true); setErrored(''); setData(null);
+        (async function () {
+          try {
+            const res = await api('/admin/users/' + encodeURIComponent(userId) + '/cases/' + encodeURIComponent(caseId));
+            if (alive) { setData(pickData(res)); setLoading(false); }
+          } catch (e) {
+            if (alive) { setErrored(e.message || '档案加载失败'); setLoading(false); }
+          }
+        })();
+        return function () { alive = false; };
+      }, [userId, caseId]);
+
+      if (loading) return <p className="hint">正在加载档案…</p>;
+      if (errored) return <div className="error-box">{errored}</div>;
+      const inp = (data && data.input) || {};
+      const calib = (data && data.calibrations) || {};
+      const calibCount = calibCountOf(calib);
+      const calibFit = calibFitValue(calib);
+      const calibFitText = calibFit == null ? null : (calibFit <= 1 ? Math.round(calibFit * 100) + '%' : String(calibFit));
+      const convos = (data && Array.isArray(data.conversations)) ? data.conversations.filter(function (m) { return m && (m.content || m.text); }) : [];
+      const summary = chartSummary(data && data.chart);
+      return (
+        <div>
+          <div className="crumb">
+            <a onClick={onBack}>← 返回该用户的 case 列表</a>
+            <span className="sep">/</span><span>档案 {data ? data.caseId : caseId}</span>
+          </div>
+          <div className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+              <h3 style={{ margin: 0 }}>我的命理档案（管理员视角）</h3>
+              {statusTag(data && data.status)}
+            </div>
+            <div className="section-title">建档信息</div>
+            {inputRows(inp).length === 0
+              ? <p className="hint">无建档信息（input 为空）</p>
+              : inputRows(inp).map(function (r, i) {
+                  return <div className="kv" key={i}><span className="k">{r[0]}</span><span className="v">{r[1]}</span></div>;
+                })}
+            <RawJson data={inp} label="建档信息原始 JSON" />
+          </div>
+
+          <div className="card">
+            <div className="section-title">盘面摘要</div>
+            {summary ? <p style={{ fontSize: 13, color: 'var(--ink-1)', marginBottom: 6 }}>{summary}</p>
+              : <p className="hint" style={{ marginBottom: 6 }}>暂无文本摘要（chart 结构请查看原始数据）</p>}
+            {data && data.chart != null && <RawJson data={data.chart} label="盘面（chart）原始 JSON" />}
+          </div>
+
+          <div className="card">
+            <div className="section-title">校准</div>
+            {calibCount != null && <div className="kv"><span className="k">用户反馈</span><span className="v">{calibCount} 条断言</span></div>}
+            {calibFitText != null && <div className="kv"><span className="k">整体契合度</span><span className="v">{calibFitText}</span></div>}
+            {calibCount == null && calibFitText == null && <p className="hint">暂无校准记录</p>}
+            {data && data.calibrations != null && <RawJson data={data.calibrations} label="校准原始数据" />}
+          </div>
+
+          <div className="card">
+            <div className="section-title">对话（最近 {Math.min(convos.length, 20)} 条）</div>
+            {convos.length === 0
+              ? <p className="hint">暂无对话记录</p>
+              : convos.slice(-20).map(function (m, i) {
+                  const isUser = m.role === 'user';
+                  return (
+                    <div className={'bubble-row' + (isUser ? '' : ' left')} key={i}>
+                      <div className={'bubble ' + (isUser ? 'user' : 'assistant')}>
+                        <div className="who">{isUser ? '用户' : '助手'}</div>
+                        {m.content != null ? m.content : m.text}
+                      </div>
+                    </div>
+                  );
+                })}
+          </div>
+
+          <div className="card">
+            <div className="section-title">方法结果（method_results）</div>
+            {data && Array.isArray(data.method_results) && data.method_results.length > 0
+              ? data.method_results.map(function (m, i) {
+                  const nm = methodName(m, i);
+                  const st = m && m.status;
+                  return (
+                    <div key={i} style={{ padding: '8px 0', borderBottom: '1px dashed var(--line)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--jade-deep)' }}>{nm}</span>
+                        {st ? <span className={'tag ' + (st === 'ok' || st === 'done' || st === 'success' ? 'ok' : 'gray')}>{String(st)}</span> : null}
+                      </div>
+                      <RawJson data={m} label="方法结果原始 JSON" />
+                    </div>
+                  );
+                })
+              : <p className="hint">暂无方法结果</p>}
+            {data && data.method_results != null && !Array.isArray(data.method_results) &&
+              <RawJson data={data.method_results} label="方法结果原始数据（非数组）" />}
+          </div>
+        </div>
+      );
+    }
+
+    /* ============ 用户 ============ */
+    function UsersSection() {
+      const [q, setQ] = useState('');
+      const [users, setUsers] = useState([]);
+      const [loadingList, setLoadingList] = useState(false);
+      const [errored, setErrored] = useState('');
+      // 导航层级：user=null 显示用户列表；casesUser=对象 显示其 case 列表；caseId 显示档案
+      const [casesUser, setCasesUser] = useState(null);
+      const [cases, setCases] = useState([]);
+      const [loadingCases, setLoadingCases] = useState(false);
+      const [casesErr, setCasesErr] = useState('');
+      const [caseId, setCaseId] = useState(null);
+
+      const search = async function (keyword) {
+        setLoadingList(true); setErrored('');
+        try {
+          const kw = String(keyword || '').trim();
+          const res = await api('/admin/users?q=' + encodeURIComponent(kw));
+          const d = pickData(res);
+          setUsers(Array.isArray(d.items) ? d.items : []);
+        } catch (e) {
+          setErrored(e.message || '用户列表加载失败');
+        } finally {
+          setLoadingList(false);
+        }
+      };
+      useEffect(function () { search(''); }, []);
+
+      const openUser = async function (u) {
+        setCasesUser(u); setCaseId(null); setCases([]); setCasesErr(''); setLoadingCases(true);
+        try {
+          const res = await api('/admin/users/' + encodeURIComponent(u.id) + '/cases');
+          const d = pickData(res);
+          setCases(Array.isArray(d.items) ? d.items : []);
+        } catch (e) {
+          setCasesErr(e.message || '该用户的 case 列表加载失败');
+        } finally {
+          setLoadingCases(false);
+        }
+      };
+      const backToUsers = function () {
+        setCasesUser(null); setCaseId(null); setCases([]); setCasesErr('');
+        search(q); // 返回列表时刷新
+      };
+
+      // —— 档案详情层 ——
+      if (caseId != null && casesUser) {
+        return (
+          <CaseArchive userId={casesUser.id} caseId={caseId}
+            onBack={function () { setCaseId(null); }} />
+        );
+      }
+
+      // —— case 列表层 ——
+      if (casesUser) {
+        return (
+          <div>
+            <h2 className="page-title">用户档案</h2>
+            <p className="page-desc">当前用户：<b style={{ color: 'var(--jade-deep)' }}>{casesUser.username}</b>（id: {casesUser.id}）</p>
+            <div className="crumb">
+              <a onClick={backToUsers}>← 返回用户列表</a>
+            </div>
+            {casesErr && <div className="error-box">{casesErr}</div>}
+            <div className="row-count">共 {cases.length} 个 case · 点击查看档案详情</div>
+            {loadingCases && <p className="hint">正在加载 case 列表…</p>}
+            {!loadingCases && cases.length === 0 && !casesErr &&
+              <div className="empty-note">该用户暂无档案</div>}
+            {!loadingCases && cases.length > 0 && (
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="table-scroll" style={{ border: 'none' }}>
+                  <table className="admin-table">
+                    <thead>
+                      <tr><th>case id</th><th>名称</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+                    </thead>
+                    <tbody>
+                      {cases.map(function (c) {
+                        return (
+                          <tr key={c.id || c.caseId} className="clickable"
+                            onClick={function () { setCaseId(c.id != null ? c.id : c.caseId); }}>
+                            <td>{c.id != null ? c.id : c.caseId}</td>
+                            <td>{c.name || '未命名档案'}</td>
+                            <td>{statusTag(c.status)}</td>
+                            <td>{fmtTime(c.created_at)}</td>
+                            <td><button className="btn btn-outline btn-mini">查看档案</button></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // —— 用户列表层 ——
+      return (
+        <div>
+          <h2 className="page-title">用户</h2>
+          <p className="page-desc">搜索并查看用户及其推演档案</p>
+          <form className="toolbar" onSubmit={function (e) { e.preventDefault(); search(q); }}>
+            <input className="input" style={{ maxWidth: 260, margin: 0 }}
+              value={q} onChange={function (e) { setQ(e.target.value); }}
+              placeholder="按用户名搜索（留空查全部）" />
+            <button className="btn btn-primary" type="submit">搜索</button>
+            <span className="hint">共 {users.length} 个用户</span>
+          </form>
+          {errored && <div className="error-box">{errored}</div>}
+          {loadingList && <p className="hint">正在加载用户…</p>}
+          {!loadingList && users.length === 0 && !errored &&
+            <div className="empty-note">未找到匹配的用户</div>}
+          {!loadingList && users.length > 0 && (
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="table-scroll" style={{ border: 'none' }}>
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>id</th><th>用户名</th><th>创建时间</th><th>操作</th></tr>
+                  </thead>
+                  <tbody>
+                    {users.map(function (u) {
+                      return (
+                        <tr key={u.id} className="clickable" onClick={function () { openUser(u); }}>
+                          <td>{u.id}</td>
+                          <td style={{ fontWeight: 600, color: 'var(--jade-deep)' }}>{u.username}</td>
+                          <td>{fmtTime(u.created_at)}</td>
+                          <td><button className="btn btn-outline btn-mini">查看档案</button></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ============ 提示词管理 ============ */
+    function PromptsSection() {
+      const [items, setItems] = useState([]);
+      const [loadingList, setLoadingList] = useState(true);
+      const [errored, setErrored] = useState('');
+      const [activeKey, setActiveKey] = useState(null);
+      const [content, setContent] = useState('');
+      const [loadingContent, setLoadingContent] = useState(false);
+      const [saving, setSaving] = useState(false);
+      const [savedMsg, setSavedMsg] = useState('');
+      const [contentErr, setContentErr] = useState('');
+
+      const loadList = async function () {
+        setLoadingList(true); setErrored('');
+        try {
+          const res = await api('/admin/prompts');
+          const d = pickData(res);
+          setItems(Array.isArray(d.items) ? d.items : []);
+        } catch (e) {
+          setErrored(e.message || '提示词列表加载失败');
+        } finally {
+          setLoadingList(false);
+        }
+      };
+      useEffect(function () { loadList(); }, []);
+
+      const openKey = async function (k) {
+        setActiveKey(k); setSavedMsg(''); setContentErr(''); setContent('');
+        setLoadingContent(true);
+        try {
+          const res = await api('/admin/prompts/' + encodeURIComponent(k));
+          const d = pickData(res);
+          setContent((d && d.content != null) ? d.content : '');
+        } catch (e) {
+          setContentErr(e.message || '提示词内容加载失败');
+        } finally {
+          setLoadingContent(false);
+        }
+      };
+      const saveKey = async function () {
+        if (!activeKey) return;
+        setSaving(true); setSavedMsg(''); setContentErr('');
+        try {
+          await api('/admin/prompts/' + encodeURIComponent(activeKey), {
+            method: 'PUT',
+            body: JSON.stringify({ content: content })
+          });
+          setSavedMsg('已保存：' + activeKey);
+          toast('保存成功');
+          loadList(); // 刷新 mtime
+        } catch (e) {
+          setContentErr(e.message || '保存失败');
+        } finally {
+          setSaving(false);
+        }
+      };
+
+      return (
+        <div>
+          <h2 className="page-title">提示词</h2>
+          <p className="page-desc">查看与编辑系统提示词（保存后立即生效于新请求）</p>
+          {errored && <div className="error-box">{errored}</div>}
+          {loadingList && <p className="hint">正在加载提示词列表…</p>}
+          {!loadingList && items.length === 0 && !errored &&
+            <div className="empty-note">暂无提示词</div>}
+          {!loadingList && items.length > 0 && (
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="table-scroll" style={{ border: 'none' }}>
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>key</th><th>修改时间</th><th>操作</th></tr>
+                  </thead>
+                  <tbody>
+                    {items.map(function (p) {
+                      const k = p.key != null ? p.key : p.name;
+                      return (
+                        <tr key={k} className="clickable" onClick={function () { openKey(k); }}>
+                          <td style={{ fontWeight: 600, color: 'var(--jade-deep)' }}>{k}</td>
+                          <td>{fmtTime(p.mtime)}</td>
+                          <td><button className="btn btn-outline btn-mini">编辑</button></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeKey != null && (
+            <div className="card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                <h3 style={{ margin: 0 }}>编辑：<span style={{ fontFamily: 'Consolas,Menlo,monospace', fontSize: 13 }}>{activeKey}</span></h3>
+                <button className="btn btn-outline btn-mini" onClick={function () { setActiveKey(null); setContent(''); }}>关闭编辑器</button>
+              </div>
+              {loadingContent && <p className="hint" style={{ marginTop: 10 }}>正在加载内容…</p>}
+              {contentErr && <div className="error-box" style={{ marginTop: 10 }}>{contentErr}</div>}
+              {savedMsg && <div className="ok-box" style={{ marginTop: 10 }}>{savedMsg}</div>}
+              {!loadingContent && (
+                <div>
+                  <label className="label" htmlFor="prompt-content">提示词内容（纯文本）</label>
+                  <textarea id="prompt-content" className="input" style={{ width: '100%', maxWidth: 'none', minHeight: 260, resize: 'vertical', lineHeight: 1.7 }}
+                    value={content}
+                    onChange={function (e) { setContent(e.target.value); setSavedMsg(''); }} />
+                  <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                    <button className="btn btn-primary" disabled={saving} onClick={saveKey}>
+                      {saving ? '保存中…' : '保存'}
+                    </button>
+                    <button className="btn btn-outline" disabled={saving}
+                      onClick={function () { setContent(''); setActiveKey(null); setSavedMsg(''); }}>放弃修改</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ============ App：登录态 + 布局 + 路由 ============ */
+    function App() {
+      const [authed, setAuthed] = useState(function () { return !!localStorage.getItem(TOKEN_KEY); });
+      const [role, setRole] = useState(function () { return localStorage.getItem(ROLE_KEY) || ''; });
+      const [section, setSection] = useState('reports');
+
+      useEffect(function () {
+        onUnauthorized = function () { setAuthed(false); setSection('reports'); };
+        return function () { onUnauthorized = null; };
+      }, []);
+
+      const handleLoggedIn = function (tk, r) {
+        setAuthed(true); setRole(r || localStorage.getItem(ROLE_KEY) || '');
+        setSection('reports');
+      };
+      const handleLogout = function () {
+        logoutLocal();
+        toast('已退出登录');
+        setAuthed(false); setSection('reports');
+      };
+
+      if (!authed) return <LoginPage onLoggedIn={handleLoggedIn} />;
+
+      const navs = [
+        { key: 'reports', label: '报表', icon: '📊' },
+        { key: 'users', label: '用户', icon: '👥' },
+        { key: 'prompts', label: '提示词', icon: '📝' },
+      ];
+      const go = function (k) { setSection(k); };
+      return (
+        <div>
+          <header className="topbar">
+            <span className="brand">太初<span className="dot">·</span><span className="sub">后台管理</span></span>
+            <div className="top-right">
+              <span className="role-chip">当前角色：<b>{role || '—'}</b></span>
+              <button className="logout-btn" onClick={handleLogout}>退出登录</button>
+            </div>
+          </header>
+          <div className="admin-body">
+            <nav className="sidebar" aria-label="后台导航">
+              <div className="side-title">管理</div>
+              {navs.map(function (n) {
+                return (
+                  <button key={n.key}
+                    className={'nav-item' + (section === n.key ? ' active' : '')}
+                    onClick={function () { go(n.key); }}>
+                    <span className="nav-icon">{n.icon}</span>{n.label}
+                  </button>
+                );
+              })}
+            </nav>
+            <main className="admin-main">
+              <div className="view-enter" key={section}>
+                {section === 'reports' && <ReportsSection />}
+                {section === 'users' && <UsersSection />}
+                {section === 'prompts' && <PromptsSection />}
+              </div>
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -348,6 +348,32 @@
     };
     function trendMeta(v) { return TREND_META[v] || TREND_META['平']; }
 
+    // ---- 埋点（批量防抖，异步不阻塞，失败静默）----
+    let _trackQueue = [];
+    let _trackTimer = null;
+    function _sessionId() {
+      let s = localStorage.getItem('taichu_session_id');
+      if (!s) { s = (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 's' + Date.now()); localStorage.setItem('taichu_session_id', s); }
+      return s;
+    }
+    function _flushTrack() {
+      if (!_trackQueue.length) return;
+      const batch = _trackQueue.splice(0, _trackQueue.length);
+      const payload = JSON.stringify({ events: batch.map(e => ({ event_name: e.n, props: e.p, session_id: _sessionId() })) });
+      try {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(API + '/events', new Blob([payload], { type: 'application/json' }));
+        } else {
+          fetch(API + '/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(() => {});
+        }
+      } catch (e) { /* 埋点失败静默 */ }
+    }
+    function track(name, props) {
+      _trackQueue.push({ n: name, p: props || {} });
+      if (_trackQueue.length >= 10) { clearTimeout(_trackTimer); _trackTimer = null; _flushTrack(); }
+      else if (!_trackTimer) { _trackTimer = setTimeout(() => { _trackTimer = null; _flushTrack(); }, 2000); }
+    }
+
     async function api(path, options = {}) {
       const buildHeaders = () => {
         const headers = { 'Content-Type': 'application/json', ...options.headers };
@@ -2558,7 +2584,7 @@
         return () => setCreditInsuffHandler(null);
       }, []);
 
-      const navigate = (p, p2 = {}) => { setPage(p); setParams(p2); };
+      const navigate = (p, p2 = {}) => { setPage(p); setParams(p2); track('page_view', { page: p }); };
       const applySkin = (s) => { setSkin(s); localStorage.setItem('taichu_skin', s); };
 
       const pages = {
