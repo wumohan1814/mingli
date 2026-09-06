@@ -44,6 +44,7 @@ from app.llm.client import get_usage, reset_usage
 from app.methods import ANALYZERS, METHOD_KEYS
 from app.models import (
     Case,
+    CaseStatus,
     Chart,
     Job,
     JobStatus,
@@ -316,6 +317,7 @@ async def run_duan_qian_chen(job_id: int) -> None:
         questionnaire["_usage"] = {"total_tokens": total_tokens}
         job.result_json = questionnaire
         job.completed = job.total if job.total is not None else job.completed
+        case.status = CaseStatus.dqc_done
         job.status = JobStatus.succeeded
         session.commit()
         logger.info(
@@ -561,6 +563,7 @@ async def run_predict(job_id: int) -> None:
             "failed_methods": failed_methods,
         }
         job.completed = job.total if job.total is not None else len(results)
+        case.status = CaseStatus.predict_done
         job.status = JobStatus.succeeded
         session.commit()
         logger.info(

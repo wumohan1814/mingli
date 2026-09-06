@@ -345,11 +345,13 @@ async def duan_qian_chen(
     if not case:
         raise HTTPException(status_code=404, detail="case不存在")
 
-    # 幂等防重复：同一 case 已有 running/pending 的断前尘 job 时复用，避免刷新/重进导致重复跑+重复扣费
+    # 幂等防重复：同一 case 已有 running/pending/succeeded 的断前尘 job 时复用，
+    # 避免刷新/重进导致重复跑+重复扣费。断前尘结果确定性（排盘不变、问卷不变），
+    # 已 succeeded 的最新 job 也复用（前端轮询 /jobs/{jobId} 立即拿到 questionnaire）
     existing = (
         db.query(Job)
         .filter_by(case_id=case_id, user_id=user_id, type=JobType.duan_qian_chen)
-        .filter(Job.status.in_([JobStatus.pending, JobStatus.running]))
+        .filter(Job.status.in_([JobStatus.pending, JobStatus.running, JobStatus.succeeded]))
         .order_by(Job.id.desc())
         .first()
     )
