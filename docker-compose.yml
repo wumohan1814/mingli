@@ -22,7 +22,8 @@ services:
       # SQLite 文件持久化到宿主机 /opt/taichu/data
       - /opt/taichu/data:/app/data
     networks:
-      - taichu
+      taichu:
+        ipv4_address: 172.28.0.10
 
   caddy:
     image: caddy:2
@@ -30,6 +31,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    # 用 hosts 映射 web，绕开 Docker 内部 DNS（127.0.0.11 → systemd-resolved 偶发 server misbehaving）
+    extra_hosts:
+      - "web:172.28.0.10"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -41,6 +48,9 @@ services:
 
 networks:
   taichu:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
 
 volumes:
   caddy_data:
