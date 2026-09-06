@@ -1892,8 +1892,9 @@ function OnboardingPage({
 }) {
   const reg = typeof window !== 'undefined' && window.REGIONS || {};
   const curYear = new Date().getFullYear();
+  const defaultYear = String(Math.max(1940, curYear - 35));
   const YEARS = [];
-  for (let y = curYear; y >= 1940; y--) YEARS.push(String(y));
+  for (let y = curYear - 18; y >= 1940; y--) YEARS.push(String(y));
   const MONTHS = [];
   for (let m = 1; m <= 12; m++) MONTHS.push(String(m));
   const DAYS = [];
@@ -1902,7 +1903,7 @@ function OnboardingPage({
   for (let h = 0; h <= 23; h++) HOURS.push(String(h));
   const [form, setForm] = useState(() => {
     const base = {
-      birth_year: String(Math.max(1940, curYear - 35)),
+      birth_year: defaultYear,
       birth_month: '',
       birth_day: '',
       birth_hour: '0',
@@ -1918,14 +1919,33 @@ function OnboardingPage({
       const saved = localStorage.getItem('taichu_onboarding_form');
       if (saved) {
         const obj = JSON.parse(saved);
-        if (obj && typeof obj === 'object') return {
-          ...base,
-          ...obj
-        };
+        if (obj && typeof obj === 'object') {
+          const merged = {
+            ...base,
+            ...obj
+          };
+          if (!merged.birth_year || !YEARS.includes(merged.birth_year)) {
+            merged.birth_year = defaultYear;
+          }
+          return merged;
+        }
       }
     } catch (e) {/* 本地存档损坏时忽略，退回默认空表单 */}
     return base;
   });
+  const yearRef = useRef(null);
+  const focusYear = e => {
+    if (!form.birth_year) {
+      const el = e && e.target;
+      if (el && el.value === '') {
+        el.value = defaultYear;
+      }
+      setForm({
+        ...form,
+        birth_year: defaultYear
+      });
+    }
+  };
   const [coordTouched, setCoordTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -2078,8 +2098,10 @@ function OnboardingPage({
   }, "出生年"), /*#__PURE__*/React.createElement("select", {
     id: "f_year",
     className: "input",
+    ref: yearRef,
     value: form.birth_year,
     onChange: update('birth_year'),
+    onFocus: focusYear,
     required: true
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
