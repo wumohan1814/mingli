@@ -7,8 +7,10 @@ from pydantic import BaseModel, Field
 import hashlib, os, base64
 from jose import jwt, JWTError
 
+from app.auth.captcha import generate_captcha, verify_captcha
 from app.config import settings
 from app.database import get_analytics_db
+from app.errors import BizError, ERR_PARAM
 from app.models import User, RefreshToken, LoginAttempt
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,8 @@ def verify_password(password: str, hashed: str) -> bool:
 class RegisterRequest(BaseModel):
     username: str = Field(min_length=3, max_length=64)
     password: str = Field(min_length=6, max_length=128)
+    captcha_id: str
+    captcha_code: str
 
 
 class LoginRequest(BaseModel):
@@ -135,9 +139,19 @@ def clear_login_attempts(username: str, db: Session):
 
 
 # --- 路由 ---
+@router.get("/auth/captcha")
+async def get_captcha():
+    """获取注册图形验证码：返回 {code, message, data:{captcha_id, image}}。"""
+    return {"code": 0, "message": "ok", "data": generate_captcha()}
+
+
 @router.post("/auth/register", response_model=TokenResponse)
 async def register(req: RegisterRequest, db: Session = Depends(get_analytics_db)):
     """注册新用户"""
+    # 图形验证码校验（R10：防脚本批量注册）：不通过则直接拒绝，不建用户
+    if not verify_captcha(req.captcha_id, req.captcha_code):
+        raise BizError(ERR_PARAM, "验证码错误或已过期")
+
     existing = db.query(User).filter_by(username=req.username).first()
     if existing:
         raise HTTPException(status_code=409, detail="用户名已存在")

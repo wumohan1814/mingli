@@ -1291,6 +1291,37 @@ function AuthPage({
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(true);
+  // 注册分支专属：确认密码 + 图形验证码（登录分支不使用）
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [captchaId, setCaptchaId] = useState('');
+  const [captchaImage, setCaptchaImage] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
+  // 拉取/刷新图形验证码：GET /api/auth/captcha → {code,data:{captcha_id,image}}
+  const loadCaptcha = async () => {
+    try {
+      const res = await api('/auth/captcha');
+      const d = res && res.data || res || {};
+      setCaptchaId(d.captcha_id || '');
+      setCaptchaImage(d.image || '');
+      setCaptchaCode(''); // 图片刷新后旧码即失效，清空待重输
+    } catch (e) {
+      setCaptchaId('');
+      setCaptchaImage('');
+      setCaptchaCode('');
+      toast('验证码加载失败，请点击重试');
+    }
+  };
+  // 组件挂载/切到注册分支时拉验证码；切回登录分支时清空注册分支缓存
+  useEffect(() => {
+    if (!isLogin) {
+      loadCaptcha();
+    } else {
+      setConfirmPassword('');
+      setCaptchaId('');
+      setCaptchaImage('');
+      setCaptchaCode('');
+    }
+  }, [isLogin]);
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
@@ -1299,14 +1330,30 @@ function AuthPage({
       setError('请先阅读并同意用户协议与隐私政策');
       return;
     }
+    // 注册分支：两次密码须一致、验证码须填写，不满足则提示且不发请求
+    if (!isLogin) {
+      if (password !== confirmPassword) {
+        setError('两次输入的密码不一致');
+        return;
+      }
+      if (!captchaCode || !String(captchaCode).trim()) {
+        setError('请输入图形验证码');
+        return;
+      }
+    }
     setLoading(true);
     try {
+      const payload = {
+        username,
+        password
+      };
+      if (!isLogin) {
+        payload.captcha_id = captchaId;
+        payload.captcha_code = captchaCode;
+      }
       const res = await api(isLogin ? '/auth/login' : '/auth/register', {
         method: 'POST',
-        body: JSON.stringify({
-          username,
-          password
-        })
+        body: JSON.stringify(payload)
       });
       // 注意：auth 接口返回裸 {access_token, refresh_token}，非 {code,data} 信封
       token = res.access_token || res.data && res.data.access_token;
@@ -1320,7 +1367,15 @@ function AuthPage({
       }
       onNavigate('cases'); // 登录/注册成功 → 进入档案列表（可从中新建或继续档案）
     } catch (e) {
-      setError(e.message);
+      const msg = e && e.message || '请求失败';
+      // 注册分支后端返回「验证码错误/过期」：旧验证码已失效，刷新图片并提示重输
+      if (!isLogin && /验证码/.test(msg)) {
+        setError('验证码错误或已过期，请重新输入');
+        setCaptchaCode('');
+        loadCaptcha();
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -1360,8 +1415,79 @@ function AuthPage({
     placeholder: "请输入密码（至少6位）",
     required: true,
     minLength: 6
-  }), !isLogin && /*#__PURE__*/React.createElement("div", {
-    className: "agree-row"
+  }), !isLogin && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "auth-pass2"
+  }, "确认密码"), /*#__PURE__*/React.createElement("input", {
+    id: "auth-pass2",
+    className: "input",
+    type: "password",
+    value: confirmPassword,
+    onChange: e => setConfirmPassword(e.target.value),
+    placeholder: "请再次输入密码",
+    required: true,
+    autoComplete: "new-password"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "auth-captcha"
+  }, "图形验证码"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      alignItems: 'center',
+      margin: '8px 0 0'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    id: "auth-captcha",
+    className: "input",
+    value: captchaCode,
+    onChange: e => setCaptchaCode(e.target.value),
+    placeholder: "请输入验证码",
+    autoComplete: "off",
+    required: true,
+    style: {
+      flex: 1,
+      minWidth: 0,
+      margin: 0
+    }
+  }), captchaImage ? /*#__PURE__*/React.createElement("img", {
+    src: captchaImage,
+    alt: "图形验证码",
+    title: "看不清？点击图片刷新",
+    onClick: loadCaptcha,
+    style: {
+      width: 120,
+      height: 42,
+      flexShrink: 0,
+      borderRadius: 8,
+      border: '1px solid var(--border)',
+      background: 'var(--surface)',
+      cursor: 'pointer',
+      objectFit: 'cover'
+    }
+  }) : /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "btn btn-outline",
+    onClick: loadCaptcha,
+    style: {
+      width: 120,
+      height: 42,
+      padding: 0,
+      fontSize: 13,
+      flexShrink: 0
+    }
+  }, "获取验证码")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      textAlign: 'right',
+      margin: '2px 0 0'
+    }
+  }, "看不清？点击图片刷新")), !isLogin && /*#__PURE__*/React.createElement("div", {
+    className: "agree-row",
+    style: {
+      margin: '10px 0 2px'
+    }
   }, /*#__PURE__*/React.createElement("input", {
     id: "auth-agree",
     type: "checkbox",

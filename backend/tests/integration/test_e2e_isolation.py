@@ -33,15 +33,27 @@ DEGRADED_WITHOUT_GEO = {"qimen-lifetime", "western", "qizheng", "wuyun-liuqi"}
 # ---------------------------------------------------------------------------- #
 # 工具：注册拿 headers / 建档
 # ---------------------------------------------------------------------------- #
+def _new_captcha(client: TestClient) -> dict:
+    """通过真实 captcha 端点取一个一次性验证码（单进程内存存储，白盒读明文）。"""
+    resp = client.get("/api/auth/captcha")
+    assert resp.status_code == 200, f"获取验证码失败: {resp.status_code} {resp.text}"
+    body = resp.json()
+    assert body["code"] == 0, body
+    data = body["data"]
+    assert data["image"].startswith("data:image/png;base64,")
+    from app.auth.captcha import _store
+
+    return {"captcha_id": data["captcha_id"], "captcha_code": _store[data["captcha_id"]][0]}
+
+
 def _register_headers(client: TestClient, tag: str) -> dict:
     """注册一个新用户并返回其 Bearer 请求头。"""
-    resp = client.post(
-        "/api/auth/register",
-        json={
-            "username": f"it_{tag}_{uuid.uuid4().hex[:8]}",
-            "password": "secret123",
-        },
-    )
+    payload = {
+        "username": f"it_{tag}_{uuid.uuid4().hex[:8]}",
+        "password": "secret123",
+    }
+    payload.update(_new_captcha(client))  # register 现要求 captcha_id + captcha_code
+    resp = client.post("/api/auth/register", json=payload)
     assert resp.status_code == 200, f"注册失败: {resp.status_code} {resp.text}"
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
