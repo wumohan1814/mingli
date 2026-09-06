@@ -43,6 +43,21 @@
       --skin-accent:#C9A24B; --skin-accent-soft:rgba(201,162,75,.18); --skin-accent-ink:#1F1F26;
       --skin-banner:#5B4B8A; --skin-banner-ink:#F7F4EC; --skin-tag-bg:rgba(0,0,0,.16);
     }
+    /* 西式占卜 HUB：内部=紫晶；顶部 Banner=琥珀（与塔罗互置） */
+    [data-skin="xishi"]{
+      --skin-accent:#5B4B8A; --skin-accent-soft:rgba(91,75,138,.18); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9A24B; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(0,0,0,.14);
+    }
+    /* 星座（=原占星）：内部=深空蓝；顶部 Banner=月银 */
+    [data-skin="xingzuo"]{
+      --skin-accent:#2A3A5C; --skin-accent-soft:rgba(42,58,92,.14); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9CBD3; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(255,255,255,.55);
+    }
+    /* MBTI：内部=靛蓝；顶部 Banner=薄荷 */
+    [data-skin="mbti"]{
+      --skin-accent:#4A5BB5; --skin-accent-soft:rgba(74,91,181,.16); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#7ED3C6; --skin-banner-ink:#16302C; --skin-tag-bg:rgba(0,0,0,.12);
+    }
 
     *{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:100%}
@@ -314,6 +329,104 @@
     .modal{background:var(--surface);border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}
     .modal-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text-1)}
     .modal-body{font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.6}
+
+    /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
+    .nav-rail{position:fixed;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:42;padding:6px 0}
+    .nav-rail button{position:relative;border:none;border-radius:0 14px 14px 0;width:58px;padding:14px 6px;min-height:96px;cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+      color:#fff;font-size:13px;font-weight:600;line-height:1.25;letter-spacing:1px;
+      transition:transform .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease;
+      box-shadow:2px 2px 10px rgba(0,0,0,.18);filter:brightness(.82)}
+    .nav-rail button .rail-ico{width:22px;height:22px}
+    .nav-rail button:hover{filter:brightness(.95);transform:translateX(3px)}
+    .nav-rail button.active{transform:translateX(10px);box-shadow:5px 4px 18px rgba(0,0,0,.32);filter:brightness(1.05)}
+    .nav-rail button .rail-label{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap}
+
+    /* ===== HUB 入口卡 ===== */
+    .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
+    .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+    .hub-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);cursor:pointer;overflow:hidden;transition:transform .14s,box-shadow .2s}
+    .hub-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(26,33,56,.18)}
+    .hub-card .hc-bar{position:absolute;left:0;top:0;bottom:0;width:5px}
+    .hub-card .hc-ico{width:30px;height:30px;color:var(--skin-accent)}
+    .hub-card .hc-name{font-size:17px;font-weight:700;color:var(--text-1)}
+    .hub-card .hc-sub{font-size:12px;color:var(--text-3);line-height:1.5}
+    .hub-card.disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4)}
+    .hub-card.disabled:hover{transform:none;box-shadow:none}
+
+    /* ===== 通用卡片 / 标签 ===== */
+    .tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .pay-hint{font-size:12px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:6px 10px;margin-top:8px}
+    .row-gap{display:flex;gap:10px;flex-wrap:wrap}
+    .back-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+    /* ===== 生肖流年 ===== */
+    .zodiac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .zodiac-cell{padding:12px 4px;text-align:center;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:14px;font-weight:600;color:var(--text-1);transition:.14s}
+    .zodiac-cell .ze{font-size:22px;display:block;margin-bottom:2px}
+    .zodiac-cell.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+    .taisui-card{text-align:center;border:1.5px solid var(--cinnabar);border-radius:var(--radius-lg);padding:16px;background:rgba(178,58,58,.05)}
+    .noble-card{text-align:center;border-radius:var(--radius-lg);padding:14px;background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:600}
+    .rel-card{border-radius:var(--radius-lg);padding:14px;font-weight:600}
+    .rel-good{background:rgba(62,124,107,.14);color:var(--skin-accent)}
+    .rel-risk{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    .rel-neutral{background:var(--surface);border:1px solid var(--border);color:var(--text-2)}
+    .signal-list{display:flex;flex-direction:column;gap:8px}
+    .signal-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text-2)}
+    .conflict-tag{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#fff}
+    .c-zhi{background:#B23A3A}.c-chong{background:#E08A2B}.c-xing{background:#5B4B8A}.c-hai{background:#3B7BB0}.c-po{background:#8A93A6}
+
+    /* ===== 临时起卦 ===== */
+    .method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+    .method-cell{padding:16px 10px;text-align:center;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:.14s}
+    .method-cell .mn{font-weight:700;color:var(--text-1);font-size:15px}
+    .method-cell .md{font-size:11px;color:var(--text-3);margin-top:3px}
+    .method-cell.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+    .method-cell.todo{opacity:.5;cursor:not-allowed}
+    .yao-line{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-1);padding:4px 0}
+    .yao-bar{height:6px;width:54px;border-radius:3px;background:var(--ink-300)}
+    .yao-bar.yin{background:transparent;border-top:3px solid var(--ink-300);height:0}
+    .yao-bar.old-yang{background:var(--gold-500)}
+    .yao-bar.old-yin{background:transparent;border-top:3px solid var(--cinnabar)}
+    .palm-disk{width:200px;height:200px;border-radius:50%;margin:14px auto;position:relative;background:radial-gradient(circle,var(--skin-accent-soft),transparent 70%);border:2px solid var(--skin-accent)}
+    .palm-disk .pd-point{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transform:translate(-50%,-50%);left:50%;top:50%}
+    .palm-disk .pd-point.hit{box-shadow:0 0 0 4px var(--gold-500)}
+
+    /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
+    .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+    .tarot-card{width:104px;height:168px;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.22);position:relative;background:#5B4B8A}
+    .tarot-card.reversed{transform:rotate(180deg)}
+    .tarot-card .tc-roman{font-size:18px;font-weight:700;opacity:.9}
+    .tarot-card .tc-name{font-size:13px;font-weight:700;text-align:center;line-height:1.25}
+    .tarot-card .tc-ph{width:46px;height:46px;border-radius:50%;border:2px dashed rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.85}
+    .tarot-card .tc-kw{font-size:10px;opacity:.9;text-align:center;line-height:1.3;max-height:34px;overflow:hidden}
+    .suit-wands{background:#C96A3B}.suit-cups{background:#3B7BB0}.suit-swords{background:#8A93A6}.suit-pentacles{background:#C9A24B}.suit-major{background:#5B4B8A}
+    .tc-pos{font-size:12px;color:var(--skin-accent);font-weight:600;text-align:center;margin-bottom:4px}
+
+    /* ===== 星座星盘 ===== */
+    .astro-wheel{width:100%;max-width:320px;margin:10px auto;display:block}
+    .astro-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:8px 0}
+    .astro-tab{flex:none;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;background:var(--surface);border:1px solid var(--border);color:var(--text-2);cursor:pointer;white-space:nowrap}
+    .astro-tab.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+    .planet-row{display:flex;gap:8px;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)}
+    .planet-row .pr-sym{width:22px;text-align:center;font-weight:700;color:var(--skin-accent)}
+
+    /* ===== MBTI ===== */
+    .mbti-progress{height:6px;border-radius:3px;background:var(--skin-accent-soft);overflow:hidden;margin:10px 0}
+    .mbti-progress > i{display:block;height:100%;background:var(--skin-accent);border-radius:3px;transition:width .25s}
+    .mbti-type-big{font-size:42px;font-weight:800;letter-spacing:3px;color:var(--skin-accent);text-align:center}
+    .mbti-alias{text-align:center;color:var(--text-2);font-size:14px;margin-bottom:10px}
+    .mbti-bar{display:flex;align-items:center;gap:8px;font-size:13px;margin:6px 0}
+    .mbti-bar .bb-track{flex:1;height:10px;border-radius:5px;background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden}
+    .mbti-bar .bb-fill{position:absolute;top:0;bottom:0;background:var(--skin-accent);border-radius:5px}
+    .mbti-bar .bb-label{width:24px;text-align:center;font-weight:700;color:var(--text-1)}
+    .mbti-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+    .mbti-cell{padding:10px 4px;text-align:center;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:700;color:var(--text-1);font-size:14px}
+    .mbti-cell.cur{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+    .mbti-cell:hover{transform:translateY(-2px)}
+    .grid16{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .grid16 .g{font-size:12px;padding:8px 2px;text-align:center;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer;color:var(--text-1)}
+    .grid16 .g.cur{background:var(--skin-accent);color:#fff}
   </style>
 </head>
 <body>
@@ -565,7 +678,7 @@ function generateDeviceFingerprint() {
       const comma = dataUrl.indexOf(',');
       const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
       let h = 5381;
-      for (let i = 0; i < b64.length; i++) h = ((h * 33) ^ b64.charCodeAt(i)) >>> 0;
+      for (let i = 0; i < b64.length; i++) h = (h * 33 ^ b64.charCodeAt(i)) >>> 0;
       canvasPart = h.toString(16);
     }
   } catch (e) {
@@ -3860,14 +3973,32 @@ function ZiweiPlate({
 
 // —— 占星盘 ——
 const PLANET_CN = {
-  Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星', Jupiter: '木星',
-  Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星',
-  Ceres: '谷神星', Juno: '婚神星', Vesta: '灶神星', Pallas: '智神星', Chiron: '凯龙星',
-  'North Node': '北交点', 'True North Node': '北交点', 'South Node': '南交点', 'True Lilith': '莉莉丝',
-  'Part of Fortune': '福点', 'Part of Spirit': '灵点'
+  Sun: '太阳',
+  Moon: '月亮',
+  Mercury: '水星',
+  Venus: '金星',
+  Mars: '火星',
+  Jupiter: '木星',
+  Saturn: '土星',
+  Uranus: '天王星',
+  Neptune: '海王星',
+  Pluto: '冥王星',
+  Ceres: '谷神星',
+  Juno: '婚神星',
+  Vesta: '灶神星',
+  Pallas: '智神星',
+  Chiron: '凯龙星',
+  'North Node': '北交点',
+  'True North Node': '北交点',
+  'South Node': '南交点',
+  'True Lilith': '莉莉丝',
+  'Part of Fortune': '福点',
+  'Part of Spirit': '灵点'
 };
 const PATTERN_CN = {
-  kite: '风筝', t_square: 'T型三角', stellium_sign: '星群'
+  kite: '风筝',
+  t_square: 'T型三角',
+  stellium_sign: '星群'
 };
 const translatePattern = p => {
   const s = String(p || '');
@@ -4375,11 +4506,1534 @@ function ArchivePage({
   }, "退出登录"));
 }
 
+// ===== 横向扩展：左侧导航栏 + 各模块页面 =====
+const MODULE_HUB = {
+  guoxue: {
+    page: 'guoxue-hub',
+    skin: 'guoxue'
+  },
+  xishi: {
+    page: 'xishi-hub',
+    skin: 'xishi'
+  },
+  mbti: {
+    page: 'mbti',
+    skin: 'mbti'
+  }
+};
+function NavRail({
+  module,
+  onSelect
+}) {
+  const MOD = [{
+    id: 'guoxue',
+    label: '国学预测',
+    color: '#3E7C6B',
+    icon: 'nine'
+  }, {
+    id: 'xishi',
+    label: '西式占卜',
+    color: '#5B4B8A',
+    icon: 'orbit'
+  }, {
+    id: 'mbti',
+    label: 'MBTI',
+    color: '#4A5BB5',
+    icon: 'spark'
+  }];
+  return /*#__PURE__*/React.createElement("nav", {
+    className: "nav-rail",
+    "aria-label": "模块导航"
+  }, MOD.map(m => /*#__PURE__*/React.createElement("button", {
+    key: m.id,
+    className: module === m.id ? 'active' : '',
+    style: {
+      background: m.color
+    },
+    onClick: () => onSelect(m.id),
+    "aria-pressed": module === m.id ? 'true' : 'false'
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: m.icon,
+    size: 20,
+    color: "#fff"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rail-label"
+  }, m.label))));
+}
+
+/* ---------- 国学预测 HUB ---------- */
+function GuoxueHubPage({
+  onNavigate,
+  applySkin
+}) {
+  const cards = [{
+    name: '九法合一解读',
+    sub: '八字·紫微·西占·七政·奇门·五运六气等 9 法综合',
+    bar: 'var(--skin-accent)',
+    ico: 'nine',
+    to: () => onNavigate('cases')
+  }, {
+    name: '生肖流年',
+    sub: '犯太岁 · 值年星君 · 贵人',
+    bar: 'var(--cinnabar)',
+    ico: 'spark',
+    to: () => onNavigate('zodiac')
+  }, {
+    name: '临时起卦',
+    sub: '六爻 · 梅花 · 小六壬 · 灵签 等，用已有档案起卦',
+    bar: 'var(--gold-500)',
+    ico: 'orbit',
+    to: () => onNavigate('divination')
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "nine",
+    size: 22
+  }), " 国学预测"), /*#__PURE__*/React.createElement("div", {
+    className: "hub-grid"
+  }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "hub-card",
+    onClick: c.to
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "hc-bar",
+    style: {
+      background: c.bar
+    }
+  }), /*#__PURE__*/React.createElement(Icon, {
+    name: c.ico,
+    size: 28,
+    className: "hc-ico"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "hc-name"
+  }, c.name), /*#__PURE__*/React.createElement("div", {
+    className: "hc-sub"
+  }, c.sub)))));
+}
+
+/* ---------- 西式占卜 HUB ---------- */
+function XishiHubPage({
+  onNavigate,
+  applySkin
+}) {
+  const cards = [{
+    name: '星座预测',
+    sub: '本命盘 · 行运 · 日返 · 次限',
+    bar: '#2A3A5C',
+    ico: 'orbit',
+    to: () => {
+      applySkin('xingzuo');
+      onNavigate('astrology');
+    }
+  }, {
+    name: '塔罗牌',
+    sub: '78 张 · 多牌阵 · 正逆位',
+    bar: '#C9A24B',
+    ico: 'spark',
+    to: () => {
+      applySkin('tarot');
+      onNavigate('tarot');
+    }
+  }, {
+    name: '雷诺曼',
+    sub: '36 张小牌 · 关键词组合',
+    bar: '#5B4B8A',
+    ico: 'nine',
+    to: () => {
+      applySkin('tarot');
+      onNavigate('lenormand');
+    }
+  }, {
+    name: '其他西式占卜',
+    sub: '敬请期待',
+    bar: '#888',
+    ico: 'flat',
+    disabled: true
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "orbit",
+    size: 22
+  }), " 西式占卜"), /*#__PURE__*/React.createElement("div", {
+    className: "hub-grid"
+  }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: 'hub-card' + (c.disabled ? ' disabled' : ''),
+    onClick: () => c.disabled ? toast('该模块敬请期待') : c.to()
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "hc-bar",
+    style: {
+      background: c.bar
+    }
+  }), /*#__PURE__*/React.createElement(Icon, {
+    name: c.ico,
+    size: 28,
+    className: "hc-ico"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "hc-name"
+  }, c.name), /*#__PURE__*/React.createElement("div", {
+    className: "hc-sub"
+  }, c.sub)))));
+}
+
+/* ---------- 生肖流年（确定性，零 LLM） ---------- */
+const ZODIAC = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+const ZE_EMO = ['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'];
+function ZodiacPage({
+  onNavigate
+}) {
+  const [z, setZ] = useState(0);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState('');
+  const load = async () => {
+    setLoading(true);
+    setErrored('');
+    try {
+      const res = await api('/zodiac/fortune', {
+        method: 'POST',
+        body: JSON.stringify({
+          zodiac: ZODIAC[z],
+          year
+        })
+      });
+      setData(res && res.data || res);
+    } catch (e) {
+      setErrored(e.message || '生肖流年加载失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    load();
+  }, [z, year]);
+  const CONFLICT_CLS = {
+    '值太岁': 'c-zhi',
+    '冲太岁': 'c-chong',
+    '刑太岁': 'c-xing',
+    '害太岁': 'c-hai',
+    '破太岁': 'c-po'
+  };
+  const conflictCls = t => CONFLICT_CLS[t] || 'c-po';
+  const relCls = c => ({
+    '有利关系': 'rel-good',
+    '风险关系': 'rel-risk',
+    '中性关系': 'rel-neutral'
+  })[c] || 'rel-neutral';
+  const conflicts = data && data.conflicts && data.conflicts.length ? data.conflicts : [{ type: '平顺无冲' }];
+  const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? data.yearGanZhi + ' · ' + data.taiSui.star + '星君' : '';
+  const elemCls = relCls(data && data.elementRelation && data.elementRelation.classification);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "spark",
+    size: 22
+  }), " 生肖流年"), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "label"
+  }, "选择生肖"), /*#__PURE__*/React.createElement("div", {
+    className: "zodiac-grid"
+  }, ZODIAC.map((n, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: 'zodiac-cell' + (z === i ? ' sel' : ''),
+    onClick: () => setZ(i)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ze"
+  }, ZE_EMO[i]), n))), /*#__PURE__*/React.createElement("div", {
+    className: "label",
+    style: {
+      marginTop: 12
+    }
+  }, "选择年份"), /*#__PURE__*/React.createElement("div", {
+    className: "row-gap",
+    style: {
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    style: {
+      width: 'auto',
+      padding: '8px 14px'
+    },
+    onClick: () => setYear(y => y - 1)
+  }, "−"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700,
+      minWidth: 64,
+      textAlign: 'center'
+    }
+  }, year, " 年"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    style: {
+      width: 'auto',
+      padding: '8px 14px'
+    },
+    onClick: () => setYear(y => y + 1)
+  }, "＋"))), loading ? /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      textAlign: 'center',
+      color: 'var(--text-2)',
+      padding: '28px 16px'
+    }
+  }, "推演中…") : errored ? /*#__PURE__*/React.createElement("div", {
+    className: "card failed-box"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "生肖流年加载失败"), /*#__PURE__*/React.createElement("div", {
+    className: "error"
+  }, errored), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: load
+  }, "重试")) : data ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 40
+    }
+  }, ZE_EMO[z]), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700
+    }
+  }, data.zodiac, " · ", year, " 年运程"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 8,
+      display: 'flex',
+      gap: 6,
+      justifyContent: 'center',
+      flexWrap: 'wrap'
+    }
+  }, conflicts.map((c, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    className: 'conflict-tag ' + conflictCls(c.type)
+  }, c.type)))), starName ? /*#__PURE__*/React.createElement("div", {
+    className: "card taisui-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: 'var(--cinnabar)'
+    }
+  }, "值年星君"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 17,
+      fontWeight: 700
+    }
+  }, starName)) : null, /*#__PURE__*/React.createElement("div", {
+    className: "row-gap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "noble-card",
+    style: {
+      flex: 1
+    }
+  }, "贵人", /*#__PURE__*/React.createElement("br", null), data.noble || '本年无'), /*#__PURE__*/React.createElement("div", {
+    className: 'rel-card ' + elemCls,
+    style: {
+      flex: 1
+    }
+  }, "五行关系", /*#__PURE__*/React.createElement("br", null), data.elementRelation ? data.elementRelation.classification : '', /*#__PURE__*/React.createElement("br", null), data.relation || '')), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "行动建议"), /*#__PURE__*/React.createElement("div", {
+    className: "signal-list"
+  }, (data.actionSignals || []).map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "signal-item"
+  }, "💡 ", /*#__PURE__*/React.createElement("span", null, s)))))) : null, /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('guoxue-hub')
+  }, "回到 Hub"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('landing')
+  }, "回到首页")));
+}
+
+/* ---------- 临时起卦 ---------- */
+const DIVIN_METHODS = [{
+  id: 'liuyao',
+  name: '六爻',
+  desc: '摇卦 / 报数',
+  todo: false
+}, {
+  id: 'meihua',
+  name: '梅花易数',
+  desc: '时间 / 报数',
+  todo: false
+}, {
+  id: 'xiaoliuren',
+  name: '小六壬',
+  desc: '月日时速断',
+  todo: false
+}, {
+  id: 'sign',
+  name: '观音灵签',
+  desc: '抽签',
+  todo: false
+}, {
+  id: 'liuren',
+  name: '大六壬',
+  desc: '时辰起课',
+  todo: true
+}, {
+  id: 'jinkoujue',
+  name: '金口诀',
+  desc: '时辰起课',
+  todo: true
+}, {
+  id: 'qimen',
+  name: '奇门时家',
+  desc: '时家奇门',
+  todo: true
+}];
+const DEMO_DIVINATION = {
+  liuyao: {
+    lines: [['老阳', '乾为天'], ['少阳', ''], ['少阴', ''], ['老阴', ''], ['少阳', ''], ['少阴', '']],
+    name: '乾为天（初爻动）',
+    text: '六爻以六爻阴阳与动变推演事体。当前得乾卦，初爻发动，主事初起、刚健前行，宜把握先机。'
+  },
+  meihua: {
+    up: '乾',
+    down: '坤',
+    dong: '三爻',
+    text: '上乾下坤，天地否之象；三爻动，体用相克，先难后易，宜静待时机转化。'
+  },
+  xiaoliuren: {
+    point: '速喜',
+    text: '掌诀落「速喜」：主喜事将近、消息速达，事宜速决，忌拖延。'
+  },
+  sign: {
+    no: 38,
+    poem: '_sign_demo_ 月出皎兮，人约黄昏；谋望有成，喜气临门。',
+    text: '第三十八签（中平）：谋事可成，宜守正待时，贵人暗助。'
+  }
+};
+function DivinationPage({
+  onNavigate
+}) {
+  const [method, setMethod] = useState('liuyao');
+  const [res, setRes] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const run = () => {
+    setLoading(true);
+    setRes(null);
+    setTimeout(() => {
+      setRes(DEMO_DIVINATION[method] || {
+        text: '（该起卦方式的确定性结果演示）'
+      });
+      setLoading(false);
+    }, 700);
+  };
+  const m = DIVIN_METHODS.find(x => x.id === method);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "orbit",
+    size: 22
+  }), " 临时起卦"), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "选择起卦方式"), /*#__PURE__*/React.createElement("div", {
+    className: "method-grid"
+  }, DIVIN_METHODS.map(x => /*#__PURE__*/React.createElement("div", {
+    key: x.id,
+    className: 'method-cell' + (method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
+    onClick: () => x.todo ? toast('「' + x.name + '」敬请期待') : setMethod(x.id)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mn"
+  }, x.name), /*#__PURE__*/React.createElement("div", {
+    className: "md"
+  }, x.desc)))), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    style: {
+      marginTop: 14
+    },
+    disabled: loading,
+    onClick: run
+  }, loading ? '起卦中…' : '开始起卦')), loading && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "skeleton sk-line"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "skeleton sk-line",
+    style: {
+      width: '60%'
+    }
+  })), res && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "卦象结果（", m.name, "）"), method === 'liuyao' && /*#__PURE__*/React.createElement("div", null, res.lines.map((ln, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "yao-line"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 30,
+      color: 'var(--text-3)'
+    }
+  }, ['初', '二', '三', '四', '五', '上'][i], "爻"), /*#__PURE__*/React.createElement("span", {
+    className: 'yao-bar ' + (ln[0] === '老阳' ? 'old-yang' : ln[0] === '老阴' ? 'old-yin' : ln[0] === '阴' || ln[0] === '少阴' ? 'yin' : '')
+  }), /*#__PURE__*/React.createElement("span", null, ln[0]))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontWeight: 700,
+      marginTop: 6
+    }
+  }, res.name)), method === 'meihua' && /*#__PURE__*/React.createElement("div", null, "上卦 ", /*#__PURE__*/React.createElement("b", null, res.up), " · 下卦 ", /*#__PURE__*/React.createElement("b", null, res.down), " · 动爻 ", /*#__PURE__*/React.createElement("b", null, res.dong)), method === 'xiaoliuren' && /*#__PURE__*/React.createElement("div", {
+    className: "palm-disk"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pd-point hit"
+  }, res.point)), method === 'sign' && /*#__PURE__*/React.createElement("div", null, "第 ", /*#__PURE__*/React.createElement("b", null, res.no), " 签", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontStyle: 'italic',
+      color: 'var(--text-2)'
+    }
+  }, res.poem)), /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 8,
+      color: 'var(--text-2)',
+      lineHeight: 1.7
+    }
+  }, res.text), /*#__PURE__*/React.createElement("div", {
+    className: "pay-hint"
+  }, "深度断卦为付费 LLM 解读，约 12 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: run
+  }, "重新起卦"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('guoxue-hub')
+  }, "回到 Hub"))));
+}
+
+/* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
+const TAROT_DECK = [{
+  name: '愚者',
+  roman: '0',
+  suit: 'major'
+}, {
+  name: '魔术师',
+  roman: 'I',
+  suit: 'major'
+}, {
+  name: '女祭司',
+  roman: 'II',
+  suit: 'major'
+}, {
+  name: '皇后',
+  roman: 'III',
+  suit: 'major'
+}, {
+  name: '皇帝',
+  roman: 'IV',
+  suit: 'major'
+}, {
+  name: '恋人',
+  roman: 'VI',
+  suit: 'major'
+}, {
+  name: '力量',
+  roman: 'VIII',
+  suit: 'major'
+}, {
+  name: '星星',
+  roman: 'XVII',
+  suit: 'major'
+}, {
+  name: '月亮',
+  roman: 'XVIII',
+  suit: 'major'
+}, {
+  name: '世界',
+  roman: 'XXI',
+  suit: 'major'
+}, {
+  name: '权杖王牌',
+  roman: 'A',
+  suit: 'wands'
+}, {
+  name: '圣杯六',
+  roman: '6',
+  suit: 'cups'
+}, {
+  name: '宝剑十',
+  roman: '10',
+  suit: 'swords'
+}, {
+  name: '钱币二',
+  roman: '2',
+  suit: 'pentacles'
+}];
+const TAROT_SPREADS = [{
+  id: 'single',
+  name: '单张',
+  pos: ['核心']
+}, {
+  id: 'three',
+  name: '三张（过去-现在-未来）',
+  pos: ['过去', '现在', '未来']
+}, {
+  id: 'love',
+  name: '爱情',
+  pos: ['你', '对方', '关系']
+}, {
+  id: 'career',
+  name: '事业',
+  pos: ['现状', '挑战', '方向']
+}];
+function TarotPlaceholderCard({
+  card,
+  pos,
+  reversed
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center'
+    }
+  }, pos && /*#__PURE__*/React.createElement("div", {
+    className: "tc-pos"
+  }, pos), /*#__PURE__*/React.createElement("div", {
+    className: 'tarot-card suit-' + card.suit + (reversed ? ' reversed' : '')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "tc-roman"
+  }, card.roman), /*#__PURE__*/React.createElement("div", {
+    className: "tc-ph"
+  }, "?"), /*#__PURE__*/React.createElement("div", {
+    className: "tc-name"
+  }, card.name), /*#__PURE__*/React.createElement("div", {
+    className: "tc-kw"
+  }, "（卡面美术待补充）")));
+}
+function TarotPage({
+  onNavigate
+}) {
+  const [step, setStep] = useState('menu'); // menu -> spread -> draw
+  const [spread, setSpread] = useState(null);
+  const [cards, setCards] = useState([]);
+  const draw = sp => {
+    setSpread(sp);
+    const pool = TAROT_DECK.slice();
+    const picks = [];
+    for (let i = 0; i < sp.pos.length; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      picks.push({
+        card: pool.splice(idx, 1)[0],
+        reversed: Math.random() < 0.4
+      });
+    }
+    setCards(picks);
+    setStep('draw');
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "spark",
+    size: 22
+  }), " 塔罗牌"), step === 'menu' && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "选择预测方向"), /*#__PURE__*/React.createElement("div", {
+    className: "row-gap"
+  }, ['爱情', '事业', '财运', '综合', '成长'].map(d => /*#__PURE__*/React.createElement("span", {
+    key: d,
+    className: "tag",
+    style: {
+      cursor: 'pointer'
+    },
+    onClick: () => toast('方向已记录：' + d)
+  }, d))), /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      marginTop: 14
+    }
+  }, "选择牌阵"), /*#__PURE__*/React.createElement("div", {
+    className: "method-grid"
+  }, TAROT_SPREADS.map(s => /*#__PURE__*/React.createElement("div", {
+    key: s.id,
+    className: "method-cell",
+    onClick: () => draw(s)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mn"
+  }, s.name))))), step === 'draw' && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, spread.name, " · 抽卡结果"), /*#__PURE__*/React.createElement("div", {
+    className: "card-fan"
+  }, cards.map((p, i) => /*#__PURE__*/React.createElement(TarotPlaceholderCard, {
+    key: i,
+    card: p.card,
+    pos: spread.pos[i],
+    reversed: p.reversed
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "pay-hint"
+  }, "综合解读为付费 LLM，约 20 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => draw(spread)
+  }, "重新抽卡"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => setStep('menu')
+  }, "重选牌阵"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('xishi-hub')
+  }, "回到 Hub"))), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 11,
+      color: 'var(--text-3)',
+      textAlign: 'center'
+    }
+  }, "卡面为占位（空白+文字），正式美术将后续补充。"));
+}
+
+/* ---------- 雷诺曼（36 张占位卡） ---------- */
+const LENORMAND_DECK = ['骑手', '三叶草', '船', '房子', '树', '云', '蛇', '棺材', '花束', '镰刀', '鞭子', '鸟', '小孩', '狐狸', '熊', '星星', '鹳', '狗', '塔', '花园', '山', '路口', '老鼠', '心', '戒指', '书', '信', '男人', '女人', '百合', '太阳', '月亮', '钥匙', '鱼', '锚', '十字'];
+const LENORMAND_SPREADS = [{
+  id: 'single',
+  name: '单张',
+  n: 1
+}, {
+  id: 'three',
+  name: '三张',
+  n: 3
+}, {
+  id: 'grid',
+  name: '九宫格',
+  n: 9
+}];
+function LenormandPage({
+  onNavigate
+}) {
+  const [spread, setSpread] = useState(null);
+  const [cards, setCards] = useState([]);
+  const draw = sp => {
+    setSpread(sp);
+    const pool = LENORMAND_DECK.slice();
+    const picks = [];
+    for (let i = 0; i < sp.n; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      picks.push(pool.splice(idx, 1)[0]);
+    }
+    setCards(picks);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "nine",
+    size: 22
+  }), " 雷诺曼"), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "选择牌阵"), /*#__PURE__*/React.createElement("div", {
+    className: "method-grid"
+  }, LENORMAND_SPREADS.map(s => /*#__PURE__*/React.createElement("div", {
+    key: s.id,
+    className: "method-cell",
+    onClick: () => draw(s)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mn"
+  }, s.name))))), cards.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, spread.name, " · 抽牌结果"), /*#__PURE__*/React.createElement("div", {
+    className: "card-fan"
+  }, cards.map((nm, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    style: {
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "tarot-card suit-major"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "tc-roman"
+  }, i + 1), /*#__PURE__*/React.createElement("div", {
+    className: "tc-ph"
+  }, "?"), /*#__PURE__*/React.createElement("div", {
+    className: "tc-name"
+  }, nm), /*#__PURE__*/React.createElement("div", {
+    className: "tc-kw"
+  }, "（占位）"))))), /*#__PURE__*/React.createElement("div", {
+    className: "pay-hint"
+  }, "深度解读为付费 LLM，约 15 积分（点击前将预检余额）"), /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => draw(spread)
+  }, "重新抽牌"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('xishi-hub')
+  }, "回到 Hub"))));
+}
+
+/* ---------- 星座预测（SVG 星盘，纯前端自绘） ---------- */
+const SIGN_SYM = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+const PLANET_SYM = {
+  '太阳': '☉',
+  '月亮': '☽',
+  '水星': '☿',
+  '金星': '♀',
+  '火星': '♂',
+  '木星': '♃',
+  '土星': '♄',
+  '上升': 'ASC',
+  '天顶': 'MC'
+};
+const DEMO_ASTRO = {
+  planets: [{
+    label: '太阳',
+    sign: '狮子',
+    degree: 12,
+    house: 5,
+    long: 132,
+    retro: false
+  }, {
+    label: '月亮',
+    sign: '双鱼',
+    degree: 8,
+    house: 11,
+    long: 338,
+    retro: false
+  }, {
+    label: '水星',
+    sign: '处女',
+    degree: 3,
+    house: 6,
+    long: 153,
+    retro: false
+  }, {
+    label: '金星',
+    sign: '巨蟹',
+    degree: 21,
+    house: 4,
+    long: 111,
+    retro: false
+  }, {
+    label: '火星',
+    sign: '天秤',
+    degree: 14,
+    house: 7,
+    long: 194,
+    retro: true
+  }, {
+    label: '木星',
+    sign: '白羊',
+    degree: 2,
+    house: 1,
+    long: 2,
+    retro: false
+  }, {
+    label: '土星',
+    sign: '水瓶',
+    degree: 17,
+    house: 12,
+    long: 317,
+    retro: false
+  }],
+  houses: Array.from({
+    length: 12
+  }, (_, i) => ({
+    n: i + 1,
+    cusp: i * 30
+  })),
+  angles: [{
+    label: '上升',
+    long: 0
+  }, {
+    label: '天顶',
+    long: 270
+  }],
+  aspects: [{
+    b1: '太阳',
+    b2: '木星',
+    type: '合',
+    l1: 132,
+    l2: 2
+  }, {
+    b1: '太阳',
+    b2: '火星',
+    type: '刑',
+    l1: 132,
+    l2: 194
+  }, {
+    b1: '月亮',
+    b2: '金星',
+    type: '拱',
+    l1: 338,
+    l2: 111
+  }],
+  summary: {
+    elements: {
+      '火': 2,
+      '土': 1,
+      '风': 2,
+      '水': 2
+    },
+    modalities: {
+      '开创': 3,
+      '固定': 2,
+      '变动': 2
+    },
+    retrograde: ['火星'],
+    patterns: ['大三角格局']
+  }
+};
+function polar(cx, cy, r, long) {
+  const a = long / 360 * Math.PI * 2 - Math.PI / 2;
+  return {
+    x: cx + r * Math.cos(a),
+    y: cy + r * Math.sin(a)
+  };
+}
+function AstroWheel({
+  data
+}) {
+  const cx = 160,
+    cy = 160;
+  const R_OUT = 150,
+    R_MID = 118,
+    R_IN = 86;
+  const planets = data.planets || [];
+  const byLabel = {};
+  planets.forEach(p => byLabel[p.label] = p);
+  const aspectColor = {
+    '合': '#C9A24B',
+    '刑': '#B23A3A',
+    '拱': '#3E7C6B',
+    '冲': '#3B7BB0',
+    '六合': '#5B4B8A'
+  };
+  return /*#__PURE__*/React.createElement("svg", {
+    className: "astro-wheel",
+    viewBox: "0 0 320 320",
+    role: "img",
+    "aria-label": "星盘"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_OUT,
+    fill: "none",
+    stroke: "var(--skin-accent)",
+    strokeWidth: "2"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_MID,
+    fill: "none",
+    stroke: "var(--border)",
+    strokeWidth: "1.5"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_IN,
+    fill: "none",
+    stroke: "var(--border)",
+    strokeWidth: "1.5"
+  }), Array.from({
+    length: 12
+  }, (_, i) => {
+    const a1 = polar(cx, cy, R_OUT, i * 30),
+      a2 = polar(cx, cy, R_MID, i * 30);
+    const s = polar(cx, cy, R_OUT - 14, i * 30 + 15);
+    return /*#__PURE__*/React.createElement("g", {
+      key: i
+    }, /*#__PURE__*/React.createElement("line", {
+      x1: a1.x,
+      y1: a1.y,
+      x2: a2.x,
+      y2: a2.y,
+      stroke: "var(--border)",
+      strokeWidth: "1"
+    }), /*#__PURE__*/React.createElement("text", {
+      x: s.x,
+      y: s.y,
+      fontSize: "13",
+      textAnchor: "middle",
+      dominantBaseline: "middle",
+      fill: "var(--skin-accent)"
+    }, SIGN_SYM[i]));
+  }), data.aspects.map((asp, i) => {
+    const p1 = byLabel[asp.b1],
+      p2 = byLabel[asp.b2];
+    if (!p1 || !p2) return null;
+    const c1 = polar(cx, cy, R_OUT - 24, p1.long),
+      c2 = polar(cx, cy, R_OUT - 24, p2.long);
+    return /*#__PURE__*/React.createElement("line", {
+      key: i,
+      x1: c1.x,
+      y1: c1.y,
+      x2: c2.x,
+      y2: c2.y,
+      stroke: aspectColor[asp.type] || '#999',
+      strokeWidth: "1.4",
+      strokeOpacity: "0.8"
+    });
+  }), planets.map((p, i) => {
+    const c = polar(cx, cy, R_OUT - 24, p.long);
+    return /*#__PURE__*/React.createElement("g", {
+      key: i
+    }, /*#__PURE__*/React.createElement("circle", {
+      cx: c.x,
+      cy: c.y,
+      r: "9",
+      fill: "var(--surface)",
+      stroke: "var(--skin-accent)",
+      strokeWidth: "1.4"
+    }), /*#__PURE__*/React.createElement("text", {
+      x: c.x,
+      y: c.y,
+      fontSize: "11",
+      textAnchor: "middle",
+      dominantBaseline: "middle",
+      fill: "var(--skin-accent)",
+      fontWeight: "700"
+    }, PLANET_SYM[p.label] || '·'));
+  }), /*#__PURE__*/React.createElement("text", {
+    x: cx,
+    y: cy - 6,
+    fontSize: "12",
+    textAnchor: "middle",
+    fill: "var(--text-3)"
+  }, "ASC"), /*#__PURE__*/React.createElement("text", {
+    x: cx,
+    y: cy + 12,
+    fontSize: "11",
+    textAnchor: "middle",
+    fill: "var(--text-3)"
+  }, "MC"));
+}
+function AstrologyPage({
+  onNavigate
+}) {
+  const [tab, setTab] = useState('natal');
+  const d = DEMO_ASTRO;
+  const tabs = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日'], ['fada', '法达']];
+  const el = d.summary.elements,
+    mod = d.summary.modalities;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "orbit",
+    size: 22
+  }), " 星座预测"), /*#__PURE__*/React.createElement("div", {
+    className: "astro-tabs"
+  }, tabs.map(t => /*#__PURE__*/React.createElement("div", {
+    key: t[0],
+    className: 'astro-tab' + (tab === t[0] ? ' sel' : ''),
+    onClick: () => setTab(t[0])
+  }, t[1]))), tab === 'natal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement(AstroWheel, {
+    data: d
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "行星落座落宫"), d.planets.map((p, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "planet-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pr-sym"
+  }, PLANET_SYM[p.label]), /*#__PURE__*/React.createElement("span", {
+    style: {
+      flex: 1
+    }
+  }, p.label, " · ", p.sign, p.degree, "° · 第", p.house, "宫 ", p.retro ? '（逆）' : ''))), /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      marginTop: 10
+    }
+  }, "四轴"), d.angles.map((a, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "planet-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pr-sym"
+  }, "·"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      flex: 1
+    }
+  }, a.label, "（", a.long, "°）")))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "元素 / 模式 / 格局"), /*#__PURE__*/React.createElement("div", {
+    className: "row-gap"
+  }, Object.keys(el).map(k => /*#__PURE__*/React.createElement("span", {
+    key: k,
+    className: "tag"
+  }, k, " ", el[k])), Object.keys(mod).map(k => /*#__PURE__*/React.createElement("span", {
+    key: k,
+    className: "tag"
+  }, k, " ", mod[k]))), /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 8,
+      fontSize: 13,
+      color: 'var(--text-2)'
+    }
+  }, "逆行：", d.summary.retrograde.join('、') || '无', "\u3000|\u3000格局：", d.summary.patterns.join('、')), /*#__PURE__*/React.createElement("div", {
+    className: "pay-hint"
+  }, "本命深度解读为付费 LLM，约 18 积分（点击前将预检余额）"))), tab !== 'natal' && /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      textAlign: 'center',
+      color: 'var(--text-3)'
+    }
+  }, "（", tabs.find(t => t[0] === tab)[1], " 解读为确定性数据，待接入后端 chart 端点后展示）"), /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('xishi-hub')
+  }, "回到 Hub"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('landing')
+  }, "回到首页")));
+}
+
+/* ---------- MBTI 人格测试 ---------- */
+const MBTI_Q = [{
+  q: '聚会后你通常感到？',
+  a: ['精力充沛（E）', 'E'],
+  b: ['需要独处恢复（I）', 'I']
+}, {
+  q: '你更信任？',
+  a: ['实际经验（S）', 'S'],
+  b: ['直觉灵感（N）', 'N']
+}, {
+  q: '做决定时你偏重？',
+  a: ['逻辑与公平（T）', 'T'],
+  b: ['人情与和谐（F）', 'F']
+}, {
+  q: '你的生活方式？',
+  a: ['计划有序（J）', 'J'],
+  b: ['灵活开放（P）', 'P']
+}, {
+  q: '你更愿意？',
+  a: ['多与人交流（E）', 'E'],
+  b: ['安静地思考（I）', 'I']
+}, {
+  q: '接收信息时你关注？',
+  a: ['细节与事实（S）', 'S'],
+  b: ['整体与可能（N）', 'N']
+}, {
+  q: '面对他人情绪你倾向？',
+  a: ['分析成因（T）', 'T'],
+  b: ['共情回应（F）', 'F']
+}, {
+  q: ' deadlines 让你？',
+  a: ['有动力完成（J）', 'J'],
+  b: ['最后冲刺（P）', 'P']
+}, {
+  q: '新环境里你？',
+  a: ['主动结识（E）', 'E'],
+  b: ['先观察（I）', 'I']
+}, {
+  q: '你描述事情更喜欢？',
+  a: ['具体例子（S）', 'S'],
+  b: ['比喻联想（N）', 'N']
+}, {
+  q: '批评对你来说多是？',
+  a: ['改进依据（T）', 'T'],
+  b: ['情感冲击（F）', 'F']
+}, {
+  q: '旅行你偏好？',
+  a: ['行程固定（J）', 'J'],
+  b: ['随性探索（P）', 'P']
+}, {
+  q: '团队中你常是？',
+  a: ['气氛带动者（E）', 'E'],
+  b: ['幕后支撑（I）', 'I']
+}, {
+  q: '学习时你更爱？',
+  a: ['逐步演练（S）', 'S'],
+  b: ['跳跃涉猎（N）', 'N']
+}, {
+  q: '劝人时你先讲？',
+  a: ['利害逻辑（T）', 'T'],
+  b: ['对方感受（F）', 'F']
+}, {
+  q: '桌面/日程你？',
+  a: ['整齐规划（J）', 'J'],
+  b: ['随放随用（P）', 'P']
+}];
+const MBTI_TYPES = {
+  INTJ: {
+    a: '建筑师',
+    s: '独立深思，长远布局',
+    b: '易显疏离',
+    w: '适合战略与研究',
+    r: '重深度联结',
+    g: '落地行动，别只构想'
+  },
+  INTP: {
+    a: '逻辑学者',
+    s: '抽象建模，追根问底',
+    b: '忽视琐事',
+    w: '研发与架构',
+    r: '需表达感受',
+    g: '完成闭环'
+  },
+  ENTJ: {
+    a: '指挥官',
+    s: '目标驱动，统筹全局',
+    b: '压迫感强',
+    w: '领导与创业',
+    r: '留白倾听',
+    g: '柔化沟通'
+  },
+  ENTP: {
+    a: '辩论家',
+    s: '点子密集，善于破局',
+    b: '易半途而废',
+    w: '创新与谈判',
+    r: '稳定陪伴',
+    g: '聚焦执行'
+  },
+  INFJ: {
+    a: '提倡者',
+    s: '洞察人心，理想主义',
+    b: '内耗严重',
+    w: '咨询与公益',
+    r: '坦诚交流',
+    g: '保护自己'
+  },
+  INFP: {
+    a: '调停者',
+    s: '价值导向，富有共情',
+    b: '回避冲突',
+    w: '创作与疗愈',
+    r: '真诚相待',
+    g: '接受现实'
+  },
+  ENFJ: {
+    a: '主人公',
+    s: '鼓舞他人，组织力强',
+    b: '过度付出',
+    w: '教育与带领',
+    r: '双向奔赴',
+    g: '设立边界'
+  },
+  ENFP: {
+    a: '活动家',
+    s: '热情好奇，联结广泛',
+    b: '注意力分散',
+    w: '品牌与社群',
+    r: '深度关系',
+    g: '坚持收尾'
+  },
+  ISTJ: {
+    a: '物流师',
+    s: '可靠守诺，注重秩序',
+    b: '抗拒变动',
+    w: '运营与合规',
+    r: '明确表达',
+    g: '适度弹性'
+  },
+  ISFJ: {
+    a: '守卫者',
+    s: '细致体贴，默默守护',
+    b: '积压委屈',
+    w: '服务与支持',
+    r: '被看见',
+    g: '说出需求'
+  },
+  ESTJ: {
+    a: '总经理',
+    s: '高效执行，规则清晰',
+    b: '缺乏变通',
+    w: '管理与制度',
+    r: '尊重差异',
+    g: '倾听异议'
+  },
+  ESFP: {
+    a: '表演者',
+    s: '活泼感染，活在当下',
+    b: '回避长远',
+    w: '展示与销售',
+    r: '稳定陪伴',
+    g: '规划储蓄'
+  },
+  ISTP: {
+    a: '鉴赏家',
+    s: '冷静实操，临场应变',
+    b: '情感疏离',
+    w: '技术与急救',
+    r: '言语确认',
+    g: '表达规划'
+  },
+  ISFP: {
+    a: '探险家',
+    s: '审美敏感，温和自由',
+    b: '回避冲突',
+    w: '艺术与手作',
+    r: '直接沟通',
+    g: '坚持主张'
+  },
+  ESTP: {
+    a: '企业家',
+    s: '行动派，随机应变',
+    b: '易冲动',
+    w: '商务与销售',
+    r: '稳定关系',
+    g: '三思后行'
+  }
+};
+MBTI_TYPES.ESFJ = {
+  a: '执政官',
+  s: '热心周到，维系和谐',
+  b: '怕被否定',
+  w: '服务与运营',
+  r: '真实反馈',
+  g: '守住自我'
+};
+const ALL_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+function MBTIPage({
+  onNavigate
+}) {
+  const [mode, setMode] = useState('menu'); // menu | quiz | result | input
+  const [idx, setIdx] = useState(0);
+  const [ans, setAns] = useState([]);
+  const [type, setType] = useState(null);
+  const choose = pole => {
+    const next = ans.slice();
+    next[idx] = pole;
+    if (idx + 1 < MBTI_Q.length) {
+      setAns(next);
+      setIdx(idx + 1);
+    } else {
+      finish(next);
+    }
+  };
+  const finish = a => {
+    const c = {
+      E: 0,
+      I: 0,
+      S: 0,
+      N: 0,
+      T: 0,
+      F: 0,
+      J: 0,
+      P: 0
+    };
+    a.forEach(p => c[p]++);
+    const t = (c.E >= c.I ? 'E' : 'I') + (c.S >= c.N ? 'S' : 'N') + (c.T >= c.F ? 'T' : 'F') + (c.J >= c.P ? 'J' : 'P');
+    setType({
+      t,
+      c
+    });
+    setMode('result');
+  };
+  const bars = type ? [{
+    L: 'E',
+    R: 'I',
+    l: c => c.E,
+    r: c => c.I
+  }, {
+    L: 'S',
+    R: 'N',
+    l: c => c.S,
+    r: c => c.N
+  }, {
+    L: 'T',
+    R: 'F',
+    l: c => c.T,
+    r: c => c.F
+  }, {
+    L: 'J',
+    R: 'P',
+    l: c => c.J,
+    r: c => c.P
+  }] : [];
+  const info = type ? MBTI_TYPES[type.t] : null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hub-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "spark",
+    size: 22
+  }), " MBTI 人格测试"), mode === 'menu' && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'var(--text-2)',
+      lineHeight: 1.7
+    }
+  }, "16 型人格测评，零 LLM，本地即时判型。共 ", MBTI_Q.length, " 题，约 3 分钟。"), /*#__PURE__*/React.createElement("div", {
+    className: "row-gap",
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => {
+      setAns([]);
+      setIdx(0);
+      setMode('quiz');
+    }
+  }, "开始答题"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => setMode('input')
+  }, "我已知道类型"))), mode === 'quiz' && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mbti-progress"
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: idx / MBTI_Q.length * 100 + '%'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginBottom: 6
+    }
+  }, "第 ", idx + 1, " / ", MBTI_Q.length, " 题"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 16,
+      fontWeight: 700,
+      color: 'var(--text-1)',
+      marginBottom: 14
+    }
+  }, MBTI_Q[idx].q), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => choose(MBTI_Q[idx].a[1])
+  }, MBTI_Q[idx].a[0]), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => choose(MBTI_Q[idx].b[1])
+  }, MBTI_Q[idx].b[0])), idx > 0 && /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    style: {
+      marginTop: 12
+    },
+    onClick: () => setIdx(idx - 1)
+  }, "上一题")), mode === 'input' && /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "选择你的人格类型"), /*#__PURE__*/React.createElement("div", {
+    className: "grid16"
+  }, ALL_TYPES.map(t => /*#__PURE__*/React.createElement("div", {
+    key: t,
+    className: "g",
+    onClick: () => {
+      setType({
+        t,
+        c: {}
+      });
+      setMode('result');
+    }
+  }, t)))), mode === 'result' && type && info && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mbti-type-big"
+  }, type.t), /*#__PURE__*/React.createElement("div", {
+    className: "mbti-alias"
+  }, info.a), bars.map((b, i) => {
+    const total = b.l(type.c) + b.r(type.c) || 1;
+    const lp = Math.round(b.l(type.c) / total * 100);
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "mbti-bar"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "bb-label"
+    }, b.L), /*#__PURE__*/React.createElement("span", {
+      className: "bb-track"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "bb-fill",
+      style: {
+        left: 0,
+        width: lp + '%'
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "bb-label"
+    }, b.R));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "特征"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-2)',
+      lineHeight: 1.8
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "优势"), "：", info.s, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "盲点"), "：", info.b, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "职场"), "：", info.w, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "关系"), "：", info.r, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, "成长"), "：", info.g)), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title"
+  }, "横向对比其他类型"), /*#__PURE__*/React.createElement("div", {
+    className: "grid16"
+  }, ALL_TYPES.map(t => /*#__PURE__*/React.createElement("div", {
+    key: t,
+    className: 'g' + (t === type.t ? ' cur' : ''),
+    onClick: () => {
+      setType({
+        t,
+        c: type.c
+      });
+    }
+  }, t)))), /*#__PURE__*/React.createElement("div", {
+    className: "back-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => {
+      setMode('menu');
+      setType(null);
+    }
+  }, "重新测试"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('landing')
+  }, "回到首页"))));
+}
+
 // ---- App Router ----
 function App() {
   const [page, setPage] = useState('landing');
   const [params, setParams] = useState({});
   const [skin, setSkin] = useState(() => localStorage.getItem('taichu_skin') || 'guoxue');
+  const [module, setModule] = useState(() => {
+    const s = localStorage.getItem('taichu_skin') || 'guoxue';
+    if (s === 'xishi' || s === 'tarot' || s === 'xingzuo') return 'xishi';
+    if (s === 'mbti') return 'mbti';
+    return 'guoxue';
+  });
   const [creditModal, setCreditModal] = useState(null);
   useEffect(() => {
     const saved = localStorage.getItem('taichu_token');
@@ -4388,7 +6042,10 @@ function App() {
       const savedR = localStorage.getItem('taichu_refresh_token');
       if (savedR) refreshToken = savedR;
       setPage('cases'); // 已登录自动进入档案列表
-      window.history.replaceState({ p: 'cases', p2: {} }, '');
+      window.history.replaceState({
+        p: 'cases',
+        p2: {}
+      }, '');
       resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
     }
   }, []);
@@ -4406,7 +6063,10 @@ function App() {
     setPage(p);
     setParams(p2);
     try {
-      window.history.pushState({ p: p, p2: p2 }, '');
+      window.history.pushState({
+        p: p,
+        p2: p2
+      }, '');
     } catch (e) {}
     track('page_view', {
       page: p
@@ -4429,6 +6089,14 @@ function App() {
   const applySkin = s => {
     setSkin(s);
     localStorage.setItem('taichu_skin', s);
+  };
+  // 左侧导航栏选择模块：同步 module 状态 + 皮肤 + 跳转到该模块 Hub
+  const selectModule = id => {
+    const h = MODULE_HUB[id];
+    if (!h) return;
+    setModule(id);
+    applySkin(h.skin);
+    navigate(h.page);
   };
   const pages = {
     landing: /*#__PURE__*/React.createElement(LandingPage, {
@@ -4475,6 +6143,32 @@ function App() {
     credits: /*#__PURE__*/React.createElement(CreditTransactionsPage, {
       caseId: params.caseId,
       onNavigate: navigate
+    }),
+    'guoxue-hub': /*#__PURE__*/React.createElement(GuoxueHubPage, {
+      onNavigate: navigate,
+      applySkin: applySkin
+    }),
+    'xishi-hub': /*#__PURE__*/React.createElement(XishiHubPage, {
+      onNavigate: navigate,
+      applySkin: applySkin
+    }),
+    zodiac: /*#__PURE__*/React.createElement(ZodiacPage, {
+      onNavigate: navigate
+    }),
+    divination: /*#__PURE__*/React.createElement(DivinationPage, {
+      onNavigate: navigate
+    }),
+    tarot: /*#__PURE__*/React.createElement(TarotPage, {
+      onNavigate: navigate
+    }),
+    lenormand: /*#__PURE__*/React.createElement(LenormandPage, {
+      onNavigate: navigate
+    }),
+    astrology: /*#__PURE__*/React.createElement(AstrologyPage, {
+      onNavigate: navigate
+    }),
+    mbti: /*#__PURE__*/React.createElement(MBTIPage, {
+      onNavigate: navigate
     })
   };
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
@@ -4498,9 +6192,9 @@ function App() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "view-enter",
     key: page
-  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), /*#__PURE__*/React.createElement(SkinSwitcher, {
-    skin: skin,
-    onPick: applySkin
+  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page !== 'auth' && /*#__PURE__*/React.createElement(NavRail, {
+    module: module,
+    onSelect: selectModule
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
     onClose: () => setCreditModal(null)
