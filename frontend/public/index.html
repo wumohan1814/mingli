@@ -296,8 +296,6 @@
     .credit-pill .pill-bal{font-variant-numeric:tabular-nums}
     .credit-pill.skeleton{width:96px;height:26px;padding:0;border:none;background:linear-gradient(90deg,#e9e2d6 25%,#f4efe6 37%,#e9e2d6 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
     .credit-balance-wrap{display:inline-flex;align-items:center;gap:8px}
-    .recharge-link{background:none;border:none;color:var(--skin-accent);font-size:12px;font-weight:600;cursor:pointer;padding:2px 4px;border-radius:var(--radius-sm);text-decoration:underline;text-underline-offset:2px}
-    .recharge-link:hover{background:var(--skin-accent-soft)}
     .txn-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
     .txn-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md)}
     .txn-icon{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
@@ -1005,6 +1003,7 @@ function CreditBalance({
     "aria-label": "加载积分"
   });
   const neg = balance == null || Number(balance) <= 0;
+  // 充值入口暂时隐藏（商户认证未完成）：仅保留余额胶囊展示与「查看积分明细」跳转，不再渲染「充值」链接
   return /*#__PURE__*/React.createElement("span", {
     className: "credit-balance-wrap"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1012,45 +1011,28 @@ function CreditBalance({
     role: "button",
     tabIndex: 0,
     onClick: onClick,
-    title: neg ? '积分不足，点击充值' : '查看积分明细'
+    title: neg ? '积分不足' : '查看积分明细'
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "spark",
     size: 14
   }), /*#__PURE__*/React.createElement("span", {
     className: "pill-bal"
-  }, "积分 ", balance == null ? '—' : balance)), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "recharge-link",
-    onClick: () => {
-      startRecharge();
-    }
-  }, "充值"));
+  }, "积分 ", balance == null ? '—' : balance)));
 }
 
-// 充值按钮：三处复用同一样式，点击走 startRecharge()（charge-code 换金数据表单并轮询到账）
-function RechargeButton({
-  onClick
-}) {
-  return /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    type: "button",
-    onClick: () => {
-      if (onClick) onClick();else startRecharge();
-    }
-  }, "充值");
-}
-
-// 积分不足弹窗：api() 拦截 5002 时由 App 渲染（creditModal state）
+// 充值按钮组件已随充值入口一并隐藏（商户认证未完成）；恢复开放时按需重建：
+// 原实现为一个 <button class="btn btn-primary" type="button">充值</button>，
+// onClick 缺省时调用 startRecharge()（charge-code 换金数据表单并轮询到账）。
 function CreditInsufficientModal({
   info,
-  onClose,
-  onRecharge
+  onClose
 }) {
   const detail = info && (info.detail || info.message) || '';
   const nums = (String(detail).match(/\d+/g) || []).map(Number);
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
-  const body = need != null && have != null ? '本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。' : '积分不足，请充值后再试。';
+  // 充值入口暂时隐藏：中性提示，不引导充值
+  const body = need != null && have != null ? '本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。' : '积分不足，请稍后再试。';
   return /*#__PURE__*/React.createElement("div", {
     className: "modal-mask",
     onClick: onClose
@@ -1061,15 +1043,14 @@ function CreditInsufficientModal({
     className: "modal-title"
   }, "积分不足"), /*#__PURE__*/React.createElement("div", {
     className: "modal-body"
-  }, body), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, body), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
-    onClick: onClose
-  }, "取消"), /*#__PURE__*/React.createElement(RechargeButton, {
-    onClick: onRecharge
-  }))));
+    onClick: onClose,
+    style: {
+      marginTop: 8
+    }
+  }, "知道了")));
 }
 
 // 积分明细页
@@ -1201,12 +1182,6 @@ function CreditTransactionsPage({
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
@@ -1218,19 +1193,7 @@ function CreditTransactionsPage({
       fontWeight: 700,
       color: 'var(--ink-700)'
     }
-  }, balance == null ? '—' : balance)), /*#__PURE__*/React.createElement(RechargeButton, {
-    onClick: () => {
-      enterBalance.current = balance;
-      startRecharge();
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--text-3)',
-      marginTop: 8,
-      textAlign: 'right'
-    }
-  }, "充值后到账非实时，通常 1–5 分钟，请勿重复提交。")), /*#__PURE__*/React.createElement("div", {
+  }, balance == null ? '—' : balance))), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
   }, "积分明细"), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "card",
@@ -4336,11 +4299,7 @@ function App() {
     onPick: applySkin
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
-    onClose: () => setCreditModal(null),
-    onRecharge: () => {
-      setCreditModal(null);
-      startRecharge();
-    }
+    onClose: () => setCreditModal(null)
   }));
 }
 ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById('root'));
