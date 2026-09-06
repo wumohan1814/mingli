@@ -281,3 +281,23 @@ class TarotReading(Base):
     draw_json = Column(JSON, nullable=True)            # 牌阵 + cards[]（确定性）
     interpretation_json = Column(JSON, nullable=True)  # LLM 综合解读（缓存）
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class AstrologyReading(Base):
+    """星座星盘（astrology_readings，Phase D1）：确定性星盘免费落库 + LLM 本命解读可选付费。
+
+    chart_json 为 Node /astrology 引擎输出：{natal, fullScope?}（natal 本命盘恒有；
+    scope != 'natal' 时附带 fullScope = natal+yearly+monthly+daily 行运上下文），
+    确定性免费；reading_json 由 POST /api/astrology/charts/{id}/interpret 写入
+    （{"content": 解读文本}），命中即为缓存，二次 interpret 零 LLM 零扣费直接返回。
+    scope 取值 MVP 以 natal 为主，后续盘型（transit/solar_return/secondary/firdaria）
+    复用同一行记录；scope 列本身不约束取值（String 宽松存前端请求原值）。
+    """
+    __tablename__ = "astrology_readings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    chart_json = Column(JSON, nullable=True)           # {natal, fullScope}（确定性）
+    scope = Column(String(32), nullable=True)          # natal|transit|solar_return|secondary|firdaria
+    reading_json = Column(JSON, nullable=True)         # LLM 解读（缓存）
+    created_at = Column(DateTime, default=datetime.utcnow)

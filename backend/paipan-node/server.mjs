@@ -42,6 +42,17 @@
  *       已 stripInternal）：drawTarotSpread(spreadType||'single', options)。
  *       options 原样透传：seed/replay 确定性重放、interactiveSamples 逐张样本、
  *       question 占问方向等。spreadType 缺失 → 'single'；非法 → 400（客户端错误）。
+ *   POST /astrology  {year, month?, day?, hour?, minute?, gender?, birthplace?,
+ *                     longitude?, latitude?, true_solar?, scope?, dateStr?}
+ *     → 200 application/json，确定性西洋星座盘（已 stripInternal）：
+ *       - scope 缺省 'natal'：仅返回 {natal}（本命盘，行星/四轴/宫位/相位/庙旺陷落/元素）
+ *       - scope != 'natal'：返回 {natal, fullScope}，fullScope =
+ *         buildAstrolabeFullScopeContexts(natal, dateStr)（natal+yearly+monthly+daily
+ *         全范围上下文，含行运/太阳返照/次限/太阳弧）；dateStr 需 YYYY-MM-DD，
+ *         缺省取当天。
+ *       出生信息 year 必填；month/day/hour/minute 缺省 1/1/0/0，gender 缺省 male，
+ *       longitude/latitude 缺省 null —— 但 generateAstrolabe 必需经纬度推算上升/宫位，
+ *       缺失/非法经纬度 → 400（客户端错误）；年份/日期越界由引擎抛错 → 500。
  *
  * 出错返回非 200（JSON {"error": ...}），并把错误打到 stderr，供调用方降级。
  * 监听 127.0.0.1，端口取环境变量 PAIPAN_NODE_PORT，默认 9317。
@@ -89,6 +100,8 @@ import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorit
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
 import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
+import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
+import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -345,6 +358,79 @@ function computeTarot(input) {
   return stripInternal(drawTarotSpread(spreadType, options));
 }
 
+/* ---------- /astrology：星座星盘（vendored mingyu-core astrolabe + astrolabe-scope） ---------- */
+
+function toAstrolabeText(value, fallback) {
+  // generateAstrolabe 的入参为数字字符串（requireNumber 只收 string）；
+  // 空值回退缺省，非法数值也回退（越界数值留给引擎本地校验抛错）。
+  if (value === undefined || value === null || value === '') return fallback;
+  const n = Number(value);
+  return Number.isFinite(n) ? String(n) : fallback;
+}
+
+function toFiniteNumber(value) {
+  if (value === undefined || value === null || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function todayDateStr() {
+  // 非 natal scope 缺省 dateStr 时的参考日期：今天（YYYY-MM-DD）
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function computeAstrology(input) {
+  // 必填校验：input 非对象 / year 缺失或非数值 → 客户端错误（对齐 /ziwei 校验风格）
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw Object.assign(new Error('Invalid input: expected an object'), { clientError: true });
+  }
+  if (toFiniteNumber(input.year) === null) {
+    throw Object.assign(new Error('Missing required input field: year'), { clientError: true });
+  }
+  // generateAstrolabe 以经纬度推算上升点与宫位（requireNumber 无条件校验），
+  // 缺失/非法经纬度属调用方入参问题 → 客户端错误（比引擎 500 友好）。
+  if (toFiniteNumber(input.longitude) === null || toFiniteNumber(input.latitude) === null) {
+    throw Object.assign(new Error('Missing required input field: longitude/latitude'), { clientError: true });
+  }
+
+  // scope 缺省 'natal'：本命盘免费视图；其余盘型（行运/日返/次限等）一律走
+  // buildAstrolabeFullScopeContexts 产出 natal+yearly+monthly+daily 全范围上下文。
+  const scope = (typeof input.scope === 'string' && input.scope.trim()) ? input.scope.trim() : 'natal';
+  const gender = input.gender === 'female' ? 'female' : 'male';
+
+  // generateAstrolabe 实际入参（flat 数字字符串，非 extra 的嵌套 profile）：
+  //   year/month/day/hour/minute + latitude/longitude + timezone 或 timeZoneId，
+  //   可选 name/gender/locationName/useTrueSolarTime（见 vendor .../algorithms/astrolabe.js 签名）。
+  const astrolabeInput = {
+    name: typeof input.name === 'string' ? input.name : '',
+    gender,
+    locationName: typeof input.birthplace === 'string' ? input.birthplace : '',
+    year: String(input.year),
+    month: toAstrolabeText(input.month, '1'),   // 缺省 1
+    day: toAstrolabeText(input.day, '1'),       // 缺省 1
+    hour: toAstrolabeText(input.hour, '0'),     // 缺省 0
+    minute: toAstrolabeText(input.minute, '0'), // 缺省 0
+    latitude: String(input.latitude),
+    longitude: String(input.longitude),
+    timezone: '8',                              // 与 computeExtra 同口径：固定东八区
+    useTrueSolarTime: Boolean(input.true_solar),
+  };
+
+  const natal = generateAstrolabe(astrolabeInput);
+  const result = { natal: stripInternal(natal) };
+
+  if (scope !== 'natal') {
+    // full 优先：行运/日返/次限等一律产出全范围上下文（引擎以统一 YYYY-MM-DD 基准
+    // 派生流年/流月/流日；dateStr 缺省/非法时以当天为基准，避免引擎 normalize 抛错）。
+    const rawDate = (typeof input.dateStr === 'string' && input.dateStr.trim()) ? input.dateStr.trim() : '';
+    const referenceDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : todayDateStr();
+    result.fullScope = stripInternal(buildAstrolabeFullScopeContexts(natal, referenceDate));
+  }
+  return result;
+}
+
 // ---------------------------------------------------------------------------
 // HTTP 服务
 // ---------------------------------------------------------------------------
@@ -423,11 +509,14 @@ async function handleRequest(req, res) {
     } else if (pathname === '/tarot') {
       const result = computeTarot(input); // 塔罗抽牌同步 API，直接返回
       sendJson(res, 200, result);
+    } else if (pathname === '/astrology') {
+      const result = computeAstrology(input); // 星座星盘同步 API（natal + fullScope）
+      sendJson(res, 200, result);
     } else if (pathname === '/divination') {
       const result = computeDivination(input); // 临时起卦同步 API，直接返回
       sendJson(res, 200, result);
     } else {
-      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra, /zodiac, /tarot or /divination.`);
+      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra, /zodiac, /tarot, /astrology or /divination.`);
     }
   } catch (e) {
     // 与子进程脚本一致：ziwei 必填校验 / 计算失败均属调用方可降级的错误
