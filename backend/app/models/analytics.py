@@ -301,3 +301,21 @@ class AstrologyReading(Base):
     scope = Column(String(32), nullable=True)          # natal|transit|solar_return|secondary|firdaria
     reading_json = Column(JSON, nullable=True)         # LLM 解读（缓存）
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class MbtiResult(Base):
+    """MBTI 人格测试结果（mbti_results，Phase D2）：纯代码判型免费落库，零 LLM 零扣费。
+
+    answers_json 为逐题答案原样（[{question_id, choice}|{id, pole}, ...]）；
+    scores_json 为四维分（{"EI":{"E":n,"I":n},"SN":{...},"TF":{...},"JP":{...}}）；
+    type 为 4 字母类型（如 INTJ）；type_info（16 型文案）不落库，由
+    GET /api/mbti/results/{id} 实时从 mbti/data/types.json 取。
+    """
+    __tablename__ = "mbti_results"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    answers_json = Column(JSON, nullable=True)         # 逐题答案
+    scores_json = Column(JSON, nullable=True)          # 四维分
+    type = Column(String(8), nullable=True)            # 如 INTJ
+    created_at = Column(DateTime, default=datetime.utcnow)
