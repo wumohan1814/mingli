@@ -68,16 +68,29 @@ nameservers:
 
 **⚠️ 请勿把 nameservers 改回 `100.100.2.x`**，否则 DNS 解析与证书续期会再次失败。
 
-### 2. OpenClaw 接入点 `bb3a.mingli.example.com` 仅允许 Tailscale
+### 2. OpenClaw 接入点 `bb3a.mingli.example.com`（公网可访问 + 回程走 Tailscale）
 
-`Caddyfile` 里 `bb3a.mingli.example.com` 加了 `remote_ip 100.64.0.0/10` 白名单，**公网一律 403**：
-- 仅 Tailnet 内设备可访问（DNS 需指向新加坡 ECS 的 Tailscale IP `<你的 Tailscale IP>`）。
-- **若移除该白名单，OpenClaw 会暴露公网**（远程控制风险），勿删。
+**目标**：客户端在公网（**不开 Tailscale**）也能连杭州 OpenClaw；杭州 OpenClaw 本体不暴露公网。
 
-### 3. 证书续期注意
+- 架构：客户端 → 公网 `bb3a.mingli.example.com`（DNS 指向公网 IP `<你的服务器 IP>`）→ 新加坡 Caddy → Tailscale 隧道 → 杭州 serve（`<你的 Tailscale IP>:443`）→ OpenClaw（loopback）。
+- **Caddy 上游必须用 Tailscale IP + 显式 SNI**（不能用 MagicDNS 域名，因为 Docker 容器内无法解析 `.ts.net`）：
+  ```caddyfile
+  bb3a.mingli.example.com {
+      reverse_proxy https://<你的 Tailscale IP>:443 {
+          transport http {
+              tls_insecure_skip_verify
+              tls_server_name <你的 Tailscale 主机名>
+          }
+          header_up Host {http.request.host}
+          header_up X-Forwarded-Proto {scheme}
+      }
+  }
+  ```
+- 访问控制 = 随机子域 `bb3a` + OpenClaw 配对 token（双重保护）。**⚠️ 此入口公网可达，token 泄露即远程控制风险，勿移除配对 token。**
 
-`bb3a.mingli.example.com` 的 DNS 指向 Tailscale IP 后，Let's Encrypt 的 HTTP-01 续期（公网验证）会失败。
-证书到期前（约 3 个月）需**临时把 DNS 切回公网 IP `<你的服务器 IP>`** 完成续期，或改用 DNS-01 续期。
+### 3. 证书续期
+
+`bb3a.mingli.example.com` 的 DNS 指向公网 IP `<你的服务器 IP>`，Let's Encrypt HTTP-01 续期**正常**，无需特殊处理。
 
 ### 4. SSH 已改为密钥登录
 
