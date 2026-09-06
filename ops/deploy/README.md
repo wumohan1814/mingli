@@ -53,20 +53,20 @@ crontab -e
 
 ## 服务器运维注意事项（⚠️ 勿回滚 / 覆盖）
 
-### 1. DNS 已改为公共 DNS（勿改回阿里云内网 DNS）
+### 1. DNS 已改为海外公共 DNS（勿改回国内/阿里云内网 DNS）
 
-阿里云新加坡 ECS 默认 DNS `100.100.2.136 / 100.100.2.138` **在新加坡节点不可达**，会导致：
-- 容器内 DNS 解析失败（`lookup ... on 127.0.0.11:53: server misbehaving`）
-- Caddy 申请/续期 Let's Encrypt 证书失败
+阿里云新加坡 ECS 默认 DNS `100.100.2.136 / 100.100.2.138` **在新加坡节点不可达**；而国内公共 DNS `223.5.5.5` **跨境访问会超时**（会导致 sshd 的 UseDNS 反解析卡死、SSH 连不上）。两者都不可用。
 
-**已通过 `/etc/netplan/50-cloud-init.yaml` 持久化改为公共 DNS**（备份在 `50-cloud-init.yaml.bak`）：
+**已通过 `/etc/netplan/50-cloud-init.yaml` 持久化改为海外 DNS**（备份在 `50-cloud-init.yaml.bak`）：
 
 ```yaml
 nameservers:
-    addresses: [223.5.5.5, 223.6.6.6]
+    addresses: [8.8.8.8, 1.1.1.1]
 ```
 
-**⚠️ 请勿把 nameservers 改回 `100.100.2.x`**，否则 DNS 解析与证书续期会再次失败。
+**⚠️ 请勿把 nameservers 改回 `100.100.2.x` 或 `223.5.5.5`**，否则 DNS 解析失败 / SSH 卡死 / 证书续期失败。
+
+**同时已关 sshd 的 UseDNS**（`/etc/ssh/sshd_config` 加 `UseDNS no`），避免 SSH 反向解析卡顿。
 
 ### 2. OpenClaw 接入点 `bb3a.taichu.xyz`（公网可访问 + 回程走 Tailscale）
 
