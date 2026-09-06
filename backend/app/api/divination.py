@@ -5,7 +5,7 @@
 计费契约：
   - POST /api/divinations 起卦 = 确定性计算，免费：把 {method, ...seed} 转发给常驻
     排盘 Node 服务（paipan-node/server.mjs 的 POST /divination，vendored
-    mingyu-core 六爻/梅花/小六壬/灵签），成功后落 divinations 表并写
+    mingyu-core 六爻/梅花/小六壬/灵签/雷诺曼(lenormand)），成功后落 divinations 表并写
     divination_cast 埋点，零 LLM 零扣费。
   - GET /api/divinations/{id} 读单条 = 只读（零 LLM 零扣费），带 user_id 隔离。
   - POST /api/divinations/{id}/interpret 断卦 = LLM 可选付费：命中
@@ -40,8 +40,11 @@ router = APIRouter(prefix="/api", tags=["divination"])
 # divination.py 位于 backend/app/api/，parents[2] = backend
 DIVINATION_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "divination.md"
 
+# 雷诺曼解读 system prompt（backend/prompts/interpret/lenormand.md，method == lenormand 时使用）
+LENORMAND_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "lenormand.md"
+
 # Node /divination 当前支持的方法（未知 method 在 pydantic 层提前拦成 400 参数错误）
-DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "ssgw")
+DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "ssgw", "lenormand")
 
 
 def _err(status: int, detail: str) -> HTTPException:
@@ -73,14 +76,15 @@ def _charge_llm(user_id: int, total_tokens, ref: str, what: str) -> None:
                      what, user_id, tokens, ref, exc)
 
 
-def _load_divination_prompt() -> str:
-    """读取 prompts/interpret/divination.md；缺失视为配置错误（RuntimeError，向上抛 500）"""
+def _load_divination_prompt(path: Path = DIVINATION_PROMPT_PATH) -> str:
+    """读取断卦/解读 system prompt（method 决定选 divination.md 还是 lenormand.md）；
+    缺失视为配置错误（RuntimeError，向上抛 500）。"""
     try:
-        text = DIVINATION_PROMPT_PATH.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
     except OSError as exc:
-        raise RuntimeError(f"断卦提示词缺失或不可读: {DIVINATION_PROMPT_PATH}") from exc
+        raise RuntimeError(f"断卦提示词缺失或不可读: {path}") from exc
     if not text.strip():
-        raise RuntimeError(f"断卦提示词为空: {DIVINATION_PROMPT_PATH}")
+        raise RuntimeError(f"断卦提示词为空: {path}")
     return text
 
 
@@ -114,9 +118,9 @@ def _case_chart_summary(db: Session, case_id: Optional[int]) -> Optional[dict]:
 
 # --- 请求模型 ---
 class CastDivinationRequest(BaseModel):
-    method: Literal["liuyao", "meihua", "xiaoliuren", "ssgw"] = Field(description="起卦方法")
-    case_id: Optional[int] = Field(default=None, description="关联国学档案（可空，起卦类要求有档案，MVP 允许空由前端拦截）")
-    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination")
+    method: Literal["liuyao", "meihua", "xiaoliuren", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案）")
+    case_id: Optional[int] = Field(default=None, description="关联国学档案（可空；国学类起卦要求有档案，MVP 允许空由前端拦截；lenormand 不要求）")
+    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）")
 
 
 # --- 路由 ---
@@ -136,10 +140,15 @@ def cast_divination(
         if case is None:
             raise _err(404, "case不存在")
 
-    # ① 转发常驻排盘 Node 服务（server.mjs /divination）；seed 键原样透传
+    # ① 转发常驻排盘 Node 服务（server.mjs /divination）；seed 键原样透传。
+    #    lenormand 的 spreadType 由 seed 提供（server.mjs 约定读 input.spreadType，
+    #    非 settings），缺省 'single'；Node /divination 对非法 spreadType 返回 400。
     payload = {"method": body.method}
-    if body.seed:
-        payload.update(body.seed)
+    seed = dict(body.seed or {})
+    if body.method == "lenormand":
+        spread_type = seed.pop("spreadType", None)
+        payload["spreadType"] = spread_type if isinstance(spread_type, str) and spread_type else "single"
+    payload.update(seed)
     try:
         resp = httpx.post(f"{settings.paipan_node_url}/divination", json=payload, timeout=60)
     except Exception as exc:
@@ -215,10 +224,12 @@ async def interpret_divination(
     # ② 计费预检：余额不足抛 BizError 5002（全局处理器转 502 信封），不放行 LLM
     check_balance(user_id)
 
-    # ③ 组装 messages：断卦 prompt + 卦象 result + 关联 case 的 chart 摘要
+    # ③ 组装 messages：按 method 选解读 prompt（lenormand → lenormand.md，其余 → divination.md）
+    #    + 牌面 result + 关联 case 的 chart 摘要
+    prompt_path = LENORMAND_PROMPT_PATH if div.method == "lenormand" else DIVINATION_PROMPT_PATH
     chart_summary = _case_chart_summary(db, div.case_id)  # case_id 为空 → None
     messages = [
-        {"role": "system", "content": _load_divination_prompt()},
+        {"role": "system", "content": _load_divination_prompt(prompt_path)},
         {
             "role": "user",
             "content": json.dumps(

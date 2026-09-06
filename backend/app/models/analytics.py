@@ -263,3 +263,21 @@ class Divination(Base):
     result_json = Column(JSON, nullable=True)          # 卦象/课式/签文（确定性）
     interpretation_json = Column(JSON, nullable=True)  # LLM 断卦（可选付费，缓存于此）
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class TarotReading(Base):
+    """塔罗抽牌（tarot_readings，Phase C）：确定性抽牌免费落库 + LLM 综合解读可选付费缓存。
+
+    draw_json 为 Node /tarot 引擎输出（spreadName + cards[]，含正逆位/关键词/元素/原型），
+    确定性免费；interpretation_json 由 POST /api/tarot/readings/{id}/interpret 写入
+    （{"content": 解读文本}），命中即为缓存，二次 interpret 零 LLM 零扣费直接返回。
+    """
+    __tablename__ = "tarot_readings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    spread_type = Column(String(32), nullable=False)   # single/three/love/career/decision
+    question = Column(Text, nullable=True)             # 用户占问方向（可选）
+    draw_json = Column(JSON, nullable=True)            # 牌阵 + cards[]（确定性）
+    interpretation_json = Column(JSON, nullable=True)  # LLM 综合解读（缓存）
+    created_at = Column(DateTime, default=datetime.utcnow)
