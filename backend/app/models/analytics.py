@@ -206,6 +206,20 @@ class CreditTransaction(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class RechargeCode(Base):
+    """充值码（recharge_codes）：一次性、绑定 user_id、短时效；充值成功即作废（防重放）。
+
+    status: unused（可用）| used（已充值作废）| expired（预留过期态）。
+    """
+    __tablename__ = "recharge_codes"
+
+    code = Column(String(16), primary_key=True)   # TC-XXXXXX
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    status = Column(String(8), default="unused")  # unused | used | expired
+    expires_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class SystemConfig(Base):
     """后台可动态改的系统配置（system_configs，如 recharge_rate / free_credit_on_register）"""
     __tablename__ = "system_configs"

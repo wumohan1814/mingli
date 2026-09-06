@@ -83,6 +83,10 @@ def ensure_schema() -> None:
     - cases.name（档案命名）
     - conversations.topic（板块追问归档，跨次持久化）
 
+    整张新表（如 credits 的 recharge_codes）不在此 ALTER：main.py lifespan 里
+    `Base.metadata.create_all`（checkfirst=True）对老库/新库都幂等建缺表，本函数
+    只需确保新模型已注册到 Base.metadata（app.models 被 import 即可）。
+
     SQLite 的 DDL 不支持 IF NOT EXISTS，故先 PRAGMA table_info 探测再 ALTER；
     用 engine.begin() 开显式事务，幂等（重复执行不报错）。
     create_all 之后调用，因此相关表必然已存在；若表缺失（空库）则直接跳过。
