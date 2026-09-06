@@ -374,10 +374,18 @@ def list_users(
     if kw:
         query = query.filter(User.username.like(f"%{kw}%"))
     users = query.order_by(User.id.desc()).limit(50).all()
+    # 一次查询取这些用户的积分账户（CreditAccount 与 User 同在业务库 AnalyticsSession）
+    accounts = (
+        db.query(CreditAccount)
+        .filter(CreditAccount.user_id.in_([u.id for u in users]))
+        .all()
+    )
+    balance_map = {acc.user_id: acc.balance for acc in accounts}
     items = [
         {
             "id": u.id,
             "username": u.username,
+            "balance": balance_map.get(u.id, 0),
             "created_at": u.created_at.isoformat() if u.created_at else None,
         }
         for u in users
