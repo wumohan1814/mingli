@@ -61,7 +61,7 @@ class Settings(BaseSettings):
 
     # 限流
     login_max_failures: int = 5
-    login_lock_minutes: int = 15
+    login_lock_minutes: int = 1440   # 连续 5 次密码错误后锁定 24 小时（1440 分钟）
 
     # CORS
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
