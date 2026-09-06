@@ -90,6 +90,8 @@ def ensure_schema() -> None:
     - jobs.result_json（预测任务落库）
     - cases.name（档案命名）
     - conversations.topic（板块追问归档，跨次持久化）
+    - astrology_readings.case_id / mbti_results.case_id / cases.mbti_type
+      （统一档案体系：星座、MBTI 复用 cases 档案并回写 mbti_type）
 
     整张新表（如 credits 的 recharge_codes）不在此 ALTER：main.py lifespan 里
     `Base.metadata.create_all`（checkfirst=True）对老库/新库都幂等建缺表，本函数
@@ -106,9 +108,18 @@ def ensure_schema() -> None:
         case_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(cases)"))]
         if case_cols and "name" not in case_cols:
             conn.execute(text("ALTER TABLE cases ADD COLUMN name VARCHAR(128)"))
+        if case_cols and "mbti_type" not in case_cols:
+            conn.execute(text("ALTER TABLE cases ADD COLUMN mbti_type VARCHAR(8)"))
         conv_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(conversations)"))]
         if conv_cols and "topic" not in conv_cols:
             conn.execute(text("ALTER TABLE conversations ADD COLUMN topic VARCHAR(64)"))
+        # 统一档案体系：astrology_readings / mbti_results 补 case_id（关联国学档案 cases.id）
+        astro_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(astrology_readings)"))]
+        if astro_cols and "case_id" not in astro_cols:
+            conn.execute(text("ALTER TABLE astrology_readings ADD COLUMN case_id INTEGER"))
+        mbti_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(mbti_results)"))]
+        if mbti_cols and "case_id" not in mbti_cols:
+            conn.execute(text("ALTER TABLE mbti_results ADD COLUMN case_id INTEGER"))
 
         # system_configs 种子：积分默认值（key 不存在才插入，幂等；不覆盖后台已改的配置）。
         sc_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(system_configs)"))]
