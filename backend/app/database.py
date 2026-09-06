@@ -29,18 +29,26 @@ ops_engine = create_engine(
 @event.listens_for(analytics_engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
+    # 并发写安全：WAL（读写不互斥）+ busy_timeout 10s（3 个并发 method 写排队而不报
+    # database is locked）。PRAGMA journal_mode=WAL 返回结果行，不必 fetch。
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=10000")
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
 @event.listens_for(feedback_engine, "connect")
 def _set_feedback_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=10000")
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
 @event.listens_for(ops_engine, "connect")
 def _set_ops_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=10000")
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 

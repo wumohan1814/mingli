@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     llm_timeout: float = 60.0                    # TAICHU_LLM_TIMEOUT（秒）
     llm_max_retries: int = 1                     # TAICHU_LLM_MAX_RETRIES（1 原始 + 1 重试 = 最多 2 次尝试）
     llm_temperature: float = 0.3                 # TAICHU_LLM_TEMPERATURE
+    llm_max_concurrency: int = 3                 # TAICHU_LLM_MAX_CONCURRENCY（单用户断前尘/预测 method 并发上限）
+    llm_global_max_concurrency: int = 100        # TAICHU_LLM_GLOBAL_MAX_CONCURRENCY（全局 method 并发兜底，跨所有用户）
 
     # JWT 鉴权（ADR-0008：HS256）
     jwt_secret: str = "change-me-in-production-use-random-32-bytes"
