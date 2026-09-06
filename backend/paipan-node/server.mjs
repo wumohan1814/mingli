@@ -23,15 +23,25 @@
  *        relation, elementRelation, noble, meeting, conflicts, evidenceGrade,
  *        interpretationBoundary, favorableRelations, riskRelations, actionSignals}
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
- *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"ssgw",
- *                      customDate?:"ISO 字符串", options?:{}, settings?:{}, params?:{}}
- *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/灵签签文，
- *       已 stripInternal）。method 决定取参位置：
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"ssgw"|"lenormand",
+ *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
+ *                      settings?:{}, params?:{}}
+ *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/灵签签文/
+ *       雷诺曼牌阵，已 stripInternal）。method 决定取参位置：
  *       - liuyao      → generateLiuyao(customDate, options)（options 可带手工爻值等）
  *       - meihua      → generateMeihua(customDate, settings)（settings 即报数等）
  *       - xiaoliuren  → generateXiaoliuren(params)（params.customDate 亦接受字符串）
  *       - ssgw        → drawRandomSign(options)（随机抽签）
- *       输入缺 method / method 非法 / customDate 无效 → 400（客户端错误）。
+ *       - lenormand   → drawLenormandSpread(spreadType||'single', options)
+ *                      （雷诺曼 spreadType 由 input.spreadType 提供，非 settings；
+ *                       options 可带 seed/replay 确定性重放）
+ *       输入缺 method / method 非法 / spreadType 非法 / customDate 无效 → 400（客户端错误）。
+ *   POST /tarot  {spreadType?:"single"|"three"|"love"|"career"|"decision"|...,
+ *                 options?:{}}
+ *     → 200 application/json，确定性塔罗抽牌（单牌/时间流/爱情/事业/选择等牌阵，
+ *       已 stripInternal）：drawTarotSpread(spreadType||'single', options)。
+ *       options 原样透传：seed/replay 确定性重放、interactiveSamples 逐张样本、
+ *       question 占问方向等。spreadType 缺失 → 'single'；非法 → 400（客户端错误）。
  *
  * 出错返回非 200（JSON {"error": ...}），并把错误打到 stderr，供调用方降级。
  * 监听 127.0.0.1，端口取环境变量 PAIPAN_NODE_PORT，默认 9317。
@@ -77,6 +87,8 @@ import { generateLiuyao } from './vendor/mingyu-core/dist/divination/algorithms/
 import { generateMeihua } from './vendor/mingyu-core/dist/divination/algorithms/meihua/index.js';
 import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorithms/xiaoliuren.js';
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
+import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
+import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -291,10 +303,46 @@ function computeDivination(input) {
       raw = drawRandomSign(options);
       break;
     }
+    case 'lenormand': {
+      // 雷诺曼抽牌：spreadType 由 input.spreadType 提供（不是 settings/options）；
+      // options 可带 seed/replay 确定性重放。非法 spreadType → 客户端错误。
+      const spreadType = (typeof input.spreadType === 'string' && input.spreadType.trim())
+        ? input.spreadType.trim()
+        : 'single';
+      if (!(spreadType in LENORMAND_SPREADS)) {
+        throw Object.assign(new Error(`Unknown lenormand spread type: ${spreadType}`), { clientError: true });
+      }
+      const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
+        ? input.options
+        : {};
+      raw = drawLenormandSpread(spreadType, options);
+      break;
+    }
     default:
       throw Object.assign(new Error(`Unknown divination method: ${method}`), { clientError: true });
   }
   return stripInternal(raw);
+}
+
+/* ---------- /tarot：塔罗抽牌（vendored mingyu-core divination/tarot.js） ---------- */
+
+function computeTarot(input) {
+  // 必填校验：input 非对象 / spreadType 非字符串（缺省 'single'）→ 客户端错误
+  if (!input || typeof input !== 'object' || Array.isArray(input)
+      || (input.spreadType !== undefined && typeof input.spreadType !== 'string')) {
+    throw Object.assign(new Error('Invalid input: spreadType must be a string'), { clientError: true });
+  }
+  const spreadType = (typeof input.spreadType === 'string' && input.spreadType.trim())
+    ? input.spreadType.trim()
+    : 'single';
+  if (!(spreadType in tarotSpreads)) {
+    throw Object.assign(new Error(`Unknown tarot spread type: ${spreadType}`), { clientError: true });
+  }
+  // options 原样透传：seed/replay 确定性重放、interactiveSamples 逐张样本、question 占问方向等
+  const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
+    ? input.options
+    : {};
+  return stripInternal(drawTarotSpread(spreadType, options));
 }
 
 // ---------------------------------------------------------------------------
@@ -372,11 +420,14 @@ async function handleRequest(req, res) {
     } else if (pathname === '/zodiac') {
       const result = computeZodiac(input); // 生肖流年同步 API，直接返回
       sendJson(res, 200, result);
+    } else if (pathname === '/tarot') {
+      const result = computeTarot(input); // 塔罗抽牌同步 API，直接返回
+      sendJson(res, 200, result);
     } else if (pathname === '/divination') {
       const result = computeDivination(input); // 临时起卦同步 API，直接返回
       sendJson(res, 200, result);
     } else {
-      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra, /zodiac or /divination.`);
+      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra, /zodiac, /tarot or /divination.`);
     }
   } catch (e) {
     // 与子进程脚本一致：ziwei 必填校验 / 计算失败均属调用方可降级的错误

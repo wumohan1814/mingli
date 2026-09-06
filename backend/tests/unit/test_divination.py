@@ -533,13 +533,14 @@ def test_api_divination_cast_requires_auth(divination_client, monkeypatch):
 
 
 def test_api_divination_cast_bad_method_400(divination_client, monkeypatch):
-    """method 非四种支持方法 → 400 参数错误（pydantic 提前拦截，不触达 Node）。"""
+    """method 非支持方法（lenormand 于 Phase C 起为支持方法，改测 tarot 走独立 /tarot 端点）
+    → 400 参数错误（pydantic 提前拦截，不触达 Node）。"""
     uid = _new_user()
     calls: list = []
     _fake_node_post(monkeypatch, payload=SAMPLE_LIUYAO_DATA, calls=calls)
     resp = divination_client.post(
         "/api/divinations",
-        json={"method": "lenormand", "seed": {"options": {}}},
+        json={"method": "tarot", "seed": {"options": {}}},
         headers=_auth_header(uid),
     )
     assert resp.status_code == 400, resp.text
