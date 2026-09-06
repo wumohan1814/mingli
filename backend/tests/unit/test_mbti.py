@@ -11,9 +11,12 @@
      - 非法输入（空/缺 id/题目不存在/选项无效/pole 越维/重复作答/单维作答）→ ValueError。
   3. Python 端点契约（TestClient，真实 FastAPI app + 临时库）：
      - GET /api/mbti/questions：公开免鉴权，60 题、四维各 15；
-     - POST /api/mbti/score：落库 mbti_results + mbti_score 埋点 + 返回
-       {type, scores} + 零扣费；答案缺失/空/维度不全/题目非法 → 400；
-     - GET /api/mbti/results/{id}：本人可取（type_info 五栏），跨用户/不存在 → 404。
+     - POST /api/mbti/score：body {case_id, answers}（case_id 必填，须为本人档案）；
+       落库 mbti_results（带 case_id）+ 回写 case.mbti_type + mbti_score 埋点
+       （props 含 case_id）+ 返回 {id, type, scores} + 零扣费；
+       非本人/不存在的档案 → 404；答案缺失/空/维度不全/题目非法 → 400；
+     - GET /api/mbti/results/{id}：本人可取（type_info 五栏，含 case_id 字段），
+       跨用户/不存在 → 404。
 
 本文件没有任何 LLM / Node 依赖：MBTI 判型在 Python 内完成，零扣费。
 依赖 conftest 的会话级临时库（orchestration_env），不触碰真实 backend/data/*.db。
@@ -94,6 +97,36 @@ def _new_user() -> int:
         session.commit()
         session.refresh(user)
         return user.id
+    finally:
+        session.close()
+
+
+def _new_case(uid: int, **overrides) -> int:
+    """直插一个 case（绕过 API）：MBTI 判型只依赖 case 存在且归属本人。"""
+    from app.database import AnalyticsSession
+    from app.models import Case
+
+    inp = {"question": "事业运势"}
+    inp.update(overrides)
+    session = AnalyticsSession()
+    try:
+        case = Case(user_id=uid, input_json=inp)
+        session.add(case)
+        session.commit()
+        session.refresh(case)
+        return case.id
+    finally:
+        session.close()
+
+
+def _case_row(case_id: int):
+    """按 id 取 case 行（校验 mbti_type 回写）。"""
+    from app.database import AnalyticsSession
+    from app.models import Case
+
+    session = AnalyticsSession()
+    try:
+        return session.query(Case).filter_by(id=case_id).first()
     finally:
         session.close()
 
@@ -333,11 +366,12 @@ def test_api_questions_public_and_shape(mbti_client):
 
 # ------------------------------------------------------------ 端点：判型落库 ----
 def test_api_score_success_persists_and_events(mbti_client):
-    """POST /api/mbti/score：全 A → ESTJ；落库 mbti_results + mbti_score 埋点；
-    返回 {id,type,scores}；零扣费（无 CreditTransaction）。"""
+    """POST /api/mbti/score：全 A → ESTJ；落库 mbti_results（带 case_id）+ 回写
+    case.mbti_type + mbti_score 埋点（props 含 case_id）；返回 {id,type,scores}；零扣费。"""
     uid = _new_user()
+    cid = _new_case(uid)
     answers = _answers_by_key("A")
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers},
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": answers},
                             headers=_auth_header(uid))
     assert resp.status_code == 200, resp.text
     body = resp.json()
@@ -352,42 +386,52 @@ def test_api_score_success_persists_and_events(mbti_client):
         "JP": {"J": 15, "P": 0},
     }
 
-    # 落库：answers_json 原样、scores_json/type 完整、user 归属正确
+    # 落库：answers_json 原样、scores_json/type/case_id 完整、user 归属正确
     row = _result_row(data["id"])
     assert row is not None
     assert row.user_id == uid
+    assert row.case_id == cid
     assert row.type == "ESTJ"
     assert row.answers_json == answers
     assert row.scores_json == data["scores"]
 
+    # 档案 mbti_type 被回写（与结果行同一次 commit）
+    case = _case_row(cid)
+    assert case is not None and case.mbti_type == "ESTJ"
+
     # 埋点 + 零扣费
     rows = _event_rows("mbti_score", uid)
     assert len(rows) == 1
-    assert rows[0].props == {"type": "ESTJ"}
+    assert rows[0].props == {"type": "ESTJ", "case_id": cid}
     assert _credit_rows(uid) == []
 
 
 def test_api_score_pole_form(mbti_client):
-    """POST /score 支持 pole 形态答案：{"id","pole"} → INTJ 落库。"""
+    """POST /score 支持 pole 形态答案：{"id","pole"} → INTJ 落库（带 case_id）。"""
     uid = _new_user()
+    cid = _new_case(uid)
     answers = _answers_by_pole({"EI": "I", "SN": "N", "TF": "T", "JP": "J"})
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers},
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": answers},
                             headers=_auth_header(uid))
     assert resp.status_code == 200, resp.text
     data = resp.json()["data"]
     assert data["type"] == "INTJ"
     assert _result_row(data["id"]).type == "INTJ"
+    assert _case_row(cid).mbti_type == "INTJ"
 
 
 def test_api_score_requires_auth(mbti_client):
     """鉴权契约：完全缺 Authorization → 400（Header 必填校验）；非 Bearer/非法令牌 → 401。"""
+    uid = _new_user()
+    cid = _new_case(uid)
     answers = _answers_by_key("A")
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers})
+    body = {"case_id": cid, "answers": answers}
+    resp = mbti_client.post("/api/mbti/score", json=body)
     assert resp.status_code == 400
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers},
+    resp = mbti_client.post("/api/mbti/score", json=body,
                             headers={"Authorization": "Token abc"})
     assert resp.status_code == 401
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers},
+    resp = mbti_client.post("/api/mbti/score", json=body,
                             headers={"Authorization": "Bearer not-a-real-jwt"})
     assert resp.status_code == 401
 
@@ -395,25 +439,32 @@ def test_api_score_requires_auth(mbti_client):
 def test_api_score_bad_answers_400(mbti_client):
     """答案非法 → 400：缺 answers / 空列表 / 单维作答 / 题目不存在；不落库不埋点。"""
     uid = _new_user()
+    cid = _new_case(uid)
     auth = _auth_header(uid)
-    q_sn = _first_two("SN")[0]
 
     # 缺 answers（pydantic 必填）→ 400 参数错误
-    resp = mbti_client.post("/api/mbti/score", json={}, headers=auth)
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid}, headers=auth)
+    assert resp.status_code == 400, resp.text
+    # 缺 case_id（pydantic 必填）→ 400 参数错误
+    resp = mbti_client.post("/api/mbti/score", json={"answers": _answers_by_key("A")},
+                            headers=auth)
     assert resp.status_code == 400, resp.text
     # 空列表 → 400
-    resp = mbti_client.post("/api/mbti/score", json={"answers": []}, headers=auth)
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": []},
+                            headers=auth)
     assert resp.status_code == 400, resp.text
     assert "答案" in resp.json()["message"] or "answers" in resp.json()["detail"]
     # 只答 EI 单维 → 400（维度不完整）
     resp = mbti_client.post("/api/mbti/score",
-                            json={"answers": [{"question_id": 1, "choice": "A"}]},
+                            json={"case_id": cid,
+                                  "answers": [{"question_id": 1, "choice": "A"}]},
                             headers=auth)
     assert resp.status_code == 400, resp.text
     assert "维度" in resp.json()["message"]
     # 题目不存在 → 400
     resp = mbti_client.post("/api/mbti/score",
-                            json={"answers": [{"question_id": 9999, "choice": "A"}]},
+                            json={"case_id": cid,
+                                  "answers": [{"question_id": 9999, "choice": "A"}]},
                             headers=auth)
     assert resp.status_code == 400, resp.text
 
@@ -421,13 +472,34 @@ def test_api_score_bad_answers_400(mbti_client):
     assert _credit_rows(uid) == []
 
 
+def test_api_score_case_isolation_404(mbti_client):
+    """归属 404：case_id 为他人档案 / 不存在的档案 → 404，不判型不落库不埋点。"""
+    uid = _new_user()
+    other = _new_user()
+    other_cid = _new_case(other)
+    answers = _answers_by_key("A")
+
+    # 他人档案 → 404（归属隔离在判型/落库之前）
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": other_cid, "answers": answers},
+                            headers=_auth_header(uid))
+    assert resp.status_code == 404, resp.text
+    # 不存在 → 404
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": 999999, "answers": answers},
+                            headers=_auth_header(uid))
+    assert resp.status_code == 404, resp.text
+
+    assert _event_rows("mbti_score", uid) == []
+    assert _credit_rows(uid) == []
+
+
 # ------------------------------------------------------------ 端点：结果复看 ----
 def test_api_results_get_and_type_info(mbti_client):
-    """GET /api/mbti/results/{id}：本人返回 {id,type,scores,type_info}，
+    """GET /api/mbti/results/{id}：本人返回 {id,case_id,type,scores,type_info}，
     type_info 为该型五栏文案（与 types.json 同源）。"""
     uid = _new_user()
+    cid = _new_case(uid)
     answers = _answers_by_key("B")   # INFP
-    resp = mbti_client.post("/api/mbti/score", json={"answers": answers},
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": answers},
                             headers=_auth_header(uid))
     rid = resp.json()["data"]["id"]
 
@@ -435,6 +507,7 @@ def test_api_results_get_and_type_info(mbti_client):
     assert resp.status_code == 200, resp.text
     data = resp.json()["data"]
     assert data["id"] == rid
+    assert data["case_id"] == cid
     assert data["type"] == "INFP"
     assert data["scores"] == {
         "EI": {"E": 0, "I": 15},
@@ -452,8 +525,9 @@ def test_api_results_get_and_type_info(mbti_client):
 def test_api_results_isolation_404(mbti_client):
     """隔离 404：跨用户读他人结果 / 不存在的 id → 404。"""
     uid = _new_user()
+    cid = _new_case(uid)
     other = _new_user()
-    resp = mbti_client.post("/api/mbti/score", json={"answers": _answers_by_key("A")},
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": _answers_by_key("A")},
                             headers=_auth_header(uid))
     rid = resp.json()["data"]["id"]
 
@@ -466,3 +540,4 @@ def test_api_results_isolation_404(mbti_client):
     # 未带鉴权 → 400（Header 必填）
     resp = mbti_client.get(f"/api/mbti/results/{rid}")
     assert resp.status_code == 400
+

@@ -6,13 +6,15 @@
   - GET  /api/mbti/questions      题库公开，无需鉴权：返回 {code:0, data:{questions}}，
                                   questions 直接读 mbti/data/questions.json（60 题，
                                   每题为二选一，选项带 dim pole 映射）。
-  - POST /api/mbti/score          鉴权（Bearer token）：body {answers: [...]}，
+  - POST /api/mbti/score          鉴权（Bearer token）：body {case_id, answers}，
+                                  case_id 必填（须为本人档案，非本人/不存在 404）：
                                   调 mbti.scoring.score 纯代码判型得 {type, scores}，
-                                  落 mbti_results 表并写 mbti_score 埋点
-                                  （props={type}），返回 {id, type, scores}。
+                                  落 mbti_results 表（带 case_id）并回写
+                                  case.mbti_type = type，再写 mbti_score 埋点
+                                  （props={type, case_id}），返回 {id, type, scores}。
                                   答案缺失/结构非法/某维度未作答 → 400 参数错误。
   - GET  /api/mbti/results/{id}   鉴权：按 id+user_id 隔离取记录（查不到 404），
-                                  返回 {id, type, scores, type_info}，
+                                  返回 {id, case_id, type, scores, type_info}，
                                   type_info 从 mbti/data/types.json 实时取该型的
                                   五栏文案（alias/优势/盲点/职场/关系/成长）。
 
@@ -33,7 +35,7 @@ from app.database import get_analytics_db
 from app.events.service import record_event
 from app.mbti import scoring
 from app.mbti.scoring import load_questions
-from app.models import MbtiResult
+from app.models import Case, MbtiResult
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +79,7 @@ def _get_owned_result(db: Session, result_id: int, user_id: int) -> MbtiResult:
 
 # --- 请求模型 ---
 class ScoreRequest(BaseModel):
+    case_id: int = Field(description="国学档案 id（判型结果关联该档案并回写 case.mbti_type）")
     answers: List[Dict[str, Any]] = Field(
         description="逐题答案，两种形态："
                     "[{\"question_id\":1,\"choice\":\"A\"}, ...]（按选项 key 取 pole）或 "
@@ -98,31 +101,41 @@ def score_mbti(
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """判型（纯代码，免费，落库）：scoring.score → 落 mbti_results 表 + mbti_score 埋点。
+    """判型（纯代码，免费，落库）：校验 case 归属 → scoring.score →
+    落 mbti_results 表（带 case_id）+ 回写 case.mbti_type + mbti_score 埋点。
 
     零 LLM 零扣费：判型为本地计数，无 chat 调用、无积分扣减。
     """
     user_id = get_user_id_from_token(authorization)
 
-    # ① 判型（纯代码）：非法答案（缺失/结构错/题目不存在/维度不全）→ 400
+    # ① case 归属校验（id+user_id 隔离，非本人/不存在 → 404）
+    case = db.query(Case).filter_by(id=body.case_id, user_id=user_id).first()
+    if case is None:
+        raise _err(404, "档案不存在")
+
+    # ② 判型（纯代码）：非法答案（缺失/结构错/题目不存在/维度不全）→ 400
     try:
         result = scoring.score(body.answers)
     except ValueError as exc:
         raise _err(400, str(exc))
 
-    # ② 落库（免费持久化，供 GET /results/{id} 只读复看）
+    # ③ 落库（免费持久化，供 GET /results/{id} 只读复看）+ 回写档案 MBTI 类型，
+    #    同一次 db commit 保证原子（case.mbti_type 与结果行要么都在要么都不在）
     row = MbtiResult(
         user_id=user_id,
+        case_id=body.case_id,
         answers_json=body.answers,
         scores_json=result["scores"],
         type=result["type"],
     )
     db.add(row)
+    case.mbti_type = result["type"]
     db.commit()
     db.refresh(row)
 
-    # ③ 埋点（写库失败静默，绝不阻断业务）；本功能零 LLM 零扣费
-    record_event("mbti_score", user_id=user_id, props={"type": row.type})
+    # ④ 埋点（写库失败静默，绝不阻断业务）；本功能零 LLM 零扣费
+    record_event("mbti_score", user_id=user_id,
+                 props={"type": row.type, "case_id": body.case_id})
 
     return {"code": 0, "message": "ok",
             "data": {"id": row.id, "type": row.type, "scores": row.scores_json}}
@@ -143,6 +156,7 @@ def get_mbti_result(
 
     return {"code": 0, "message": "ok", "data": {
         "id": row.id,
+        "case_id": row.case_id,
         "type": row.type,
         "scores": row.scores_json,
         "type_info": type_info,

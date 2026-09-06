@@ -10,9 +10,11 @@
        scope 缺省 natal 仅返回 {natal}；scope=yearly 返回 {natal, fullScope} 且任意层级
        不含 evidenceAnalysis/prompt/timestamp 等内部字段；缺经纬度/缺 year → 400。
   2. Python 端点契约（TestClient + stub httpx 转发 / mock chat，不真调 Node/LLM）：
-     - POST /api/astrology/chart：鉴权 / 参数校验（缺 year、缺经纬度、scope 非法、
-       date_str 格式）→ 400 / 落库 + astrology_chart 埋点 + 转发契约（timeout=120，
-       dateStr 透传）/ Node 非 200 与连接异常 → 502 / 零扣费；
+     - POST /api/astrology/chart：body {case_id, scope?, date_str?}；鉴权 / 参数校验
+       （缺 case_id、scope 非法、date_str 格式）→ 400；case 不存在或非本人 → 404；
+       档案缺经纬度 → 400 / 落库带 case_id + astrology_chart 埋点（props 含 case_id）+
+       转发契约（生辰扁平化取自 case.input_json、timeout=120、dateStr 透传）/
+       Node 非 200 与连接异常 → 502 / 零扣费；
      - GET /api/astrology/charts/{id}：本人可取、跨用户 404；
      - POST /api/astrology/charts/{id}/interpret：缓存命中零 LLM 零扣费 / 未命中走
        mock chat + 即时扣费（ref=astrology:{id}）/ 余额不足 5002 / LLMError → 502 /
@@ -107,6 +109,35 @@ def _new_user() -> int:
         session.commit()
         session.refresh(user)
         return user.id
+    finally:
+        session.close()
+
+
+def _new_case(uid: int, **overrides) -> int:
+    """直插一个 case（绕过 API）：input_json 即建档生辰，chart 端点从此读取生辰。"""
+    from app.database import AnalyticsSession
+    from app.models import Case
+
+    inp = {
+        "birth_year": 1990,
+        "birth_month": 5,
+        "birth_day": 12,
+        "birth_hour": 10,
+        "gender": "male",
+        "birthplace": "",
+        "longitude": 121.5,
+        "latitude": 31.2,
+        "true_solar_time": False,
+        "question": "事业运势",
+    }
+    inp.update(overrides)
+    session = AnalyticsSession()
+    try:
+        case = Case(user_id=uid, input_json=inp)
+        session.add(case)
+        session.commit()
+        session.refresh(case)
+        return case.id
     finally:
         session.close()
 
@@ -431,17 +462,16 @@ def astrology_client(orchestration_env):
 
 
 def test_api_astrology_chart_success(astrology_client, monkeypatch):
-    """鉴权通过 + Node 200 → code:0 + 落库（chart_json/scope）+ astrology_chart 埋点 + 零扣费。"""
+    """鉴权通过 + Node 200 → code:0 + 落库（case_id/chart_json/scope）+ astrology_chart 埋点 + 零扣费。"""
     import app.api.astrology as astro_mod
 
     uid = _new_user()
+    cid = _new_case(uid, birthplace="上海")
     calls: list = []
     _fake_node_post(monkeypatch, astro_mod, payload=SAMPLE_ASTROLOGY_CHART, calls=calls)
 
     resp = astrology_client.post("/api/astrology/chart",
-                                 json={"year": 1990, "month": 5, "day": 12, "hour": 10,
-                                       "minute": 30, "longitude": 121.5, "latitude": 31.2,
-                                       "birthplace": "上海"},
+                                 json={"case_id": cid},
                                  headers=_auth_header(uid))
     assert resp.status_code == 200, resp.text
     body = resp.json()
@@ -451,29 +481,29 @@ def test_api_astrology_chart_success(astrology_client, monkeypatch):
     assert data["scope"] == "natal"
     assert data["chart"] == SAMPLE_ASTROLOGY_CHART
 
-    # 转发契约：URL /astrology，payload 出生信息原样 + dateStr None，timeout=120
+    # 转发契约：URL /astrology，payload 为档案生辰扁平化（minute 恒 0），timeout=120
     assert len(calls) == 1
     assert calls[0]["url"].endswith("/astrology")
     assert calls[0]["timeout"] == 120
     payload = calls[0]["json"]
     assert payload["year"] == 1990 and payload["month"] == 5 and payload["day"] == 12
-    assert payload["hour"] == 10 and payload["minute"] == 30
+    assert payload["hour"] == 10 and payload["minute"] == 0
     assert payload["gender"] == "male" and payload["birthplace"] == "上海"
     assert payload["longitude"] == 121.5 and payload["latitude"] == 31.2
     assert payload["true_solar"] is False
     assert payload["scope"] == "natal" and payload["dateStr"] is None
 
-    # 落库：astrology_readings 一行，chart_json/scope 完整
+    # 落库：astrology_readings 一行，case_id/chart_json/scope 完整
     row = _reading_row(data["id"])
     assert row is not None
-    assert row.user_id == uid and row.scope == "natal"
+    assert row.user_id == uid and row.case_id == cid and row.scope == "natal"
     assert row.chart_json == SAMPLE_ASTROLOGY_CHART
     assert row.reading_json is None
 
     # 埋点 + 零扣费
     rows = _event_rows("astrology_chart", uid)
     assert len(rows) == 1
-    assert rows[0].props == {"scope": "natal"}
+    assert rows[0].props == {"scope": "natal", "case_id": cid}
     assert _credit_rows(uid) == []
 
 
@@ -482,13 +512,13 @@ def test_api_astrology_chart_non_natal_fullscope(astrology_client, monkeypatch):
     import app.api.astrology as astro_mod
 
     uid = _new_user()
+    cid = _new_case(uid)
     calls: list = []
     _fake_node_post(monkeypatch, astro_mod, payload=SAMPLE_ASTROLOGY_CHART, calls=calls)
 
     resp = astrology_client.post("/api/astrology/chart",
-                                 json={"year": 1990, "month": 5, "day": 12, "hour": 10,
-                                       "longitude": 121.5, "latitude": 31.2,
-                                       "scope": "yearly", "date_str": "2026-06-01"},
+                                 json={"case_id": cid, "scope": "yearly",
+                                       "date_str": "2026-06-01"},
                                  headers=_auth_header(uid))
     assert resp.status_code == 200, resp.text
     data = resp.json()["data"]
@@ -497,52 +527,54 @@ def test_api_astrology_chart_non_natal_fullscope(astrology_client, monkeypatch):
     assert calls[0]["json"]["scope"] == "yearly"
     assert calls[0]["json"]["dateStr"] == "2026-06-01"
     assert _reading_row(data["id"]).scope == "yearly"
-    assert _event_rows("astrology_chart", uid)[0].props == {"scope": "yearly"}
+    assert _event_rows("astrology_chart", uid)[0].props == {"scope": "yearly", "case_id": cid}
 
 
-def test_api_astrology_chart_validation_400(astrology_client, monkeypatch):
-    """参数校验：缺鉴权 / 缺 year / 缺经纬度 / 经纬度越界 / scope 非法 / date_str 格式错 →
-    400，且不触达 Node。"""
+def test_api_astrology_chart_validation_and_isolation(astrology_client, monkeypatch):
+    """参数/归属校验：缺鉴权 / 缺 case_id / scope 非法 / date_str 格式错 → 400；
+    case 不存在或非本人 → 404；档案缺经纬度 → 400（且不触达 Node、不埋点、零扣费）。"""
     import app.api.astrology as astro_mod
 
     uid = _new_user()
+    other = _new_user()
+    cid = _new_case(uid)                                          # 带经纬度的本人档案
+    other_cid = _new_case(other)                                  # 他人档案
+    no_geo_cid = _new_case(uid, longitude=None, latitude=None)    # 本人但缺经纬度
     calls: list = []
     _fake_node_post(monkeypatch, astro_mod, payload=SAMPLE_ASTROLOGY_CHART, calls=calls)
     auth = _auth_header(uid)
-    valid = {"year": 1990, "month": 5, "day": 12, "hour": 10,
-             "longitude": 121.5, "latitude": 31.2}
 
     # 完全缺 Authorization 头 → 400
-    resp = astrology_client.post("/api/astrology/chart", json=valid)
+    resp = astrology_client.post("/api/astrology/chart", json={"case_id": cid})
     assert resp.status_code == 400
     # 非 Bearer / 非法令牌 → 401
-    resp = astrology_client.post("/api/astrology/chart", json=valid,
+    resp = astrology_client.post("/api/astrology/chart", json={"case_id": cid},
                                  headers={"Authorization": "Token abc"})
     assert resp.status_code == 401
-    # 缺 year（必填）→ 400 参数错误
-    resp = astrology_client.post("/api/astrology/chart",
-                                 json={k: v for k, v in valid.items() if k != "year"},
+    # 缺 case_id（必填）→ 400 参数错误
+    resp = astrology_client.post("/api/astrology/chart", json={}, headers=auth)
+    assert resp.status_code == 400, resp.text
+    # case 不存在 → 404
+    resp = astrology_client.post("/api/astrology/chart", json={"case_id": 999999},
+                                 headers=auth)
+    assert resp.status_code == 404, resp.text
+    # case 非本人 → 404（归属隔离在 Node 转发之前）
+    resp = astrology_client.post("/api/astrology/chart", json={"case_id": other_cid},
+                                 headers=auth)
+    assert resp.status_code == 404, resp.text
+    # 档案未提供经纬度 → 400（引擎必填，推算上升/宫位）
+    resp = astrology_client.post("/api/astrology/chart", json={"case_id": no_geo_cid},
                                  headers=auth)
     assert resp.status_code == 400, resp.text
-    # 缺经纬度 → 400（引擎必填，推算上升/宫位）
-    resp = astrology_client.post("/api/astrology/chart",
-                                 json={k: v for k, v in valid.items()
-                                       if k not in ("longitude", "latitude")},
-                                 headers=auth)
-    assert resp.status_code == 400, resp.text
-    assert "经纬度" in resp.json()["message"]
-    # 经纬度越界 → 400
-    resp = astrology_client.post("/api/astrology/chart",
-                                 json={**valid, "latitude": 100.0}, headers=auth)
-    assert resp.status_code == 400
+    assert "该档案未提供经纬度，无法生成星座盘" in resp.json()["message"]
     # scope 非法（非开放盘型）→ 400
     resp = astrology_client.post("/api/astrology/chart",
-                                 json={**valid, "scope": "celtic"}, headers=auth)
+                                 json={"case_id": cid, "scope": "celtic"}, headers=auth)
     assert resp.status_code == 400, resp.text
     # 非 natal 且 date_str 非 YYYY-MM-DD → 400
     resp = astrology_client.post("/api/astrology/chart",
-                                 json={**valid, "scope": "yearly", "date_str": "2026-6-1"},
-                                 headers=auth)
+                                 json={"case_id": cid, "scope": "yearly",
+                                       "date_str": "2026-6-1"}, headers=auth)
     assert resp.status_code == 400, resp.text
 
     assert calls == []                          # 全程未触达 Node
@@ -555,8 +587,8 @@ def test_api_astrology_chart_node_error_502(astrology_client, monkeypatch):
     import app.api.astrology as astro_mod
 
     uid = _new_user()
-    body = {"year": 1990, "month": 5, "day": 12, "hour": 10,
-            "longitude": 121.5, "latitude": 31.2}
+    cid = _new_case(uid)
+    body = {"case_id": cid}
     # 非 200
     _fake_node_post(monkeypatch, astro_mod, status=500, payload={"error": "星盘失败"})
     resp = astrology_client.post("/api/astrology/chart", json=body, headers=_auth_header(uid))

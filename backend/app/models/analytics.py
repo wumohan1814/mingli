@@ -78,6 +78,7 @@ class Case(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     name = Column(String(128), nullable=True)
+    mbti_type = Column(String(8), nullable=True)   # 该档案主人的 MBTI 类型（如 INTJ；POST /api/mbti/score 回写）
     input_json = Column(JSON, nullable=True)
     current_stage = Column(Integer, default=0)
     status = Column(SAEnum(CaseStatus), default=CaseStatus.created)
@@ -297,6 +298,7 @@ class AstrologyReading(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=True, index=True)  # 关联国学档案（生辰同源）
     chart_json = Column(JSON, nullable=True)           # {natal, fullScope}（确定性）
     scope = Column(String(32), nullable=True)          # natal|transit|solar_return|secondary|firdaria
     reading_json = Column(JSON, nullable=True)         # LLM 解读（缓存）
@@ -315,6 +317,7 @@ class MbtiResult(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=True, index=True)  # 关联国学档案（判型结果写回 case.mbti_type）
     answers_json = Column(JSON, nullable=True)         # 逐题答案
     scores_json = Column(JSON, nullable=True)          # 四维分
     type = Column(String(8), nullable=True)            # 如 INTJ
