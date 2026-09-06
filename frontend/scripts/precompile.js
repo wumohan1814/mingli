@@ -15,7 +15,9 @@ import { readFileSync, writeFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { transformSync } from '@babel/core';
+import { createRequire } from 'node:module';
 
+const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FILES = ['public/index.html', 'public/admin.html'];
 
@@ -53,7 +55,7 @@ for (const rel of FILES) {
     let result;
     try {
       result = transformSync(code, {
-        presets: [['@babel/preset-react', { runtime: 'classic' }]],
+        presets: [[require.resolve('@babel/preset-react'), { runtime: 'classic' }]],
         filename: `${rel}#block${blockIndex}.jsx`,
         babelrc: false,
         configFile: false,
