@@ -1,0 +1,71 @@
+{
+  "method": "bazi-pattern",
+  "phase": "prediction",
+  "past_propositions": [
+    {
+      "year_range": "1996-2004",
+      "domain": "学业",
+      "claim": "官杀当令而日主身弱：求学阶段管教与课业压力偏大，属于需咬牙坚持方能出成绩的类型",
+      "confidence_level": "medium",
+      "confidence_reason": "月令七杀当令且日主根浅，命局结构对应早年压力情境；具体应期须逐流年回验，故置信中档",
+      "basis": [
+        "bazi.pillars.month.zhi 月令官杀当令",
+        "bazi.day_master_wuxing 木日主身弱不任杀",
+        "子平格法：杀重身轻，早年历练型"
+      ]
+    },
+    {
+      "year_range": "2008-2015",
+      "domain": "事业",
+      "claim": "进入印比帮扶的大运区间后，职场平台与人际助力明显改善，呈逐步晋升轨迹",
+      "confidence_level": "high",
+      "confidence_reason": "命局以印星为用神，该区间大运与命局用神同气、帮扶连续，结构证据一致",
+      "basis": [
+        "bazi.pillars.month.gan 印星透出为用",
+        "bazi.day_master 身弱得印比生扶则事业舒展",
+        "用神到位，事业向贵人提携方向演绎"
+      ]
+    },
+    {
+      "year_range": "2019-2021",
+      "domain": "人际/婚恋",
+      "claim": "该窗口人际圈有聚散调整，亲密关系易因工作节奏波动出现沟通损耗",
+      "confidence_level": "speculative",
+      "confidence_reason": "命局层面仅给出倾向性信号，未见强应期证据，作待回验命题处理",
+      "basis": [
+        "人际/婚恋属副证领域，不作主断",
+        "需用户回验后方可采信"
+      ]
+    }
+  ],
+  "conclusions": [
+    {
+      "direction": "吉",
+      "domain": "事业",
+      "claim": "用神印星得生扶，中长期宜走专业化发展路线，中年阶段有稳步向上的发展窗口",
+      "confidence_level": "medium",
+      "confidence_reason": "格局与用神结构清晰，但逐流年应期存在不确定性，故置信中档",
+      "evidence": [
+        "bazi.pillars.month 印星当令为用",
+        "bazi.day_master 身弱喜印比生扶，专业路线与用神相符",
+        "取用总则：身弱喜生扶、身强喜克泄耗"
+      ],
+      "risks": [
+        "财星坏印之年易决策反复",
+        "忌跨界冒进动摇根基"
+      ]
+    },
+    {
+      "direction": "平",
+      "domain": "健康",
+      "claim": "木旺土弱，日常宜注意脾胃与消化系统保养；未见结构性重大健康风险",
+      "confidence_level": "low",
+      "confidence_reason": "健康非本命主轴且缺乏流年强应期证据，仅作一般倾向提示",
+      "evidence": [
+        "bazi.pillars.month.zhi 木旺耗泄之象指向脾胃",
+        "健康领域非主问，仅凭结构作低置信提示"
+      ],
+      "risks": []
+    }
+  ]
+}

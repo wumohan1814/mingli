@@ -34,6 +34,32 @@ function stripInternal(obj) {
   return obj;
 }
 
+// 西方占星「格局」中文化：mingyu-core 的 summary.patterns 用英文格局名 + 英文星体名
+const PATTERN_NAME_ZH = { kite: '风筝格局', t_square: 'T型相位', stellium_sign: '群星格局' };
+const BODY_NAME_ZH = {
+  Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星',
+  Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星',
+  Ceres: '谷神星', Pallas: '智神星', Juno: '婚神星', Vesta: '灶神星', Chiron: '凯龙星',
+  'True North Node': '北交点', 'True Lilith': '莉莉丝',
+};
+
+function localizeWestern(w) {
+  if (!w || !w.summary || !Array.isArray(w.summary.patterns)) return w;
+  w.summary.patterns = w.summary.patterns.map((p) => {
+    if (typeof p !== 'string') return p;
+    const idx = p.indexOf(':');
+    const name = idx >= 0 ? p.slice(0, idx).trim() : '';
+    const bodies = idx >= 0 ? p.slice(idx + 1) : p;
+    const zhName = PATTERN_NAME_ZH[name] || name;
+    const zhBodies = bodies.split(',').map((b) => {
+      const t = b.trim();
+      return BODY_NAME_ZH[t] || t;
+    });
+    return `${zhName}：${zhBodies.join('、')}`;
+  });
+  return w;
+}
+
 async function main() {
   const raw = readFileSync(0, 'utf8').trim();
   const input = JSON.parse(raw || '{}');
@@ -61,7 +87,7 @@ async function main() {
   let qizheng = null;
   try {
     const bundle = await calculateBirthChartBundle(profile, { systems: ['astrolabe', 'qizheng'] });
-    western = bundle.astrolabe ? stripInternal(bundle.astrolabe) : null;
+    western = bundle.astrolabe ? localizeWestern(stripInternal(bundle.astrolabe)) : null;
     qizheng = bundle.qizheng ? stripInternal(bundle.qizheng) : null;
   } catch (e) {
     console.error(`[paipan_extra] astrolabe/qizheng 失败: ${e && e.message ? e.message : e}`);

@@ -1,0 +1,41 @@
+# 太初 · 部署编排（web 单体 + Caddy HTTPS 反代）
+services:
+  web:
+    build: .
+    restart: always
+    environment:
+      # SQLite 持久化到挂载卷
+      TAICHU_DB_PATH: /app/data/taichu_analytics.db
+      TAICHU_FEEDBACK_DB_PATH: /app/data/taichu_feedback.db
+      # 排盘常驻服务（同容器内 127.0.0.1）
+      TAICHU_PAIPAN_NODE_URL: http://127.0.0.1:9317
+      # 以下从 .env 注入（敏感，不进仓库）
+      TAICHU_LLM_API_KEY: ${TAICHU_LLM_API_KEY}
+      TAICHU_JWT_SECRET: ${TAICHU_JWT_SECRET}
+    volumes:
+      # SQLite 文件持久化到宿主机 /opt/taichu/data
+      - /opt/taichu/data:/app/data
+    networks:
+      - taichu
+
+  caddy:
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    networks:
+      - taichu
+
+networks:
+  taichu:
+
+volumes:
+  caddy_data:
+  caddy_config:

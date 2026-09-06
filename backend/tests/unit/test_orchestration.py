@@ -219,7 +219,7 @@ async def test_predict_orchestration(paipan_case, monkeypatch):
     rj = job.result_json
     assert rj is not None
     assert rj["report"].get("trend"), "report.trend 应存在"
-    assert "不构成" in rj["report"]["summary"], "summary 应含免责声明关键词"
+    assert rj["report"].get("summary"), "report.summary 应存在（免责由前端全局 DisclaimerFooter 负责，后端不再追加进 summary）"
 
     # 预测阶段只 analyze（不校验）
     assert len(fake.analyze_calls) == 5

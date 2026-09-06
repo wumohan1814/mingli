@@ -89,6 +89,7 @@ async def run_duan_qian_chen(job_id: int) -> None:
 
         reset_usage()
         failed_methods: list[str] = []
+        llm_fail_streak = 0
 
         # 串行遍历 9 个注册方法
         for key in METHOD_KEYS:
@@ -126,10 +127,22 @@ async def run_duan_qian_chen(job_id: int) -> None:
                     continue
                 validation = await validate(result, slices.get(key))
             except (LLMError, ValueError) as exc:
-                # 单法失败：记日志 + 记入 failed_methods，继续下一法
+                # 单法失败：记日志 + 记入 failed_methods
                 failed_methods.append(key)
-                logger.warning("断前尘单法失败，继续下一法 method_key=%s error=%s", key, exc)
+                logger.warning("断前尘单法失败 method_key=%s error=%s", key, exc)
                 job.completed = (job.completed or 0) + 1
+                # 快速失败：连续 2 个方法都因 LLM 调用失败 → 判定服务不可用，停止后续方法，
+                # 避免 9 法逐个重试（浪费 token + 时间）。ValueError（解析失败）不累计。
+                if isinstance(exc, LLMError):
+                    llm_fail_streak += 1
+                    if llm_fail_streak >= 2:
+                        job.status = JobStatus.failed
+                        job.error = f"LLM 服务连续失败，已停止（最后错误：{exc}）"
+                        session.commit()
+                        logger.error("断前尘任务中止：LLM 连续失败 job_id=%s", job_id)
+                        return
+                else:
+                    llm_fail_streak = 0
                 session.commit()
                 continue
 
@@ -324,10 +337,9 @@ async def run_predict(job_id: int) -> None:
                 )
         session.commit()
 
-        # 合成 + 合规拦截 + 免责声明（summary 与各条 description 文字）
+        # 合成 + 合规拦截（免责由前端全局 DisclaimerFooter 统一展示，不再追加进 report 文字）
         report = await synthesize(results, decision)
         _apply_compliance(report)
-        _apply_disclaimer(report)
 
         usage = get_usage()
         job.result_json = {

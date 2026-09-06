@@ -77,6 +77,7 @@ class Case(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name = Column(String(128), nullable=True)
     input_json = Column(JSON, nullable=True)
     current_stage = Column(Integer, default=0)
     status = Column(SAEnum(CaseStatus), default=CaseStatus.created)
@@ -140,6 +141,8 @@ class Conversation(Base):
     turn = Column(Integer, nullable=False)
     role = Column(String(16), nullable=False)
     content = Column(Text, nullable=True)
+    # 板块追问 topic（如 "事业"/"财运"/"婚姻"）；普通追问为 None，保持兼容
+    topic = Column(String(64), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     case = relationship("Case", back_populates="conversations")

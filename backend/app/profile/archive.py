@@ -38,7 +38,13 @@ def _get_conversations(case: Case, db: Session) -> list[dict]:
         .all()
     )
     return [
-        {"turn": c.turn, "role": c.role, "content": c.content, "created_at": str(c.created_at)}
+        {
+            "turn": c.turn,
+            "role": c.role,
+            "content": c.content,
+            "topic": c.topic,
+            "created_at": str(c.created_at),
+        }
         for c in convs
     ]
 

@@ -1,4 +1,4 @@
-"""Case API 路由：建档/排盘/断前尘/校准/预测/修正/归档/单法直问"""
+"""Case API 路由：建档/排盘/断前尘/校准/预测/修正对话(含板块追问)/归档/读报告/命名/删除/单法直问"""
 import asyncio
 import json
 import logging
@@ -23,9 +23,10 @@ from app.models import (
     JobStatus,
     MethodResult,
     Phase,
+    RouteDecision,
 )
 from app.auth.router import get_user_id_from_token
-from app.compliance.guardrails import append_disclaimer
+from app.compliance.guardrails import append_disclaimer, check_output
 from app.llm import LLMError, chat
 from app.methods import ANALYZERS, METHOD_KEYS
 from app.paipan import (
@@ -106,6 +107,22 @@ def _chart_summary(chart_json: dict) -> dict:
     }
 
 
+def _list_chart_summary(chart_json) -> dict:
+    """档案列表用盘面摘要（仅前端进度展示所需 3 字段）。
+
+    防御性访问：chart 缺失或 bazi/calendar 字段缺失时对应值为空串，不抛错。
+    """
+    if not isinstance(chart_json, dict):
+        return {"dayMaster": "", "dayMasterWuxing": "", "lunar": ""}
+    bazi = chart_json.get("bazi") or {}
+    calendar = chart_json.get("calendar") or {}
+    return {
+        "dayMaster": bazi.get("day_master") or "",
+        "dayMasterWuxing": bazi.get("day_master_wuxing") or "",
+        "lunar": calendar.get("lunar") or "",
+    }
+
+
 # --- 请求模型 ---
 class CreateCaseRequest(BaseModel):
     birth_year: int
@@ -126,6 +143,14 @@ class CalibrationRequest(BaseModel):
 
 class ReviseRequest(BaseModel):
     message: str
+    # 板块追问 topic（如 "事业"/"财运"/"婚姻"，或 report.details 里的 title）；
+    # 缺省 None = 普通追问，不注入 topic。
+    topic: Optional[str] = None
+
+
+class RenameCaseRequest(BaseModel):
+    """档案命名：PATCH /api/cases/{case_id} body"""
+    name: str
 
 
 # --- 路由 ---
@@ -148,6 +173,73 @@ async def create_case(
     db.refresh(case)
 
     return {"code": 0, "message": "ok", "data": {"caseId": str(case.id)}}
+
+
+@router.get("")
+async def list_cases(
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """当前用户的档案列表（按创建时间倒序，最多 20 个）"""
+    user_id = get_user_id_from_token(authorization)
+
+    cases = (
+        db.query(Case)
+        .filter_by(user_id=user_id)
+        .order_by(Case.created_at.desc())
+        .limit(20)
+        .all()
+    )
+
+    # 批量聚合（<=20 个 case，各表一次 IN 查询，避免逐 case 查）：
+    #   - MethodResult 一次查全该批 case 的行，Python 侧按 phase 分流：
+    #       has_report     phase=prediction 且 result_json 非空（已产出解读报告）
+    #       method_count   phase=duan-qian-chen 且 result_json 非空（已完成方法数）
+    #   - Chart 一次查全该批 case 的盘面行（case_id → chart_json）
+    has_report_ids: set[int] = set()
+    method_counts: dict[int, int] = {}
+    chart_by_case: dict[int, dict] = {}
+    if cases:
+        case_ids = [c.id for c in cases]
+        result_rows = (
+            db.query(MethodResult)
+            .filter(MethodResult.case_id.in_(case_ids))
+            .all()
+        )
+        for row in result_rows:
+            if not row.result_json:
+                continue
+            # SAEnum 回读为枚举成员（.value 如 "prediction"/"duan-qian-chen"）；
+            # 兼容回读为字符串的极端情况，统一按连字符形态比较
+            phase = (getattr(row.phase, "value", None) or "").replace("_", "-")
+            if phase == "prediction":
+                has_report_ids.add(row.case_id)
+            elif phase == "duan-qian-chen":
+                method_counts[row.case_id] = method_counts.get(row.case_id, 0) + 1
+        for chart_row in db.query(Chart).filter(Chart.case_id.in_(case_ids)).all():
+            chart_by_case[chart_row.case_id] = chart_row.chart_json
+
+    summary = []
+    for case in cases:
+        inp = case.input_json if isinstance(case.input_json, dict) else {}
+        summary.append(
+            {
+                "caseId": str(case.id),
+                "name": case.name,
+                "birthYear": inp.get("birth_year"),
+                "gender": inp.get("gender"),
+                "birthplace": inp.get("birthplace"),
+                "status": case.status.value if case.status else None,
+                "createdAt": case.created_at.isoformat() if case.created_at else None,
+                "hasReport": case.id in has_report_ids,
+                # 断前尘共 9 法，methodCount 为已产出非空结果的方法数（进度）
+                "methodCount": method_counts.get(case.id, 0),
+                "totalMethods": 9,
+                "chartSummary": _list_chart_summary(chart_by_case.get(case.id)),
+            }
+        )
+
+    return {"code": 0, "message": "ok", "data": {"cases": summary}}
 
 
 @router.post("/{case_id}/paipan")
@@ -372,18 +464,20 @@ async def revise(
     chart_row = db.query(Chart).filter_by(case_id=case_id).first()
     chart_summary = _chart_summary(chart_row.chart_json) if chart_row is not None else {}
 
+    # 板块追问：req.topic 存在时注入 topic，让 LLM 针对该板块详解
+    user_payload: dict = {
+        "question": req.message,
+        "chart_summary": chart_summary,
+        "history": history,
+    }
+    if req.topic:
+        user_payload["topic"] = req.topic
+
     messages = [
         {"role": "system", "content": _load_revise_prompt()},
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "question": req.message,
-                    "chart_summary": chart_summary,
-                    "history": history,
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(user_payload, ensure_ascii=False),
         },
     ]
 
@@ -397,15 +491,23 @@ async def revise(
 
     reply = append_disclaimer(resp["content"])
 
-    # 落两行对话（user + assistant，turn 递增），增量写不覆盖历史
+    # 合规拦截：命中禁区词时把 reply 替换为安全兜底文案（append_disclaimer 逻辑不变）
+    is_safe, _ = check_output(reply)
+    if not is_safe:
+        logger.warning("修正对话输出命中合规拦截 case_id=%s user_id=%s",
+                       case_id, user_id)
+        reply = "该部分内容因合规原因未展示。"
+
+    # 落两行对话（user + assistant，turn 递增），增量写不覆盖历史；
+    # 板块追问 topic 一并落库（普通追问 topic=None）
     next_turn = max((c.turn for c in convs), default=0) + 1
     db.add(Conversation(
         case_id=case_id, user_id=user_id, turn=next_turn,
-        role="user", content=req.message,
+        role="user", content=req.message, topic=req.topic,
     ))
     db.add(Conversation(
         case_id=case_id, user_id=user_id, turn=next_turn + 1,
-        role="assistant", content=reply,
+        role="assistant", content=reply, topic=req.topic,
     ))
     db.commit()
 
@@ -505,3 +607,77 @@ async def archive(
     data = build_archive(case, db)
 
     return {"code": 0, "message": "ok", "data": data}
+
+
+# --- 档案增强 ---
+@router.get("/{case_id}/report")
+async def get_case_report(
+    case_id: int,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """读历史解读报告（零 LLM）：取该 case 最新一条 type=predict 且 succeeded 的 Job，
+    返回其 result_json["report"]；无成功预测任务时 report=None。"""
+    user_id = get_user_id_from_token(authorization)
+    case = _get_owned_case(db, case_id, user_id)  # 鉴权 + 归属校验（case 未被删）
+
+    job = (
+        db.query(Job)
+        .filter_by(case_id=case.id, type=JobType.predict, status=JobStatus.succeeded)
+        .order_by(Job.id.desc())
+        .first()
+    )
+    report = None
+    if job is not None and isinstance(job.result_json, dict):
+        report = job.result_json.get("report")
+
+    return {"code": 0, "message": "ok", "data": {"report": report}}
+
+
+@router.patch("/{case_id}")
+async def rename_case(
+    case_id: int,
+    req: RenameCaseRequest,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """档案命名：更新 case.name（多用户隔离，非本人 404）"""
+    user_id = get_user_id_from_token(authorization)
+    case = _get_owned_case(db, case_id, user_id)
+
+    case.name = req.name
+    db.commit()
+    db.refresh(case)
+
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {"caseId": str(case.id), "name": case.name},
+    }
+
+
+@router.delete("/{case_id}")
+async def delete_case(
+    case_id: int,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """删除档案：先删子表（charts/method_results/calibrations/conversations/jobs/
+    route_decisions 按 case_id 删，外键顺序子表在前），最后删 case 行。"""
+    user_id = get_user_id_from_token(authorization)
+    case = _get_owned_case(db, case_id, user_id)  # 归属校验（非本人 404）
+
+    # 子表先删（均只以 case_id 关联；bulk delete 不触达 ORM 已加载对象）
+    for model in (
+        Chart,
+        MethodResult,
+        Calibration,
+        Conversation,
+        Job,
+        RouteDecision,
+    ):
+        db.query(model).filter_by(case_id=case.id).delete(synchronize_session=False)
+    db.delete(case)
+    db.commit()
+
+    return {"code": 0, "message": "ok", "data": {"deleted": True}}

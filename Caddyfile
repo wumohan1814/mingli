@@ -1,0 +1,4 @@
+# Caddy 反向代理：自动申请/续期 Let's Encrypt HTTPS 证书
+mingli.example.com {
+    reverse_proxy web:8000
+}
