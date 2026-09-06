@@ -1,7 +1,7 @@
 """用户分析库 ORM 模型（taichu_analytics）"""
 from datetime import datetime
 from sqlalchemy import (
-    Column, Integer, String, Text, Boolean, DateTime, ForeignKey, JSON, Enum as SAEnum,
+    Column, Integer, String, Text, Boolean, Float, DateTime, ForeignKey, JSON, Enum as SAEnum,
 )
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -177,3 +177,41 @@ class RouteDecision(Base):
     support_methods = Column(JSON, nullable=True)
     reasons = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class CreditAccount(Base):
+    """积分账户（credit_accounts，user_id 1:1）"""
+    __tablename__ = "credit_accounts"
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    balance = Column(Integer, default=0)
+    total_consumed = Column(Integer, default=0)
+    total_recharged = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class CreditTransaction(Base):
+    """积分流水（credit_transactions，delta>0 入账 / delta<0 消费）"""
+    __tablename__ = "credit_transactions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    delta = Column(Integer)                 # 正=入账，负=消费
+    type = Column(String(16))               # consume | recharge | manual | refund | free
+    tokens = Column(Integer, nullable=True)
+    amount = Column(Float, nullable=True)
+    ref = Column(String(128), nullable=True)
+    note = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class SystemConfig(Base):
+    """后台可动态改的系统配置（system_configs，如 recharge_rate / free_credit_on_register）"""
+    __tablename__ = "system_configs"
+
+    key = Column(String(64), primary_key=True)  # 如 recharge_rate / free_credit_on_register
+    value = Column(String(255))
+    description = Column(String(255), nullable=True)
+    updated_by = Column(String(64), nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

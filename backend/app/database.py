@@ -6,6 +6,7 @@ from pathlib import Path
 
 Path(settings.db_path).parent.mkdir(parents=True, exist_ok=True)
 Path(settings.feedback_db_path).parent.mkdir(parents=True, exist_ok=True)
+Path(settings.ops_db_path).parent.mkdir(parents=True, exist_ok=True)
 
 analytics_engine = create_engine(
     f"sqlite:///{settings.db_path}",
@@ -15,6 +16,12 @@ analytics_engine = create_engine(
 
 feedback_engine = create_engine(
     f"sqlite:///{settings.feedback_db_path}",
+    connect_args={"check_same_thread": False},
+    echo=False,
+)
+
+ops_engine = create_engine(
+    f"sqlite:///{settings.ops_db_path}",
     connect_args={"check_same_thread": False},
     echo=False,
 )
@@ -31,11 +38,19 @@ def _set_feedback_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
+@event.listens_for(ops_engine, "connect")
+def _set_ops_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
 AnalyticsSession = sessionmaker(bind=analytics_engine, autocommit=False, autoflush=False)
 FeedbackSession = sessionmaker(bind=feedback_engine, autocommit=False, autoflush=False)
+OpsSession = sessionmaker(bind=ops_engine, autocommit=False, autoflush=False)
 
 Base = declarative_base()
 FeedbackBase = declarative_base()
+OpsBase = declarative_base()
 
 
 def get_analytics_db():
@@ -48,6 +63,14 @@ def get_analytics_db():
 
 def get_feedback_db():
     session = FeedbackSession()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+def get_ops_db():
+    session = OpsSession()
     try:
         yield session
     finally:
@@ -74,3 +97,25 @@ def ensure_schema() -> None:
         conv_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(conversations)"))]
         if conv_cols and "topic" not in conv_cols:
             conn.execute(text("ALTER TABLE conversations ADD COLUMN topic VARCHAR(64)"))
+
+        # system_configs 种子：积分默认值（key 不存在才插入，幂等；不覆盖后台已改的配置）。
+        sc_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(system_configs)"))]
+        if sc_cols:
+            def _fmt(v) -> str:
+                # 整数值 float（如 10.0）落库为 "10"，非整 float（如 12.5）保留 "12.5"
+                return str(int(v)) if isinstance(v, float) and v.is_integer() else str(v)
+
+            # 值取 config 默认（首启时若以环境变量覆盖，则以覆盖值为准落库）
+            seeds = {
+                "recharge_rate": _fmt(settings.recharge_rate),
+                "free_credit_on_register": str(settings.free_credit_on_register),
+            }
+            for key, value in seeds.items():
+                exists = conn.execute(
+                    text("SELECT 1 FROM system_configs WHERE key = :key"), {"key": key}
+                ).first()
+                if not exists:
+                    conn.execute(
+                        text("INSERT INTO system_configs (key, value) VALUES (:key, :value)"),
+                        {"key": key, "value": value},
+                    )

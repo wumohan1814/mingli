@@ -27,7 +27,9 @@ from app.models import (
 )
 from app.auth.router import get_user_id_from_token
 from app.compliance.guardrails import append_disclaimer, check_output
+from app.credits.service import check_balance, consume
 from app.llm import LLMError, chat
+from app.llm.client import get_usage, reset_usage
 from app.methods import ANALYZERS, METHOD_KEYS
 from app.paipan import (
     paipan as paipan_engine,  # 端点函数名也是 paipan，故加别名避免遮蔽
@@ -76,6 +78,22 @@ def _case_question(case: Case) -> str:
     if isinstance(case.input_json, dict) and case.input_json.get("question"):
         return str(case.input_json["question"])
     return "事业运势"
+
+
+def _charge_llm(user_id: int, total_tokens, ref: str, what: str) -> None:
+    """LLM 调用成功后按实际 token 扣费；失败只记日志不阻断结果（架构 §6.3 对账）。
+
+    tokens <= 0（mock/零消耗）不产生流水，仅 info 日志。
+    """
+    tokens = int(total_tokens or 0)
+    if tokens <= 0:
+        logger.info("%s无 token 消耗，跳过扣费 user_id=%s ref=%s", what, user_id, ref)
+        return
+    try:
+        consume(user_id, tokens, ref=ref)
+    except Exception as exc:
+        logger.error("%s扣费失败 user_id=%s tokens=%s ref=%s error=%s",
+                     what, user_id, tokens, ref, exc)
 
 
 def _load_revise_prompt() -> str:
@@ -481,6 +499,9 @@ async def revise(
         },
     ]
 
+    # 计费预检：余额不足抛 BizError 5002（全局处理器转 502 信封），不放行 LLM
+    check_balance(user_id)
+
     try:
         resp = await chat(messages)  # 非 json_mode，拿自然语言文本
     except LLMError as exc:
@@ -488,6 +509,9 @@ async def revise(
         logger.warning("修正对话 LLM 调用失败 case_id=%s user_id=%s error=%s",
                        case_id, user_id, exc)
         raise _err(502, "修正对话服务暂不可用")
+
+    # 计费扣费：chat 已成功（LLM 已调用），扣费失败只记日志不阻断回复落库
+    _charge_llm(user_id, resp["usage"]["total_tokens"], ref=f"revise:{case_id}", what="修正对话")
 
     reply = append_disclaimer(resp["content"])
 
@@ -554,6 +578,10 @@ async def query_method(
     if chart_row is None or not isinstance(chart_row.chart_json, dict):
         raise _err(409, "case尚未排盘，无法单法直问")
 
+    # 计费：真实 LLM 前预检余额（不足抛 BizError 5002，全局处理器转信封）；
+    # 清零 usage 账本，analyze 内部经 chat 累加，调用后按本次消耗扣费
+    check_balance(user_id)
+    reset_usage()
     try:
         slices = slice_chart(chart_row.chart_json, methods=[method_key])
         result = await ANALYZERS[method_key]("prediction", slices.get(method_key),
@@ -568,6 +596,10 @@ async def query_method(
         logger.warning("单法直问降级（analyze 返回空）method_key=%s case_id=%s",
                        method_key, case_id)
         raise _err(502, "该方法当前不可用（已降级），请稍后重试")
+
+    # 计费扣费：LLM 已调用，按本次 analyze 实际消耗扣费；失败只记日志不阻断落库
+    _charge_llm(user_id, get_usage().get("total_tokens"),
+                ref=f"query:{case_id}:{method_key}", what="单法直问")
 
     # 落 MethodResult(phase=prediction)；覆盖残留空行避免重复
     if cached is not None:

@@ -147,6 +147,7 @@ async def chat(
                     _usage["completion_tokens"] += int(usage["completion_tokens"])
                     _usage["total_tokens"] += int(usage["total_tokens"])
                     _usage["calls"] += 1
+                    _record_llm_event(result["model"], usage, success=True)
                     return result
                 last_error = _raise_from_response(response.status_code, response.text)
 
@@ -159,4 +160,23 @@ async def chat(
                 break
 
     assert last_error is not None  # 循环内必赋值
+    _record_llm_event(model, None, success=False, error=str(last_error)[:200])
     raise last_error
+
+
+def _record_llm_event(model: str, usage: dict | None, *, success: bool, error: str = "") -> None:
+    """LLM 调用埋点（llm_call）。函数内 import 避免循环依赖。"""
+    try:
+        from app.events.service import record_event
+        props = {"model": model, "success": success}
+        if usage:
+            props.update({
+                "prompt_tokens": usage.get("prompt_tokens"),
+                "completion_tokens": usage.get("completion_tokens"),
+                "total_tokens": usage.get("total_tokens"),
+            })
+        if error:
+            props["error"] = error
+        record_event("llm_call", props=props)
+    except Exception:
+        logger.warning("llm_call 埋点失败", exc_info=True)

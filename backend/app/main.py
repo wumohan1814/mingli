@@ -4,12 +4,15 @@ import subprocess
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.database import Base, FeedbackBase, analytics_engine, ensure_schema, feedback_engine
+from app.database import Base, FeedbackBase, OpsBase, analytics_engine, ensure_schema, feedback_engine, ops_engine
+from app.errors import BizError, code_to_http, http_to_code, ERR_PARAM, ERR_INTERNAL
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +32,7 @@ async def lifespan(app: FastAPI):
     proc = None
     Base.metadata.create_all(bind=analytics_engine)
     FeedbackBase.metadata.create_all(bind=feedback_engine)
+    OpsBase.metadata.create_all(bind=ops_engine)
     ensure_schema()
 
     # 拉起常驻排盘服务（HTTP 优先路径；engine 已内置 subprocess 降级）
@@ -54,9 +58,13 @@ async def lifespan(app: FastAPI):
             logger.warning("排盘常驻服务停止时出错（忽略）", exc_info=True)
 
 
+from app.admin.router import router as admin_router
 from app.api.cases import router as cases_router
 from app.api.jobs import router as jobs_router
 from app.auth.router import router as auth_router
+from app.credits.router import router as credits_router
+from app.events.router import router as events_router
+from app.middleware import api_metrics_middleware
 
 app = FastAPI(
     title="太初 API",
@@ -76,9 +84,48 @@ app.add_middleware(
 )
 
 
+app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(cases_router)
 app.include_router(jobs_router)
+app.include_router(credits_router)
+app.include_router(events_router)
+
+# 请求埋点中间件（记录 /api/* 到 taichu_ops.events）
+app.middleware("http")(api_metrics_middleware)
+
+
+# --- 统一错误处理（兼容现有 {code, message, detail} 信封） ---
+@app.exception_handler(BizError)
+async def biz_error_handler(request: Request, exc: BizError):
+    return JSONResponse(status_code=code_to_http(exc.code), content=exc.to_dict())
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"code": http_to_code(exc.status_code), "message": str(exc.detail), "detail": ""},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    first = exc.errors()[0] if exc.errors() else {}
+    loc = ".".join(str(x) for x in first.get("loc", [])) or "参数"
+    return JSONResponse(
+        status_code=400,
+        content={"code": ERR_PARAM, "message": "参数错误", "detail": f"{loc}: {first.get('msg', '')}"},
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception("未捕获异常 path=%s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"code": ERR_INTERNAL, "message": "内部错误", "detail": ""},
+    )
 
 # Serve frontend static files at root (before API routes)
 frontend_path = Path("../frontend/public")

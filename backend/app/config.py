@@ -1,4 +1,5 @@
 """应用配置（pydantic-settings，从环境变量/.env加载）"""
+from pydantic import Field
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
@@ -9,6 +10,7 @@ class Settings(BaseSettings):
     # 数据库
     db_path: str = str(Path("data/taichu_analytics.db"))
     feedback_db_path: str = str(Path("data/taichu_feedback.db"))
+    ops_db_path: str = str(Path("data/taichu_ops.db"))   # TAICHU_OPS_DB_PATH（埋点/后台/错误上报运维库）
 
     # LLM（DeepSeek 官方 API，OpenAI 兼容）
     # key 只允许来自环境变量/backend/.env（TAICHU_LLM_API_KEY），严禁硬编码进源码
@@ -39,6 +41,12 @@ class Settings(BaseSettings):
     # 任务超时
     job_timeout_dqc: int = 600
     job_timeout_pred: int = 180
+
+    # 积分系统
+    credit_per_token: int = 1000            # TAICHU_CREDIT_PER_TOKEN：1 积分 = 1000 tokens
+    # alias 使环境变量名为 TAICHU_FREE_CREDIT（与字段名 free_credit_on_register 不完全对应）
+    free_credit_on_register: int = Field(default=100, validation_alias="TAICHU_FREE_CREDIT")  # 新用户注册赠送积分
+    recharge_rate: float = 10.0             # TAICHU_RECHARGE_RATE：1 元 = 10 积分（默认，后台 system_configs 可动态改）
 
     # 限流
     login_max_failures: int = 5
