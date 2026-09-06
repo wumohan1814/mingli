@@ -127,11 +127,11 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
         content={"code": ERR_INTERNAL, "message": "内部错误", "detail": ""},
     )
 
-# Serve frontend static files at root (before API routes)
-frontend_path = Path("../frontend/public")
-if frontend_path.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
-
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "0.1.0"}
+
+# Serve frontend static files at root (after API routes)
+frontend_path = Path("../frontend/public")
+if frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
