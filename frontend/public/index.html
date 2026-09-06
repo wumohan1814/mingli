@@ -2420,7 +2420,13 @@ function WaitingPage({
       color: 'var(--text-3)',
       marginTop: 4
     }
-  }, "每个方法约需数分钟，全程约 30–60 分钟；可先去做别的事，本页会持续等待。"));
+  }, "每个方法约需数分钟，全程约 30–60 分钟；可先去做别的事，本页会持续等待。"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    style: {
+      marginTop: 12
+    },
+    onClick: () => onNavigate('landing')
+  }, "回到首页"));
 }
 function CalibrationPage({
   caseId,
@@ -4393,7 +4399,12 @@ function App() {
   }), /*#__PURE__*/React.createElement("header", {
     className: "topbar"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "brand"
+    className: "brand",
+    role: "button",
+    onClick: () => navigate('landing'),
+    style: {
+      cursor: 'pointer'
+    }
   }, "太初", /*#__PURE__*/React.createElement("span", {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
