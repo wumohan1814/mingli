@@ -23,6 +23,7 @@ import json
 import logging
 from pathlib import Path
 
+from app.config import settings
 from app.llm import LLMError, chat
 
 logger = logging.getLogger(__name__)
@@ -140,7 +141,7 @@ async def analyze_method(
     ]
 
     try:
-        resp = await chat(messages, json_mode=True)
+        resp = await chat(messages, json_mode=True, max_tokens=settings.llm_max_tokens)
         result = parse_method_result(resp["content"])
     except LLMError as exc:
         logger.warning("方法 LLM 调用失败，交由编排层决定降级: method_key=%s phase=%s error=%s",
