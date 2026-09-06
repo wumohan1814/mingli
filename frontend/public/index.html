@@ -88,6 +88,29 @@
     .brand{font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.04em}
     .brand .dot{color:var(--gold-300);margin:0 2px}
     .topbar .tagline{font-size:12px;opacity:.85}
+    .topbar-side{display:flex;align-items:baseline;gap:12px;min-width:0}
+
+    /* 右上角菜单区：登录按钮 + 汉堡下拉 */
+    .topbar-menu{position:relative;display:flex;align-items:center;flex:none}
+    .topbar-menu .menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
+      background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
+    .topbar-menu .menu-btn:hover{background:rgba(128,128,150,.32)}
+    .topbar-menu .menu-btn .bars{display:flex;flex-direction:column;gap:4px;width:16px;pointer-events:none}
+    .topbar-menu .menu-btn .bars .bar{height:2px;border-radius:2px;background:currentColor}
+    .menu-login-btn{display:flex;align-items:center;gap:6px;padding:7px 15px;border-radius:999px;font-size:13px;font-weight:600;
+      color:var(--skin-banner-ink);background:transparent;border:1px solid var(--skin-banner-ink);line-height:1.4;white-space:nowrap;
+      transition:background .18s ease,color .18s ease}
+    .menu-login-btn:hover{background:var(--skin-banner-ink);color:var(--skin-banner)}
+    .menu-drop{position:absolute;right:0;top:calc(100% + 10px);z-index:60;min-width:184px;padding:6px;
+      background:var(--surface);color:var(--text-1);border:1px solid var(--border);border-radius:14px;
+      box-shadow:0 14px 34px rgba(26,33,56,.24);display:flex;flex-direction:column;gap:2px}
+    .menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:9px;text-align:left;
+      font-size:14px;color:var(--text-1);background:none;transition:background .14s ease,color .14s ease;white-space:nowrap}
+    .menu-item:hover{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .menu-item .mi-dot{width:8px;height:8px;border-radius:50%;flex:none}
+    .menu-sep{height:1px;background:var(--border);margin:4px 8px}
+    .menu-item.logout{color:var(--cinnabar)}
+    .menu-item.logout:hover{background:rgba(178,58,58,.1);color:var(--cinnabar)}
 
     /* 底部皮肤切换胶囊（随主题换色） */
     .skin-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:20;display:flex;gap:4px;
@@ -335,12 +358,17 @@
     .nav-rail button{position:relative;border:none;border-radius:0 14px 14px 0;width:58px;padding:14px 6px;min-height:96px;cursor:pointer;
       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
       color:#fff;font-size:13px;font-weight:600;line-height:1.25;letter-spacing:1px;
-      transition:transform .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease,width .18s ease;
+      transition:transform .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease,width .2s ease;
       box-shadow:2px 2px 10px rgba(0,0,0,.18);filter:brightness(.82)}
     .nav-rail button .rail-ico{width:22px;height:22px}
     .nav-rail button:hover{filter:brightness(.95);width:66px}
     .nav-rail button.active{width:74px;box-shadow:5px 4px 18px rgba(0,0,0,.32);filter:brightness(1.05)}
     .nav-rail button .rail-label{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap}
+    /* 选中模块时按钮展开：竖排窄条 → 横排长条（图标 + 横排文字） */
+    .nav-rail button.expanded{width:132px;min-height:56px;padding:10px 16px;flex-direction:row;justify-content:flex-start;gap:10px;
+      box-shadow:5px 4px 18px rgba(0,0,0,.32);filter:brightness(1.06)}
+    .nav-rail button.expanded:hover{width:132px}
+    .nav-rail button.expanded .rail-label{writing-mode:horizontal-tb;text-orientation:mixed;letter-spacing:1px}
 
     /* ===== HUB 入口卡 ===== */
     .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
@@ -1083,109 +1111,71 @@ function SkinSwitcher({
 
 // ---- Pages ----
 function LandingPage({
+  module,
   onNavigate
 }) {
+  // 各模块的「落地宣传页」配置：主标题 / 副标题 / 简介 / 主按钮 → 对应 HUB 或测试页
+  const MODS = {
+    guoxue: {
+      icon: 'nine',
+      title: '太初 · 九法合参',
+      subtitle: '八字 · 紫微 · 西占 · 七政 · 奇门 · 五运六气等 9 法综合',
+      intro: '九大命理流派并行推演，AI 逐柱逐宫演算、交叉印证，从事业、财运、婚姻到健康，为你合成一份整体运势参考。全程约 30–60 分钟，值得等待。',
+      cta: '进入国学预测',
+      to: 'guoxue-hub'
+    },
+    xishi: {
+      icon: 'orbit',
+      title: '西式占卜',
+      subtitle: '星座 · 塔罗 · 雷诺曼',
+      intro: '从本命星盘、行运推演，到塔罗牌阵与雷诺曼小牌——AI 以符号与意象为语，陪你梳理情绪、看清关系与当下的每一个抉择。',
+      cta: '进入西式占卜',
+      to: 'xishi-hub'
+    },
+    mbti: {
+      icon: 'spark',
+      title: 'MBTI 人格测试',
+      subtitle: '认识你的 16 型人格',
+      intro: '通过 16 型人格框架，梳理你的能量来源、信息偏好与决策方式。逐题作答，AI 将结合你的选择给出专属类型画像与解读。',
+      cta: '开始测试',
+      to: 'mbti'
+    }
+  };
+  const c = MODS[module] || MODS.guoxue;
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
-      textAlign: 'center'
+      textAlign: 'center',
+      paddingTop: 32,
+      paddingBottom: 32
     }
-  }, /*#__PURE__*/React.createElement("h1", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--skin-accent)',
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: c.icon,
+    size: 44
+  })), /*#__PURE__*/React.createElement("h1", {
     className: "title"
-  }, "太初 · 九法合参，看清你的人生大势"), /*#__PURE__*/React.createElement("p", {
+  }, c.title), /*#__PURE__*/React.createElement("p", {
     className: "subtitle"
-  }, "九大流派交叉印证 · 越用越懂你 · 更接近真实"), /*#__PURE__*/React.createElement("p", {
+  }, c.subtitle), /*#__PURE__*/React.createElement("p", {
     style: {
       color: 'var(--text-2)',
       fontSize: 13,
-      marginBottom: 24
+      lineHeight: 1.9,
+      marginBottom: 26
     }
-  }, "九大命理流派并行推演，AI 逐柱逐宫演算、交叉印证，最终合成一份完整的人生运势解读——事业、财运、婚姻、健康尽在其中。全程约 30–60 分钟，值得等待。"), /*#__PURE__*/React.createElement("button", {
+  }, c.intro), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
-    onClick: () => onNavigate(token ? 'cases' : 'auth')
-  }, "开始我的命理推演")), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      marginTop: 16
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card feature",
-    style: {
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'var(--skin-accent)',
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: 4
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "nine",
-    size: 30
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      fontWeight: 600
-    }
-  }, "多流派综合"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--text-3)'
-    }
-  }, "九法交叉验证")), /*#__PURE__*/React.createElement("div", {
-    className: "card feature",
-    style: {
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'var(--skin-accent)',
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: 4
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "pencil",
-    size: 26
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      fontWeight: 600
-    }
-  }, "可修正"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--text-3)'
-    }
-  }, "校准断言再测算")), /*#__PURE__*/React.createElement("div", {
-    className: "card feature",
-    style: {
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'var(--skin-accent)',
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: 4
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "chat",
-    size: 26
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      fontWeight: 600
-    }
-  }, "更准确的回答"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--text-3)'
-    }
-  }, "交叉印证，更接近真实"))));
+    onClick: () => onNavigate(c.to)
+  }, c.cta)));
 }
 
 // —— 积分系统组件（沿用国学皮肤令牌，不新增配色）——
@@ -4566,32 +4556,32 @@ const MODULE_HUB = {
     skin: 'mbti'
   }
 };
+const RAIL_MODS = [{
+  id: 'guoxue',
+  label: '国学预测',
+  color: '#3E7C6B',
+  icon: 'nine'
+}, {
+  id: 'xishi',
+  label: '西式占卜',
+  color: '#5B4B8A',
+  icon: 'orbit'
+}, {
+  id: 'mbti',
+  label: 'MBTI',
+  color: '#4A5BB5',
+  icon: 'spark'
+}];
 function NavRail({
   module,
   onSelect
 }) {
-  const MOD = [{
-    id: 'guoxue',
-    label: '国学预测',
-    color: '#3E7C6B',
-    icon: 'nine'
-  }, {
-    id: 'xishi',
-    label: '西式占卜',
-    color: '#5B4B8A',
-    icon: 'orbit'
-  }, {
-    id: 'mbti',
-    label: 'MBTI',
-    color: '#4A5BB5',
-    icon: 'spark'
-  }];
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav-rail",
     "aria-label": "模块导航"
-  }, MOD.map(m => /*#__PURE__*/React.createElement("button", {
+  }, RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
     key: m.id,
-    className: module === m.id ? 'active' : '',
+    className: module === m.id ? 'active expanded' : '',
     style: {
       background: m.color
     },
@@ -4604,6 +4594,81 @@ function NavRail({
   }), /*#__PURE__*/React.createElement("span", {
     className: "rail-label"
   }, m.label))));
+}
+
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示汉堡按钮 + 下拉（切模块回落地页 / 退出登录）
+function TopbarMenu({
+  loggedIn,
+  onAuth,
+  onPickModule,
+  onLogout
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = e => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = e => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+  if (!loggedIn) return /*#__PURE__*/React.createElement("div", {
+    className: "topbar-menu"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "menu-login-btn",
+    onClick: onAuth
+  }, "登录 / 注册"));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "topbar-menu",
+    ref: wrapRef
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "menu-btn",
+    type: "button",
+    onClick: () => setOpen(o => !o),
+    "aria-label": open ? '关闭菜单' : '打开菜单',
+    "aria-expanded": open ? 'true' : 'false'
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bars"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bar"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "bar"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "bar"
+  }))), open && /*#__PURE__*/React.createElement("div", {
+    className: "menu-drop",
+    role: "menu"
+  }, RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
+    key: m.id,
+    className: "menu-item",
+    role: "menuitem",
+    onClick: () => {
+      setOpen(false);
+      onPickModule(m.id);
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mi-dot",
+    style: {
+      background: m.color
+    }
+  }), m.label)), /*#__PURE__*/React.createElement("div", {
+    className: "menu-sep"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "menu-item logout",
+    role: "menuitem",
+    onClick: () => {
+      setOpen(false);
+      onLogout();
+    }
+  }, "退出登录")));
 }
 
 /* ---------- 国学预测 HUB ---------- */
@@ -7068,16 +7133,19 @@ function App() {
     setSkin(s);
     localStorage.setItem('taichu_skin', s);
   };
-  // 左侧导航栏选择模块：同步 module 状态 + 皮肤 + 跳转到该模块 Hub
+  // 切换模块（左侧 NavRail + Banner 菜单共用）：只同步 module + 皮肤并「留在 landing 落地宣传页」，
+  // 不直接跳 HUB；落地页主按钮才负责进入对应 HUB / 测试页（onNavigate）。
   const selectModule = id => {
     const h = MODULE_HUB[id];
     if (!h) return;
     setModule(id);
     applySkin(h.skin);
-    navigate(h.page);
+    setPage('landing');
+    setParams({});
   };
   const pages = {
     landing: /*#__PURE__*/React.createElement(LandingPage, {
+      module: module,
       onNavigate: navigate
     }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
@@ -7157,6 +7225,8 @@ function App() {
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("header", {
     className: "topbar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "topbar-side"
   }, /*#__PURE__*/React.createElement("span", {
     className: "brand",
     role: "button",
@@ -7168,12 +7238,17 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, "命理全局 · 运势趋势")), /*#__PURE__*/React.createElement("div", {
+  }, "命理全局 · 运势趋势")), /*#__PURE__*/React.createElement(TopbarMenu, {
+    loggedIn: !!token,
+    onAuth: () => navigate('auth'),
+    onPickModule: selectModule,
+    onLogout: () => logout()
+  })), /*#__PURE__*/React.createElement("div", {
     className: "app-shell"
   }, /*#__PURE__*/React.createElement("div", {
     className: "view-enter",
     key: page
-  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page !== 'auth' && /*#__PURE__*/React.createElement(NavRail, {
+  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
     module: module,
     onSelect: selectModule
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
