@@ -1552,6 +1552,51 @@ function AuthPage({
   }, isLogin ? '没有账号？去注册' : '已有账号？去登录')));
 }
 
+// 档案命名模态框：受控输入 + 取消/确定，确定中禁用按钮防重复提交
+function RenameModal({
+  value,
+  onChange,
+  onConfirm,
+  onCancel,
+  busy
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-mask",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-title"
+  }, "给这份档案起个名字"), /*#__PURE__*/React.createElement("input", {
+    className: "input",
+    value: value,
+    onChange: onChange,
+    placeholder: "请输入档案名称",
+    autoFocus: true,
+    onKeyDown: e => {
+      if (e.key === 'Enter') onConfirm();
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex-row",
+    style: {
+      marginTop: 16,
+      justifyContent: 'center',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    onClick: onCancel,
+    disabled: busy
+  }, "取消"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    type: "button",
+    onClick: onConfirm,
+    disabled: busy
+  }, "确定"))));
+}
+
 // 档案列表页：GET /api/cases 展示用户全部命理档案，可查看解读 / 继续 / 进入档案 / 新建
 function CasesPage({
   onNavigate
@@ -1559,6 +1604,9 @@ function CasesPage({
   const [caseList, setCaseList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
+  const [renameTarget, setRenameTarget] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [renameBusy, setRenameBusy] = useState(false);
   const load = async () => {
     setLoading(true);
     setErrored('');
@@ -1588,17 +1636,25 @@ function CasesPage({
   const genderText = g => g === 'male' ? '男' : g === 'female' ? '女' : g || '-';
   const dateText = t => t ? String(t).slice(0, 10) : '-';
 
-  // 命名：prompt 输入 → PATCH /cases/{caseId} {name} → 本地更新该条（避免整页重拉闪烁）
-  const handleRename = async c => {
-    const raw = prompt('给这份档案起个名字', c.name || '');
-    if (raw == null) return; // 用户点了取消
-    const name = String(raw).trim();
+  // 命名：点「命名」打开模态框，输入后确定提交；空名提示
+  const openRename = c => {
+    setRenameTarget(c);
+    setRenameValue(c.name || '');
+    setRenameBusy(false);
+  };
+  const closeRename = () => {
+    if (!renameBusy) setRenameTarget(null);
+  };
+  const submitRename = async () => {
+    if (!renameTarget) return;
+    const name = String(renameValue || '').trim();
     if (!name) {
       toast('名字不能为空');
       return;
     }
+    setRenameBusy(true);
     try {
-      const res = await api('/cases/' + c.caseId, {
+      const res = await api('/cases/' + renameTarget.caseId, {
         method: 'PATCH',
         body: JSON.stringify({
           name
@@ -1606,13 +1662,16 @@ function CasesPage({
       });
       const data = res && res.data || {};
       const savedName = data.name || name;
-      setCaseList(list => list.map(x => x.caseId === c.caseId ? {
+      setCaseList(list => list.map(x => x.caseId === renameTarget.caseId ? {
         ...x,
         name: savedName
       } : x));
       toast('命名成功');
+      setRenameTarget(null);
     } catch (e) {
-      alert(e.message || '命名失败，请重试。');
+      toast(e.message || '命名失败，请重试。');
+    } finally {
+      setRenameBusy(false);
     }
   };
   // 删除：confirm 确认 → DELETE /cases/{caseId} → 从列表移除
@@ -1874,7 +1933,7 @@ function CasesPage({
         padding: '8px',
         fontSize: 13
       },
-      onClick: () => handleRename(c)
+      onClick: () => openRename(c)
     }, "命名"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
       style: {
@@ -1885,6 +1944,12 @@ function CasesPage({
       },
       onClick: () => handleDelete(c)
     }, "删除")));
+  }), renameTarget && /*#__PURE__*/React.createElement(RenameModal, {
+    value: renameValue,
+    onChange: e => setRenameValue(e.target.value),
+    onConfirm: submitRename,
+    onCancel: closeRename,
+    busy: renameBusy
   }));
 }
 function OnboardingPage({
