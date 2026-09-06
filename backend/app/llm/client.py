@@ -6,6 +6,7 @@
   4xx（401 鉴权、400 参数、404 模型不存在等）不重试，直接抛 LLMError。
 """
 import asyncio
+import contextvars
 import logging
 
 import httpx
@@ -14,23 +15,25 @@ from ..config import settings
 
 logger = logging.getLogger(__name__)
 
-# 进程内 usage 累计账本（MVP 单进程）。
-# 并发下简单 `+=` 累计即可，总量正确；无锁。Phase 2 换结构化 metrics 后此模块废弃。
-_usage = {"prompt_tokens": 0, "prompt_cache_hit_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "calls": 0}
+# 进程内 usage 账本（MVP 单进程）。
+# 用 contextvars.ContextVar 按 asyncio task 隔离：asyncio.gather / create_task 会为每个
+# 协程复制当前 context，因此每个并发 method 协程内只累计它自己的 chat 调用，编排层
+# 的「快照差值」即为该法自己的消耗（并发下逐法扣费精确）。
+# 纪律：**绝不可原地修改 `.get()` 返回的 dict**——ContextVar 隔离靠「读当前 → 构造
+# 新 dict → `.set()`」实现；reset_usage / chat 累加全部走 `.set()` 新对象，default 与
+# 各 context 持有的旧 dict 永不 mutate，避免污染共享对象。
+_default_usage = {"prompt_tokens": 0, "prompt_cache_hit_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "calls": 0}
+_usage_var: contextvars.ContextVar[dict] = contextvars.ContextVar("llm_usage", default=_default_usage)
 
 
 def reset_usage() -> None:
-    """清零进程内 usage 账本（编排任务开始时调用）。"""
-    _usage["prompt_tokens"] = 0
-    _usage["prompt_cache_hit_tokens"] = 0
-    _usage["completion_tokens"] = 0
-    _usage["total_tokens"] = 0
-    _usage["calls"] = 0
+    """清零当前 context 的 usage 账本（编排任务开始时调用）。"""
+    _usage_var.set(dict(_default_usage))
 
 
 def get_usage() -> dict:
-    """返回当前累计 usage 的副本。"""
-    return dict(_usage)
+    """返回当前 context 累计 usage 的副本。"""
+    return dict(_usage_var.get())
 
 
 class LLMError(Exception):
@@ -141,12 +144,16 @@ async def chat(
                         "LLM chat 成功 model=%s prompt_tokens=%s completion_tokens=%s total_tokens=%s",
                         result["model"], usage["prompt_tokens"], usage["completion_tokens"], usage["total_tokens"],
                     )
-                    # 成功返回前累加进进程内 usage 账本（calls+1）
-                    _usage["prompt_tokens"] += int(usage["prompt_tokens"])
-                    _usage["prompt_cache_hit_tokens"] += int(usage.get("prompt_cache_hit_tokens", 0))
-                    _usage["completion_tokens"] += int(usage["completion_tokens"])
-                    _usage["total_tokens"] += int(usage["total_tokens"])
-                    _usage["calls"] += 1
+                    # 成功返回前把本次 usage 累加进当前 context 的账本（calls+1）。
+                    # 读当前 → 构造新 dict → .set()，绝不原地修改 .get() 返回的 dict。
+                    cur = _usage_var.get()
+                    _usage_var.set({
+                        "prompt_tokens": cur["prompt_tokens"] + int(usage["prompt_tokens"]),
+                        "prompt_cache_hit_tokens": cur["prompt_cache_hit_tokens"] + int(usage.get("prompt_cache_hit_tokens", 0)),
+                        "completion_tokens": cur["completion_tokens"] + int(usage["completion_tokens"]),
+                        "total_tokens": cur["total_tokens"] + int(usage["total_tokens"]),
+                        "calls": cur["calls"] + 1,
+                    })
                     _record_llm_event(result["model"], usage, success=True)
                     return result
                 last_error = _raise_from_response(response.status_code, response.text)
