@@ -73,6 +73,28 @@ def chart_snapshot() -> dict:
         return json.load(f)
 
 
+@pytest.fixture(autouse=True)
+def clean_register_limits(orchestration_env):
+    """每个用例开始前清空 register_limits（注册限流计数表）。
+
+    为什么需要：TestClient 发出的所有请求 client.host 都是同一个假 IP
+    （"testclient"），且全套 e2e 共用 conftest 的同一个会话级临时 analytics 库；
+    跨用例累计注册会让第 3 次 register 撞上“同一 IP 1 小时最多 2 次”的限流而误红。
+    e2e 用例验证的是注册→业务主链路而非限流本身，故以“每例前清表”隔离计数
+    （单个用例内最多 2 次 register，本就达不到 >=3 才触发的 IP 阈值）。
+    """
+    from app.database import AnalyticsSession
+    from app.models import RegisterLimit
+
+    session = AnalyticsSession()
+    try:
+        session.query(RegisterLimit).delete()
+        session.commit()
+    finally:
+        session.close()
+    yield
+
+
 @pytest.fixture()
 def paipan_case(orchestration_env, chart_snapshot):
     """工厂夹具：生成一个已排盘的 case（user/case/chart 三行已落临时库）。
