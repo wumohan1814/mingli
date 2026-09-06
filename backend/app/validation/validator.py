@@ -142,7 +142,7 @@ async def validate(method_result: dict, slice_data: dict | None = None) -> dict:
     ]
 
     try:
-        resp = await chat(messages, model=settings.llm_validation_model, json_mode=True)
+        resp = await chat(messages, model=settings.llm_validation_model, json_mode=True, max_tokens=settings.llm_validation_max_tokens)
         validations = parse_validations(resp["content"])
     except LLMError as exc:
         logger.warning("命题校验 LLM 调用失败，交由编排层决定处理: %s", exc)

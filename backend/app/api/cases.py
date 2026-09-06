@@ -345,6 +345,20 @@ async def duan_qian_chen(
     if not case:
         raise HTTPException(status_code=404, detail="case不存在")
 
+    # 幂等防重复：同一 case 已有 running/pending 的断前尘 job 时复用，避免刷新/重进导致重复跑+重复扣费
+    existing = (
+        db.query(Job)
+        .filter_by(case_id=case_id, user_id=user_id, type=JobType.duan_qian_chen)
+        .filter(Job.status.in_([JobStatus.pending, JobStatus.running]))
+        .order_by(Job.id.desc())
+        .first()
+    )
+    if existing is not None:
+        return JSONResponse(
+            status_code=202,
+            content={"code": 0, "message": "ok", "data": {"jobId": str(existing.id), "total": existing.total, "reused": True}},
+        )
+
     # 创建异步任务（后台编排器独立 session 执行，不占用本请求 session）
     job = Job(
         case_id=case_id,
@@ -434,6 +448,20 @@ async def predict(
     case = db.query(Case).filter_by(id=case_id, user_id=user_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="case不存在")
+
+    # 幂等防重复：同一 case 已有 running/pending 的 predict job 时复用，避免刷新/重进导致重复跑+重复扣费
+    existing = (
+        db.query(Job)
+        .filter_by(case_id=case_id, user_id=user_id, type=JobType.predict)
+        .filter(Job.status.in_([JobStatus.pending, JobStatus.running]))
+        .order_by(Job.id.desc())
+        .first()
+    )
+    if existing is not None:
+        return JSONResponse(
+            status_code=202,
+            content={"code": 0, "message": "ok", "data": {"jobId": str(existing.id), "total": existing.total, "reused": True}},
+        )
 
     # 建 job：total 先置 0，后台编排器路由后回填实际方法数
     job = Job(

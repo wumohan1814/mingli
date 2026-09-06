@@ -18,9 +18,11 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://api.deepseek.com"  # TAICHU_LLM_BASE_URL
     llm_model: str = "deepseek-v4-flash"         # TAICHU_LLM_MODEL（解读/分析主模型）
     llm_validation_model: str = "deepseek-v4-flash"  # TAICHU_LLM_VALIDATION_MODEL（校验模型，MVP 与主模型同档，留可换便宜模型）
-    llm_timeout: float = 60.0                    # TAICHU_LLM_TIMEOUT（秒）
+    llm_timeout: float = 180.0                  # TAICHU_LLM_TIMEOUT（秒；断前尘 method 为长 prompt+长 JSON 输出，需更长超时）
     llm_max_retries: int = 1                     # TAICHU_LLM_MAX_RETRIES（1 原始 + 1 重试 = 最多 2 次尝试）
     llm_temperature: float = 0.3                 # TAICHU_LLM_TEMPERATURE
+    llm_max_tokens: int = 12000                  # TAICHU_LLM_MAX_TOKENS（method analyze 输出上限，防超长拖慢生成）
+    llm_validation_max_tokens: int = 4000        # TAICHU_LLM_VALIDATION_MAX_TOKENS（校验输出上限）
     llm_max_concurrency: int = 3                 # TAICHU_LLM_MAX_CONCURRENCY（单用户断前尘/预测 method 并发上限）
     llm_global_max_concurrency: int = 100        # TAICHU_LLM_GLOBAL_MAX_CONCURRENCY（全局 method 并发兜底，跨所有用户）
 
