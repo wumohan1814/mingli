@@ -1,0 +1,22 @@
+# Git / 环境
+.git
+.env
+*.db
+
+# Python 缓存
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 参考项目 / 临时产物 / 工具目录
+reference/
+temp/
+.workbuddy/
+
+# 前端 Vite 依赖（免构建，不需要）
+frontend/node_modules/
+frontend/src/
+
+# 本地数据库与测试（不进镜像）
+backend/data/
+backend/tests/

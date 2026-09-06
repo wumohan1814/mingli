@@ -16,12 +16,13 @@ logger = logging.getLogger(__name__)
 
 # 进程内 usage 累计账本（MVP 单进程）。
 # 并发下简单 `+=` 累计即可，总量正确；无锁。Phase 2 换结构化 metrics 后此模块废弃。
-_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "calls": 0}
+_usage = {"prompt_tokens": 0, "prompt_cache_hit_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "calls": 0}
 
 
 def reset_usage() -> None:
     """清零进程内 usage 账本（编排任务开始时调用）。"""
     _usage["prompt_tokens"] = 0
+    _usage["prompt_cache_hit_tokens"] = 0
     _usage["completion_tokens"] = 0
     _usage["total_tokens"] = 0
     _usage["calls"] = 0
@@ -64,12 +65,17 @@ def _parse_success(data: dict, model: str) -> dict:
     message = choices[0].get("message") or {}
     content = message.get("content")
     if not content:
+        # DeepSeek 推理模型（如 deepseek-v4-flash）在 json_mode 下可能把结果放进
+        # reasoning_content（推理字段），而 content 为空 → 回退到 reasoning_content。
+        content = message.get("reasoning_content") or ""
+    if not content:
         raise LLMError(f"LLM 响应 content 为空: {_truncate(str(data))}")
     usage = data.get("usage") or {}
     return {
         "content": content,
         "usage": {
             "prompt_tokens": int(usage.get("prompt_tokens", 0)),
+            "prompt_cache_hit_tokens": int(usage.get("prompt_cache_hit_tokens", 0)),
             "completion_tokens": int(usage.get("completion_tokens", 0)),
             "total_tokens": int(usage.get("total_tokens", 0)),
         },
@@ -137,6 +143,7 @@ async def chat(
                     )
                     # 成功返回前累加进进程内 usage 账本（calls+1）
                     _usage["prompt_tokens"] += int(usage["prompt_tokens"])
+                    _usage["prompt_cache_hit_tokens"] += int(usage.get("prompt_cache_hit_tokens", 0))
                     _usage["completion_tokens"] += int(usage["completion_tokens"])
                     _usage["total_tokens"] += int(usage["total_tokens"])
                     _usage["calls"] += 1

@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>太初 · 事业运势趋势参考</title>
+  <title>太初 · 命理全局运势趋势</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
   <script src="./vendor/react.production.min.js"></script>
   <script src="./vendor/react-dom.production.min.js"></script>
   <script src="./vendor/babel.min.js"></script>
+  <script src="./vendor/regions.js"></script>
   <style>
     :root{
       /* 主色 墨蓝 / 靛青 */
@@ -97,6 +98,13 @@
     .input{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:16px;margin:8px 0;background:var(--surface);color:var(--text-1)}
     .input:focus{outline:none;border-color:var(--skin-accent)}
     .label{font-size:13px;color:var(--text-2);margin-top:12px;display:block}
+
+    /* 注册协议勾选（仅注册页显示） */
+    .agree-row{display:flex;align-items:flex-start;gap:8px;margin:14px 0 2px;text-align:left}
+    .agree-row input{flex-shrink:0;margin-top:3px;width:auto;accent-color:var(--skin-accent);cursor:pointer}
+    .agree-label{font-size:13px;color:var(--text-2);line-height:1.6;cursor:pointer}
+    .agree-label a{color:var(--ink-500);text-decoration:none;border-bottom:1px solid rgba(68,85,143,.35);margin:0 1px}
+    .agree-label a:hover{color:var(--skin-accent);border-bottom-color:currentColor}
     .title{font-family:var(--font-serif);font-size:24px;color:var(--ink-700);text-align:center;margin:8px 0 16px;font-weight:600}
     .subtitle{font-size:14px;color:var(--text-2);text-align:center;margin-bottom:24px}
     .error{background:#FFF0F0;color:var(--cinnabar);padding:12px;border-radius:var(--radius-sm);font-size:13px}
@@ -105,6 +113,11 @@
     /* 免责星印（跨皮肤合规标记，硬编码朱砂） */
     .disclaimer{font-size:11px;color:var(--cinnabar);text-align:center;margin:0 auto;padding:18px 20px;max-width:480px;line-height:1.6}
     .disclaimer .star{margin-right:4px}
+    /* 协议链接行（低调小字，随免责色） */
+    .disclaimer .legal-links{margin-top:8px;font-size:10px;letter-spacing:.02em}
+    .disclaimer .legal-links a{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(178,58,58,.4);padding-bottom:1px;margin:0 3px;opacity:.85}
+    .disclaimer .legal-links a:hover{opacity:1;border-bottom-color:rgba(178,58,58,.9)}
+    .disclaimer .legal-sep{opacity:.5}
 
     .progress{height:6px;background:var(--border);border-radius:3px;margin:16px 0;overflow:hidden}
     .progress-bar{height:100%;background:linear-gradient(90deg,var(--skin-accent),var(--gold-500));border-radius:3px;transition:width .5s var(--ease)}
@@ -183,6 +196,129 @@
     .card{transition:box-shadow .25s var(--ease),transform .25s var(--ease)}
     .card:hover{box-shadow:0 6px 22px rgba(26,33,56,.14)}
     .btn-primary:hover{box-shadow:0 6px 20px rgba(26,33,56,.26)}
+
+    /* 解读页「历史追问 / 矫正」列表 */
+    .hist-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .hist-item{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);
+      background:var(--paper);font-size:13px;color:var(--text-1);line-height:1.55;cursor:pointer;word-break:break-word;
+      transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+    .hist-item:hover{border-color:var(--skin-accent);background:#f0ece0}
+
+    /* ===== 完整盘面（八字/紫微/占星/七政/奇门/五运六气） ===== */
+    .chart-view{margin-top:14px}
+    .chart-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
+    .chart-tab{padding:7px 13px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-pill);font-size:13px;cursor:pointer;color:var(--text-2);transition:.18s}
+    .chart-tab:hover{border-color:var(--skin-accent)}
+    .chart-tab.active{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);font-weight:600}
+    .sub-title{font-size:13px;font-weight:600;color:var(--skin-accent);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+    .sub-title::before{content:"";width:3px;height:13px;background:var(--skin-accent);border-radius:2px;display:inline-block}
+    .daymaster{display:flex;align-items:baseline;gap:8px;margin:2px 0 4px}
+    .daymaster .dm{font-size:21px;font-weight:700;color:var(--skin-accent)}
+    .daymaster .dm-wx{font-size:13px;color:var(--text-2)}
+    .aux-line{font-size:12px;color:var(--text-3);margin:6px 0;line-height:1.75}
+    .aux-line b{color:var(--text-2);font-weight:600}
+
+    /* 四柱表 */
+    .four-pillars{display:grid;grid-template-columns:74px repeat(4,1fr);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface)}
+    .fp-cell{padding:9px 6px;text-align:center;font-size:13px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:0;word-break:break-word}
+    .fp-cell:last-child{border-right:none}
+    .fp-cell.fp-rowhead{background:#f4f0e7;font-weight:600;color:var(--text-2);text-align:left;padding-left:10px}
+    .fp-cell.fp-head{background:var(--skin-accent);color:var(--skin-accent-ink);font-weight:600}
+    .fp-cell.fp-day{background:var(--skin-accent-soft);font-weight:600;color:var(--skin-accent)}
+    .fp-cell.fp-head.fp-day{background:var(--skin-accent);color:var(--skin-accent-ink)}
+
+    /* 神煞标签 */
+    .shensha-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .shensha-tag{font-size:12px;padding:3px 9px;border-radius:var(--radius-pill);border:1px solid transparent;line-height:1.4}
+    .shensha-tag.green{background:rgba(62,124,107,.14);color:#2f6b5b;border-color:rgba(62,124,107,.3)}
+    .shensha-tag.red{background:rgba(178,58,58,.12);color:var(--cinnabar);border-color:rgba(178,58,58,.3)}
+    .shensha-tag.gold{background:rgba(191,161,90,.16);color:#9a7d34;border-color:rgba(191,161,90,.35)}
+
+    /* 通用小表格 */
+    .mini-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+    .mini-table th,.mini-table td{border:1px solid var(--border);padding:6px 8px;text-align:center}
+    .mini-table th{background:#f4f0e7;color:var(--text-2);font-weight:600}
+    .mini-table td{color:var(--text-1)}
+
+    /* 流年时间轴 */
+    .timeline{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-top:4px}
+    .tl-item{flex:0 0 auto;width:128px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px}
+    .tl-year{font-weight:700;font-size:14px;color:var(--skin-accent)}
+    .tl-age{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px}
+    .tl-ganzhi{font-size:13px;margin:3px 0}
+    .tl-dy{display:block;font-size:11px;color:var(--text-3)}
+    .tl-events{display:flex;flex-direction:column;gap:3px}
+    .tl-ev{font-size:11px;color:var(--cinnabar);background:rgba(178,58,58,.07);border-radius:6px;padding:2px 5px;line-height:1.35}
+
+    /* 紫微十二宫 */
+    .ziwei-wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+    .ziwei-wheel{flex:0 0 auto;width:240px;height:240px;max-width:100%}
+    .zw-ring{fill:none;stroke:var(--skin-accent);stroke-width:1.5;opacity:.5}
+    .zw-ring-inner{fill:none;stroke:var(--skin-accent);stroke-width:1;opacity:.3}
+    .zw-label{font-size:12px;fill:var(--text-2)}
+    .zw-center{font-size:13px;font-weight:700;fill:var(--skin-accent)}
+    .zw-center2{font-size:11px;fill:var(--text-3)}
+    .palace-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:8px;flex:1;min-width:260px}
+    .palace-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;background:var(--surface)}
+    .palace-card.body{border-color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .pc-name{font-weight:700;font-size:13px;color:var(--text-1);display:flex;align-items:center;gap:5px}
+    .pc-badge{font-size:10px;background:var(--skin-accent);color:var(--skin-accent-ink);border-radius:6px;padding:1px 5px}
+    .pc-stem{font-size:12px;color:var(--text-3);margin:2px 0}
+    .pc-stars{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+    .pc-major{font-size:12px;background:var(--skin-accent);color:var(--skin-accent-ink);border-radius:6px;padding:1px 6px}
+    .pc-stars.sm{font-size:11px;color:var(--text-2)}
+    .pc-stars.adj{font-size:11px;color:var(--text-3)}
+    .pc-sihua{font-size:11px;color:var(--cinnabar);margin-top:3px}
+
+    /* 占星 / 七政 表格 */
+    .planet-table,.star-table,.aspect-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+    .planet-table th,.star-table th,.aspect-table th,.planet-table td,.star-table td,.aspect-table td{border:1px solid var(--border);padding:6px 8px}
+    .planet-table th,.star-table th,.aspect-table th{background:#f4f0e7;color:var(--text-2);font-weight:600;text-align:left}
+    .planet-table td,.star-table td,.aspect-table td{color:var(--text-1)}
+    .retro{color:var(--cinnabar);font-size:11px}
+
+    /* 奇门九宫 */
+    .qimen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:420px;margin-top:4px}
+    .qimen-cell{border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 8px;background:var(--surface);min-height:78px}
+    .qc-name{font-weight:700;font-size:13px;color:var(--skin-accent)}
+    .qc-meta{font-size:11px;color:var(--text-3)}
+    .qc-lines{font-size:11.5px;color:var(--text-1);margin-top:3px;line-height:1.5}
+
+    /* 五运六气对比 */
+    .wuyun-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+    .wuyun-col{border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--surface)}
+    .wuyun-col h4{margin:0 0 8px;font-size:13px;color:var(--skin-accent)}
+    .wuyun-col .kv{font-size:12.5px}
+
+    .empty-note{font-size:13px;color:var(--text-3);background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
+    .deg-banner{font-size:12px;color:var(--cinnabar);background:rgba(178,58,58,.08);border-radius:var(--radius-md);padding:8px 10px;margin-bottom:6px;line-height:1.6}
+
+    /* —— 积分系统（沿用国学皮肤令牌，不新增配色）—— */
+    .credit-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--radius-pill);background:var(--skin-banner);color:#fff;font-size:13px;font-weight:600;cursor:pointer;line-height:1.5;transition:transform .12s,box-shadow .2s}
+    .credit-pill:hover{box-shadow:0 4px 14px rgba(178,58,58,.28)}
+    .credit-pill.warn{background:var(--cinnabar)}
+    .credit-pill .pill-bal{font-variant-numeric:tabular-nums}
+    .credit-pill.skeleton{width:96px;height:26px;padding:0;border:none;background:linear-gradient(90deg,#e9e2d6 25%,#f4efe6 37%,#e9e2d6 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+    .credit-balance-wrap{display:inline-flex;align-items:center;gap:8px}
+    .recharge-link{background:none;border:none;color:var(--skin-accent);font-size:12px;font-weight:600;cursor:pointer;padding:2px 4px;border-radius:var(--radius-sm);text-decoration:underline;text-underline-offset:2px}
+    .recharge-link:hover{background:var(--skin-accent-soft)}
+    .txn-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .txn-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md)}
+    .txn-icon{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .txn-icon.up{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .txn-icon.down{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    .txn-main{flex:1;min-width:0}
+    .txn-title{font-size:14px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .txn-time{font-size:12px;color:var(--text-3);margin-top:2px}
+    .txn-right{flex:none;text-align:right}
+    .txn-delta{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+    .txn-delta.plus{color:var(--skin-accent)}
+    .txn-delta.minus{color:var(--cinnabar)}
+    .txn-rest{font-size:11px;color:var(--text-3);margin-top:2px}
+    .modal-mask{position:fixed;inset:0;background:rgba(20,24,38,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+    .modal{background:var(--surface);border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}
+    .modal-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text-1)}
+    .modal-body{font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.6}
   </style>
 </head>
 <body>
@@ -193,20 +329,13 @@
     let token = '';
     let refreshToken = '';
     let onUnauthorized = null;
-
-    // 内置城市坐标表：出生地命中时自动填入经纬度（免外部 API，离线可用）
-    const CITY_COORDS = {
-      '北京': [116.41, 39.90], '上海': [121.47, 31.23], '广州': [113.26, 23.13], '深圳': [114.06, 22.55],
-      '杭州': [120.15, 30.27], '成都': [104.07, 30.57], '武汉': [114.30, 30.59], '南京': [118.80, 32.06],
-      '西安': [108.95, 34.27], '重庆': [106.55, 29.56], '天津': [117.20, 39.13], '苏州': [120.62, 31.30],
-      '郑州': [113.65, 34.76], '长沙': [112.94, 28.23], '沈阳': [123.43, 41.80], '青岛': [120.38, 36.07],
-      '大连': [121.62, 38.92], '厦门': [118.09, 24.48], '昆明': [102.83, 24.88], '哈尔滨': [126.53, 45.80],
-      '济南': [117.00, 36.65], '福州': [119.30, 26.08], '太原': [112.55, 37.87], '合肥': [117.27, 31.86],
-      '南昌': [115.86, 28.68], '贵阳': [106.71, 26.65], '南宁': [108.37, 22.82], '兰州': [103.83, 36.06],
-      '乌鲁木齐': [87.62, 43.82], '拉萨': [91.14, 29.65], '呼和浩特': [111.75, 40.84], '银川': [106.27, 38.47],
-      '西宁': [101.78, 36.62], '石家庄': [114.51, 38.04], '香港': [114.17, 22.32], '澳门': [113.54, 22.19],
-      '台北': [121.56, 25.03]
-    };
+    // 积分不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
+    let creditInsuffHandler = null;
+    function setCreditInsuffHandler(fn) { creditInsuffHandler = fn; }
+    // 充值链接：严禁前端硬编码；由后端/部署时注入 window.TAICHU_RECHARGE_URL。
+    // 未注入时回退占位，保证按钮可点击不报错（待后端下发真实小鹅通链接）。
+    const RECHARGE_FALLBACK = '/recharge';
+    function getRechargeUrl() { return (typeof window !== 'undefined' && window.TAICHU_RECHARGE_URL) || RECHARGE_FALLBACK; }
 
     // 断前尘九法（轨道动画节点）
     const DQC_METHODS = ['八字','紫微斗数','六爻','奇门遁甲','大六壬','太乙神数','七政四余','铁板神数','果老星宗'];
@@ -219,19 +348,72 @@
     };
     function trendMeta(v) { return TREND_META[v] || TREND_META['平']; }
 
-    function api(path, options = {}) {
-      const headers = { 'Content-Type': 'application/json', ...options.headers };
-      if (token) headers['Authorization'] = 'Bearer ' + token;
-      return fetch(API + path, { ...options, headers }).then(r => {
-        if (r.status === 401) {
-          token = ''; refreshToken = '';
-          localStorage.removeItem('taichu_token');
-          localStorage.removeItem('taichu_refresh_token');
-          if (onUnauthorized) onUnauthorized();
-          throw new Error('登录已过期，请重新登录');
-        }
-        return r.ok ? r.json() : r.json().then(e => { throw new Error(e.detail || '请求失败'); });
-      });
+    async function api(path, options = {}) {
+      const buildHeaders = () => {
+        const headers = { 'Content-Type': 'application/json', ...options.headers };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+        return headers;
+      };
+      const parseError = (e) => {
+        // FastAPI 的 422 detail 是数组 [{loc,msg,type}]，转成可读字符串，避免 [object Object]
+        let msg = '请求失败';
+        const d = e && e.detail;
+        if (typeof d === 'string' && d) msg = d;
+        else if (Array.isArray(d) && d.length) msg = d.map(x => (x && x.msg) || JSON.stringify(x)).join('；');
+        else if (d) msg = JSON.stringify(d);
+        return msg;
+      };
+
+      let r = await fetch(API + path, { ...options, headers: buildHeaders() });
+
+      // access token 过期 → 用 refresh_token 自动续期并重试原请求（避免长任务中途被踢出）
+      if (r.status === 401 && refreshToken) {
+        try {
+          const rr = await fetch(API + '/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          });
+          if (rr.ok) {
+            const rd = await rr.json();
+            const newToken = rd.access_token || (rd.data && rd.data.access_token);
+            const newRefresh = rd.refresh_token || (rd.data && rd.data.refresh_token);
+            if (newToken) {
+              token = newToken;
+              localStorage.setItem('taichu_token', token);
+              if (newRefresh) {
+                refreshToken = newRefresh;
+                localStorage.setItem('taichu_refresh_token', refreshToken);
+              }
+              r = await fetch(API + path, { ...options, headers: buildHeaders() });
+            }
+          }
+        } catch (e) { /* 刷新失败则走下方踢出 */ }
+      }
+
+      if (r.status === 401) {
+        token = ''; refreshToken = '';
+        localStorage.removeItem('taichu_token');
+        localStorage.removeItem('taichu_refresh_token');
+        if (onUnauthorized) onUnauthorized();
+        throw new Error('登录已过期，请重新登录');
+      }
+      if (r.ok) return r.json();
+      let errBody = null;
+      try { errBody = await r.json(); } catch (_) { /* 响应体非 JSON（如 502 网关错误） */ }
+      const rawDetail = errBody && errBody.detail;
+      let errMsg;
+      if (Array.isArray(rawDetail)) errMsg = rawDetail.map(x => (x && x.msg) || JSON.stringify(x)).join('；');
+      else if (typeof rawDetail === 'string' && rawDetail) errMsg = rawDetail;
+      else if (errBody && typeof errBody.message === 'string' && errBody.message) errMsg = errBody.message;
+      else errMsg = '请求失败（HTTP ' + r.status + '）';
+      const err = new Error(errMsg);
+      err.code = (errBody && typeof errBody.code === 'number') ? errBody.code : null;
+      err.status = r.status;
+      err.payload = errBody;
+      // 统一拦截「积分不足」错误码，弹充值引导弹窗（由 App 注册 handler 渲染）
+      if (err.code === 5002 && creditInsuffHandler) creditInsuffHandler(errBody || {});
+      throw err;
     }
 
     function logout() {
@@ -290,6 +472,9 @@
       return (
         <div className="disclaimer" role="contentinfo">
           <span className="star"><Icon name="spark" size={14} /></span>本结果为运势趋势参考，不构成医疗、法律或投资建议。重大现实决策请咨询相关专业人士。
+          <div className="legal-links">
+            <a href="/legal/用户协议.html" target="_blank">用户协议</a><span className="legal-sep"> · </span><a href="/legal/隐私政策.html" target="_blank">隐私政策</a>
+          </div>
         </div>
       );
     }
@@ -361,12 +546,12 @@
       return (
         <div className="container">
           <div className="card" style={{ textAlign: 'center' }}>
-            <h1 className="title">太初 · 事业运势趋势参考</h1>
-            <p className="subtitle">多流派综合 · 可修正 · 随时问</p>
+            <h1 className="title">太初 · 九法合参，看清你的人生大势</h1>
+            <p className="subtitle">九大流派交叉印证 · 越用越懂你 · 更接近真实</p>
             <p style={{ color: 'var(--text-2)', fontSize: 13, marginBottom: 24 }}>
-              基于九大流派的命理综合推演，为您的事业决策提供趋势参考
+              九大命理流派并行推演，AI 逐柱逐宫演算、交叉印证，最终合成一份完整的人生运势解读——事业、财运、婚姻、健康尽在其中。全程约 30–60 分钟，值得等待。
             </p>
-            <button className="btn btn-primary" onClick={() => onNavigate('auth')}>开始我的事业运势</button>
+            <button className="btn btn-primary" onClick={() => onNavigate(token ? 'cases' : 'auth')}>开始我的命理推演</button>
           </div>
           <div className="flex-row" style={{ marginTop: 16 }}>
             <div className="card feature" style={{ textAlign: 'center' }}>
@@ -381,10 +566,216 @@
             </div>
             <div className="card feature" style={{ textAlign: 'center' }}>
               <div style={{ color: 'var(--skin-accent)', display: 'flex', justifyContent: 'center', marginBottom: 4 }}><Icon name="chat" size={26} /></div>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>随时问</div>
-              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>不限次数追问</div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>更准确的回答</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>交叉印证，更接近真实</div>
             </div>
           </div>
+        </div>
+      );
+    }
+
+    // —— 积分系统组件（沿用国学皮肤令牌，不新增配色）——
+
+    // 余额胶囊：自拉数据，loading 骨架，余额≤0 红字警示；点击进明细页
+    function CreditBalance({ onClick }) {
+      const [balance, setBalance] = useState(null);
+      const [loading, setLoading] = useState(true);
+      useEffect(() => {
+        let alive = true;
+        (async () => {
+          try {
+            const res = await api('/credits/balance');
+            const b = (res.data && res.data.balance != null) ? res.data.balance : res.balance;
+            if (alive) { setBalance(b != null ? Number(b) : null); setLoading(false); }
+          } catch (e) { if (alive) setLoading(false); }
+        })();
+        return () => { alive = false; };
+      }, []);
+      if (loading) return <div className="credit-pill skeleton" aria-label="加载积分" />;
+      const neg = balance == null || Number(balance) <= 0;
+      return (
+        <span className="credit-balance-wrap">
+          <span className={'credit-pill' + (neg ? ' warn' : '')} role="button" tabIndex={0}
+                onClick={onClick} title={neg ? '积分不足，点击充值' : '查看积分明细'}>
+            <Icon name="spark" size={14} />
+            <span className="pill-bal">积分 {balance == null ? '—' : balance}</span>
+          </span>
+          <button type="button" className="recharge-link" onClick={() => { window.location.href = getRechargeUrl(); }}>充值</button>
+        </span>
+      );
+    }
+
+    // 充值按钮：三处复用同一样式，点击跳充值链接（链接由后端/部署注入 window.TAICHU_RECHARGE_URL）
+    function RechargeButton({ onClick }) {
+      return (
+        <button className="btn btn-primary" type="button"
+          onClick={() => { if (onClick) onClick(); else window.location.href = getRechargeUrl(); }}>
+          充值
+        </button>
+      );
+    }
+
+    // 积分不足弹窗：api() 拦截 5002 时由 App 渲染（creditModal state）
+    function CreditInsufficientModal({ info, onClose, onRecharge }) {
+      const detail = (info && (info.detail || info.message)) || '';
+      const nums = (String(detail).match(/\d+/g) || []).map(Number);
+      const have = nums.length >= 2 ? nums[nums.length - 2] : null;
+      const need = nums.length >= 2 ? nums[nums.length - 1] : null;
+      const body = (need != null && have != null)
+        ? ('本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。')
+        : '积分不足，请充值后再试。';
+      return (
+        <div className="modal-mask" onClick={onClose}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">积分不足</div>
+            <div className="modal-body">{body}</div>
+            <div className="flex-row">
+              <button className="btn btn-outline" type="button" onClick={onClose}>取消</button>
+              <RechargeButton onClick={onRecharge} />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 积分明细页
+    function CreditTransactionsPage({ caseId, onNavigate }) {
+      const LIMIT = 20;
+      const [balance, setBalance] = useState(null);
+      const [items, setItems] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+      const [offset, setOffset] = useState(0);
+      const [hasMore, setHasMore] = useState(false);
+      const [loadingMore, setLoadingMore] = useState(false);
+      const enterBalance = useRef(null);
+
+      const loadBalance = async () => {
+        try {
+          const r = await api('/credits/balance');
+          const b = (r.data && r.data.balance != null) ? r.data.balance : r.balance;
+          if (b != null) setBalance(Number(b));
+        } catch (_) {}
+      };
+
+      const load = async (off, append) => {
+        if (append) setLoadingMore(true); else { setLoading(true); setErrored(''); }
+        try {
+          const r = await api('/credits/transactions?limit=' + LIMIT + '&offset=' + off);
+          const data = r.data || r;
+          const list = Array.isArray(data.items) ? data.items : [];
+          const total = (data && typeof data.total === 'number') ? data.total : null;
+          setItems(prev => append ? prev.concat(list) : list);
+          setHasMore(list.length >= LIMIT && (total == null || off + list.length < total));
+          setOffset(off + list.length);
+          await loadBalance();
+        } catch (e) {
+          if (!append) setErrored(e.message || '积分记录加载失败，请重试。');
+        } finally {
+          if (append) setLoadingMore(false); else setLoading(false);
+        }
+      };
+
+      useEffect(() => { load(0, false); }, []);
+
+      // 从充值页返回后检测余额增加 → 到账提示
+      useEffect(() => { enterBalance.current = balance; }, [balance]);
+      useEffect(() => {
+        const onFocus = async () => {
+          try {
+            const r = await api('/credits/balance');
+            const b = (r.data && r.data.balance != null) ? r.data.balance : r.balance;
+            if (b != null && enterBalance.current != null && Number(b) > enterBalance.current) {
+              toast('充值成功，积分已到账');
+              setBalance(Number(b));
+              load(0, false);
+            }
+          } catch (_) {}
+        };
+        window.addEventListener('focus', onFocus);
+        return () => window.removeEventListener('focus', onFocus);
+      }, []);
+
+      const typeText = (t) => ({ recharge: '充值', grant: '手动赠送', predict: '预测推演', dqch: '断前尘推演', revise: '修正对话', single: '单法直问' }[t] || (t || '交易'));
+      const isIncome = (t) => t === 'recharge' || t === 'grant';
+
+      if (loading) {
+        return (
+          <div className="container">
+            <div className="sk-card">
+              <div className="skeleton sk-title" style={{ width: '40%' }} />
+              <div className="skeleton sk-line" style={{ width: '70%' }} />
+            </div>
+            {[0, 1, 2].map(i => (
+              <div className="sk-card" key={i}>
+                <div className="skeleton sk-line" style={{ width: '90%' }} />
+                <div className="skeleton sk-line" style={{ width: '55%' }} />
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      if (errored) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">积分明细加载失败</h2>
+              <div className="error">{errored}</div>
+              <button className="btn btn-primary" onClick={() => load(0, false)}>重试</button>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate(caseId ? 'archive' : 'cases', { caseId })}>返回</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="container">
+          <div className="card">
+            <div className="flex-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)' }}>当前积分</div>
+                <div style={{ fontSize: 30, fontWeight: 700, color: 'var(--ink-700)' }}>{balance == null ? '—' : balance}</div>
+              </div>
+              <RechargeButton onClick={() => { enterBalance.current = balance; window.location.href = getRechargeUrl(); }} />
+            </div>
+          </div>
+
+          <div className="section-title">积分明细</div>
+          {items.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', color: 'var(--text-3)' }}>暂无积分记录</div>
+          ) : (
+            <div className="txn-list">
+              {items.map((it, i) => {
+                const income = isIncome(it.type);
+                const delta = it.delta != null ? Number(it.delta) : null;
+                const sign = delta == null ? '' : (delta >= 0 ? '+' : '');
+                const cls = delta == null ? '' : (delta >= 0 ? ' plus' : ' minus');
+                const time = String(it.createdAt || it.time || '').replace('T', ' ').slice(0, 16);
+                const rest = (it.balance != null) ? it.balance : (it.balanceAfter != null ? it.balanceAfter : '—');
+                return (
+                  <div className="txn-item" key={i}>
+                    <span className={'txn-icon ' + (income ? 'up' : 'down')}><Icon name={income ? 'up' : 'down'} size={16} /></span>
+                    <div className="txn-main">
+                      <div className="txn-title">{typeText(it.type)}{it.note ? ' · ' + it.note : ''}</div>
+                      <div className="txn-time">{time}</div>
+                    </div>
+                    <div className="txn-right">
+                      <div className={'txn-delta' + cls}>{sign}{delta == null ? '—' : delta}</div>
+                      <div className="txn-rest">结余 {rest}</div>
+                    </div>
+                  </div>
+                );
+              })}
+              {hasMore && (
+                <button className="btn btn-outline" disabled={loadingMore} onClick={() => load(offset, true)}>
+                  {loadingMore ? '加载中...' : '加载更多'}
+                </button>
+              )}
+            </div>
+          )}
+
+          <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={() => onNavigate(caseId ? 'archive' : 'cases', { caseId })}>返回</button>
         </div>
       );
     }
@@ -395,11 +786,17 @@
       const [password, setPassword] = useState('');
       const [error, setError] = useState('');
       const [loading, setLoading] = useState(false);
+      const [agreed, setAgreed] = useState(true);
 
       const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError('');
+        // 注册前须勾选同意用户协议与隐私政策（登录分支不校验、不展示该勾选）
+        if (!isLogin && !agreed) {
+          setError('请先阅读并同意用户协议与隐私政策');
+          return;
+        }
+        setLoading(true);
         try {
           const res = await api(isLogin ? '/auth/login' : '/auth/register', {
             method: 'POST',
@@ -410,7 +807,12 @@
           refreshToken = res.refresh_token || (res.data && res.data.refresh_token);
           localStorage.setItem('taichu_token', token || '');
           localStorage.setItem('taichu_refresh_token', refreshToken || '');
-          onNavigate('onboarding');
+          // 注册成功：提示新用户赠送积分（数量以后端 free_credit_granted 为准，缺失则用通用文案）
+          if (!isLogin) {
+            const free = (res.data && res.data.free_credit_granted) || res.free_credit_granted;
+            toast(free != null ? ('已赠送 ' + free + ' 积分') : '注册成功，赠送积分已到账');
+          }
+          onNavigate('cases'); // 登录/注册成功 → 进入档案列表（可从中新建或继续档案）
         } catch (e) {
           setError(e.message);
         } finally {
@@ -428,6 +830,14 @@
               <input id="auth-user" className="input" value={username} onChange={e => setUsername(e.target.value)} placeholder="请输入用户名" required />
               <label className="label" htmlFor="auth-pass">密码</label>
               <input id="auth-pass" className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="请输入密码（至少6位）" required minLength={6} />
+              {!isLogin && (
+                <div className="agree-row">
+                  <input id="auth-agree" type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
+                  <label htmlFor="auth-agree" className="agree-label">
+                    我已阅读并同意<a href="/legal/用户协议.html" target="_blank">《用户协议》</a>和<a href="/legal/隐私政策.html" target="_blank">《隐私政策》</a>
+                  </label>
+                </div>
+              )}
               <button className="btn btn-primary" type="submit" disabled={loading} style={{ marginTop: 16 }}>
                 {loading ? '处理中...' : (isLogin ? '登录' : '注册')}
               </button>
@@ -440,25 +850,242 @@
       );
     }
 
+    // 档案列表页：GET /api/cases 展示用户全部命理档案，可查看解读 / 继续 / 进入档案 / 新建
+    function CasesPage({ onNavigate }) {
+      const [caseList, setCaseList] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [errored, setErrored] = useState('');
+
+      const load = async () => {
+        setLoading(true);
+        setErrored('');
+        try {
+          // 列表接口返回 {code,data:{cases:[...]}} 双信封；兼容裸 {cases:[...]}
+          const res = await api('/cases', { method: 'GET' });
+          const list = (res.data && res.data.cases) || res.cases || [];
+          setCaseList(list);
+        } catch (e) {
+          setErrored(e.message || '读取档案列表失败，请重试。');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      useEffect(() => { load(); }, []);
+
+      const statusText = (s) => (
+        { created: '已建档', paipan_done: '已排盘', calibrated: '已校准', predict_done: '已解读', failed: '失败' }[s] || s || '-'
+      );
+      const genderText = (g) => (g === 'male' ? '男' : g === 'female' ? '女' : (g || '-'));
+      const dateText = (t) => (t ? String(t).slice(0, 10) : '-');
+
+      // 命名：prompt 输入 → PATCH /cases/{caseId} {name} → 本地更新该条（避免整页重拉闪烁）
+      const handleRename = async (c) => {
+        const raw = prompt('给这份档案起个名字', c.name || '');
+        if (raw == null) return; // 用户点了取消
+        const name = String(raw).trim();
+        if (!name) { toast('名字不能为空'); return; }
+        try {
+          const res = await api('/cases/' + c.caseId, {
+            method: 'PATCH',
+            body: JSON.stringify({ name })
+          });
+          const data = (res && res.data) || {};
+          const savedName = data.name || name;
+          setCaseList(list => list.map(x => x.caseId === c.caseId ? { ...x, name: savedName } : x));
+          toast('命名成功');
+        } catch (e) {
+          alert(e.message || '命名失败，请重试。');
+        }
+      };
+      // 删除：confirm 确认 → DELETE /cases/{caseId} → 从列表移除
+      const handleDelete = async (c) => {
+        if (!confirm('确定删除该档案？相关解读也将一并删除')) return;
+        try {
+          const res = await api('/cases/' + c.caseId, { method: 'DELETE' });
+          // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
+          if (res && res.code != null && res.code !== 0) throw new Error(res.message || '删除失败');
+          setCaseList(list => list.filter(x => x.caseId !== c.caseId));
+          toast('档案已删除');
+        } catch (e) {
+          alert(e.message || '删除失败，请重试。');
+        }
+      };
+
+      if (loading) {
+        return (
+          <div className="container">
+            <div className="sk-card">
+              <div className="skeleton sk-title" style={{ width: '36%' }} />
+              <div className="skeleton sk-line" style={{ width: '88%' }} />
+              <div className="skeleton sk-line" style={{ width: '62%' }} />
+            </div>
+            <div className="sk-card">
+              <div className="skeleton sk-title" style={{ width: '36%' }} />
+              <div className="skeleton sk-line" style={{ width: '88%' }} />
+              <div className="skeleton sk-line" style={{ width: '62%' }} />
+            </div>
+            <div className="sk-card">
+              <div className="skeleton sk-title" style={{ width: '36%' }} />
+              <div className="skeleton sk-line" style={{ width: '88%' }} />
+              <div className="skeleton sk-line" style={{ width: '62%' }} />
+            </div>
+            <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)' }}>正在加载档案…</p>
+          </div>
+        );
+      }
+
+      if (errored) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">档案加载失败</h2>
+              <div className="error">{errored}</div>
+              <button className="btn btn-primary" onClick={load}>重试</button>
+              <button className="btn btn-outline" style={{ marginTop: 8 }} onClick={() => onNavigate('landing')}>返回首页</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="container">
+          <h2 className="title">我的档案</h2>
+          {caseList.length > 0 &&
+            <p className="subtitle" style={{ marginTop: -10 }}>共 {caseList.length} 份档案，选择一份继续查看</p>}
+          <button className="btn btn-primary" onClick={() => onNavigate('onboarding')}>+ 新建档案</button>
+
+          {caseList.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-3)', fontSize: 14 }}>
+              暂无档案，点击新建开始
+            </div>
+          ) : (
+            caseList.map((c) => {
+              const failed = c.status === 'failed';
+              const mainLabel = c.hasReport ? '查看解读' : ((c.methodCount || 0) < 9 ? '继续排盘' : '继续');
+              // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
+              const methodCount = c.methodCount || 0;
+              const totalMethods = c.totalMethods || 9;
+              const progressPct = totalMethods > 0
+                ? Math.min(100, Math.max(0, Math.round(methodCount / totalMethods * 100)))
+                : 0;
+              // 盘面摘要：chartSummary 为 null（未排盘）时不展示摘要行
+              const cs = c.chartSummary || null;
+              const summaryParts = [];
+              if (cs) {
+                if (cs.dayMaster) summaryParts.push('日主：' + cs.dayMaster + (cs.dayMasterWuxing || ''));
+                if (cs.lunar) summaryParts.push('农历 ' + cs.lunar);
+              }
+              const summaryText = summaryParts.join(' · ');
+              return (
+                <div className="card" key={c.caseId} style={{ padding: '16px 20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', fontSize: 15, fontWeight: 600, color: 'var(--ink-700)' }}>
+                      <span>{c.name || '未命名档案'}</span>
+                    </div>
+                    <span style={{
+                      display: 'inline-block', fontSize: 11, padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap',
+                      background: failed ? '#FFF0F0' : 'var(--skin-accent-soft)',
+                      color: failed ? 'var(--cinnabar)' : 'var(--skin-accent)',
+                      fontWeight: 600
+                    }}>{statusText(c.status)}</span>
+                  </div>
+                  <div>
+                    <div className="kv"><span className="k">出生年</span><span className="v">{c.birthYear != null ? c.birthYear : '-'}</span></div>
+                    <div className="kv"><span className="k">性别</span><span className="v">{genderText(c.gender)}</span></div>
+                    <div className="kv"><span className="k">出生地</span><span className="v">{c.birthplace || '-'}</span></div>
+                    <div className="kv"><span className="k">创建时间</span><span className="v">{dateText(c.createdAt)}</span></div>
+                  </div>
+                  {/* 排盘进度：已完成方法数 / 总方法数 */}
+                  <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 13, marginBottom: 6 }}>
+                      <span style={{ color: 'var(--text-2)' }}>排盘进度</span>
+                      <span style={{ color: 'var(--text-1)', fontWeight: 600 }}>{totalMethods} 法中已完成 {methodCount} 个</span>
+                    </div>
+                    <div className="progress" style={{ margin: 0 }}>
+                      <div className="progress-bar" style={{ width: progressPct + '%' }} />
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 8 }}>
+                      {summaryText
+                        ? <span>盘面：{summaryText}</span>
+                        : <span style={{ color: 'var(--text-3)' }}>尚未排盘</span>}
+                    </div>
+                  </div>
+                  <div className="flex-row" style={{ marginTop: 12 }}>
+                    <button className="btn btn-primary" onClick={() => onNavigate(c.hasReport || (c.methodCount || 0) >= 9 ? 'predict' : 'waiting', { caseId: c.caseId })}>{mainLabel}</button>
+                    <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId: c.caseId })}>排盘</button>
+                  </div>
+                  <div className="flex-row" style={{ marginTop: 8 }}>
+                    <button className="btn btn-outline" style={{ padding: '8px', fontSize: 13 }} onClick={() => handleRename(c)}>命名</button>
+                    <button className="btn btn-outline" style={{ padding: '8px', fontSize: 13, color: 'var(--cinnabar)', borderColor: 'var(--cinnabar)' }} onClick={() => handleDelete(c)}>删除</button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      );
+    }
+
     function OnboardingPage({ onNavigate }) {
-      const [form, setForm] = useState({
-        birth_year: '', birth_month: '', birth_day: '', birth_hour: '0',
-        gender: 'male', birthplace: '', longitude: '', latitude: '', true_solar_time: false
+      const reg = (typeof window !== 'undefined' && window.REGIONS) || {};
+      const YEARS = []; for (let y = 1900; y <= 2100; y++) YEARS.push(String(y));
+      const MONTHS = []; for (let m = 1; m <= 12; m++) MONTHS.push(String(m));
+      const DAYS = []; for (let d = 1; d <= 31; d++) DAYS.push(String(d));
+      const HOURS = []; for (let h = 0; h <= 23; h++) HOURS.push(String(h));
+
+      const [form, setForm] = useState(() => {
+        const base = {
+          birth_year: '', birth_month: '', birth_day: '', birth_hour: '0',
+          gender: 'male', birth_province: '', birth_city: '', birth_district: '',
+          longitude: '', latitude: '', true_solar_time: false
+        };
+        try {
+          const saved = localStorage.getItem('taichu_onboarding_form');
+          if (saved) {
+            const obj = JSON.parse(saved);
+            if (obj && typeof obj === 'object') return { ...base, ...obj };
+          }
+        } catch (e) { /* 本地存档损坏时忽略，退回默认空表单 */ }
+        return base;
       });
       const [coordTouched, setCoordTouched] = useState(false);
       const [loading, setLoading] = useState(false);
       const [error, setError] = useState('');
 
+      // 表单防丢失：建档成功进入 waiting 前，form 每次变化都写入 localStorage
+      useEffect(() => {
+        try { localStorage.setItem('taichu_onboarding_form', JSON.stringify(form)); } catch (e) { /* 忽略 */ }
+      }, [form]);
+
+      const cityNames = form.birth_province && reg[form.birth_province]
+        ? Object.keys(reg[form.birth_province]) : [];
+      const districtNames = form.birth_province && form.birth_city &&
+        reg[form.birth_province] && reg[form.birth_province][form.birth_city]
+        ? Object.keys(reg[form.birth_province][form.birth_city]) : [];
+
       const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-      const updateBirthplace = (e) => {
-        const v = e.target.value;
-        const next = { ...form, birthplace: v };
-        if (!coordTouched) {
-          const hit = Object.keys(CITY_COORDS).find(c => v && v.indexOf(c) !== -1);
-          if (hit) {
-            next.longitude = String(CITY_COORDS[hit][0]);
-            next.latitude = String(CITY_COORDS[hit][1]);
-          }
+      const updateProvince = (e) => {
+        const p = e.target.value;
+        const cs = p && reg[p] ? Object.keys(reg[p]) : [];
+        const next = { ...form, birth_province: p, birth_city: '', birth_district: '' };
+        if (cs.length === 1) next.birth_city = cs[0]; // 直辖市等单“市/市辖区”结构：市自动带出
+        if (!coordTouched) { next.longitude = ''; next.latitude = ''; }
+        setForm(next);
+      };
+      const updateCity = (e) => {
+        const c = e.target.value;
+        const next = { ...form, birth_city: c, birth_district: '' };
+        if (!coordTouched) { next.longitude = ''; next.latitude = ''; }
+        setForm(next);
+      };
+      const updateDistrict = (e) => {
+        const d = e.target.value;
+        const next = { ...form, birth_district: d };
+        if (!coordTouched && d) {
+          const coord = reg[form.birth_province] && reg[form.birth_province][form.birth_city] &&
+            reg[form.birth_province][form.birth_city][d];
+          if (coord) { next.longitude = String(coord[0]); next.latitude = String(coord[1]); }
         }
         setForm(next);
       };
@@ -477,12 +1104,13 @@
         if (!m || m < 1 || m > 12) { setError('出生月需在 1–12 之间'); setLoading(false); return; }
         if (!d || d < 1 || d > 31) { setError('出生日需在 1–31 之间'); setLoading(false); return; }
         if (h < 0 || h > 23 || isNaN(h)) { setError('出生时辰需在 0–23 之间'); setLoading(false); return; }
+        const birthplace = [form.birth_province, form.birth_city, form.birth_district].filter(Boolean).join('/');
         try {
           const res = await api('/cases', {
             method: 'POST',
             body: JSON.stringify({
               birth_year: y, birth_month: m, birth_day: d, birth_hour: h,
-              gender: form.gender, birthplace: form.birthplace,
+              gender: form.gender, birthplace: birthplace,
               longitude: form.longitude ? +form.longitude : null,
               latitude: form.latitude ? +form.latitude : null,
               true_solar_time: !!form.true_solar_time,
@@ -492,6 +1120,7 @@
           // 注意：cases 接口返回 {code,data:{caseId}} 信封
           const caseId = (res.data && res.data.caseId) || res.caseId;
           await api('/cases/' + caseId + '/paipan', { method: 'POST' });
+          try { localStorage.removeItem('taichu_onboarding_form'); } catch (e) { /* 忽略 */ }
           onNavigate('waiting', { caseId });
         } catch (e) {
           setError(e.message);
@@ -507,20 +1136,54 @@
             {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
             <form onSubmit={handleSubmit}>
               <label className="label" htmlFor="f_year">出生年</label>
-              <input id="f_year" className="input" type="number" value={form.birth_year} onChange={update('birth_year')} placeholder="如 1990" required />
+              <select id="f_year" className="input" value={form.birth_year} onChange={update('birth_year')} required>
+                <option value="">请选择</option>
+                {YEARS.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
               <label className="label" htmlFor="f_month">出生月</label>
-              <input id="f_month" className="input" type="number" value={form.birth_month} onChange={update('birth_month')} placeholder="1-12" required />
+              <select id="f_month" className="input" value={form.birth_month} onChange={update('birth_month')} required>
+                <option value="">请选择</option>
+                {MONTHS.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
               <label className="label" htmlFor="f_day">出生日</label>
-              <input id="f_day" className="input" type="number" value={form.birth_day} onChange={update('birth_day')} placeholder="1-31" required />
+              <select id="f_day" className="input" value={form.birth_day} onChange={update('birth_day')} required>
+                <option value="">请选择</option>
+                {DAYS.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
               <label className="label" htmlFor="f_hour">出生时辰（0-23）</label>
-              <input id="f_hour" className="input" type="number" value={form.birth_hour} onChange={update('birth_hour')} placeholder="如 14" />
+              <select id="f_hour" className="input" value={form.birth_hour} onChange={update('birth_hour')}>
+                {HOURS.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
               <label className="label" htmlFor="f_gender">性别</label>
               <select id="f_gender" className="input" value={form.gender} onChange={update('gender')}>
                 <option value="male">男</option>
                 <option value="female">女</option>
               </select>
-              <label className="label" htmlFor="f_birthplace">出生地</label>
-              <input id="f_birthplace" className="input" value={form.birthplace} onChange={updateBirthplace} placeholder="如 北京（命中后自动填入经纬度）" />
+
+              <label className="label">出生地（选到区/县后自动填入经纬度）</label>
+              <div className="field-row">
+                <div>
+                  <label className="label" htmlFor="f_province">省</label>
+                  <select id="f_province" className="input" value={form.birth_province} onChange={updateProvince}>
+                    <option value="">请选择</option>
+                    {Object.keys(reg).map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="label" htmlFor="f_city">市</label>
+                  <select id="f_city" className="input" value={form.birth_city} onChange={updateCity} disabled={!form.birth_province}>
+                    <option value="">请选择</option>
+                    {cityNames.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="label" htmlFor="f_district">区/县</label>
+                  <select id="f_district" className="input" value={form.birth_district} onChange={updateDistrict} disabled={!form.birth_city}>
+                    <option value="">请选择</option>
+                    {districtNames.map(x => <option key={x} value={x}>{x}</option>)}
+                  </select>
+                </div>
+              </div>
 
               <div className="field-row">
                 <div>
@@ -552,12 +1215,19 @@
       );
     }
 
+    const POLL_MESSAGES = [
+      '算命师傅正推演四柱干支…', '紫微星曜正在排布…', '大运流年逐一推敲…',
+      '神煞纳音细细参详…', '奇门九宫正在起局…', '占星相位正在演算…',
+      '七政躔次正在排定…', '五运六气正在推演…', '师傅正在斟酌格局喜忌…',
+      '命盘已定，正在核验应期…'
+    ];
     function WaitingPage({ caseId, onNavigate }) {
       const [progress, setProgress] = useState(0);
       const [total, setTotal] = useState(9);
       const [status, setStatus] = useState('pending');
       const [errored, setErrored] = useState('');
-      const ref = useRef({ timer: null, timeout: null, done: false });
+      const [pollMsg, setPollMsg] = useState(POLL_MESSAGES[0]);
+      const ref = useRef({ timer: null, timeout: null, done: false, lastCompleted: 0 });
 
       const stop = () => { clearInterval(ref.current.timer); clearTimeout(ref.current.timeout); };
 
@@ -572,15 +1242,32 @@
       const start = async () => {
         stop();
         ref.current.done = false;
+        ref.current.lastCompleted = 0;
         setErrored(''); setStatus('pending'); setProgress(0); setTotal(9);
+        setPollMsg(POLL_MESSAGES[Math.floor(Math.random() * POLL_MESSAGES.length)]);
+        // 超时按「单法进度」计：每完成一个 method（completed 变化）重新计时；
+        // 只有某个 method 卡住超过 10 分钟（进度不动）才超时。
+        const resetTimeout = () => {
+          clearTimeout(ref.current.timeout);
+          ref.current.timeout = setTimeout(() => {
+            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('某个方法超过 10 分钟无进展，请重试。'); }
+          }, 600000);
+        };
         try {
           const res = await api('/cases/' + caseId + '/duan-qian-chen', { method: 'POST' });
           const jobId = (res.data && res.data.jobId) || res.jobId;
+          resetTimeout();
           ref.current.timer = setInterval(async () => {
             try {
               const job = await api('/jobs/' + jobId);
               const data = job.data || job;
               setProgress(data.completed); setTotal(data.total); setStatus(data.status);
+              // 进度推进 → 重新计时 + 换一句等待短句
+              if ((data.completed || 0) > (ref.current.lastCompleted || 0)) {
+                ref.current.lastCompleted = data.completed;
+                resetTimeout();
+                setPollMsg(POLL_MESSAGES[Math.floor(Math.random() * POLL_MESSAGES.length)]);
+              }
               if (data.status === 'succeeded') {
                 ref.current.done = true; stop();
                 setTimeout(() => onNavigate('calibration', { caseId }), 500);
@@ -593,17 +1280,13 @@
               setErrored(e.message || '网络异常，请重试。');
             }
           }, 2000);
-          // 硬超时：断前尘 10 分钟（§5.1）
-          ref.current.timeout = setTimeout(() => {
-            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('等待超时（约 10 分钟），请重试。'); }
-          }, 600000);
         } catch (e) {
           ref.current.done = true; stop();
           setErrored(e.message || '启动推演失败。');
         }
       };
 
-      useEffect(() => { start(); return stop; }, [caseId]);
+      useEffect(() => { if (caseId) { start(); } return stop; }, [caseId]);
 
       const pct = total > 0 ? Math.round(progress / total * 100) : 0;
       const lit = Math.min(DQC_METHODS.length, Math.round((progress / (total || 9)) * DQC_METHODS.length));
@@ -628,7 +1311,7 @@
             <div className="dqc-progress">{progress} / {total}</div>
             <div className="dqc-method">{status === 'succeeded' ? '九法推演完成' : '正在综合九流派推演'}</div>
             <div className="dqc-bar"><i style={{ width: pct + '%' }}></i></div>
-            <div className="dqc-status">{status === 'succeeded' ? 'jobs.status: succeeded' : 'jobs.status: running · polling…'}</div>
+            <div className="dqc-status">{status === 'succeeded' ? '推演完成' : pollMsg}</div>
             <div className="dqc-list">
               {DQC_METHODS.map((m, i) => {
                 const cls = i < lit ? 'done' : (i === lit && progress < total ? 'active' : '');
@@ -639,6 +1322,10 @@
           <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-2)', marginTop: 14 }}>
             {status === 'succeeded' ? '推演完成，正在进入问卷校准...' : '已完成 ' + progress + ' / ' + total + '，请稍候...'}
           </p>
+          {status !== 'succeeded' &&
+            <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>
+              每个方法约需数分钟，全程约 30–60 分钟；可先去做别的事，本页会持续等待。
+            </p>}
         </div>
       );
     }
@@ -703,7 +1390,7 @@
         }
       };
 
-      useEffect(() => { start(); return stop; }, [caseId]);
+      useEffect(() => { if (caseId) { start(); } return stop; }, [caseId]);
 
       const handleFeedback = (idx, type, noteText) => {
         const prop = propositions[idx];
@@ -856,21 +1543,42 @@
       const [report, setReport] = useState(null);
       const [loading, setLoading] = useState(true);
       const [errored, setErrored] = useState('');
-      const ref = useRef({ timer: null, timeout: null, done: false });
+      const [history, setHistory] = useState([]);
+      const ref = useRef({ timer: null, timeout: null, done: false, lastCompleted: 0 });
 
       const stop = () => { clearInterval(ref.current.timer); clearTimeout(ref.current.timeout); };
 
       const start = async () => {
         stop();
         ref.current.done = false;
+        ref.current.lastCompleted = 0;
         setErrored(''); setLoading(true);
+        // 超时按「单法进度」计：每完成一个 method（completed 变化）重新计时；
+        // 只有某个 method 卡住超过 10 分钟（进度不动）才超时。
+        const resetTimeout = () => {
+          clearTimeout(ref.current.timeout);
+          ref.current.timeout = setTimeout(() => {
+            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('某个方法超过 10 分钟无进展，请重试。'); setLoading(false); }
+          }, 600000);
+        };
+        // 先查历史报告：已有解读直接展示，不重复调 LLM；无历史（404 或空）才走原 predict 流程
+        try {
+          const rr = await api('/cases/' + caseId + '/report');
+          const rdata = (rr && rr.data) || rr;
+          if (rdata && rdata.report) { setReport(rdata.report); setLoading(false); return; }
+        } catch (e) { /* 无历史报告，走原 predict 流程 */ }
         try {
           const res = await api('/cases/' + caseId + '/predict', { method: 'POST' });
           const jobId = (res.data && res.data.jobId) || res.jobId;
+          resetTimeout();
           ref.current.timer = setInterval(async () => {
             try {
               const job = await api('/jobs/' + jobId);
               const data = job.data || job;
+              if ((data.completed || 0) > (ref.current.lastCompleted || 0)) {
+                ref.current.lastCompleted = data.completed;
+                resetTimeout();
+              }
               if (data.status === 'succeeded') {
                 ref.current.done = true; stop();
                 // Phase 4：取真实 job result 里的 report（summary/trend/details）
@@ -892,10 +1600,6 @@
               setLoading(false);
             }
           }, 2000);
-          // 硬超时：预测 3 分钟（§5.1）
-          ref.current.timeout = setTimeout(() => {
-            if (!ref.current.done) { ref.current.done = true; stop(); setErrored('等待超时（约 3 分钟），请重试。'); setLoading(false); }
-          }, 180000);
         } catch (e) {
           ref.current.done = true; stop();
           setErrored(e.message || '启动预测失败。');
@@ -903,7 +1607,23 @@
         }
       };
 
-      useEffect(() => { start(); return stop; }, [caseId]);
+      useEffect(() => { if (caseId) { start(); } return stop; }, [caseId]);
+
+      // 挂载时拉历史追问（只取最近 10 条 user 提问；archive 失败静默，不影响解读主流程）
+      useEffect(() => {
+        let alive = true;
+        if (!caseId) return;
+        (async () => {
+          try {
+            const res = await api('/cases/' + caseId + '/archive');
+            const data = (res && res.data) || res || {};
+            const convs = (Array.isArray(data.conversations) ? data.conversations : [])
+              .filter(m => m && m.role === 'user').slice(-10);
+            if (alive) setHistory(convs);
+          } catch (e) { /* 无历史/加载失败 → 板块不展示 */ }
+        })();
+        return () => { alive = false; };
+      }, [caseId]);
 
       if (errored) {
         return (
@@ -943,39 +1663,102 @@
 
       return (
         <div className="container">
-          <div className="card" style={{ textAlign: 'center', borderLeft: '3px solid var(--gold-500)' }}>
+          <div className="card" style={{ textAlign: 'center', borderLeft: '3px solid var(--gold-500)', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: 12, right: 12 }}>
+              <CreditBalance onClick={() => onNavigate('credits', { caseId })} />
+            </div>
             <h2 className="title">综合解读</h2>
             <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 4px', color: 'var(--gold-500)' }}><Icon name="orbit" size={48} /></div>
             <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--skin-accent)' }}>总体趋势：温和上扬</p>
             <p style={{ color: 'var(--text-2)', fontSize: 14, marginTop: 8 }}>{report?.summary}</p>
           </div>
-          {(report?.details || []).map((d, i) => (
-            <div key={i} className={'card trend-' + (d.direction === '吉' ? 'ji' : d.direction === '凶' ? 'xiong' : 'ping')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 24, color: d.direction === '吉' ? 'var(--skin-accent)' : d.direction === '凶' ? 'var(--cinnabar)' : 'var(--ink-400)' }}><Icon name={d.direction === '吉' ? 'up' : d.direction === '凶' ? 'down' : 'flat'} size={24} /></span>
-                <div>
-                  <h4>{d.title}</h4>
-                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>{d.description}</p>
-                  <span style={{ fontSize: 11, color: 'var(--text-3)' }}>置信度: {d.confidence}</span>
+          {(report?.details || []).map((d, i) => {
+            const goTopic = () => onNavigate('topic', { caseId, topic: d.title, context: d.description, direction: d.direction });
+            const m = trendMeta(d.direction);
+            return (
+              <div key={i} className={'card trend-' + (d.direction === '吉' ? 'ji' : d.direction === '凶' ? 'xiong' : 'ping')}
+                style={{ cursor: 'pointer' }} title={'查看「' + d.title + '」板块详情'}
+                onClick={goTopic}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 24, color: m.color }}><Icon name={m.icon} size={24} /></span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h4>{d.title}</h4>
+                    <p style={{ color: 'var(--text-2)', fontSize: 13 }}>{d.description}</p>
+                  </div>
+                  <button type="button" className="btn btn-outline" style={{ flex: 'none', width: 'auto', padding: '6px 12px', fontSize: 12, whiteSpace: 'nowrap' }}
+                    onClick={e => { e.stopPropagation(); goTopic(); }}>查看详情</button>
                 </div>
               </div>
+            );
+          })}
+          {history.length > 0 && (
+            <div className="card">
+              <div className="sub-title">历史追问 / 矫正</div>
+              <div className="hist-list">
+                {history.map((m, i) => {
+                  const t = (m && m.content != null) ? String(m.content).replace(/\s+/g, ' ').trim() : '';
+                  const shown = t.length > 40 ? t.slice(0, 40) + '…' : t;
+                  return (
+                    <button key={i} type="button" className="hist-item"
+                      onClick={() => onNavigate('revise', { caseId, topic: null, context: m.content })}>
+                      {shown}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          ))}
+          )}
           <div className="flex-row">
-            <button className="btn btn-primary" onClick={() => onNavigate('revise', { caseId })}>追问修正</button>
-            <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
+            <button className="btn btn-primary" onClick={() => onNavigate('revise', { caseId, context: (report && report.summary) || '' })}>追问解读</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId })}>回到档案</button>
           </div>
           <div className="flex-row">
-            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>返回首页</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('cases')}>回到档案列表</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>回到首页</button>
+          </div>
+          <div className="flex-row">
             <button className="btn btn-outline" onClick={logout}>退出登录</button>
           </div>
         </div>
       );
     }
 
-    function RevisePage({ caseId, onNavigate }) {
-      const [messages, setMessages] = useState([{ role: 'assistant', content: '您好，我是太初。关于您的事业运势，还有什么想了解的？' }]);
+    function RevisePage({ caseId, topic, context, onNavigate }) {
+      const [messages, setMessages] = useState(() => {
+        const first = context || (topic ? '关于「' + topic + '」这一板块，请说出您的疑问或不同看法。' : null);
+        const guide = '关于这份解读，您还有什么想追问的？';
+        return first
+          ? [{ role: 'assistant', content: first }, { role: 'assistant', content: guide }]
+          : [{ role: 'assistant', content: guide }];
+      });
       const [input, setInput] = useState('');
+      const [regenerating, setRegenerating] = useState(false);
+
+      // 重新生成解读：POST predict 拿 jobId，轮询到 succeeded（或 failed/超时）再回解读页；
+      // 此时 PredictPage 读 /report 已是最新成功的预测任务，直接展示新解读。
+      const handleRegenerate = async () => {
+        if (regenerating) return;
+        setRegenerating(true);
+        try {
+          const res = await api('/cases/' + caseId + '/predict', { method: 'POST' });
+          const jobId = (res.data && res.data.jobId) || res.jobId;
+          if (jobId && token) {
+            for (let i = 0; i < 150; i++) { // 至多约 5 分钟
+              await new Promise(r => setTimeout(r, 2000));
+              if (!token) break; // 轮询途中登出则中止
+              try {
+                const job = await api('/jobs/' + jobId);
+                const jd = job.data || job;
+                if (jd.status === 'succeeded') break;
+                if (jd.status === 'failed') { toast('解读重新生成失败，请返回解读页重试。'); break; }
+              } catch (e) { break; } // job 查询异常 → 直接回解读页（PredictPage 自行处理）
+            }
+          }
+          if (token) onNavigate('predict', { caseId });
+        } catch (e) {
+          if (token) onNavigate('predict', { caseId }); // predict 启动失败也回解读页（可重试）
+        }
+      };
 
       const handleSend = async () => {
         if (!input.trim()) return;
@@ -983,9 +1766,11 @@
         setMessages([...messages, userMsg]);
         setInput('');
         try {
+          const body = { message: input };
+          if (topic) body.topic = topic; // 板块追问：标注是针对哪个板块（如「事业趋势」）
           const res = await api('/cases/' + caseId + '/revise', {
             method: 'POST',
-            body: JSON.stringify({ message: input })
+            body: JSON.stringify(body)
           });
           const reply = (res.data && res.data.reply) || res.reply || '根据您的命盘综合来看，建议保持耐心，等待时机成熟。';
           setMessages(msgs => [...msgs, { role: 'assistant', content: reply }]);
@@ -997,7 +1782,7 @@
       return (
         <div className="container">
           <div className="card">
-            <h2 className="title">追问修正</h2>
+            <h2 className="title">{topic ? '追问：' + topic : '追问解读'}</h2>
             <div style={{ maxHeight: 400, overflowY: 'auto', marginBottom: 12 }}>
               {messages.map((m, i) => (
                 <div key={i} style={{
@@ -1015,14 +1800,579 @@
               ))}
             </div>
             <div className="flex-row">
-              <input className="input" value={input} onChange={e => setInput(e.target.value)} placeholder="输入您的问题..." onKeyDown={e => e.key === 'Enter' && handleSend()} />
+              <input className="input" value={input} onChange={e => setInput(e.target.value)} placeholder={topic ? '就「' + topic + '」继续提问...' : '输入您的问题...'} onKeyDown={e => e.key === 'Enter' && handleSend()} />
               <button className="btn btn-primary" style={{ width: 80 }} onClick={handleSend}>发送</button>
             </div>
-            <div className="flex-row" style={{ marginTop: 12 }}>
-              <button className="btn btn-outline" onClick={() => onNavigate('predict', { caseId })}>返回解读</button>
-              <button className="btn btn-outline" onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
+            <button className="btn btn-primary" style={{ marginTop: 12 }} onClick={handleRegenerate} disabled={regenerating}>
+              {regenerating ? '重新生成中…' : '重新生成解读'}
+            </button>
+            <div className="flex-row" style={{ marginTop: 8 }}>
+              <button className="btn btn-outline" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => onNavigate('predict', { caseId })}>返回解读</button>
+              <button className="btn btn-outline" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
             </div>
-            <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={logout}>退出登录</button>
+          </div>
+        </div>
+      );
+    }
+
+    // ===== 板块独立详情页（report.details 每个板块的专属界面） =====
+    // 标题=板块领域名 + 趋势 direction（TREND_META 映射颜色/图标）；正文=完整展示该板块 description；
+    // 下方=针对本板块的追问对话，复用 /revise 端点、body 带 topic=板块名。
+    function TopicPage({ caseId, topic, context, direction, onNavigate }) {
+      const [input, setInput] = useState('');
+      const [sending, setSending] = useState(false);
+      const [messages, setMessages] = useState(() => [{
+        role: 'assistant',
+        content: topic ? '以上是「' + topic + '」板块的完整解读，您可就这一板块继续追问。' : '您想进一步了解哪些细节？'
+      }]);
+
+      const goPredict = () => onNavigate('predict', { caseId });
+
+      const handleSend = async () => {
+        const text = String(input || '').trim();
+        if (!text || sending || !topic || !caseId) return;
+        setSending(true);
+        setMessages(msgs => [...msgs, { role: 'user', content: text }]);
+        setInput('');
+        try {
+          const body = { message: text };
+          if (topic) body.topic = topic; // 板块追问：body 带 topic=板块名，走同一 /revise 端点
+          const res = await api('/cases/' + caseId + '/revise', {
+            method: 'POST',
+            body: JSON.stringify(body)
+          });
+          const reply = (res.data && res.data.reply) || res.reply || '根据您的命盘综合来看，建议保持耐心，等待时机成熟。';
+          setMessages(msgs => [...msgs, { role: 'assistant', content: reply }]);
+        } catch (e) {
+          setMessages(msgs => [...msgs, { role: 'assistant', content: '抱歉，暂时无法回复，请稍后重试。' }]);
+        } finally {
+          setSending(false);
+        }
+      };
+
+      // 挂载时回显该板块历史追问：GET archive → data.conversations（防御解包），
+      // 按 topic === 当前板块名 过滤、turn 升序，映射成 role/content 气泡，插在引导语之后；
+      // archive 失败或无该板块记录 → 静默，仅保留引导语（不报错）
+      useEffect(() => {
+        let alive = true;
+        if (!caseId || !topic) return;
+        (async () => {
+          try {
+            const res = await api('/cases/' + caseId + '/archive');
+            const data = (res && res.data) || res || {};
+            const convs = (Array.isArray(data.conversations) ? data.conversations : [])
+              .filter(c => c && (c.role === 'user' || c.role === 'assistant') && c.content && c.topic === topic)
+              .sort((a, b) => (a.turn || 0) - (b.turn || 0))
+              .map(c => ({ role: c.role, content: c.content }));
+            if (!alive || !convs.length) return;
+            setMessages(msgs => {
+              // 引导语恒在 index 0，历史紧跟其后，本会话新追问保持在队尾
+              return msgs.slice(0, 1).concat(convs, msgs.slice(1));
+            });
+          } catch (e) { /* 无历史/加载失败 → 不展示、不报错 */ }
+        })();
+        return () => { alive = false; };
+      }, [caseId, topic]);
+
+      const meta = trendMeta(direction); // 吉/凶/平 → 颜色 / 图标 / 文案
+      const trendName = direction || '平';
+
+      if (!caseId || !topic) {
+        return (
+          <div className="container">
+            <div className="card failed-box">
+              <h2 className="title">板块详情不可用</h2>
+              <div className="error">缺少档案或板块信息，请从综合解读页进入具体板块。</div>
+              <button className="btn btn-primary" onClick={goPredict}>返回综合解读</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="container">
+          {/* 板块头部：领域名 + 趋势徽章（复用 TREND_META 颜色/图标） */}
+          <div className={'card ' + meta.cls} style={{ padding: '18px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ color: meta.color, display: 'inline-flex', flex: 'none' }}><Icon name={meta.icon} size={30} /></span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="serif" style={{ fontSize: 23, fontWeight: 700, color: 'var(--ink-700)', letterSpacing: '.03em' }}>{topic}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 3 }}>板块独立解读 · 趋势 {trendName}（{meta.label}）</div>
+              </div>
+              <span style={{
+                flex: 'none', fontSize: 13, fontWeight: 700, padding: '4px 14px',
+                borderRadius: 999, background: meta.color, color: '#fff',
+                boxShadow: '0 2px 8px rgba(26,33,56,.16)'
+              }}>{trendName}</span>
+            </div>
+          </div>
+
+          {/* 独立板块解读：完整展示该板块 description（非「综合解读」文案） */}
+          <div className="card" style={{ marginTop: 0 }}>
+            <div className="sub-title">{topic} · 独立解读</div>
+            <p style={{ fontSize: 15, lineHeight: 1.9, color: 'var(--text-1)', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              {context || '该板块暂无更多解读内容，可通过下方追问进一步了解。'}
+            </p>
+          </div>
+
+          {/* 本板块追问：输入框 + 历史对话，复用 /revise（body 带 topic=title） */}
+          <div className="card" style={{ marginTop: 0 }}>
+            <div className="sub-title">追问 · {topic}</div>
+            <div style={{ maxHeight: 340, overflowY: 'auto', marginBottom: 12, display: 'flex', flexDirection: 'column' }}>
+              {messages.map((m, i) => (
+                <div key={i} style={{
+                  padding: '8px 12px',
+                  margin: '4px 0',
+                  borderRadius: 12,
+                  background: m.role === 'user' ? 'var(--skin-accent)' : 'var(--paper)',
+                  color: m.role === 'user' ? 'var(--skin-accent-ink)' : 'var(--text-1)',
+                  alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                  maxWidth: '86%',
+                }}>
+                  {m.content}
+                </div>
+              ))}
+              {sending && (
+                <div style={{ padding: '8px 12px', margin: '4px 0', borderRadius: 12, background: 'var(--paper)', color: 'var(--text-3)', alignSelf: 'flex-start', fontSize: 13 }}>解读中…</div>
+              )}
+            </div>
+            <div className="flex-row">
+              <input className="input" style={{ margin: 0 }} value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder={'就「' + topic + '」继续提问…'}
+                onKeyDown={e => { if (e.key === 'Enter') handleSend(); }} />
+              <button type="button" className="btn btn-primary"
+                style={{ flex: 'none', width: 84 }}
+                onClick={handleSend} disabled={sending}>{sending ? '回复中' : '发送'}</button>
+            </div>
+            <div className="flex-row" style={{ marginTop: 12 }}>
+              <button className="btn btn-outline" style={{ padding: '8px 12px', fontSize: 13 }} onClick={goPredict}>返回综合解读</button>
+              <button className="btn btn-outline" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => onNavigate('archive', { caseId })}>我的档案</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ===== 完整盘面组件（直接消费 archive 的 data.chart.data，零 LLM） =====
+    const arr = (x) => (Array.isArray(x) ? x : []);
+    const val = (x, d = '') => (x == null ? d : x);
+    const joinArr = (x, sep = '、') => {
+      if (Array.isArray(x)) return x.filter(v => v != null && v !== '').join(sep);
+      return (x == null || x === '') ? '' : String(x);
+    };
+
+    function EmptyNote({ deg, name }) {
+      return (
+        <div className="empty-note">
+          {name}：{deg ? '本次建档未提供经纬度，该盘未排（已降级）。' : '暂无数据。'}
+        </div>
+      );
+    }
+
+    // —— 八字盘（最核心）——
+    function FourPillars({ pillars }) {
+      if (!pillars) return <div className="aux-line">四柱数据缺失</div>;
+      const cols = [['年柱', pillars.year], ['月柱', pillars.month], ['日柱', pillars.day], ['时柱', pillars.hour]];
+      const rowDefs = [
+        { label: '天干', get: p => p && p.gan },
+        { label: '地支', get: p => p && p.zhi },
+        { label: '干五行', get: p => p && p.gan_wuxing },
+        { label: '支五行', get: p => p && p.zhi_wuxing },
+        { label: '十神(干)', get: p => p && p.shishen_gan },
+        { label: '十神(支)', get: p => joinArr(p && p.shishen_zhi) },
+        { label: '藏干', get: p => joinArr(p && p.hide_gan && p.hide_gan.map(h => h.gan + '(' + h.shishen + ')')) },
+        { label: '纳音', get: p => p && p.nayin },
+        { label: '十二长生', get: p => p && p.dish },
+      ];
+      return (
+        <div className="four-pillars">
+          <div className="fp-cell fp-rowhead" />
+          {cols.map((c, i) => <div key={'h' + i} className={'fp-cell fp-head' + (i === 2 ? ' fp-day' : '')}>{c[0]}</div>)}
+          {rowDefs.map((r, ri) => (
+            <React.Fragment key={'r' + ri}>
+              <div className="fp-cell fp-rowhead">{r.label}</div>
+              {cols.map((c, i) => <div key={'c' + i} className={'fp-cell' + (i === 2 ? ' fp-day' : '')}>{val(r.get(c[1]))}</div>)}
+            </React.Fragment>
+          ))}
+        </div>
+      );
+    }
+
+    function ShenshaTags({ list }) {
+      const items = arr(list);
+      if (!items.length) return null;
+      const cls = (s) => {
+        const c = (s && s.category) || '';
+        if (/贵人|吉/.test(c)) return 'green';
+        if (/煞|凶|亡|空|破|灾/.test(c)) return 'red';
+        return 'gold';
+      };
+      return (
+        <div className="shensha-tags">
+          {items.map((s, i) => {
+            const pillars = joinArr(s.pillars);
+            return (
+              <span key={i} className={'shensha-tag ' + cls(s)} title={(s.note || '') + (pillars ? ' 落:' + pillars : '')}>
+                {s.name}{pillars ? '·' + pillars : ''}
+              </span>
+            );
+          })}
+        </div>
+      );
+    }
+
+    function DaYun({ qiYun, daYun }) {
+      const list = arr(daYun);
+      if (!list.length) return null;
+      const q = qiYun || {};
+      return (
+        <div>
+          <div className="aux-line">
+            起运：<b>{q.forward ? '顺行' : '逆行'}</b> · {val(q.start, '-')} · <b>{val(q.start_age, '?')}</b>岁起运
+          </div>
+          <table className="mini-table">
+            <thead><tr><th>步</th><th>干支</th><th>起止年</th><th>起止岁</th></tr></thead>
+            <tbody>
+              {list.map(dy => (
+                <tr key={dy.index}>
+                  <td>{dy.index}</td>
+                  <td>{dy.ganzhi}</td>
+                  <td>{dy.start_year}–{dy.end_year}</td>
+                  <td>{dy.age_start}–{dy.age_end}岁</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    function Timeline({ timeline }) {
+      const items = arr(timeline);
+      if (!items.length) return null;
+      return (
+        <div className="timeline">
+          {items.map((t, i) => (
+            <div className="tl-item" key={i}>
+              <div className="tl-year">{t.year}年<span className="tl-age">{t.age}岁</span></div>
+              <div className="tl-ganzhi">{t.liu_nian_ganzhi}<span className="tl-dy">大运 {t.da_yun_ganzhi}</span></div>
+              <div className="tl-events">
+                {arr(t.events).map((e, j) => <span className="tl-ev" key={j}>{e.desc}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function BaziPlate({ d }) {
+      const bazi = d.bazi || {};
+      const cal = d.calendar || {};
+      return (
+        <div>
+          <div className="daymaster">
+            <span className="dm">日主：{val(bazi.day_master, '-')}</span>
+            <span className="dm-wx">{val(bazi.day_master_wuxing, '')}</span>
+            {cal.lunar && <span className="dm-wx">· {cal.lunar}</span>}
+          </div>
+          <FourPillars pillars={bazi.pillars} />
+          <div className="aux-line" style={{ marginTop: 10 }}>
+            命宫 {val(bazi.ming_gong)} · 身宫 {val(bazi.shen_gong)} · 胎元 {val(bazi.tai_yuan)} · 旬空 {joinArr(bazi.xun_kong)}
+          </div>
+          <div className="sub-title">神煞</div>
+          <ShenshaTags list={bazi.shensha} />
+          <div className="sub-title">大运</div>
+          <DaYun qiYun={bazi.qi_yun} daYun={bazi.da_yun} />
+          <div className="sub-title">流年（近 20 年）</div>
+          <Timeline timeline={d.timeline_20y} />
+        </div>
+      );
+    }
+
+    // —— 紫微盘 ——
+    function ZiweiWheel({ palaces, soulPalace, bodyPalace }) {
+      const cx = 130, cy = 130, R = 108;
+      const items = arr(palaces);
+      return (
+        <svg viewBox="0 0 260 260" className="ziwei-wheel">
+          <circle cx={cx} cy={cy} r={R} className="zw-ring" />
+          <circle cx={cx} cy={cy} r={R * 0.52} className="zw-ring-inner" />
+          {items.map((p, i) => {
+            const ang = (i / 12) * 2 * Math.PI - Math.PI / 2;
+            const x = cx + R * Math.cos(ang);
+            const y = cy + R * Math.sin(ang);
+            return <text key={i} x={x} y={y} className="zw-label" textAnchor="middle" dominantBaseline="middle">{p.name}</text>;
+          })}
+          <text x={cx} y={cy - 8} textAnchor="middle" className="zw-center">命宫 {val(soulPalace)}</text>
+          <text x={cx} y={cy + 12} textAnchor="middle" className="zw-center2">身宫 {val(bodyPalace)}</text>
+        </svg>
+      );
+    }
+
+    function ZiweiPlate({ d, deg }) {
+      const z = d.ziwei || {};
+      if (!z.palaces) return <EmptyNote deg={deg} name="紫微盘" />;
+      return (
+        <div>
+          <div className="aux-line">
+            五行局 <b>{val(z.five_elements_class)}</b> · 农历 {val(z.lunar_date)} · 命宫 <b>{val(z.soul_palace)}</b> / 身宫 <b>{val(z.body_palace)}</b> · 命主 {val(z.soul)} / 身主 {val(z.body)}
+          </div>
+          <div className="ziwei-wrap">
+            <ZiweiWheel palaces={z.palaces} soulPalace={z.soul_palace} bodyPalace={z.body_palace} />
+            <div className="palace-grid">
+              {arr(z.palaces).map((p, i) => (
+                <div key={i} className={'palace-card' + (p.is_body_palace ? ' body' : '')}>
+                  <div className="pc-name">{p.name}{p.is_body_palace && <span className="pc-badge">身宫</span>}</div>
+                  <div className="pc-stem">{val(p.heavenly_stem)}{val(p.earthly_branch)}</div>
+                  <div className="pc-stars">{arr(p.major_stars).map((s, j) => <span className="pc-major" key={j}>{s}</span>)}</div>
+                  {arr(p.minor_stars).length > 0 && <div className="pc-stars sm">{joinArr(p.minor_stars)}</div>}
+                  {arr(p.adjective_stars).length > 0 && <div className="pc-stars adj">{joinArr(p.adjective_stars)}</div>}
+                  {arr(p.sihua).length > 0 && <div className="pc-sihua">{joinArr(p.sihua)}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="sub-title">四化表</div>
+          <table className="mini-table">
+            <thead><tr><th>星曜</th><th>四化</th><th>落宫</th></tr></thead>
+            <tbody>
+              {arr(z.sihua).map((s, i) => (
+                <tr key={i}><td>{val(s.star)}</td><td>{val(s.mutagen)}</td><td>{val(s.palace)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // —— 占星盘 ——
+    function WesternSummary({ s }) {
+      if (!s || typeof s !== 'object') return null;
+      const sec = (title, obj) => (obj && typeof obj === 'object' && Object.keys(obj).length) ? (
+        <div className="aux-line"><b>{title}：</b>{Object.entries(obj).map(([k, v]) => `${k}(${Array.isArray(v) ? v.join('、') : v})`).join('  ')}</div>
+      ) : null;
+      return (
+        <div>
+          {sec('四元素', s.elements)}
+          {sec('三方', s.modalities)}
+          {s.retrograde && s.retrograde.length ? <div className="aux-line"><b>逆行：</b>{s.retrograde.join('、')}</div> : null}
+          {s.patterns && s.patterns.length ? <div className="aux-line"><b>格局：</b>{s.patterns.join('、')}</div> : null}
+        </div>
+      );
+    }
+
+    function WesternPlate({ d, deg }) {
+      const w = d.western || {};
+      if (!w.planets) return <EmptyNote deg={deg} name="占星盘" />;
+      return (
+        <div>
+          <WesternSummary s={w.summary} />
+          <div className="sub-title">行星落位</div>
+          <table className="planet-table">
+            <thead><tr><th>星体</th><th>星座</th><th>宫位</th><th>度数</th><th></th></tr></thead>
+            <tbody>
+              {arr(w.planets).map((p, i) => (
+                <tr key={i}>
+                  <td>{val(p.label)}{p.name && p.label !== p.name ? ' (' + p.name + ')' : ''}</td>
+                  <td>{val(p.sign)}</td>
+                  <td>{val(p.house)}</td>
+                  <td>{val(p.formatted)}</td>
+                  <td>{p.retrograde ? <span className="retro">逆</span> : ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="sub-title">四轴</div>
+          <table className="planet-table">
+            <thead><tr><th>轴</th><th>星座</th><th>度数</th></tr></thead>
+            <tbody>
+              {arr(w.angles).map((a, i) => (
+                <tr key={i}><td>{val(a.label)}</td><td>{val(a.sign)}</td><td>{val(a.formatted)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="sub-title">宫位</div>
+          <table className="planet-table">
+            <thead><tr><th>宫</th><th>星座</th><th>度数</th></tr></thead>
+            <tbody>
+              {arr(w.houses).map((h, i) => (
+                <tr key={i}><td>{val(h.label)}</td><td>{val(h.sign)}</td><td>{val(h.formatted)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="sub-title">主要相位</div>
+          <table className="aspect-table">
+            <thead><tr><th>星体1</th><th>星体2</th><th>相位</th><th>紧密</th></tr></thead>
+            <tbody>
+              {arr(w.aspects).map((a, i) => (
+                <tr key={i}><td>{val(a.body1)}</td><td>{val(a.body2)}</td><td>{val(a.type)}</td><td>{val(a.closeness)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // —— 七政四余 ——
+    function QizhengPlate({ d, deg }) {
+      const q = d.qizheng || {};
+      if (!q.stars) return <EmptyNote deg={deg} name="七政四余" />;
+      return (
+        <div>
+          <div className="aux-line">
+            命宫 <b>{val(q.mingGong)}</b> · 身宫 <b>{val(q.shenGong)}</b> · 命主 <b>{val(q.mingZhu)}</b>
+          </div>
+          <div className="sub-title">星曜躔次</div>
+          <table className="star-table">
+            <thead><tr><th>星</th><th>种类</th><th>宿</th><th>落宫</th><th>庙旺</th></tr></thead>
+            <tbody>
+              {arr(q.stars).map((s, i) => (
+                <tr key={i}>
+                  <td>{val(s.name)}</td><td>{val(s.kind)}</td><td>{val(s.xiu)}</td><td>{val(s.palace)}</td><td>{val(s.dignity)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {arr(q.twelvePalaces).length > 0 && (
+            <React.Fragment>
+              <div className="sub-title">十二宫</div>
+              <div className="palace-grid">
+                {arr(q.twelvePalaces).map((p, i) => (
+                  <div key={i} className="palace-card">
+                    <div className="pc-name">{val(p.name || p.palace || ('宫' + i))}</div>
+                    <div className="pc-stars sm">{joinArr([p.stars || p.mainStar, p.notes || p.note].filter(Boolean))}</div>
+                  </div>
+                ))}
+              </div>
+            </React.Fragment>
+          )}
+          {arr(q.shensha).length > 0 && (
+            <React.Fragment>
+              <div className="sub-title">神煞</div>
+              <ShenshaTags list={q.shensha} />
+            </React.Fragment>
+          )}
+        </div>
+      );
+    }
+
+    // —— 奇门终身局 ——
+    const GONG_POS = { 4: [0, 0], 9: [0, 1], 2: [0, 2], 3: [1, 0], 5: [1, 1], 7: [1, 2], 8: [2, 0], 1: [2, 1], 6: [2, 2] };
+    function QimenPlate({ d, deg }) {
+      const q = d.qimen_lifetime || {};
+      const bc = q.baseChart || {};
+      if (!bc.jiuGongGe) return <EmptyNote deg={deg} name="奇门终身局" />;
+      const cells = arr(bc.jiuGongGe).slice().sort((a, b) => {
+        const pa = GONG_POS[a.gong] || [9, 9], pb = GONG_POS[b.gong] || [9, 9];
+        return pa[0] - pb[0] || pa[1] - pb[1];
+      });
+      return (
+        <div>
+          <div className="aux-line">
+            {val(bc.juMethod, '排盘')} · {bc.isYangDun ? '阳遁' : '阴遁'} · 局数 <b>{val(bc.juShu)}</b> · 值符 <b>{val(bc.zhiFu)}</b> · 值使 <b>{val(bc.zhiShi)}</b>
+          </div>
+          <div className="sub-title">九宫格</div>
+          <div className="qimen-grid">
+            {cells.map((c, i) => (
+              <div key={i} className="qimen-cell">
+                <div className="qc-name">{val(c.name)}</div>
+                <div className="qc-meta">{val(c.direction)}·{val(c.element)}</div>
+                <div className="qc-lines">
+                  {c.tianPan && <div>天盘 {val(c.tianPan.star)}{val(c.tianPan.stem)}</div>}
+                  {c.diPan && <div>地盘 {val(c.diPan.stem)}</div>}
+                  {c.renPan && <div>人盘 {val(c.renPan.door)}</div>}
+                  {c.shenPan && <div>神盘 {val(c.shenPan.god)}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+          {arr(q.stages).length > 0 && (
+            <React.Fragment>
+              <div className="sub-title">分限行运</div>
+              <table className="mini-table">
+                <thead><tr><th>限</th><th>主题</th><th>年龄</th><th>倾向</th></tr></thead>
+                <tbody>
+                  {arr(q.stages).map((s, i) => (
+                    <tr key={i}>
+                      <td>{s.stageIndex}</td>
+                      <td style={{ textAlign: 'left' }}>{val(s.title)}</td>
+                      <td>{val(s.ageStart)}–{val(s.ageEnd)}</td>
+                      <td style={{ textAlign: 'left', fontSize: 11 }}>{val(s.stageTheme)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </React.Fragment>
+          )}
+        </div>
+      );
+    }
+
+    // —— 五运六气 ——
+    function WuyunPlate({ d, deg }) {
+      const w = d.wuyun_liuqi || {};
+      const by = w.birth_year || {};
+      const cy = w.current_year || {};
+      if (!by.annualMovement && !by.sitian) return <EmptyNote deg={deg} name="五运六气" />;
+      const Row = ({ label, v }) => <div className="kv"><span className="k">{label}</span><span className="v">{val(v, '-')}</span></div>;
+      return (
+        <div>
+          <div className="wuyun-compare">
+            <div className="wuyun-col">
+              <h4>出生年运气（{val(by.input && by.input.yearGanZhi)}）</h4>
+              <Row label="岁运" v={by.annualMovement && (by.annualMovement.name + ' ' + (by.annualMovement.strength || ''))} />
+              <Row label="司天" v={by.sitian && by.sitian.name} />
+              <Row label="在泉" v={by.zaiquan && by.zaiquan.name} />
+              <Row label="天符关系" v={by.annualRelation && by.annualRelation.kind} />
+              {by.annualConformities && arr(by.annualConformities.names).length > 0 &&
+                <Row label="同化" v={joinArr(by.annualConformities.names)} />}
+            </div>
+            <div className="wuyun-col">
+              <h4>当前年运气（{val(cy.input && cy.input.yearGanZhi)}）</h4>
+              <Row label="岁运" v={cy.annualMovement && (cy.annualMovement.name + ' ' + (cy.annualMovement.strength || ''))} />
+              <Row label="司天" v={cy.sitian && cy.sitian.name} />
+              <Row label="在泉" v={cy.zaiquan && cy.zaiquan.name} />
+              <Row label="天符关系" v={cy.annualRelation && cy.annualRelation.kind} />
+              {cy.annualConformities && arr(cy.annualConformities.names).length > 0 &&
+                <Row label="同化" v={joinArr(cy.annualConformities.names)} />}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // —— 盘面 Tab 容器（默认展开八字盘）——
+    function ChartView({ chartData, degraded }) {
+      const d = chartData || {};
+      const deg = arr(degraded).map(s => s.replace(/-/g, '_'));
+      const isDeg = (k) => deg.includes(k);
+      const [tab, setTab] = useState('bazi');
+      const tabs = [
+        { id: 'bazi', label: '八字盘' },
+        { id: 'ziwei', label: '紫微盘' },
+        { id: 'western', label: '占星盘' },
+        { id: 'qizheng', label: '七政四余' },
+        { id: 'qimen', label: '奇门终身局' },
+        { id: 'wuyun', label: '五运六气' },
+      ];
+      return (
+        <div className="card chart-view">
+          <div className="section-title">完整盘面</div>
+          {deg.length > 0 &&
+            <div className="deg-banner">已降级方法：{arr(degraded).join('、')}（未提供经纬度，相关盘面数据缺失，对应标签页将提示未排）。</div>}
+          <div className="chart-tabs">
+            {tabs.map(t => (
+              <button key={t.id} className={'chart-tab' + (tab === t.id ? ' active' : '')} onClick={() => setTab(t.id)}>{t.label}</button>
+            ))}
+          </div>
+          <div className="chart-body">
+            {tab === 'bazi' && <BaziPlate d={d} />}
+            {tab === 'ziwei' && <ZiweiPlate d={d} deg={isDeg('ziwei')} />}
+            {tab === 'western' && <WesternPlate d={d} deg={isDeg('western')} />}
+            {tab === 'qizheng' && <QizhengPlate d={d} deg={isDeg('qizheng')} />}
+            {tab === 'qimen' && <QimenPlate d={d} deg={isDeg('qimen_lifetime')} />}
+            {tab === 'wuyun' && <WuyunPlate d={d} deg={isDeg('wuyun_liuqi')} />}
           </div>
         </div>
       );
@@ -1085,15 +2435,9 @@
         ['真太阳时', inp.true_solar_time ? '是' : '否'],
       ];
 
-      // 盘面摘要：chart.data 各字段缺失则省略对应行（防御性访问）
+      // 完整盘面：chart.data 即后端 chart_json（含八字/紫微/占星/七政/奇门/五运六气）；degraded 为已降级方法列表
       const chart = (data && data.chart) || {};
       const chartData = (chart.data || {});
-      const bazi = chartData.bazi || {};
-      const calendar = chartData.calendar || {};
-      const chartRows = [];
-      if (bazi.day_master) chartRows.push(['日主', bazi.day_master]);
-      if (bazi.day_master_wuxing) chartRows.push(['日主五行', bazi.day_master_wuxing]);
-      if (calendar.lunar) chartRows.push(['农历', calendar.lunar]);
       const degradedList = Array.isArray(chart.degraded) ? chart.degraded : (chart.degraded ? [chart.degraded] : []);
 
       // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
@@ -1124,7 +2468,10 @@
       return (
         <div className="container">
           <div className="card">
-            <h2 className="title">我的命理档案</h2>
+            <div className="flex-row" style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <h2 className="title" style={{ marginBottom: 0 }}>我的命理档案</h2>
+              <CreditBalance onClick={() => onNavigate('credits', { caseId })} />
+            </div>
             <p style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 8 }}>
               档案编号：{caseId} · 状态：{statusMap[data && data.status] || (data && data.status) || '-'}
             </p>
@@ -1136,17 +2483,8 @@
               <p className="coord-hint" style={{ marginTop: 8 }}>提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。</p>}
           </div>
 
-          {/* 盘面摘要：chart 存在且有可展示内容时才渲染 */}
-          {data && data.chart && (chartRows.length > 0 || degradedList.length > 0) && (
-            <div className="card">
-              <div className="section-title">盘面摘要</div>
-              {chartRows.map((r, i) => (
-                <div className="kv" key={i}><span className="k">{r[0]}</span><span className="v">{r[1] != null && r[1] !== '' ? r[1] : '-'}</span></div>
-              ))}
-              {degradedList.length > 0 &&
-                <p className="coord-hint" style={{ marginTop: 8 }}>已降级方法：{degradedList.join('、')}</p>}
-            </div>
-          )}
+          {/* 完整盘面：直接消费 archive 的 data.chart.data（零 LLM），无需额外后端改动 */}
+          {data && data.chart && chartData && <ChartView chartData={chartData} degraded={degradedList} />}
 
           {/* 校准记录：record 反馈条数 + 整体契合度（拿不到契合度则只展示条数） */}
           {data && data.calibrations && (calibCount != null || calibFitText != null) && (
@@ -1183,7 +2521,10 @@
 
           <div className="flex-row">
             <button className="btn btn-primary" onClick={() => onNavigate('predict', { caseId })}>查看解读</button>
-            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>返回首页</button>
+            <button className="btn btn-outline" onClick={() => onNavigate('cases')}>回到档案列表</button>
+          </div>
+          <div className="flex-row">
+            <button className="btn btn-outline" onClick={() => onNavigate('landing')}>回到首页</button>
           </div>
           <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={logout}>退出登录</button>
         </div>
@@ -1195,6 +2536,7 @@
       const [page, setPage] = useState('landing');
       const [params, setParams] = useState({});
       const [skin, setSkin] = useState(() => localStorage.getItem('taichu_skin') || 'guoxue');
+      const [creditModal, setCreditModal] = useState(null);
 
       useEffect(() => {
         const saved = localStorage.getItem('taichu_token');
@@ -1202,7 +2544,7 @@
           token = saved;
           const savedR = localStorage.getItem('taichu_refresh_token');
           if (savedR) refreshToken = savedR;
-          setPage('onboarding'); // 已登录自动跳转
+          setPage('cases'); // 已登录自动进入档案列表
         }
       }, []);
 
@@ -1210,18 +2552,27 @@
 
       onUnauthorized = () => setPage('auth');
 
+      // 注册「积分不足」弹窗处理器：api() 拦截到 5002 时回调，驱动 modal 渲染
+      useEffect(() => {
+        setCreditInsuffHandler((info) => setCreditModal(info));
+        return () => setCreditInsuffHandler(null);
+      }, []);
+
       const navigate = (p, p2 = {}) => { setPage(p); setParams(p2); };
       const applySkin = (s) => { setSkin(s); localStorage.setItem('taichu_skin', s); };
 
       const pages = {
         landing: <LandingPage onNavigate={navigate} />,
         auth: <AuthPage onNavigate={navigate} />,
+        cases: <CasesPage onNavigate={navigate} />,
         onboarding: <OnboardingPage onNavigate={navigate} />,
         waiting: <WaitingPage caseId={params.caseId} onNavigate={navigate} />,
         calibration: <CalibrationPage caseId={params.caseId} onNavigate={navigate} />,
         predict: <PredictPage caseId={params.caseId} onNavigate={navigate} />,
-        revise: <RevisePage caseId={params.caseId} onNavigate={navigate} />,
+        revise: <RevisePage caseId={params.caseId} topic={params.topic} context={params.context} onNavigate={navigate} />,
+        topic: <TopicPage caseId={params.caseId} topic={params.topic} context={params.context} direction={params.direction} onNavigate={navigate} />,
         archive: <ArchivePage caseId={params.caseId} onNavigate={navigate} />,
+        credits: <CreditTransactionsPage caseId={params.caseId} onNavigate={navigate} />,
       };
 
       return (
@@ -1229,7 +2580,7 @@
           <div className="starfield" aria-hidden="true"></div>
           <header className="topbar">
             <span className="brand">太初<span className="dot">·</span></span>
-            <span className="tagline">事业运势趋势参考</span>
+            <span className="tagline">命理全局 · 运势趋势</span>
           </header>
           <div className="app-shell">
             <div className="view-enter" key={page}>
@@ -1238,6 +2589,13 @@
             <DisclaimerFooter />
           </div>
           <SkinSwitcher skin={skin} onPick={applySkin} />
+          {creditModal && (
+            <CreditInsufficientModal
+              info={creditModal}
+              onClose={() => setCreditModal(null)}
+              onRecharge={() => { setCreditModal(null); window.location.href = getRechargeUrl(); }}
+            />
+          )}
         </div>
       );
     }

@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     llm_model: str = "deepseek-v4-flash"         # TAICHU_LLM_MODEL（解读/分析主模型）
     llm_validation_model: str = "deepseek-v4-flash"  # TAICHU_LLM_VALIDATION_MODEL（校验模型，MVP 与主模型同档，留可换便宜模型）
     llm_timeout: float = 60.0                    # TAICHU_LLM_TIMEOUT（秒）
-    llm_max_retries: int = 2                     # TAICHU_LLM_MAX_RETRIES
+    llm_max_retries: int = 1                     # TAICHU_LLM_MAX_RETRIES（1 原始 + 1 重试 = 最多 2 次尝试）
     llm_temperature: float = 0.3                 # TAICHU_LLM_TEMPERATURE
 
     # JWT 鉴权（ADR-0008：HS256）
@@ -49,6 +49,11 @@ class Settings(BaseSettings):
 
     # Node运行时
     node_path: str = "node"
+
+    # 排盘常驻 Node 服务（paipan-node/server.mjs，HTTP 优先 + subprocess 降级）
+    paipan_node_url: str = "http://127.0.0.1:9317"   # TAICHU_PAIPAN_NODE_URL
+    paipan_node_port: int = 9317                     # TAICHU_PAIPAN_NODE_PORT
+    paipan_max_concurrency: int = 3                  # TAICHU_PAIPAN_MAX_CONCURRENCY（排盘并发上限）
 
     host: str = "0.0.0.0"
     port: int = 8000

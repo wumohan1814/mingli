@@ -25,11 +25,14 @@ from __future__ import annotations
 
 import json
 import subprocess
+import threading
 from datetime import datetime
 from pathlib import Path
 
+import httpx
 from lunar_python import Solar
 
+from app.config import settings
 from app.paipan.shensha import compute_shensha
 
 GAN_WUXING = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",
@@ -72,6 +75,10 @@ PILLAR_LABEL = {"year": "年", "month": "月", "day": "日", "hour": "时"}
 NODE_DIR = Path(__file__).resolve().parents[2] / "paipan-node"
 ZIWEI_SCRIPT = NODE_DIR / "ziwei.cjs"
 EXTRA_SCRIPT = NODE_DIR / "extra.mjs"
+
+# 排盘并发限流：模块级信号量（上限 settings.paipan_max_concurrency）。
+# paipan() 整个排盘主体在 `with _paipan_semaphore:` 内执行，超出上限的调用会阻塞排队。
+_paipan_semaphore = threading.Semaphore(settings.paipan_max_concurrency)
 
 
 def normalize_gender(g: str) -> str:
@@ -251,15 +258,28 @@ def build_timeline_20y(da_yun, pillars, day_master, shensha_targets) -> list:
 
 
 def run_ziwei(year, month, day, hour, gender) -> dict | None:
-    """调用 paipan-node/ziwei.cjs；失败返回 None。"""
+    """紫微排盘：先调常驻 HTTP 服务（server.mjs /ziwei），失败则静默降级 subprocess ziwei.cjs。
+
+    HTTP 与 subprocess 输出结构一致；两条路径都失败时返回 None。
+    """
     if not ZIWEI_SCRIPT.exists():
         return None
     time_idx = ((hour + 1) // 2) % 12
-    payload = json.dumps({"birthday": f"{year}-{month:02d}-{day:02d}",
-                          "time_idx": time_idx, "gender": gender},
-                         ensure_ascii=False)
+    payload = {"birthday": f"{year}-{month:02d}-{day:02d}",
+               "time_idx": time_idx, "gender": gender}
+    # ① 优先：常驻 HTTP 服务（paipan-node/server.mjs）
     try:
-        r = subprocess.run(["node", str(ZIWEI_SCRIPT)], input=payload,
+        resp = httpx.post(f"{settings.paipan_node_url}/ziwei", json=payload, timeout=60)
+        if resp.status_code == 200:
+            data = resp.json()
+            if isinstance(data, dict):
+                return data
+    except Exception:
+        pass  # 连接失败/超时/非 200/解析失败 → 静默降级
+    # ② 降级：一次性 subprocess（ziwei.cjs，保留原逻辑）
+    try:
+        r = subprocess.run(["node", str(ZIWEI_SCRIPT)],
+                           input=json.dumps(payload, ensure_ascii=False),
                            capture_output=True, text=True, encoding="utf-8", timeout=60)
         if r.returncode != 0:
             return None
@@ -270,16 +290,29 @@ def run_ziwei(year, month, day, hour, gender) -> dict | None:
 
 def run_extra(year, month, day, hour, gender, name, birthplace, longitude, latitude,
               true_solar) -> dict | None:
-    """调用 paipan-node/extra.mjs（占星/七政/五运六气/奇门终身局）；失败返回 None。"""
+    """占星/七政/五运六气/奇门终身局：先调常驻 HTTP 服务（server.mjs /extra），失败降级 subprocess extra.mjs。
+
+    调用方约定：仅当 longitude is not None 时才调用；失败返回 None。
+    """
     if not EXTRA_SCRIPT.exists():
         return None
-    payload = json.dumps({"year": year, "month": month, "day": day, "hour": hour,
-                          "minute": 0, "gender": gender, "name": name,
-                          "birthplace": birthplace, "longitude": longitude,
-                          "latitude": latitude, "true_solar": true_solar},
-                         ensure_ascii=False)
+    payload = {"year": year, "month": month, "day": day, "hour": hour,
+               "minute": 0, "gender": gender, "name": name,
+               "birthplace": birthplace, "longitude": longitude,
+               "latitude": latitude, "true_solar": true_solar}
+    # ① 优先：常驻 HTTP 服务（paipan-node/server.mjs）
     try:
-        r = subprocess.run(["node", str(EXTRA_SCRIPT)], input=payload,
+        resp = httpx.post(f"{settings.paipan_node_url}/extra", json=payload, timeout=180)
+        if resp.status_code == 200:
+            data = resp.json()
+            if isinstance(data, dict):
+                return data
+    except Exception:
+        pass  # 连接失败/超时/非 200/解析失败 → 静默降级
+    # ② 降级：一次性 subprocess（extra.mjs，保留原逻辑）
+    try:
+        r = subprocess.run(["node", str(EXTRA_SCRIPT)],
+                           input=json.dumps(payload, ensure_ascii=False),
                            capture_output=True, text=True, encoding="utf-8", timeout=180)
         if r.returncode != 0:
             return None
@@ -299,87 +332,88 @@ def paipan(*, year: int, month: int, day: int,
     meta, input, calendar, bazi, timeline_20y, ziwei,
     western, qizheng, qimen_lifetime, wuyun_liuqi
     """
-    input_hour = hour
-    input_minute = minute
+    with _paipan_semaphore:
+        input_hour = hour
+        input_minute = minute
 
-    gender = normalize_gender(gender)
-    gender_num = 1 if gender == "男" else 0
-    has_hour = input_hour is not None
+        gender = normalize_gender(gender)
+        gender_num = 1 if gender == "男" else 0
+        has_hour = input_hour is not None
 
-    # 真太阳时近似：经度每偏离 120° 一度修正 4 分钟
-    true_solar_applied = False
-    hour = input_hour or 12
-    minute = input_minute or 0
-    if true_solar and longitude is not None:
-        delta_min = int(round((longitude - 120) * 4))
-        total = hour * 60 + minute + delta_min
-        total %= 24 * 60
-        hour, minute = divmod(total, 60)
-        true_solar_applied = True
+        # 真太阳时近似：经度每偏离 120° 一度修正 4 分钟
+        true_solar_applied = False
+        hour = input_hour or 12
+        minute = input_minute or 0
+        if true_solar and longitude is not None:
+            delta_min = int(round((longitude - 120) * 4))
+            total = hour * 60 + minute + delta_min
+            total %= 24 * 60
+            hour, minute = divmod(total, 60)
+            true_solar_applied = True
 
-    solar = Solar.fromYmdHms(year, month, day, hour, minute, 0)
-    lunar = solar.getLunar()
-    b = lunar.getEightChar()
-    if hasattr(b, "setSect"):
-        b.setSect(2)
+        solar = Solar.fromYmdHms(year, month, day, hour, minute, 0)
+        lunar = solar.getLunar()
+        b = lunar.getEightChar()
+        if hasattr(b, "setSect"):
+            b.setSect(2)
 
-    bazi = build_bazi(b, has_hour)
-    qiyun, da_yun = build_da_yun(b, gender_num)
-    bazi["qi_yun"] = qiyun
-    bazi["da_yun"] = da_yun
+        bazi = build_bazi(b, has_hour)
+        qiyun, da_yun = build_da_yun(b, gender_num)
+        bazi["qi_yun"] = qiyun
+        bazi["da_yun"] = da_yun
 
-    shensha_targets = {}
-    for ss in bazi["shensha"]:
-        shensha_targets.setdefault(ss["name"], set()).add(ss["target"])
+        shensha_targets = {}
+        for ss in bazi["shensha"]:
+            shensha_targets.setdefault(ss["name"], set()).add(ss["target"])
 
-    ziwei = None
-    if has_hour:
-        ziwei = run_ziwei(year, month, day, hour, gender)
+        ziwei = None
+        if has_hour:
+            ziwei = run_ziwei(year, month, day, hour, gender)
 
-    western = qizheng = wuyun = qimen_lifetime = None
-    if has_hour and longitude is not None:
-        extra = run_extra(year, month, day, hour, gender, name,
-                          birthplace, longitude, latitude,
-                          true_solar_applied)
-        if extra:
-            western = extra.get("western")
-            qizheng = extra.get("qizheng")
-            wuyun = extra.get("wuyun_liuqi")
-            qimen_lifetime = extra.get("qimen_lifetime")
+        western = qizheng = wuyun = qimen_lifetime = None
+        if has_hour and longitude is not None:
+            extra = run_extra(year, month, day, hour, gender, name,
+                              birthplace, longitude, latitude,
+                              true_solar_applied)
+            if extra:
+                western = extra.get("western")
+                qizheng = extra.get("qizheng")
+                wuyun = extra.get("wuyun_liuqi")
+                qimen_lifetime = extra.get("qimen_lifetime")
 
-    degraded = []
-    if qimen_lifetime is None:
-        degraded.append("qimen-lifetime")  # 仅当奇门终身局输出为 null 时降级
-    if not has_hour:
-        degraded.append("bazi-hour")
-    if ziwei is None:
-        degraded.append("ziwei")
-    if western is None:
-        degraded.append("western")
-    if qizheng is None:
-        degraded.append("qizheng")
-    if wuyun is None:
-        degraded.append("wuyun-liuqi")
+        degraded = []
+        if qimen_lifetime is None:
+            degraded.append("qimen-lifetime")  # 仅当奇门终身局输出为 null 时降级
+        if not has_hour:
+            degraded.append("bazi-hour")
+        if ziwei is None:
+            degraded.append("ziwei")
+        if western is None:
+            degraded.append("western")
+        if qizheng is None:
+            degraded.append("qizheng")
+        if wuyun is None:
+            degraded.append("wuyun-liuqi")
 
-    timeline = build_timeline_20y(da_yun, bazi["pillars"], bazi["day_master"],
-                                  shensha_targets)
+        timeline = build_timeline_20y(da_yun, bazi["pillars"], bazi["day_master"],
+                                      shensha_targets)
 
-    chart = {
-        "meta": {"version": "1.0.0",
-                 "generated_at": datetime.now().isoformat(timespec="seconds"),
-                 "source": "taichu-paipan", "degraded_methods": degraded},
-        "input": {"calendar": "solar", "year": year, "month": month,
-                  "day": day, "hour": input_hour, "minute": input_minute,
-                  "gender": gender, "birthplace_name": birthplace,
-                  "longitude": longitude, "latitude": latitude,
-                  "true_solar_time": true_solar_applied, "sect": 2, "yun_sect": 1,
-                  "name": name},
-        "calendar": {"solar": solar.toYmdHms(), "lunar": lunar.toString(),
-                     "true_solar_applied": true_solar_applied},
-        "bazi": bazi,
-        "timeline_20y": timeline,
-        "ziwei": ziwei,
-        "western": western, "qizheng": qizheng,
-        "qimen_lifetime": qimen_lifetime, "wuyun_liuqi": wuyun,
-    }
-    return chart
+        chart = {
+            "meta": {"version": "1.0.0",
+                     "generated_at": datetime.now().isoformat(timespec="seconds"),
+                     "source": "taichu-paipan", "degraded_methods": degraded},
+            "input": {"calendar": "solar", "year": year, "month": month,
+                      "day": day, "hour": input_hour, "minute": input_minute,
+                      "gender": gender, "birthplace_name": birthplace,
+                      "longitude": longitude, "latitude": latitude,
+                      "true_solar_time": true_solar_applied, "sect": 2, "yun_sect": 1,
+                      "name": name},
+            "calendar": {"solar": solar.toYmdHms(), "lunar": lunar.toString(),
+                         "true_solar_applied": true_solar_applied},
+            "bazi": bazi,
+            "timeline_20y": timeline,
+            "ziwei": ziwei,
+            "western": western, "qizheng": qizheng,
+            "qimen_lifetime": qimen_lifetime, "wuyun_liuqi": wuyun,
+        }
+        return chart
