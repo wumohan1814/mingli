@@ -131,6 +131,7 @@ from app.api.astrology import router as astrology_router
 from app.api.cases import router as cases_router
 from app.api.divination import router as divination_router
 from app.api.jobs import router as jobs_router
+from app.api.mbti import router as mbti_router
 from app.api.tarot import router as tarot_router
 from app.api.zodiac import router as zodiac_router
 from app.auth.router import router as auth_router
@@ -164,6 +165,7 @@ app.include_router(zodiac_router)
 app.include_router(divination_router)
 app.include_router(tarot_router)
 app.include_router(astrology_router)
+app.include_router(mbti_router)
 app.include_router(credits_router)
 app.include_router(events_router)
 
