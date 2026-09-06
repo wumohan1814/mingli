@@ -6096,108 +6096,120 @@ const PLANET_SYM = {
   '火星': '♂',
   '木星': '♃',
   '土星': '♄',
+  '天王星': '♅',
+  '海王星': '♆',
+  '冥王星': '♇',
+  '凯龙星': '⚷',
+  '谷神星': '⚳',
+  '智神星': '⚴',
+  '婚神星': '⚵',
+  '灶神星': '⚶',
+  '北交点': '☊',
+  '南交点': '☋',
+  '莉莉丝': '⚸',
+  '福点': '⊕',
   '上升': 'ASC',
   '天顶': 'MC'
 };
-const DEMO_ASTRO = {
-  planets: [{
-    label: '太阳',
-    sign: '狮子',
-    degree: 12,
-    house: 5,
-    long: 132,
-    retro: false
-  }, {
-    label: '月亮',
-    sign: '双鱼',
-    degree: 8,
-    house: 11,
-    long: 338,
-    retro: false
-  }, {
-    label: '水星',
-    sign: '处女',
-    degree: 3,
-    house: 6,
-    long: 153,
-    retro: false
-  }, {
-    label: '金星',
-    sign: '巨蟹',
-    degree: 21,
-    house: 4,
-    long: 111,
-    retro: false
-  }, {
-    label: '火星',
-    sign: '天秤',
-    degree: 14,
-    house: 7,
-    long: 194,
-    retro: true
-  }, {
-    label: '木星',
-    sign: '白羊',
-    degree: 2,
-    house: 1,
-    long: 2,
-    retro: false
-  }, {
-    label: '土星',
-    sign: '水瓶',
-    degree: 17,
-    house: 12,
-    long: 317,
-    retro: false
-  }],
-  houses: Array.from({
-    length: 12
-  }, (_, i) => ({
-    n: i + 1,
-    cusp: i * 30
-  })),
-  angles: [{
-    label: '上升',
-    long: 0
-  }, {
-    label: '天顶',
-    long: 270
-  }],
-  aspects: [{
-    b1: '太阳',
-    b2: '木星',
-    type: '合',
-    l1: 132,
-    l2: 2
-  }, {
-    b1: '太阳',
-    b2: '火星',
-    type: '刑',
-    l1: 132,
-    l2: 194
-  }, {
-    b1: '月亮',
-    b2: '金星',
-    type: '拱',
-    l1: 338,
-    l2: 111
-  }],
-  summary: {
-    elements: {
-      '火': 2,
-      '土': 1,
-      '风': 2,
-      '水': 2
-    },
-    modalities: {
-      '开创': 3,
-      '固定': 2,
-      '变动': 2
-    },
-    retrograde: ['火星'],
-    patterns: ['大三角格局']
-  }
-};
+/* 星座星盘页：出生信息表单默认值 / 年份选项（参考建档页可简化，1940~当前年-18） */
+const ASTRO_YEAR_MIN = 1940;
+const ASTRO_YEAR_MAX = Math.max(ASTRO_YEAR_MIN, new Date().getFullYear() - 18);
+const ASTRO_YEARS = [];
+for (let _ay = ASTRO_YEAR_MIN; _ay <= ASTRO_YEAR_MAX; _ay++) ASTRO_YEARS.push(_ay);
+const ASTRO_DEFAULT_YEAR = Math.max(ASTRO_YEAR_MIN, Math.min(ASTRO_YEAR_MAX, new Date().getFullYear() - 25));
+const ASTRO_DEFAULT_LONGITUDE = '116.4'; // 北京
+const ASTRO_DEFAULT_LATITUDE = '39.9'; // 北京
+
+function astroFin(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+function astroDaysInMonth(y, m) {
+  return new Date(y, m, 0).getDate();
+}
+/* 把后端 natal / 单盘结构归一化成前端渲染结构（兼容 DEMO 字段与真实字段，缺字段不崩） */
+function astroNorm(scope) {
+  const emptySum = {
+    elements: {},
+    modalities: {},
+    retrograde: [],
+    patterns: []
+  };
+  const empty = {
+    planets: [],
+    angles: [],
+    houses: [],
+    aspects: [],
+    summary: emptySum,
+    birth: {}
+  };
+  if (!scope || typeof scope !== 'object') return empty;
+  const num = v => {
+    if (v === undefined || v === null || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const mapPoint = p => {
+    if (!p || typeof p !== 'object') return null;
+    const degree = num(p.degree);
+    const minute = num(p.minute);
+    const house = num(p.house);
+    const long = num(p.longitude) != null ? num(p.longitude) : num(p.long);
+    let pos = typeof p.formatted === 'string' && p.formatted ? p.formatted : '';
+    if (!pos) {
+      pos = (p.sign || '') + (degree != null ? degree + '°' : '');
+      if (minute != null && minute > 0) pos += minute + '′';
+    }
+    return {
+      name: p.name || '',
+      label: p.label || p.name || '星体',
+      sign: p.sign || '',
+      degree,
+      minute,
+      house: house == null ? '' : house,
+      long,
+      retro: !!(p.retrograde || p.retro),
+      formatted: typeof p.formatted === 'string' ? p.formatted : '',
+      dignityLabel: p.dignityLabel || '',
+      pos
+    };
+  };
+  const sumSrc = scope.summary && typeof scope.summary === 'object' ? scope.summary : {};
+  const sumOut = {
+    elements: {},
+    modalities: {},
+    retrograde: [],
+    patterns: []
+  };
+  ['elements', 'modalities'].forEach(k => {
+    const s = sumSrc[k] || {};
+    const o = {};
+    Object.keys(s).forEach(key => {
+      const v = s[key];
+      if (Array.isArray(v)) o[key] = { count: v.length, list: v.filter(Boolean) };else if (typeof v === 'number') o[key] = { count: v, list: [] };else o[key] = { count: 0, list: [] };
+    });
+    sumOut[k] = o;
+  });
+  sumOut.retrograde = Array.isArray(sumSrc.retrograde) ? sumSrc.retrograde.filter(Boolean) : [];
+  sumOut.patterns = Array.isArray(sumSrc.patterns) ? sumSrc.patterns.filter(Boolean) : [];
+  return {
+    birth: scope.birth && typeof scope.birth === 'object' ? scope.birth : {},
+    planets: (Array.isArray(scope.planets) ? scope.planets.map(mapPoint) : []).filter(Boolean),
+    angles: (Array.isArray(scope.angles) ? scope.angles.map(mapPoint) : []).filter(Boolean),
+    houses: (Array.isArray(scope.houses) ? scope.houses.map(mapPoint) : []).filter(Boolean),
+    aspects: (Array.isArray(scope.aspects) ? scope.aspects : []).filter(a => a && typeof a === 'object').map(a => ({
+      b1: a.body1 || a.b1 || '',
+      b2: a.body2 || a.b2 || '',
+      type: a.type || a.aspectName || '相位',
+      l1: a.actualAngle != null ? num(a.actualAngle) : num(a.l1),
+      l2: num(a.l2),
+      orb: num(a.orb),
+      closeness: a.closeness || '',
+      applying: !!a.applying
+    })),
+    summary: sumOut
+  };
+}
 function polar(cx, cy, r, long) {
   const a = long / 360 * Math.PI * 2 - Math.PI / 2;
   return {
@@ -6214,13 +6226,21 @@ function AstroWheel({
     R_MID = 118,
     R_IN = 86;
   const planets = data.planets || [];
+  const aspects = data.aspects || [];
   const byLabel = {};
-  planets.forEach(p => byLabel[p.label] = p);
+  planets.forEach(p => {
+    if (p && p.label) byLabel[p.label] = p;
+  });
+  const lg = p => p && p.long != null ? p.long : p && p.longitude != null ? p.longitude : null;
   const aspectColor = {
     '合': '#C9A24B',
+    '合相': '#C9A24B',
     '刑': '#B23A3A',
+    '刑相': '#B23A3A',
     '拱': '#3E7C6B',
+    '拱相': '#3E7C6B',
     '冲': '#3B7BB0',
+    '冲相': '#3B7BB0',
     '六合': '#5B4B8A'
   };
   return /*#__PURE__*/React.createElement("svg", {
@@ -6272,12 +6292,12 @@ function AstroWheel({
       dominantBaseline: "middle",
       fill: "var(--skin-accent)"
     }, SIGN_SYM[i]));
-  }), data.aspects.map((asp, i) => {
-    const p1 = byLabel[asp.b1],
-      p2 = byLabel[asp.b2];
+  }), aspects.map((asp, i) => {
+    const p1 = byLabel[asp.b1 || asp.body1],
+      p2 = byLabel[asp.b2 || asp.body2];
     if (!p1 || !p2) return null;
-    const c1 = polar(cx, cy, R_OUT - 24, p1.long),
-      c2 = polar(cx, cy, R_OUT - 24, p2.long);
+    const c1 = polar(cx, cy, R_OUT - 24, lg(p1)),
+      c2 = polar(cx, cy, R_OUT - 24, lg(p2));
     return /*#__PURE__*/React.createElement("line", {
       key: i,
       x1: c1.x,
@@ -6289,7 +6309,7 @@ function AstroWheel({
       strokeOpacity: "0.8"
     });
   }), planets.map((p, i) => {
-    const c = polar(cx, cy, R_OUT - 24, p.long);
+    const c = polar(cx, cy, R_OUT - 24, lg(p));
     return /*#__PURE__*/React.createElement("g", {
       key: i
     }, /*#__PURE__*/React.createElement("circle", {
@@ -6325,90 +6345,428 @@ function AstroWheel({
 function AstrologyPage({
   onNavigate
 }) {
+  const el = React.createElement;
   const [tab, setTab] = useState('natal');
-  const d = DEMO_ASTRO;
-  const tabs = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日'], ['fada', '法达']];
-  const el = d.summary.elements,
-    mod = d.summary.modalities;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "orbit",
-    size: 22
-  }), " 星座预测"), /*#__PURE__*/React.createElement("div", {
-    className: "astro-tabs"
-  }, tabs.map(t => /*#__PURE__*/React.createElement("div", {
+  const [year, setYear] = useState(ASTRO_DEFAULT_YEAR);
+  const [month, setMonth] = useState(6);
+  const [day, setDay] = useState(15);
+  const [hour, setHour] = useState(12);
+  const [minute, setMinute] = useState(0);
+  const [gender, setGender] = useState('male');
+  const [birthplace, setBirthplace] = useState('');
+  const [longitude, setLongitude] = useState(ASTRO_DEFAULT_LONGITUDE);
+  const [latitude, setLatitude] = useState(ASTRO_DEFAULT_LATITUDE);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const TAB_LIST = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日']];
+  const cpt = {
+    padding: '8px 6px',
+    fontSize: 14,
+    margin: '4px 0'
+  };
+  const chart = data && data.chart ? data.chart : null;
+  const natalRaw = chart && chart.natal ? chart.natal : null;
+  const natal = astroNorm(natalRaw);
+  const birthInfo = natal.birth || {};
+  const onYear = v => {
+    setYear(v);
+    if (day > astroDaysInMonth(v, month)) setDay(astroDaysInMonth(v, month));
+  };
+  const onMonth = v => {
+    setMonth(v);
+    if (day > astroDaysInMonth(year, v)) setDay(astroDaysInMonth(year, v));
+  };
+  const opt = (v, label) => el('option', {
+    key: v,
+    value: v
+  }, label == null ? String(v) : label);
+  const numOpts = (from, to, suffix) => {
+    const arr = [];
+    for (let i = from; i <= to; i++) arr.push(opt(i, i + (suffix || '')));
+    return arr;
+  };
+  const field = (label, node) => el('div', null, el('span', {
+    className: 'label',
+    style: {
+      marginTop: 6,
+      fontSize: 12
+    }
+  }, label), node);
+  const maxDay = astroDaysInMonth(year, month);
+
+  // 生成星盘：确定性计算免费；经纬度后端必填（缺省北京由表单默认值兜底）
+  const load = async scope => {
+    const sc = scope || 'natal';
+    const lngTxt = String(longitude == null ? '' : longitude).trim();
+    const latTxt = String(latitude == null ? '' : latitude).trim();
+    const lng = astroFin(lngTxt);
+    const lat = astroFin(latTxt);
+    setErrored('');
+    setData(null);
+    setInterp('');
+    setInterpErr('');
+    if (!lngTxt || !latTxt || lng === null || lat === null) {
+      setErrored('请填写有效的出生地经度与纬度（数字，如北京 116.4 / 39.9）');
+      return;
+    }
+    if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+      setErrored('经纬度越界：经度 -180~180，纬度 -90~90');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await api('/astrology/chart', {
+        method: 'POST',
+        body: JSON.stringify({
+          year: Number(year),
+          month: Number(month),
+          day: Number(day),
+          hour: Number(hour),
+          minute: Number(minute),
+          gender: gender,
+          birthplace: String(birthplace || '').trim(),
+          longitude: lng,
+          latitude: lat,
+          true_solar: false,
+          scope: sc
+        })
+      });
+      setData(res && res.data ? res.data : res);
+      setTab('natal');
+    } catch (e) {
+      setErrored(e && e.message ? e.message : '星盘生成失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  // 付费解读：命中 reading_json 缓存零扣费，未命中先预检余额再调 LLM
+  const interpret = async () => {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/astrology/charts' + '/' + data.id + '/interpret', {
+        method: 'POST',
+        body: '{}'
+      });
+      setInterp(res && res.data && res.data.interpretation ? res.data.interpretation : '（暂无解读内容）');
+    } catch (e) {
+      setInterpErr(e && e.message ? e.message : '本命深度解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
+    }
+  };
+
+  // ---- 表单 ----
+  const yearSel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: year,
+    onChange: ev => onYear(Number(ev.target.value))
+  }, ASTRO_YEARS.map(v => opt(v, v + ' 年')));
+  const monthSel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: month,
+    onChange: ev => onMonth(Number(ev.target.value))
+  }, numOpts(1, 12, ' 月'));
+  const daySel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: day,
+    onChange: ev => setDay(Number(ev.target.value))
+  }, numOpts(1, maxDay, ' 日'));
+  const hourSel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: hour,
+    onChange: ev => setHour(Number(ev.target.value))
+  }, numOpts(0, 23, ' 时'));
+  const minuteSel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: minute,
+    onChange: ev => setMinute(Number(ev.target.value))
+  }, numOpts(0, 59, ' 分'));
+  const genderSel = el('select', {
+    className: 'input',
+    style: cpt,
+    value: gender,
+    onChange: ev => setGender(ev.target.value)
+  }, el('option', {
+    value: 'male'
+  }, '男'), el('option', {
+    value: 'female'
+  }, '女'));
+  const lngInput = el('input', {
+    className: 'input',
+    style: cpt,
+    type: 'text',
+    inputMode: 'decimal',
+    value: longitude,
+    placeholder: '116.4（东经为正）',
+    onChange: ev => setLongitude(ev.target.value)
+  });
+  const latInput = el('input', {
+    className: 'input',
+    style: cpt,
+    type: 'text',
+    inputMode: 'decimal',
+    value: latitude,
+    placeholder: '39.9（北纬为正）',
+    onChange: ev => setLatitude(ev.target.value)
+  });
+  const placeInput = el('input', {
+    className: 'input',
+    style: {
+      padding: '9px 10px',
+      fontSize: 14,
+      margin: '4px 0'
+    },
+    type: 'text',
+    value: birthplace,
+    placeholder: '出生地（可选，仅作展示，如：北京）',
+    onChange: ev => setBirthplace(ev.target.value)
+  });
+  const formCard = el('div', {
+    className: 'card'
+  }, el('div', {
+    className: 'section-title'
+  }, '出生信息 · 生成免费本命盘'), el('div', {
+    className: 'field-row'
+  }, field('出生年', yearSel), field('出生月', monthSel), field('出生日', daySel)), el('div', {
+    className: 'field-row'
+  }, field('出生时（0-23）', hourSel), field('出生分（0-59）', minuteSel), field('性别', genderSel)), field('出生地（可选）', placeInput), el('div', {
+    className: 'field-row'
+  }, field('经度', lngInput), field('纬度', latInput)), el('div', {
+    style: {
+      fontSize: 11,
+      color: 'var(--text-3)',
+      lineHeight: 1.7,
+      marginTop: 2
+    }
+  }, '经纬度用于生成本命盘，必填；缺省北京 116.4 / 39.9。出生时间按东八区公历计，排盘为确定性计算、免费。'), el('button', {
+    className: 'btn btn-primary',
+    style: {
+      marginTop: 12
+    },
+    disabled: loading,
+    onClick: () => load('natal')
+  }, loading ? '星盘生成中…' : '生成星盘'));
+
+  // ---- 盘型 tab：MVP 先只开放本命盘，其余置灰「敬请期待」 ----
+  const tabsNode = el('div', {
+    className: 'astro-tabs'
+  }, TAB_LIST.map(t => el('div', {
     key: t[0],
-    className: 'astro-tab' + (tab === t[0] ? ' sel' : ''),
-    onClick: () => setTab(t[0])
-  }, t[1]))), tab === 'natal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement(AstroWheel, {
-    data: d
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "行星落座落宫"), d.planets.map((p, i) => /*#__PURE__*/React.createElement("div", {
+    className: 'astro-tab' + (tab === t[0] ? ' sel' : '') + (t[0] !== 'natal' ? ' off' : ''),
+    title: t[0] === 'natal' ? '' : '敬请期待（MVP 暂只支持本命盘）',
+    style: t[0] === 'natal' ? undefined : {
+      opacity: .5,
+      cursor: 'not-allowed'
+    },
+    onClick: () => {
+      if (t[0] === 'natal') setTab('natal');
+      else toast('「' + t[1] + '」敬请期待，当前仅支持本命盘');
+    }
+  }, t[1])));
+
+  // ---- 本命盘渲染 ----
+  const pointRow = (p, i) => el('div', {
     key: i,
-    className: "planet-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "pr-sym"
-  }, PLANET_SYM[p.label]), /*#__PURE__*/React.createElement("span", {
+    className: 'planet-row'
+  }, el('span', {
+    className: 'pr-sym'
+  }, PLANET_SYM[p.label] || '·'), el('span', {
     style: {
       flex: 1
     }
-  }, p.label, " · ", p.sign, p.degree, "° · 第", p.house, "宫 ", p.retro ? '（逆）' : ''))), /*#__PURE__*/React.createElement("div", {
-    className: "section-title",
+  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
+  const birthMeta = [birthInfo.dateTime ? '出生 ' + birthInfo.dateTime : '', birthInfo.location ? '地点 ' + birthInfo.location : ''].filter(Boolean).join(' ｜ ');
+  const natalCard = el('div', {
+    className: 'card',
     style: {
-      marginTop: 10
+      textAlign: 'center'
     }
-  }, "四轴"), d.angles.map((a, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "planet-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "pr-sym"
-  }, "·"), /*#__PURE__*/React.createElement("span", {
+  }, el(AstroWheel, {
+    data: natal
+  }), birthMeta ? el('div', {
     style: {
-      flex: 1
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginTop: 8,
+      lineHeight: 1.7
     }
-  }, a.label, "（", a.long, "°）")))), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "元素 / 模式 / 格局"), /*#__PURE__*/React.createElement("div", {
-    className: "row-gap"
-  }, Object.keys(el).map(k => /*#__PURE__*/React.createElement("span", {
+  }, birthMeta) : null);
+  const planetCard = el('div', {
+    className: 'card'
+  }, el('div', {
+    className: 'section-title'
+  }, '行星落座落宫'), natal.planets.length ? natal.planets.map(pointRow) : el('div', {
+    className: 'error'
+  }, '暂无行星数据'), el('div', {
+    className: 'section-title',
+    style: {
+      marginTop: 12
+    }
+  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.length ? natal.angles.map(pointRow) : el('div', {
+    className: 'error'
+  }, '暂无四轴数据'));
+
+  const elSum = natal.summary.elements;
+  const modSum = natal.summary.modalities;
+  const sumSum = natal.summary;
+  const tagChip = (k, item) => el('span', {
     key: k,
-    className: "tag"
-  }, k, " ", el[k])), Object.keys(mod).map(k => /*#__PURE__*/React.createElement("span", {
-    key: k,
-    className: "tag"
-  }, k, " ", mod[k]))), /*#__PURE__*/React.createElement("p", {
+    className: 'tag'
+  }, k + ' ' + (item && item.count != null ? item.count : 0));
+  const detailLines = [];
+  ['elements', 'modalities'].forEach(grp => {
+    const o = grp === 'elements' ? elSum : modSum;
+    Object.keys(o).forEach(k => {
+      const item = o[k];
+      if (item && Array.isArray(item.list) && item.list.length) {
+        detailLines.push(el('div', {
+          key: grp + k,
+          style: {
+            fontSize: 11,
+            color: 'var(--text-3)',
+            lineHeight: 1.8
+          }
+        }, (grp === 'elements' ? '元素' : '模式') + '·' + k + '：' + item.list.join('、')));
+      }
+    });
+  });
+  const sumCard = el('div', {
+    className: 'card'
+  }, el('div', {
+    className: 'section-title'
+  }, '元素 / 模式 / 格局'), el('div', {
+    className: 'row-gap'
+  }, Object.keys(elSum).map(k => tagChip(k, elSum[k])), Object.keys(modSum).map(k => tagChip(k, modSum[k]))), detailLines.length ? el('div', {
+    style: {
+      marginTop: 6
+    }
+  }, detailLines) : null, el('p', {
     style: {
       marginTop: 8,
       fontSize: 13,
       color: 'var(--text-2)'
     }
-  }, "逆行：", d.summary.retrograde.join('、') || '无', "\u3000|\u3000格局：", d.summary.patterns.join('、')), /*#__PURE__*/React.createElement("div", {
-    className: "pay-hint"
-  }, "本命深度解读为付费 LLM，约 18 积分（点击前将预检余额）"))), tab !== 'natal' && /*#__PURE__*/React.createElement("div", {
-    className: "card",
+  }, '逆行：', sumSum.retrograde.length ? sumSum.retrograde.join('、') : '无', '\u3000|\u3000格局：', sumSum.patterns.length ? sumSum.patterns.join('、') : '无'));
+  const interpCard = el('div', {
+    className: 'card'
+  }, el('div', {
+    className: 'section-title'
+  }, '本命深度解读'), interpErr ? el('div', {
+    className: 'error',
     style: {
-      textAlign: 'center',
-      color: 'var(--text-3)'
+      marginTop: 10
     }
-  }, "（", tabs.find(t => t[0] === tab)[1], " 解读为确定性数据，待接入后端 chart 端点后展示）"), /*#__PURE__*/React.createElement("div", {
-    className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
+  }, interpErr) : null, el('div', {
+    className: 'pay-hint'
+  }, '本命深度解读为付费 LLM，约 18 积分（点击前将预检余额；缓存命中零扣费）'), el('button', {
+    className: 'btn btn-outline',
+    style: {
+      marginTop: 8
+    },
+    disabled: interpLoading || !data || !data.id,
+    onClick: interpret
+  }, interpLoading ? '解读生成中…' : '[可选] 本命深度解读（付费）'), interp ? el(React.Fragment, null, el('div', {
+    className: 'interp-title'
+  }, '解读结果'), el('div', {
+    className: 'interp-body'
+  }, interp)) : null);
+
+  // ---- 三态 body ----
+  let body = null;
+  if (loading) {
+    body = el('div', {
+      className: 'sk-card'
+    }, el('div', {
+      className: 'sk-title'
+    }), el('div', {
+      className: 'skeleton sk-line'
+    }), el('div', {
+      className: 'skeleton sk-line',
+      style: {
+        width: '70%'
+      }
+    }), el('div', {
+      className: 'skeleton sk-line',
+      style: {
+        width: '55%'
+      }
+    }), el('div', {
+      className: 'skeleton sk-line'
+    }));
+  } else if (errored) {
+    body = el('div', {
+      className: 'card failed-box'
+    }, el('div', {
+      className: 'section-title'
+    }, '星盘生成失败'), el('div', {
+      className: 'error'
+    }, errored), el('button', {
+      className: 'btn btn-primary',
+      onClick: () => load('natal')
+    }, '重试'));
+  } else if (data && !natalRaw) {
+    body = el('div', {
+      className: 'card failed-box'
+    }, el('div', {
+      className: 'section-title'
+    }, '星盘数据异常'), el('div', {
+      className: 'error'
+    }, '服务未返回本命盘数据，请稍后重试。'), el('button', {
+      className: 'btn btn-primary',
+      onClick: () => load('natal')
+    }, '重新生成'));
+  } else if (data && natalRaw) {
+    body = el(React.Fragment, null, natalCard, planetCard, sumCard, interpCard);
+  } else {
+    body = el('div', {
+      className: 'card',
+      style: {
+        textAlign: 'center',
+        color: 'var(--text-3)',
+        padding: '22px 16px'
+      }
+    }, '输入出生日期、时间与经纬度后点击「生成星盘」，即可免费查看行星落座、四轴、相位与元素格局。');
+  }
+
+  return el('div', {
+    className: 'container'
+  }, el('div', {
+    className: 'hub-title'
+  }, el(Icon, {
+    name: 'orbit',
+    size: 22
+  }), ' 星座预测'), formCard, tabsNode, body, el('div', {
+    className: 'back-row'
+  }, data ? el('button', {
+    className: 'btn btn-outline',
+    style: {
+      width: 'auto'
+    },
+    onClick: () => load('natal')
+  }, '重新生成') : null, el('button', {
+    className: 'btn btn-outline',
+    style: {
+      width: 'auto'
+    },
     onClick: () => onNavigate('xishi-hub')
-  }, "回到 Hub"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
+  }, '回到 Hub'), el('button', {
+    className: 'btn btn-outline',
+    style: {
+      width: 'auto'
+    },
     onClick: () => onNavigate('landing')
-  }, "回到首页")));
+  }, '回到首页')));
 }
 
 /* ---------- MBTI 人格测试 ---------- */
