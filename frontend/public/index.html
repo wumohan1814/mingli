@@ -1892,8 +1892,9 @@ function OnboardingPage({
   onNavigate
 }) {
   const reg = typeof window !== 'undefined' && window.REGIONS || {};
+  const curYear = new Date().getFullYear();
   const YEARS = [];
-  for (let y = 1900; y <= 2100; y++) YEARS.push(String(y));
+  for (let y = curYear; y >= 1940; y--) YEARS.push(String(y));
   const MONTHS = [];
   for (let m = 1; m <= 12; m++) MONTHS.push(String(m));
   const DAYS = [];
@@ -1902,7 +1903,7 @@ function OnboardingPage({
   for (let h = 0; h <= 23; h++) HOURS.push(String(h));
   const [form, setForm] = useState(() => {
     const base = {
-      birth_year: '',
+      birth_year: String(Math.max(1940, curYear - 35)),
       birth_month: '',
       birth_day: '',
       birth_hour: '0',
