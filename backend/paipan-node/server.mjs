@@ -17,6 +17,12 @@
  *                  longitude,latitude,true_solar}
  *     → 200 application/json，输出结构与 extra.mjs 逐字一致（已 stripInternal）：
  *       {western, qizheng, wuyun_liuqi:{birth_year,current_year}, qimen_lifetime}
+ *   POST /zodiac  {zodiac:"鼠", year:2026}
+ *     → 200 application/json，生肖流年运程（已 stripInternal）：
+ *       {zodiac, zodiacBranch, yearGanZhi, yearBranch, taiSui:{yearBranch, star},
+ *        relation, elementRelation, noble, meeting, conflicts, evidenceGrade,
+ *        interpretationBoundary, favorableRelations, riskRelations, actionSignals}
+ *       输入 zodiac 缺失/非法 → 400（客户端错误）。
  *
  * 出错返回非 200（JSON {"error": ...}），并把错误打到 stderr，供调用方降级。
  * 监听 127.0.0.1，端口取环境变量 PAIPAN_NODE_PORT，默认 9317。
@@ -57,6 +63,7 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 import { calculateBirthChartBundle } from 'mingyu-core';
 import { calculateWuyunLiuqi } from 'mingyu-core/wuyun-liuqi';
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
+import { calculateZodiacYearFortune, getYearTaiSui } from './vendor/mingyu-core/dist/zodiac/index.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -203,6 +210,26 @@ async function computeExtra(input) {
   };
 }
 
+/* ---------- /zodiac：生肖流年（本地 vendor 的 mingyu-core zodiac） ---------- */
+
+function computeZodiac(input) {
+  // 必填校验：input 非对象 / zodiac 缺失或非字符串 → 客户端错误（对齐 /ziwei 校验风格）
+  if (!input || typeof input !== 'object' || Array.isArray(input)
+      || typeof input.zodiac !== 'string' || !input.zodiac.trim()) {
+    throw Object.assign(new Error('Missing required input field: zodiac'), { clientError: true });
+  }
+  // 纯确定性计算：{zodiac:"鼠", year:2026} → 流年干支/太岁/冲刑害破/贵人/行动信号；
+  // evidenceAnalysis/prompt 属引擎内部字段，stripInternal 后不外泄。
+  const raw = calculateZodiacYearFortune({ zodiac: input.zodiac, year: input.year });
+  const result = stripInternal(raw);
+  // 值年太岁星君名只出现在引擎 prompt 文本里（会被 stripInternal 剥离），
+  // 这里单独从 getYearTaiSui 取回并入响应，供前端「值年星君」卡展示。
+  if (raw.yearGanZhi) {
+    result.taiSui = getYearTaiSui(raw.yearGanZhi);  // {yearBranch, star}
+  }
+  return result;
+}
+
 // ---------------------------------------------------------------------------
 // HTTP 服务
 // ---------------------------------------------------------------------------
@@ -275,8 +302,11 @@ async function handleRequest(req, res) {
     } else if (pathname === '/extra') {
       const result = await computeExtra(input);
       sendJson(res, 200, result);
+    } else if (pathname === '/zodiac') {
+      const result = computeZodiac(input); // 生肖流年同步 API，直接返回
+      sendJson(res, 200, result);
     } else {
-      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei or /extra.`);
+      sendError(req, res, 404, `Unknown endpoint: ${pathname}. Use /ziwei, /extra or /zodiac.`);
     }
   } catch (e) {
     // 与子进程脚本一致：ziwei 必填校验 / 计算失败均属调用方可降级的错误

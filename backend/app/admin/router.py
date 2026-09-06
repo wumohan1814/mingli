@@ -101,6 +101,19 @@ EVENT_NAME_ZH = {
     "credit_consume": "积分消耗",
     "credit_recharge": "积分充值",
     "credit_insufficient": "积分不足",
+    # 横向扩展 Phase A–D 事件（HUB 浏览 / 生肖流年 / 起卦断卦 / 塔罗 / 雷诺曼 /
+    # 星座 / MBTI），一次补全
+    "guoxue_hub_view": "国学HUB浏览",
+    "xishi_hub_view": "西式HUB浏览",
+    "zodiac_fortune": "生肖流年",
+    "divination_cast": "起卦",
+    "divination_interpret": "断卦解读",
+    "tarot_draw": "塔罗抽牌",
+    "tarot_interpret": "塔罗解读",
+    "lenormand_draw": "雷诺曼抽牌",
+    "astrology_chart": "星座星盘",
+    "astrology_interpret": "星座解读",
+    "mbti_score": "MBTI判型",
 }
 
 

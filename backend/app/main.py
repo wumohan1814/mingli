@@ -129,6 +129,7 @@ async def lifespan(app: FastAPI):
 from app.admin.router import router as admin_router
 from app.api.cases import router as cases_router
 from app.api.jobs import router as jobs_router
+from app.api.zodiac import router as zodiac_router
 from app.auth.router import router as auth_router
 from app.credits.router import router as credits_router
 from app.events.router import router as events_router
@@ -156,6 +157,7 @@ app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(cases_router)
 app.include_router(jobs_router)
+app.include_router(zodiac_router)
 app.include_router(credits_router)
 app.include_router(events_router)
 
