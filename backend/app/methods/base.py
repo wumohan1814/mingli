@@ -98,6 +98,7 @@ async def analyze_method(
     slice_data: dict,
     user_question: str = "",
     calibration_feedback: dict | None = None,
+    continuation: str = None,
 ) -> dict | None:
     """通用方法分析：加载 prompt → 组装 messages → 真实 LLM 调用 → 解析并规范化。
 
@@ -118,20 +119,23 @@ async def analyze_method(
                        method_key, phase)
         return None
 
+    payload: dict = {
+        "phase": phase,
+        "method_key": method_key,
+        "slice": slice_data,
+        "user_question": user_question,
+        "calibration_feedback": calibration_feedback,
+    }
+    # 断点续跑上下文：服务重启后中断续跑时注入（非空才加，calibration_feedback
+    # 保持无条件携带的既有行为不变）
+    if continuation:
+        payload["continuation"] = continuation
+
     messages = [
         {"role": "system", "content": prompt + _OUTPUT_FORMAT_INSTRUCTIONS},
         {
             "role": "user",
-            "content": json.dumps(
-                {
-                    "phase": phase,
-                    "method_key": method_key,
-                    "slice": slice_data,
-                    "user_question": user_question,
-                    "calibration_feedback": calibration_feedback,
-                },
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
 
