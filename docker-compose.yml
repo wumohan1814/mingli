@@ -13,6 +13,8 @@ services:
       # 以下从 .env 注入（敏感，不进仓库）
       TAICHU_LLM_API_KEY: ${TAICHU_LLM_API_KEY}
       TAICHU_JWT_SECRET: ${TAICHU_JWT_SECRET}
+      TAICHU_JINSHUJU_ACCESS_TOKEN: ${TAICHU_JINSHUJU_ACCESS_TOKEN:-}
+      TAICHU_JINSHUJU_ALLOW_MOCK: ${TAICHU_JINSHUJU_ALLOW_MOCK:-false}
     volumes:
       # SQLite 文件持久化到宿主机 /opt/taichu/data
       - /opt/taichu/data:/app/data
