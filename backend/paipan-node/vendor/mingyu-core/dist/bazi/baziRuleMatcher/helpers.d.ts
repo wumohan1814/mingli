@@ -1,0 +1,13 @@
+export declare function getStemWuxing(stem: string): string;
+export declare function includesOrWildcard(values: string[] | undefined, target: string | undefined): boolean;
+export declare function includesAll(values: string[] | undefined, targets: string[] | undefined): boolean;
+export declare function includesAny(values: string[] | undefined, targets: string[] | undefined): boolean;
+export declare function excludesAll(values: string[] | undefined, targets: string[] | undefined): boolean;
+export declare function getWuxingTenGodCategory(dayStem: string, targetWuxing: string): string;
+export declare function getStemTenGodCategory(dayStem: string, targetStem: string): string;
+export declare function buildFormationTenGodCategories(dayStem: string | undefined, formationWuxings: string[] | undefined): string[] | undefined;
+export declare function buildTenGodCategoryCounts(dayStem: string | undefined, stems: string[] | undefined, excludeDayStemSelf: boolean): Record<string, number> | null;
+export declare function mergeCategoryCounts(...countMaps: Array<Record<string, number> | null>): Record<string, number> | null;
+export declare function buildTenGodCategoryDistinctStemSets(dayStem: string | undefined, stems: string[] | undefined, excludeDayStemSelf: boolean): Record<string, Set<string>> | null;
+export declare function buildTenGodCategoryDistinctStemCounts(dayStem: string | undefined, stems: string[] | undefined, excludeDayStemSelf: boolean): Record<string, number> | null;
+export declare function mergeDistinctCategoryCounts(...setMaps: Array<Record<string, Set<string>> | null>): Record<string, number> | null;

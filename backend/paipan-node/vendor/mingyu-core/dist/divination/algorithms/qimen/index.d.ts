@@ -1,0 +1,119 @@
+/**
+ * @file 奇门遁甲排盘算法（主入口）
+ * @description 基于转盘法或飞盘法，实现时家/日家/月家/年家奇门完整排盘，
+ * 含定局、布盘、格局识别、方位建议、应期判断。
+ * @流派 转盘奇门为默认口径，飞盘奇门为可选口径（拆补法定局）
+ * @古籍依据 《烟波钓叟歌》《御定奇门宝鉴》《遁甲演义》《奇门遁甲秘籍大全》
+ *
+ * @核心流程
+ * 1. 定局数（拆补法/月家法/年家法）：根据 scope 选择不同定局方式
+ * 2. 寻值符值使：由对应级别的干支旬首定位值符星和值使门
+ * 3. 排九宫格：布地盘三奇六仪 -> 定值符值使落宫 -> 排天盘九星 -> 排人盘八门 -> 排神盘八神
+ * 4. 识格局：基础标签（伏吟/反吟/门迫等）+ 经典双元格局（九遁、三奇格局、门迫、击刑、入墓）
+ * 5. 辅助分析：方位吉凶、应期估算
+ *
+ * 《烟波钓叟歌》核心法理（下称《歌》）：
+ *   "阴阳二遁分顺逆，一气三元人莫测"        —— 拆补法定局
+ *   "直符直使各有时，时干直符时支使"        —— 旬首寻值符值使
+ *   "星随符转，门随地转，八神随遁顺逆"      —— 转盘排盘
+ *   "星反吟兮门反吟，门迫宫兮事难行"        —— 格局判读
+ *   "天遁地遁与人遁，龙遁虎遁与风遁"        —— 九遁格局
+ *   "三奇得使最为良，玉女守门喜非常"        —— 吉格判据
+ *   "十干入墓主事迟，击刑之处防官非"        —— 凶格判据
+ */
+import type { QimenData, QimenJiuGongGe, QimenScope } from '../../../types/divination';
+import type { QimenMethod } from './helpers/layout';
+import type { QimenJuMethod } from './helpers/jushu';
+import { resolveZhiShiLandingPalace } from './helpers/layout';
+export { createQimenPriorityPalaces } from './helpers/guidance';
+export type { QimenPriorityPalace } from './helpers/guidance';
+export { calculateQimenLifetime, generateQimenLifetimePrompt, buildLifetimePrompt, normalizeQimenLifetimeTime, extractPersonalMarkers, buildTopicCandidates, buildLifetimeStages, scanLifetimeDynamicEvents, } from './lifetime';
+export { analyzeQimenEvidence } from '../../qimen-evidence';
+export type { QimenCalculationEvidenceFact, QimenCounterEvidenceFact, QimenCounterSummaryFact, QimenDirectionFact, QimenDirectionSummaryFact, QimenEvidenceAnalysis, QimenPalaceEvidence, QimenPalaceFact, QimenPalaceCoverageFact, QimenPalaceInsightFact, QimenPalaceRelationEvidence, QimenPatternEvidenceFact, QimenRuleSourceFact, QimenStemRelationFact, QimenTimingFact, QimenTimingSummaryFact, } from '../../qimen-evidence';
+/**
+ * 根据地支解析所属宫位
+ *
+ * @param branch     地支（如"子""午"）
+ * @param jiuGongGe  九宫格数据
+ * @returns 宫位对象（含地支、宫号、宫名），找不到时返回 null
+ */
+declare function resolveQimenBranchPalace(branch: string, jiuGongGe: QimenJiuGongGe[]): {
+    branch: string;
+    palace: number;
+    name: string;
+} | null;
+/**
+ * 获取驿马地支
+ *
+ * 《烟波钓叟歌》：「天马方为动应之神，驿马冲则事速」
+ * 寅午戌马在申，申子辰马在寅，
+ * 巳酉丑马在亥，亥卯未马在巳。
+ *
+ * @param sourceBranch 时支
+ * @returns 驿马地支，无匹配时返回空字符串
+ */
+declare function getHorseBranch(sourceBranch: string): string;
+/**
+ * 生成奇门遁甲完整排盘
+ *
+ * 支持时家（hour）、日家（day）、月家（month）、年家（year）四种级别。
+ * 默认时家奇门（精确到时辰），使用拆补法定局。
+ *
+ * 遵循拆补法定局，并按所选转盘法或飞盘法完整输出九宫四盘（天地人神）、
+ * 格局标签、经典格局（九遁、三奇、门迫、击刑、入墓等）、
+ * 宫位洞察、方位吉凶指引和应期估算。
+ *
+ * ── 排盘流程 ──
+ *
+ * 1. **时间信息**：《歌》"先须掌上排九宫，纵横十五在其中"
+ *    - 获取公历、农历、节气、干支等完整时间数据
+ *
+ * 2. **定局数**：《歌》"阴阳二遁分顺逆，一气三元人莫测"
+ *    - 时家/日家：拆补法（以节气为界）
+ *    - 月家：月支循环定局
+ *    - 年家：年干分组 + 三元甲子周期
+ *
+ * 3. **寻值符值使（旬首法）**：《歌》"直符直使各有时，时干直符时支使"
+ *    - 由对应级别干支的旬首定位值符星和值使门
+ *
+ * 4. **排九宫格（转盘法或飞盘法）**：按所选方法排列九星、八门、八神与天地盘干
+ *    - 布地盘三奇六仪 -> 定值符值使落宫 -> 排天盘九星 -> 排人盘八门 -> 排神盘八神
+ *
+ * 5. **辅助数据**：空亡地支配对、驿马定位
+ *
+ * 6. **基础格局标签**：《歌》"星反吟兮门反吟，门迫宫兮事难行"
+ *    - 伏吟/反吟、门迫、击刑、入墓、三奇得、符使同宫、三奇得使、马星
+ *
+ * 7. **经典格局**：《歌》"天遁地遁与人遁，龙遁虎遁与风遁"
+ *    - 九大遁格、三奇得使/升殿/入墓/会甲、符使同宫等
+ *
+ * 8. **天地盘干关系**：每个宫位天盘干与地盘干的五行生克
+ *
+ * 9. **宫位洞察**：综合门、神、星、格局标签判定各宫等级
+ *
+ * 10. **方位建议**：《歌》"八门若遇开休生，诸事逢之总称情"
+ *     - 逐项保留门、神、星、三奇、空亡与格局依据，给出有明确证据的方位候选
+ *
+ * 11. **应期估算**：《奇门遁甲大全》庚格应期法
+ *
+ * @param customDate 自定义时间（可选，默认当前时间）
+ * @param method     排盘方法，默认 'zhuanpan'（转盘法）
+ * @param scope      排盘级别，默认 'hour'（时家奇门）
+ * @returns 完整的奇门遁甲数据 QimenData
+ *
+ * @example
+ * ```ts
+ * // 时家奇门（默认）
+ * const result = generateQimen();
+ *
+ * // 日家奇门
+ * const result = generateQimen(undefined, 'zhuanpan', 'day');
+ *
+ * // 年家奇门
+ * const result = generateQimen(new Date('2025-01-01'), 'zhuanpan', 'year');
+ * ```
+ */
+export declare function generateQimen(customDate?: Date, method?: QimenMethod, scope?: QimenScope, juMethod?: QimenJuMethod): QimenData;
+export type { QimenScope, QimenMethod };
+export { getHorseBranch, resolveQimenBranchPalace, resolveZhiShiLandingPalace };
+export { evaluateQimenPatternFulfillment } from './helpers/guidance';

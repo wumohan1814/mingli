@@ -1,0 +1,296 @@
+import { WUXING } from '../wuxing/index.js';
+function joinOrFallback(values, fallback = '无') {
+    return values && values.length > 0 ? values.join('、') : fallback;
+}
+function formatLunarDate(baziResult) {
+    const lunarDate = baziResult.lunarDate;
+    return `${lunarDate.year}年${lunarDate.monthName}${lunarDate.dayName}`;
+}
+function formatBirthSeason(baziResult) {
+    const seasonInfo = baziResult.seasonInfo;
+    if (!seasonInfo || seasonInfo.currentJieqi === '未知') {
+        return '';
+    }
+    return [
+        `${seasonInfo.currentSeason}令`,
+        seasonInfo.daysSincePrev == null
+            ? seasonInfo.currentJieqi
+            : `${seasonInfo.currentJieqi}后${seasonInfo.daysSincePrev}天`,
+        seasonInfo.nextJieqi !== '未知' && seasonInfo.daysToNext != null
+            ? `距${seasonInfo.nextJieqi}${seasonInfo.daysToNext}天`
+            : '',
+    ]
+        .filter(Boolean)
+        .join(' | ');
+}
+const TEN_GOD_ORDER = [
+    '比肩',
+    '劫财',
+    '食神',
+    '伤官',
+    '偏财',
+    '正财',
+    '七杀',
+    '正官',
+    '偏印',
+    '正印',
+];
+function formatTenGodSummary(baziResult) {
+    const counts = new Map();
+    const values = [
+        ...Object.values(baziResult.tenGods ?? {}),
+        ...Object.values(baziResult.hiddenTenGods ?? {}).flat(),
+    ];
+    values.forEach((value) => {
+        if (!value || value === '日主')
+            return;
+        counts.set(value, (counts.get(value) ?? 0) + 1);
+    });
+    return TEN_GOD_ORDER.filter((tenGod) => counts.has(tenGod))
+        .map((tenGod) => `${tenGod}${counts.get(tenGod)}`)
+        .join('、');
+}
+function formatWuxingSeasonStatus(baziResult) {
+    const status = baziResult.wuxingSeasonStatus;
+    if (!status || !Object.keys(status).length)
+        return '';
+    return WUXING.map((wuxing) => (status[wuxing] ? `${wuxing}${status[wuxing]}` : ''))
+        .filter(Boolean)
+        .join(' ');
+}
+function formatSolarDateTime(value) {
+    return `${value.year}年${value.month}月${value.day}日 ${value.hour}:${String(value.minute).padStart(2, '0')}`;
+}
+function formatPromptLuckOverview(baziResult) {
+    if (!baziResult.luckInfo?.cycles?.length) {
+        return '';
+    }
+    const cycles = baziResult.luckInfo.cycles;
+    const lines = [`起运: ${baziResult.luckInfo.startInfo}`];
+    const cycleOverview = cycles.slice(0, 13).map((cycle, index) => {
+        const years = cycle.years ?? [];
+        const firstYear = years[0]?.year;
+        const lastYear = years[years.length - 1]?.year;
+        const yearRange = firstYear && lastYear ? `，含${firstYear}-${lastYear}年流年` : '';
+        const cycleLabel = cycle.isXiaoyun ? `${cycle.ganZhi}童运` : `${cycle.ganZhi}${cycle.type}`;
+        return `${index + 1}. ${cycleLabel}: ${cycle.year}年起，约${cycle.age}岁交运${yearRange}`;
+    });
+    if (cycleOverview.length) {
+        lines.push('大运总览:');
+        lines.push(...cycleOverview);
+    }
+    return lines.join('\n');
+}
+function buildBaziText(baziResult, options) {
+    if (!baziResult)
+        return '无法获取八字数据。';
+    const { solarDate, timeInfo, dayMaster, pillars, tenGods, hiddenStems, hiddenTenGods, shensha, shenShaAnalysis, } = baziResult;
+    const { includeRules = true, includeShensha = true, includeShenShaAnalysis = false, includeWuxing = true, includeNatalDetails = true, includeLuckOverview = true, } = options;
+    let result = '【命盘】\n';
+    const isMale = baziResult.gender === 'male';
+    result += `基本信息: ${isMale ? '乾造' : '坤造'} | ${solarDate.year}年${solarDate.month}月${solarDate.day}日 ${timeInfo.name}\n`;
+    result += `出生历法: 阳历${solarDate.year}年${solarDate.month}月${solarDate.day}日 | 农历${formatLunarDate(baziResult)} | 生肖:${baziResult.zodiac}\n`;
+    if (baziResult.timing?.enabled && baziResult.timing.correctedTime) {
+        result += `真太阳时: ${formatSolarDateTime(baziResult.timing.correctedTime)}`;
+        if (baziResult.timing.birthPlace) {
+            result += ` | 出生地:${baziResult.timing.birthPlace}`;
+        }
+        if (baziResult.timing.birthLongitude != null) {
+            result += ` | 经度:${baziResult.timing.birthLongitude}`;
+        }
+        result += '\n';
+    }
+    if (baziResult.timing?.dstCorrectionMinutes != null) {
+        result += `夏令时校正: ${baziResult.timing.dstCorrectionMinutes} 分钟\n`;
+    }
+    result += `日元本命: ${dayMaster.gan}${dayMaster.element} (${dayMaster.yinYang})\n`;
+    if (baziResult.monthCommander)
+        result += `月令司权: ${baziResult.monthCommander}\n`;
+    const birthSeason = formatBirthSeason(baziResult);
+    if (birthSeason)
+        result += `节令: ${birthSeason}\n`;
+    const wuxingSeasonStatus = formatWuxingSeasonStatus(baziResult);
+    if (wuxingSeasonStatus)
+        result += `月令旺相: ${wuxingSeasonStatus}\n`;
+    result += '\n【核心判断】\n';
+    const analysis = baziResult.analysis;
+    result += `旺衰: ${analysis.dayMasterStrength.status}`;
+    if (includeRules && analysis.dayMasterStrength.details?.ruleBasis?.[0]) {
+        result += `（${analysis.dayMasterStrength.details.ruleBasis[0]}）`;
+    }
+    result += '\n';
+    result += `格局: ${analysis.mingGe.pattern}`;
+    if (includeRules && analysis.mingGe.basis) {
+        result += `（${analysis.mingGe.basis}）`;
+    }
+    result += '\n';
+    if (analysis.usefulGod) {
+        const primaryFavorableWuxing = analysis.usefulGod.primaryFavorableWuxing || analysis.usefulGod.favorableWuxing?.[0] || '无';
+        const secondaryFavorableWuxing = analysis.usefulGod.secondaryFavorableWuxing ||
+            analysis.usefulGod.favorableWuxing?.slice(1) ||
+            [];
+        const primaryUnfavorableWuxing = analysis.usefulGod.primaryUnfavorableWuxing ||
+            analysis.usefulGod.unfavorableWuxing?.[0] ||
+            '无';
+        const secondaryUnfavorableWuxing = analysis.usefulGod.secondaryUnfavorableWuxing ||
+            analysis.usefulGod.unfavorableWuxing?.slice(1) ||
+            [];
+        const primaryFavorableTenGods = analysis.usefulGod.primaryFavorable || analysis.usefulGod.primaryFavorableWuxing
+            ? analysis.usefulGod.primaryFavorable || analysis.usefulGod.favorable?.slice(0, 2) || []
+            : [];
+        const primaryUnfavorableTenGods = analysis.usefulGod.primaryUnfavorable || analysis.usefulGod.primaryUnfavorableWuxing
+            ? analysis.usefulGod.primaryUnfavorable || analysis.usefulGod.unfavorable?.slice(0, 2) || []
+            : [];
+        result += `取用: 主用${primaryFavorableWuxing}${secondaryFavorableWuxing.length ? '，辅' + secondaryFavorableWuxing.join('、') : ''}（${joinOrFallback(primaryFavorableTenGods)}）；忌${primaryUnfavorableWuxing}${secondaryUnfavorableWuxing.length ? '，次忌' + secondaryUnfavorableWuxing.join('、') : ''}（${joinOrFallback(primaryUnfavorableTenGods)}）\n`;
+        if (includeRules && analysis.usefulGod.primaryReason) {
+            result += `取用主线: ${analysis.usefulGod.primaryReason}\n`;
+            result += `取用依据: 以${analysis.usefulGod.primaryReason}为主，结合旺衰${analysis.dayMasterStrength.status}与格局${analysis.mingGe.pattern}综合取用\n`;
+        }
+        if (includeRules && baziResult.climate && baziResult.climate.nature !== '中和') {
+            result += `调候特征: ${baziResult.climate.summary}\n`;
+        }
+    }
+    if (includeNatalDetails) {
+        const tenGodSummary = formatTenGodSummary(baziResult);
+        result += '\n【本命辅助】\n';
+        result += `命宫:${baziResult.mingGong || '无'} | 身宫:${baziResult.shenGong || '无'} | 胎元:${baziResult.taiYuan || '无'} | 胎息:${baziResult.taiXi || '无'}\n`;
+        if (tenGodSummary)
+            result += `十神构成（天干与藏干）: ${tenGodSummary}\n`;
+    }
+    result += '\n【四柱】\n';
+    const pillarNames = ['年柱', '月柱', '日柱', '时柱'];
+    const keys = ['year', 'month', 'day', 'hour'];
+    const dayKongWangBranches = baziResult.kongWang?.day || [];
+    keys.forEach((key, index) => {
+        const pillar = pillars[key];
+        const tenGod = tenGods[key];
+        const shenShaValue = shensha?.[key]?.join(',') || '';
+        const kongWangFlag = dayKongWangBranches.includes(pillar.zhi) ? '(空亡)' : '';
+        const hiddenStemValues = hiddenStems?.[key] || [];
+        const hiddenTenGodValues = hiddenTenGods?.[key] || [];
+        const dayMasterLifeStage = baziResult.lifeStages?.[key] || '';
+        const nayin = baziResult.nayin?.[key] || '';
+        const ziZuo = baziResult.ziZuo?.[key] || '';
+        const pillarKongWang = baziResult.kongWang?.[key]?.join('、') || '';
+        const hiddenStr = hiddenStemValues
+            .map((stem, idx) => `${stem}${hiddenTenGodValues[idx] ? `[${hiddenTenGodValues[idx]}]` : ''}`)
+            .join('');
+        const shenShaExplain = shenShaAnalysis?.[key]?.join(' | ') || '';
+        const pillarParts = [
+            `${pillarNames[index]}: ${pillar.ganZhi}`,
+            tenGod ? `[${tenGod}]` : '',
+            kongWangFlag,
+        ]
+            .filter(Boolean)
+            .join(' ');
+        result += `${pillarParts}\n`;
+        if (hiddenStr)
+            result += `  藏干: ${hiddenStr}\n`;
+        if (includeNatalDetails) {
+            const referenceParts = [
+                nayin ? `纳音: ${nayin}` : '',
+                ziZuo ? `自坐: ${ziZuo}` : '',
+                dayMasterLifeStage ? `十二运: ${dayMasterLifeStage}` : '',
+                pillarKongWang ? `旬空: ${pillarKongWang}` : '',
+            ].filter(Boolean);
+            if (referenceParts.length)
+                result += `  ${referenceParts.join(' | ')}\n`;
+        }
+        else if (dayMasterLifeStage) {
+            result += `  十二运: ${dayMasterLifeStage}\n`;
+        }
+        if (includeShensha && shenShaValue)
+            result += `  神煞: ${shenShaValue}\n`;
+        if (includeShenShaAnalysis && shenShaExplain) {
+            result += `  传统旁证: ${shenShaExplain}\n`;
+        }
+    });
+    const globalShenShaValue = shensha?.global?.join(',') || '';
+    const globalShenShaExplain = shenShaAnalysis?.global?.join(' | ') || '';
+    if (includeShensha && globalShenShaValue) {
+        result += `全局神煞: ${globalShenShaValue}\n`;
+        if (includeShenShaAnalysis && globalShenShaExplain) {
+            result += `  传统旁证: ${globalShenShaExplain}\n`;
+        }
+    }
+    if (!includeShensha && includeShenShaAnalysis && globalShenShaExplain) {
+        result += `全局传统旁证: ${globalShenShaExplain}\n`;
+    }
+    if (includeWuxing && baziResult.wuxingStrength) {
+        result += '\n【五行】\n';
+        result += `出现:${baziResult.wuxingStrength.present.join('、') || '无'} | 结构比较优先:${baziResult.wuxingStrength.dominantByRule.join('、') || '无'}`;
+        if (baziResult.wuxingStrength.commanderElement) {
+            result += ` | 司令五行:${baziResult.wuxingStrength.commanderElement}`;
+        }
+        if (baziResult.wuxingStrength.missing?.length) {
+            result += ` | 缺失:${baziResult.wuxingStrength.missing.join(',')}`;
+        }
+        result += '\n';
+    }
+    if (includeNatalDetails && baziResult.warnings?.length) {
+        result += '\n【定盘提醒】\n';
+        result += `${baziResult.warnings.join('\n')}\n`;
+    }
+    if (includeLuckOverview && baziResult.luckInfo?.cycles) {
+        result += '\n【大运】\n';
+        result += `${formatPromptLuckOverview(baziResult)}\n`;
+    }
+    return result;
+}
+function getPromptSceneOptions(scene) {
+    if (scene === 'comprehensive') {
+        return {
+            includeRules: true,
+            includeShensha: true,
+            includeShenShaAnalysis: false,
+            includeWuxing: true,
+            includeNatalDetails: true,
+            includeLuckOverview: false,
+        };
+    }
+    if (scene === 'fortune') {
+        return {
+            includeRules: true,
+            includeShensha: true,
+            includeShenShaAnalysis: false,
+            includeWuxing: true,
+            includeNatalDetails: true,
+            includeLuckOverview: false,
+        };
+    }
+    if (scene === 'compatibility') {
+        return {
+            includeRules: true,
+            includeShensha: false,
+            includeShenShaAnalysis: false,
+            includeWuxing: true,
+            includeNatalDetails: true,
+            includeLuckOverview: false,
+        };
+    }
+    if (scene === 'concise') {
+        return {
+            includeRules: true,
+            includeShensha: false,
+            includeShenShaAnalysis: false,
+            includeWuxing: false,
+            includeNatalDetails: false,
+            includeLuckOverview: false,
+        };
+    }
+    return {
+        includeRules: true,
+        includeShensha: true,
+        includeShenShaAnalysis: false,
+        includeWuxing: true,
+        includeNatalDetails: true,
+        includeLuckOverview: false,
+    };
+}
+export function formatBaziForPrompt(baziResult, 
+/** @deprecated 兼容旧调用签名，具体岁运应通过 FortuneSelectionContext 传入。 */
+_selectedOption = null, scene = 'general') {
+    if (!baziResult)
+        return '无法获取八字数据。';
+    return buildBaziText(baziResult, getPromptSceneOptions(scene));
+}

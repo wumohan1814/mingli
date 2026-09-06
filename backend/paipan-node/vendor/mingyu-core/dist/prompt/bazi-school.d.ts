@@ -1,0 +1,20 @@
+import { type BaziChartResult } from '../bazi';
+export declare const BAZI_PROMPT_SCHOOLS: readonly ["traditional", "ziping", "mangpai", "xinpai"];
+export declare const BAZI_PROMPT_MULTI_SCHOOLS: readonly ["ziping", "mangpai", "xinpai"];
+export type BaziPromptSchool = (typeof BAZI_PROMPT_SCHOOLS)[number];
+export type NormalizedBaziPromptSchool = Exclude<BaziPromptSchool, 'traditional'>;
+type SchoolProfile = {
+    label: string;
+    task: string;
+    basis: string;
+};
+export declare const BAZI_SCHOOL_PROFILES: Record<NormalizedBaziPromptSchool, SchoolProfile>;
+export declare function normalizeBaziPromptSchool(school: BaziPromptSchool): NormalizedBaziPromptSchool;
+export declare function getBaziSchoolGuidance(school?: BaziPromptSchool): string;
+export declare function formatBaziSchoolFacts(result: BaziChartResult, school: BaziPromptSchool): string;
+export declare function formatBaziSchoolPrompt(result: BaziChartResult, school: BaziPromptSchool): string;
+export declare function buildBaziSchoolPromptSection(result: BaziChartResult, school?: BaziPromptSchool): string;
+export declare function normalizeBaziPromptSchools(schools?: readonly BaziPromptSchool[] | null): NormalizedBaziPromptSchool[];
+export declare function formatBaziSchoolsPrompt(result: BaziChartResult, schools?: readonly BaziPromptSchool[] | null): string;
+export declare function buildBaziSchoolsPromptSection(result: BaziChartResult, schools?: readonly BaziPromptSchool[] | null): string;
+export {};
