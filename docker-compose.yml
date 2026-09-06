@@ -7,6 +7,7 @@ services:
       # SQLite 持久化到挂载卷
       TAICHU_DB_PATH: /app/data/taichu_analytics.db
       TAICHU_FEEDBACK_DB_PATH: /app/data/taichu_feedback.db
+      TAICHU_OPS_DB_PATH: /app/data/taichu_ops.db
       # 排盘常驻服务（同容器内 127.0.0.1）
       TAICHU_PAIPAN_NODE_URL: http://127.0.0.1:9317
       # 以下从 .env 注入（敏感，不进仓库）
