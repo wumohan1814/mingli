@@ -796,6 +796,7 @@ function UsersSection() {
   const [formErr, setFormErr] = useState('');
   const [savingUser, setSavingUser] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [giftingId, setGiftingId] = useState(null);
   const [newUser, setNewUser] = useState({ username: '', password: '', nickname: '' });
   const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
   const search = async function (keyword) {
@@ -851,6 +852,38 @@ function UsersSection() {
     } finally {
       setDeletingId(null);
       search(q); // 成功/失败都刷新（失败如 1002 说明已被他人删除）
+    }
+  };
+  // 赠送积分（operator+ 才有此按钮；POST /admin/credits/manual）
+  const grantCredits = async function (u) {
+    const raw = window.prompt('为「' + u.username + '」（id: ' + u.id + '）赠送积分，请输入数量（正整数）：', '');
+    if (raw === null) return; // 用户取消
+    const text = String(raw).trim();
+    if (!/^[1-9]\d*$/.test(text)) {
+      alert('积分数量必须为正整数，未提交');
+      return;
+    }
+    const delta = parseInt(text, 10);
+    const noteRaw = window.prompt('备注（可选，直接点击确定跳过）：', '');
+    const note = noteRaw === null ? '' : String(noteRaw).trim().slice(0, 500);
+    setGiftingId(u.id);
+    try {
+      const res = await api('/admin/credits/manual', {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: u.id,
+          delta: delta,
+          note: note
+        })
+      });
+      const d = pickData(res);
+      const bal = d && d.balance != null ? d.balance : delta;
+      toast('赠送成功，当前余额 ' + bal);
+      search(q); // 刷新列表（重新拉取余额）
+    } catch (err) {
+      alert(err.message || '赠送失败');
+    } finally {
+      setGiftingId(null);
     }
   };
   const openUser = async function (u) {
@@ -1072,7 +1105,7 @@ function UsersSection() {
     }
   }, /*#__PURE__*/React.createElement("table", {
     className: "admin-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "id"), /*#__PURE__*/React.createElement("th", null, "用户名"), /*#__PURE__*/React.createElement("th", null, "创建时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, users.map(function (u) {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "id"), /*#__PURE__*/React.createElement("th", null, "用户名"), /*#__PURE__*/React.createElement("th", null, "积分"), /*#__PURE__*/React.createElement("th", null, "创建时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, users.map(function (u) {
     return /*#__PURE__*/React.createElement("tr", {
       key: u.id,
       className: "clickable",
@@ -1084,7 +1117,9 @@ function UsersSection() {
         fontWeight: 600,
         color: 'var(--jade-deep)'
       }
-    }, u.username), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
+    }, u.username), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+      className: "tag gold"
+    }, "余额 ", u.balance != null ? u.balance : 0)), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         gap: 6,
@@ -1094,6 +1129,13 @@ function UsersSection() {
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini"
     }, "查看档案"), canWrite && /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      disabled: giftingId === u.id,
+      onClick: function (e) {
+        e.stopPropagation();
+        grantCredits(u);
+      }
+    }, giftingId === u.id ? '赠送中…' : '赠积分'), canWrite && /*#__PURE__*/React.createElement("button", {
       className: "btn btn-danger btn-mini",
       disabled: deletingId === u.id,
       onClick: function (e) {
