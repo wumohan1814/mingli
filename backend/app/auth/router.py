@@ -1,7 +1,7 @@
 """认证模块：注册/登录/JWT/限流"""
 import logging
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 import hashlib, os, base64
@@ -10,8 +10,8 @@ from jose import jwt, JWTError
 from app.auth.captcha import generate_captcha, verify_captcha
 from app.config import settings
 from app.database import get_analytics_db
-from app.errors import BizError, ERR_PARAM
-from app.models import User, RefreshToken, LoginAttempt
+from app.errors import BizError, ERR_PARAM, ERR_RATE_LIMITED
+from app.models import User, RefreshToken, LoginAttempt, RegisterLimit
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +40,8 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=6, max_length=128)
     captcha_id: str
     captcha_code: str
+    # 前端采集的设备指纹；默认空串兼容旧客户端（空串不做设备维度限流）
+    device_fingerprint: str = Field(default="", max_length=128)
 
 
 class LoginRequest(BaseModel):
@@ -107,6 +109,11 @@ def get_user_id_from_token(authorization: str = "") -> int:
     return verify_access_token(token)
 
 
+# --- 注册限流参数（R10：防脚本批量注册，IP + 设备指纹双维度） ---
+REGISTER_IP_MAX_PER_HOUR = 2      # 同一 IP 1 小时内最多注册次数
+REGISTER_IP_WINDOW = timedelta(hours=1)
+
+
 # --- 限流检查 ---
 def check_login_rate_limit(username: str, db: Session):
     """检查是否被锁定"""
@@ -146,11 +153,39 @@ async def get_captcha():
 
 
 @router.post("/auth/register", response_model=TokenResponse)
-async def register(req: RegisterRequest, db: Session = Depends(get_analytics_db)):
-    """注册新用户"""
+async def register(
+    req: RegisterRequest,
+    request: Request,
+    db: Session = Depends(get_analytics_db),
+):
+    """注册新用户（图形验证码 + IP/设备指纹双维度限流）"""
     # 图形验证码校验（R10：防脚本批量注册）：不通过则直接拒绝，不建用户
     if not verify_captcha(req.captcha_id, req.captcha_code):
         raise BizError(ERR_PARAM, "验证码错误或已过期")
+
+    # --- 注册限流（验证码通过后、建用户前判定，防脚本刷号） ---
+    ip = request.client.host if request.client else ""
+    # 归一化设备指纹：去空白 + 截断到列长（String(128)），保证查询与落库同口径
+    device_fp = (req.device_fingerprint or "").strip()[:128]
+
+    cutoff = datetime.utcnow() - REGISTER_IP_WINDOW
+    recent_ip_count = (
+        db.query(RegisterLimit)
+        .filter(RegisterLimit.ip == ip, RegisterLimit.created_at > cutoff)
+        .count()
+    )
+    if recent_ip_count >= REGISTER_IP_MAX_PER_HOUR:
+        raise BizError(ERR_RATE_LIMITED, "同一 IP 1 小时内注册次数已达上限（最多 2 次）")
+
+    if device_fp:
+        # 设备指纹维度不带时间窗：该设备注册过即永久拒绝（一设备一账号）
+        fp_count = (
+            db.query(RegisterLimit)
+            .filter(RegisterLimit.device_fingerprint == device_fp)
+            .count()
+        )
+        if fp_count >= 1:
+            raise BizError(ERR_RATE_LIMITED, "该设备已注册过账号")
 
     existing = db.query(User).filter_by(username=req.username).first()
     if existing:
@@ -170,6 +205,10 @@ async def register(req: RegisterRequest, db: Session = Depends(get_analytics_db)
         recharge(user.id, settings.free_credit_on_register, "free", note="注册赠送")
     except Exception:
         logger.exception("注册赠送积分失败 user_id=%s username=%s", user.id, req.username)
+
+    # 注册成功（建用户 + 赠积分后）落一条限流计数，供后续 IP/设备维度判定
+    db.add(RegisterLimit(ip=ip, device_fingerprint=device_fp))
+    db.commit()
 
     access_token = create_access_token(user.id)
     refresh_token = create_refresh_token(user.id, db)

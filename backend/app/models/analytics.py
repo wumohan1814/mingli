@@ -229,3 +229,18 @@ class SystemConfig(Base):
     description = Column(String(255), nullable=True)
     updated_by = Column(String(64), nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class RegisterLimit(Base):
+    """注册限流计数（register_limits）：注册成功落一行，按 IP / 设备指纹两个维度限流。
+
+    表由 main.py lifespan 的 Base.metadata.create_all 幂等建（老库自动补，无需 ALTER）。
+    行不清理：IP 维度查询带 1 小时时间窗，旧行自然失效；设备指纹维度不带时间窗，
+    同一设备永久只能注册一个账号。
+    """
+    __tablename__ = "register_limits"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ip = Column(String(64), index=True)
+    device_fingerprint = Column(String(128), index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)

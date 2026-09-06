@@ -5,8 +5,9 @@
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
   - 提示词            → 直接读/写 backend/prompts/method-prompts/*.md（写必记审计）
 
-鉴权：Bearer JWT（type=admin）。viewer 可读全部；operator+ 才能写提示词。
+鉴权：Bearer JWT（type=admin）。viewer 可读全部；operator+ 才能写提示词/用户管理。
 """
+import logging
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -15,25 +16,43 @@ from collections import defaultdict
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import text
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
 from app.admin.auth import admin_login, require_role
 from app.auth.router import hash_password
-from app.credits.service import manual
-from app.database import get_analytics_db, get_ops_db
-from app.errors import BizError, ERR_CASE_NOT_FOUND, ERR_INTERNAL, ERR_NOT_FOUND, ERR_PARAM
+from app.config import settings
+from app.credits.service import manual, recharge
+from app.database import get_analytics_db, get_feedback_db, get_ops_db
+from app.errors import (
+    BizError,
+    ERR_CASE_NOT_FOUND,
+    ERR_CONFLICT,
+    ERR_INTERNAL,
+    ERR_NOT_FOUND,
+    ERR_PARAM,
+)
 from app.models import (
     Calibration,
     Case,
     CaseStatus,
     Chart,
     Conversation,
+    CreditAccount,
+    CreditTransaction,
+    Job,
+    LoginAttempt,
     MethodResult,
+    RechargeCode,
+    RefreshToken,
+    RouteDecision,
     User,
 )
+from app.models.feedback import Feedback
 from app.models.ops import AdminAuditLog, Event
 from app.profile.archive import build_archive
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -116,6 +135,13 @@ class ResetPasswordRequest(BaseModel):
 
 class ResetCaseRequest(BaseModel):
     case_id: int
+
+
+class CreateUserRequest(BaseModel):
+    """后台新增 C 端用户（约束与 C 端 /api/auth/register 一致）。"""
+    username: str = Field(min_length=3, max_length=64)
+    password: str = Field(min_length=6, max_length=128)
+    nickname: str | None = Field(default=None, max_length=128)
 
 
 # --- 提示词工具 ---
@@ -583,3 +609,133 @@ def reset_user_case(
     )
     ops_db.commit()
     return {"code": 0, "message": "ok", "data": {"reset": True}}
+
+
+# --- 路由：用户管理（新增 / 删除，operator+；业务库操作先行 commit，审计库随后） ---
+@router.post("/users")
+def create_user(
+    req: CreateUserRequest,
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_analytics_db),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """后台新增 C 端用户（operator+）。
+
+    username 唯一校验（重复抛 1003 冲突）→ hash_password 建用户 → 注册赠送积分
+    （recharge type=free，与 C 端 register 同口径 settings.free_credit_on_register）
+    → 运维库写 AdminAuditLog(action=create_user)。审计不含明文密码。
+    事务顺序：业务库建用户 commit → 积分赠送（独立 session）→ 审计 commit。
+    """
+    username = (req.username or "").strip()
+    if not username:
+        raise BizError(ERR_PARAM, "参数错误", "用户名不能为空")
+    if db.query(User).filter_by(username=username).first():
+        raise BizError(ERR_CONFLICT, "用户名已存在")
+
+    user = User(
+        username=username,
+        password_hash=hash_password(req.password),
+        nickname=((req.nickname or "").strip() or None),
+    )
+    db.add(user)
+    try:
+        db.commit()
+    except IntegrityError:  # 并发兜底：唯一索引兜住 check-then-insert 的竞态
+        db.rollback()
+        raise BizError(ERR_CONFLICT, "用户名已存在")
+    db.refresh(user)
+
+    # 注册赠送积分：失败不阻断建号（与 C 端 register 同策略），仅记日志
+    try:
+        recharge(user.id, settings.free_credit_on_register, "free", note="后台新增用户")
+    except Exception:
+        logger.exception(
+            "后台新增用户赠送积分失败 user_id=%s username=%s", user.id, username
+        )
+
+    ops_db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="create_user",
+            target_type="user",
+            target_id=str(user.id),
+            detail=(
+                f"后台新增用户 {username}（赠送 {settings.free_credit_on_register} 积分）"
+            ),
+        )
+    )
+    ops_db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {"id": user.id, "username": user.username},
+    }
+
+
+@router.delete("/users/{user_id}")
+def delete_user(
+    user_id: int,
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_analytics_db),
+    fb_db: Session = Depends(get_feedback_db),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """删除 C 端用户（operator+）：按 FK 顺序级联清该用户全部业务数据 + 审计。
+
+    analytics 业务库删除范围（顺序不可乱，先子后父）：
+      charts / method_results / calibrations / conversations / jobs /
+      route_decisions（按该用户 cases 的 id 列表删）→ cases
+      → credit_transactions → credit_accounts → recharge_codes（user_id 有 FK，
+      不删会违反外键）→ refresh_tokens → login_attempts（按 username 匹配，
+      表无 user_id 列）→ users。
+    注：本代码库暂无 register_limits 表（任务清单中的预留项），无需删除。
+    feedback 库（taichu_feedback）Feedback 按 user_id 同删（跨库无 FK，best-effort）；
+    ops 库 events.user_id 无 FK、为埋点历史，保留不删。
+    用户不存在抛 1002。事务顺序：业务库删除并 commit → feedback 库 → 审计库 commit。
+    """
+    user = db.query(User).filter_by(id=user_id).first()
+    if not user:
+        raise BizError(ERR_NOT_FOUND, "用户不存在")
+    username = user.username
+    # 先取该用户 cases 的 id 列表，供 case 级子表按 case_id 删（FK 父键在 cases）
+    case_ids = [row[0] for row in db.query(Case.id).filter_by(user_id=user_id).all()]
+
+    # 1) case 级子表（按 case_id 删；bulk delete 不触达 ORM 已加载对象）
+    for model in (Chart, MethodResult, Calibration, Conversation, Job, RouteDecision):
+        db.query(model).filter(model.case_id.in_(case_ids)).delete(
+            synchronize_session=False
+        )
+    # 2) cases 本身
+    db.query(Case).filter_by(user_id=user_id).delete(synchronize_session=False)
+    # 3) 直接挂 users 的账户/流水/充值码/令牌（父键均为 users）
+    for model in (CreditTransaction, CreditAccount, RechargeCode, RefreshToken):
+        db.query(model).filter_by(user_id=user_id).delete(synchronize_session=False)
+    # 4) login_attempts 按 username（该表只有 username 无 user_id）
+    db.query(LoginAttempt).filter_by(username=username).delete(synchronize_session=False)
+    # 5) users 本体
+    db.query(User).filter_by(id=user_id).delete(synchronize_session=False)
+    db.commit()
+
+    # feedback 库同删（尽力而为；跨库失败只记日志，不阻断主流程）
+    try:
+        fb_db.query(Feedback).filter_by(user_id=user_id).delete(
+            synchronize_session=False
+        )
+        fb_db.commit()
+    except Exception:
+        logger.warning(
+            "删除用户 %s(id=%s) 时清理 feedback 失败", username, user_id, exc_info=True
+        )
+        fb_db.rollback()
+
+    ops_db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="delete_user",
+            target_type="user",
+            target_id=str(user_id),
+            detail=f"删除用户 {username}（级联清除其档案/对话/积分等全部数据）",
+        )
+    )
+    ops_db.commit()
+    return {"code": 0, "message": "ok", "data": {"deleted": True}}

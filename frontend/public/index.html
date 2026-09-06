@@ -535,6 +535,65 @@ function track(name, props) {
     }, 2000);
   }
 }
+
+// 设备指纹（注册专用，提交到后端 device_fingerprint 字段，可空）：
+//   canvas 渲染特征（文字+图形 → toDataURL → djb2 散列） + UA + 时区 → base64，总长 ≤ 128。
+// 全程 try/catch：任一步失败即降级（缺失项留空 / 仅 UA+时区），最终兜底返回空串，不抛错、不阻塞注册。
+function generateDeviceFingerprint() {
+  // 1) Canvas 指纹：画背景/文字/图形后读 toDataURL 的 base64 段，整串 djb2 散列成 8 位十六进制
+  //    （任何像素/抗锯齿/字体渲染差异都会传导到散列；canvas 不可用则此段留空）
+  let canvasPart = '';
+  try {
+    const c = document.createElement('canvas');
+    c.width = 280;
+    c.height = 72;
+    const g = c.getContext ? c.getContext('2d') : null;
+    if (g) {
+      g.fillStyle = '#F7F4EC';
+      g.fillRect(0, 0, c.width, c.height);
+      g.font = 'bold 18px "Songti SC",serif';
+      g.fillStyle = '#44558F';
+      g.fillText('Taichu\u2605\u592a\u521d\u6307\u7eb9', 12, 12);
+      g.strokeStyle = '#B8893E';
+      g.lineWidth = 2;
+      g.strokeRect(120, 24, 60, 30);
+      g.beginPath();
+      g.arc(220, 39, 16, 0, Math.PI * 2);
+      g.stroke();
+      const dataUrl = c.toDataURL('image/png');
+      const comma = dataUrl.indexOf(',');
+      const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+      let h = 5381;
+      for (let i = 0; i < b64.length; i++) h = ((h * 33) ^ b64.charCodeAt(i)) >>> 0;
+      canvasPart = h.toString(16);
+    }
+  } catch (e) {
+    canvasPart = ''; // canvas 被禁用/异常 → 降级为仅 UA+时区
+  }
+  // 2) UA / 时区（各自独立 try/catch，失败留空）
+  let ua = '';
+  try {
+    // 清除孤立代理项：避免个别异常 UA 字符令 encodeURIComponent 抛错，从而整个指纹降级为空
+    ua = String(navigator.userAgent || '').replace(/[\uD800-\uDFFF]/g, '?');
+  } catch (e) {
+    ua = '';
+  }
+  let tz = '';
+  try {
+    tz = String(Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+  } catch (e) {
+    tz = '';
+  }
+  // 3) 组合 → UTF-8 → latin1 → base64，截断到 128（canvas 散列 | 时区 | UA 排序，保证散列/时区先于长 UA 被保留）
+  try {
+    const raw = [canvasPart, tz, ua].filter(Boolean).join('|');
+    if (!raw) return '';
+    const latin1 = typeof unescape === 'function' ? unescape(encodeURIComponent(raw)) : encodeURIComponent(raw);
+    return btoa(latin1).slice(0, 128);
+  } catch (e) {
+    return ''; // 兜底：返回空串，绝不让指纹生成阻塞注册
+  }
+}
 async function api(path, options = {}) {
   const buildHeaders = () => {
     const headers = {
@@ -1293,8 +1352,12 @@ function AuthPage({
       setError('请先阅读并同意用户协议与隐私政策');
       return;
     }
-    // 注册分支：两次密码须一致、验证码须填写，不满足则提示且不发请求
+    // 注册分支：用户名即为手机号，须为真实有效的 11 位中国大陆手机号（1 开头、第二位 3-9），否则提示且不发请求（登录分支仅要求非空，由 required 保证）
     if (!isLogin) {
+      if (!/^1[3-9]\d{9}$/.test(username)) {
+        setError('请输入正确的 11 位手机号');
+        return;
+      }
       if (password !== confirmPassword) {
         setError('两次输入的密码不一致');
         return;
@@ -1313,6 +1376,8 @@ function AuthPage({
       if (!isLogin) {
         payload.captcha_id = captchaId;
         payload.captcha_code = captchaCode;
+        // 注册专用设备指纹（后端字段可空；生成失败为空串也不阻断提交）。登录分支不带该字段。
+        payload.device_fingerprint = generateDeviceFingerprint();
       }
       const res = await api(isLogin ? '/auth/login' : '/auth/register', {
         method: 'POST',
@@ -1359,13 +1424,17 @@ function AuthPage({
   }, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "auth-user"
-  }, "用户名"), /*#__PURE__*/React.createElement("input", {
+  }, "手机号"), /*#__PURE__*/React.createElement("input", {
     id: "auth-user",
     className: "input",
+    type: "tel",
+    inputMode: "numeric",
     value: username,
     onChange: e => setUsername(e.target.value),
-    placeholder: "请输入用户名",
-    required: true
+    placeholder: "请输入 11 位手机号",
+    maxLength: 11,
+    required: true,
+    autoComplete: "tel"
   }), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "auth-pass"

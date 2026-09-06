@@ -791,6 +791,13 @@ function UsersSection() {
   const [loadingCases, setLoadingCases] = useState(false);
   const [casesErr, setCasesErr] = useState('');
   const [caseId, setCaseId] = useState(null);
+  // —— 新增 / 删除用户（仅 operator/admin 显示操作；viewer 保持只读）——
+  const [showForm, setShowForm] = useState(false);
+  const [formErr, setFormErr] = useState('');
+  const [savingUser, setSavingUser] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [newUser, setNewUser] = useState({ username: '', password: '', nickname: '' });
+  const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
   const search = async function (keyword) {
     setLoadingList(true);
     setErrored('');
@@ -808,6 +815,44 @@ function UsersSection() {
   useEffect(function () {
     search('');
   }, []);
+  const createUser = async function (e) {
+    e.preventDefault();
+    setFormErr('');
+    const username = String(newUser.username || '').trim();
+    const password = String(newUser.password || '');
+    if (!username || !password) {
+      setFormErr('用户名与密码均为必填');
+      return;
+    }
+    const payload = { username: username, password: password };
+    const nickname = String(newUser.nickname || '').trim();
+    if (nickname) payload.nickname = nickname;
+    setSavingUser(true);
+    try {
+      await api('/admin/users', { method: 'POST', body: JSON.stringify(payload) });
+      toast('新增用户成功：' + username);
+      setNewUser({ username: '', password: '', nickname: '' });
+      setShowForm(false);
+      search(q); // 刷新列表（新用户按 id 倒序排在最前）
+    } catch (err) {
+      setFormErr(err.message || '新增用户失败');
+    } finally {
+      setSavingUser(false);
+    }
+  };
+  const deleteUser = async function (u) {
+    if (!window.confirm('确认删除用户「' + u.username + '」（id: ' + u.id + '）？\n将级联删除该用户的全部档案、对话、积分等数据，且不可恢复！')) return;
+    setDeletingId(u.id);
+    try {
+      await api('/admin/users/' + encodeURIComponent(u.id), { method: 'DELETE' });
+      toast('已删除用户：' + u.username);
+    } catch (err) {
+      toast(err.message || '删除失败');
+    } finally {
+      setDeletingId(null);
+      search(q); // 成功/失败都刷新（失败如 1002 说明已被他人删除）
+    }
+  };
   const openUser = async function (u) {
     setCasesUser(u);
     setCaseId(null);
@@ -918,7 +963,97 @@ function UsersSection() {
     type: "submit"
   }, "搜索"), /*#__PURE__*/React.createElement("span", {
     className: "hint"
-  }, "共 ", users.length, " 个用户")), errored && /*#__PURE__*/React.createElement("div", {
+  }, "共 ", users.length, " 个用户"), /*#__PURE__*/React.createElement("span", {
+    className: "spacer"
+  }), canWrite && /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    type: "button",
+    onClick: function () {
+      setFormErr('');
+      setShowForm(!showForm);
+    }
+  }, showForm ? '收起表单' : '＋ 新增用户')), showForm && /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("h3", null, "新增用户"), /*#__PURE__*/React.createElement("p", {
+    className: "hint",
+    style: {
+      margin: '0 0 6px'
+    }
+  }, "后台直接创建 C 端账号（免验证码），注册赠送积分按系统配置自动到账。"), formErr && /*#__PURE__*/React.createElement("div", {
+    className: "error-box"
+  }, formErr), /*#__PURE__*/React.createElement("form", {
+    onSubmit: createUser
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "nu-username"
+  }, "用户名（必填）"), /*#__PURE__*/React.createElement("input", {
+    id: "nu-username",
+    className: "input",
+    value: newUser.username,
+    onChange: function (e) {
+      setNewUser(Object.assign({}, newUser, {
+        username: e.target.value
+      }));
+    },
+    placeholder: "3-64 字符，需唯一",
+    autoComplete: "off"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "nu-password"
+  }, "密码（必填）"), /*#__PURE__*/React.createElement("input", {
+    id: "nu-password",
+    className: "input",
+    type: "password",
+    value: newUser.password,
+    onChange: function (e) {
+      setNewUser(Object.assign({}, newUser, {
+        password: e.target.value
+      }));
+    },
+    placeholder: "至少 6 位",
+    autoComplete: "new-password"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "nu-nickname"
+  }, "昵称（可选）"), /*#__PURE__*/React.createElement("input", {
+    id: "nu-nickname",
+    className: "input",
+    value: newUser.nickname,
+    onChange: function (e) {
+      setNewUser(Object.assign({}, newUser, {
+        nickname: e.target.value
+      }));
+    },
+    placeholder: "用户昵称",
+    autoComplete: "off"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      marginTop: 14,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    type: "submit",
+    disabled: savingUser
+  }, savingUser ? '创建中…' : '创建用户'), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    disabled: savingUser,
+    onClick: function () {
+      setFormErr('');
+      setShowForm(false);
+      setNewUser({
+        username: '',
+        password: '',
+        nickname: ''
+      });
+    }
+  }, "取消")))), errored && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
   }, errored), loadingList && /*#__PURE__*/React.createElement("p", {
     className: "hint"
@@ -949,9 +1084,23 @@ function UsersSection() {
         fontWeight: 600,
         color: 'var(--jade-deep)'
       }
-    }, u.username), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
+    }, u.username), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        gap: 6,
+        flexWrap: 'wrap',
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini"
-    }, "查看档案")));
+    }, "查看档案"), canWrite && /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-danger btn-mini",
+      disabled: deletingId === u.id,
+      onClick: function (e) {
+        e.stopPropagation();
+        deleteUser(u);
+      }
+    }, deletingId === u.id ? '删除中…' : '删除'))));
   }))))));
 }
 
