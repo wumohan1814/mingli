@@ -322,3 +322,22 @@ class MbtiResult(Base):
     scores_json = Column(JSON, nullable=True)          # 四维分
     type = Column(String(8), nullable=True)            # 如 INTJ
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class MbtiShareLink(Base):
+    """MBTI 免登录分享链接（mbti_share_links，REQ-047）：绑定某档案(case)的专属链接。
+
+    他人打开 GET /api/mbti/share/{token}（免登录）仅答 MBTI 并判型，
+    每次填写作为一条 MbtiResult 历史记录存入该档案（user_id 取档案主人 case.user_id），
+    **不回写** case.mbti_type（填写人可能是他人，不覆盖主人结果）。
+    token 由 secrets.token_urlsafe(16) 生成；同一 case 重复 POST /api/mbti/share
+    幂等复用已有链接（按 case_id 查重），不重复建行。
+    """
+    __tablename__ = "mbti_share_links"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=False, index=True)  # 绑定档案
+    token = Column(String(64), unique=True, nullable=False, index=True)            # 分享 token
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    case = relationship("Case")
