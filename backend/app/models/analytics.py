@@ -494,3 +494,32 @@ class AgentMemoryTask(Base):
     last_error = Column(Text, nullable=True)                   # 最近一次失败原因（截断 200 字符）
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AgentMessage(Base):
+    """太初先生 Agent 会话消息表（agent_messages，REQ-076）。
+
+    固定 session 对话：用户与「太初先生」的每一回合在此落两条消息（role='user' 与
+    role='assistant'，role 取值 user|assistant）。id 为 autoincrement，天然单调，
+    记忆模块（REQ-077）按 (user_id, id) 区间只读 role='user' 消息（方案书 §7.2
+    最小列契约 id/user_id/role/content/created_at；本表在最小列之上扩展 case_id /
+    tokens，向后兼容）。
+
+    - user 消息：tokens=None（不计费，计费按整轮 assistant 消息口径）；
+    - assistant 消息：tokens = 该回合 LLM 实际 total_tokens（余额明细/审计对账用，
+      与 credits.consume 的 tokens 一致，供 agent_message 埋点与消费流水核对）。
+    计费口径（REQ-076②）：每来回按 LLM 实际 token 即时 consume（ceil 积分、
+    1 积分=1000 tokens，同 interpret），不预扣。
+    case_id 为所选「默认档案」（仅本人档案，会话顶部下拉；防越权在 API 层按
+    id+user_id 校验）。表由 main.py lifespan 的 Base.metadata.create_all 幂等建
+    （老库自动补，无需 ALTER）。
+    """
+    __tablename__ = "agent_messages"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=True, index=True)  # 所选默认档案（可空=闲聊）
+    role = Column(String(16), nullable=False)       # user | assistant
+    content = Column(Text, nullable=False)
+    tokens = Column(Integer, nullable=True)         # 本消息计费 tokens（assistant=本轮 total_tokens；user=None）
+    created_at = Column(DateTime, default=datetime.utcnow)

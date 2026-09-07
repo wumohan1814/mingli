@@ -3,7 +3,7 @@
 数据源约定：
   - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
-  - 提示词            → 直接读/写 backend/prompts/**/*.md（19 个文件类 prompt：
+  - 提示词            → 直接读/写 backend/prompts/**/*.md（21 个文件类 prompt：
                         method-prompts 9 / shared 2 / interpret 5 / pair 3）；
                         每次写前先落
                         PromptVersion 版本快照到运维库（可查看历史 / 回滚），写必记审计。
@@ -70,7 +70,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 19 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 21 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -96,6 +96,9 @@ PROMPT_FILES = {
     "guoxue": "pair/guoxue.md",
     "xishi": "pair/xishi.md",
     "mbti": "pair/mbti.md",
+    # agent（2，REQ-076：太初先生主角色 prompt + 开场白话术；均用户不可改、后台可热改）
+    "agent_master": "agent/master.md",
+    "agent_greeting": "agent/greeting.md",
 }
 # key → 中文分类（按所在目录；前端列表分组展示）
 _CATEGORY_BY_PROMPT_DIR = {
@@ -103,6 +106,7 @@ _CATEGORY_BY_PROMPT_DIR = {
     "shared": "校验/追问",
     "interpret": "解读",
     "pair": "配对",
+    "agent": "太初先生",
 }
 PROMPT_CATEGORY = {
     key: _CATEGORY_BY_PROMPT_DIR.get(Path(rel).parent.name, "其他")
@@ -156,6 +160,8 @@ EVENT_NAME_ZH = {
     "astrology_interpret": "星座解读",
     "mbti_score": "MBTI判型",
     "case_share_fill": "分享帮填",
+    # REQ-076：太初先生 Agent 对话
+    "agent_message": "太初先生对话",
 }
 
 
@@ -514,11 +520,11 @@ def get_user_case_archive(
     return {"code": 0, "message": "ok", "data": build_archive(case, db)}
 
 
-# --- 路由：提示词（19 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 3） ---
+# --- 路由：提示词（21 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 3） ---
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 19 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 21 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []
