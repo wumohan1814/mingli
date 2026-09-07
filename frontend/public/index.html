@@ -415,10 +415,14 @@
     .method-cell.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
     .method-cell.todo{opacity:.5;cursor:not-allowed}
     .yao-line{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-1);padding:4px 0}
-    .yao-bar{height:6px;width:54px;border-radius:3px;background:var(--ink-300)}
-    .yao-bar.yin{background:transparent;border-top:3px solid var(--ink-300);height:0}
+    /* BUG-004: 阳爻=整条实线；阴爻=两条短横线中间断开（标准卦象）；老阴同构、色用朱砂 */
+    .yao-bar{height:6px;width:54px;border-radius:3px;background:var(--ink-300);flex:0 0 auto}
     .yao-bar.old-yang{background:var(--gold-500)}
-    .yao-bar.old-yin{background:transparent;border-top:3px solid var(--cinnabar)}
+    .yao-bar.yin,.yao-bar.old-yin{background:transparent;position:relative}
+    .yao-bar.yin::before,.yao-bar.yin::after,.yao-bar.old-yin::before,.yao-bar.old-yin::after{content:"";position:absolute;top:0;width:22px;height:6px;border-radius:3px;background:var(--ink-300)}
+    .yao-bar.yin::before,.yao-bar.old-yin::before{left:0}
+    .yao-bar.yin::after,.yao-bar.old-yin::after{right:0}
+    .yao-bar.old-yin::before,.yao-bar.old-yin::after{background:var(--cinnabar)}
     .palm-disk{width:200px;height:200px;border-radius:50%;margin:14px auto;position:relative;background:radial-gradient(circle,var(--skin-accent-soft),transparent 70%);border:2px solid var(--skin-accent)}
     .palm-disk .pd-point{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transform:translate(-50%,-50%);left:50%;top:50%}
     .palm-disk .pd-point.hit{box-shadow:0 0 0 4px var(--gold-500)}
@@ -513,6 +517,10 @@ const {
 const API = '/api';
 let token = '';
 let refreshToken = '';
+// BUG-002: 需登录才能访问的页面白名单（landing/auth/guoxue-hub/xishi-hub 保持公开）
+const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti'];
+// 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
+let authRedirect = null;
 let onUnauthorized = null;
 // 积分不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
 let creditInsuffHandler = null;
@@ -1540,7 +1548,14 @@ function AuthPage({
         const free = res.data && res.data.free_credit_granted || res.free_credit_granted;
         toast(free != null ? '已赠送 ' + free + ' 积分' : '注册成功，赠送积分已到账');
       }
-      onNavigate('cases'); // 登录/注册成功 → 进入档案列表（可从中新建或继续档案）
+      // BUG-002: 登录/注册成功 → 若有被拦截的受限页回跳目标则先回跳，否则进入档案列表
+      if (authRedirect) {
+        const r = authRedirect;
+        authRedirect = null;
+        onNavigate(r.p, r.p2);
+      } else {
+        onNavigate('cases'); // 登录/注册成功 → 进入档案列表（可从中新建或继续档案）
+      }
     } catch (e) {
       const msg = e && e.message || '请求失败';
       // 注册分支后端返回「验证码错误/过期」：旧验证码已失效，刷新图片并提示重输
@@ -5046,6 +5061,11 @@ function DivLiuyaoView(res) {
   });
   const arr = Array.isArray(res.yaoArray) ? res.yaoArray : null;
   const oldLines = Array.isArray(res.lines) ? res.lines : null;
+  // BUG-004: 后端增强字段（可能缺失或长度不足，需判空容错）
+  const sixRel = Array.isArray(res.sixRelatives) ? res.sixRelatives : null;
+  const najia = Array.isArray(res.najiaDizhi) ? res.najiaDizhi : null;
+  const sGods = Array.isArray(res.sixGods) ? res.sixGods : null;
+  const wAndR = Array.isArray(res.worldAndResponse) ? res.worldAndResponse : null;
   const rows = [];
   if (arr || oldLines) {
     const src = arr || oldLines;
@@ -5053,10 +5073,19 @@ function DivLiuyaoView(res) {
       const raw = arr ? src[i] : (Array.isArray(src[i]) ? src[i][0] : src[i]);
       const info = yaoView(raw);
       const mv = changing[i + 1] || info.moving;
-      rows.push(React.createElement('div', { key: i, className: 'yao-line' },
-        React.createElement('span', { style: { width: 30, color: 'var(--text-3)' } }, YAO_LABEL[i] + '爻'),
-        React.createElement('span', { className: 'yao-bar ' + info.cls }),
-        React.createElement('span', null, info.name + (mv ? '（动）' : ''))));
+      const sr = sixRel && sixRel[i] != null ? String(sixRel[i]) : '';
+      const nj = najia && najia[i] != null ? String(najia[i]) : '';
+      const sg = sGods && sGods[i] != null ? String(sGods[i]) : '';
+      const wr = wAndR && wAndR[i] != null ? String(wAndR[i]) : '';
+      const cells = [];
+      cells.push(React.createElement('span', { key: 'pos', style: { width: 30, color: 'var(--text-3)' } }, YAO_LABEL[i] + '爻'));
+      if (sr) cells.push(React.createElement('span', { key: 'rel', style: { fontSize: 12, color: 'var(--text-3)' } }, sr));
+      if (nj) cells.push(React.createElement('span', { key: 'nj', style: { fontSize: 12, color: 'var(--text-3)' } }, nj));
+      if (wr) cells.push(React.createElement('span', { key: 'wr', style: { fontSize: 13, fontWeight: 700, color: 'var(--cinnabar)' } }, wr));
+      cells.push(React.createElement('span', { key: 'bar', className: 'yao-bar ' + info.cls }));
+      cells.push(React.createElement('span', { key: 'name' }, info.name + (mv ? '（动）' : '')));
+      if (sg) cells.push(React.createElement('span', { key: 'god', style: { fontSize: 11, color: 'var(--text-3)' } }, sg));
+      rows.push(React.createElement('div', { key: i, className: 'yao-line' }, cells));
     }
   }
   const nameText = res.originalName ? (res.originalName + (res.changedName ? ' 之 ' + res.changedName : '') + (res.interName && !res.changedName ? '（互卦 ' + res.interName + '）' : '')) : (res.name || '');
@@ -7142,6 +7171,13 @@ function App() {
     return () => setCreditInsuffHandler(null);
   }, []);
   const navigate = (p, p2 = {}) => {
+    // BUG-002: 未登录访问受限页 → 拦截并记回跳目标，改去登录页（不 pushState、不 track）
+    if (AUTH_REQUIRED_PAGES.indexOf(p) >= 0 && !token) {
+      authRedirect = { p: p, p2: p2 };
+      setPage('auth');
+      setParams({});
+      return;
+    }
     setPage(p);
     setParams(p2);
     try {
