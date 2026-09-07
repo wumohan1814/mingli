@@ -824,6 +824,280 @@
     .tc-share-brand-note{font-size:11.5px;color:var(--text-3);line-height:1.7;margin-top:7px}
     .tc-share-brand-links{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
     .tc-share-brand-links .btn{width:auto;padding:6px 14px;font-size:12px;font-weight:600;border-radius:var(--radius-pill)}
+
+    /* ===== REQ-061：占卜动效与翻牌交互（占位/程序化 CSS 动画；不依赖外部美术） =====
+       素材替换点（美术到位后在对应元素上把 CSS 变量设为 url(...) 即可，缺省=占位渐变/程序化）：
+       --art-ssgw-tube 观音签筒  → .tube-body / --art-ssgw-stick 签条 → .ssgw-stick
+       --art-card-back-tarot 塔罗牌背 → .fc-back.taro / --art-card-back-lenormand 雷诺曼牌背 → .fc-back.leno
+       --art-coin-face 铜钱字面 → .coin .s-a / --art-coin-back 铜钱背面 → .coin .s-b
+       --art-xlr-palm 掌诀底图 → .xlr-ring / --art-cast-bg 演出氛围底 → .stage-bg
+       --art-mh-orbit 梅花能量环 → .mh-orb / --art-deal-pile 牌堆 → .deal-pile
+       --art-ssgw-paper 笺纸纹理 → .ssgw-paper（结果区容器可选，本期仅预留槽位） */
+    .art-stage{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      overflow:hidden;padding:30px 18px calc(20px + env(safe-area-inset-bottom));
+      background:radial-gradient(140% 120% at 50% 4%, #37323C 0%, #1E1C22 55%, #100F14 100%);color:#EEE6D4;
+      font-family:var(--font-serif);touch-action:manipulation;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
+    .art-stage .stage-bg{position:absolute;inset:0;pointer-events:none;opacity:.55;
+      background:
+        radial-gradient(62% 46% at 50% 0%, rgba(201,162,75,.17), transparent 68%),
+        radial-gradient(48% 42% at 10% 92%, rgba(91,75,138,.16), transparent 70%),
+        radial-gradient(42% 36% at 93% 86%, rgba(184,137,62,.13), transparent 72%);
+      background-image:var(--art-cast-bg,none);background-size:auto,auto,auto,cover}
+    .art-fx-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+    .art-fx{position:absolute;border-radius:50%;background:radial-gradient(circle,#F2E2BD 0%,rgba(226,196,130,.25) 55%,transparent 75%);
+      opacity:0;bottom:-8px;animation:artFloatUp linear infinite}
+    @keyframes artFloatUp{0%{transform:translateY(0);opacity:0}12%{opacity:.8}88%{opacity:.5}100%{transform:translateY(-86vh);opacity:0}}
+    .stage-cap{position:relative;text-align:center;margin:0 0 6px}
+    .stage-title{font-size:21px;font-weight:700;letter-spacing:.12em;color:#F4E7C8}
+    .stage-sub{display:block;font-size:12px;color:#A99F8C;margin-top:3px;font-family:var(--font-sans);letter-spacing:.06em}
+    .stage-hint{position:relative;text-align:center;font-size:13px;color:#CFC2A6;line-height:1.7;margin:14px 0 2px;font-family:var(--font-sans)}
+    .stage-hint .h-key{color:#E8C98A;font-weight:700}
+    .stage-wait{position:relative;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:#B7AC96;
+      margin-top:12px;font-family:var(--font-sans)}
+    .stage-wait i{width:9px;height:9px;border-radius:50%;background:#E8C98A;animation:pulse 1s ease-in-out infinite}
+    .stage-banner{position:relative;min-height:26px;text-align:center;font-size:16px;color:#F4E7C8;letter-spacing:.08em;margin-top:10px;font-weight:700}
+    .stage-banner small{display:block;font-size:11.5px;color:#A99F8C;font-weight:400;margin-top:2px;font-family:var(--font-sans);letter-spacing:.04em}
+    .art-skip{position:absolute;top:12px;right:14px;z-index:2;font-size:12px;color:#8E8570;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 13px;font-family:var(--font-sans);line-height:1.4}
+    .art-skip:active{transform:translateY(1px)}
+    .art-cancel{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:12px;color:#8E8570;
+      background:none;font-family:var(--font-sans);padding:6px 14px}
+    .art-stage .stage-tip{font-size:12px;color:#7E7663;font-family:var(--font-sans);margin-top:12px;line-height:1.6;text-align:center}
+
+    /* ---- 观音灵签：签筒（占位体，点击/摇晃对象） ---- */
+    .ssgw-zone{position:relative;width:220px;height:300px;margin:6px auto 0;flex:none}
+    .ssgw-tube-wrap{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .ssgw-tube-wrap.shake{animation:tubeShake .55s cubic-bezier(.45,0,.55,1)}
+    @keyframes tubeShake{0%,100%{transform:translateX(-50%) rotate(0)}15%{transform:translateX(calc(-50% - 9px)) rotate(-6deg)}
+      35%{transform:translateX(calc(-50% + 9px)) rotate(6deg)}55%{transform:translateX(calc(-50% - 7px)) rotate(-4deg)}
+      75%{transform:translateX(calc(-50% + 7px)) rotate(4deg)}92%{transform:translateX(calc(-50% - 3px)) rotate(-2deg)}}
+    .ssgw-tube{position:relative;width:150px;height:196px;animation:ssgwFloat 3.4s ease-in-out infinite}
+    @keyframes ssgwFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .ssgw-tube .tube-body{position:absolute;left:7px;right:7px;top:26px;bottom:0;
+      border-radius:8px 8px 26px 26px;background-color:#241A10;
+      background-image:var(--art-ssgw-tube,linear-gradient(92deg,#7A4D22 0%,#A97A3C 26%,#8A5A2B 52%,#6A421D 78%,#4C2E12 100%));
+      background-size:cover;background-position:center;
+      box-shadow:inset -12px 0 18px rgba(0,0,0,.34),inset 9px 0 14px rgba(255,236,190,.1),0 12px 26px rgba(0,0,0,.5);
+      clip-path:polygon(0% 4%,100% 4%,88% 100%,12% 100%)}
+    .ssgw-tube .tube-body::after{content:"";position:absolute;inset:0;
+      background:repeating-linear-gradient(180deg,rgba(255,255,255,.05) 0 2px,transparent 2px 30px);
+      border-radius:inherit}
+    .ssgw-tube .tube-rim{position:absolute;left:-8px;right:-8px;top:4px;height:30px;border-radius:50%;
+      background:linear-gradient(180deg,#C89B52 0%,#8A5A2B 62%,#5E3B1B 100%);
+      box-shadow:inset 0 4px 8px rgba(255,235,190,.35),0 6px 12px rgba(0,0,0,.45)}
+    .ssgw-tube .tube-mouth{position:absolute;left:-4px;right:-4px;top:20px;height:22px;border-radius:50%;
+      background:radial-gradient(58% 52% at 50% 38%,#3A2813 0%,#191005 74%);box-shadow:inset 0 3px 8px rgba(0,0,0,.8)}
+    .ssgw-tube .tube-tips{position:absolute;left:24%;right:24%;top:12px;height:34px;overflow:hidden}
+    .ssgw-tube .tube-tips i{position:absolute;top:2px;width:5px;height:30px;border-radius:2px;
+      background:linear-gradient(90deg,#DDB679,#F2DFB4 45%,#C89B52);box-shadow:0 0 3px rgba(0,0,0,.35);opacity:0}
+    .ssgw-tube .tube-tips i:nth-child(1){left:6%;transform:rotate(10deg);transform-origin:bottom center}
+    .ssgw-tube .tube-tips i:nth-child(2){left:44%;transform:rotate(2deg);transform-origin:bottom center}
+    .ssgw-tube .tube-tips i:nth-child(3){left:78%;transform:rotate(-9deg);transform-origin:bottom center}
+    .ssgw-tube-wrap.shake .tube-tips i{opacity:.95;animation:tipJig .22s ease-in-out infinite alternate}
+    .ssgw-tube-wrap.shake .tube-tips i:nth-child(2){animation-delay:.06s}
+    .ssgw-tube-wrap.shake .tube-tips i:nth-child(3){animation-delay:.12s}
+    @keyframes tipJig{from{top:3px}to{top:15px}}
+    /* 签条（前端印签号；弹出→旋转→落地弹跳全 CSS） */
+    .ssgw-stick{position:absolute;left:50%;top:8px;width:20px;height:104px;display:none;z-index:3;pointer-events:none;
+      background-color:#E9CF97;
+      background-image:var(--art-ssgw-stick,linear-gradient(93deg,#DFC184 0%,#F6E8C6 42%,#D4B06B 100%));
+      background-size:cover;background-position:center;
+      border:1px solid #A97A3C;border-radius:3px;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+    .ssgw-stick .stick-red{position:absolute;top:5px;left:50%;transform:translateX(-50%);width:7px;height:7px;
+      border-radius:50%;background:var(--cinnabar);box-shadow:0 0 4px rgba(178,58,58,.8)}
+    .ssgw-stick .stick-no{position:absolute;left:0;right:0;top:42px;text-align:center;font-size:10px;font-weight:800;
+      color:#7C4E22;font-family:var(--font-sans);letter-spacing:0;line-height:1.2}
+    .ssgw-stick.fly{display:block;animation:ssgwFly .62s cubic-bezier(.45,0,.9,.4) both}
+    @keyframes ssgwFly{0%{opacity:0;transform:translate(-50%,6px) rotate(4deg)}18%{opacity:1}
+      52%{transform:translate(26%,-118px) rotate(-108deg)}82%{opacity:1}
+      100%{transform:translate(-118%,-46px) rotate(-168deg);opacity:1}}
+    .ssgw-stick.land{display:block;animation:ssgwFall .58s cubic-bezier(.5,0,.75,.4) both}
+    @keyframes ssgwFall{0%{transform:translate(-118%,-46px) rotate(-168deg);opacity:1}
+      100%{transform:translate(-150%,150px) rotate(-206deg);opacity:1}}
+    .ssgw-stick.stay{display:block;transform:translate(-150%,150px) rotate(-206deg);animation:ssgwRest .45s cubic-bezier(.3,.1,.3,1.35)}
+    @keyframes ssgwRest{0%{transform:translate(-150%,150px) rotate(-206deg)}45%{transform:translate(-150%,132px) rotate(-206deg)}
+      100%{transform:translate(-150%,150px) rotate(-206deg)}}
+    .ssgw-stick .stick-no{opacity:0;transition:opacity .2s ease .15s}
+    .ssgw-stick.reveal .stick-no{opacity:1}
+    .ssgw-dust{position:absolute;left:50%;bottom:8px;width:30px;height:14px;transform:translateX(-50%)}
+    .ssgw-dust i{position:absolute;left:50%;top:0;width:5px;height:5px;border-radius:50%;background:#E4C98F;opacity:0;pointer-events:none}
+    .ssgw-dust i:nth-child(1){animation:dustBurst .6s ease-out .1s both}
+    .ssgw-dust i:nth-child(2){animation:dustBurst .6s ease-out .18s both}
+    .ssgw-dust i:nth-child(3){animation:dustBurst .6s ease-out .26s both}
+    .ssgw-dust i:nth-child(4){animation:dustBurst .6s ease-out .32s both}
+    .ssgw-dust i:nth-child(5){animation:dustBurst .6s ease-out .4s both}
+    .ssgw-dust i:nth-child(6){animation:dustBurst .6s ease-out .46s both}
+    @keyframes dustBurst{0%{transform:translate(-50%,0) scale(1);opacity:.9}
+      100%{transform:translate(-50%,calc(var(--dx,-20px))) scale(.2);opacity:0}}
+    .ssgw-land-glow{position:absolute;left:50%;bottom:-4px;width:120px;height:20px;transform:translateX(-50%);
+      background:radial-gradient(50% 100% at 50% 50%,rgba(232,201,138,.5),transparent 75%);border-radius:50%;opacity:0}
+    .ssgw-land-glow.on{opacity:1;transition:opacity .3s ease}
+    /* 签文笺纸纹理替换点（可选素材 --art-ssgw-paper；未配置时保持现有白卡） */
+    .card.ssgw-paper{background-image:var(--art-ssgw-paper,none);background-size:cover;background-position:center}
+
+    /* ---- 六爻起卦：铜钱 + 爻列 ---- */
+    .ly-cast-area{position:relative;display:flex;flex-direction:column;align-items:center;width:min(92vw,340px);margin-top:6px}
+    .ly-coins{display:flex;gap:26px;align-items:center;justify-content:center;height:86px;margin-bottom:8px}
+    .ly-coins .coin-empty{font-size:12px;color:#6E6757;letter-spacing:.14em;font-family:var(--font-sans)}
+    .coin{width:62px;height:62px;position:relative;perspective:360px;flex:none}
+    .coin .c3d{position:absolute;inset:0;transform-style:preserve-3d;border-radius:50%;
+      transition:transform .32s cubic-bezier(.4,0,.2,1)}
+    .coin .side{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+      display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;font-family:var(--font-sans)}
+    .coin .side.s-a{background:radial-gradient(circle at 32% 28%,#E3C08A,#A97A3C 66%,#7A4D22);color:#3E2A0E;border:2px solid #E8CF9A;
+      box-shadow:inset 0 0 0 4px rgba(62,42,14,.25)}
+    .coin .side.s-b{background:radial-gradient(circle at 32% 28%,#4A3623,#2A1F12 70%);color:#E8C98A;border:2px solid #B8893E;
+      transform:rotateY(180deg);box-shadow:inset 0 0 0 4px rgba(232,201,138,.16)}
+    .coin.toss .c3d{animation:coinToss .6s cubic-bezier(.34,.66,.5,1) both}
+    @keyframes coinToss{0%{transform:translateY(34px) rotateY(0) rotateZ(-18deg)}
+      32%{transform:translateY(-44px) rotateY(252deg) rotateZ(24deg)}
+      100%{transform:translateY(0) rotateY(720deg) rotateZ(0)}}
+    .coin.back .c3d{transform:rotateY(180deg)}
+    .ly-rows{position:relative;display:flex;flex-direction:column-reverse;gap:9px;width:100%;margin-top:2px;padding:4px 2px}
+    .ly-cast-row{display:flex;align-items:center;gap:10px;min-height:20px;opacity:.16;transition:opacity .18s ease}
+    .ly-cast-row.casting{opacity:.5}
+    .ly-cast-row.reveal{opacity:1}
+    .ly-cast-row .lc-pos{font-size:12px;color:#9A8F76;width:44px;text-align:center;font-family:var(--font-sans);flex:none}
+    .ly-cast-row .lc-bar{height:8px;flex:1;max-width:210px;border-radius:4px}
+    .ly-cast-row .lc-bar.yang{background:#E6D9B4;box-shadow:0 0 6px rgba(230,217,180,.5)}
+    .ly-cast-row .lc-bar.yin{background:linear-gradient(to right,#E6D9B4 0 42%,transparent 42% 58%,#E6D9B4 58% 100%)}
+    .ly-cast-row .lc-bar.moving-yang{background:#E8C98A;box-shadow:0 0 8px rgba(232,201,138,.85)}
+    .ly-cast-row .lc-bar.moving-yin{background:linear-gradient(to right,#E8C98A 0 42%,transparent 42% 58%,#E8C98A 58% 100%)}
+    .ly-cast-row .lc-name{font-size:11px;color:#9A8F76;font-family:var(--font-sans);min-width:26px;text-align:left}
+    .ly-cast-row .lc-mv{font-size:10px;font-weight:800;color:#fff;background:var(--gold-500);border-radius:999px;
+      padding:1px 7px;opacity:0;transition:opacity .2s ease;font-family:var(--font-sans);line-height:1.5}
+    .ly-cast-row.reveal.moving .lc-mv{opacity:1;animation:pulse 1.4s ease-in-out infinite}
+
+    /* ---- 梅花：双环能量场 + 三节点汇聚 ---- */
+    .mh-arena{position:relative;width:290px;height:250px;flex:none;margin-top:4px}
+    .mh-orb,.mh-orb2{position:absolute;border-radius:50%;pointer-events:none}
+    .mh-orb{left:50%;top:50%;width:216px;height:216px;transform:translate(-50%,-50%);
+      border:1.5px solid rgba(232,201,138,.4);box-shadow:0 0 34px rgba(201,162,75,.22) inset}
+    .mh-orb2{left:50%;top:50%;width:150px;height:150px;transform:translate(-50%,-50%);
+      border:1px dashed rgba(232,201,138,.3);animation:spin 26s linear infinite}
+    .mh-orb.on{animation:mhOrbPulse 1s ease-in-out infinite alternate}
+    .mh-orb2.on{animation:spin 26s linear infinite,mhOrbPulse 1s ease-in-out infinite alternate}
+    @keyframes mhOrbPulse{from{box-shadow:0 0 18px rgba(201,162,75,.16) inset}to{box-shadow:0 0 46px rgba(232,201,138,.5) inset}}
+    .mh-node{position:absolute;display:flex;align-items:center;justify-content:center;gap:6px;
+      background:rgba(232,201,138,.12);border:1px solid rgba(232,201,138,.4);color:#E8C98A;border-radius:999px;
+      padding:4px 11px;font-size:12px;letter-spacing:.08em;opacity:.35;transition:opacity .2s ease,box-shadow .2s ease;
+      font-family:var(--font-sans);white-space:nowrap}
+    .mh-node.on{opacity:1;box-shadow:0 0 14px rgba(232,201,138,.55)}
+    .mh-node .mh-dot{width:7px;height:7px;border-radius:50%;background:#E8C98A}
+    .mh-node.on .mh-dot{animation:pulse .9s ease-in-out infinite}
+    .mh-slot{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:74px;padding:7px 10px;
+      border:1px solid rgba(232,201,138,.34);border-radius:10px;background:rgba(255,255,255,.04);text-align:center;
+      font-family:var(--font-sans);font-size:12px;color:#A99F8C}
+    .mh-slot b{font-size:15px;color:#F4E7C8;font-weight:700;font-family:var(--font-serif)}
+    .mh-slot b.blank{color:#6E6757}
+    .mh-slots-row{display:flex;gap:14px;justify-content:center;margin-top:8px}
+
+    /* ---- 小六壬：掌诀盘走宫 ---- */
+    .xlr-cast-wrap{position:relative;width:300px;height:310px;margin:4px auto 0;flex:none}
+    .xlr-ring{position:absolute;left:50%;top:50%;width:236px;height:236px;transform:translate(-50%,-50%);border-radius:50%;
+      background:radial-gradient(circle,rgba(232,201,138,.09) 0%,rgba(232,201,138,.03) 44%,transparent 68%);
+      border:1.5px solid rgba(232,201,138,.35);box-shadow:0 0 30px rgba(201,162,75,.16) inset;
+      background-image:var(--art-xlr-palm,none);background-size:cover;background-position:center}
+    .xlr-ring::before{content:"";position:absolute;inset:14px;border-radius:50%;border:1px dashed rgba(232,201,138,.22)}
+    .xlr-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:#E8C98A;font-size:11px;letter-spacing:.1em;
+      background:radial-gradient(circle,#3E3323,#221A10);border:1px solid rgba(232,201,138,.45);font-family:var(--font-sans)}
+    .xlr-node{position:absolute;width:58px;margin-left:-29px;margin-top:-24px;text-align:center;pointer-events:none}
+    .xlr-node .xn-badge{display:inline-flex;align-items:center;justify-content:center;height:48px;width:48px;border-radius:50%;
+      background:rgba(34,26,16,.92);border:1.5px solid rgba(232,201,138,.3);color:#CFC2A6;font-size:13px;font-weight:700;
+      box-shadow:0 4px 10px rgba(0,0,0,.35);transition:border-color .18s ease,box-shadow .18s ease,color .18s ease,transform .18s ease}
+    .xlr-node .xn-sub{font-size:9px;color:#8E8570;margin-top:3px;letter-spacing:.04em;font-family:var(--font-sans);display:block}
+    .xlr-node.on .xn-badge{color:#FFF6DE;border-color:#E8C98A;box-shadow:0 0 16px rgba(232,201,138,.75),0 4px 12px rgba(0,0,0,.4);
+      transform:scale(1.08)}
+    .xlr-node.hit .xn-badge{animation:nodeHit 1s ease-in-out 2}
+    @keyframes nodeHit{0%,100%{box-shadow:0 0 12px rgba(232,201,138,.6)}50%{box-shadow:0 0 30px rgba(232,201,138,1),0 0 52px rgba(232,201,138,.5)}}
+    .xlr-verdict{position:relative;text-align:center;margin-top:8px;font-size:14px;color:#F4E7C8;font-weight:700;letter-spacing:.1em;min-height:22px}
+    .xlr-verdict small{display:block;font-size:11.5px;color:#A99F8C;font-weight:400;margin-top:3px;font-family:var(--font-sans);letter-spacing:.02em}
+
+    /* ===== 塔罗/雷诺曼：抽牌动画 + 3D 翻牌 ===== */
+    :root{--card-w:104px;--card-h:168px}
+    .fan-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;width:var(--card-w)}
+    .flip-card{position:relative;width:var(--card-w);height:var(--card-h);perspective:960px;cursor:pointer;
+      -webkit-tap-highlight-color:transparent;flex:none}
+    .flip-card.lock{cursor:default}
+    .flip-card .fc-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+    .flip-card.flipped .fc-inner{transform:rotateY(180deg)}
+    .fan-zone.bulk .flip-card .fc-inner{transition-delay:calc(var(--fdi,0)*.1s)}
+    .fan-zone.bulk .mean-item.revealed .mi-txt{transition:opacity .3s ease calc(var(--fdi,0)*.1s)}
+    .flip-card .fc-side{position:absolute;inset:0;border-radius:11px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+    .flip-card .fc-back{transform:rotateY(0deg);display:flex;align-items:center;justify-content:center}
+    .flip-card .fc-front{transform:rotateY(180deg);background:#1D1B20}
+    .fc-back{background-color:#3A2E55;
+      background-image:var(--art-card-back-tarot,radial-gradient(circle at 50% 118%,#1E1A2E 0 26%,transparent 26.5%),
+        radial-gradient(1.4px 1.4px at 24% 22%,rgba(240,220,170,.9),transparent 1.6px),
+        radial-gradient(1px 1px at 71% 32%,rgba(240,220,170,.6),transparent 1.2px),
+        radial-gradient(1.6px 1.6px at 43% 58%,rgba(240,220,170,.75),transparent 1.8px),
+        radial-gradient(1px 1px at 82% 66%,rgba(240,220,170,.55),transparent 1.2px),
+        radial-gradient(1.3px 1.3px at 18% 74%,rgba(240,220,170,.7),transparent 1.5px));
+      background-size:100% 100%,auto,auto,auto,auto,auto;background-position:center;
+      border:2px solid rgba(201,162,75,.55)}
+    .fc-back.leno{background-color:#1F3A46;
+      background-image:var(--art-card-back-lenormand,
+        repeating-radial-gradient(circle at 50% 46%,rgba(232,201,138,0) 0 16px,rgba(232,201,138,.12) 17px 18px,transparent 19px),
+        radial-gradient(circle at 50% 46%,#1B3140 0 30%,transparent 31%),
+        radial-gradient(circle at 50% 46%,rgba(232,201,138,.5) 0 3px,transparent 4px));
+      border:2px solid rgba(126,179,170,.55)}
+    .fc-back .back-mark{font-family:var(--font-serif);font-size:11px;letter-spacing:.2em;color:rgba(244,231,200,.8);
+      text-shadow:0 1px 2px rgba(0,0,0,.5)}
+    .fc-front .fc-art{position:absolute;inset:0;background:#1D1B20;overflow:hidden}
+    .fc-art.suit-major{border:2px solid #5B4B8A}.fc-art.suit-wands{border:2px solid #b8893e}
+    .fc-art.suit-cups{border:2px solid #c0392b}.fc-art.suit-swords{border:2px solid #2c3e6e}
+    .fc-art.suit-pentacles{border:2px solid #4a7c59}.fc-art.suit-hearts{border:2px solid #b94a4a}
+    .fc-art.suit-diamonds{border:2px solid #3a6ea5}.fc-art.suit-spades{border:2px solid #2c2c2c}
+    .fc-art.suit-clubs{border:2px solid #4a8a5e}
+    .fc-art img.tc-img{width:100%;height:100%;object-fit:cover;display:block}
+    .fc-art.reversed img.tc-img{transform:rotate(180deg)}
+    .fc-art .fc-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;
+      font-weight:800;font-size:17px;text-align:center;padding:6px;font-family:var(--font-serif)}
+    .fan-col .fc-reveal{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:42px;justify-content:flex-start}
+    .fan-col .fc-reveal .fc-name{font-size:13px;font-weight:700;text-align:center;line-height:1.25;color:var(--text-1);opacity:0}
+    .fan-col .fc-reveal .fc-kw{font-size:11px;color:var(--text-2);text-align:center;line-height:1.45;opacity:0}
+    .fan-col .fc-reveal .fc-orient{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;margin-top:1px;opacity:0;
+      font-family:var(--font-sans)}
+    .fan-col .fc-reveal .fc-orient.up{background:rgba(62,124,107,.14);color:#3E7C6B}
+    .fan-col .fc-reveal .fc-orient.rev{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    .fan-col.flipped .fc-name,.fan-col.flipped .fc-kw,.fan-col.flipped .fc-orient{opacity:1;
+      animation:fcRevealIn .4s var(--ease) .22s both}
+    @keyframes fcRevealIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+    /* 抽牌（出牌动画：牌堆 → 依次飞向牌位） */
+    .deal-stage{position:relative}
+    .deal-pile{position:relative;width:96px;height:56px;margin:2px auto 8px;pointer-events:none;transition:opacity .3s ease}
+    .deal-pile i{position:absolute;left:0;right:0;top:0;bottom:0;border-radius:9px;
+      background:linear-gradient(160deg,#2C2440 0%,#171228 100%);border:1.5px solid rgba(201,162,75,.5);
+      box-shadow:0 3px 8px rgba(0,0,0,.4)}
+    .deal-pile i:nth-child(2){transform:translate(-5px,3px) rotate(-5deg)}
+    .deal-pile i:nth-child(3){transform:translate(5px,6px) rotate(6deg)}
+    .deal-pile.gone{opacity:0}
+    .fan-col.deal{opacity:0;will-change:transform,opacity}
+    .fan-col.deal.fly{opacity:1;transform:none;
+      transition:transform .5s cubic-bezier(.3,.7,.4,1) calc(var(--fdi,0)*.09s + .03s),
+      opacity .3s ease calc(var(--fdi,0)*.09s)}
+    .deal-tip{text-align:center;font-size:12.5px;color:var(--text-3);margin:2px 0 8px;line-height:1.7;
+      animation:pulse 2.2s ease-in-out infinite}
+    .deal-tip b{color:var(--skin-accent)}
+    .flip-ctrl{display:flex;align-items:center;gap:8px;margin:4px 0 10px}
+    .flip-ctrl .fc-progress{font-size:12px;color:var(--text-3);flex:1;min-width:0;line-height:1.5}
+    .flip-ctrl .fc-progress b{color:var(--skin-accent)}
+    .flip-all-btn{flex:none;width:auto;padding:9px 18px;font-size:13px}
+    .flip-all-btn:disabled{opacity:.55}
+    /* 解析放行：牌未翻时的占位 */
+    .mean-item.locked .mi-txt,.mean-item.locked .mi-kw,.mean-item.locked .mi-theme,
+    .mean-item.locked .mi-name,.mean-item.locked .mi-orient{display:none}
+    .mean-item .mi-lock{font-size:12.5px;color:var(--text-3);margin-top:4px;line-height:1.7;display:none;font-family:var(--font-sans)}
+    .mean-item.locked .mi-lock{display:block}
+    .mean-item.revealed .mi-lock{display:none}
+    .mean-item.revealed .mi-txt,.mean-item.revealed .mi-kw{animation:fcRevealIn .38s var(--ease) .2s both}
+    @media (max-width:420px){:root{--card-w:88px;--card-h:142px}}
+    @media (prefers-reduced-motion:reduce){
+      .art-stage .art-fx,.art-stage *,.art-stage *::before,.art-stage *::after,
+      .flip-card .fc-inner,.fan-col.deal,.fan-col.deal.fly,.mean-item.revealed .mi-txt{animation:none!important;transition:none!important}
+      .fan-col.deal{opacity:1;transform:none}
+    }
   </style>
 </head>
 <body>
@@ -9111,6 +9385,543 @@ const signReplaySample = function (n) { return (n - 0.5) / SSGW_POOL_SIZE; };
 const XLR_PALACE_ORDER = ['大安', '留连', '速喜', '赤口', '小吉', '空亡'];
 /* 按传统「月→日→时」顺数落宫：宫位索引=(月-1+日-1+时-1) mod 6（shichen 序数 1=子…12=亥） */
 const xlrPalaceName = function (m, d, h) { return XLR_PALACE_ORDER[(((m - 1) + (d - 1) + (h - 1)) % 6 + 6) % 6] || ''; };
+
+/* =====================================================================
+   REQ-061：占卜动效与翻牌交互（统一机制）
+   - 读取钩子：tcShouldPlayAnim()=REQ-066①「动画与抽卡模拟」；tcShouldShowCards()=REQ-066⑥「牌面图片显示」
+   - 动效阶段 state 机：各演出组件内部 ph 只描述"演出到哪一步"，取数/落库仍走既有 doCast/draw/load
+   - 结果一致性：观音灵签/六爻 = 前端先定结果 + replay 固定（REQ-069 同契约）；
+     梅花/小六壬 = 取数先行（演出的卦名/落宫一律取自后端结果，不本地复制引擎）；
+     塔罗/雷诺曼 = 取数先行，数据藏于牌背，翻牌时揭示
+   - 全部器物为占位/程序化 CSS；素材接入点见上方注释的 --art-* 变量槽
+   ===================================================================== */
+const tcShouldPlayAnim = function () { return TC_SETTINGS.anim_enabled !== false; };
+const tcShouldShowCards = function () { return TC_SETTINGS.card_images !== false; };
+const artFxEls = function (n) {
+  const els = [];
+  for (let i = 0; i < n; i++) {
+    const st = {
+      left: (3 + ((i * 41 + 7) % 90)) + '%',
+      bottom: (2 + ((i * 23 + 5) % 12)) + '%',
+      width: (3 + ((i * 7) % 4)) + 'px',
+      height: (3 + ((i * 7) % 4)) + 'px',
+      opacity: 0.32 + ((i * 5) % 4) * 0.16,
+      animationDelay: ((i * 0.61) % 3.4).toFixed(2) + 's',
+      animationDuration: (3.6 + ((i * 37) % 24) / 10).toFixed(2) + 's',
+      animationFillMode: 'both'
+    };
+    els.push(React.createElement('span', { key: 'fx' + i, className: 'art-fx', style: st }));
+  }
+  return els;
+};
+/* 全屏演出层公共框架（z-index 70，高于 modal-mask 50；右上「跳过动画」=单次跳过不改变全局开关） */
+function ArtStageFrame(opts) {
+  const kids = [
+    React.createElement('div', { key: 'bg', className: 'stage-bg' }),
+    React.createElement('div', { key: 'fx', className: 'art-fx-wrap' }, artFxEls(10))
+  ];
+  if (opts.skip) kids.push(React.createElement('button', { key: 'sk', type: 'button', className: 'art-skip', onClick: opts.skip }, '跳过动画'));
+  if (opts.cancel) kids.push(React.createElement('button', { key: 'cc', type: 'button', className: 'art-cancel', onClick: opts.cancel }, opts.cancelLabel || '返回'));
+  kids.push(React.createElement('div', { key: 'cap', className: 'stage-cap' },
+    React.createElement('div', { className: 'stage-title' }, opts.title),
+    opts.sub ? React.createElement('div', { className: 'stage-sub' }, opts.sub) : null));
+  if (opts.children) kids.push(opts.children);
+  return React.createElement('div', { className: 'art-stage' }, kids);
+}
+/* 翻牌卡正面（占位/正片共用：有 img 用图，无则色块占位；塔罗逆位沿用 rotate180 语义） */
+function ArtCardFront(props) {
+  const { img, name, suit, rev, phColor } = props;
+  const art = img
+    ? React.createElement('img', { className: 'tc-img', src: img, alt: name, loading: 'lazy', decoding: 'async' })
+    : React.createElement('div', { className: 'fc-ph', style: { background: phColor || '#5B4B8A' } }, name);
+  return React.createElement('div', { className: 'fc-side fc-front' },
+    React.createElement('div', { className: 'fc-art suit-' + (suit || 'major') + (rev ? ' reversed' : '') }, art));
+}
+function ArtCardBack(props) {
+  return React.createElement('div', { className: 'fc-side fc-back' + (props.kind === 'leno' ? ' leno' : ' taro') },
+    React.createElement('span', { className: 'back-mark' }, '太初'));
+}
+
+/* ---------------- 观音灵签：可交互签筒舞台 ----------------
+   流程：点击签筒（兜底）/ 摇动手机 → 筒身抖动 → 签条弹出旋转落地（签号=进入时已定，replay 固定）→ 转签文。
+   devicemotion：iOS 13+ 首次点击时在用户手势内 requestPermission；拒绝/无传感器自动降级为点击模式。 */
+function SsgwTubeStage(props) {
+  const { fixedNo, resultReady, failed, onDraw, onFinish, onSkip, onExit } = props;
+  const [ph, setPh] = useState('idle'); // idle|shake|fly|land|landed|finish|out
+  const [motionMode, setMotionMode] = useState(null); // null=未确认 | 'tap'=仅点击 | 'shake'=可摇动
+  const timersRef = useRef([]);
+  const firedRef = useRef(false);
+  const doneRef = useRef(false);
+  const motionRef = useRef(false);
+  const hiddenRef = useRef(false);
+  const accRef = useRef([]);
+  const coolRef = useRef(0);
+  const askedRef = useRef(false);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  const beginShake = function () {
+    if (firedRef.current) return;
+    firedRef.current = true;
+    coolRef.current = Date.now() + 1200;
+    onDraw(fixedNo); // 摇动瞬间即按已定签号取数（replay 固定 → 落签与后端签文必然一致）
+    setPh('shake');
+    later(function () { setPh('fly'); }, 560);
+    later(function () { setPh('land'); }, 1420);
+    later(function () { setPh('landed'); }, 2100);
+    later(function () { setPh('finish'); }, 2580);
+  };
+  const armMotion = function () {
+    try {
+      const DM = window.DeviceMotionEvent;
+      if (!DM || typeof DM.requestPermission !== 'function') {
+        // 桌面/旧版 iOS：直接启用加速度监听（无传感器则永不触发，不影响点击兜底）
+        motionRef.current = true;
+        return;
+      }
+      if (askedRef.current) return;
+      askedRef.current = true;
+      DM.requestPermission().then(function (st) {
+        motionRef.current = (st === 'granted');
+        if (st !== 'granted') setMotionMode('tap');
+      }).catch(function () { motionRef.current = false; setMotionMode('tap'); });
+    } catch (e) { motionRef.current = false; setMotionMode('tap'); }
+  };
+  useEffect(function () {
+    const onVis = function () { hiddenRef.current = document.hidden; };
+    document.addEventListener('visibilitychange', onVis);
+    const onMotion = function (ev) {
+      if (!motionRef.current || hiddenRef.current || firedRef.current) return;
+      const a = ev.accelerationIncludingGravity || ev.acceleration || null;
+      if (!a) return;
+      const x = a.x || 0, y = a.y || 0, z = a.z || 0;
+      const mag = Math.sqrt(x * x + y * y + z * z);
+      const now = Date.now();
+      if (mag > 15) {
+        const arr = accRef.current.filter(function (t) { return now - t < 800; });
+        arr.push(now);
+        accRef.current = arr;
+        // 窗口 800ms 内 ≥3 次峰值 → 判为一次有效摇动；1.2s 冷却 + 本会话只掉一支签
+        if (arr.length >= 3 && now > coolRef.current) beginShake();
+      }
+    };
+    window.addEventListener('devicemotion', onMotion, false);
+    return function () {
+      document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('devicemotion', onMotion, false);
+    };
+  }, []);
+  const clickTube = function () {
+    armMotion();
+    beginShake();
+  };
+  // 演出收尾：动画播完 & 数据就绪（或失败）→ 淡出交给结果视图（DivSsgwView）
+  useEffect(function () {
+    if (doneRef.current) return;
+    if (failed && ph !== 'idle') {
+      doneRef.current = true;
+      setPh('out');
+      later(function () { onFinish(); }, 300);
+      return;
+    }
+    if (ph === 'finish' && resultReady) {
+      doneRef.current = true;
+      setPh('out');
+      later(function () { onFinish(); }, 340);
+    }
+  }, [ph, resultReady, failed]);
+  let stickCls = 'ssgw-stick';
+  if (ph === 'fly') stickCls += ' fly';
+  else if (ph === 'land') stickCls += ' land';
+  else if (ph === 'landed' || ph === 'finish' || ph === 'out') stickCls += ' stay';
+  if (ph === 'landed' || ph === 'finish') stickCls += ' reveal';
+  const dustEls = [];
+  if (ph === 'land' || ph === 'landed' || ph === 'finish') {
+    const dxs = [-38, 26, -8, 44, -56, 58];
+    dxs.forEach(function (d, di) {
+      dustEls.push(React.createElement('i', { key: di, style: { '--dx': d + 'px' } }));
+    });
+  }
+  const tips = [0, 1, 2].map(function (i) { return React.createElement('i', { key: i }); });
+  let hint = null;
+  if (ph === 'idle') {
+    hint = React.createElement('div', { className: 'stage-hint' },
+      motionMode === 'tap'
+        ? '未检测到摇动传感器，请点击签筒求签'
+        : React.createElement('span', null, React.createElement('span', { className: 'h-key' }, '点击签筒'), '，或摇一摇手机，求一支签'));
+  }
+  const zone = React.createElement('div', { className: 'ssgw-zone' },
+    React.createElement('div', { className: 'ssgw-land-glow' + (ph === 'landed' || ph === 'finish' ? ' on' : '') }),
+    React.createElement('div', { className: 'ssgw-dust' }, dustEls),
+    React.createElement('div', { className: 'ssgw-tube-wrap' + (ph === 'shake' ? ' shake' : ''), onClick: clickTube },
+      React.createElement('div', { className: 'ssgw-tube' },
+        React.createElement('div', { className: 'tube-rim' }),
+        React.createElement('div', { className: 'tube-tips' }, tips),
+        React.createElement('div', { className: 'tube-mouth' }),
+        React.createElement('div', { className: 'tube-body' }))),
+    React.createElement('div', { className: stickCls },
+      React.createElement('i', { className: 'stick-red' }),
+      React.createElement('span', { className: 'stick-no' }, '第 ' + fixedNo + ' 签')));
+  const waitLine = (ph === 'finish' && !resultReady)
+    ? React.createElement('div', { className: 'stage-wait' }, React.createElement('i', null), '签文正在生成…')
+    : null;
+  const tipLine = React.createElement('div', { className: 'stage-tip' },
+    ph === 'idle' ? '默念所问之事，诚心摇签；签号即你所抽之签，结果以签文为准。' : '摇签完成 · 即将展示签文');
+  const children = [zone, hint, waitLine, tipLine];
+  return ArtStageFrame({
+    title: '观音灵签',
+    sub: '一签一问 · 心诚则灵',
+    skip: onSkip,
+    cancel: (ph === 'idle' && onExit) ? onExit : null,
+    cancelLabel: '返回重选',
+    children: children
+  });
+}
+
+/* ---------------- 六爻起卦演出：逐爻掷 3 铜钱 × 6（yaos 前端先定 → replay 固定） ---------------- */
+const shuffleArr = function (a) {
+  const b = a.slice();
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = b[i]; b[i] = b[j]; b[j] = t;
+  }
+  return b;
+};
+const yaosPartsOf = function (v) {
+  if (v === 6) return [2, 2, 2];            // 老阴：三字（2+2+2）
+  if (v === 7) return shuffleArr([2, 2, 3]); // 少阳：两字一背
+  if (v === 8) return shuffleArr([2, 3, 3]); // 少阴：一字两背
+  if (v === 9) return [3, 3, 3];            // 老阳：三背
+  return shuffleArr([2, 2, 3]);
+};
+function LiuyaoCastStage(props) {
+  const { yaos, resultReady, guaText, failed, onFinish, onSkip } = props;
+  const [cur, setCur] = useState(-1);
+  const [doneRows, setDoneRows] = useState([]);
+  const [phase, setPhase] = useState('run'); // run|final|done
+  const startedRef = useRef(false);
+  const doneRef = useRef(false);
+  const timersRef = useRef([]);
+  const partsRef = useRef(null);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  if (!partsRef.current) partsRef.current = (yaos || []).map(yaosPartsOf);
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  useEffect(function () {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    const n = (yaos && yaos.length) || 6;
+    (yaos || []).forEach(function (v, i) {
+      later(function () { setCur(i); }, 150 + i * 780);
+      later(function () {
+        setDoneRows(function (prev) { return prev.indexOf(i) >= 0 ? prev : prev.concat([i]); });
+      }, 150 + i * 780 + 650);
+    });
+    later(function () { setPhase('final'); }, 150 + n * 780 + 120);
+    later(function () { setPhase('done'); }, 150 + n * 780 + 900);
+  }, []);
+  useEffect(function () {
+    if (doneRef.current) return;
+    if (failed) { doneRef.current = true; onFinish(); return; }
+    if (phase === 'done' && resultReady) { doneRef.current = true; onFinish(); }
+  }, [phase, resultReady, failed]);
+  let coinRow = null;
+  if (cur >= 0 && cur < (yaos || []).length) {
+    const parts = partsRef.current[cur] || [];
+    const settled = doneRows.indexOf(cur) >= 0;
+    coinRow = React.createElement('div', { key: 'c' + cur, className: 'ly-coins' },
+      parts.map(function (p, ci) {
+        const cls = 'coin' + (settled ? (p === 3 ? ' back' : ' front') : ' toss');
+        return React.createElement('div', { key: ci, className: cls },
+          React.createElement('div', { className: 'c3d' },
+            React.createElement('div', { className: 'side s-a' }, '字'),
+            React.createElement('div', { className: 'side s-b' }, '通宝')));
+      }));
+  } else {
+    coinRow = React.createElement('div', { className: 'ly-coins' },
+      React.createElement('span', { className: 'coin-empty' }, '凝神起卦 · 逐爻掷币'));
+  }
+  const mvCount = (yaos || []).filter(function (v) { return v === 6 || v === 9; }).length;
+  const rowsEls = (yaos || []).map(function (v, i) {
+    const mv = (v === 6 || v === 9);
+    const yang = (v === 7 || v === 9);
+    const barCls = 'lc-bar ' + (mv ? (yang ? 'moving-yang' : 'moving-yin') : (yang ? 'yang' : 'yin'));
+    const rCls = 'ly-cast-row' + (cur === i ? ' casting' : '') + (doneRows.indexOf(i) >= 0 ? ' reveal' : '') + (mv ? ' moving' : '');
+    const nameTxt = v === 6 ? '老阴' : v === 7 ? '少阳' : v === 8 ? '少阴' : v === 9 ? '老阳' : '';
+    const kids = [
+      React.createElement('span', { key: 'p', className: 'lc-pos' }, YAO_LABEL[i] + '爻'),
+      React.createElement('span', { key: 'b', className: barCls }),
+      React.createElement('span', { key: 'n', className: 'lc-name' }, nameTxt)
+    ];
+    if (mv) kids.push(React.createElement('span', { key: 'm', className: 'lc-mv' }, '动'));
+    return React.createElement('div', { key: i, className: rCls }, kids);
+  });
+  let banner = null;
+  if (phase === 'final' || phase === 'done') {
+    banner = React.createElement('div', { className: 'stage-banner' },
+      guaText || '六爻成卦',
+      React.createElement('small', null, mvCount ? '动爻 ' + mvCount + ' 处' : '六爻安静 · 本卦即用' + (guaText ? '' : '，卦名以结果为准')));
+  }
+  const waitLine = (phase === 'done' && !resultReady)
+    ? React.createElement('div', { className: 'stage-wait' }, React.createElement('i', null), '卦象正在生成…')
+    : null;
+  const area = React.createElement('div', { className: 'ly-cast-area' },
+    coinRow,
+    React.createElement('div', { className: 'ly-rows' }, rowsEls),
+    banner,
+    waitLine);
+  return ArtStageFrame({
+    title: '六爻起卦',
+    sub: '铜钱六掷 · 自初爻向上成卦',
+    skip: onSkip,
+    children: area
+  });
+}
+
+/* ---------------- 梅花易数起卦演出（取数先行：光点汇聚 → 卦象按后端结果成形） ---------------- */
+function MeihuaCastStage(props) {
+  const { result, resultReady, failed, onFinish, onSkip } = props;
+  const [step, setStep] = useState(0); // 0..3 三步汇聚；4=卦象成形；5=完成
+  const [phase, setPhase] = useState('run');
+  const startedRef = useRef(false);
+  const doneRef = useRef(false);
+  const timersRef = useRef([]);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  useEffect(function () {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    later(function () { setStep(1); }, 360);
+    later(function () { setStep(2); }, 940);
+    later(function () { setStep(3); }, 1520);
+    later(function () { setPhase('gua'); setStep(4); }, 2260);
+    later(function () { setPhase('done'); }, 3200);
+  }, []);
+  useEffect(function () {
+    if (doneRef.current) return;
+    if (failed) { doneRef.current = true; onFinish(); return; }
+    if (phase === 'done' && resultReady) { doneRef.current = true; onFinish(); }
+  }, [phase, resultReady, failed]);
+  const res = (result && typeof result === 'object') ? result : {};
+  const stepsCopy = ['上卦之数', '下卦之数', '动爻之位'];
+  const nodePos = [{ left: '50%', top: '2%' }, { left: '6%', top: '30%' }, { left: '70%', top: '62%' }];
+  const nodes = stepsCopy.map(function (t, i) {
+    const active = step >= i + 1;
+    return React.createElement('div', { key: i, className: 'mh-node' + (active ? ' on' : ''), style: nodePos[i] },
+      React.createElement('span', { className: 'mh-dot' }),
+      t);
+  });
+  const upName = res.up || '';
+  const downName = res.down || '';
+  const dongTxt = res.dong != null ? '第 ' + res.dong + ' 爻动' : '';
+  const partsName = [];
+  if (res.originalName) partsName.push('本卦 ' + res.originalName);
+  if (res.interName) partsName.push('互卦 ' + res.interName);
+  if (res.changedName && res.changedName !== res.originalName) partsName.push('变卦 ' + res.changedName);
+  const slotsRow = React.createElement('div', { className: 'mh-slots-row' },
+    React.createElement('div', { className: 'mh-slot' }, '上卦', React.createElement('b', { className: upName ? '' : 'blank' }, upName || '待成')),
+    React.createElement('div', { className: 'mh-slot' }, '下卦', React.createElement('b', { className: downName ? '' : 'blank' }, downName || '待成')),
+    dongTxt ? React.createElement('div', { className: 'mh-slot' }, '动爻', React.createElement('b', null, dongTxt)) : null);
+  const arena = React.createElement('div', { className: 'mh-arena' },
+    React.createElement('div', { className: 'mh-orb' + (phase === 'run' ? ' on' : '') }),
+    React.createElement('div', { className: 'mh-orb2' + (phase === 'run' ? ' on' : '') }),
+    nodes);
+  let banner = null;
+  if (phase === 'gua' || phase === 'done') {
+    banner = React.createElement('div', { className: 'stage-banner' },
+      partsName.length ? partsName.join(' · ') : '卦象成形',
+      React.createElement('small', null, resultReady ? '体用已分 · 随解随观' : '卦象成形中 · 片刻即呈'));
+  }
+  const waitLine = (phase === 'done' && !resultReady)
+    ? React.createElement('div', { className: 'stage-wait' }, React.createElement('i', null), '卦象正在生成…')
+    : null;
+  return ArtStageFrame({
+    title: '梅花易数',
+    sub: '以时起卦 · 体用生克察事应',
+    skip: onSkip,
+    children: [arena, slotsRow, waitLine, banner]
+  });
+}
+
+/* ---------------- 小六壬起卦演出：掌诀盘走宫（结果先取 → 路径按后端 calculation 逐宫游走，落宫与课式一致） ---------------- */
+const xlrRingPos = function (idx) {
+  const cx = 150, cy = 150, R = 100;
+  const ang = (idx * 60 - 90) * Math.PI / 180;
+  return { left: Math.round(cx + R * Math.cos(ang)), top: Math.round(cy + R * Math.sin(ang)) };
+};
+const xlrInfoOf = function (result) {
+  const o = (result && typeof result === 'object') ? result : {};
+  const calc = (o.calculation && typeof o.calculation === 'object') ? o.calculation : {};
+  const M = Number(calc.lunarMonth) || Number(o.lunarMonth) || 1;
+  const D = Number(calc.lunarDay) || Number(o.lunarDay) || 1;
+  const H = Number(calc.hourNumber) || ((o.hourIndex != null && o.hourIndex >= 0) ? ((o.hourIndex % 12) + 1) : 1);
+  return { M: Math.max(1, M), D: Math.max(1, D), H: Math.max(1, H) };
+};
+function XlrCastStage(props) {
+  const { result, resultReady, failed, onFinish, onSkip } = props;
+  const [phase, setPhase] = useState('idle'); // idle|walk|done
+  const [curIdx, setCurIdx] = useState(-1);
+  const [cap, setCap] = useState('');        // 走宫说明
+  const [finalName, setFinalName] = useState('');
+  const startedRef = useRef(false);
+  const doneRef = useRef(false);
+  const timersRef = useRef([]);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  // 取数先行：结果就绪后才开始走宫（每段宫数与后端 lunarMonth/lunarDay/hourNumber 完全一致）
+  useEffect(function () {
+    if (startedRef.current || !resultReady || !result) return;
+    startedRef.current = true;
+    const info = xlrInfoOf(result);
+    const M = info.M, D = info.D, H = info.H;
+    const mHops = M - 1, dHops = D - 1, hHops = H - 1;
+    const list = [0];
+    let cur = 0;
+    const walk = function (n) {
+      for (let k = 0; k < n; k++) { cur = (cur + 1) % 6; list.push(cur); }
+    };
+    walk(mHops);
+    const end1 = list.length - 1;
+    walk(dHops);
+    const end2 = list.length - 1;
+    walk(hHops);
+    const end3 = list.length - 1;
+    const hops = Math.max(1, list.length - 1);
+    const hopMs = Math.max(52, Math.min(150, Math.floor(2300 / hops)));
+    const pauseMs = 300;
+    const perSegTxt = function (n) { return n + ' 宫'; };
+    const nameOf = function (i) { return xlrNameAt(i); };
+    setCap('月 顺数 ' + perSegTxt(mHops));
+    setPhase('walk');
+    let t = 160;
+    for (let k = 1; k < list.length; k++) {
+      (function (kk) {
+        later(function () {
+          setCurIdx(list[kk]);
+          if (kk === end1) setCap('月落「' + nameOf(list[kk]) + '」· 日 续数 ' + perSegTxt(dHops));
+          else if (kk === end2) setCap('日落「' + nameOf(list[kk]) + '」· 时 再数 ' + perSegTxt(hHops));
+          else if (kk === end3) setCap('时落「' + nameOf(list[kk]) + '」· 定格');
+        }, t);
+      })(k);
+      t += hopMs;
+      if (k === end1 || k === end2) t += pauseMs;
+    }
+    later(function () {
+      setCurIdx(list[end3]);
+      setFinalName(nameOf(list[end3]));
+      setCap('');
+      setPhase('done');
+    }, t + 260);
+    later(function () { onFinish(); }, t + 1050);
+  }, [resultReady]);
+  useEffect(function () {
+    if (doneRef.current) return;
+    if (failed && !doneRef.current) { doneRef.current = true; onFinish(); }
+  }, [failed, phase]);
+  const nodes = XLR_PALACE_ORDER.map(function (nm, i) {
+    const pos = xlrRingPos(i);
+    const active = curIdx === i;
+    return React.createElement('div', {
+      key: nm,
+      className: 'xlr-node' + (active ? (phase === 'done' ? ' hit' : ' on') : ''),
+      style: { left: pos.left + 'px', top: pos.top + 'px' }
+    },
+      React.createElement('span', { className: 'xn-badge' }, nm),
+      React.createElement('span', { className: 'xn-sub' }, (nm === '大安' ? '安稳' : nm === '留连' ? '拖延' : nm === '速喜' ? '喜信' : nm === '赤口' ? '口舌' : nm === '小吉' ? '渐成' : '落空')));
+  });
+  let verdict = null;
+  if (phase === 'done' && finalName) {
+    const kw = C4_XIAOLIUREN_SHENS[finalName] || '';
+    verdict = React.createElement('div', { className: 'xlr-verdict' },
+      '落宫定格 · ' + finalName,
+      kw ? React.createElement('small', null, kw.slice(0, 22) + '…') : null);
+  }
+  const capLine = cap ? React.createElement('div', { className: 'stage-hint', style: { marginTop: 2 } }, cap) : null;
+  const waitLine = (phase === 'idle')
+    ? React.createElement('div', { className: 'stage-wait' }, React.createElement('i', null), '按所选日期时辰推演课式…')
+    : null;
+  const arena = React.createElement('div', { className: 'xlr-cast-wrap' },
+    React.createElement('div', { className: 'xlr-ring' }),
+    React.createElement('div', { className: 'xlr-center' }, '掌诀'),
+    nodes);
+  return ArtStageFrame({
+    title: '小六壬',
+    sub: '月日时三程走宫 · 掐指速断',
+    skip: onSkip,
+    children: [arena, capLine, waitLine, verdict]
+  });
+}
+
+/* ---------------- 塔罗/雷诺曼：出牌动画（牌堆 → 依次飞向牌位；落位即牌背朝上，进入翻牌阶段） ---------------- */
+function DealFly(props) {
+  const { cols, onDone } = props;
+  const boxRef = useRef(null);
+  const [fly, setFly] = useState(false);
+  useEffect(function () {
+    if (fly) return;
+    const box = boxRef.current;
+    if (!box) return;
+    const list = box.querySelectorAll('.fan-col.deal');
+    const br = box.getBoundingClientRect();
+    const pileX = br.left + br.width / 2;
+    const pileY = br.top + 26;
+    list.forEach(function (col, i) {
+      const r = col.getBoundingClientRect(); // 此刻无 transform（仅 opacity:0），测得即最终牌位
+      const dx = pileX - (r.left + r.width / 2);
+      const dy = pileY - (r.top + r.height / 2);
+      const deg = (i % 2 === 0 ? 1 : -1) * (4 + (i % 3) * 2);
+      col.style.setProperty('--dx', dx.toFixed(1) + 'px');
+      col.style.setProperty('--dy', dy.toFixed(1) + 'px');
+      col.style.setProperty('--fr', deg + 'deg');
+      col.style.setProperty('--fdi', String(i));
+      col.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(.82) rotate(' + deg + 'deg)';
+      col.style.opacity = '1';
+    });
+    const t = setTimeout(function () { setFly(true); }, 90);
+    return function () { clearTimeout(t); };
+  }, [fly]);
+  // 起飞：交还 CSS 过渡（inline transform/opacity 清空，.fly 的 transition 生效）
+  useEffect(function () {
+    if (!fly) return;
+    const raf = requestAnimationFrame(function () {
+      const box = boxRef.current;
+      if (!box) return;
+      box.querySelectorAll('.fan-col.deal').forEach(function (col) {
+        col.style.transform = '';
+        col.style.opacity = '';
+      });
+    });
+    return function () { cancelAnimationFrame(raf); };
+  }, [fly]);
+  useEffect(function () {
+    if (!fly) return;
+    const n = (cols && cols.length) || 1;
+    const t = setTimeout(onDone, 480 + n * 95 + 200);
+    return function () { clearTimeout(t); };
+  }, [fly]);
+  const fanKids = (cols || []).map(function (col, i) {
+    const cls = String(col.props.className || '').replace(/\s*(deal|fly)/g, '');
+    return React.cloneElement(col, { key: i, className: cls + ' deal' + (fly ? ' fly' : '') });
+  });
+  return React.createElement('div', { className: 'deal-stage' },
+    React.createElement('div', { className: 'deal-pile' + (fly ? ' gone' : '') },
+      React.createElement('i', { key: 0 }),
+      React.createElement('i', { key: 1 }),
+      React.createElement('i', { key: 2 })),
+    React.createElement('div', { className: 'card-fan', ref: boxRef }, fanKids));
+}
+function FanZone(props) {
+  return React.createElement('div', { className: 'fan-zone' + (props.bulk ? ' bulk' : '') }, props.children);
+}
+function ArtStageSkipNote() {
+  return null;
+}
 function DivinationPage({
   onNavigate
 }) {
@@ -9138,6 +9949,9 @@ function DivinationPage({
   const [manLabel, setManLabel] = useState(''); // 本次录入方式（展示在结果上方）
   const [manWarn, setManWarn] = useState('');
   const [lastManual, setLastManual] = useState(null); // 手动发起失败后的重试凭据 {seed, meta}
+  // REQ-061：占卜动效演出阶段机（null=无演出；'ssgw'=签筒 / 'liuyao'=逐爻掷币 / 'meihua'=梅花环聚 / 'xiaoliuren'=掌诀走宫）
+  const [animStage, setAnimStage] = useState(null);
+  const [castYaos, setCastYaos] = useState(null); // 六爻动画用逐爻值（前端掷币预演 → options.yaos replay 固定）
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
   const isTimeMethod = Boolean(TIME_METHODS[method]);
@@ -9273,6 +10087,8 @@ function DivinationPage({
   };
   const closeAsk = () => setAsking(false);
   // REQ-044 v2：弹窗「开始起卦」：问题必填 → 关弹窗 → run()（梅花/小六壬时间必填由 run() 内部校验）
+  // REQ-061：REQ-066① 开时自动模式进入动效演出层（签筒 / 逐爻掷币 / 梅花环聚 / 掌诀走宫），
+  //          演出结束 & 数据就绪后转既有 v2 结果布局；① 关或手动路径不重演、直接出结果。
   const startAsk = () => {
     if (!(question || '').trim()) {
       toast('请填写占问问题');
@@ -9280,6 +10096,35 @@ function DivinationPage({
     }
     setLastManual(null);
     setAsking(false);
+    if (!tcShouldPlayAnim()) { run(); return; }
+    if (method === 'sign') {
+      // 清掉上一次结果，避免签筒等待期残留旧签文
+      setData(null);
+      setErrored('');
+      setInterp('');
+      setInterpErr('');
+      setManLabel('');
+      // 前端先定签号（S0，1..92）→ 进入签筒舞台；用户摇签/点击瞬间才 doCast（options.replay 固定该签）
+      const n = 1 + Math.floor(Math.random() * SSGW_POOL_SIZE);
+      setSignNo(n);
+      setAnimStage('ssgw');
+      return;
+    }
+    if (method === 'liuyao') {
+      // 前端逐爻模拟掷 3 币定 6/7/8/9 → options.yaos（与 REQ-069 手动通道同一契约）→ 后端确定性还原
+      const ys = [];
+      for (let i = 0; i < 6; i++) {
+        const cs = [];
+        for (let k = 0; k < 3; k++) cs.push(Math.random() < 0.5 ? 2 : 3);
+        ys.push(cs[0] + cs[1] + cs[2]);
+      }
+      setCastYaos(ys);
+      setAnimStage('liuyao');
+      doCast({ question: qText, options: { yaos: ys } }, null);
+      return;
+    }
+    // 梅花 / 小六壬：取数先行（run 组装 customDate 并 doCast），动画按后端结果做氛围演出，不本地复制引擎
+    setAnimStage(method === 'meihua' ? 'meihua' : 'xiaoliuren');
     run();
   };
   // REQ-069：手动「记录并…」总入口 —— 按方法分发：六爻/梅花逐爻成卦、灵签按签号、小六壬三数/掌诀
@@ -9367,6 +10212,19 @@ function DivinationPage({
       doCast(seed, meta);
     }
   };
+  // REQ-061：失败重试 —— 签筒/六爻动画路径仍固定本次结果（replay/yaos），其余沿用既有 run/手动凭据
+  const retryAsk = function () {
+    if (lastManual) { doCast(lastManual.seed, lastManual.meta); return; }
+    if (method === 'sign' && signNo >= 1 && signNo <= SSGW_POOL_SIZE) {
+      doCast({ question: qText, options: { replay: [signReplaySample(signNo)] } }, null);
+      return;
+    }
+    if (method === 'liuyao' && Array.isArray(castYaos) && castYaos.length === 6 && !loading) {
+      doCast({ question: qText, options: { yaos: castYaos } }, null);
+      return;
+    }
+    run();
+  };
   const m = DIVIN_METHODS.find(x => x.id === method);
   const result = (data && data.result) || null;
   let view = null;
@@ -9386,8 +10244,59 @@ function DivinationPage({
     else if (method === 'meihua') freeReading = MeihuaFreeReading(result);
     else if (method === 'xiaoliuren') freeReading = XiaoliurenFreeReading(result);
   }
+  // REQ-061：演出层挂载（动效期间数据取数先行/并行，渲染替 loading 骨架；结束或失败即卸载交还结果分支）
+  const resResult = (data && data.result) || null;
+  const resultReady = !!data;
+  const castFailed = !!errored;
+  let stageBody = null;
+  if (animStage === 'ssgw') {
+    stageBody = React.createElement(SsgwTubeStage, {
+      fixedNo: (signNo >= 1 && signNo <= SSGW_POOL_SIZE) ? signNo : 1,
+      resultReady: resultReady,
+      failed: castFailed,
+      onDraw: function (n) { doCast({ question: qText, options: { replay: [signReplaySample(n)] } }, null); },
+      onFinish: function () { setAnimStage(null); },
+      onSkip: function () {
+        if (loading || data) { setAnimStage(null); return; }
+        doCast({ question: qText, options: { replay: [signReplaySample(signNo >= 1 && signNo <= SSGW_POOL_SIZE ? signNo : 1)] } }, null);
+        setAnimStage(null);
+      },
+      onExit: function () { setAnimStage(null); openAsk(m); }
+    });
+  } else if (animStage === 'liuyao') {
+    const guaR = resResult;
+    const guaTxt = (guaR && guaR.originalName)
+      ? (guaR.originalName + ((guaR.changedName && guaR.changedName !== guaR.originalName) ? ' 之 ' + guaR.changedName : ''))
+      : '';
+    stageBody = React.createElement(LiuyaoCastStage, {
+      yaos: castYaos || [],
+      resultReady: resultReady,
+      guaText: guaTxt,
+      failed: castFailed,
+      onFinish: function () { setAnimStage(null); },
+      onSkip: function () { setAnimStage(null); }
+    });
+  } else if (animStage === 'meihua') {
+    stageBody = React.createElement(MeihuaCastStage, {
+      result: resResult,
+      resultReady: resultReady,
+      failed: castFailed,
+      onFinish: function () { setAnimStage(null); },
+      onSkip: function () { setAnimStage(null); }
+    });
+  } else if (animStage === 'xiaoliuren') {
+    stageBody = React.createElement(XlrCastStage, {
+      result: resResult,
+      resultReady: resultReady,
+      failed: castFailed,
+      onFinish: function () { setAnimStage(null); },
+      onSkip: function () { setAnimStage(null); }
+    });
+  }
   let body = null;
-  if (loading) {
+  if (animStage) {
+    body = stageBody;
+  } else if (loading) {
     body = React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'skeleton sk-line' }),
       React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
@@ -9395,9 +10304,10 @@ function DivinationPage({
     body = React.createElement('div', { className: 'card failed-box' },
       React.createElement('div', { className: 'section-title' }, '起卦失败'),
       React.createElement('div', { className: 'error' }, errored),
-      React.createElement('button', { className: 'btn btn-primary', onClick: function () { if (lastManual) doCast(lastManual.seed, lastManual.meta); else run(); } }, '重试'));
+      React.createElement('button', { className: 'btn btn-primary', onClick: retryAsk }, '重试'));
   } else if (data) {
-    body = React.createElement('div', { className: 'card' },
+    // REQ-061：灵签结果笺纸纹理槽（--art-ssgw-paper 可选素材，缺省无视觉差异）
+    body = React.createElement('div', { className: 'card' + (method === 'sign' ? ' ssgw-paper' : '') },
       React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
       qText ? React.createElement('div', { className: 'ask-echo' }, '问题：', qText) : null,
       manLabel ? React.createElement('div', { className: 'man-flag' }, '录入：', manLabel) : null,
@@ -10204,6 +11114,10 @@ function TarotPage({
   const [pickOri, setPickOri] = useState('up'); // 当前待选牌的正/逆位
   const [dkFilter, setDkFilter] = useState('all');
   const [wasManual, setWasManual] = useState(false); // 当前结果是否由手动录入产生（决定「重新抽卡」去向）
+  // REQ-061：塔罗抽牌动效阶段机（deal=出牌动画 → down=背朝上待翻 → done=全翻开=v2 布局）
+  const [dealStage, setDealStage] = useState('done');
+  const [flipped, setFlipped] = useState({});
+  const [bulkFlip, setBulkFlip] = useState(false); // 一键全翻的 stagger 模式
   // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（必填）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
@@ -10220,6 +11134,9 @@ function TarotPage({
     setInterpErr('');
     setLoading(true);
     setWasManual(false);
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     // REQ-042 v2：问题文本直接透传给后端（方向已删，不再拼接「占问方向：」前缀）
     const askTrim = (question || '').trim();
     const askBodyQ = askTrim ? askTrim : null;
@@ -10228,7 +11145,10 @@ function TarotPage({
         method: 'POST',
         body: JSON.stringify({ spread_type: sp.id, question: askBodyQ })
       });
-      setData((res && res.data) || res);
+      const d = (res && res.data) || res;
+      setData(d);
+      // REQ-061：取数先行 → 动画开（且⑥图开）进入出牌演出；关=直接以 v2 正面布局出结果
+      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('deal'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || '塔罗抽牌失败，请重试。');
     } finally {
@@ -10251,6 +11171,9 @@ function TarotPage({
     setInterpErr('');
     setData(null);
     setWasManual(true);
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     setStep('pick');
   };
   // 点牌库卡片 → 写入当前牌位并推进
@@ -10293,6 +11216,10 @@ function TarotPage({
       const d = (res && res.data) || res;
       setData(d);
       setStep('draw');
+      // REQ-061：手动路径不重演抽牌动画（用户已真实抽牌）→ 直接 v2 正面布局
+      setDealStage('done');
+      setFlipped({});
+      setBulkFlip(false);
     } catch (e) {
       setErrored((e && e.message) || '塔罗手动选牌提交失败，请重试。');
     } finally {
@@ -10322,6 +11249,9 @@ function TarotPage({
     setPicks([]);
     setPickOri('up');
     setDkFilter('all');
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
     setMode(tcAskNextDefault(mode));
     setWasManual(false);
@@ -10337,6 +11267,9 @@ function TarotPage({
       setPicks([]);
       setPickOri('up');
       setDkFilter('all');
+      setFlipped({});
+      setBulkFlip(false);
+      setDealStage('done');
       setStep('pick');
     } else {
       draw(spread);
@@ -10363,6 +11296,58 @@ function TarotPage({
       meanText ? React.createElement('div', { className: 'mi-txt' }, meanText) : null,
       kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
   });
+  // REQ-061：塔罗 3D 翻牌 —— 单张点击翻转 / 「一键全翻」stagger；正面/逆位沿用 normTarotCard 的 img/reversed
+  const flipOne = function (i) {
+    if (dealStage !== 'down' || flipped[i]) return;
+    const next = Object.assign({}, flipped);
+    next[i] = true;
+    setFlipped(next);
+    const left = cards.filter(function (c, k) { return !next[k]; }).length;
+    if (!left) setTimeout(function () { setDealStage('done'); }, 780); // 全部单翻 → 落回 v2 布局
+  };
+  const flipAll = function () {
+    if (dealStage !== 'down') return;
+    const left = cards.filter(function (c, i) { return !flipped[i]; }).length;
+    if (!left) { setDealStage('done'); return; }
+    const all = {};
+    cards.forEach(function (c, i) { all[i] = true; });
+    setBulkFlip(true);
+    setFlipped(all);
+    setTimeout(function () { setBulkFlip(false); setDealStage('done'); }, 700 + cards.length * 110);
+  };
+  const flipCardCol = function (c, i, interactive) {
+    const n = normTarotCard(c);
+    const flippedNow = !!flipped[i];
+    const front = React.createElement(ArtCardFront, { img: n.img, name: n.name, suit: n.suit, rev: n.reversed, phColor: (TAROT_SUIT_COLOR[n.suit] || '#5B4B8A') });
+    const card = React.createElement('div', {
+      className: 'flip-card' + (flippedNow ? ' flipped' : '') + (interactive ? '' : ' lock'),
+      style: { '--fdi': i },
+      onClick: interactive ? function () { flipOne(i); } : undefined
+    }, React.createElement('div', { className: 'fc-inner' }, React.createElement(ArtCardBack, { kind: 'taro' }), front));
+    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' · ') : '';
+    const kids = [];
+    if (n.pos) kids.push(React.createElement('div', { key: 'pos', className: 'tc-pos' }, n.pos));
+    kids.push(card);
+    kids.push(React.createElement('div', { key: 'rv', className: 'fc-reveal' },
+      React.createElement('div', { className: 'fc-name' }, n.name, n.reversed ? '（逆位）' : ''),
+      kwLine ? React.createElement('div', { className: 'fc-kw' }, kwLine) : null));
+    return React.createElement('div', { key: 'fc' + i, className: 'fan-col' + (flippedNow ? ' flipped' : '') }, kids);
+  };
+  const flipMeanItem = function (c, i) {
+    const n = normTarotCard(c);
+    const revealed = !!flipped[i];
+    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
+    const meanText = n.reversed ? (n.reversedText || '') : (n.upright || '');
+    const kids = [
+      React.createElement('div', { key: 'head', className: 'mi-head' },
+        React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
+        React.createElement('span', { className: 'mi-name' }, n.name),
+        React.createElement('span', { className: 'mi-orient' + (n.reversed ? ' rev' : ' up') }, n.reversed ? '逆位' : '正位')),
+      React.createElement('div', { key: 'lock', className: 'mi-lock' }, '该牌尚未翻开 · 牌义待揭示')];
+    if (meanText) kids.push(React.createElement('div', { key: 'txt', className: 'mi-txt' }, meanText));
+    if (kwLine) kids.push(React.createElement('div', { key: 'kw', className: 'mi-kw' }, '关键词：', kwLine));
+    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' + (revealed ? ' revealed' : ' locked') }, kids);
+  };
   let drawBody = null;
   if (loading) {
     drawBody = React.createElement('div', { className: 'card' },
@@ -10375,24 +11360,53 @@ function TarotPage({
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, '重试'));
   } else if (data) {
-    drawBody = React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title' }, spreadName),
-      askEcho,
-      // REQ-042 v2：上方仅平铺本次抽到的全部卡（图/标题/关键词标签），卡内不嵌牌义
-      // REQ-066⑥：card_images 关 → 隐藏牌面图/扇形，结果改纯文字列表（卡名+正/逆位+含义段落）
-      cardImagesOn ? React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
-        return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
-      })) : null,
-      // REQ-042 v2：牌义集中到下方段落（固定可复用文案，非 LLM，自第一张起）
-      React.createElement('div', { className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '各张牌义' : '抽到的牌（纯文字模式）'),
-        meanItems),
-      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
-      React.createElement('div', { className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'),
-      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '综合解读（付费）'),
-      interp ? React.createElement(React.Fragment, null,
-        React.createElement('div', { className: 'interp-title' }, '综合解读'),
-        React.createElement('div', { className: 'interp-body' }, interp)) : null);
+    const bodyKids = [
+      React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+      askEcho
+    ];
+    if (cardImagesOn) {
+      if (dealStage === 'deal') {
+        // D1 出牌动画：牌堆 → N 张牌背依次飞向牌位（数据已在手，翻牌阶段揭示）
+        const cols = cards.map(function (c, i) { return flipCardCol(c, i, false); });
+        bodyKids.push(React.createElement(DealFly, { key: 'deal', cols: cols, onDone: function () { setDealStage('down'); } }));
+      } else if (dealStage === 'down') {
+        // D2/D3/D4：背朝上待翻 → 点牌背 3D 翻转 → 一键全翻（解析随翻牌逐条放行）
+        const cols = cards.map(function (c, i) { return flipCardCol(c, i, true); });
+        const flippedN = Object.keys(flipped).filter(function (k) { return flipped[k]; }).length;
+        const left = cards.length - flippedN;
+        const fan = React.createElement('div', { key: 'fan', className: 'fan-zone' + (bulkFlip ? ' bulk' : '') },
+          React.createElement('div', { className: 'card-fan' }, cols));
+        const ctrl = React.createElement('div', { key: 'ctrl', className: 'flip-ctrl' },
+          React.createElement('span', { className: 'fc-progress' },
+            '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
+            left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
+          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? '一键全翻' : '已全部翻开'));
+        const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
+          cards.map(function (c, i) { return flipMeanItem(c, i); }));
+        bodyKids.push(fan, mp, ctrl);
+      } else {
+        // done（=v2 布局）：全正面平铺 + 集中牌义段落（与 REQ-042 v2 现状一致）
+        bodyKids.push(React.createElement('div', { key: 'fan', className: 'card-fan' }, cards.map(function (c, i) {
+          return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
+        })));
+        bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+          meanItems));
+      }
+    } else {
+      // REQ-066⑥ 关：纯文字列表模式（无任何卡面/牌背/扇形渲染）
+      bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+        React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
+        meanItems));
+    }
+    if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
+    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'));
+    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '综合解读（付费）'));
+    if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
+      React.createElement('div', { className: 'interp-title' }, '综合解读'),
+      React.createElement('div', { className: 'interp-body' }, interp)));
+    drawBody = React.createElement('div', { className: 'card' }, bodyKids);
   }
   // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：选择牌阵上方提供「自动抽牌 / 手动选牌」并行切换（手动=从牌库按牌位录入实际结果）
@@ -10805,6 +11819,10 @@ function LenormandPage({
   const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // LENORMAND_DECK 条目（含 num）
   const [wasManual, setWasManual] = useState(false);
+  // REQ-061：雷诺曼抽牌动效阶段机（deal=出牌动画 → down=背朝上待翻 → done=全翻开=v2 布局；雷诺曼无正逆位）
+  const [dealStage, setDealStage] = useState('done');
+  const [flipped, setFlipped] = useState({});
+  const [bulkFlip, setBulkFlip] = useState(false);
   const lnApiType = function (sp) { return sp && sp.id === 'grid' ? 'nine' : (sp ? (sp.id || 'single') : 'single'); };
   // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（必填）→ ② 选择牌阵
   const load = async sp => {
@@ -10826,12 +11844,18 @@ function LenormandPage({
     setInterpErr('');
     setLoading(true);
     setWasManual(false);
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     try {
       const res = await api('/divinations', {
         method: 'POST',
         body: JSON.stringify({ method: 'lenormand', case_id: null, seed: seedObj })
       });
-      setData((res && res.data) || res);
+      const d = (res && res.data) || res;
+      setData(d);
+      // REQ-061：取数先行 → 动画开（且⑥图开）进入出牌演出；关=直接以 v2 正面布局出结果
+      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('deal'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || '雷诺曼抽牌失败，请重试。');
     } finally {
@@ -10852,6 +11876,9 @@ function LenormandPage({
     setInterpErr('');
     setData(null);
     setWasManual(true);
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     setStep('pick');
   };
   const placeCard = (di) => {
@@ -10891,6 +11918,10 @@ function LenormandPage({
       const d = (res && res.data) || res;
       setData(d);
       setStep('draw');
+      // REQ-061：手动路径不重演抽牌动画（用户已真实抽牌）→ 直接 v2 正面布局
+      setDealStage('done');
+      setFlipped({});
+      setBulkFlip(false);
     } catch (e) {
       setErrored((e && e.message) || '雷诺曼手动选牌提交失败，请重试。');
     } finally {
@@ -10918,6 +11949,9 @@ function LenormandPage({
     setInterp('');
     setInterpErr('');
     setPicks([]);
+    setFlipped({});
+    setBulkFlip(false);
+    setDealStage('done');
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
     setMode(tcAskNextDefault(mode));
     setWasManual(false);
@@ -10930,6 +11964,9 @@ function LenormandPage({
       setInterp('');
       setInterpErr('');
       setPicks([]);
+      setFlipped({});
+      setBulkFlip(false);
+      setDealStage('done');
       setStep('pick');
     } else {
       load(spread);
@@ -10955,6 +11992,57 @@ function LenormandPage({
       it.detail ? React.createElement('div', { className: 'mi-txt' }, it.detail) : null,
       kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
   });
+  // REQ-061：雷诺曼 3D 翻牌（同构，无正逆位）—— 单张点击翻转 / 「一键全翻」stagger
+  const flipOne = function (i) {
+    if (dealStage !== 'down' || flipped[i]) return;
+    const next = Object.assign({}, flipped);
+    next[i] = true;
+    setFlipped(next);
+    const left = cards.filter(function (c, k) { return !next[k]; }).length;
+    if (!left) setTimeout(function () { setDealStage('done'); }, 780);
+  };
+  const flipAll = function () {
+    if (dealStage !== 'down') return;
+    const left = cards.filter(function (c, i) { return !flipped[i]; }).length;
+    if (!left) { setDealStage('done'); return; }
+    const all = {};
+    cards.forEach(function (c, i) { all[i] = true; });
+    setBulkFlip(true);
+    setFlipped(all);
+    setTimeout(function () { setBulkFlip(false); setDealStage('done'); }, 700 + cards.length * 110);
+  };
+  const flipCardCol = function (c, i, interactive) {
+    const n = lnCardOf(c);
+    const flippedNow = !!flipped[i];
+    const front = React.createElement(ArtCardFront, { img: n.img, name: n.name, suit: n.suit, phColor: (LN_SUIT_COLOR[n.suit] || '#3E7C6B') });
+    const card = React.createElement('div', {
+      className: 'flip-card' + (flippedNow ? ' flipped' : '') + (interactive ? '' : ' lock'),
+      style: { '--fdi': i },
+      onClick: interactive ? function () { flipOne(i); } : undefined
+    }, React.createElement('div', { className: 'fc-inner' }, React.createElement(ArtCardBack, { kind: 'leno' }), front));
+    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' · ') : '';
+    const kids = [];
+    if (n.pos) kids.push(React.createElement('div', { key: 'pos', className: 'tc-pos' }, n.pos));
+    kids.push(card);
+    kids.push(React.createElement('div', { key: 'rv', className: 'fc-reveal' },
+      React.createElement('div', { className: 'fc-name' }, n.name),
+      kwLine ? React.createElement('div', { className: 'fc-kw' }, kwLine) : null));
+    return React.createElement('div', { key: 'fc' + i, className: 'fan-col' + (flippedNow ? ' flipped' : '') }, kids);
+  };
+  const flipMeanItem = function (c, i) {
+    const n = lnCardOf(c);
+    const revealed = !!flipped[i];
+    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
+    const kids = [
+      React.createElement('div', { key: 'head', className: 'mi-head' },
+        React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
+        React.createElement('span', { className: 'mi-name' }, n.name)),
+      React.createElement('div', { key: 'lock', className: 'mi-lock' }, '该牌尚未翻开 · 牌义待揭示')];
+    if (n.theme) kids.push(React.createElement('div', { key: 'th', className: 'mi-theme' }, n.theme));
+    if (n.detail) kids.push(React.createElement('div', { key: 'dt', className: 'mi-txt' }, n.detail));
+    if (kwLine) kids.push(React.createElement('div', { key: 'kw', className: 'mi-kw' }, '关键词：', kwLine));
+    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' + (revealed ? ' revealed' : ' locked') }, kids);
+  };
   let body = null;
   if (loading && step === 'draw') {
     body = React.createElement('div', { className: 'card' },
@@ -10967,24 +12055,49 @@ function LenormandPage({
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, '重试'));
   } else if (data) {
-    body = React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title' }, spreadName),
-      askEcho,
-      // REQ-043 v2：上方卡位仅平铺卡面（图/标题/关键词标签），不放解释
-      // REQ-066⑥：card_images 关 → 隐藏牌面图/扇形，结果改纯文字列表（卡名+含义段落）
-      cardImagesOn ? React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
-        return lnCardEl(lnCardOf(c), i);
-      })) : null,
-      // REQ-043 v2：主题/细节解释归拢到下方段落（固定可复用文案，自第一张起）
-      React.createElement('div', { className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '各张牌义' : '抽到的牌（纯文字模式）'),
-        meanItems),
-      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
-      React.createElement('div', { className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'),
-      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '深度解读（付费）'),
-      interp ? React.createElement(React.Fragment, null,
-        React.createElement('div', { className: 'interp-title' }, '深度解读'),
-        React.createElement('div', { className: 'interp-body' }, interp)) : null);
+    const bodyKids = [
+      React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+      askEcho
+    ];
+    if (cardImagesOn) {
+      if (dealStage === 'deal') {
+        const cols = cards.map(function (c, i) { return flipCardCol(c, i, false); });
+        bodyKids.push(React.createElement(DealFly, { key: 'deal', cols: cols, onDone: function () { setDealStage('down'); } }));
+      } else if (dealStage === 'down') {
+        const cols = cards.map(function (c, i) { return flipCardCol(c, i, true); });
+        const flippedN = Object.keys(flipped).filter(function (k) { return flipped[k]; }).length;
+        const left = cards.length - flippedN;
+        const fan = React.createElement('div', { key: 'fan', className: 'fan-zone' + (bulkFlip ? ' bulk' : '') },
+          React.createElement('div', { className: 'card-fan' }, cols));
+        const ctrl = React.createElement('div', { key: 'ctrl', className: 'flip-ctrl' },
+          React.createElement('span', { className: 'fc-progress' },
+            '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
+            left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
+          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? '一键全翻' : '已全部翻开'));
+        const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
+          cards.map(function (c, i) { return flipMeanItem(c, i); }));
+        bodyKids.push(fan, mp, ctrl);
+      } else {
+        bodyKids.push(React.createElement('div', { key: 'fan', className: 'card-fan' }, cards.map(function (c, i) {
+          return lnCardEl(lnCardOf(c), i);
+        })));
+        bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+          meanItems));
+      }
+    } else {
+      bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+        React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
+        meanItems));
+    }
+    if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
+    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'));
+    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '深度解读（付费）'));
+    if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
+      React.createElement('div', { className: 'interp-title' }, '深度解读'),
+      React.createElement('div', { className: 'interp-body' }, interp)));
+    body = React.createElement('div', { className: 'card' }, bodyKids);
   }
   // REQ-043 v2：menu = ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：牌阵上方提供「自动抽牌 / 手动选牌」并行切换
