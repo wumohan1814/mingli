@@ -164,6 +164,7 @@ async def lifespan(app: FastAPI):
 
 
 from app.admin.router import router as admin_router
+from app.api.agent import router as agent_router
 from app.api.assets import router as assets_router
 from app.api.astrology import router as astrology_router
 from app.api.case_share import router as case_share_router
@@ -200,6 +201,7 @@ app.add_middleware(
 
 
 app.include_router(admin_router)
+app.include_router(agent_router)
 app.include_router(assets_router)
 app.include_router(auth_router)
 app.include_router(case_share_router)

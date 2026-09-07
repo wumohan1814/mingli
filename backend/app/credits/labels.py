@@ -23,6 +23,8 @@ app/credits/poller.py）：
   divination_focus:{id}:{focus} 六爻焦点详解（REQ-075，按 divinations.method 区分）
   tarot:{id}                    塔罗解读（tarot_readings 无 case_id 列，档案名恒空）
   astrology:{id}                星座本命解读
+  agent:{user_id}               太初先生对话（无档案，闲聊）
+  agent:{user_id}:{case_id}     太初先生对话（选了默认档案，可反查档案名）
   serial:{serial}               金数据充值（type=recharge 的流水）
 """
 from __future__ import annotations
@@ -69,7 +71,8 @@ DIVINATION_METHOD_ZH = {
 def parse_ref(ref) -> dict | None:
     """ref → 结构化 dict；None/空/无法识别 → None。
 
-    返回的 kind ∈ job|revise|query|divination|divination_focus|tarot|astrology|serial。
+    返回的 kind ∈ job|revise|query|divination|divination_focus|tarot|astrology|
+    agent|serial。
     """
     if not ref or not isinstance(ref, str):
         return None
@@ -90,6 +93,12 @@ def parse_ref(ref) -> dict | None:
         return {"kind": "tarot", "tarot_id": int(parts[1])}
     if kind == "astrology" and len(parts) == 2 and parts[1].isdigit():
         return {"kind": "astrology", "astrology_id": int(parts[1])}
+    if kind == "agent" and len(parts) in (2, 3) and parts[1].isdigit():
+        # agent:{user_id}（闲聊） / agent:{user_id}:{case_id}（选了默认档案）
+        case_id = None
+        if len(parts) == 3 and parts[2].isdigit():
+            case_id = int(parts[2])
+        return {"kind": "agent", "user_id": int(parts[1]), "case_id": case_id}
     if kind == "serial":
         return {"kind": "serial", "serial": ":".join(parts[1:])}
     return None
@@ -120,6 +129,8 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
       - divination_focus:{id}:{focus} → 「六爻焦点详解」（REQ-075，仅六爻）；
       - tarot:{id} → 「塔罗解读」；
       - astrology:{id} → 「星座本命解读」；
+      - agent:{user_id}[:{case_id}] → 「太初先生对话」（REQ-076，选档案时 case_id
+        可反查档案名，见 label_case_map）；
       - query:{case_id}:{method} → 「单法直问·{法}」（单法直问为 prediction 单法分析）；
       - type=consume 且 ref 无法识别 → 「消耗」。
     """
@@ -150,6 +161,8 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
         return "塔罗解读"
     if kind == "astrology":
         return "星座本命解读"
+    if kind == "agent":
+        return "太初先生对话"
     if kind == "serial":
         return "充值"  # serial ref 只出现在 recharge 流水
     return "消耗"
@@ -166,6 +179,8 @@ def label_case_map(session, rows) -> dict[int, dict]:
       - revise/query  → ref 内 case_id → cases.name；
       - divination:{id} / divination_focus:{id}:{focus} → divinations.case_id（可空）
         → cases.name（REQ-075 六爻焦点详解同 divinations 反查）；
+      - agent:{user_id}:{case_id} → ref 内 case_id → cases.name（REQ-076 太初先生
+        对话；agent:{user_id} 无档案 → case_name 恒 None）；
       - astrology:{id} → astrology_readings.case_id（可空）→ cases.name；
       - tarot:{id}   → tarot_readings **无 case_id 列**，档案名恒 None；
       - 入账/未识别/关联档案缺失/档案未命名 → case_name=None。
@@ -183,6 +198,9 @@ def label_case_map(session, rows) -> dict[int, dict]:
             job_ids.add(p["job_id"])
         elif p["kind"] in ("revise", "query"):
             direct_case_ids.add(p["case_id"])
+        elif p["kind"] == "agent":
+            if p.get("case_id") is not None:
+                direct_case_ids.add(p["case_id"])
         elif p["kind"] in ("divination", "divination_focus"):
             div_ids.add(p["divination_id"])
         elif p["kind"] == "astrology":
@@ -232,6 +250,8 @@ def label_case_map(session, rows) -> dict[int, dict]:
                 if div is not None:
                     div_method = div.method
                     case_id = div.case_id
+            elif kind == "agent":
+                case_id = p.get("case_id")     # 选了默认档案 → 反查档案名；闲聊 None
             elif kind == "astrology":
                 astro = astros.get(p["astrology_id"])
                 if astro is not None:

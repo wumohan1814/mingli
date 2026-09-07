@@ -95,6 +95,9 @@ def test_ref_label_consume_mapping():
     # tarot / astrology
     assert ref_label("tarot:4", "consume") == "塔罗解读"
     assert ref_label("astrology:5", "consume") == "星座本命解读"
+    # agent（REQ-076 太初先生对话；有无档案都同名，档案名反查在 label_case_map）
+    assert ref_label("agent:7", "consume") == "太初先生对话"
+    assert ref_label("agent:7:9", "consume") == "太初先生对话"
     # consume 且 ref 无法识别 → 消耗
     assert ref_label(None, "consume") == "消耗"
     assert ref_label("weird:xx", "consume") == "消耗"
@@ -108,6 +111,8 @@ def test_parse_ref_shape():
     assert parse_ref("divination:2") == {"kind": "divination", "divination_id": 2}
     assert parse_ref("tarot:2") == {"kind": "tarot", "tarot_id": 2}
     assert parse_ref("astrology:2") == {"kind": "astrology", "astrology_id": 2}
+    assert parse_ref("agent:7") == {"kind": "agent", "user_id": 7, "case_id": None}
+    assert parse_ref("agent:7:9") == {"kind": "agent", "user_id": 7, "case_id": 9}
     assert parse_ref("serial:TC-ABC") == {"kind": "serial", "serial": "TC-ABC"}
     assert parse_ref(None) is None
     assert parse_ref("") is None
@@ -137,6 +142,8 @@ def test_transactions_label_and_case_name():
     consume(uid, 1000, ref="divination:999999")                # 起卦记录缺失 → 起卦深度解读
     consume(uid, 1000, ref=f"tarot:{tarot}")                   # 塔罗解读，无档案
     consume(uid, 1000, ref=f"astrology:{astro}")               # 星座本命解读 + 档案
+    consume(uid, 1000, ref=f"agent:{uid}")                     # 太初先生对话（闲聊，无档案）
+    consume(uid, 1000, ref=f"agent:{uid}:{case_id}")           # 太初先生对话 + 档案
     consume(uid, 1000, ref=None)                               # 无 ref consume → 消耗
     consume(uid, 1000, ref="garbage-xx")                       # 未识别 consume → 消耗
     recharge(uid, 100, "recharge", amount=10.0, ref="serial:TC-ABC")  # 充值
@@ -155,6 +162,8 @@ def test_transactions_label_and_case_name():
         ("consume", "divination:999999"): ("起卦深度解读", None),
         ("consume", f"tarot:{tarot}"): ("塔罗解读", None),
         ("consume", f"astrology:{astro}"): ("星座本命解读", "张三的国学档案"),
+        ("consume", f"agent:{uid}"): ("太初先生对话", None),
+        ("consume", f"agent:{uid}:{case_id}"): ("太初先生对话", "张三的国学档案"),
         ("consume", None): ("消耗", None),            # 无 ref 的 consume
         ("consume", "garbage-xx"): ("消耗", None),    # 未识别 ref 的 consume
         ("recharge", "serial:TC-ABC"): ("充值", None),
