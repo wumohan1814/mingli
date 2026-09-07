@@ -150,7 +150,10 @@ def test_zodiac_raw_function_contract():
     assert out["zodiacBranch"] == "子"
     assert out["yearGanZhi"] == "丙午"      # 2026 = 丙午
     assert out["yearBranch"] == "午"
-    assert out["noble"] is None              # 子午不合（六合丑 / 三合申子辰）
+    # 子午不合（无六合丑 / 三合申子辰命中）→ 引擎 noble 为空；BUG-003 修复后由
+    # vendor B2 确定性文案回填（优先级：引擎命中 > B2 回填 > server 天乙贵人兜底），
+    # 保证「贵人」卡永不为空。这里断言回填结果而非 None。
+    assert out["noble"] == "三合：猴、龙；六合：牛"
     assert out["meeting"] is None
     assert out["relation"] == "生肖地支本气克年干五行"
     assert isinstance(out["conflicts"], list) and out["conflicts"]
@@ -160,8 +163,9 @@ def test_zodiac_raw_function_contract():
     assert isinstance(out["riskRelations"], list)
     assert out["evidenceGrade"] == "轻量"
     assert out["interpretationBoundary"] == "仅限生肖与流年关系"
-    # 顶层 16 键 = 14 个可解释字段 + evidenceAnalysis + prompt
-    assert len(out["keys"]) == 16
+    # 顶层 17 键 = 15 个可解释字段（含 BUG-003 新增 zodiacWuxing）+ evidenceAnalysis + prompt
+    assert len(out["keys"]) == 17
+    assert "zodiacWuxing" in out["keys"]
     # raw 结果确实带内部字段 → 证明 stripInternal 之前存在、之后需要剥离
     assert out["hasEvidenceAnalysis"] is True
     assert out["hasPrompt"] is True
@@ -177,7 +181,8 @@ def test_zodiac_node_endpoint_strips_internal(zodiac_node_server):
     assert data["zodiacBranch"] == "子"
     assert data["yearGanZhi"] == "丙午"
     assert data["yearBranch"] == "午"
-    assert data["noble"] is None
+    # BUG-003 修复后：noble 由 vendor B2 回填（非 None），端点原样透传
+    assert data["noble"] == "三合：猴、龙；六合：牛"
     assert [c["type"] for c in data["conflicts"]] == ["冲太岁"]
     assert data["relation"]
     assert isinstance(data["actionSignals"], list) and data["actionSignals"]

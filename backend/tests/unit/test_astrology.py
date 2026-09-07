@@ -507,6 +507,61 @@ def test_api_astrology_chart_success(astrology_client, monkeypatch):
     assert _credit_rows(uid) == []
 
 
+def test_api_astrology_chart_idempotent_reuse(astrology_client, monkeypatch):
+    """REQ-039 幂等复用：同一 (user, case, scope) 二次 POST → 返回既有 reading id，
+    不再转发 Node（calls 仍 1 次）、不落新行、不重复埋点；scope 不同则各自独立生成。"""
+    import app.api.astrology as astro_mod
+
+    uid = _new_user()
+    cid = _new_case(uid, birthplace="上海")
+    calls: list = []
+    _fake_node_post(monkeypatch, astro_mod, payload=SAMPLE_ASTROLOGY_CHART, calls=calls)
+    auth = _auth_header(uid)
+
+    # 首次生成 → id1；Node 转发 1 次
+    r1 = astrology_client.post("/api/astrology/chart", json={"case_id": cid}, headers=auth)
+    assert r1.status_code == 200, r1.text
+    id1 = r1.json()["data"]["id"]
+    assert len(calls) == 1
+
+    # 同 (case, scope) 再入 → 幂等返回 id1，Node 不再转发（calls 仍 1 次）
+    r2 = astrology_client.post("/api/astrology/chart", json={"case_id": cid}, headers=auth)
+    assert r2.status_code == 200, r2.text
+    assert r2.json()["data"]["id"] == id1
+    assert r2.json()["data"]["chart"] == SAMPLE_ASTROLOGY_CHART
+    assert len(calls) == 1, "幂等命中不应再次转发 Node"
+
+    # 落库仅一行；埋点仅 1 条（不重复写）
+    from app.database import AnalyticsSession
+    from app.models import AstrologyReading
+
+    session = AnalyticsSession()
+    try:
+        rows = (session.query(AstrologyReading)
+                .filter_by(user_id=uid, case_id=cid).all())
+    finally:
+        session.close()
+    assert [row.id for row in rows] == [id1]
+    assert len(_event_rows("astrology_chart", uid)) == 1
+
+    # 不同 scope（yearly）→ 独立生成新行（幂等键含 scope），Node 再转发 1 次
+    r3 = astrology_client.post("/api/astrology/chart",
+                               json={"case_id": cid, "scope": "yearly",
+                                     "date_str": "2026-06-01"},
+                               headers=auth)
+    assert r3.status_code == 200, r3.text
+    id3 = r3.json()["data"]["id"]
+    assert id3 != id1
+    assert len(calls) == 2
+    # 同 scope 再入依然幂等
+    r4 = astrology_client.post("/api/astrology/chart",
+                               json={"case_id": cid, "scope": "yearly",
+                                     "date_str": "2026-06-01"},
+                               headers=auth)
+    assert r4.json()["data"]["id"] == id3
+    assert len(calls) == 2
+
+
 def test_api_astrology_chart_non_natal_fullscope(astrology_client, monkeypatch):
     """scope != natal：date_str 透传为 dateStr，落库 scope 原值；返回 chart 含 fullScope。"""
     import app.api.astrology as astro_mod
