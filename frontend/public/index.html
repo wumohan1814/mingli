@@ -752,6 +752,39 @@ const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predi
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
 let onUnauthorized = null;
+// BUG-011：MBTI 分享落地页（/mbti/share 或 /mbti/share/{token}）是公开免登录入口，
+// 访客会话必须与分享者隔离：分享页期间全局 token/refreshToken 一律置空（绝不写回
+// localStorage），使任何 api() 请求都不携带分享者 Authorization；离开分享页时若有
+// 本地 token（同浏览器本人）再恢复正常会话。
+function isMbtiSharePath(p) {
+  p = String(p || '');
+  return /^\/mbti\/share\/?$/.test(p) || /^\/mbti\/share\//.test(p);
+}
+function switchShareGuestSession(entering) {
+  if (entering) {
+    // 进入分享落地页：置空内存会话（访客态标记即「空 token」，不触碰 localStorage）
+    token = '';
+    refreshToken = '';
+    return;
+  }
+  // 离开分享落地页：若内存仍为空且有本地 token（同浏览器本人），恢复正常会话；
+  // 无本地 token 的访客维持未登录，受限操作由 BUG-002 拦截引导去登录页。
+  if (token) return;
+  let saved = null;
+  try {
+    saved = localStorage.getItem('taichu_token');
+  } catch (e) {
+    saved = null;
+  }
+  if (saved) {
+    token = saved;
+    try {
+      refreshToken = localStorage.getItem('taichu_refresh_token') || '';
+    } catch (e) {
+      refreshToken = '';
+    }
+  }
+}
 // 积分不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
 let creditInsuffHandler = null;
 function setCreditInsuffHandler(fn) {
@@ -1025,7 +1058,9 @@ async function api(path, options = {}) {
       'Content-Type': 'application/json',
       ...options.headers
     };
-    if (token) headers['Authorization'] = 'Bearer ' + token;
+    // BUG-011：noAuth=true 的请求（分享落地页免登录 GET/score）绝不携带任何
+    // Authorization——即使全局 token 意外非空（双保险：App 已对分享页做会话隔离）
+    if (token && !options.noAuth) headers['Authorization'] = 'Bearer ' + token;
     return headers;
   };
   const parseError = e => {
@@ -9305,7 +9340,7 @@ function MbtiSharePage({
   // 丢失时，立即按「分享链接无效」渲染（见下方 !tk 分支），绝不发起 /mbti/share/undefined 之类请求。
   const tk = token && String(token).trim() ? String(token).trim() : '';
   const base = tk ? '/mbti/share/' + encodeURIComponent(tk) : null;
-  // —— 拉取分享题库（GET /api/mbti/share/{token}，免登录、不带鉴权依赖）——
+  // —— 拉取分享题库（GET /api/mbti/share/{token}，免登录；BUG-011：noAuth 强制不带 Authorization）——
   useEffect(() => {
     let alive = true;
     if (!tk) {
@@ -9317,7 +9352,7 @@ function MbtiSharePage({
       setLoading(true);
       setErrored('');
       try {
-        const res = await api(base);
+        const res = await api(base, {noAuth: true});
         const d = res && res.data || res || {};
         const list = d.questions || [];
         if (!list.length) throw new Error('题库为空');
@@ -9336,13 +9371,14 @@ function MbtiSharePage({
       alive = false;
     };
   }, [tk]);
-  // —— 提交答案并判型（POST /api/mbti/share/{token}/score，免登录）——
+  // —— 提交答案并判型（POST /api/mbti/share/{token}/score，免登录；BUG-011：noAuth 强制不带 Authorization）——
   const submitShare = async list => {
     if (!list || !total || list.length !== total) return;
     setScoring(true);
     try {
       const res = await api(base + '/score', {
         method: 'POST',
+        noAuth: true,
         body: JSON.stringify({
           answers: list
         })
@@ -9484,6 +9520,14 @@ function App() {
   });
   const [creditModal, setCreditModal] = useState(null);
   useEffect(() => {
+    // BUG-011：分享落地页（/mbti/share/{token}）是公开免登录入口 → 命中时跳过本地
+    // token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存会话保持空（访客
+    // 隔离）；localStorage 原样保留，离开分享页时再由 switchShareGuestSession 恢复。
+    if (isMbtiSharePath(window.location.pathname)) {
+      token = '';
+      refreshToken = '';
+      return;
+    }
     const saved = localStorage.getItem('taichu_token');
     if (saved) {
       token = saved;
@@ -9537,6 +9581,10 @@ function App() {
     return () => setCreditInsuffHandler(null);
   }, []);
   const navigate = (p, p2 = {}) => {
+    // BUG-011：离开分享落地页（页面跳转）→ 先恢复本地会话（若有本地 token 的同浏览器
+    // 本人），再走 BUG-002 受限页判断；无本地 token 的访客维持未登录，受限操作仍会被
+    // 下方拦截引导去登录页。
+    if (page === 'mbti-share' && p !== 'mbti-share') switchShareGuestSession(false);
     // BUG-002: 未登录访问受限页 → 拦截并记回跳目标，改去登录页（不 pushState、不 track）
     if (AUTH_REQUIRED_PAGES.indexOf(p) >= 0 && !token) {
       authRedirect = { p: p, p2: p2 };
@@ -9559,6 +9607,12 @@ function App() {
   useEffect(() => {
     const onPop = ev => {
       const st = ev && ev.state;
+      const next = st && st.p ? st.p : 'landing';
+      // BUG-011：浏览器前进/后退跨越分享落地页时同步切换访客会话——进入 mbti-share
+      // 先置空内存 token（先于渲染，分享页任何 api 都不带 Authorization）；离开
+      // mbti-share 若有本地 token 则恢复正常登录态。
+      if (next === 'mbti-share' && page !== 'mbti-share') switchShareGuestSession(true);
+      else if (next !== 'mbti-share' && page === 'mbti-share') switchShareGuestSession(false);
       if (st && st.p) {
         setPage(st.p);
         setParams(st.p2 || {});
@@ -9569,7 +9623,7 @@ function App() {
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, []);
+  }, [page]);
   const applySkin = s => {
     setSkin(s);
     localStorage.setItem('taichu_skin', s);
@@ -9579,6 +9633,8 @@ function App() {
   const selectModule = id => {
     const h = MODULE_HUB[id];
     if (!h) return;
+    // BUG-011：顶栏汉堡菜单/落地页切模块会离开分享落地页 → 先恢复本地会话（若有）
+    if (page === 'mbti-share') switchShareGuestSession(false);
     setModule(id);
     applySkin(h.skin);
     setPage('landing');
