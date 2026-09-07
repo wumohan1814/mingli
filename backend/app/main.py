@@ -128,7 +128,9 @@ async def lifespan(app: FastAPI):
 
 
 from app.admin.router import router as admin_router
+from app.api.assets import router as assets_router
 from app.api.astrology import router as astrology_router
+from app.api.case_share import router as case_share_router
 from app.api.cases import router as cases_router
 from app.api.divination import router as divination_router
 from app.api.jobs import router as jobs_router
@@ -160,7 +162,9 @@ app.add_middleware(
 
 
 app.include_router(admin_router)
+app.include_router(assets_router)
 app.include_router(auth_router)
+app.include_router(case_share_router)
 app.include_router(cases_router)
 app.include_router(jobs_router)
 app.include_router(zodiac_router)
@@ -243,6 +247,19 @@ class SPAStaticFiles(StaticFiles):
             # index.html 也不存在：维持 404，不崩溃。
             raise
 
+
+# REQ-059：后台素材上传目录静态托管（backend/uploads → /uploads/assets/...）。
+# 目录根为 backend/uploads（挂 /uploads），素材文件落在其 assets/ 子目录（与
+# admin/router.py 的 ASSETS_UPLOAD_DIR 同源，故 URL /uploads/assets/<file>
+# 恰好命中，不双写目录名）；须在下方 "/" SPA 挂载之前注册（路由先匹配原则）。
+# 目录创建/挂载失败只记 warning，不阻断服务启动（此时上传端点同样会失败，后台可见）。
+uploads_root_dir = Path(__file__).resolve().parents[1] / "uploads"
+try:
+    (uploads_root_dir / "assets").mkdir(parents=True, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=str(uploads_root_dir)), name="uploads")
+    logger.info("素材上传目录静态托管: %s → /uploads", uploads_root_dir / "assets")
+except Exception:
+    logger.warning("素材上传目录不可用，跳过 /uploads 静态托管", exc_info=True)
 
 # Serve frontend static files at root (after API routes)
 frontend_path = Path("../frontend/public")
