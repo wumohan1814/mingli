@@ -13,6 +13,9 @@
     并写 astrology_chart 埋点（props 含 case_id），零 LLM 零扣费。
     星盘计算较重，Node 转发 timeout=120。
   - GET /api/astrology/charts/{id} 读单条 = 只读（零 LLM 零扣费），带 user_id 隔离。
+  - DELETE /api/astrology/charts/{id} 删除单条历史记录（REQ-054，鉴权 Bearer）：
+    id+user_id 隔离，不存在 404；删除前二次确认由前端做，后端只删行
+    （db.delete + commit），零 LLM 零扣费。
   - POST /api/astrology/charts/{id}/interpret 本命深度解读 = LLM 可选付费：命中
     reading_json 缓存直接返回（零 LLM 零扣费）；未命中先 check_balance 预检
     （余额不足抛 BizError 5002）→ LLM chat → 成功即时扣费（ref=astrology:{id}）
@@ -292,6 +295,25 @@ def get_astrology_chart(
         "chart": reading.chart_json,
         "reading": reading.reading_json,
     }}
+
+
+@router.delete("/astrology/charts/{reading_id}")
+def delete_astrology_chart(
+    reading_id: int,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """删除单条星盘历史记录（REQ-054）：id+user_id 隔离（复用
+    _get_owned_reading），不存在 404；删除前二次确认由前端负责，后端仅删除
+    该行并 commit。零 LLM 零扣费；不写埋点。"""
+    user_id = get_user_id_from_token(authorization)
+    reading = _get_owned_reading(db, reading_id, user_id)
+
+    db.delete(reading)
+    db.commit()
+
+    return {"code": 0, "message": "ok",
+            "data": {"deleted": True, "id": reading_id}}
 
 
 @router.post("/astrology/charts/{reading_id}/interpret")
