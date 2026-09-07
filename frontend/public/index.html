@@ -365,6 +365,10 @@
     .modal{background:var(--surface);border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}
     .modal-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text-1)}
     .modal-body{font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.6}
+    /* REQ-044 v2：起卦方案弹窗（左对齐 + 加宽，标题居中） */
+    .modal.ask-modal{max-width:420px;text-align:left}
+    .modal.ask-modal .modal-title{text-align:center}
+    .ask-cap{font-size:13px;font-weight:700;color:var(--text-1);margin:2px 0 4px}
 
     /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
     /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
@@ -6116,37 +6120,37 @@ function ZodiacPage({
 const DIVIN_METHODS = [{
   id: 'liuyao',
   name: '六爻',
-  desc: '摇卦 / 报数',
+  desc: '以铜钱摇卦成卦，依六亲、世应、动爻断吉凶',
   todo: false
 }, {
   id: 'meihua',
   name: '梅花易数',
-  desc: '时间 / 报数',
+  desc: '以时间或数字起卦，凭体用生克察事应',
   todo: false
 }, {
   id: 'xiaoliuren',
   name: '小六壬',
-  desc: '月日时速断',
+  desc: '按月日时三数顺数落宫，速断所问吉凶',
   todo: false
 }, {
   id: 'sign',
   name: '观音灵签',
-  desc: '抽签',
+  desc: '诚心默问后抽签，依签诗断语解疑',
   todo: false
 }, {
   id: 'liuren',
   name: '大六壬',
-  desc: '时辰起课',
+  desc: '敬请期待',
   todo: true
 }, {
   id: 'jinkoujue',
   name: '金口诀',
-  desc: '时辰起课',
+  desc: '敬请期待',
   todo: true
 }, {
   id: 'qimen',
   name: '奇门时家',
-  desc: '时家奇门',
+  desc: '敬请期待',
   todo: true
 }];
 
@@ -6520,11 +6524,18 @@ function DivinationPage({
   // REQ-055 ⑤：梅花/小六壬时间选项（日期默认今天 + 时辰默认当前，必填）
   const [timeDate, setTimeDate] = useState(todayStr());
   const [shichen, setShichen] = useState(nowShichen());
+  // REQ-044 v2：方案弹窗开关（点选方法 → 弹窗内填占问问题/时间 → 开始起卦）
+  const [asking, setAsking] = useState(false);
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
   const isTimeMethod = Boolean(TIME_METHODS[method]);
   const run = async () => {
     if (loading) return;
+    // REQ-044 v2：占问问题必填（弹窗「开始起卦」已前置校验；此处兜底历史调用路径如失败重试）
+    if (!qText) {
+      toast('请填写占问问题');
+      return;
+    }
     // 梅花/小六壬：日期与时辰必填（输入框默认已带值，用户清空日期时拦截）
     if (isTimeMethod) {
       if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
@@ -6576,6 +6587,36 @@ function DivinationPage({
       setInterpLoading(false);
     }
   };
+  // REQ-044 v2：点选列表方法 → 打开起卦弹窗（todo 置灰提示；切换方法沿用 v1 行为：清旧结果、时间类重置为默认今天 + 当前时辰）
+  const openAsk = x => {
+    if (x.todo) {
+      toast('「' + x.name + '」敬请期待');
+      return;
+    }
+    if (loading) return;
+    if (x.id !== method) {
+      setMethod(x.id);
+      setData(null);
+      setErrored('');
+      setInterp('');
+      setInterpErr('');
+      if (TIME_METHODS[x.id]) {
+        setTimeDate(todayStr());
+        setShichen(nowShichen());
+      }
+    }
+    setAsking(true);
+  };
+  const closeAsk = () => setAsking(false);
+  // REQ-044 v2：弹窗「开始起卦」：问题必填 → 关弹窗 → run()（梅花/小六壬时间必填由 run() 内部校验）
+  const startAsk = () => {
+    if (!(question || '').trim()) {
+      toast('请填写占问问题');
+      return;
+    }
+    setAsking(false);
+    run();
+  };
   const m = DIVIN_METHODS.find(x => x.id === method);
   const result = (data && data.result) || null;
   let view = null;
@@ -6623,66 +6664,54 @@ function DivinationPage({
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
     React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'section-title' }, '选择起卦方式'),
-      React.createElement('div', { className: 'method-grid' }, DIVIN_METHODS.map(function (x) {
+      React.createElement('div', { className: 'method-list' }, DIVIN_METHODS.map(function (x) {
         return React.createElement('div', {
           key: x.id,
-          className: 'method-cell' + (method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
-          onClick: function () {
-            if (x.todo) toast('「' + x.name + '」敬请期待');
-            else if (!loading) {
-              setMethod(x.id);
-              setData(null);
-              setInterp('');
-              setInterpErr('');
-              // 切到梅花/小六壬时，时间默认刷新为今天 + 当前时辰
-              if (TIME_METHODS[x.id] && x.id !== method) {
-                setTimeDate(todayStr());
-                setShichen(nowShichen());
-              }
-            }
-          }
+          className: 'method-cell' + (asking && method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
+          onClick: function () { openAsk(x); }
         }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
-      })),
-      isTimeMethod ? React.createElement('div', { key: 'tm', className: 'time-box' },
-        React.createElement('div', { className: 'section-title', style: { marginTop: 12 } }, '占问时间（' + ((m && m.name) || apiMethod) + ' 起卦必填）'),
-        React.createElement('div', { className: 'dt-row' },
-          React.createElement('label', { className: 'dt-field' },
-            React.createElement('span', { className: 'dt-cap' }, '日期', React.createElement('em', null, '*')),
-            React.createElement('input', {
-              type: 'date',
-              className: 'dt-input',
-              value: timeDate,
-              onChange: function (e) { setTimeDate(e.target.value); }
-            })),
-          React.createElement('label', { className: 'dt-field' },
-            React.createElement('span', { className: 'dt-cap' }, '时辰', React.createElement('em', null, '*')),
-            React.createElement('select', {
-              className: 'dt-input',
-              value: shichen,
-              onChange: function (e) { setShichen(Number(e.target.value)); }
-            }, SHICHEN_ARR.map(function (s, i) {
-              return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
-            })))),
-        React.createElement('div', { className: 'time-note' }, '以所选日期与时辰起卦（默认今天 + 当前时辰）；六爻 / 观音灵签不取此时间。')) : null,
-      React.createElement('div', { className: 'section-title', style: { marginTop: 12 } }, '占问问题（可选）'),
-      React.createElement('textarea', {
-        className: 'q-input',
-        rows: 2,
-        maxLength: 300,
-        placeholder: '示例：这件事的走向？ / 该不该推进？',
-        value: question,
-        onChange: function (e) { setQuestion(e.target.value); }
-      }),
-      React.createElement('button', {
-        className: 'btn btn-primary',
-        style: { marginTop: 10 },
-        disabled: loading,
-        onClick: run
-      }, loading ? '起卦中…' : UI_COPY.buttons.start_divination)),
+      }))),
     body,
     React.createElement('div', { className: 'back-row fill' },
-      data ? React.createElement('button', { className: 'btn btn-outline', onClick: run }, '重新起卦') : null,
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, '返回选项')));
+      data ? React.createElement('button', { className: 'btn btn-outline', onClick: function () { openAsk(m); } }, '重新起卦') : null,
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, '返回选项')),
+    asking ? React.createElement('div', { className: 'modal-mask', onClick: closeAsk },
+      React.createElement('div', { className: 'modal ask-modal', onClick: function (e) { e.stopPropagation(); } },
+        React.createElement('div', { className: 'modal-title' }, ((m && m.name) || apiMethod), ' · 起卦'),
+        React.createElement('div', { className: 'ask-cap' }, '占问问题（必填）'),
+        React.createElement('textarea', {
+          className: 'q-input',
+          rows: 2,
+          maxLength: 300,
+          autoFocus: true,
+          placeholder: '示例：这件事的走向？ / 该不该推进？',
+          value: question,
+          onChange: function (e) { setQuestion(e.target.value); }
+        }),
+        isTimeMethod ? React.createElement('div', { key: 'tm' },
+          React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '起卦时间（必填）'),
+          React.createElement('div', { className: 'dt-row' },
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, '日期', React.createElement('em', null, '*')),
+              React.createElement('input', {
+                type: 'date',
+                className: 'dt-input',
+                value: timeDate,
+                onChange: function (e) { setTimeDate(e.target.value); }
+              })),
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, '时辰', React.createElement('em', null, '*')),
+              React.createElement('select', {
+                className: 'dt-input',
+                value: shichen,
+                onChange: function (e) { setShichen(Number(e.target.value)); }
+              }, SHICHEN_ARR.map(function (s, i) {
+                return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
+              })))),
+          React.createElement('div', { className: 'time-note' }, '默认今天 + 当前时辰，可按实际起卦时刻调整。')) : null,
+        React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
+          React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination)))) : null);
 }
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
