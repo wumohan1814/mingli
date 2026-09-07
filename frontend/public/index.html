@@ -9782,8 +9782,8 @@ function LiuyaoCastStage(props) {
         const cls = 'coin' + (settled ? (p === 3 ? ' back' : ' front') : ' toss');
         return React.createElement('div', { key: ci, className: cls },
           React.createElement('div', { className: 'c3d' },
-            React.createElement('div', { className: 'side s-a' }, '字'),
-            React.createElement('div', { className: 'side s-b' }, '通宝')));
+            React.createElement('div', { className: 'side s-a' }),
+            React.createElement('div', { className: 'side s-b' })));
       }));
   } else {
     coinRow = React.createElement('div', { className: 'ly-coins' },
