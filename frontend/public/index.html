@@ -6233,6 +6233,32 @@ function DivSsgwView(res) {
 /* ---------- REQ-055：免费静态解读（占位文案，正文由文字 Agent 后补） ---------- */
 const PH_WENAN = '文案待补充';
 const PH_HEX_SUFFIX = '（64 卦大意正文后续交付）';
+/* ---------- 第二轮文案 C3/C4（docs/文案交付-第二轮）：卦理通则 + 梅花/小六壬释义 ---------- */
+/* C3：64 卦 hexagrams 本轮全占位，正文后续分批补全，前端仅内联 genericRules 五条（本卦/变卦大意字段为空即显示 PH_WENAN）。 */
+const C3_GENERIC_RULES = {
+  '动爻': '动爻是本卦转为之卦的关键爻位，提示当下最易生变、最需留意的环节；一爻动宜看变爻之意，多爻动则综观整体趋势。',
+  '世应': '世爻代表问事者自身，应爻代表所问之人或事之方；世应相生多顺、相克多阻，是判读双方态势与远近的基础坐标。',
+  '互卦': '互卦由本卦二至四爻、三至五爻重组而成，揭示事情发展过程中潜伏的中间阶段，补本卦与变卦未尽之处。',
+  '本卦': '本卦呈现事情起始与整体基调，是判读的根基。',
+  '变卦': '变卦呈现事情的可能走向与结果，由动爻推演而来，宜与本卦对照着看。'
+};
+/* C4 meihua.patterns 五格局（体用生克）；引擎输出 tiYongRelation 的「体用比和」归并为键名「比和」。 */
+const C4_MEIHUA_PATTERNS = {
+  '体克用': '体（我/主）克用（事/客），主所谋可得，事虽能成却需出力费心，宜主动争取、忌半途松懈。',
+  '用克体': '用（事/客）克体（我/主），主外力压制、所求难成或倍感吃力，宜守不宜攻，暂收锋芒以观其变。',
+  '体生用': '体（我/主）生用（事/客），主我方付出、能量外泄，虽用心良苦却易耗神，宜量力而行、忌过度倾注。',
+  '用生体': '用（事/客）生体（我/主），主得外力相济、贵人暗助，事多顺遂省力，宜顺势承接、把握时机。',
+  '比和': '体与用同气比和，主双方相合、事易成就，少有掣肘，宜同心协力、顺势推进。'
+};
+/* C4 xiaoliuren.shens 六神掌诀释义；落掌神名（primary.name/point）直接查表，查不到显示占位。 */
+const C4_XIAOLIUREN_SHENS = {
+  '大安': '大安主安稳静止，诸事平顺、少波折，宜静守与落实，不必急于变动。',
+  '留连': '留连主拖延纠缠，事多反复、进展迟缓，宜耐心等待、忌仓促决断。',
+  '速喜': '速喜主喜信速至，事有进展、多有佳音，宜把握当下、乘势而动。',
+  '赤口': '赤口主口舌是非，易生争执或误解，宜谨言慎行、避开冲突。',
+  '小吉': '小吉主小有所成，事渐顺遂、可得其利，宜稳妥推进、积小为大。',
+  '空亡': '空亡主落空虚无，谋事易散、难得其实，宜暂收手、另择时机。'
+};
 function FreeCard(title, blocks) {
   const kids = [React.createElement('div', { key: 't', className: 'fc-title' }, title)];
   blocks.forEach(function (b, i) {
@@ -6248,16 +6274,19 @@ function LiuyaoFreeReading(res) {
   const blocks = [];
   const originalName = res.originalName || res.name || '';
   const changedName = (res.changedName && res.changedName !== originalName) ? res.changedName : '';
+  const interName = res.interName || '';
+  // C3 genericRules ① 本卦：正文占位（hexagrams 分批补全），通则置 tip
   blocks.push({
     label: '本卦大意',
     text: originalName ? ('「' + originalName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX) : PH_WENAN + '。',
-    tip: '以本卦卦名、卦辞与大象为纲，看整件事的基调与当前态势。'
+    tip: '通则 · 本卦：' + C3_GENERIC_RULES['本卦'] + '以本卦卦名、卦辞与大象为纲，看整件事的基调与当前态势。'
   });
   if (changedName) {
+    // C3 genericRules ② 变卦：正文占位，通则置 tip
     blocks.push({
       label: '变卦大意',
       text: '「' + changedName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX,
-      tip: '动爻成之卦，代表事态推进之后的走向与结局。'
+      tip: '通则 · 变卦：' + C3_GENERIC_RULES['变卦'] + '动爻成之卦，代表事态推进之后的走向与结局。'
     });
   } else {
     blocks.push({
@@ -6268,16 +6297,25 @@ function LiuyaoFreeReading(res) {
   }
   const chg = Array.isArray(res.changingYaos) ? res.changingYaos : [];
   if (chg.length) {
+    // C3 genericRules ③ 动爻：作为通则置于开头，逐条「第N爻动」结构保留（断语正文后补）
     blocks.push({
       label: '动爻提示',
-      text: chg.map(function (y) { return '第' + (y && y.position != null ? y.position : '?') + '爻动：' + PH_WENAN + '。'; }).join('\n'),
-      tip: '动爻是事态变化的关节点：动爻所临六亲及其与世应的生克关系，决定事情的进退取舍（逐爻断语正文后补）。'
+      text: '通则 · 动爻：' + C3_GENERIC_RULES['动爻'] + '\n'
+        + chg.map(function (y) { return '第' + (y && y.position != null ? y.position : '?') + '爻动：' + PH_WENAN + '。'; }).join('\n'),
+      tip: '动爻所临六亲及其与世应的生克关系，决定事情的进退取舍（逐爻断语正文后补）。'
     });
   } else {
     blocks.push({
       label: '动爻提示',
-      text: '无动爻。',
+      text: '无动爻（静卦）。',
       tip: '静卦以卦意为体，以世应、用神与月建日辰的生克关系参断。'
+    });
+  }
+  // C3 genericRules ④ 互卦：六爻有互卦时给出通则 + 本课互卦名
+  if (interName) {
+    blocks.push({
+      label: '互卦提示',
+      text: C3_GENERIC_RULES['互卦'] + '本卦互卦为「' + interName + '」，主事情推进过程中的中间潜势。'
     });
   }
   const wAndR = Array.isArray(res.worldAndResponse) ? res.worldAndResponse : null;
@@ -6288,10 +6326,10 @@ function LiuyaoFreeReading(res) {
       if (s === '世' || s === '应') wrParts.push((s === '世' ? '世爻' : '应爻') + '在' + YAO_LABEL[i] + '爻（第' + (i + 1) + '爻）');
     }
   }
+  // C3 genericRules ⑤ 世应：以原创通则为主干，附本课世应落位
   blocks.push({
     label: '世应含义',
-    text: '世爻代表求测者自身、立场与当前处境；应爻代表对方、环境与所问之事。' + (wrParts.length ? '本卦' + wrParts.join('，') + '。' : ''),
-    tip: '问自身与当下看世爻，问他人、合作与外部环境看应爻；世应相生相合多为顺，相冲相克多为阻。'
+    text: C3_GENERIC_RULES['世应'] + (wrParts.length ? '本卦' + wrParts.join('，') + '。' : '')
   });
   return FreeCard('卦理解读（免费）', blocks);
 }
@@ -6303,20 +6341,32 @@ function MeihuaFreeReading(res) {
     label: '本卦大意',
     text: originalName ? ('「' + originalName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX) : PH_WENAN + '。'
   });
+  // C4 meihua.patterns：按引擎体用关系（analysis.tiYongRelation / tiYongRaw）查五格局文案
+  const an = res.analysis || {};
+  const rel = an.tiYongRelation || an.tiYongRaw || '';
+  const relKey = (rel === '体用比和') ? '比和' : rel; // 引擎「体用比和」归并为键名「比和」
+  const patText = relKey ? (C4_MEIHUA_PATTERNS[relKey] || '') : '';
+  blocks.push({
+    label: '体用生克',
+    text: rel ? ('本卦体用关系「' + rel + '」' + (patText ? '：' + patText : '。')) : (PH_WENAN + '。'),
+    tip: '体卦为己（我、主），用卦为事（客、对方）；格局解释为文化视角下的趋势参考，仅供自我觉察。'
+  });
   if (changedName) {
     blocks.push({
       label: '变卦趋势',
       text: '「' + changedName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX
     });
   }
+  // C3 genericRules：梅花免费区通用提示改用原创通则（动爻/本卦/互卦/变卦；世应为六爻专有概念，梅花不取）
   const mv = res.movingYao || {};
-  const an = res.analysis || {};
+  const c3Lines = [];
+  c3Lines.push('动爻：' + C3_GENERIC_RULES['动爻'] + (mv.position != null ? '（本卦第' + mv.position + '爻为动爻）' : ''));
+  c3Lines.push('本卦：' + C3_GENERIC_RULES['本卦']);
+  c3Lines.push('互卦：' + C3_GENERIC_RULES['互卦']);
+  c3Lines.push('变卦：' + C3_GENERIC_RULES['变卦']);
   blocks.push({
     label: '通用提示',
-    text: '梅花易数以体用生克为断事主线：体卦为己、为求测者，用卦为事、为对方，动爻所在即事态变化的关节点。'
-      + (mv.position != null ? '本卦第' + mv.position + '爻为动爻。' : '')
-      + (an.tiYongRelation ? '本卦体用关系：' + an.tiYongRelation + '。' : '')
-      + '体用比和、用生体、体克用多主顺遂省力；用克体、体生用则多费心耗力。互卦主事之中段，变卦主事之结局。',
+    text: '梅花易数以体用生克为断事主线：体卦为己、为求测者，用卦为事、为对方。\n' + c3Lines.join('\n'),
     tip: '以上为静态规则参考，仅供自我觉察，不构成任何决策建议。'
   });
   return FreeCard('免费解读', blocks);
@@ -6327,15 +6377,20 @@ function XiaoliurenFreeReading(res) {
   const name = primary.name || res.point || '';
   const seq = res.sequence || {};
   const seqNames = [seq.month, seq.day, seq.hour].map(function (p) { return p && p.name ? p.name : ''; }).filter(Boolean);
+  // C4 xiaoliuren.shens：按落掌神（primary.name/point）查六神释义；查不到显示占位
+  const shenText = (name && C4_XIAOLIUREN_SHENS[name]) || '';
   blocks.push({
     label: '掌诀含义',
-    text: name ? ('「' + name + '」掌诀含义' + PH_WENAN + '。') : (PH_WENAN + '。'),
-    tip: '落宫掌诀是小六壬断事的核心口诀，具体诀文正文后补。'
+    text: shenText ? shenText : (name ? ('「' + name + '」掌诀含义' + PH_WENAN + '。') : (PH_WENAN + '。')),
+    tip: '落宫掌诀是小六壬断事的核心口诀；释义为文化视角下的趋势参考，仅供自我觉察。'
   });
+  // C3 genericRules：小六壬「起宫—行宫—落宫」与本卦（起始）—互卦（中段）—变卦（结果）同构，通则并列供参读
   blocks.push({
     label: '通用提示',
     text: (seqNames.length === 3 ? '本课自' + seqNames[0] + '起，经' + seqNames[1] + '，落于' + seqNames[2] + '。' : '')
-      + '小六壬按「月 → 日 → 时」依序顺数至落宫断事：起宫见事端，行宫见过程，落宫为事之归结；落宫吉凶宜结合所问之事与自身处境综合体会。',
+      + '小六壬按「月 → 日 → 时」依序顺数至落宫断事：起宫见事端，行宫见过程，落宫为事之归结；落宫吉凶宜结合所问之事与自身处境综合体会。'
+      + '\n卦理通则（可资参读）：'
+      + C3_GENERIC_RULES['本卦'] + C3_GENERIC_RULES['互卦'] + C3_GENERIC_RULES['变卦'],
     tip: '以上为静态规则参考，仅供自我觉察，不构成任何决策建议。'
   });
   return FreeCard('免费解读', blocks);
