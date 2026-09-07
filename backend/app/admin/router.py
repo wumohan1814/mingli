@@ -9,6 +9,12 @@
 
 鉴权：Bearer JWT（type=admin）。viewer 可读全部（含版本历史/版本全文）；operator+
 才能写提示词（PUT / rollback）。
+
+Agent 运维工具端点（REQ-050，/admin/agent/*）：OpenClaw Agent 经既有 bb3a.taichu.xyz
+接入点直调后台 API。鉴权用 Agent 专用静态 token（require_agent，TAICHU_AGENT_TOKEN），
+与 admin 账号密码 / admin JWT 完全独立（互不可用）。写动作（赠积分/重置密码/重置 case）
+审计：admin_user_id=0 + detail 前缀 "[agent]"，与人工 admin 审计区分；高风险端点响应
+data 内带 requires_confirmation=true 标记（确认交互由 OpenClaw/用户侧完成，本端只标记）。
 """
 import logging
 import re
@@ -22,7 +28,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
-from app.admin.auth import admin_login, require_role
+from app.admin.auth import admin_login, require_agent, require_role
 from app.auth.router import hash_password
 from app.config import settings
 from app.credits.service import manual, recharge
@@ -52,7 +58,7 @@ from app.models import (
     User,
 )
 from app.models.feedback import Feedback
-from app.models.ops import AdminAuditLog, Event, PromptVersion
+from app.models.ops import AdminAuditLog, ErrorReport, Event, PromptVersion
 from app.profile.archive import build_archive
 
 logger = logging.getLogger(__name__)
@@ -920,3 +926,268 @@ def delete_user(
     )
     ops_db.commit()
     return {"code": 0, "message": "ok", "data": {"deleted": True}}
+
+
+# =========================================================================== #
+# Agent 运维工具端点（REQ-050，/admin/agent/*）
+#
+# OpenClaw Agent 经既有 bb3a.taichu.xyz 通道直调后台 API。鉴权用 require_agent
+# （TAICHU_AGENT_TOKEN，独立于 admin 账号密码/admin JWT——两套 token 互不可用）。
+# 查看类端点与 /admin/* 对应端点返回同构；写端点复用 /admin/* 相同业务逻辑，
+# 审计约定：admin_user_id=0（约定值 = Agent/系统调用，区别于人工 admin id）+
+# detail 前缀 "[agent]"（如 "[agent] 赠送积分 user_id=..."），与人工审计区分。
+# 高风险写端点（赠积分/重置密码/重置 case）响应 data 内带 requires_confirmation=true
+# 标记；确认交互由 OpenClaw/用户侧完成，本端只执行 + 标记。
+# =========================================================================== #
+
+
+def _add_agent_audit(
+    db: Session,
+    action: str,
+    target_type: str,
+    target_id: str,
+    detail: str,
+) -> None:
+    """写一条 Agent 调用审计（admin_user_id=0 约定值 + detail 已含 [agent] 前缀）。
+
+    detail 由调用方以 "[agent] " 开头拼好；调用方负责 commit（与业务库事务解耦，
+    与 /admin/* 写端点一致：业务库先行 commit，审计库随后）。
+    """
+    db.add(
+        AdminAuditLog(
+            admin_user_id=0,
+            action=action,
+            target_type=target_type,
+            target_id=target_id,
+            detail=detail,
+        )
+    )
+
+
+# --- 报表（查看类，与 GET /admin/reports/{metric} 同构） ---
+@router.get("/agent/reports/{metric}")
+def agent_get_report(
+    metric: str,
+    days: int = Query(7, ge=1, le=90),
+    _agent: dict = Depends(require_agent),
+    db: Session = Depends(get_ops_db),
+):
+    """Agent 查看运营报表（events 聚合；metric ∈ overview/funnel/llm_cost/errors）。
+
+    与 GET /admin/reports/{metric} 同一聚合逻辑（_metric_*），返回同构 data。
+    查看类端点不标 requires_confirmation。
+    """
+    now = datetime.utcnow()
+    if metric == "overview":
+        items = _metric_overview(db, days, now)
+    elif metric == "funnel":
+        items = _metric_funnel(db, days, now)
+    elif metric == "llm_cost":
+        items = _metric_llm_cost(db, days, now)
+    elif metric == "errors":
+        items = _metric_errors(db, days, now)
+    else:
+        raise BizError(ERR_PARAM, f"未知指标: {metric}")
+    return {"code": 0, "message": "ok", "data": {"metric": metric, "days": days, "items": items}}
+
+
+# --- 用户查询（查看类，与 GET /admin/users 同构，含积分余额） ---
+@router.get("/agent/users")
+def agent_list_users(
+    q: str = Query("", max_length=64),
+    _agent: dict = Depends(require_agent),
+    db: Session = Depends(get_analytics_db),
+):
+    """Agent 按 username 模糊搜 C 端用户（含积分余额；与 /admin/users 同构）。"""
+    kw = q.strip()
+    query = db.query(User)
+    if kw:
+        query = query.filter(User.username.like(f"%{kw}%"))
+    users = query.order_by(User.id.desc()).limit(50).all()
+    accounts = (
+        db.query(CreditAccount)
+        .filter(CreditAccount.user_id.in_([u.id for u in users]))
+        .all()
+    )
+    balance_map = {acc.user_id: acc.balance for acc in accounts}
+    items = [
+        {
+            "id": u.id,
+            "username": u.username,
+            "balance": balance_map.get(u.id, 0),
+            "created_at": u.created_at.isoformat() if u.created_at else None,
+        }
+        for u in users
+    ]
+    return {"code": 0, "message": "ok", "data": {"items": items}}
+
+
+# --- 服务健康（查看类；与 C 端 GET /api/health 同口径） ---
+@router.get("/agent/health")
+def agent_health(_agent: dict = Depends(require_agent)):
+    """Agent 查看服务健康 → data {status, version}（与 C 端 /api/health 一致）。"""
+    # version 与 app.main FastAPI(version=...) / /api/health 保持一致
+    return {"code": 0, "message": "ok", "data": {"status": "ok", "version": "0.1.0"}}
+
+
+# --- 错误报告（查看类；ErrorReport 明细 + 指标聚合兜底） ---
+@router.get("/agent/errors")
+def agent_list_errors(
+    days: int = Query(7, ge=1, le=90),
+    _agent: dict = Depends(require_agent),
+    db: Session = Depends(get_ops_db),
+):
+    """Agent 查看后台错误报告。
+
+    data.items = error_reports 表按 id 倒序最多 50 条明细
+    {id, error_code, message, source, user_id, case_id, created_at}。
+    现状：代码库尚无 ErrorReport 写入来源（模型已建、无端点/服务实例化），
+    明细通常为空——故响应恒带 note 说明，并附 reports/errors（events 表）指标
+    聚合兜底（data.aggregate.items，与 GET /reports/errors 同构）。
+    """
+    rows = (
+        db.query(ErrorReport)
+        .order_by(ErrorReport.id.desc())
+        .limit(50)
+        .all()
+    )
+    items = [
+        {
+            "id": r.id,
+            "error_code": r.error_code,
+            "message": r.message,
+            "source": r.source,
+            "user_id": r.user_id,
+            "case_id": r.case_id,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in rows
+    ]
+    now = datetime.utcnow()
+    aggregate = _metric_errors(db, days, now)
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {
+            "items": items,
+            "aggregate": {"metric": "errors", "days": days, "items": aggregate},
+            "note": (
+                "当前代码库尚无 ErrorReport 写入来源（error_reports 明细通常为空）；"
+                "错误可见性以 reports/errors（events 表聚合，见 aggregate）兜底"
+            ),
+        },
+    }
+
+
+# --- 赠积分（高风险写操作，复用 credits.service.recharge 入账逻辑） ---
+@router.post("/agent/credits/manual")
+def agent_manual_credit(
+    req: CreditManualRequest,
+    _agent: dict = Depends(require_agent),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """Agent 赠送积分（高风险，需人工确认）。
+
+    入账等价复用 credits.service.manual 内部逻辑：recharge(type=manual) 写业务库
+    （独立 AnalyticsSession，自动 commit）；**不直接调 manual()**——它内部会再写一条
+    无 [agent] 标注、admin_user_id=admin_id 的审计，无法满足"审计单次 + 标注 Agent
+    来源"，故审计由本端点自写一条（admin_user_id=0 + detail "[agent] 赠送积分 ..."）。
+    data.requires_confirmation=true 标记高风险；确认交互由 OpenClaw/用户侧完成。
+    """
+    if req.delta <= 0:
+        raise BizError(ERR_PARAM, "参数错误")
+    result = recharge(req.user_id, req.delta, type="manual", note=req.note)
+    detail = (
+        f"[agent] 赠送积分 user_id={req.user_id} delta={req.delta}"
+        f"（当前余额 {result['balance']}）"
+    )
+    if req.note:
+        detail += f"，备注：{req.note}"
+    _add_agent_audit(
+        ops_db,
+        action="credit_manual",
+        target_type="user",
+        target_id=str(req.user_id),
+        detail=detail,
+    )
+    ops_db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {"balance": result["balance"], "requires_confirmation": True},
+    }
+
+
+# --- 重置用户密码（高风险写操作，逻辑同 /admin/ops/users/{id}/reset-password） ---
+@router.post("/agent/ops/users/{user_id}/reset-password")
+def agent_reset_user_password(
+    user_id: int,
+    req: ResetPasswordRequest,
+    _agent: dict = Depends(require_agent),
+    db: Session = Depends(get_analytics_db),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """Agent 重设 C 端用户密码（高风险，需人工确认）。
+
+    业务逻辑与 /admin 版一致（users.password_hash = hash(new_password)）；审计由
+    本端点写（admin_user_id=0 + "[agent]" 前缀），不落密码明文。业务库与审计库
+    分别提交。data.requires_confirmation=true 标记高风险。
+    """
+    user = db.query(User).filter_by(id=user_id).first()
+    if not user:
+        raise BizError(ERR_NOT_FOUND, "用户不存在")
+    user.password_hash = hash_password(req.new_password)
+    db.commit()
+    _add_agent_audit(
+        ops_db,
+        action="reset_password",
+        target_type="user",
+        target_id=str(user_id),
+        detail=f"[agent] 重置用户密码 user_id={user_id}（临时密码线下交付）",
+    )
+    ops_db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {"reset": True, "requires_confirmation": True},
+    }
+
+
+# --- 重置 case 档案（高风险写操作，逻辑同 /admin/ops/users/{id}/reset-case） ---
+@router.post("/agent/ops/users/{user_id}/reset-case")
+def agent_reset_user_case(
+    user_id: int,
+    req: ResetCaseRequest,
+    _agent: dict = Depends(require_agent),
+    db: Session = Depends(get_analytics_db),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """Agent 重置某 case 档案（高风险，需人工确认）。
+
+    业务逻辑与 /admin 版一致（删 charts/method_results/calibrations/conversations，
+    case 行保留且 status 置 created，保留 user 与积分）；审计由本端点写
+    （admin_user_id=0 + "[agent]" 前缀）。data.requires_confirmation=true 标记高风险。
+    """
+    case = db.query(Case).filter_by(id=req.case_id, user_id=user_id).first()
+    if not case:
+        raise BizError(ERR_CASE_NOT_FOUND, "档案不存在")
+    for model in (Chart, MethodResult, Calibration, Conversation):
+        db.query(model).filter_by(case_id=case.id).delete(synchronize_session=False)
+    case.status = CaseStatus.created
+    db.commit()
+    _add_agent_audit(
+        ops_db,
+        action="reset_case",
+        target_type="case",
+        target_id=str(case.id),
+        detail=(
+            f"[agent] 重置档案 user_id={user_id} case_id={case.id}：已删 charts/"
+            "method_results/calibrations/conversations，status 置 created"
+        ),
+    )
+    ops_db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {"reset": True, "requires_confirmation": True},
+    }
