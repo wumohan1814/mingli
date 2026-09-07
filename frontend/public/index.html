@@ -4515,6 +4515,76 @@ const ASTRO_SCOPE_CN = {
 function astroScopeLabel(scope) {
   return ASTRO_SCOPE_CN[scope] || scope;
 }
+// REQ-039 退回细化①：档案内直接渲染 astrology 记录 chart.natal 的完整本命盘。
+// 复用星座页的 astroNorm / AstroWheel / 行星-四轴行 / 元素格局标签；判空不崩。
+function AstroNatalPanel({
+  chart
+}) {
+  const el = React.createElement;
+  const natal = astroNorm(chart && chart.natal ? chart.natal : null);
+  const birthInfo = natal.birth || {};
+  const birthMeta = [birthInfo.dateTime ? '出生 ' + birthInfo.dateTime : '', birthInfo.location ? '地点 ' + birthInfo.location : ''].filter(Boolean).join(' ｜ ');
+  const pointRow = (p, i) => el('div', {
+    key: i,
+    className: 'planet-row'
+  }, el('span', {
+    className: 'pr-sym'
+  }, PLANET_SYM[p.label] || '·'), el('span', {
+    style: {
+      flex: 1
+    }
+  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
+  if (!natal.planets.length && !natal.angles.length) {
+    return el('div', {
+      style: {
+        fontSize: 13,
+        color: 'var(--text-3)',
+        padding: '8px 0'
+      }
+    }, '该条星盘数据不完整，无法展示盘面。');
+  }
+  const sum = natal.summary;
+  const chip = (k, item) => el('span', {
+    key: k,
+    className: 'tag'
+  }, k + ' ' + (item && item.count != null ? item.count : 0));
+  return el('div', null, el('div', {
+    style: {
+      textAlign: 'center',
+      margin: '2px 0'
+    }
+  }, el(AstroWheel, {
+    data: natal
+  }), birthMeta ? el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginTop: 6,
+      lineHeight: 1.7
+    }
+  }, birthMeta) : null), natal.planets.length > 0 && el('div', null, el('div', {
+    className: 'sub-title',
+    style: {
+      marginTop: 8
+    }
+  }, '行星落座落宫'), natal.planets.map(pointRow)), natal.angles.length > 0 && el('div', null, el('div', {
+    className: 'sub-title',
+    style: {
+      marginTop: 8
+    }
+  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.map(pointRow)), el('div', {
+    className: 'row-gap',
+    style: {
+      marginTop: 10
+    }
+  }, Object.keys(sum.elements).map(k => chip(k, sum.elements[k])), Object.keys(sum.modalities).map(k => chip(k, sum.modalities[k]))), el('p', {
+    style: {
+      marginTop: 6,
+      fontSize: 13,
+      color: 'var(--text-2)'
+    }
+  }, '逆行：', sum.retrograde.length ? sum.retrograde.join('、') : '无', '　|　格局：', sum.patterns.length ? sum.patterns.join('、') : '无'));
+}
 function ArchivePage({
   caseId,
   onNavigate
@@ -4651,7 +4721,10 @@ function ArchivePage({
   const mbtiRecords = mbtiInfo && Array.isArray(mbtiInfo.results) ? mbtiInfo.results : [];
   const fmtArchiveTime = t => t ? String(t).replace('T', ' ').slice(0, 16) : '';
 
-  // 占星盘卡片：每条 = scope 中文名 + 生成时间 + 「查看」（星座页按档案复用已有星盘）
+  // REQ-039 退回细化①：占星盘卡片直接展示完整星盘（chart.natal 完整本命盘，取自档案
+  // 已生成记录、无需重新生成）；无 chart 数据的记录退化为记录条目。
+  // ②：「查看」跳星座页带 caseId（AstrologyPage 自动复用已有星盘，不再要求重新生成）
+  const astroMain = astroRecords.find(a => a && a.chart && a.chart.natal) || null;
   const astroCard = astroRecords.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -4659,15 +4732,13 @@ function ArchivePage({
   }, "占星盘"), astroRecords.map((a, i) => {
     const label = astroScopeLabel(a && a.scope);
     const at = fmtArchiveTime(a && a.created_at);
-    return /*#__PURE__*/React.createElement("div", {
-      key: a && a.id != null ? a.id : i,
+    const isMain = astroMain && a && astroMain.id != null && a.id === astroMain.id;
+    const head = /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 10,
-        padding: '8px 0',
-        borderBottom: '1px solid var(--border)'
+        gap: 10
       }
     }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
       style: {
@@ -4683,44 +4754,162 @@ function ArchivePage({
       }
     }, "生成于 ", at) : null), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini",
-      onClick: () => onNavigate('astrology')
+      onClick: () => onNavigate('astrology', {
+        caseId
+      })
     }, "查看"));
+    return /*#__PURE__*/React.createElement("div", {
+      key: a && a.id != null ? a.id : i,
+      style: {
+        padding: isMain ? '4px 0 10px' : '8px 0',
+        borderBottom: '1px solid var(--border)'
+      }
+    }, head, isMain ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontSize: 12,
+        color: 'var(--text-3)',
+        margin: '4px 0 2px'
+      }
+    }, "以下为本命盘完整盘面（取自档案已生成记录，无需重新生成）。"), /*#__PURE__*/React.createElement(AstroNatalPanel, {
+      chart: astroMain.chart
+    })) : a && a.chart && !a.chart.natal ? /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontSize: 12,
+        color: 'var(--text-3)',
+        marginTop: 4
+      }
+    }, "该条星盘数据缺失，无法展示盘面。") : null);
   }));
 
-  // MBTI 人格卡片：档案当前类型（醒目大字，空则省略）+ 判型历史（type 加粗 + 时间小字）
-  const mbtiCard = mbtiInfo && (mbtiInfo.mbti_type || mbtiRecords.length > 0) && /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "MBTI 人格"), mbtiInfo.mbti_type ? /*#__PURE__*/React.createElement("div", {
+  // REQ-039 退回细化③：MBTI 卡片完整展示 —— 主类型大字 + alias + 最近一条判型结果的
+  // 四维倾向条（scores）+ 16 型五栏评语（type_info，答题与手动选型均覆盖）；判空兜底。
+  const R = React.createElement;
+  const mbtiType = mbtiInfo && mbtiInfo.mbti_type ? String(mbtiInfo.mbti_type).toUpperCase() : '';
+  const mbtiTypeInfo = mbtiInfo && mbtiInfo.type_info && typeof mbtiInfo.type_info === 'object' ? mbtiInfo.type_info : null;
+  const mbtiMainRes = (mbtiRecords.find(r => r && r.type && mbtiType && String(r.type).toUpperCase() === mbtiType) || null) || (mbtiRecords.length ? mbtiRecords[0] : null);
+  const mbtiOtherRes = mbtiRecords.filter(r => r && (!mbtiMainRes || mbtiMainRes.id == null || r.id == null || r.id !== mbtiMainRes.id));
+  const mbtiLines = v => {
+    const out = [];
+    const push = s => {
+      if (s == null) return;
+      String(s).split('\n').forEach(x => {
+        x = x.trim();
+        if (x) out.push(x);
+      });
+    };
+    if (Array.isArray(v)) v.forEach(push); else push(v);
+    return out;
+  };
+  const mbtiBar = d => {
+    const s = mbtiMainRes && mbtiMainRes.scores ? mbtiMainRes.scores[d.k] || {} : {};
+    const lc = s[d.l] || 0;
+    const rc = s[d.r] || 0;
+    const sum = lc + rc || 1;
+    const lp = Math.round(lc / sum * 100);
+    return R('div', {
+      key: d.k,
+      className: 'mbti-bar'
+    }, R('span', {
+      className: 'bb-label',
+      style: {
+        width: 'auto',
+        minWidth: 44,
+        textAlign: 'left'
+      }
+    }, d.l + ' ' + lc), R('span', {
+      className: 'bb-track'
+    }, R('span', {
+      className: 'bb-fill',
+      style: {
+        left: 0,
+        width: lp + '%',
+        background: 'var(--skin-accent)'
+      }
+    }), R('span', {
+      className: 'bb-fill',
+      style: {
+        right: 0,
+        width: (100 - lp) + '%',
+        background: 'var(--skin-accent-soft)'
+      }
+    })), R('span', {
+      className: 'bb-label',
+      style: {
+        width: 'auto',
+        minWidth: 44,
+        textAlign: 'right'
+      }
+    }, d.r + ' ' + rc));
+  };
+  const mbtiCard = mbtiInfo && (mbtiInfo.mbti_type || mbtiRecords.length > 0) && R('div', {
+    className: 'card'
+  }, R('div', {
+    className: 'section-title'
+  }, 'MBTI 人格'), mbtiType ? R('div', {
     style: {
       textAlign: 'center',
-      padding: '2px 0 12px'
+      padding: '2px 0 6px'
     }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "mbti-type-big"
-  }, String(mbtiInfo.mbti_type))) : null, mbtiRecords.length > 0 && /*#__PURE__*/React.createElement("div", null, mbtiRecords.map((r, i) => {
+  }, R('span', {
+    className: 'mbti-type-big'
+  }, mbtiType), mbtiTypeInfo && mbtiTypeInfo.alias ? R('div', {
+    className: 'mbti-alias'
+  }, mbtiTypeInfo.alias) : null) : null, mbtiMainRes && mbtiMainRes.scores ? R('div', null, R('div', {
+    className: 'sub-title'
+  }, '四维倾向（答题计数）'), MBTI_DIMS.map(mbtiBar)) : null, mbtiTypeInfo ? R('div', null, MBTI_FIELDS.map(f => {
+    const lines = mbtiLines(mbtiTypeInfo[f[0]]);
+    return R('div', {
+      key: f[0],
+      style: {
+        margin: '4px 0'
+      }
+    }, R('div', {
+      className: 'section-title',
+      style: {
+        marginBottom: 2,
+        fontSize: 13
+      }
+    }, f[1]), lines.length ? lines.map((x, i) => R('p', {
+      key: i,
+      style: {
+        fontSize: 13,
+        color: 'var(--text-2)',
+        lineHeight: 1.8
+      }
+    }, '· ' + x)) : R('p', {
+      style: {
+        fontSize: 13,
+        color: 'var(--text-3)'
+      }
+    }, '—'));
+  })) : null, mbtiOtherRes.length > 0 ? R('div', {
+    style: {
+      marginTop: 10
+    }
+  }, R('div', {
+    className: 'sub-title'
+  }, '历史判型记录'), mbtiOtherRes.map((r, i) => {
     const t = r && r.type ? String(r.type) : '未知';
     const at = fmtArchiveTime(r && r.created_at);
-    return /*#__PURE__*/React.createElement("div", {
+    return R('div', {
       key: r && r.id != null ? r.id : i,
-      className: "kv"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "k",
+      className: 'kv'
+    }, R('span', {
+      className: 'k',
       style: {
         fontSize: 15,
         fontWeight: 700,
         color: 'var(--text-1)'
       }
-    }, t), /*#__PURE__*/React.createElement("span", {
-      className: "v",
+    }, t), R('span', {
+      className: 'v',
       style: {
         fontSize: 12,
         fontWeight: 400,
         color: 'var(--text-2)'
       }
     }, at || '—'));
-  })));
+  })) : null);
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
@@ -7012,14 +7201,15 @@ function AstroWheel({
   }));
 }
 function AstrologyPage({
-  onNavigate
+  onNavigate,
+  initCaseId
 }) {
   const el = React.createElement;
   const [tab, setTab] = useState('natal');
   const [caseList, setCaseList] = useState([]);
   const [caseLoading, setCaseLoading] = useState(true);
   const [caseErrored, setCaseErrored] = useState('');
-  const [caseId, setCaseId] = useState(null);
+  const [caseId, setCaseId] = useState(initCaseId || null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errored, setErrored] = useState('');
@@ -7050,6 +7240,23 @@ function AstrologyPage({
   useEffect(() => {
     loadCases();
   }, []);
+
+  // REQ-039 退回细化②：携 caseId 进入本页（档案「查看星盘」/ 建档 returnTo）→ 自动选中
+  // 该档案并复用已生成的本命盘（后端按 档案+scope 幂等，命中直接返回已有 chart，零扣费），
+  // 不再要求手动「重新生成」；重挂载（再从档案进入）时按新 initCaseId 重新自动加载。
+  const autoLoadRef = useRef(null);
+  useEffect(() => {
+    if (initCaseId == null || autoLoadRef.current === initCaseId) return;
+    if (caseLoading) return;
+    setCaseId(initCaseId);
+  }, [initCaseId, caseLoading]);
+  useEffect(() => {
+    if (initCaseId == null || autoLoadRef.current === initCaseId) return;
+    if (caseId == null || Number(caseId) !== Number(initCaseId)) return;
+    if (loading || data || errored) return;
+    autoLoadRef.current = initCaseId;
+    load('natal');
+  }, [initCaseId, caseId, loading, data, errored]);
 
   // 生成星盘：选档案 → POST /astrology/chart，生辰由后端从档案 case.input_json 取
   const load = async scope => {
@@ -7508,7 +7715,8 @@ const ALL_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP
 const MBTI_DIMS = [{k: 'EI', l: 'E', r: 'I'}, {k: 'SN', l: 'S', r: 'N'}, {k: 'TF', l: 'T', r: 'F'}, {k: 'JP', l: 'J', r: 'P'}];
 const MBTI_FIELDS = [['strengths', '优势'], ['blindspots', '盲点'], ['career', '职场'], ['relationships', '关系'], ['growth', '成长建议']];
 function MbtiPage({
-  onNavigate
+  onNavigate,
+  initCaseId
 }) {
   const el = React.createElement;
   const [view, setView] = useState('quiz'); // quiz | grid | result
@@ -7526,7 +7734,7 @@ function MbtiPage({
   const [caseList, setCaseList] = useState([]);
   const [caseLoading, setCaseLoading] = useState(true);
   const [caseErrored, setCaseErrored] = useState('');
-  const [caseId, setCaseId] = useState(null); // 判型结果将回写该档案 case.mbti_type
+  const [caseId, setCaseId] = useState(initCaseId || null); // 判型结果将回写该档案 case.mbti_type（档案内「MBTI」进入时由 App 传 initCaseId 预选）
   // REQ-047：分享按钮（仅 scored 判型且有档案时可用）
   const [shareUrl, setShareUrl] = useState(null); // 完整分享链接（window.location.origin + d.url）
   const [shareLoading, setShareLoading] = useState(false);
@@ -7568,6 +7776,44 @@ function MbtiPage({
     load();
     loadCases();
   }, []);
+  // REQ-039 退回细化④：已选档案（含档案内 MBTI / 建档 returnTo 预选）再入本页时，
+  // 若该档案已有判型记录 → 直达结果页（最近一条 {type,scores} + type_info），
+  // 不再直接进入重测；「重新测试」按钮走 reset() 才回到答题流程。
+  // 同一档案在本组件生命周期内只探测一次：reset() 后 caseId 不变 → 不会再把
+  // 用户拉回结果页，可正常重测；重入本页（组件重挂载）时重新探测直达。
+  const checkedCase = useRef(null);
+  useEffect(() => {
+    if (caseId == null || checkedCase.current === String(caseId)) return;
+    checkedCase.current = String(caseId);
+    let alive = true;
+    (async () => {
+      try {
+        const rr = await api('/mbti/results?case_id=' + encodeURIComponent(caseId));
+        const items = rr && rr.data && rr.data.items || (rr && rr.items) || [];
+        if (!alive) return;
+        const latest = items && items.length ? items[0] : null;
+        if (latest && latest.type) {
+          setResult({
+            id: latest.id != null ? latest.id : null,
+            type: latest.type,
+            scores: latest.scores || {},
+            mode: 'scored'
+          });
+          setInfo(null);
+          setInfoLoading(false);
+          setInfoErr('');
+          setScoreErr('');
+          setView('result');
+          if (latest.id != null) fetchInfo(latest.id);
+        }
+      } catch (e) {
+        /* 探测失败静默：不阻塞答题流程（档案选择照常可用） */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [caseId]);
   // —— 拉取判型文案（GET /api/mbti/results/{id}）——
   const fetchInfo = async id => {
     if (!id) return;
@@ -8209,10 +8455,12 @@ function App() {
       onNavigate: navigate
     }),
     astrology: /*#__PURE__*/React.createElement(AstrologyPage, {
-      onNavigate: navigate
+      onNavigate: navigate,
+      initCaseId: params.caseId
     }),
     mbti: /*#__PURE__*/React.createElement(MbtiPage, {
-      onNavigate: navigate
+      onNavigate: navigate,
+      initCaseId: params.caseId
     }),
     'mbti-share': /*#__PURE__*/React.createElement(MbtiSharePage, {
       token: params.token,
