@@ -1,0 +1,74 @@
+{
+  "_meta": {
+    "doc": "C5 全站按钮/提示/错误文案修订（buttons/tips/error 三组全站替换）",
+    "req": "REQ-037",
+    "category": "B 原创",
+    "source": "原创；在 round1 B1_ui_copy.json 基础上做一致性收口与全站接回。",
+    "tone": "含蓄、趋势参考口径；功能性动词保持可操作（不过度创意化），情绪/空态/错误态柔化去机械感。",
+    "target": "前端 UI_COPY 常量（frontend/public/index.html，第 625 行起）；各模块按钮/提示/错误态从常量引用，不再散落硬编码。",
+    "complianceNote": "全部为倾向/宜软性措辞，配合 compliance.disclaimer_full / footer_note 使用。"
+  },
+  "revisionNotes": [
+    "buttons.create_case：'新建档案' → '新建命理档案'（更明确，呼应 empty.no_case）。",
+    "buttons.start_quiz：'开始答题' → '开始测试'（与 module_hub.enter_mbti '开始人格测试' 口径统一）。",
+    "tips.hint_placeholder：'示例：' → '例如：'（更自然）。",
+    "其余 buttons/tips/error/empty 文案经评审保留（round1 已定稿，风格与合规一致），本轮仅做全站接回（消除硬编码散落）。"
+  ],
+  "buttons": {
+    "create_case": "新建命理档案",
+    "choose_case": "选择已有档案",
+    "generate_chart": "生成星盘",
+    "start_divination": "开始起卦",
+    "draw_cards": "抽牌",
+    "start_quiz": "开始测试",
+    "redo": "重新抽卡",
+    "rechoose": "重选牌阵",
+    "back": "返回",
+    "view_archive": "查看档案",
+    "back_to_list": "回到档案列表",
+    "back_home": "回到首页",
+    "deep_read": "本命深度解读",
+    "buy_points": "购买积分",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出登录",
+    "confirm": "确认",
+    "cancel": "取消"
+  },
+  "tips": {
+    "loading_chart": "正在为你推演星图，请稍候……",
+    "loading_read": "解读生成中，趋势正在成形。",
+    "info_points_cost": "本次解读将消耗积分，结果可随时回看。",
+    "hint_revision": "补充更准确的信息，可让结果更贴合你的真实处境。",
+    "hint_placeholder": "例如：想了解近半年的事业走向。",
+    "hint_compliance": "以下为趋势参考，供你自行判断，非确定结论。"
+  },
+  "error": {
+    "net_error": "网络似乎打了个盹，请稍后重试。",
+    "auth_expired": "登录状态已失效，请重新登录以继续。",
+    "param_invalid": "信息填写不完整或有误，请检查后再试。",
+    "points_insufficient": "积分不足，补足后可继续本次解读。",
+    "unknown": "出现了一点小状况，请稍后再试；若持续发生可联系我们。",
+    "rate_limit": "操作过于频繁，稍作停留后再继续吧。"
+  },
+  "empty": {
+    "no_case": "还没有命理档案。新建一份，开启你的趋势参考。",
+    "no_reading": "这一模块尚未生成结果。选择方向，开始第一次推演。",
+    "no_mbti": "尚未完成人格测试。用几分钟，认识另一个角度的自己。",
+    "no_history": "暂无历史记录，每一次探索都会在这里留痕。"
+  },
+  "wiringMap": {
+    "说明": "以下前端硬编码字符串已在本轮接回 UI_COPY 常量（frontend/public/index.html）：",
+    "2170": "\"+ 新建档案\" → '+ ' + UI_COPY.buttons.create_case",
+    "6259": "'开始起卦'（非加载态）→ UI_COPY.buttons.start_divination",
+    "7000": "'重新抽卡' → UI_COPY.buttons.redo",
+    "7442": "'重新抽牌' → UI_COPY.buttons.redo",
+    "7955": "'新建档案' → UI_COPY.buttons.create_case",
+    "7976": "'② 生成星盘' → '② ' + UI_COPY.buttons.generate_chart",
+    "7987": "'生成星盘'（非加载态）→ UI_COPY.buttons.generate_chart",
+    "8710": "'新建档案' → UI_COPY.buttons.create_case",
+    "1444": "'积分不足，请稍后再试。'（弹窗正文 else 分支）→ UI_COPY.error.points_insufficient",
+    "1453": "'积分不足'（弹窗标题）→ UI_COPY.error.points_insufficient"
+  },
+  "outOfScopeNote": "模块专有文案（如「我已知道类型，直接输入」「抽牌失败」分区标题、塔罗/雷诺曼抽牌失败的具体 fetch 错误兜底、星盘「该盘未排，相关数据缺失。」）属模块内部展示，不在 buttons/tips/error 三组范围，本轮未改动，后续如需统一可另立条目。"
+}
