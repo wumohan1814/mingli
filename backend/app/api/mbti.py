@@ -6,6 +6,9 @@
   - GET  /api/mbti/questions      题库公开，无需鉴权：返回 {code:0, data:{questions}}，
                                   questions 直接读 mbti/data/questions.json（60 题，
                                   每题为二选一，选项带 dim pole 映射）。
+  - GET  /api/mbti/types/{type}   16 型文案公开，无需鉴权（前端手动输入类型时取
+                                  五栏详解，BUG-005）：type 大小写不敏感（转大写
+                                  匹配），非法类型 400；零落库零 LLM 零扣费。
   - POST /api/mbti/score          鉴权（Bearer token）：body {case_id, answers}，
                                   case_id 必填（须为本人档案，非本人/不存在 404）：
                                   调 mbti.scoring.score 纯代码判型得 {type, scores}，
@@ -93,6 +96,20 @@ class ScoreRequest(BaseModel):
 def get_mbti_questions():
     """题库（公开，无需鉴权）：返回 60 题标准版，每题为二选一并带维度 pole。"""
     return {"code": 0, "message": "ok", "data": {"questions": load_questions()}}
+
+
+@router.get("/mbti/types/{type_code}")
+def get_mbti_type_info(type_code: str):
+    """16 型详解文案（公开，无需鉴权）：type_code 大小写不敏感（转大写匹配
+    load_types() 的 key），命中返回该型 type_info；非法类型 400。
+    纯只读 + 进程内缓存，零落库、零 LLM、零扣费（BUG-005：供前端
+    result.mode='manual' 直接输入类型时展示对应详解文案）。"""
+    upper_type = type_code.strip().upper()
+    types_map = load_types()
+    if upper_type not in types_map:
+        raise _err(400, "未知 MBTI 类型: " + type_code)
+    return {"code": 0, "message": "ok",
+            "data": {"type": upper_type, "type_info": types_map.get(upper_type)}}
 
 
 @router.post("/mbti/score")
