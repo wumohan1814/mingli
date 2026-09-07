@@ -786,6 +786,44 @@
     .pk-slot.filled{color:var(--skin-accent);border-color:var(--skin-accent);font-weight:600}
     .pk-slot.cur{border-color:var(--gold-500);color:var(--gold-600);font-weight:700;box-shadow:0 0 0 2px rgba(184,137,62,.18)}
     .dk-hint{font-size:12px;color:var(--text-3);line-height:1.6;margin:2px 0 4px}
+
+    /* ===== REQ-066：功能设置（右上角菜单入口 → 设置页：7 开关 / 默认模式三选 / 保存状态） ===== */
+    .tc-set-sub{font-size:12px;color:var(--text-3);line-height:1.7;margin:0 2px 6px}
+    .tc-set-card{display:flex;flex-direction:column;padding:6px 20px}
+    .tc-set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 2px;border-bottom:1px dashed var(--border)}
+    .tc-set-row:last-child{border-bottom:none}
+    .tc-set-row.col{flex-direction:column;align-items:stretch;gap:2px}
+    .tc-set-text{flex:1;min-width:0}
+    .tc-set-name{font-size:14px;font-weight:600;color:var(--text-1);line-height:1.5;display:block}
+    .tc-set-desc{font-size:12px;color:var(--text-3);line-height:1.7;margin-top:3px;display:block}
+    .tc-set-row .switch{flex:none}
+    .tc-set-row .switch input:disabled + .slider{opacity:.45;cursor:not-allowed}
+    .tc-set-opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .tc-set-opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--surface);cursor:pointer;transition:border-color .14s,background .14s;line-height:1.4}
+    .tc-set-opt:hover:not(:disabled){border-color:var(--skin-accent)}
+    .tc-set-opt.sel{border-color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .tc-set-opt:disabled{opacity:.55;cursor:not-allowed}
+    .tc-set-opt .so-dot{flex:none;width:17px;height:17px;margin-top:1px;border-radius:50%;border:1.5px solid var(--border);background:var(--paper);position:relative}
+    .tc-set-opt.sel .so-dot{border-color:var(--skin-accent);background:var(--skin-accent)}
+    .tc-set-opt.sel .so-dot::after{content:"";position:absolute;inset:0;margin:auto;width:6px;height:6px;border-radius:50%;background:#fff}
+    .tc-set-opt .so-main{flex:1;min-width:0}
+    .tc-set-opt .so-t{font-size:13.5px;font-weight:600;color:var(--text-1);line-height:1.5;display:block}
+    .tc-set-opt .so-d{font-size:11.5px;color:var(--text-3);line-height:1.65;margin-top:2px;display:block}
+    .tc-set-status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-3);line-height:1.7;margin:10px 2px 0;flex-wrap:wrap}
+    .tc-set-status .ss-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--skin-accent)}
+    .tc-set-status.saving{color:var(--text-2)}
+    .tc-set-status.saving .ss-dot{background:var(--gold-500);animation:pulse 1.2s ease-in-out infinite}
+    .tc-set-status.failed{color:var(--cinnabar)}
+    .tc-set-status.failed .ss-dot{background:var(--cinnabar)}
+    .tc-set-guest{font-size:12px;color:var(--text-3);background:var(--paper);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:9px 12px;line-height:1.7;margin-top:10px}
+    /* REQ-066④：分享表单「太初 UI」品牌条（share_taichu_ui 开时显示在答题卡顶部） */
+    .tc-share-brand{border-bottom:1px dashed var(--border);padding:2px 0 12px;margin:0 0 12px}
+    .tc-share-brand-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .tc-share-brand-name{font-family:var(--font-serif);font-weight:700;font-size:17px;color:var(--text-1);letter-spacing:.04em}
+    .tc-share-brand-tag{font-size:11.5px;color:var(--text-3)}
+    .tc-share-brand-note{font-size:11.5px;color:var(--text-3);line-height:1.7;margin-top:7px}
+    .tc-share-brand-links{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+    .tc-share-brand-links .btn{width:auto;padding:6px 14px;font-size:12px;font-weight:600;border-radius:var(--radius-pill)}
   </style>
 </head>
 <body>
@@ -896,6 +934,71 @@ const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predi
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
 let onUnauthorized = null;
+// ===== REQ-066：功能设置（前端全局设置核心） =====
+// 后端契约：GET /api/settings（需 Bearer）→ {code:0,data:{settings:{anim_enabled,default_mode,
+// banner_dropdown,share_taichu_ui,bg_enabled,card_images,agent_enabled}}}；PUT 部分字段 → 全量 settings。
+// 前端默认值见 SETTINGS_DEFAULTS；未登录或接口失败一律用前端默认值（登录后由 App 拉取覆盖）。
+// 运行期镜像 TC_SETTINGS 供各页面/钩子读取（模块级对象原地 Object.assign，页挂载即读到最新值），
+// 另暴露 camelCase 只读钩子（animEnabled / defaultMode / bannerDropdown / shareTaichuUi /
+// bgEnabled / cardImages / agentEnabled），供 REQ-061 动效、REQ-076 Agent 后续接入。
+const SETTINGS_DEFAULTS = {
+  anim_enabled: true,
+  default_mode: 'auto', // 'auto'=默认项目起卦/抽卡（现状）| 'manual'=默认手动快速填写 | 'both'=两入口并行不设默认
+  banner_dropdown: false,
+  share_taichu_ui: true,
+  bg_enabled: true,
+  card_images: true,
+  agent_enabled: true
+};
+const SETTINGS_KEYS = Object.keys(SETTINGS_DEFAULTS);
+const TC_SETTINGS = Object.assign({}, SETTINGS_DEFAULTS);
+(function installTcAliases() {
+  const map = {
+    anim_enabled: 'animEnabled',
+    default_mode: 'defaultMode',
+    banner_dropdown: 'bannerDropdown',
+    share_taichu_ui: 'shareTaichuUi',
+    bg_enabled: 'bgEnabled',
+    card_images: 'cardImages',
+    agent_enabled: 'agentEnabled'
+  };
+  Object.keys(map).forEach(function (k) {
+    Object.defineProperty(TC_SETTINGS, map[k], {
+      enumerable: false,
+      configurable: true,
+      get: function () { return TC_SETTINGS[k]; }
+    });
+  });
+})();
+// 服务端原始值 → 前端规范化设置对象（未知/缺失字段回退默认值；default_mode 白名单校验）
+function normalizeTcSettings(raw) {
+  const out = Object.assign({}, SETTINGS_DEFAULTS);
+  if (raw && typeof raw === 'object') {
+    SETTINGS_KEYS.forEach(function (k) {
+      const v = raw[k];
+      if (k === 'default_mode') {
+        if (v === 'auto' || v === 'manual' || v === 'both') out[k] = v;
+      } else if (typeof v === 'boolean') {
+        out[k] = v;
+      }
+    });
+  }
+  return out;
+}
+function shallowEqTc(a, b) {
+  for (let i = 0; i < SETTINGS_KEYS.length; i++) {
+    if (a[SETTINGS_KEYS[i]] !== b[SETTINGS_KEYS[i]]) return false;
+  }
+  return true;
+}
+// ② 默认模式助手：manual=默认停在手动录入入口；auto=自动起卦/抽卡（现状）；
+// both=两入口并行、不强行设默认 → 每次打开保留上次所选（返回 keepCurrent 原值）。
+function tcAskNextDefault(keepCurrent) {
+  const dm = TC_SETTINGS.default_mode;
+  if (dm === 'manual') return 'manual';
+  if (dm === 'both') return keepCurrent;
+  return 'auto';
+}
 // BUG-011：MBTI 分享落地页（/mbti/share 或 /mbti/share/{token}）是公开免登录入口，
 // 访客会话必须与分享者隔离：分享页期间全局 token/refreshToken 一律置空（绝不写回
 // localStorage），使任何 api() 请求都不携带分享者 Authorization；离开分享页时若有
@@ -6252,12 +6355,13 @@ function TopbarModNav({
   }, it.label))))));
 }
 
-// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 余额¥ + 汉堡按钮 + 下拉（切模块回落地页 / 退出登录）
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 余额¥ + 汉堡按钮 + 下拉（切模块回落地页 / 功能设置 / 档案管理 / 退出登录）
 function TopbarMenu({
   loggedIn,
   onAuth,
   onPickModule,
   onCases,
+  onSettings,
   onLogout,
   onCredits
 }) {
@@ -6320,7 +6424,20 @@ function TopbarMenu({
     style: {
       background: m.color
     }
-  }), m.label)), /*#__PURE__*/React.createElement("button", {
+  }), m.label)), /* REQ-066：右上角菜单「功能设置」入口（菜单按钮名统一为「功能设置」）→ 设置页 */
+  /*#__PURE__*/React.createElement("button", {
+    className: "menu-item",
+    role: "menuitem",
+    onClick: () => {
+      setOpen(false);
+      onSettings && onSettings();
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mi-dot",
+    style: {
+      background: '#44558F'
+    }
+  }), "功能设置"), /*#__PURE__*/React.createElement("button", {
     className: "menu-item",
     role: "menuitem",
     onClick: () => {
@@ -9120,9 +9237,10 @@ function DivinationPage({
     }
   };
   // REQ-044 v2：点选列表方法 → 打开起卦弹窗（todo 置灰提示；切换方法沿用 v1 行为：清旧结果、时间类重置为默认今天 + 当前时辰）
-  // REQ-069：每次打开弹窗默认「自动」模式并重置手动录入内容
+  // REQ-069：每次打开弹窗重置手动录入内容
+  // REQ-066②：默认模式按功能设置 default_mode —— manual=默认手动录入入口 / auto=自动起卦（现状）/ both=并行不预设（保留上次所选）
   const resetManualState = function () {
-    setAskMode('auto');
+    setAskMode(tcAskNextDefault(askMode));
     setYaoPick(blankYaoRows());
     setSignNo(null);
     setXlrWay('nums');
@@ -10080,7 +10198,8 @@ function TarotPage({
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
   // REQ-069：手动选牌（真实世界已抽好 → 从牌库按牌位录入 + 定正/逆位）与自动抽牌并行
-  const [mode, setMode] = useState('auto'); // 'auto' | 'manual'
+  // REQ-066②：默认入口按功能设置 default_mode —— manual=手动选牌 / auto=自动抽牌（现状）/ both=并行不预设
+  const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // {id,name,reversed}
   const [pickOri, setPickOri] = useState('up'); // 当前待选牌的正/逆位
   const [dkFilter, setDkFilter] = useState('all');
@@ -10203,7 +10322,8 @@ function TarotPage({
     setPicks([]);
     setPickOri('up');
     setDkFilter('all');
-    setMode('auto');
+    // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
+    setMode(tcAskNextDefault(mode));
     setWasManual(false);
   };
   // 重新出牌：手动结果回到选牌步骤重录；自动结果重新自动抽牌
@@ -10225,6 +10345,8 @@ function TarotPage({
   const drawData = (data && data.draw) || null;
   const cards = drawData && Array.isArray(drawData.cards) ? drawData.cards : [];
   const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || '抽卡结果';
+  // REQ-066⑥：牌面图片显示（塔罗/雷诺曼）—— 关 = 纯文字列表模式（隐藏牌面图/扇形）
+  const cardImagesOn = TC_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-042 v2：draw 顶部承接所填占问问题文本（保留）
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
@@ -10257,12 +10379,13 @@ function TarotPage({
       React.createElement('div', { className: 'section-title' }, spreadName),
       askEcho,
       // REQ-042 v2：上方仅平铺本次抽到的全部卡（图/标题/关键词标签），卡内不嵌牌义
-      React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
+      // REQ-066⑥：card_images 关 → 隐藏牌面图/扇形，结果改纯文字列表（卡名+正/逆位+含义段落）
+      cardImagesOn ? React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
         return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
-      })),
+      })) : null,
       // REQ-042 v2：牌义集中到下方段落（固定可复用文案，非 LLM，自第一张起）
       React.createElement('div', { className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+        React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '各张牌义' : '抽到的牌（纯文字模式）'),
         meanItems),
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       React.createElement('div', { className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'),
@@ -10320,7 +10443,7 @@ function TarotPage({
       className: 'dk-cell',
       onClick: function () { placeCard(di); }
     },
-      React.createElement('div', { className: 'dk-thumb' }, d.thumb ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', null, d.name.slice(0, 1))),
+      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: '#fff', fontSize: 17, fontWeight: 700 } }, d.name.slice(0, 1))),
       React.createElement('div', { className: 'dk-n' }, d.name)));
   });
   const pickBody = React.createElement('div', { className: 'card pick-box' },
@@ -10678,7 +10801,8 @@ function LenormandPage({
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
   // REQ-069：手动选牌（真实世界已抽好 → 从 36 张牌库按牌位数录入）与自动抽牌并行
-  const [mode, setMode] = useState('auto'); // 'auto' | 'manual'
+  // REQ-066②：默认入口按功能设置 default_mode（manual=手动选牌 / auto=自动抽牌 / both=并行不预设）
+  const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // LENORMAND_DECK 条目（含 num）
   const [wasManual, setWasManual] = useState(false);
   const lnApiType = function (sp) { return sp && sp.id === 'grid' ? 'nine' : (sp ? (sp.id || 'single') : 'single'); };
@@ -10794,7 +10918,8 @@ function LenormandPage({
     setInterp('');
     setInterpErr('');
     setPicks([]);
-    setMode('auto');
+    // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
+    setMode(tcAskNextDefault(mode));
     setWasManual(false);
   };
   const redo = () => {
@@ -10813,6 +10938,8 @@ function LenormandPage({
   const result = (data && data.result) || null;
   const cards = result && Array.isArray(result.cards) ? result.cards : [];
   const spreadName = (result && result.spreadName) || (spread && spread.name) || '抽牌结果';
+  // REQ-066⑥：牌面图片显示（塔罗/雷诺曼）—— 关 = 纯文字列表模式（隐藏牌面图/扇形）
+  const cardImagesOn = TC_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-043 v2：draw 顶部承接所填占问问题文本
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
@@ -10844,12 +10971,13 @@ function LenormandPage({
       React.createElement('div', { className: 'section-title' }, spreadName),
       askEcho,
       // REQ-043 v2：上方卡位仅平铺卡面（图/标题/关键词标签），不放解释
-      React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
+      // REQ-066⑥：card_images 关 → 隐藏牌面图/扇形，结果改纯文字列表（卡名+含义段落）
+      cardImagesOn ? React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
         return lnCardEl(lnCardOf(c), i);
-      })),
+      })) : null,
       // REQ-043 v2：主题/细节解释归拢到下方段落（固定可复用文案，自第一张起）
       React.createElement('div', { className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+        React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '各张牌义' : '抽到的牌（纯文字模式）'),
         meanItems),
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       React.createElement('div', { className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'),
@@ -10903,7 +11031,7 @@ function LenormandPage({
       className: 'dk-cell',
       onClick: function () { placeCard(di); }
     },
-      React.createElement('div', { className: 'dk-thumb' }, d.thumb ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', null, String(d.num))),
+      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: '#fff', fontSize: 17, fontWeight: 700 } }, String(d.num))),
       React.createElement('div', { className: 'dk-n' }, d.name)));
   });
   const pickBody = React.createElement('div', { className: 'card pick-box' },
@@ -12664,6 +12792,18 @@ function MbtiSharePage({
   onNavigate
 }) {
   const el = React.createElement;
+  // REQ-066④：分享表单太初 UI —— share_taichu_ui 开 → 答题表单内显示太初 logo、登录注册与免责提示；
+  // 关 → 仅表单（填完仅保存结果；访客会话隔离与受限页拦截由 BUG-011 / BUG-002 负责）。
+  const shareUiOn = TC_SETTINGS.share_taichu_ui !== false;
+  const shareBrand = shareUiOn ? el('div', {className: 'tc-share-brand'},
+    el('div', {className: 'tc-share-brand-head'},
+      el(Icon, {name: 'spark', size: 18}),
+      el('span', {className: 'tc-share-brand-name'}, UI_COPY.brand.name),
+      el('span', {className: 'tc-share-brand-tag'}, UI_COPY.brand.tagline)),
+    el('div', {className: 'tc-share-brand-note'}, UI_COPY.landing.disclaimer_short),
+    el('div', {className: 'tc-share-brand-links'},
+      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('auth')}, '登录 / 注册'),
+      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('landing')}, '了解太初'))) : null;
   const [caseName, setCaseName] = useState('');
   const [questions, setQuestions] = useState([]);
   const [idx, setIdx] = useState(0);
@@ -12837,12 +12977,110 @@ function MbtiSharePage({
             el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setIdx(idx - 1)}, '上一题')) : null));
     }
   }
+  // REQ-066④：品牌条仅在「答题表单视图」出现（loading/失败/结果/无效链接时不渲染）
+  const inForm = !!tk && !result && !loading && !errored && total > 0 && !!questions[idx];
   return el('div', {className: 'container'},
     el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
     caseName && !result ? el('div', {style: {fontSize: 13, color: 'var(--text-2)', marginBottom: 2}}, '为「' + caseName + '」填写 MBTI') : null,
+    inForm && shareUiOn ? el('div', {className: 'card', style: {padding: '14px 20px 10px', margin: '12px 0 0'}}, shareBrand) : null,
     body);
 }
 
+
+/* ---------- REQ-066：功能设置页（右上角菜单「功能设置」→ 此视图） ---------- */
+// 7 项设置：①动画与抽卡模拟 ②占卜界面默认模式（三选一）③Banner 模块下拉导航
+// ④分享表单太初 UI ⑤背景图显示 ⑥牌面图片显示 ⑦太初先生 Agent（存值 + 暴露 agentEnabled
+// 钩子，入口待 REQ-076 接入）。改动即保存：props.onPatch 本地即时生效，App 防抖 PUT，
+// saveState 展示 已保存 / 保存中… / 失败回退。未登录（访客）只读展示前端默认值。
+function SettingsPage({
+  settings,
+  saveState,
+  loggedIn,
+  onPatch,
+  onNavigate
+}) {
+  const disabled = !loggedIn;
+  // 默认模式三选一（与后端 default_mode 契约一致）
+  const dmOpts = [{
+    v: 'auto',
+    t: '默认项目起卦 / 抽卡方式（默认）',
+    d: '保持现状：进入占卜界面默认停在自动起卦 / 自动抽卡。'
+  }, {
+    v: 'manual',
+    t: '默认手动快速填写',
+    d: '进入后默认停在手动录入 / 手动选牌入口，直接填写真实结果。'
+  }, {
+    v: 'both',
+    t: '两方式都可用',
+    d: '自动与手动两入口并行展示、不强行预设（保留上次所选）。'
+  }];
+  const curDm = settings.default_mode === 'manual' || settings.default_mode === 'both' ? settings.default_mode : 'auto';
+  // 开关行渲染（label.switch 复用既有 .switch/.slider 样式）
+  const switchRow = function (key, name, desc, checked) {
+    return React.createElement('div', { className: 'tc-set-row' },
+      React.createElement('div', { className: 'tc-set-text' },
+        React.createElement('span', { className: 'tc-set-name' }, name),
+        desc ? React.createElement('span', { className: 'tc-set-desc' }, desc) : null),
+      React.createElement('label', { className: 'switch', 'aria-label': name },
+        React.createElement('input', {
+          type: 'checkbox',
+          checked: !!checked,
+          disabled: disabled,
+          onChange: function (e) { onPatch(key, e.target.checked); }
+        }),
+        React.createElement('span', { className: 'slider' })));
+  };
+  // 默认模式行（三选一单选行）
+  const dmRow = React.createElement('div', { className: 'tc-set-row col' },
+    React.createElement('div', { className: 'tc-set-text' },
+      React.createElement('span', { className: 'tc-set-name' }, '占卜界面默认模式'),
+      React.createElement('span', { className: 'tc-set-desc' }, '控制塔罗 / 雷诺曼 / 临时起卦等占卜界面的默认入口方式。')),
+    React.createElement('div', { className: 'tc-set-opts' }, dmOpts.map(function (o) {
+      return React.createElement('button', {
+        key: o.v,
+        type: 'button',
+        className: 'tc-set-opt' + (curDm === o.v ? ' sel' : ''),
+        disabled: disabled,
+        onClick: function () { onPatch('default_mode', o.v); }
+      },
+      React.createElement('span', { className: 'so-dot' }),
+      React.createElement('span', { className: 'so-main' },
+        React.createElement('span', { className: 'so-t' }, o.t),
+        React.createElement('span', { className: 'so-d' }, o.d)));
+    })));
+  const saveCls = saveState === 'failed' ? 'failed' : saveState === 'saving' ? 'saving' : 'ok';
+  const saveTxt = !loggedIn ? '未登录：以下为前端默认值，登录后调整将同步保存到账户。'
+    : saveState === 'saving' ? '保存中…'
+      : saveState === 'failed' ? '保存失败，已回退为最近一次保存值，请重试。'
+        : '已保存';
+  const goBack = function () {
+    try {
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+    } catch (e) {/* 忽略，走 fallback */}
+    onNavigate('landing');
+  };
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 功能设置'),
+    React.createElement('div', { className: 'tc-set-sub' }, '功能设置 · 全部改动即时生效并自动保存（无需额外保存按钮）'),
+    React.createElement('div', { className: 'card tc-set-card' },
+      switchRow('anim_enabled', '动画与抽卡模拟', '关闭后各占卜界面跳过动效直接出结果。', settings.anim_enabled),
+      dmRow,
+      switchRow('banner_dropdown', 'Banner 模块下拉导航', '开启后顶部横幅正中显示「模块」下拉，直达各功能页；关闭则不展示。', settings.banner_dropdown),
+      switchRow('share_taichu_ui', '分享表单太初 UI', '开启后分享答题表单内显示太初 logo、登录注册与免责提示；关闭后仅表单。', settings.share_taichu_ui),
+      switchRow('bg_enabled', '背景图显示', '开启显示模块主题运营背景（含星点背景）；关闭后为纯色默认样式。', settings.bg_enabled),
+      switchRow('card_images', '牌面图片显示（塔罗 / 雷诺曼）', '关闭后为纯文字列表模式：仅显示抽到的卡名、正 / 逆位与含义段落。', settings.card_images),
+      switchRow('agent_enabled', '太初先生 Agent', '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。', settings.agent_enabled)),
+    React.createElement('div', { className: 'tc-set-status ' + saveCls },
+      React.createElement('span', { className: 'ss-dot' }),
+      React.createElement('span', null, saveTxt)),
+    !loggedIn ? React.createElement('div', { className: 'tc-set-guest' }, '当前为未登录状态：设置仅按前端默认值展示，暂不可修改；登录后将从账户拉取并保存。') : null,
+    React.createElement('div', { className: 'back-row' },
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: goBack }, '返回'),
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('landing'); } }, '回到首页')));
+}
 
 // ---- App Router ----
 function App() {
@@ -12857,6 +13095,80 @@ function App() {
   });
   const [creditModal, setCreditModal] = useState(null);
   const [pairCfg, setPairCfg] = useState(null); // REQ-072：配对解析弹窗配置 {module}，非空时渲染 PairModal
+  // REQ-066：功能设置 —— 全局 state（App 顶层）+ 保存态。默认值 SETTINGS_DEFAULTS；
+  // 登录后 GET /api/settings 覆盖，未登录/接口失败保持前端默认；改动本地即时生效并防抖 PUT。
+  // tcSavedRef = 服务端最近确认值（用于保存失败回退）；tcLoadedRef = 本登录会话是否已拉取。
+  const [tcSet, setTcSet] = useState(function () { return Object.assign({}, SETTINGS_DEFAULTS); });
+  const [tcSave, setTcSave] = useState('saved'); // 'saved' | 'saving' | 'failed'
+  const tcSavedRef = useRef(Object.assign({}, SETTINGS_DEFAULTS));
+  const tcLoadedRef = useRef(false);
+  const tcSeqRef = useRef(0); // PUT 序号：忽略乱序返回的旧响应，避免旧响应覆盖新改动
+  const patchTcSettings = function (patch) {
+    setTcSet(function (prev) { return Object.assign({}, prev, patch); });
+  };
+  const applyTcSettings = function (next) {
+    tcSeqRef.current++; // 使任何在途 PUT 失效（GET/登出覆盖优先）
+    tcSavedRef.current = next;
+    setTcSet(next);
+    setTcSave('saved');
+  };
+  // 拉取服务端设置：成功 → 覆盖；未登录 / 接口失败 → 前端默认值
+  const loadTcSettings = async function () {
+    try {
+      const res = await api('/settings', { method: 'GET' });
+      const raw = (res && res.data && res.data.settings) || (res && res.settings) || null;
+      applyTcSettings(raw && typeof raw === 'object' ? normalizeTcSettings(raw) : Object.assign({}, SETTINGS_DEFAULTS));
+    } catch (e) {
+      applyTcSettings(Object.assign({}, SETTINGS_DEFAULTS));
+    } finally {
+      tcLoadedRef.current = true;
+    }
+  };
+  // 退出登录：清会话 + 设置回默认（下次登录重新拉取）
+  const doLogout = function () {
+    logout();
+    tcLoadedRef.current = false;
+    applyTcSettings(Object.assign({}, SETTINGS_DEFAULTS));
+  };
+  // REQ-066：登录态 / 页面切换时拉取设置（启动带 token、登录/注册成功各拉一次；登出重置标记）
+  useEffect(() => {
+    if (token && page !== 'auth' && !tcLoadedRef.current) {
+      loadTcSettings();
+    } else if (!token) {
+      tcLoadedRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+  // REQ-066：设置镜像 TC_SETTINGS（供各页面钩子读取）+ 防抖保存 —— tcSet 与「已确认值」
+  // 不一致 → 450ms 后 PUT 全量设置；成功用服务端返回值覆盖（刷新确认基线），失败回退基线并标 failed。
+  useEffect(() => {
+    Object.assign(TC_SETTINGS, tcSet);
+    if (shallowEqTc(tcSet, tcSavedRef.current)) return;
+    setTcSave('saving');
+    const seq = ++tcSeqRef.current;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api('/settings', { method: 'PUT', body: JSON.stringify(tcSet) });
+        if (seq !== tcSeqRef.current) return; // 已有更新的改动/覆盖，丢弃本次旧响应
+        const raw = (res && res.data && res.data.settings) || (res && res.settings) || null;
+        if (raw && typeof raw === 'object') {
+          const next = normalizeTcSettings(raw);
+          tcSavedRef.current = next;
+          setTcSet(next);
+        } else {
+          tcSavedRef.current = Object.assign({}, tcSet);
+        }
+        setTcSave('saved');
+      } catch (e) {
+        if (seq !== tcSeqRef.current) return; // 旧请求失败不再回退（避免覆盖新改动）
+        setTcSave('failed');
+        setTcSet(Object.assign({}, tcSavedRef.current));
+        if (e && (e.status === 401 || e.code === 401)) tcLoadedRef.current = false;
+      }
+    }, 450);
+    return function () { clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tcSet]);
   useEffect(() => {
     // BUG-011：分享落地页（/mbti/share/{token}）是公开免登录入口 → 命中时跳过本地
     // token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存会话保持空（访客
@@ -13075,12 +13387,22 @@ function App() {
     'mbti-share': /*#__PURE__*/React.createElement(MbtiSharePage, {
       token: params.token,
       onNavigate: navigate
+    }),
+    // REQ-066：功能设置页（右上角菜单「功能设置」进入）
+    settings: /*#__PURE__*/React.createElement(SettingsPage, {
+      settings: tcSet,
+      saveState: tcSave,
+      loggedIn: !!token,
+      onPatch: patchTcSettings,
+      onNavigate: navigate
     })
   };
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", null, /* REQ-066⑤：bg_enabled 开 → 渲染运营背景图层（.bg-layer 模块主题渐变 + .starfield 星点）；
+     关 → 一律不渲染，回 body 纯色默认样式（--paper） */
+  tcSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
     className: "bg-layer bg-" + module,
     "aria-hidden": "true"
-  }), /*#__PURE__*/React.createElement("div", {
+  }), tcSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
     className: "starfield",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("header", {
@@ -13098,22 +13420,26 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, UI_COPY.brand.tagline)), /* REQ-071：正中「模块」下拉（在「太初」与右上角 余额/汉堡 之间，
-    用 flex 中列 + space-between 等距留白，不遮挡两侧） */
-  /*#__PURE__*/React.createElement(TopbarModNav, {
+  }, UI_COPY.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「太初」与右上角 余额/汉堡 之间，
+     用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
+     banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
+  tcSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
     onGo: goFeature
   }), /*#__PURE__*/React.createElement(TopbarMenu, {
     loggedIn: !!token,
     onAuth: () => navigate('auth'),
     onPickModule: selectModule,
     onCases: () => navigate('cases'),
+    onSettings: () => navigate('settings'),
     onCredits: () => navigate('credits'),
-    onLogout: () => logout()
+    onLogout: () => doLogout()
   })), /*#__PURE__*/React.createElement("div", {
     className: "app-shell"
   }, /*#__PURE__*/React.createElement("div", {
     className: "view-enter",
-    key: page
+    key: page,
+    /* REQ-066①：anim_enabled 关 → 页面切换动画直接跳过（供 REQ-061 动效读取的现成一处） */
+    style: tcSet.anim_enabled ? undefined : { animation: 'none' }
   }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
     module: module,
     onSelect: selectModule,
