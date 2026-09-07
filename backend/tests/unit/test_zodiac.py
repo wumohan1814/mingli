@@ -163,9 +163,11 @@ def test_zodiac_raw_function_contract():
     assert isinstance(out["riskRelations"], list)
     assert out["evidenceGrade"] == "轻量"
     assert out["interpretationBoundary"] == "仅限生肖与流年关系"
-    # 顶层 17 键 = 15 个可解释字段（含 BUG-003 新增 zodiacWuxing）+ evidenceAnalysis + prompt
-    assert len(out["keys"]) == 17
+    # 顶层 19 键 = 17 个可解释字段（含 zodiacWuxing + C1 relationCopy + C2 nobleDetail）+ evidenceAnalysis + prompt
+    assert len(out["keys"]) == 19
     assert "zodiacWuxing" in out["keys"]
+    assert "relationCopy" in out["keys"]
+    assert "nobleDetail" in out["keys"]
     # raw 结果确实带内部字段 → 证明 stripInternal 之前存在、之后需要剥离
     assert out["hasEvidenceAnalysis"] is True
     assert out["hasPrompt"] is True

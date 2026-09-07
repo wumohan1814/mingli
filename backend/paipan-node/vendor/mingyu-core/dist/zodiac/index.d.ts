@@ -26,6 +26,10 @@ export interface ZodiacYearFortune {
     zodiacWuxing: string;
     /** 三合/六合贵人（流年命中时）；否则为 B2 贵人兜底文案（BUG-003），保证非空 */
     noble: string;
+    /** 五行关系固定解读文案（C1 确定性文案，按 relation 查表；查无为空串） */
+    relationCopy: string;
+    /** 贵人静态解读（C2）：命中六合/三合时带对应 explain；恒带天乙贵人 note + partners（按年干） */
+    nobleDetail: { 六合?: { partner: string; explain: string }; 三合?: { partners: string; explain: string }; 天乙贵人?: { note: string; partners?: string } };
     /** 两支同属固定三会组；只记录关系，不表示完整三会成局 */
     meeting: string | null;
     conflicts: TaiSuiConflict[];
