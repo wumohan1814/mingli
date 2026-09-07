@@ -20,9 +20,11 @@
  *   POST /zodiac  {zodiac:"鼠", year:2026}
  *     → 200 application/json，生肖流年运程（已 stripInternal）：
  *       {zodiac, zodiacBranch, yearGanZhi, yearBranch, taiSui:{yearBranch, star},
- *        relation, elementRelation, noble, tianyiNoble?, meeting, conflicts,
- *        evidenceGrade, interpretationBoundary, favorableRelations, riskRelations,
- *        actionSignals}
+ *        relation, elementRelation, zodiacWuxing, noble, tianyiNoble?, meeting,
+ *        conflicts, evidenceGrade, interpretationBoundary, favorableRelations,
+ *        riskRelations, actionSignals}
+ *       zodiacWuxing 为 B2 本气五行展示文案（如“水（子）”）；贵人三层兜底：
+ *       流年命中六合/三合 > B2 贵人（引擎 zodiac/index.js 回填）> tianyiNoble（此处）。
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
  *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
@@ -287,10 +289,12 @@ function computeZodiac(input) {
   if (raw.yearGanZhi) {
     result.taiSui = getYearTaiSui(raw.yearGanZhi);  // {yearBranch, star}
   }
-  // BUG-003：引擎 noble（六合/三合贵人）仅在生肖与流年命中六合/三合时非空，
-  // 否则为 null → 前端「贵人」卡空白。此处当 noble 为空/缺失时补确定性
-  // tianyiNoble（天乙贵人，按流年年干查固定映射），保证「贵人」卡永远有内容；
-  // 前端会优先展示 noble，故仅在 noble 为空时设置。
+  // BUG-003：贵人字段三层保障，保证最终输出「贵人」内容永远非空：
+  //   ① 引擎 noble = 流年命中六合/三合贵人（非空即优先）；
+  //   ② 引擎 noble 为空时，由 zodiac/index.js 以 B2 该生肖「贵人」确定性文案回填
+  //      （ZODIAC_ANNUAL_COPY，覆盖全部 12 生肖，因此正常不会走到本分支）；
+  //   ③ 仍为空（仅当 B2 数据缺失等异常时）→ 此处按流年年干补 tianyiNoble
+  //      （天乙贵人，按固定映射查表）作为最后兜底。
   if (!result.noble) {
     const yearGanZhi = raw.yearGanZhi || result.yearGanZhi;
     if (typeof yearGanZhi === 'string' && yearGanZhi.length > 0) {

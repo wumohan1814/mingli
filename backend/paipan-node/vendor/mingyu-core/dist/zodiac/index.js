@@ -81,6 +81,103 @@ function assertTaiSuiStarTable() {
     }
 }
 assertTaiSuiStarTable();
+/**
+ * BUG-003 确定性文案（来源：docs/文案交付/B2_zodiac_annual.json，UTF-8 原文逐字收录）。
+ * 仅作“计算未覆盖”时的回填兜底，纯确定性、零 LLM、零新依赖：
+ * - 本气五行：该生肖地支本气的展示文案（机读五行见 elementRelation.zodiacWuxing）。
+ * - 贵人/风险关系/行动建议：按地支固定关系（三合/六合/冲/害/刑/破）生成的固定文案，
+ *   与流年年支是否命中无关，故仅用于对应计算字段为空的场景。
+ * 键按十二生肖名（与 ZODIACS 同序），无内部字段名（evidenceAnalysis/prompt 等），
+ * 不会被 stripInternal 剥离。
+ */
+const ZODIAC_ANNUAL_COPY = Object.freeze({
+    鼠: Object.freeze({
+        本气五行: '水（子）',
+        贵人: '三合：猴、龙；六合：牛',
+        风险关系: '相冲：马；相害：羊；相破：鸡；相刑：兔（无礼之刑）',
+        行动建议: '水主智，宜以灵活与积淀应对变化；顺势之年多结善缘，逆势之年忌冒进与口舌。',
+    }),
+    牛: Object.freeze({
+        本气五行: '土（丑，己土）',
+        贵人: '三合：蛇、鸡；六合：鼠',
+        风险关系: '相冲：羊；相害：马；相破：龙；相刑：狗、羊（恃势之刑）',
+        行动建议: '土主稳，宜守成与深耕；顺势之年可拓展根基，逆势之年忌固执与硬扛。',
+    }),
+    虎: Object.freeze({
+        本气五行: '木（寅）',
+        贵人: '三合：马、狗；六合：猪',
+        风险关系: '相冲：猴；相害：蛇；相破：猪；相刑：蛇、猴（无恩之刑）',
+        行动建议: '木主生发，宜主动开拓；顺势之年借势向前，逆势之年忌冲动与孤行。',
+    }),
+    兔: Object.freeze({
+        本气五行: '木（卯）',
+        贵人: '三合：猪、羊；六合：狗',
+        风险关系: '相冲：鸡；相害：龙；相破：马；相刑：鼠（无礼之刑）',
+        行动建议: '木主柔韧，宜以巧劲化解阻力；顺势之年多谋善断，逆势之年忌优柔与内耗。',
+    }),
+    龙: Object.freeze({
+        本气五行: '土（辰，戊土）',
+        贵人: '三合：猴、鼠；六合：鸡',
+        风险关系: '相冲：狗；相害：兔；相破：牛；自刑：辰',
+        行动建议: '土主承载，宜以格局与信誉立身；顺势之年可担大任，逆势之年忌张扬与专断。',
+    }),
+    蛇: Object.freeze({
+        本气五行: '火（巳）',
+        贵人: '三合：鸡、牛；六合：猴',
+        风险关系: '相冲：猪；相害：虎；相破：申；相刑：虎、猴（无恩之刑）',
+        行动建议: '火主明，宜以洞察与谋定后动；顺势之年借智慧破局，逆势之年忌猜忌与纠缠。',
+    }),
+    马: Object.freeze({
+        本气五行: '火（午）',
+        贵人: '三合：虎、狗；六合：羊',
+        风险关系: '相冲：鼠；相害：牛；相破：兔；自刑：午',
+        行动建议: '火主跃动，宜把控节奏、张弛有度；顺势之年可放手一搏，逆势之年忌急躁与分散。',
+    }),
+    羊: Object.freeze({
+        本气五行: '土（未，己土）',
+        贵人: '三合：猪、兔；六合：马',
+        风险关系: '相冲：牛；相害：鼠；相破：狗；相刑：牛、狗（恃势之刑）',
+        行动建议: '土主温厚，宜以和顺聚人聚气；顺势之年广结善缘，逆势之年忌犹疑与跟风。',
+    }),
+    猴: Object.freeze({
+        本气五行: '金（申）',
+        贵人: '三合：鼠、龙；六合：蛇',
+        风险关系: '相冲：虎；相害：猪；相破：巳；相刑：虎、蛇（无恩之刑）',
+        行动建议: '金主锐，宜以机变与务实并进；顺势之年多路开花，逆势之年忌投机与口舌。',
+    }),
+    鸡: Object.freeze({
+        本气五行: '金（酉）',
+        贵人: '三合：蛇、牛；六合：龙',
+        风险关系: '相冲：兔；相害：狗；相破：子；自刑：酉',
+        行动建议: '金主精，宜以专业与细致见长；顺势之年可求精进，逆势之年忌苛责与孤芳。',
+    }),
+    狗: Object.freeze({
+        本气五行: '土（戌，戊土）',
+        贵人: '三合：虎、马；六合：兔',
+        风险关系: '相冲：龙；相害：鸡；相破：羊；相刑：牛、羊（恃势之刑）',
+        行动建议: '土主忠，宜以可靠与守约立信；顺势之年得同伴助，逆势之年忌较真与硬碰。',
+    }),
+    猪: Object.freeze({
+        本气五行: '水（亥）',
+        贵人: '三合：兔、羊；六合：虎',
+        风险关系: '相冲：蛇；相害：猴；相破：寅；自刑：亥',
+        行动建议: '水主容，宜以豁达与积累并行；顺势之年多遇贵人，逆势之年忌懈怠与拖延。',
+    }),
+});
+/** B2 note_year_relation.templates['有利关系']（favorableRelations 计算为空时的兜底文案） */
+const FAVORABLE_RELATION_TEMPLATE = '流年天干五行与你的生肖本气相生相成，整体气场较为和顺，宜把握顺势而为的窗口。';
+function assertZodiacAnnualCopyTable() {
+    const required = ['本气五行', '贵人', '风险关系', '行动建议'];
+    const missingZodiac = ZODIACS.filter((name) => !ZODIAC_ANNUAL_COPY[name]);
+    const missingFields = ZODIACS.filter((name) => {
+        const entry = ZODIAC_ANNUAL_COPY[name];
+        return !entry || required.some((field) => !String(entry[field] || '').trim());
+    });
+    if (missingZodiac.length || missingFields.length) {
+        throw new Error(`B2 生肖流年确定性文案不完整：缺生肖${missingZodiac.join('、') || '无'}；字段缺失/为空${missingFields.join('、') || '无'}`);
+    }
+}
+assertZodiacAnnualCopyTable();
 /** 生肖是否犯太岁（年支视角） */
 export function getTaiSuiConflicts(zodiacBranch, yearBranch) {
     try {
@@ -306,6 +403,23 @@ export function getZodiacYearFortune(zodiacBranch, yearGanZhi) {
     ]
         .filter(Boolean)
         .join('\n');
+    // BUG-003（B2 确定性文案接入）：对计算未覆盖的空白字段做回填，保证
+    // noble / favorableRelations / riskRelations / actionSignals / 本气五行 永不为空。
+    // 注意：evidenceAnalysis / prompt 已在上方按“未命中”的原始计算结果生成——
+    // 回填仅补充面向展示的字段，不把固定文案伪装成流年关系命中。
+    // 贵人优先级：流年命中六合/三合(引擎计算) > B2 贵人(此处回填) > 天乙贵人(server.mjs 最终兜底)。
+    const annualCopy = ZODIAC_ANNUAL_COPY[zodiac];
+    if (annualCopy) {
+        if (!resultBase.noble && annualCopy.贵人) resultBase.noble = annualCopy.贵人;
+        if (!resultBase.favorableRelations.length) resultBase.favorableRelations.push(FAVORABLE_RELATION_TEMPLATE);
+        if (!resultBase.riskRelations.length && annualCopy.风险关系) {
+            resultBase.riskRelations.push(...annualCopy.风险关系.split('；').map((text) => text.trim()).filter(Boolean));
+        }
+        if (!resultBase.actionSignals.length && annualCopy.行动建议) resultBase.actionSignals.push(annualCopy.行动建议);
+        // 顶层 zodiacWuxing 为 B2 展示文案（如“水（子）”，含地支本气）；
+        // elementRelation.zodiacWuxing 保持机读五行（如“水”），二者不重复职责。
+        resultBase.zodiacWuxing = annualCopy.本气五行 || zodiacWuxing;
+    }
     return {
         ...resultBase,
         evidenceAnalysis,
