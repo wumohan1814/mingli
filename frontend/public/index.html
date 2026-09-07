@@ -448,6 +448,8 @@
     .zrel:last-child{border-bottom:none}
     .zrel .zl{flex:none;width:92px;color:var(--text-3)}
     .zrel .zv{flex:1;min-width:0;color:var(--text-1);font-weight:600;line-height:1.75;word-break:break-all}
+    /* C6：五行关系 / 风险关系 通用解读小字（确定性，零 LLM） */
+    .zrel-guide{font-size:12px;color:var(--text-3);line-height:1.85;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);text-align:left}
 
     /* ===== 临时起卦 ===== */
     .method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
@@ -720,6 +722,11 @@ const UI_COPY = {
   compliance: {
     disclaimer_full: '太初所提供的所有内容，均基于传统命理与占星文化的趋势性参考，用于自我觉察与思路梳理，不构成医疗、投资、司法或任何具有约束力的决策建议。命运向来开放，真正的结果，来自你清醒的选择与持续的行动。',
     footer_note: '本平台为文化娱乐性质，请理性看待，勿迷信盲从。'
+  },
+  // C6：五行关系 / 风险关系 通用解读（确定性，零 LLM；来源 docs/文案交付-第二轮/C6_zodiac_relation_guide.json）
+  zodiacGuide: {
+    elementRelation: '五行（金、木、水、火、土）是传统中用来理解事物相生相克、流转制衡的一套文化视角。在生肖流年里，它表现为「流年天干五行」与「你生肖地支本气五行」之间的生、克、同类（比和）等互动。若流年五行生旺你的生肖本气，可视作一种顺势相济、气场较为和顺的倾向；若流年五行克制你的生肖本气，则可理解为一份需要留意的压力或阻力，宜稳守、预留缓冲；若两者同类比和，则相对平和、少有牵扯。这些只是文化视角下的趋势性参考，用来帮助你理解当年的节律与侧重，而非对现实事件的决定性判语。真正如何度过这一年，仍取决于你清醒的判断与持续的行动。',
+    riskRelation: '风险关系指生肖年支与流年年支之间，依传统地支关系表可能命中的「值（同支）、六冲、相害、相破、相刑」等固定关系。它们是一份提示「易有波动、宜多留心的领域」的分类标签。其中「冲」主变动与对冲，宜留意计划被打乱；「害」主隐微牵绊，宜谨言避嫌；「破」主暗中损耗，宜护好既有成果；「刑」主纠葛反复，宜缓处人际与契约；「值」（同支）主本命临年，宜沉淀自省。命中并不代表必然发生不利，未命中也不代表全然无忧——它们更像一份给你的「留意清单」，而非对吉凶的定论。请理性看待，重大现实决策仍以你自己的判断与专业意见为准。'
   }
 };
 const API = '/api';
@@ -5945,7 +5952,7 @@ function ZodiacPage({
     className: "card"
   }, React.createElement("div", {
     className: "section-title"
-  }, "五行关系明细"), erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')),
+  }, "五行关系明细"), erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—'), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.elementRelation)),
   /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */
   hasRisk ? React.createElement("div", {
     className: "card"
@@ -5959,7 +5966,7 @@ function ZodiacPage({
   }, data.riskRelations.map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "· ", React.createElement("span", null, s))))) : null,
+  }, "· ", React.createElement("span", null, s))), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.riskRelation))) : null,
   /* BUG-003：有利关系区块（同上，空则不渲染） */
   hasFav ? React.createElement("div", {
     className: "card"
@@ -7190,9 +7197,14 @@ function TarotPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
-  // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（可选）→ ② 选择牌阵
+  // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（必填）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
+    // 占问问题必填：点牌阵/抽牌前拦截空问题（trim 后为空 → 提示并返回，不抽牌）
+    if (!(question || '').trim()) {
+      toast('请填写占问问题');
+      return;
+    }
     setSpread(sp);
     setStep('draw');
     setData(null);
@@ -7285,9 +7297,9 @@ function TarotPage({
         React.createElement('div', { className: 'interp-title' }, '综合解读'),
         React.createElement('div', { className: 'interp-body' }, interp)) : null);
   }
-  // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（可选）→ ② 选择牌阵（单列按钮 + 适用说明）
+  // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
   const menuBody = React.createElement('div', { className: 'card' },
-    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（可选）'),
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（必填）'),
     React.createElement('textarea', {
       className: 'q-input',
       rows: 2,
@@ -7631,9 +7643,14 @@ function LenormandPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
-  // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（可选）→ ② 选择牌阵
+  // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（必填）→ ② 选择牌阵
   const load = async sp => {
     if (loading || !sp) return;
+    // 占问问题必填：点牌阵/抽牌前拦截空问题（trim 后为空 → 提示并返回，不抽牌）
+    if (!(question || '').trim()) {
+      toast('请填写占问问题');
+      return;
+    }
     const apiType = sp.id === 'grid' ? 'nine' : (sp.id || 'single');
     // REQ-043 v2：问题文本直接放入 seed.question（方向已删，不再拼接前缀）
     const askTrim = (question || '').trim();
@@ -7727,9 +7744,9 @@ function LenormandPage({
         React.createElement('div', { className: 'interp-title' }, '深度解读'),
         React.createElement('div', { className: 'interp-body' }, interp)) : null);
   }
-  // REQ-043 v2：menu = ① 占问问题（可选）→ ② 选择牌阵（单列按钮 + 适用说明）
+  // REQ-043 v2：menu = ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
   const menuBody = React.createElement('div', { className: 'card' },
-    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（可选）'),
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（必填）'),
     React.createElement('textarea', {
       className: 'q-input',
       rows: 2,
@@ -8109,6 +8126,92 @@ function AstrologyPage({
     loadCases();
   }, []);
 
+  // 档案卡 meta 升级：由「出生年/性别/出生地」改为「出生年月日 + 太阳星座(若有)」。
+  // GET /cases 列表项只带 birthYear/gender/birthplace（无出生月日、无星盘存在性），故列表
+  // 就绪后对每份档案并行拉一次 archive（GET /cases/{id}/archive，结果缓存在 detailMap，
+  // 同列表不重复探测）：
+  //   - input.birth_year/month/day → 出生年月日（如 1990年5月20日）；
+  //   - astrology 最近一条带 chart.natal 的记录 → 太阳落座 → 「太阳白羊」（已生成过星盘才附上）。
+  // 失败/缺字段一律判空兜底（meta 退化为档案出生年），不阻塞档案选择与排盘。
+  const [detailMap, setDetailMap] = useState({}); // {caseId: {birthCn, sunCn, hasNatal}}
+  const dataCaseId = useRef(null); // 当前下方展示星盘所属档案 id（切换档案即清空盘面，防串档）
+  const sunCnOfChart = raw => {
+    try {
+      const n = astroNorm(raw);
+      const arr = n.planets || [];
+      for (let i = 0; i < arr.length; i++) {
+        const p = arr[i];
+        if (!p) continue;
+        const nm = String(p.name || '').toLowerCase();
+        const lb = String(p.label || '').toLowerCase();
+        if (nm === 'sun' || nm === '太阳' || lb === 'sun' || lb === '太阳') {
+          const cn = signToCn(p.sign);
+          return cn ? cn : '';
+        }
+      }
+    } catch (e) {}
+    return '';
+  };
+  const birthCnFromDt = s => {
+    try {
+      const m = String(s || '').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (!m) return '';
+      return Number(m[1]) + '年' + Number(m[2]) + '月' + Number(m[3]) + '日';
+    } catch (e) {
+      return '';
+    }
+  };
+  const patchDetail = (k, patch) => {
+    setDetailMap(prev => {
+      const cur = prev[k] || {};
+      return Object.assign({}, prev, {[k]: {
+        birthCn: patch.birthCn || cur.birthCn || '',
+        sunCn: patch.sunCn || cur.sunCn || '',
+        hasNatal: !!(patch.hasNatal || cur.hasNatal)
+      }});
+    });
+  };
+  const probeDetail = async list => {
+    const arr = (list || []).filter(c => c && c.caseId != null);
+    if (!arr.length) return;
+    await Promise.all(arr.map(async c => {
+      const k = String(c.caseId);
+      try {
+        const rr = await api('/cases/' + encodeURIComponent(k) + '/archive');
+        const d = rr && rr.data || rr || {};
+        const inp = d.input && typeof d.input === 'object' ? d.input : {};
+        const y = inp.birth_year;
+        const mo = inp.birth_month;
+        const dd = inp.birth_day;
+        const birthCn = (y != null && mo != null && dd != null)
+          ? Number(y) + '年' + Number(mo) + '月' + Number(dd) + '日'
+          : '';
+        let sunCn = '';
+        let hasNatal = false;
+        const recs = Array.isArray(d.astrology) ? d.astrology : [];
+        for (let i = 0; i < recs.length; i++) {
+          const a = recs[i];
+          if (a && a.chart && a.chart.natal && typeof a.chart.natal === 'object') {
+            hasNatal = true;
+            sunCn = sunCnOfChart(a.chart.natal);
+            break;
+          }
+        }
+        patchDetail(k, {birthCn: birthCn, sunCn: sunCn, hasNatal: hasNatal});
+      } catch (e) {
+        /* archive 探测失败：该档案卡 meta 退化为出生年兜底，不阻塞 */
+      }
+    }));
+  };
+  const detailKeyRef = useRef(null);
+  useEffect(() => {
+    if (caseLoading || !caseList.length) return;
+    const key = caseList.map(c => c.caseId).join(',');
+    if (detailKeyRef.current === key) return;
+    detailKeyRef.current = key;
+    probeDetail(caseList);
+  }, [caseLoading, caseList]);
+
   // REQ-039 退回细化②：携 caseId 进入本页（档案「查看星盘」/ 建档 returnTo）→ 自动选中
   // 该档案并复用已生成的本命盘（后端按 档案+scope 幂等，命中直接返回已有 chart，零扣费），
   // 不再要求手动「重新生成」；重挂载（再从档案进入）时按新 initCaseId 重新自动加载。
@@ -8126,13 +8229,16 @@ function AstrologyPage({
     load('natal');
   }, [initCaseId, caseId, loading, data, errored]);
 
-  // 生成星盘：选档案 → POST /astrology/chart，生辰由后端从档案 case.input_json 取
+  // 生成星盘 / 查看星盘：选档案 → POST /astrology/chart，生辰由后端从档案 case.input_json 取。
+  // 后端按 (user, case_id, scope) 幂等：已生成过直接返回已有 chart（零扣费、不重复计算），
+  // 故「生成星盘」与「查看星盘」共用本函数即可实现「查看已有盘 / 首次生成」两种语义。
   const load = async scope => {
     const sc = scope || 'natal';
     setErrored('');
     setData(null);
     setInterp('');
     setInterpErr('');
+    dataCaseId.current = null;
     if (!caseId) {
       setErrored('请先选择一份档案');
       return;
@@ -8146,8 +8252,18 @@ function AstrologyPage({
           scope: sc
         })
       });
-      setData(res && res.data ? res.data : res);
+      const d = res && res.data ? res.data : res;
+      setData(d);
+      dataCaseId.current = caseId == null ? null : Number(caseId);
       setTab('natal');
+      // 生成/复用成功后即时回填该档案卡 meta：太阳星座（+出生年月日，若盘上可解析）
+      if (d && d.chart && d.chart.natal && typeof d.chart.natal === 'object') {
+        patchDetail(String(caseId), {
+          hasNatal: true,
+          sunCn: sunCnOfChart(d.chart.natal),
+          birthCn: birthCnFromDt(astroNorm(d.chart.natal).birth && astroNorm(d.chart.natal).birth.dateTime)
+        });
+      }
     } catch (e) {
       setErrored(e && e.message ? e.message : '星盘生成失败，请重试。');
     } finally {
@@ -8230,19 +8346,31 @@ function AstrologyPage({
       onClick: () => onNavigate('cases')
     }, '管理档案')));
   } else {
-    // BUG-006：档案改为明显可选卡片（档案名 + 出生年/性别/出生地 meta + 圆形选中勾）
-    // REQ-046：列表下方补「新建档案」入口 → 建档完成后 returnTo 回跳星座页
-    casePick = el(React.Fragment, null, el('div', {
+    // 档案选择卡：档案名 + meta「出生年月日 + 太阳星座(若有)」+ 圆形选中勾
+    // （meta 不再显示性别/出生地；太阳星座仅当该档案已生成过星盘时附上）
+    casePick = el('div', {
       className: 'case-opts'
     }, caseList.map(c => {
       const sel = caseId != null && Number(caseId) === Number(c.caseId);
-      const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
+      const det = detailMap[String(c.caseId)];
+      const birthCn = (det && det.birthCn) || (c.birthYear ? c.birthYear + '年' : '');
+      const sunTxt = (det && det.hasNatal && det.sunCn) ? '太阳' + det.sunCn : '';
+      const meta = [birthCn, sunTxt].filter(Boolean).join(' · ') || '出生信息未补充';
       const nm = c.name || '档案 ' + c.caseId;
       return el('button', {
         key: c.caseId,
         type: 'button',
         className: 'case-opt' + (sel ? ' sel' : ''),
-        onClick: () => setCaseId(c.caseId)
+        onClick: () => {
+          // 切换档案：清空上一档案已生成的星盘/解读展示，防止盘面串档（下方引导重新生成/查看）
+          if (data && dataCaseId.current != null && Number(dataCaseId.current) !== Number(c.caseId)) {
+            dataCaseId.current = null;
+            setData(null);
+            setInterp('');
+            setInterpErr('');
+          }
+          setCaseId(c.caseId);
+        }
       }, el('span', {
         className: 'co-main'
       }, el('span', {
@@ -8252,18 +8380,7 @@ function AstrologyPage({
       }, meta)), el('span', {
         className: 'co-check'
       }, sel ? '✓' : ''));
-    })), el('div', {
-      className: 'back-row',
-      style: {
-        justifyContent: 'center'
-      }
-    }, el('button', {
-      className: 'btn btn-outline',
-      style: {
-        width: 'auto'
-      },
-      onClick: () => onNavigate('onboarding', { returnTo: 'astrology' })
-    }, UI_COPY.buttons.create_case)));
+    }));
   }
   const formCard = el('div', {
     className: 'card'
@@ -8288,14 +8405,45 @@ function AstrologyPage({
     className: 'sh-arr'
   }, '→'), el('span', {
     className: 'sh' + (data ? ' cur' : '')
-  }, '③ 查看解读')), casePick, el('button', {
-    className: 'btn btn-primary',
+  }, '③ 查看解读')), casePick, el('div', {
     style: {
-      marginTop: 4
-    },
-    disabled: loading || !caseId,
-    onClick: () => load('natal')
-  }, loading ? '星盘生成中…' : UI_COPY.buttons.generate_chart));
+      display: 'flex',
+      gap: 10,
+      marginTop: 4,
+      flexWrap: 'wrap'
+    }
+  },
+    // 操作区：选档案后出现并排等宽的「生成星盘 / 查看星盘」双按钮 —— 生成=重新/首次生成；
+    // 查看=后端按档案幂等直接复用已有盘（已生成过则零重复计费，等价直接查看）。
+    el('button', {
+      className: 'btn btn-primary',
+      style: {
+        flex: '1 1 0',
+        minWidth: 0
+      },
+      disabled: loading || !caseId,
+      title: caseId ? '' : '请先选择一份档案',
+      onClick: () => load('natal')
+    }, loading ? '星盘生成中…' : UI_COPY.buttons.generate_chart),
+    caseId ? el('button', {
+      className: 'btn btn-outline',
+      style: {
+        flex: '1 1 0',
+        minWidth: 0
+      },
+      disabled: loading,
+      title: '该档案已生成过星盘将直接展示（幂等复用，不重复计费）',
+      onClick: () => load('natal')
+    }, '查看星盘') : null,
+    // 「新建命理档案」横向扩大：与「生成星盘」按钮等宽（同一操作行 flex 均分）
+    el('button', {
+      className: 'btn btn-outline',
+      style: {
+        flex: '1 1 0',
+        minWidth: 0
+      },
+      onClick: () => onNavigate('onboarding', { returnTo: 'astrology' })
+    }, UI_COPY.buttons.create_case)));
 
   // ---- 盘型 tab：MVP 先只开放本命盘，其余置灰「敬请期待」 ----
   const tabsNode = el('div', {
@@ -8502,7 +8650,7 @@ function AstrologyPage({
         color: 'var(--text-3)',
         padding: '22px 16px'
       }
-    }, '在上方选择一份档案并点击「生成星盘」（生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
+    }, '在上方选择一份档案，点击「生成星盘」或「查看星盘」（该档案已生成过的星盘会直接展示、不重复计费；生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
   }
 
   return el('div', {
@@ -8559,12 +8707,14 @@ function MbtiPage({
   const [caseList, setCaseList] = useState([]);
   const [caseLoading, setCaseLoading] = useState(true);
   const [caseErrored, setCaseErrored] = useState('');
-  // REQ-056 v2：选档案阶段与答题阶段分离 —— 勾选档案后先停留在「选档案 + 操作区」，
-  // 点「开始测试」才进入答题；已测档案勾选后仍由 checkedCase 直达结果页（不重新测试）。
-  const [started, setStarted] = useState(!!initCaseId); // false=选档案阶段（勾选档案后展示操作区）
+  // REQ-056 v3：选档案阶段与答题阶段分离 —— 勾选档案后一律停留在「选档案 + 操作区」，
+  // 点「开始测试」才进入答题；「查看已完成 MBTI 类型」为显式按钮，点击才进结果页
+  // （已删除 checkedCase 的「已测档案勾选即自动 setView('result')」直达逻辑，含档案内
+  // initCaseId 预选入口：同样落到选档案阶段，由用户自行选择开始测试或查看已完成）。
+  const [started, setStarted] = useState(false); // false=选档案阶段（勾选档案后展示操作区）
   // REQ-056①：档案卡片「已测 MBTI 类型 / 未测试」。GET /api/cases 列表项当前不含
   // mbti_type，故前端按 caseId 并行 GET /mbti/results?case_id= 取「最近一条判型」作为
-  // 已测类型（与 checkedCase 直达展示口径一致：他人经分享填写的最新记录同样算作已测）；
+  // 已测类型（与「查看已完成 MBTI 类型」展示口径一致：他人经分享填写的最新记录同样算作已测）；
   // 判空容错：探测失败按未测兜底，不阻塞档案列表。
   const [typeMap, setTypeMap] = useState({}); // {caseId: type}；''=已确认未测
   const [typeLoading, setTypeLoading] = useState(false);
@@ -8642,62 +8792,39 @@ function MbtiPage({
     return Object.prototype.hasOwnProperty.call(typeMap, k) ? typeMap[k] : null;
   };
   // 惰性探测：仅当「选档案阶段」实际在展示（view=quiz 且未开考）且档案列表就绪时，
-  // 才按当前列表批量探测一次（同一份列表不重复探测）；档案内 MBTI（initCaseId 直入答题/
-  // 结果）等非选档案场景不触发，避免无谓请求。同会话内判型结果由 submitScore 即时刷新角标。
+  // 才按当前列表批量探测一次（同一份列表不重复探测）；进入即预选（initCaseId）或
+  // 勾选档案都停留在选档案阶段，同样触发探测以正确标注「已测类型/未测试」标签。
+  // 同会话内判型结果由 submitScore / viewExisting 即时刷新角标。
   const probedKey = useRef(null);
   useEffect(() => {
-    if (view !== 'quiz' || started || caseId != null || caseLoading || !caseList.length) return;
+    if (view !== 'quiz' || started || caseLoading || !caseList.length) return;
     const key = caseList.map(c => c.caseId).join(',');
     if (probedKey.current === key) return;
     probedKey.current = key;
     probeTypes(caseList);
-  }, [view, started, caseId, caseList, caseLoading]);
+  }, [view, started, caseList, caseLoading]);
   useEffect(() => {
     load();
     loadCases();
   }, []);
-  // REQ-039 退回细化④（REQ-056 v2 整合）：已选档案（含档案内 MBTI / 建档 returnTo 预选）
-  // 若已有判型记录 → 直达结果页（最近一条 {type,scores} + type_info），不再直接进入重测；
-  // 「重新测试」按钮走 reset() 才回到答题流程。
-  // 同一档案在本组件生命周期内只探测一次：reset() 后 caseId 不变 → 不会再把
-  // 用户拉回结果页，可正常重测；pickAnother()（选择其它档案/更换档案）会清空该
-  // 探测记录，回到选档案阶段后再勾选已测档案仍会重新探测直达（③ 口径一致）。
+  // 前端改造：已删除 checkedCase 的「勾选已测档案即自动 setView('result')」直达逻辑，
+  // 查看已完成结果改为下方操作区的显式按钮（viewExisting，见选档案阶段渲染）——
+  // 普通勾选与档案内 MBTI（initCaseId 预选）一律先落在选档案阶段，不自动进结果/答题。
+  // 本 effect 仅保留 caseId 变更时的串档清理（分享链接/旧结果/旧文案归零）。
   const checkedCase = useRef(null);
   useEffect(() => {
     if (caseId == null || checkedCase.current === String(caseId)) return;
     checkedCase.current = String(caseId);
-    // REQ-047（退回①）：caseId 变更（换档案）即清空上一档案生成的分享链接，防止分享链接跨档案串用
+    // REQ-047（退回①）：caseId 变更（换档案）即清空上一档案生成的分享链接与旧结果态，
+    // 防止分享链接/结果跨档案串用
     setShareUrl(null);
     setShareLoading(false);
     setShareErr('');
-    let alive = true;
-    (async () => {
-      try {
-        const rr = await api('/mbti/results?case_id=' + encodeURIComponent(caseId));
-        const items = rr && rr.data && rr.data.items || (rr && rr.items) || [];
-        if (!alive) return;
-        const latest = items && items.length ? items[0] : null;
-        if (latest && latest.type) {
-          setResult({
-            id: latest.id != null ? latest.id : null,
-            type: latest.type,
-            scores: latest.scores || {},
-            mode: 'scored'
-          });
-          setInfo(null);
-          setInfoLoading(false);
-          setInfoErr('');
-          setScoreErr('');
-          setView('result');
-          if (latest.id != null) fetchInfo(latest.id);
-        }
-      } catch (e) {
-        /* 探测失败静默：不阻塞答题流程（档案选择照常可用） */
-      }
-    })();
-    return () => {
-      alive = false;
-    };
+    setResult(null);
+    setInfo(null);
+    setInfoLoading(false);
+    setInfoErr('');
+    setScoreErr('');
   }, [caseId]);
   // —— 拉取判型文案（GET /api/mbti/results/{id}）——
   const fetchInfo = async id => {
@@ -8712,6 +8839,36 @@ function MbtiPage({
       setInfoErr(e && e.message || '类型文案加载失败，请重试。');
     } finally {
       setInfoLoading(false);
+    }
+  };
+  // —— 查看已完成 MBTI 类型：操作区显式按钮（替代旧「勾选已测档案自动直达结果页」）——
+  // 取该档案最近一条判型 {type,scores} 并 fetchInfo 拉五栏评语；无记录则 toast 提示不进入。
+  const viewExisting = async () => {
+    if (caseId == null) return;
+    try {
+      const rr = await api('/mbti/results?case_id=' + encodeURIComponent(caseId));
+      const items = rr && rr.data && rr.data.items || (rr && rr.items) || [];
+      const latest = items && items.length ? items[0] : null;
+      if (!latest || !latest.type) {
+        toast('该档案还没有已完成的 MBTI 测试，请先开始测试。');
+        return;
+      }
+      // 同步刷新该档案「已测类型」角标（含他人分享填写的最新记录口径）
+      setTypeMap(prev => Object.assign({}, prev, {[String(caseId)]: String(latest.type).toUpperCase()}));
+      setResult({
+        id: latest.id != null ? latest.id : null,
+        type: latest.type,
+        scores: latest.scores || {},
+        mode: 'scored'
+      });
+      setInfo(null);
+      setInfoLoading(false);
+      setInfoErr('');
+      setScoreErr('');
+      setView('result');
+      if (latest.id != null) fetchInfo(latest.id);
+    } catch (e) {
+      toast(e && e.message || '结果读取失败，请重试。');
     }
   };
   // —— 提交答案并判型（POST /api/mbti/score，case_id 必填；判型结果回写档案 mbti_type）——
@@ -8784,7 +8941,7 @@ function MbtiPage({
     setView('quiz');
     setStarted(false);
     setCaseId(null);
-    checkedCase.current = null; // 重开选档案阶段：再勾选已测档案时重新探测并直达其 MBTI 结果（③）
+    checkedCase.current = null; // 重开选档案阶段：列表重新按档案探测已测类型（含再勾选已测档案）
     setIdx(0);
     setAnswers([]);
     setResult(null);
@@ -8959,9 +9116,9 @@ function MbtiPage({
     } else if (!cur) {
       body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
     } else if (!started || !caseId) {
-      // REQ-056 v2 选档案阶段：判型结果需回写档案 mbti_type；勾选档案后停留本阶段
-      // （下方「档案操作」区出现：开始测试 / 我已知道类型 / 新建档案 / 管理档案 + 分享测试链接），
-      // 未测档案点「开始测试」才进答题；已测档案由 checkedCase 勾选即直达结果页（不重新测试）。
+      // REQ-056 v3 选档案阶段：判型结果需回写档案 mbti_type；勾选档案后停留本阶段
+      // （下方「档案操作」区出现：开始测试 / 查看已完成 MBTI 类型(仅已测) / 我已知道类型 /
+      // 新建档案 / 管理档案 + 分享测试链接），不自动进入答题或结果页。
       let gate = null;
       if (caseLoading) {
         gate = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '24px 16px'}}, '档案列表加载中…');
@@ -8983,14 +9140,15 @@ function MbtiPage({
         // —— REQ-056①：档案卡片 = 档案名称 + 出生 meta + 「已测 MBTI 类型 / 未测试」标签 ——
         const selCase = caseId != null ? (caseList.find(c => Number(c.caseId) === Number(caseId)) || null) : null;
         const selNm = selCase ? (selCase.name || '档案 ' + selCase.caseId) : '';
+        const selTval = selCase ? caseTypeOf(selCase) : ''; // 已测类型：非空才展示「查看已完成 MBTI 类型」按钮
         gate = el(React.Fragment, null,
           el('div', {className: 'card'},
             el('div', {className: 'section-title'}, '选择档案 · MBTI 判型'),
-            el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案的 mbti_type。勾选档案后从下方操作区开始测试或管理；已测过的档案勾选后将直接显示其 MBTI 结果（可重新测试）。'),
+            el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案的 mbti_type。勾选档案后不会自动进入答题或结果页，请从下方操作区选择「开始测试」或「查看已完成 MBTI 类型」（已测档案才显示）。'),
             el('div', {className: 'step-hint'},
               el('span', {className: 'sh cur'}, '① 选择档案'),
               el('span', {className: 'sh-arr'}, '→'),
-              el('span', {className: 'sh'}, '② 开始测试 / 已测看结果')),
+              el('span', {className: 'sh'}, '② 开始测试 / 查看已完成类型')),
             el('div', {className: 'case-opts'},
               caseList.map(c => {
                 const sel = caseId != null && Number(caseId) === Number(c.caseId);
@@ -9014,9 +9172,10 @@ function MbtiPage({
             selCase ? el(React.Fragment, null,
               el('div', {style: {fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 10}}, '已选档案：' + selNm),
               el('div', {style: {display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%', paddingBottom: 10, marginBottom: 10, borderBottom: '1px dashed var(--border)'}}, shareZone))
-              : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, '请先勾选上方一份档案：未测档案可开始测试；已测档案勾选后直接显示其 MBTI 结果。'),
+              : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, '请先勾选上方一份档案：勾选后停留本操作区，可点「开始测试」答题；已测档案可再点「查看已完成 MBTI 类型」回看结果（不自动进入）。'),
             el('div', {className: 'back-row', style: {justifyContent: 'center', margin: 0}},
               el('button', {className: 'btn btn-primary', style: {width: 'auto'}, disabled: !selCase, title: selCase ? '' : '请先勾选档案', onClick: () => setStarted(true)}, UI_COPY.buttons.start_quiz),
+              selTval ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: viewExisting}, '查看已完成 MBTI 类型') : null,
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入'),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, UI_COPY.buttons.create_case),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'))));
