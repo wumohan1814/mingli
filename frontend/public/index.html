@@ -361,6 +361,19 @@
     .txn-delta.plus{color:var(--skin-accent)}
     .txn-delta.minus{color:var(--cinnabar)}
     .txn-rest{font-size:11px;color:var(--text-3);margin-top:2px}
+    .txn-case{font-size:12px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+    /* REQ-065：档案管理 CRM 行式列表 */
+    .case-row{display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0 0 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;flex-wrap:wrap;transition:border-color var(--dur) var(--ease),box-shadow .2s var(--ease)}
+    .case-row:last-child{margin-bottom:0}
+    .case-row:hover{border-color:var(--skin-accent);box-shadow:0 4px 14px rgba(26,33,56,.08)}
+    .case-info{flex:1;min-width:200px;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+    .case-name{font-size:15px;font-weight:600;color:var(--ink-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .case-meta{font-size:12.5px;color:var(--text-2);white-space:nowrap}
+    .case-meta b{color:var(--text-1);font-weight:600}
+    .case-actions{flex:none;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .case-actions .btn{width:auto;flex:none;padding:5px 11px;font-size:12.5px;font-weight:500;line-height:1.4;border-radius:var(--radius-pill)}
+    .case-actions .btn-del{color:var(--cinnabar);border-color:var(--cinnabar)}
     .modal-mask{position:fixed;inset:0;background:rgba(20,24,38,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
     .modal{background:var(--surface);border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}
     .modal-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text-1)}
@@ -1622,6 +1635,22 @@ function CreditTransactionsPage({
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  // REQ-063：本页积分记载统一改按余额单位展示（¥ = 积分 ÷ 汇率）。
+  // 复用 REQ-051 的 fetchCreditYuanRate()（模块级记忆只探测一次），失败/未就绪回退常量 10。
+  const [yuanRate, setYuanRate] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    fetchCreditYuanRate().then(r => {
+      if (alive) setYuanRate(r);
+    }).catch(() => {
+      if (alive) setYuanRate(CREDIT_YUAN_RATE);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const rate = Number(yuanRate) > 0 ? Number(yuanRate) : CREDIT_YUAN_RATE;
+  const fmtYuan = pts => pts == null ? '—' : '¥' + (Number(pts) / rate).toFixed(2);
   const enterBalance = useRef(null);
   const loadBalance = async () => {
     try {
@@ -1673,15 +1702,19 @@ function CreditTransactionsPage({
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, []);
+  // REQ-063：后端流水每条已带中文 label（断前尘·八字格局 / 塔罗解读 / 追问 / 充值 等），
+  // 列表直接取 it.label；typeText 仅作后端 label 缺失时的兜底，不再回退显示裸 ref / consume。
   const typeText = t => ({
     recharge: '充值',
+    manual: '手动赠送',
     grant: '手动赠送',
+    free: '注册赠送',
+    refund: '退款',
     predict: '预测推演',
     dqch: '断前尘推演',
     revise: '修正对话',
     single: '单法直问'
-  })[t] || t || '交易';
-  const isIncome = t => t === 'recharge' || t === 'grant';
+  })[t] || '';
   if (loading) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -1743,29 +1776,37 @@ function CreditTransactionsPage({
       fontSize: 12,
       color: 'var(--text-3)'
     }
-  }, "当前积分"), /*#__PURE__*/React.createElement("div", {
+  }, "当前余额"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 30,
       fontWeight: 700,
-      color: 'var(--ink-700)'
+      color: 'var(--ink-700)',
+      fontVariantNumeric: 'tabular-nums'
     }
-  }, balance == null ? '—' : balance))), /*#__PURE__*/React.createElement("div", {
+  }, fmtYuan(balance)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: 'var(--text-3)',
+      marginTop: 4
+    }
+  }, "换算：1 元 = ", rate, " 积分（余额 ¥ = 积分 ÷ 汇率）"))), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "积分明细"), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, "余额明细"), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
       color: 'var(--text-3)'
     }
-  }, "暂无积分记录") : /*#__PURE__*/React.createElement("div", {
+  }, "暂无消费记录") : /*#__PURE__*/React.createElement("div", {
     className: "txn-list"
   }, items.map((it, i) => {
-    const income = isIncome(it.type);
     const delta = it.delta != null ? Number(it.delta) : null;
-    const sign = delta == null ? '' : delta >= 0 ? '+' : '';
-    const cls = delta == null ? '' : delta >= 0 ? ' plus' : ' minus';
+    const income = delta != null && delta >= 0;
+    const cls = delta == null ? '' : income ? ' plus' : ' minus';
+    const amt = delta == null ? '—' : (income ? '+' : '-') + '¥' + (Math.abs(delta) / rate).toFixed(2);
     const time = String(it.createdAt || it.time || '').replace('T', ' ').slice(0, 16);
-    const rest = it.balance != null ? it.balance : it.balanceAfter != null ? it.balanceAfter : '—';
+    const title = it.label || typeText(it.type) || '交易';
+    const caseName = it.case_name ? String(it.case_name) : null;
     return /*#__PURE__*/React.createElement("div", {
       className: "txn-item",
       key: i
@@ -1778,15 +1819,15 @@ function CreditTransactionsPage({
       className: "txn-main"
     }, /*#__PURE__*/React.createElement("div", {
       className: "txn-title"
-    }, typeText(it.type), it.note ? ' · ' + it.note : ''), /*#__PURE__*/React.createElement("div", {
+    }, title, it.note ? ' · ' + it.note : ''), /*#__PURE__*/React.createElement("div", {
       className: "txn-time"
-    }, time)), /*#__PURE__*/React.createElement("div", {
+    }, time), caseName ? /*#__PURE__*/React.createElement("div", {
+      className: "txn-case"
+    }, "消耗档案：", caseName) : null), /*#__PURE__*/React.createElement("div", {
       className: "txn-right"
     }, /*#__PURE__*/React.createElement("div", {
       className: 'txn-delta' + cls
-    }, sign, delta == null ? '—' : delta), /*#__PURE__*/React.createElement("div", {
-      className: "txn-rest"
-    }, "结余 ", rest)));
+    }, amt)));
   }), hasMore && /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     disabled: loadingMore,
@@ -2122,7 +2163,82 @@ function RenameModal({
   }, "确定"))));
 }
 
-// 档案列表页：GET /api/cases 展示用户全部命理档案。REQ-046③ 档案管理入口：选择档案查看/修改、新建、命名/删除、回首页，不展示模块主流程按钮
+// REQ-065「修改联系方式」模态框：可编辑 手机号/邮箱（均选填，空串=清空），格式校验在提交侧
+// （手机号 11 位数字、邮箱含 @）；提交由父级 PATCH /cases/{id} 传 name+phone+email。
+function CaseContactModal({
+  name,
+  phone,
+  email,
+  onPhone,
+  onEmail,
+  onConfirm,
+  onCancel,
+  busy
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-mask",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-title"
+  }, "修改联系方式"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginBottom: 2,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }
+  }, "档案：", name, "（改名称请用「重命名」）"), /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "edit-phone"
+  }, "手机号（选填）"), /*#__PURE__*/React.createElement("input", {
+    id: "edit-phone",
+    className: "input",
+    type: "tel",
+    inputMode: "numeric",
+    maxLength: 11,
+    value: phone,
+    onChange: onPhone,
+    placeholder: "请输入 11 位手机号"
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "edit-email"
+  }, "电子邮箱（选填）"), /*#__PURE__*/React.createElement("input", {
+    id: "edit-email",
+    className: "input",
+    type: "email",
+    value: email,
+    onChange: onEmail,
+    placeholder: "请输入电子邮箱（需包含 @）",
+    onKeyDown: e => {
+      if (e.key === 'Enter') onConfirm();
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex-row",
+    style: {
+      marginTop: 16,
+      justifyContent: 'center',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    onClick: onCancel,
+    disabled: busy
+  }, "取消"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    type: "button",
+    onClick: onConfirm,
+    disabled: busy
+  }, busy ? '保存中...' : '保存'))));
+}
+
+// 档案列表页：GET /api/cases 展示用户全部命理档案。REQ-065 CRM 行式列表（单行条目 + 行尾查看/修改/重命名/删除四键），
+// 保留 + 新建档案 与 回首页；行点击进入 archive（查看）。不展示模块主流程按钮。
 function CasesPage({
   onNavigate
 }) {
@@ -2132,6 +2248,11 @@ function CasesPage({
   const [renameTarget, setRenameTarget] = useState(null);
   const [renameValue, setRenameValue] = useState('');
   const [renameBusy, setRenameBusy] = useState(false);
+  // REQ-065「修改」弹窗（编辑 手机号/邮箱，PATCH name+phone+email）
+  const [editTarget, setEditTarget] = useState(null);
+  const [editPhone, setEditPhone] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editBusy, setEditBusy] = useState(false);
   const load = async () => {
     setLoading(true);
     setErrored('');
@@ -2151,15 +2272,54 @@ function CasesPage({
   useEffect(() => {
     load();
   }, []);
-  const statusText = s => ({
-    created: '已建档',
-    paipan_done: '已排盘',
-    calibrated: '已校准',
-    predict_done: '已解读',
-    failed: '失败'
-  })[s] || s || '-';
-  const genderText = g => g === 'male' ? '男' : g === 'female' ? '女' : g || '-';
-  const dateText = t => t ? String(t).slice(0, 10) : '-';
+  // REQ-065「修改」：打开修改弹窗（可编辑 手机号/邮箱），确定后 PATCH name+phone+email
+  const openEdit = c => {
+    setEditTarget(c);
+    setEditPhone(c.phone || '');
+    setEditEmail(c.email || '');
+    setEditBusy(false);
+  };
+  const closeEdit = () => {
+    if (!editBusy) setEditTarget(null);
+  };
+  const submitEdit = async () => {
+    if (!editTarget) return;
+    // 格式校验：手机号 11 位数字；邮箱含 @（两侧非空、无空白）
+    const phone = String(editPhone || '').trim();
+    const email = String(editEmail || '').trim();
+    if (phone && !/^\d{11}$/.test(phone)) {
+      toast('手机号须为 11 位数字');
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+$/.test(email)) {
+      toast('邮箱格式不正确（需包含 @）');
+      return;
+    }
+    setEditBusy(true);
+    try {
+      const res = await api('/cases/' + editTarget.caseId, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          name: String(editTarget.name || '').trim() || '未命名档案',
+          phone: phone || null,
+          email: email || null
+        })
+      });
+      const data = res && res.data || {};
+      setCaseList(list => list.map(x => x.caseId === editTarget.caseId ? {
+        ...x,
+        name: data.name != null ? data.name : x.name,
+        phone: data.phone != null ? data.phone : (phone || null),
+        email: data.email != null ? data.email : (email || null)
+      } : x));
+      toast('修改成功');
+      setEditTarget(null);
+    } catch (e) {
+      toast(e.message || '修改失败，请重试。');
+    } finally {
+      setEditBusy(false);
+    }
+  };
 
   // 命名：点「命名」打开模态框，输入后确定提交；空名提示
   const openRename = c => {
@@ -2305,7 +2465,7 @@ function CasesPage({
     style: {
       marginTop: -10
     }
-  }, "共 ", caseList.length, " 份档案，选择一份进行查看 / 修改"), /*#__PURE__*/React.createElement("div", {
+  }, "共 ", caseList.length, " 份档案 · 每条目行尾可查看 / 修改 / 重命名 / 删除"), /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       marginBottom: 14,
@@ -2326,164 +2486,48 @@ function CasesPage({
       fontSize: 14
     }
   }, UI_COPY.empty.no_case) : caseList.map(c => {
-    const failed = c.status === 'failed';
-    // REQ-046③：档案管理入口只提供「查看 / 修改」，不再展示继续命盘/校准/生成解读等模块主流程按钮
+    // CRM 行式列表（REQ-065，取代 REQ-046③ 卡片口径）：每行 = 档案名 + 生日（birthYear）+ 手机号/邮箱（有则显示），
+    // 行尾排「查看 / 修改 / 重命名 / 删除」四键；点击行进入 archive（查看），行尾按键不触发行跳转
     const openArchive = () => onNavigate('archive', {
       caseId: c.caseId
     });
-    // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
-    const methodCount = c.methodCount || 0;
-    const totalMethods = c.totalMethods || 9;
-    const progressPct = totalMethods > 0 ? Math.min(100, Math.max(0, Math.round(methodCount / totalMethods * 100))) : 0;
-    // 盘面摘要：chartSummary 为 null（未排盘）时不展示摘要行
-    const cs = c.chartSummary || null;
-    const summaryParts = [];
-    if (cs) {
-      if (cs.dayMaster) summaryParts.push('日主：' + cs.dayMaster + (cs.dayMasterWuxing || ''));
-      if (cs.lunar) summaryParts.push('农历 ' + cs.lunar);
-    }
-    const summaryText = summaryParts.join(' · ');
+    const byName = String(c.name || '').trim() || '未命名档案';
+    const birthText = c.birthYear != null ? c.birthYear + ' 年' : '—';
+    const phoneText = c.phone ? String(c.phone).trim() : '';
+    const emailText = c.email ? String(c.email).trim() : '';
     return /*#__PURE__*/React.createElement("div", {
-      className: "card",
+      className: "case-row",
       key: c.caseId,
-      onClick: openArchive,
-      style: {
-        padding: '16px 20px',
-        cursor: 'pointer'
-      }
+      onClick: openArchive
     }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 8
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'baseline',
-        gap: 8,
-        flexWrap: 'wrap',
-        fontSize: 15,
-        fontWeight: 600,
-        color: 'var(--ink-700)'
-      }
-    }, /*#__PURE__*/React.createElement("span", null, c.name || '未命名档案')), /*#__PURE__*/React.createElement("span", {
-      style: {
-        display: 'inline-block',
-        fontSize: 11,
-        padding: '2px 8px',
-        borderRadius: 999,
-        whiteSpace: 'nowrap',
-        background: failed ? '#FFF0F0' : 'var(--skin-accent-soft)',
-        color: failed ? 'var(--cinnabar)' : 'var(--skin-accent)',
-        fontWeight: 600
-      }
-    }, statusText(c.status))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      className: "kv"
+      className: "case-info"
     }, /*#__PURE__*/React.createElement("span", {
-      className: "k"
-    }, "出生年"), /*#__PURE__*/React.createElement("span", {
-      className: "v"
-    }, c.birthYear != null ? c.birthYear : '-')), /*#__PURE__*/React.createElement("div", {
-      className: "kv"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "k"
-    }, "性别"), /*#__PURE__*/React.createElement("span", {
-      className: "v"
-    }, genderText(c.gender))), /*#__PURE__*/React.createElement("div", {
-      className: "kv"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "k"
-    }, "出生地"), /*#__PURE__*/React.createElement("span", {
-      className: "v"
-    }, c.birthplace || '-')), /*#__PURE__*/React.createElement("div", {
-      className: "kv"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "k"
-    }, "创建时间"), /*#__PURE__*/React.createElement("span", {
-      className: "v"
-    }, dateText(c.createdAt)))), /*#__PURE__*/React.createElement("div", {
-      style: {
-        marginTop: 10,
-        paddingTop: 10,
-        borderTop: '1px solid var(--border)'
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'baseline',
-        fontSize: 13,
-        marginBottom: 6
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: 'var(--text-2)'
-      }
-    }, "排盘进度"), /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: 'var(--text-1)',
-        fontWeight: 600
-      }
-    }, totalMethods, " 法中已完成 ", methodCount, " 个")), /*#__PURE__*/React.createElement("div", {
-      className: "progress",
-      style: {
-        margin: 0
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "progress-bar",
-      style: {
-        width: progressPct + '%'
-      }
-    })), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 12,
-        color: 'var(--text-2)',
-        marginTop: 8
-      }
-    }, summaryText ? /*#__PURE__*/React.createElement("span", null, "盘面：", summaryText) : /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: 'var(--text-3)'
-      }
-    }, "尚未排盘"))), /*#__PURE__*/React.createElement("div", {
-      className: "flex-row",
-      style: {
-        marginTop: 12
-      }
+      className: "case-name"
+    }, byName), /*#__PURE__*/React.createElement("span", {
+      className: "case-meta"
+    }, "生日：", /*#__PURE__*/React.createElement("b", null, birthText)), phoneText ? /*#__PURE__*/React.createElement("span", {
+      className: "case-meta"
+    }, "手机：", /*#__PURE__*/React.createElement("b", null, phoneText)) : null, emailText ? /*#__PURE__*/React.createElement("span", {
+      className: "case-meta"
+    }, "邮箱：", /*#__PURE__*/React.createElement("b", null, emailText)) : null), /*#__PURE__*/React.createElement("div", {
+      className: "case-actions",
+      onClick: e => e.stopPropagation()
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
-      onClick: e => {
-        e.stopPropagation(); // 卡片整体可点进 archive，按钮内点击避免重复导航
-        openArchive();
-      }
-    }, "查看 / 修改")), /*#__PURE__*/React.createElement("div", {
-      className: "flex-row",
-      style: {
-        marginTop: 8
-      }
-    }, /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: openArchive
+    }, "查看"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
-      style: {
-        padding: '8px',
-        fontSize: 13
-      },
-      onClick: e => {
-        e.stopPropagation();
-        openRename(c);
-      }
+      type: "button",
+      onClick: () => openEdit(c)
+    }, "修改"), /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline",
+      type: "button",
+      onClick: () => openRename(c)
     }, "重命名"), /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-outline",
-      style: {
-        padding: '8px',
-        fontSize: 13,
-        color: 'var(--cinnabar)',
-        borderColor: 'var(--cinnabar)'
-      },
-      onClick: e => {
-        e.stopPropagation();
-        handleDelete(c);
-      }
+      className: "btn btn-outline btn-del",
+      type: "button",
+      onClick: () => handleDelete(c)
     }, "删除")));
   }), renameTarget && /*#__PURE__*/React.createElement(RenameModal, {
     value: renameValue,
@@ -2491,6 +2535,15 @@ function CasesPage({
     onConfirm: submitRename,
     onCancel: closeRename,
     busy: renameBusy
+  }), editTarget && /*#__PURE__*/React.createElement(CaseContactModal, {
+    name: String(editTarget.name || '').trim() || '未命名档案',
+    phone: editPhone,
+    email: editEmail,
+    onPhone: e => setEditPhone(e.target.value),
+    onEmail: e => setEditEmail(e.target.value),
+    onConfirm: submitEdit,
+    onCancel: closeEdit,
+    busy: editBusy
   }));
 }
 function OnboardingPage({
@@ -2520,7 +2573,10 @@ function OnboardingPage({
       birth_district: '',
       longitude: '',
       latitude: '',
-      true_solar_time: false
+      true_solar_time: false,
+      // REQ-065：建档选填联系方式（非必填；为空不提交或提交 null）
+      phone: '',
+      email: ''
     };
     try {
       const saved = localStorage.getItem('taichu_onboarding_form');
@@ -2652,6 +2708,19 @@ function OnboardingPage({
       setLoading(false);
       return;
     }
+    // REQ-065：建档选填 手机号/邮箱 —— 格式非法（手机号非 11 位数字 / 邮箱不含 @）toast 提示不提交
+    const phoneRaw = String(form.phone || '').trim();
+    const emailRaw = String(form.email || '').trim();
+    if (phoneRaw && !/^\d{11}$/.test(phoneRaw)) {
+      toast('手机号须为 11 位数字');
+      setLoading(false);
+      return;
+    }
+    if (emailRaw && !/^[^\s@]+@[^\s@]+$/.test(emailRaw)) {
+      toast('邮箱格式不正确（需包含 @）');
+      setLoading(false);
+      return;
+    }
     const birthplace = [form.birth_province, form.birth_city, form.birth_district].filter(Boolean).join('/');
     try {
       const res = await api('/cases', {
@@ -2666,6 +2735,8 @@ function OnboardingPage({
           longitude: form.longitude ? +form.longitude : null,
           latitude: form.latitude ? +form.latitude : null,
           true_solar_time: !!form.true_solar_time,
+          phone: phoneRaw || null,
+          email: emailRaw || null,
           question: '事业运势'
         })
       });
@@ -2849,6 +2920,43 @@ function OnboardingPage({
   }))), !coordTouched && form.longitude && form.latitude && /*#__PURE__*/React.createElement("p", {
     className: "coord-hint"
   }, "已根据出生地自动填入经纬度，可手动修改（留空则占星/七政/奇门/五运六气将降级）。"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "field-row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "f_phone"
+  }, "手机号（选填）"), /*#__PURE__*/React.createElement("input", {
+    id: "f_phone",
+    className: "input",
+    type: "tel",
+    inputMode: "numeric",
+    maxLength: 11,
+    value: form.phone,
+    onChange: update('phone'),
+    placeholder: "11 位手机号"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "f_email"
+  }, "电子邮箱（选填）"), /*#__PURE__*/React.createElement("input", {
+    id: "f_email",
+    className: "input",
+    type: "email",
+    value: form.email,
+    onChange: update('email'),
+    placeholder: "需包含 @"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "field-row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      margin: '2px 0 0',
+      lineHeight: 1.5
+    }
+  }, "联系方式仅用于后续联络，不参与排盘计算。")))), /*#__PURE__*/React.createElement("div", {
     className: "switch-row"
   }, /*#__PURE__*/React.createElement("label", {
     className: "switch"
