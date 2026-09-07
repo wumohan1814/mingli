@@ -256,6 +256,9 @@ class Divination(Base):
     seed_json / result_json 均可为 None（转发 Node 失败时不落库，故正常行两者非空）；
     interpretation_json 由 POST /divinations/{id}/interpret 写入（{"content": 断卦文本}），
     命中即为缓存，二次 interpret 零 LLM 零扣费直接返回。
+    focus_interpretations 由 POST /divinations/{id}/focus（REQ-075，仅六爻）写入
+    （dict：focus_key → 详解文本；focus_key ∈ moving_yao/shi_ying/kong_wang/an_dong/
+    hui_tou_sheng_ke/hua_kong_hua_mu），命中该 focus 即缓存，二次点击零 LLM 零扣费。
     """
     __tablename__ = "divinations"
 
@@ -266,6 +269,8 @@ class Divination(Base):
     seed_json = Column(JSON, nullable=True)            # 报数/时间/摇卦结果
     result_json = Column(JSON, nullable=True)          # 卦象/课式/签文（确定性）
     interpretation_json = Column(JSON, nullable=True)  # LLM 断卦（可选付费，缓存于此）
+    focus_interpretations = Column(JSON, nullable=True)  # 六爻焦点详解缓存（REQ-075：
+                                                        # dict focus_key → 详解文本，逐项点击命中即零 LLM 零扣费）
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
