@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>太初 · 命理全局运势趋势</title>
+  <title>太初 · 识己于星，安己于时</title>
   <script src="./vendor/react.production.min.js"></script>
   <script src="./vendor/react-dom.production.min.js"></script>
   <script src="./vendor/regions.js"></script>
@@ -527,6 +527,93 @@ const {
   useEffect,
   useRef
 } = React;
+// ===== B1 全站 UI 文案常量（REQ-037）=====
+// 来源：docs/文案交付/B1_ui_copy.json（去掉 _meta，8 组全量内联）。
+// 集中维护：落地页 / 品牌标语 / 免责声明 / Hub 标题等从此引用。
+// buttons / tips / empty / error 本次仅定义常量，暂不全站替换按钮与提示文案（避免破坏既有交互与断言）。
+const UI_COPY = {
+  brand: {
+    name: '太初',
+    tagline: '识己于星，安己于时',
+    subtitle: '以多流派文化视角，照见当下的趋势与可能',
+    positioning: '命理文化 · 趋势参考 · 自我觉察'
+  },
+  landing: {
+    hero_title: '太初 · 识己于星，安己于时',
+    hero_subtitle: '融合东方命理与西方占星的多流派视角，为你提供一份关于趋势的从容参考。',
+    hero_cta_primary: '开始我的命理档案',
+    hero_cta_secondary: '先看看怎么用',
+    value_1_title: '多流派综合',
+    value_1_desc: '八字、紫微、星盘、塔罗等并行呈现，而非单一口径的片面之见。',
+    value_2_title: '可修正',
+    value_2_desc: '补充信息后结果可迭代收敛，更贴近你真实的处境与困惑。',
+    value_3_title: '随时问',
+    value_3_desc: '线上随时展开，突破预约与时空的边界，想问就问。',
+    faq_q1: '这是算命吗？',
+    faq_a1: '我们将其视作一种文化视角下的趋势参考，用于自我觉察与厘清思路，而非对命运下定论。',
+    faq_q2: '结果一定准吗？',
+    faq_a2: '命理本质是模糊而开放的。我们更在意你借由它看清当下、作出更从容的选择。',
+    disclaimer_short: '太初所载皆为文化趋势参考，仅供自我觉察，不构成任何决策建议。'
+  },
+  module_hub: {
+    guoxue_title: '国学预测',
+    guoxue_desc: '以八字、紫微等东方体系，梳理你当下的趋势脉络。',
+    western_title: '西式占卜',
+    western_desc: '以星盘、塔罗、雷诺曼等视角，照见不同的可能。',
+    mbti_title: 'MBTI 人格',
+    mbti_desc: '以趣味性格测评，认识自己与世界相处的方式。',
+    enter_guoxue: '进入国学预测',
+    enter_western: '进入西式占卜',
+    enter_mbti: '开始人格测试'
+  },
+  buttons: {
+    create_case: '新建档案',
+    choose_case: '选择已有档案',
+    generate_chart: '生成星盘',
+    start_divination: '开始起卦',
+    draw_cards: '抽牌',
+    start_quiz: '开始答题',
+    redo: '重新抽卡',
+    rechoose: '重选牌阵',
+    back: '返回',
+    view_archive: '查看档案',
+    back_to_list: '回到档案列表',
+    back_home: '回到首页',
+    deep_read: '本命深度解读',
+    buy_points: '购买积分',
+    login: '登录',
+    register: '注册',
+    logout: '退出登录',
+    confirm: '确认',
+    cancel: '取消'
+  },
+  tips: {
+    loading_chart: '正在为你推演星图，请稍候……',
+    loading_read: '解读生成中，趋势正在成形。',
+    info_points_cost: '本次解读将消耗积分，结果可随时回看。',
+    hint_revision: '补充更准确的信息，可让结果更贴合你的真实处境。',
+    hint_placeholder: '示例：想了解近半年的事业走向。',
+    hint_compliance: '以下为趋势参考，供你自行判断，非确定结论。'
+  },
+  empty: {
+    no_case: '还没有命理档案。新建一份，开启你的趋势参考。',
+    no_reading: '这一模块尚未生成结果。选择方向，开始第一次推演。',
+    no_mbti: '尚未完成人格测试。用几分钟，认识另一个角度的自己。',
+    no_history: '暂无历史记录，每一次探索都会在这里留痕。'
+  },
+  error: {
+    net_error: '网络似乎打了个盹，请稍后重试。',
+    auth_expired: '登录状态已失效，请重新登录以继续。',
+    param_invalid: '信息填写不完整或有误，请检查后再试。',
+    points_insufficient: '积分不足，补足后可继续本次解读。',
+    unknown: '出现了一点小状况，请稍后再试；若持续发生可联系我们。',
+    rate_limit: '操作过于频繁，稍作停留后再继续吧。'
+  },
+  compliance: {
+    disclaimer_full: '太初所提供的所有内容，均基于传统命理与占星文化的趋势性参考，用于自我觉察与思路梳理，不构成医疗、投资、司法或任何具有约束力的决策建议。命运向来开放，真正的结果，来自你清醒的选择与持续的行动。',
+    footer_note: '本平台为文化娱乐性质，请理性看待，勿迷信盲从。'
+  }
+};
 const API = '/api';
 let token = '';
 let refreshToken = '';
@@ -970,7 +1057,7 @@ function DisclaimerFooter() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "spark",
     size: 14
-  })), "本结果为运势趋势参考，不构成医疗、法律或投资建议。重大现实决策请咨询相关专业人士。", /*#__PURE__*/React.createElement("div", {
+  })), UI_COPY.compliance.disclaimer_full, /*#__PURE__*/React.createElement("div", {
     className: "legal-links"
   }, /*#__PURE__*/React.createElement("a", {
     href: "/legal/用户协议.html",
@@ -1139,26 +1226,26 @@ function LandingPage({
   const MODS = {
     guoxue: {
       icon: 'nine',
-      title: '太初 · 九法合参',
-      subtitle: '八字 · 紫微 · 西占 · 七政 · 奇门 · 五运六气等 9 法综合',
-      intro: '九大命理流派并行推演，AI 逐柱逐宫演算、交叉印证，从事业、财运、婚姻到健康，为你合成一份整体运势参考。全程约 30–60 分钟，值得等待。',
-      cta: '进入国学预测',
+      title: UI_COPY.module_hub.guoxue_title,
+      subtitle: UI_COPY.module_hub.guoxue_desc,
+      intro: UI_COPY.landing.value_1_desc,
+      cta: UI_COPY.module_hub.enter_guoxue,
       to: 'guoxue-hub'
     },
     xishi: {
       icon: 'orbit',
-      title: '西式占卜',
-      subtitle: '星座 · 塔罗 · 雷诺曼',
+      title: UI_COPY.module_hub.western_title,
+      subtitle: UI_COPY.module_hub.western_desc,
       intro: '从本命星盘、行运推演，到塔罗牌阵与雷诺曼小牌——AI 以符号与意象为语，陪你梳理情绪、看清关系与当下的每一个抉择。',
-      cta: '进入西式占卜',
+      cta: UI_COPY.module_hub.enter_western,
       to: 'xishi-hub'
     },
     mbti: {
       icon: 'spark',
-      title: 'MBTI 人格测试',
-      subtitle: '认识你的 16 型人格',
+      title: UI_COPY.module_hub.mbti_title,
+      subtitle: UI_COPY.module_hub.mbti_desc,
       intro: '通过 16 型人格框架，梳理你的能量来源、信息偏好与决策方式。逐题作答，AI 将结合你的选择给出专属类型画像与解读。',
-      cta: '开始测试',
+      cta: UI_COPY.module_hub.enter_mbti,
       to: 'mbti'
     }
   };
@@ -1968,7 +2055,7 @@ function CasesPage({
       color: 'var(--text-3)',
       fontSize: 14
     }
-  }, "暂无档案，点击新建开始") : caseList.map(c => {
+  }, UI_COPY.empty.no_case) : caseList.map(c => {
     const failed = c.status === 'failed';
     const mainLabel = c.hasReport ? '查看解读' : c.status === 'calibrated' ? '生成解读' : (c.methodCount || 0) >= 9 ? '继续校准' : '继续命盘';
     // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
@@ -4864,7 +4951,7 @@ function GuoxueHubPage({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "nine",
     size: 22
-  }), " 国学预测"), /*#__PURE__*/React.createElement("div", {
+  }), UI_COPY.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -4932,7 +5019,7 @@ function XishiHubPage({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "orbit",
     size: 22
-  }), " 西式占卜"), /*#__PURE__*/React.createElement("div", {
+  }), UI_COPY.module_hub.western_title), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -7917,11 +8004,11 @@ function App() {
     style: {
       cursor: 'pointer'
     }
-  }, "太初", /*#__PURE__*/React.createElement("span", {
+  }, UI_COPY.brand.name, /*#__PURE__*/React.createElement("span", {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, "命理全局 · 运势趋势")), /*#__PURE__*/React.createElement(TopbarMenu, {
+  }, UI_COPY.brand.tagline)), /*#__PURE__*/React.createElement(TopbarMenu, {
     loggedIn: !!token,
     onAuth: () => navigate('auth'),
     onPickModule: selectModule,
