@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     access_token_ttl: int = 1800
     refresh_token_ttl: int = 604800
 
+    # Agent 运维接入（REQ-050）：OpenClaw Agent 专用静态 token，独立于 admin 账号密码/JWT
+    # key 只允许来自环境变量/backend/.env（TAICHU_AGENT_TOKEN），严禁硬编码进源码；
+    # 空 = 禁用 /admin/agent/*（require_agent 一律 401 拒绝，防误开）
+    agent_api_token: str = ""                     # TAICHU_AGENT_TOKEN
+
     # 成本闸门
     cost_gate_mode: str = "full"
 
