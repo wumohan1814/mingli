@@ -5885,7 +5885,7 @@ function normTarotCard(c) {
   };
   // A2：固定牌义正文与分方向关键词（判空容错；reversed 为布尔逆位标记，逆位正文存 reversedText）
   const upright = strOf(src, 'upright') || strOf(c, 'upright');
-  const revText = strOf(src, 'reversed') || strOf(c, 'reversed');
+  const revText = strOf(src, 'reversedText') || strOf(c, 'reversedText');
   const uprightKeywords = arrOf(src, 'uprightKeywords').length ? arrOf(src, 'uprightKeywords') : arrOf(c, 'uprightKeywords');
   const reversedKeywords = arrOf(src, 'reversedKeywords').length ? arrOf(src, 'reversedKeywords') : arrOf(c, 'reversedKeywords');
   const keywords = Array.isArray(src && src.keywords) ? src.keywords : (Array.isArray(c && c.keywords) ? c.keywords : []);

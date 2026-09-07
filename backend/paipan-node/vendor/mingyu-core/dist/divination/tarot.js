@@ -250,11 +250,18 @@ export function drawTarotSpread(spreadType = 'single', options) {
         if (options.interactiveSamples.length !== spread.cardCount * 2) {
             throw new Error(`${spread.name}需要逐张抽取${spread.cardCount}张牌`);
         }
-        const cards = resolveInteractiveTarotCards(spreadType, options.interactiveSamples).map((card, index) => ({
-            ...card,
-            position: spread.positions[index],
-            ...getCardEvidence(card.name),
-        }));
+        const cards = resolveInteractiveTarotCards(spreadType, options.interactiveSamples).map((card, index) => {
+            const source = tarotCards.find((item) => item.number === card.id);
+            return {
+                ...card,
+                position: spread.positions[index],
+                upright: source ? (source.upright || '') : '',
+                reversedText: source ? (source.reversed || '') : '',
+                uprightKeywords: source && Array.isArray(source.uprightKeywords) ? source.uprightKeywords : [],
+                reversedKeywords: source && Array.isArray(source.reversedKeywords) ? source.reversedKeywords : [],
+                ...getCardEvidence(card.name),
+            };
+        });
         const timestamp = Date.now();
         const data = attachResultMeta({
             spreadType,
@@ -291,6 +298,10 @@ export function drawTarotSpread(spreadType = 'single', options) {
                 name: card.name,
                 position: spread.positions[index],
                 reversed: input.reversed,
+                upright: card.upright || '',
+                reversedText: card.reversed || '',
+                uprightKeywords: Array.isArray(card.uprightKeywords) ? card.uprightKeywords : [],
+                reversedKeywords: Array.isArray(card.reversedKeywords) ? card.reversedKeywords : [],
                 ...getCardEvidence(card.name),
             };
         });
@@ -319,6 +330,10 @@ export function drawTarotSpread(spreadType = 'single', options) {
                     name: draw.card.name,
                     position: draw.position,
                     reversed: draw.isReversed,
+                    upright: draw.card.upright || '',
+                    reversedText: draw.card.reversed || '',
+                    uprightKeywords: Array.isArray(draw.card.uprightKeywords) ? draw.card.uprightKeywords : [],
+                    reversedKeywords: Array.isArray(draw.card.reversedKeywords) ? draw.card.reversedKeywords : [],
                     ...getCardEvidence(draw.card.name),
                 },
             ],
@@ -338,6 +353,10 @@ export function drawTarotSpread(spreadType = 'single', options) {
             name: item.card.name,
             position: item.position,
             reversed: item.isReversed,
+            upright: item.card.upright || '',
+            reversedText: item.card.reversed || '',
+            uprightKeywords: Array.isArray(item.card.uprightKeywords) ? item.card.uprightKeywords : [],
+            reversedKeywords: Array.isArray(item.card.reversedKeywords) ? item.card.reversedKeywords : [],
             ...getCardEvidence(item.card.name),
         })),
         timestamp: draw.timestamp,
