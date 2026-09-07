@@ -11223,14 +11223,9 @@ function TarotPage({
   const [dealStage, setDealStage] = useState('done');
   const [flipped, setFlipped] = useState({});
   const [bulkFlip, setBulkFlip] = useState(false); // 一键全翻的 stagger 模式
-  // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（必填）→ ② 选择牌阵
+  // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（选填，REQ-079）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
-    // 占问问题必填：点牌阵/抽牌前拦截空问题（trim 后为空 → 提示并返回，不抽牌）
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     setSpread(sp);
     setStep('draw');
     setData(null);
@@ -11260,13 +11255,9 @@ function TarotPage({
       setLoading(false);
     }
   };
-  // REQ-069：进入手动选牌步骤（校验问题后开始按牌位逐张选牌）
+  // REQ-069：进入手动选牌步骤（问题选填，留空可直接按牌位选牌）
   const openManualPick = sp => {
     if (loading || !sp) return;
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     setSpread(sp);
     setPicks([]);
     setPickOri('up');
@@ -11296,10 +11287,6 @@ function TarotPage({
   // REQ-069：手动选牌完成 → drawTarotSpread options.manualCards = [{id,reversed}]（后端按牌位确定性成牌）
   const submitManual = async () => {
     if (loading || !spread) return;
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     if (!picks || picks.length !== spread.pos.length) {
       toast('请把「' + spread.name + '」的 ' + spread.pos.length + ' 个牌位逐张选完');
       return;
@@ -11513,10 +11500,10 @@ function TarotPage({
       React.createElement('div', { className: 'interp-body' }, interp)));
     drawBody = React.createElement('div', { className: 'card' }, bodyKids);
   }
-  // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
+  // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（选填，REQ-079）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：选择牌阵上方提供「自动抽牌 / 手动选牌」并行切换（手动=从牌库按牌位录入实际结果）
   const menuBody = React.createElement('div', { className: 'card' },
-    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（必填）'),
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（选填）'),
     React.createElement('textarea', {
       className: 'q-input',
       rows: 2,
@@ -11929,14 +11916,9 @@ function LenormandPage({
   const [flipped, setFlipped] = useState({});
   const [bulkFlip, setBulkFlip] = useState(false);
   const lnApiType = function (sp) { return sp && sp.id === 'grid' ? 'nine' : (sp ? (sp.id || 'single') : 'single'); };
-  // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（必填）→ ② 选择牌阵
+  // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（选填，REQ-079）→ ② 选择牌阵
   const load = async sp => {
     if (loading || !sp) return;
-    // 占问问题必填：点牌阵/抽牌前拦截空问题（trim 后为空 → 提示并返回，不抽牌）
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     // REQ-043 v2：问题文本直接放入 seed.question（方向已删，不再拼接前缀）
     const askTrim = (question || '').trim();
     const seedObj = { spreadType: lnApiType(sp) };
@@ -11967,13 +11949,9 @@ function LenormandPage({
       setLoading(false);
     }
   };
-  // REQ-069：进入手动选牌步骤
+  // REQ-069：进入手动选牌步骤（问题选填，留空可直接按牌位选牌）
   const openManualPick = sp => {
     if (loading || !sp) return;
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     setSpread(sp);
     setPicks([]);
     setErrored('');
@@ -11999,10 +11977,6 @@ function LenormandPage({
   // REQ-069：手动选牌完成 → drawLenormandSpread options.manualCardIds（后端按牌位确定性成牌）
   const submitManual = async () => {
     if (loading || !spread) return;
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     const need = spread.n || 1;
     if (!picks || picks.length !== need) {
       toast('请把「' + spread.name + '」的 ' + need + ' 个牌位逐张选完');
@@ -12204,10 +12178,10 @@ function LenormandPage({
       React.createElement('div', { className: 'interp-body' }, interp)));
     body = React.createElement('div', { className: 'card' }, bodyKids);
   }
-  // REQ-043 v2：menu = ① 占问问题（必填）→ ② 选择牌阵（单列按钮 + 适用说明）
+  // REQ-043 v2：menu = ① 占问问题（选填，REQ-079）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：牌阵上方提供「自动抽牌 / 手动选牌」并行切换
   const menuBody = React.createElement('div', { className: 'card' },
-    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（必填）'),
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（选填）'),
     React.createElement('textarea', {
       className: 'q-input',
       rows: 2,
