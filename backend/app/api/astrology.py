@@ -180,6 +180,11 @@ def create_astrology_chart(
     """排星座盘（确定性，免费，落库）：取 case 生辰 → 转发 Node /astrology →
     落 astrology_readings 表（带 case_id）+ 埋点。
 
+    幂等复用（REQ-039）：同一档案+盘型只生成一次并绑定，键 = (user_id, case_id,
+    scope)；已有记录直接返回（不重复转发 Node / 落新行 / 写埋点）。date_str 不参与
+    幂等键——模型无 date_str 列，非 natal 盘型的再入按 scope 复用（MVP 前端仅用 natal，
+    此简化可接受）。
+
     统一档案体系：出生信息一律读 case.input_json，不再接收独立出生字段；
     case.input_json 缺经纬度时提前 400，避免 Node 以 500 兜底返回成「服务不可用」。
     """
@@ -204,7 +209,19 @@ def create_astrology_chart(
         if not re.match(_DATE_STR_PATTERN, body.date_str):
             raise _err(400, "date_str 需为 YYYY-MM-DD 格式的参考日期")
 
-    # ③ 转发常驻排盘 Node 服务（server.mjs /astrology）；生辰扁平化透传。
+    # ③ 幂等复用（REQ-039）：同一 (user_id, case_id, scope) 已生成过且 chart_json
+    #    非空 → 直接返回该已有 reading（不转发 Node、不落新行、不写埋点）。
+    #    date_str 不参与幂等键：模型无 date_str 列，非 natal 再入按 scope 复用
+    #    （docstring 已注明此简化，MVP 前端仅用 natal）。
+    existing = (db.query(AstrologyReading)
+                .filter_by(user_id=user_id, case_id=body.case_id, scope=body.scope)
+                .order_by(AstrologyReading.id.desc()).first())
+    if existing is not None and existing.chart_json:
+        return {"code": 0, "message": "ok",
+                "data": {"id": existing.id, "scope": existing.scope,
+                         "chart": existing.chart_json}}
+
+    # ④ 转发常驻排盘 Node 服务（server.mjs /astrology）；生辰扁平化透传。
     #    星盘计算较重（本命 + 行运/返照/次限上下文），timeout 放宽到 120s。
     payload = {
         "year": inp.get("birth_year"),
@@ -239,7 +256,7 @@ def create_astrology_chart(
                        user_id, body.case_id, str(node_result)[:200])
         raise _err(502, "星盘服务暂不可用，请稍后重试")
 
-    # ④ 落库（确定性星盘免费持久化，供 GET 只读与 interpret 付费解读复用；带 case_id）
+    # ⑤ 落库（确定性星盘免费持久化，供 GET 只读与 interpret 付费解读复用；带 case_id）
     reading = AstrologyReading(
         user_id=user_id,
         case_id=body.case_id,
@@ -250,7 +267,7 @@ def create_astrology_chart(
     db.commit()
     db.refresh(reading)
 
-    # ⑤ 埋点（写库失败静默，绝不阻断业务）；本功能零 LLM 零扣费
+    # ⑥ 埋点（写库失败静默，绝不阻断业务）；本功能零 LLM 零扣费
     record_event("astrology_chart", user_id=user_id,
                  props={"scope": body.scope, "case_id": body.case_id})
 
