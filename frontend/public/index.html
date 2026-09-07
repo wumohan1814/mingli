@@ -2983,7 +2983,7 @@ function AuthPage({
     style: {
       marginTop: 16
     }
-  }, loading ? '处理中...' : isLogin ? '登录' : '注册')), /*#__PURE__*/React.createElement("p", {
+  }, loading ? '处理中...' : isLogin ? UI_COPY.buttons.login : UI_COPY.buttons.register)), /*#__PURE__*/React.createElement("p", {
     style: {
       textAlign: 'center',
       marginTop: 16,
@@ -3032,7 +3032,7 @@ function RenameModal({
     type: "button",
     onClick: onCancel,
     disabled: busy
-  }, "取消"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.buttons.cancel), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     type: "button",
     onClick: onConfirm,
@@ -3106,7 +3106,7 @@ function CaseContactModal({
     type: "button",
     onClick: onCancel,
     disabled: busy
-  }, "取消"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.buttons.cancel), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     type: "button",
     onClick: onConfirm,
@@ -3331,7 +3331,7 @@ function CasesPage({
         marginTop: 8
       },
       onClick: () => onNavigate('landing')
-    }, "返回首页")));
+    }, UI_COPY.buttons.back_home)));
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -4114,7 +4114,7 @@ function WaitingPage({
       marginTop: 12
     },
     onClick: () => onNavigate('landing')
-  }, "回到首页"));
+  }, UI_COPY.buttons.back_home));
 }
 function CalibrationPage({
   caseId,
@@ -4308,7 +4308,7 @@ function CalibrationPage({
         marginTop: 8
       },
       onClick: () => onNavigate('landing')
-    }, "返回首页")));
+    }, UI_COPY.buttons.back_home)));
   }
 
   // 后端无待校准断言：友好空态 + 跳过校准
@@ -4443,7 +4443,7 @@ function CalibrationPage({
       setCorrecting(false);
       setNote('');
     }
-  }, "取消"))) : /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.buttons.cancel))) : /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       justifyContent: 'flex-end',
@@ -4461,7 +4461,7 @@ function CalibrationPage({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "check",
     size: 15
-  }), "确认"), /*#__PURE__*/React.createElement("button", {
+  }), UI_COPY.buttons.confirm), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     style: {
       background: '#FFF0F0',
@@ -4613,7 +4613,7 @@ function PredictPage({
         marginTop: 8
       },
       onClick: () => onNavigate('landing')
-    }, "返回首页")));
+    }, UI_COPY.buttons.back_home)));
   }
   if (loading) {
     return /*#__PURE__*/React.createElement("div", {
@@ -4798,15 +4798,15 @@ function PredictPage({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('cases')
-  }, "回到档案列表"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.buttons.back_to_list), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, "回到首页")), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.buttons.back_home)), /*#__PURE__*/React.createElement("div", {
     className: "flex-row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: logout
-  }, "退出登录")));
+  }, UI_COPY.buttons.logout)));
 }
 function RevisePage({
   caseId,
@@ -6038,7 +6038,7 @@ function ArchivePage({
         marginTop: 8
       },
       onClick: () => onNavigate('landing')
-    }, "返回首页")));
+    }, UI_COPY.buttons.back_home)));
   }
   const inp = data && data.input || {};
   const statusMap = {
@@ -6482,10 +6482,10 @@ function ArchivePage({
   }, "九法合一解读"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('cases')
-  }, "回到档案列表"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.buttons.back_to_list), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, "回到首页")), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.buttons.back_home)), /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       flexWrap: 'wrap',
@@ -6807,7 +6807,7 @@ function TopbarMenu({
       setOpen(false);
       onLogout();
     }
-  }, "退出登录")));
+  }, UI_COPY.buttons.logout)));
 }
 
 /* ---------- REQ-068：九法合一 · 选择档案（档案与九法解耦后的九法入口） ---------- */
@@ -6939,7 +6939,7 @@ function NinePickPage({
         width: 'auto'
       },
       onClick: () => onNavigate('landing')
-    }, '返回首页')));
+    }, UI_COPY.buttons.back_home)));
   } else if (!list || list.length === 0) {
     pickBody = el('div', {
       style: {
@@ -7136,7 +7136,7 @@ function NinePickPage({
   }, '档案列表'), el('button', {
     className: 'btn btn-outline',
     onClick: () => onNavigate('landing')
-  }, '回到首页')));
+  }, UI_COPY.buttons.back_home)));
 }
 
 /* ---------- 国学预测 HUB ---------- */
@@ -7688,7 +7688,7 @@ function ZodiacPage({
   }, "返回选项"), React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, "回到首页")));
+  }, UI_COPY.buttons.back_home)));
 }
 
 /* ---------- 临时起卦 ---------- */
@@ -10650,7 +10650,7 @@ function DivinationPage({
           React.createElement('div', { className: 'time-note' }, '默认今天 + 当前时辰，可按实际起卦/掐指时刻调整。')) : null,
         manualPanel,
         React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
-          React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, '取消'),
+          React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
           askMode === 'manual'
             ? React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startManual }, manualStartLabel)
             : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination)))) : null);
@@ -11644,7 +11644,7 @@ function TarotPage({
     drawBody,
     React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
-      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '重选牌阵'),
+      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
@@ -12307,7 +12307,7 @@ function LenormandPage({
     body,
     React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
-      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '重选牌阵'),
+      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'nine', size: 22 }), ' 雷诺曼'),
@@ -13488,7 +13488,7 @@ function AstrologyPage({
       width: 'auto'
     },
     onClick: () => onNavigate('landing')
-  }, '回到首页'))), loveOpen ? el(SunLoveModal, {
+  }, UI_COPY.buttons.back_home))), loveOpen ? el(SunLoveModal, {
     sunCn: loveSunCn,
     caseName: loveCaseName,
     onClose: () => setLoveOpen(false),
@@ -13917,7 +13917,7 @@ function MbtiPage({
       el('div', {className: 'back-row'},
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '重新测试'),
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: pickAnother}, '选择其它档案'),
-        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, UI_COPY.buttons.back_home)));
   } else {
     // —— 阶段 1：答题 ——
     if (qLoading) {
@@ -14153,7 +14153,7 @@ function MbtiSharePage({
       el('div', {className: 'section-title'}, '无法打开分享'),
       el('div', {className: 'error'}, '分享链接无效（缺少链接参数）'),
       el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-        el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+        el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, UI_COPY.buttons.back_home)));
   } else if (result) {
     const t = result.type || 'INTJ';
     // —— 单维双向比例条（复用 MbtiPage 视觉）——
@@ -14182,7 +14182,7 @@ function MbtiSharePage({
       barsCard,
       el('div', {className: 'back-row', style: {justifyContent: 'center'}},
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '再测一次'),
-        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, UI_COPY.buttons.back_home)));
   } else if (loading) {
     body = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px'}}, '分享题库加载中…');
   } else if (errored) {
@@ -14190,7 +14190,7 @@ function MbtiSharePage({
       el('div', {className: 'section-title'}, '无法打开分享'),
       el('div', {className: 'error'}, errored),
       el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-        el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+        el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, UI_COPY.buttons.back_home)));
   } else if (!total) {
     body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
   } else {
@@ -14331,7 +14331,7 @@ function SettingsPage({
     !loggedIn ? React.createElement('div', { className: 'tc-set-guest' }, '当前为未登录状态：设置仅按前端默认值展示，暂不可修改；登录后将从账户拉取并保存。') : null,
     React.createElement('div', { className: 'back-row' },
       React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: goBack }, '返回'),
-      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('landing'); } }, '回到首页')));
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('landing'); } }, UI_COPY.buttons.back_home)));
 }
 
 // ===== REQ-076：太初先生 Agent 会话页 =====
@@ -14956,7 +14956,7 @@ class ErrorBoundary extends React.Component {
           React.createElement('div', { className: 'error', style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } },
             '错误信息：' + msg),
           React.createElement('div', { className: 'back-row', style: { justifyContent: 'center' } },
-            React.createElement('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => { window.location.assign('/'); } }, '返回首页'))));
+            React.createElement('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => { window.location.assign('/'); } }, UI_COPY.buttons.back_home))));
     }
     return this.props.children;
   }
