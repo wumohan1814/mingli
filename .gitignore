@@ -17,6 +17,9 @@ token.txt
 
 # 数据库（SQLite 本地文件，任何位置）
 *.db
+*.db-shm
+*.db-wal
+*.db-journal
 
 # IDE
 .idea/
