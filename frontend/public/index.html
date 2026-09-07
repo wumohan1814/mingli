@@ -450,6 +450,13 @@
 .tarot-card.reversed .tc-imgwrap{transform:rotate(180deg)}
 .tarot-card .tc-name{font-size:13px;font-weight:700;text-align:center;line-height:1.25;color:var(--text-1)}
 .tarot-card .tc-kw{font-size:11px;color:var(--text-2);text-align:center;line-height:1.45}
+/* A2/A3：塔罗固定牌义正文 / 雷诺曼主题·细节文案（非 LLM 文案落地展示） */
+.tarot-card.has-mean{width:132px}
+.tarot-card .tc-mean{width:100%;margin-top:2px}
+.tarot-card .tc-mean-tag{font-size:11px;font-weight:600;color:var(--skin-accent);text-align:center;margin-bottom:3px}
+.tarot-card .tc-mean-txt{font-size:12px;color:var(--text-2);line-height:1.8;text-align:left}
+.tarot-card .tc-theme{font-size:12px;font-weight:700;color:var(--text-1);text-align:center;line-height:1.5;margin-top:2px}
+.tarot-card .tc-detail{font-size:12px;color:var(--text-2);line-height:1.8;text-align:left;width:100%;margin-top:2px}
 .tarot-card .tc-element{font-size:10px;color:var(--text-3);text-align:center}
 .tarot-card .tc-ph{display:flex;width:100%;height:100%;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;padding:6px;text-align:center;box-sizing:border-box}
 .tarot-deck-back{display:flex;align-items:center;gap:12px;margin:4px 0 10px;padding:8px 10px;background:var(--skin-accent-soft);border-radius:var(--radius-sm)}
@@ -5862,14 +5869,41 @@ function normTarotCard(c) {
   const src = c && c.card && typeof c.card === 'object' ? c.card : c;
   const name = (src && (src.name || src.cardName)) || '';
   const pos = (c && (c.position || c.pos)) || '';
-  const reversed = c ? (typeof c.reversed === 'boolean' ? c.reversed : (c.orientation === '逆位') || false) : false;
+  // 逆位判定兼容三种来源：random 分支 item.isReversed、interactive/manual 分支布尔 item.reversed、以及 orientation==='逆位'
+  let reversed = false;
+  if (c) {
+    if (typeof c.isReversed === 'boolean') reversed = c.isReversed;
+    else if (typeof c.reversed === 'boolean') reversed = c.reversed;
+    else if (src && typeof src.reversed === 'boolean') reversed = src.reversed;
+    else if (c.orientation === '逆位' || (src && src.orientation === '逆位')) reversed = true;
+  }
+  const strOf = function (o, key) {
+    return (o && typeof o[key] === 'string' && o[key].trim()) ? o[key] : '';
+  };
+  const arrOf = function (o, key) {
+    return (o && Array.isArray(o[key])) ? o[key] : [];
+  };
+  // A2：固定牌义正文与分方向关键词（判空容错；reversed 为布尔逆位标记，逆位正文存 reversedText）
+  const upright = strOf(src, 'upright') || strOf(c, 'upright');
+  const revText = strOf(src, 'reversed') || strOf(c, 'reversed');
+  const uprightKeywords = arrOf(src, 'uprightKeywords').length ? arrOf(src, 'uprightKeywords') : arrOf(c, 'uprightKeywords');
+  const reversedKeywords = arrOf(src, 'reversedKeywords').length ? arrOf(src, 'reversedKeywords') : arrOf(c, 'reversedKeywords');
   const keywords = Array.isArray(src && src.keywords) ? src.keywords : (Array.isArray(c && c.keywords) ? c.keywords : []);
+  // 按当前正逆位把对应方向关键词并入展示行（去重），原始 uprightKeywords/reversedKeywords 仍单独保留
+  const oriKw = reversed ? reversedKeywords : uprightKeywords;
+  const mergedKw = keywords.concat(oriKw.filter(function (k) {
+    return keywords.indexOf(k) === -1;
+  }));
   const deck = tarotDeckMatch(name);
   return {
     name: name,
     pos: pos,
     reversed: !!reversed,
-    keywords: keywords,
+    keywords: mergedKw,
+    upright: upright,
+    reversedText: revText,
+    uprightKeywords: uprightKeywords.slice(),
+    reversedKeywords: reversedKeywords.slice(),
     element: (src && src.element) || '',
     archetype: (src && src.archetype) || '',
     suit: (deck && deck.suit) || tarotSuitOf(name),
@@ -5882,6 +5916,18 @@ function TarotCard({
   const rev = !!(item && item.reversed);
   const suit = (item && item.suit) || 'major';
   const name = (item && item.name) || '牌';
+  // A2：固定牌义正文（后端 upright/reversed 字段，非 LLM；判空容错，无正文时不渲染该区块）
+  const bodyText = rev
+    ? ((item && (item.reversedText || (typeof item.reversed === 'string' ? item.reversed : ''))) || '')
+    : ((item && item.upright) || '');
+  const bodyTag = rev ? '逆位含义' : '正位含义';
+  const body = bodyText ? React.createElement('div', {
+    className: 'tc-mean'
+  }, React.createElement('div', {
+    className: 'tc-mean-tag'
+  }, bodyTag), React.createElement('div', {
+    className: 'tc-mean-txt'
+  }, bodyText)) : null;
   return React.createElement('div', {
     style: {
       textAlign: 'center'
@@ -5889,7 +5935,7 @@ function TarotCard({
   }, item && item.pos ? React.createElement('div', {
     className: 'tc-pos'
   }, item.pos) : null, React.createElement('div', {
-    className: 'tarot-card suit-' + suit + (rev ? ' reversed' : '')
+    className: 'tarot-card suit-' + suit + (rev ? ' reversed' : '') + (bodyText ? ' has-mean' : '')
   }, React.createElement('div', {
     className: 'tc-imgwrap'
   }, item && item.img ? React.createElement('img', {
@@ -5907,7 +5953,7 @@ function TarotCard({
     className: 'tc-name'
   }, name, rev ? '（逆位）' : ''), item && item.keywords && item.keywords.length ? React.createElement('div', {
     className: 'tc-kw'
-  }, item.keywords.join(' · ')) : null));
+  }, item.keywords.join(' · ')) : null, body));
 }
 function TarotPage({
   onNavigate
@@ -6260,23 +6306,31 @@ function lnCardOf(c) {
   const name = (c && (c.name || c.cardName)) || '';
   const pos = (c && (c.position || c.pos)) || '';
   const deck = name ? (LENORMAND_DECK.find(d => d.name === (LN_NAME_ALIAS[name] || name)) || LENORMAND_DECK.find(d => d.name === name) || null) : null;
+  // A3：雷诺曼固定主题/细节文案（判空容错；c 为 LENORMAND_CARDS 对象引用时自带 theme/detail）
+  const theme = (c && typeof c.theme === 'string' && c.theme.trim()) ? c.theme : '';
+  const detail = (c && typeof c.detail === 'string' && c.detail.trim()) ? c.detail : '';
   return {
     name: name || '？',
     pos: pos,
     img: deck ? deck.img : '',
     suit: deck ? String(deck.suit).toLowerCase() : 'hearts',
     kw: deck ? deck.kw : '',
-    keywords: Array.isArray(c && c.keywords) && c.keywords.length ? c.keywords.slice(0, 3) : (deck && deck.kw ? deck.kw.split('/') : [])
+    keywords: Array.isArray(c && c.keywords) && c.keywords.length ? c.keywords.slice(0, 3) : (deck && deck.kw ? deck.kw.split('/') : []),
+    theme: theme,
+    detail: detail
   };
 }
 function lnCardEl(item, idx) {
+  const hasText = !!(item && (item.theme || item.detail));
   return React.createElement('div', { key: idx, style: { textAlign: 'center' } },
     item.pos ? React.createElement('div', { className: 'tc-pos' }, item.pos) : null,
-    React.createElement('div', { className: 'tarot-card suit-' + item.suit },
+    React.createElement('div', { className: 'tarot-card suit-' + item.suit + (hasText ? ' has-mean' : '') },
       React.createElement('div', { className: 'tc-imgwrap' },
         item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || '#3E7C6B' } }, item.name)),
       React.createElement('div', { className: 'tc-name' }, item.name),
-      React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
+      React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / ')),
+      item.theme ? React.createElement('div', { className: 'tc-theme' }, item.theme) : null,
+      item.detail ? React.createElement('div', { className: 'tc-detail' }, item.detail) : null));
 }
 function LenormandPage({
   onNavigate
