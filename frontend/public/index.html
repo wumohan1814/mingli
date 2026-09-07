@@ -941,7 +941,8 @@ async function api(path, options = {}) {
   });
 
   // access token 过期 → 用 refresh_token 自动续期并重试原请求（避免长任务中途被踢出）
-  if (r.status === 401 && refreshToken) {
+  // REQ-049：skip401 调用（登录/注册）不参与续期重试，401 即视为业务失败，交下方通用解析透传后端 message
+  if (r.status === 401 && refreshToken && !options.skip401) {
     try {
       const rr = await fetch(API + '/auth/refresh', {
         method: 'POST',
@@ -971,7 +972,9 @@ async function api(path, options = {}) {
       }
     } catch (e) {/* 刷新失败则走下方踢出 */}
   }
-  if (r.status === 401) {
+  // REQ-049：统一 401 拦截（清 token / onUnauthorized / 抛「登录已过期」）仅用于非 skip401 调用；
+  // skip401（登录/注册）直接落入下方通用错误解析，err.message 透传后端真实 message（如「用户名或密码错误」）
+  if (r.status === 401 && !options.skip401) {
     token = '';
     refreshToken = '';
     localStorage.removeItem('taichu_token');
@@ -1638,18 +1641,35 @@ function AuthPage({
       setError('请先阅读并同意用户协议与隐私政策');
       return;
     }
-    // 注册分支：用户名即为手机号，须为真实有效的 11 位中国大陆手机号（1 开头、第二位 3-9），否则提示且不发请求（登录分支仅要求非空，由 required 保证）
+    // 注册分支：逐字段必填校验（用户名/密码/确认密码/验证码为空分别提示、不发请求），
+    // 再校验手机号格式与两次密码一致（登录分支仅要求非空，由 required 保证）
     if (!isLogin) {
+      if (!String(username || '').trim()) {
+        setError('请输入手机号（注册用户名）');
+        return;
+      }
+      if (!password) {
+        setError('请输入密码');
+        return;
+      }
+      if (!confirmPassword) {
+        setError('请再次输入确认密码');
+        return;
+      }
+      if (!String(captchaCode || '').trim()) {
+        setError('请输入图形验证码');
+        return;
+      }
       if (!/^1[3-9]\d{9}$/.test(username)) {
         setError('请输入正确的 11 位手机号');
         return;
       }
-      if (password !== confirmPassword) {
-        setError('两次输入的密码不一致');
+      if (password.length < 6) {
+        setError('密码至少需要 6 位');
         return;
       }
-      if (!captchaCode || !String(captchaCode).trim()) {
-        setError('请输入图形验证码');
+      if (password !== confirmPassword) {
+        setError('两次输入的密码不一致');
         return;
       }
     }
@@ -1667,7 +1687,10 @@ function AuthPage({
       }
       const res = await api(isLogin ? '/auth/login' : '/auth/register', {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        // REQ-049：登录/注册的 401（如「用户名或密码错误」）属业务失败而非会话过期，
+        // skip401 跳过统一踢出拦截，让下方 catch 拿到后端真实 message
+        skip401: true
       });
       // 注意：auth 接口返回裸 {access_token, refresh_token}，非 {code,data} 信封
       token = res.access_token || res.data && res.data.access_token;
@@ -1891,7 +1914,7 @@ function RenameModal({
   }, "确定"))));
 }
 
-// 档案列表页：GET /api/cases 展示用户全部命理档案，可查看解读 / 继续 / 进入档案 / 新建
+// 档案列表页：GET /api/cases 展示用户全部命理档案。REQ-046③ 档案管理入口：选择档案查看/修改、新建、命名/删除、回首页，不展示模块主流程按钮
 function CasesPage({
   onNavigate
 }) {
@@ -2074,10 +2097,19 @@ function CasesPage({
     style: {
       marginTop: -10
     }
-  }, "共 ", caseList.length, " 份档案，选择一份继续查看"), /*#__PURE__*/React.createElement("button", {
+  }, "共 ", caseList.length, " 份档案，选择一份进行查看 / 修改"), /*#__PURE__*/React.createElement("div", {
+    className: "flex-row",
+    style: {
+      marginBottom: 14,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('onboarding')
-  }, "+ 新建档案"), caseList.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, "+ 新建档案"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    onClick: () => onNavigate('landing')
+  }, "回首页")), caseList.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
@@ -2087,7 +2119,10 @@ function CasesPage({
     }
   }, UI_COPY.empty.no_case) : caseList.map(c => {
     const failed = c.status === 'failed';
-    const mainLabel = c.hasReport ? '查看解读' : c.status === 'calibrated' ? '生成解读' : (c.methodCount || 0) >= 9 ? '继续校准' : '继续命盘';
+    // REQ-046③：档案管理入口只提供「查看 / 修改」，不再展示继续命盘/校准/生成解读等模块主流程按钮
+    const openArchive = () => onNavigate('archive', {
+      caseId: c.caseId
+    });
     // 排盘进度：methodCount/totalMethods 防御性取值，totalMethods 缺省按 9
     const methodCount = c.methodCount || 0;
     const totalMethods = c.totalMethods || 9;
@@ -2103,8 +2138,10 @@ function CasesPage({
     return /*#__PURE__*/React.createElement("div", {
       className: "card",
       key: c.caseId,
+      onClick: openArchive,
       style: {
-        padding: '16px 20px'
+        padding: '16px 20px',
+        cursor: 'pointer'
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
@@ -2207,16 +2244,12 @@ function CasesPage({
         marginTop: 12
       }
     }, /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-primary",
-      onClick: () => onNavigate(c.hasReport ? 'predict' : c.status === 'calibrated' ? 'predict' : (c.methodCount || 0) >= 9 ? 'calibration' : 'waiting', {
-        caseId: c.caseId
-      })
-    }, mainLabel), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
-      onClick: () => onNavigate('archive', {
-        caseId: c.caseId
-      })
-    }, "命盘")), /*#__PURE__*/React.createElement("div", {
+      onClick: e => {
+        e.stopPropagation(); // 卡片整体可点进 archive，按钮内点击避免重复导航
+        openArchive();
+      }
+    }, "查看 / 修改")), /*#__PURE__*/React.createElement("div", {
       className: "flex-row",
       style: {
         marginTop: 8
@@ -2227,7 +2260,10 @@ function CasesPage({
         padding: '8px',
         fontSize: 13
       },
-      onClick: () => openRename(c)
+      onClick: e => {
+        e.stopPropagation();
+        openRename(c);
+      }
     }, "重命名"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
       style: {
@@ -2236,7 +2272,10 @@ function CasesPage({
         color: 'var(--cinnabar)',
         borderColor: 'var(--cinnabar)'
       },
-      onClick: () => handleDelete(c)
+      onClick: e => {
+        e.stopPropagation();
+        handleDelete(c);
+      }
     }, "删除")));
   }), renameTarget && /*#__PURE__*/React.createElement(RenameModal, {
     value: renameValue,
