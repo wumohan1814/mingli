@@ -606,6 +606,21 @@
     .free-block .fb-label{font-size:12px;font-weight:700;color:var(--ink-600);margin-bottom:2px}
     .free-block .fb-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
     .free-block .fb-tip{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.6}
+    /* ===== REQ-075：六爻焦点详解（逐项点击 → LLM 结合本盘+爻辞针对性解读，小额积分付费） ===== */
+    .focus-card{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .focus-card .fc-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
+    .focus-intro{font-size:12px;color:var(--text-3);line-height:1.7;margin-bottom:4px}
+    .focus-item{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 0}
+    .focus-item + .focus-item{border-top:1px dashed var(--border)}
+    .focus-name{flex:none;font-size:13px;font-weight:600;color:var(--text-1);min-width:124px}
+    .focus-name.off{color:var(--text-3)}
+    .focus-btn{flex:none;font-size:12px;font-weight:600;color:var(--skin-accent);background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-pill);padding:3px 11px;cursor:pointer;font-family:inherit;line-height:1.5;transition:filter .14s}
+    .focus-btn:hover{filter:brightness(1.05)}
+    .focus-btn.on{color:var(--text-2);border-color:var(--border);background:var(--surface)}
+    .focus-note{font-size:11px;color:var(--text-3);line-height:1.6}
+    .focus-note.err{color:var(--cinnabar)}
+    .focus-panel{width:100%;margin-top:2px}
+    .focus-disclaim{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border)}
     .dt-row{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 2px}
     .dt-field{flex:1 1 160px;min-width:0;display:flex;flex-direction:column;gap:4px}
     .dt-cap{font-size:12px;color:var(--text-2)}
@@ -9127,6 +9142,19 @@ const LIUYAO_GENERIC = {
 /* S07：合规尾注（追加在免费解读区末尾，沿用 REQ-006 免责口径） */
 const LIUYAO_DISCLAIMER = '以上内容由传统卦理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。';
 
+/* REQ-075：六爻焦点详解文案（动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读，小额积分即时扣费） */
+const LIUYAO_FOCUS_CN = {
+  'title': '焦点详解（付费）',
+  'intro': '结合本盘爻象（yaosDetail）与 64 卦爻辞原文，对动爻、世应、空亡·月破·日破、暗动、回头生克、化空化墓逐项做针对性解读（每项小额积分扣费；同项结果自动缓存，再次点击不再重复扣费）。',
+  'pay_tip': '详解（小额积分）',
+  'miss': '本盘无此标记',
+  'loading': '详解生成中…',
+  'expand': '展开',
+  'collapse': '收起',
+  'empty': '（暂无详解内容）',
+  'err': '详解生成失败，请重试。'
+};
+
 /* 卦理通则：六爻/梅花/小六壬通用规则提示（免费解读区正文之外的静态规则参考；世应为六爻专有概念）。 */
 const C3_GENERIC_RULES = {
   '动爻': '动爻是本卦转为之卦的关键爻位，提示当下最易生变、最需留意的环节；一爻动宜看变爻之意，多爻动则综观整体趋势。',
@@ -9208,6 +9236,50 @@ function LiuyaoTermCard(res) {
     tip: TERMS_CN['用忌原仇']
   });
   return FreeCard('卦理词条（免费）', blocks);
+}
+/* ---------- REQ-075：六爻焦点详解 —— 动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读（小额积分即时扣费）。
+   命中判定复用 S05 术语短释（LiuyaoTermCard 同一套 yaosDetail 富字段逻辑）；未命中置灰「本盘无此标记」不请求；世应恒可点。
+   三态：loading 文案 / 失败 err 文案 / 成功 interpretation 可折叠面板（复用 interp-body 解析面板样式）；本地缓存已取结果（同 focus 再点直接展示不再请求）。 ---------- */
+function LiuyaoFocusPanel({ res, focusMap, onDetail, onToggle }) {
+  const yaos = Array.isArray(res.yaosDetail) ? res.yaosDetail.slice() : [];
+  const any = function (fn) { return yaos.some(fn); };
+  const hasMoving = Boolean((Array.isArray(res.changingYaos) && res.changingYaos.length) || any(function (y) { return Boolean(y.isChanging); }));
+  const hasKong = Boolean(any(function (y) { return Boolean(y.isVoid); }) || any(function (y) { return Boolean(y.isMonthBreak); }) || any(function (y) { return Boolean(y.isDayBreak || y.isDayClash); }));
+  const hasAnDong = Boolean(any(function (y) { return Boolean(y.isHiddenMove); }));
+  const hasHuiTou = Boolean(any(function (y) { return Boolean(y.isChanging) && Array.isArray(y.changeRelations) && y.changeRelations.some(function (r) { return typeof r === 'string' && r.indexOf('回头') === 0; }); }));
+  const hasHuaKong = Boolean(any(function (y) { return Boolean(y.isChanging) && Array.isArray(y.changeRelations) && y.changeRelations.indexOf('化空') !== -1; }));
+  const items = [
+    { key: 'moving_yao', label: '动爻', hit: hasMoving },
+    { key: 'shi_ying', label: '世应', hit: true },
+    { key: 'kong_wang', label: '空亡·月破·日破', hit: hasKong },
+    { key: 'an_dong', label: '暗动', hit: hasAnDong },
+    { key: 'hui_tou_sheng_ke', label: '回头生克', hit: hasHuiTou },
+    { key: 'hua_kong_hua_mu', label: '化空化墓', hit: hasHuaKong }
+  ];
+  const rows = items.map(function (it) {
+    const st = focusMap[it.key] || {};
+    const kids = [];
+    kids.push(React.createElement('span', { key: 'nm', className: 'focus-name' + (it.hit ? '' : ' off') }, it.label));
+    if (!it.hit) {
+      kids.push(React.createElement('span', { key: 'miss', className: 'focus-note' }, LIUYAO_FOCUS_CN.miss));
+    } else if (st.loading) {
+      kids.push(React.createElement('span', { key: 'ld', className: 'focus-note' }, LIUYAO_FOCUS_CN.loading));
+    } else if (st.txt) {
+      kids.push(React.createElement('button', { key: 'tg', type: 'button', className: 'focus-btn' + (st.open ? ' on' : ''), onClick: function () { onToggle(it.key); } }, st.open ? LIUYAO_FOCUS_CN.collapse : LIUYAO_FOCUS_CN.expand));
+    } else {
+      kids.push(React.createElement('button', { key: 'go', type: 'button', className: 'focus-btn', onClick: function () { onDetail(it.key); } }, LIUYAO_FOCUS_CN.pay_tip));
+    }
+    if (st.err) kids.push(React.createElement('span', { key: 'er', className: 'focus-note err' }, st.err));
+    if (st.txt && st.open) {
+      kids.push(React.createElement('div', { key: 'panel', className: 'interp-body focus-panel' }, st.txt));
+    }
+    return React.createElement('div', { key: it.key, className: 'focus-item' }, kids);
+  });
+  return React.createElement('div', { className: 'focus-card' },
+    React.createElement('div', { className: 'fc-title' }, LIUYAO_FOCUS_CN.title),
+    React.createElement('div', { className: 'focus-intro' }, LIUYAO_FOCUS_CN.intro),
+    rows,
+    React.createElement('div', { className: 'focus-disclaim' }, LIUYAO_DISCLAIMER));
 }
 function LiuyaoFreeReading(res) {
   const blocks = [];
@@ -9932,6 +10004,8 @@ function DivinationPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
+  // REQ-075：六爻焦点详解 —— focus key → {txt, loading, err, open}（本盘结果缓存，同 focus 再点直接展示不再请求）
+  const [focusMap, setFocusMap] = useState({});
   const [question, setQuestion] = useState('');
   // REQ-055 ⑤：梅花/小六壬时间选项（日期默认今天 + 时辰默认当前，必填）
   const [timeDate, setTimeDate] = useState(todayStr());
@@ -9980,6 +10054,7 @@ function DivinationPage({
     setData(null);
     setInterp('');
     setInterpErr('');
+    setFocusMap({});
     setManWarn('');
     const meta = manual || null;
     if (meta) setManLabel(meta.label);
@@ -10050,6 +10125,27 @@ function DivinationPage({
       setInterpLoading(false);
     }
   };
+  // REQ-075：六爻焦点详解 —— 点击某焦点项 → POST /divinations/{div_id}/focus（同 interpret 的 div_id/扣费机制）；
+  // 5002 余额不足已由 api() 统一弹既有充值引导（creditInsuffHandler），此处仅展示错误文案；成功写前端缓存，同 focus 再点直接展开不再请求。
+  const focusDetail = async (key) => {
+    if (!data || !data.id) return;
+    const cur = focusMap[key] || {};
+    if (cur.txt || cur.loading) return; // 已缓存或加载中：不重复请求
+    setFocusMap(prev => Object.assign({}, prev, { [key]: Object.assign({}, prev[key], { loading: true, err: '' }) }));
+    try {
+      const r = await api('/divinations' + '/' + data.id + '/focus', { method: 'POST', body: JSON.stringify({ focus: key }) });
+      const txt = (r && r.data && r.data.interpretation) || LIUYAO_FOCUS_CN.empty;
+      setFocusMap(prev => Object.assign({}, prev, { [key]: { txt: txt, loading: false, err: '', open: true } }));
+    } catch (e) {
+      setFocusMap(prev => Object.assign({}, prev, { [key]: Object.assign({}, prev[key] || {}, { loading: false, err: (e && e.message) || LIUYAO_FOCUS_CN.err }) }));
+    }
+  };
+  const toggleFocus = (key) => {
+    setFocusMap(prev => {
+      const cur = prev[key] || {};
+      return Object.assign({}, prev, { [key]: Object.assign({}, cur, { open: !cur.open }) });
+    });
+  };
   // REQ-044 v2：点选列表方法 → 打开起卦弹窗（todo 置灰提示；切换方法沿用 v1 行为：清旧结果、时间类重置为默认今天 + 当前时辰）
   // REQ-069：每次打开弹窗重置手动录入内容
   // REQ-066②：默认模式按功能设置 default_mode —— manual=默认手动录入入口 / auto=自动起卦（现状）/ both=并行不预设（保留上次所选）
@@ -10077,6 +10173,7 @@ function DivinationPage({
       setErrored('');
       setInterp('');
       setInterpErr('');
+      setFocusMap({});
       if (TIME_METHODS[x.id]) {
         setTimeDate(todayStr());
         setShichen(nowShichen());
@@ -10103,6 +10200,7 @@ function DivinationPage({
       setErrored('');
       setInterp('');
       setInterpErr('');
+      setFocusMap({});
       setManLabel('');
       // 前端先定签号（S0，1..92）→ 进入签筒舞台；用户摇签/点击瞬间才 doCast（options.replay 固定该签）
       const n = 1 + Math.floor(Math.random() * SSGW_POOL_SIZE);
@@ -10313,6 +10411,13 @@ function DivinationPage({
       manLabel ? React.createElement('div', { className: 'man-flag' }, '录入：', manLabel) : null,
       view,
       freeReading,
+      method === 'liuyao' && result && data && data.id ? React.createElement(LiuyaoFocusPanel, {
+        key: 'focus',
+        res: result,
+        focusMap: focusMap,
+        onDetail: focusDetail,
+        onToggle: toggleFocus
+      }) : null,
       result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       manWarn ? React.createElement('div', { className: 'warn-note' }, manWarn) : null,
