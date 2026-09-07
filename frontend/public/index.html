@@ -10339,6 +10339,7 @@ function DivinationPage({
       const meta = { method: method === 'liuyao' ? 'liuyao' : 'meihua', label: method === 'liuyao' ? '六爻逐爻点选（手动录入）' : '梅花逐爻点选（手动录入）' };
       setLastManual({ seed: seed, meta: meta });
       setAsking(false);
+      track('manual_input', { method: method });
       doCast(seed, meta);
     } else if (method === 'sign') {
       if (!(signNo >= 1 && signNo <= SSGW_POOL_SIZE)) {
@@ -10349,6 +10350,7 @@ function DivinationPage({
       // drawRandomSign 的 replay 样本把随机签固定在所选签号上（签文=该签，随机仅作落库通道）
       const meta = { method: 'sign', label: '签号 ' + signNo + '（手动录入）' };
       setLastManual({ seed: { question: q, options: { replay: [signReplaySample(signNo)] } }, meta: meta });
+      track('manual_input', { method: method });
       doCast({ question: q, options: { replay: [signReplaySample(signNo)] } }, meta);
     } else if (method === 'xiaoliuren') {
       if (!timeValid()) return;
@@ -10381,6 +10383,7 @@ function DivinationPage({
       };
       setLastManual({ seed: seed, meta: meta });
       setAsking(false);
+      track('manual_input', { method: method });
       doCast(seed, meta);
     }
   };
@@ -11365,6 +11368,7 @@ function TarotPage({
       toast('请把「' + spread.name + '」的 ' + spread.pos.length + ' 个牌位逐张选完');
       return;
     }
+    track('manual_input', { method: 'tarot' });
     setLoading(true);
     setErrored('');
     setInterp('');
@@ -12059,6 +12063,7 @@ function LenormandPage({
     const askTrim = (question || '').trim();
     const seedObj = { spreadType: lnApiType(spread), options: { manualCardIds: picks.map(function (c) { return c.num; }) } };
     if (askTrim) seedObj.question = askTrim;
+    track('manual_input', { method: 'lenormand' });
     setLoading(true);
     setErrored('');
     setInterp('');
@@ -13458,7 +13463,10 @@ function AstrologyPage({
   }, '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱匹配度 —— 静态娱乐向参考、免费、不扣积分（太阳星座需先生成/查看本命盘；深度双人合盘请用下方「配对解析」）')), el('button', {
     className: 'btn btn-outline',
     type: 'button',
-    onClick: () => setLoveOpen(true)
+    onClick: () => {
+      track('zodiac_match', {});
+      setLoveOpen(true);
+    }
   }, '恋爱关系'));
 
   return el(React.Fragment, null, el('div', {
