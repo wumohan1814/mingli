@@ -36,6 +36,16 @@
       --skin-banner:#B23A3A;
       --skin-banner-ink:#F7F4EC;
       --skin-tag-bg:rgba(0,0,0,.16);
+
+      /* REQ-061⑤：美术必备 6 张（frontend/public/art/…，运行期仅用 WebP α；PNG 为母版随仓库保留）。
+         url 用根绝对路径（BUG-009：页面经 pushState 无 URL 切换，深层分享路由下相对路径会 404）。
+         变量未定义/删除时，各消费者 var(--art-XXX, fallback渐变) 自动回退占位渐变；URL 加载失败则露背景色。 */
+      --art-ssgw-tube:url('/art/ssgw/ssgw-tube.webp');
+      --art-ssgw-stick:url('/art/ssgw/ssgw-stick.webp');
+      --art-card-back-tarot:url('/art/card-back/card-back-tarot.webp');
+      --art-card-back-lenormand:url('/art/card-back/card-back-lenormand.webp');
+      --art-coin-face:url('/art/liuyao/coin-face.webp');
+      --art-coin-back:url('/art/liuyao/coin-back.webp');
     }
     /* 西式占星：内部=深空蓝；顶部 Banner=月银 */
     [data-skin="astrology"]{
@@ -1006,9 +1016,13 @@
       transition:transform .32s cubic-bezier(.4,0,.2,1)}
     .coin .side{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;
       display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;font-family:var(--font-sans)}
-    .coin .side.s-a{background:radial-gradient(circle at 32% 28%,#E3C08A,#A97A3C 66%,#7A4D22);color:#3E2A0E;border:2px solid #E8CF9A;
+    .coin .side.s-a{background-color:#E3C08A;color:#3E2A0E;border:2px solid #E8CF9A;
+      background-image:var(--art-coin-face,radial-gradient(circle at 32% 28%,#E3C08A,#A97A3C 66%,#7A4D22));
+      background-size:cover;background-position:center;
       box-shadow:inset 0 0 0 4px rgba(62,42,14,.25)}
-    .coin .side.s-b{background:radial-gradient(circle at 32% 28%,#4A3623,#2A1F12 70%);color:#E8C98A;border:2px solid #B8893E;
+    .coin .side.s-b{background-color:#2A1F12;color:#E8C98A;border:2px solid #B8893E;
+      background-image:var(--art-coin-back,radial-gradient(circle at 32% 28%,#4A3623,#2A1F12 70%));
+      background-size:cover;background-position:center;
       transform:rotateY(180deg);box-shadow:inset 0 0 0 4px rgba(232,201,138,.16)}
     .coin.toss .c3d{animation:coinToss .6s cubic-bezier(.34,.66,.5,1) both}
     @keyframes coinToss{0%{transform:translateY(34px) rotateY(0) rotateZ(-18deg)}
