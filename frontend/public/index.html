@@ -124,6 +124,37 @@
     .menu-item.logout{color:var(--cinnabar)}
     .menu-item.logout:hover{background:rgba(178,58,58,.1);color:var(--cinnabar)}
 
+    /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
+       受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
+       两侧留白相等 → 不遮挡左侧「太初」与右上角 余额/汉堡。 */
+    .topbar-modnav{position:relative;display:flex;align-items:center;flex:none}
+    .topbar-modnav .modnav-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
+      font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;color:var(--skin-banner-ink);
+      background:rgba(128,128,150,.18);transition:background .18s ease}
+    .topbar-modnav .modnav-btn:hover{background:rgba(128,128,150,.32)}
+    .topbar-modnav .modnav-btn .caret{width:0;height:0;margin-top:2px;
+      border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor}
+    .topbar-modnav .modnav-drop{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%);z-index:60;
+      width:200px;max-width:calc(100vw - 24px);padding:8px;background:var(--surface);color:var(--text-1);
+      border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 34px rgba(26,33,56,.24);
+      display:flex;flex-direction:column}
+    .topbar-modnav .modnav-group{display:flex;flex-direction:column}
+    .topbar-modnav .modnav-group + .modnav-group{border-top:1px solid var(--border);margin-top:6px;padding-top:6px}
+    .topbar-modnav .modnav-group-title{font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.08em;
+      padding:2px 12px 3px;display:flex;align-items:center;gap:6px}
+    .topbar-modnav .modnav-group-title .mg-dot{width:7px;height:7px;border-radius:50%;flex:none}
+    .topbar-modnav .modnav-item{display:flex;align-items:center;gap:8px;width:100%;padding:7px 12px;border-radius:9px;
+      text-align:left;font-size:13.5px;color:var(--text-1);background:none;white-space:nowrap;
+      transition:background .14s ease,color .14s ease}
+    .topbar-modnav .modnav-item:hover{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    /* REQ-071③：小屏适配 —— ≤520px 隐藏 Banner 标题语并微缩按钮/面板，
+       为正中「模块」下拉让出水平空间，避免与两侧挤压重叠 */
+    @media (max-width:520px){
+      .topbar .tagline{display:none}
+      .topbar-modnav .modnav-btn{padding:7px 10px}
+      .topbar-modnav .modnav-drop{width:188px}
+    }
+
     /* 底部皮肤切换胶囊（随主题换色） */
     .skin-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:20;display:flex;gap:4px;
       padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);
@@ -136,6 +167,9 @@
 
     /* 卡片 / 按钮 / 表单 */
     .card{background:var(--surface);border-radius:var(--radius-lg);padding:24px;margin:12px 0;box-shadow:var(--shadow-card);border:1px solid rgba(26,33,56,.04)}
+    /* REQ-062：落地页宣传色块（国学/西式/MBTI 三模块共用 .landing-hero .card）白底 70% 半透明；
+       只改背景不设整体 opacity，色块内文字/图标保持 100% 不透明 */
+    .landing-hero .card{background:rgba(255,255,255,.7)}
     .feature{border-left:3px solid var(--skin-accent)}
     .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
     .btn:active{transform:translateY(1px)}
@@ -1427,6 +1461,20 @@ function Icon({
         d: "M18 6 6 18"
       }), /*#__PURE__*/React.createElement("path", {
         d: "M6 6l12 12"
+      }));
+    case 'list':
+      return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("path", {
+        d: "M8 6h13"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M8 12h13"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M8 18h13"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3 6h.01"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3 12h.01"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3 18h.01"
       }));
     case 'spark':
       return /*#__PURE__*/React.createElement("svg", {
@@ -6038,7 +6086,9 @@ const RAIL_MODS = [{
 }];
 function NavRail({
   module,
-  onSelect
+  onSelect,
+  loggedIn,
+  onCases
 }) {
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav-rail",
@@ -6057,7 +6107,137 @@ function NavRail({
     color: "#fff"
   }), /*#__PURE__*/React.createElement("span", {
     className: "rail-label"
-  }, m.label))));
+  }, m.label))), /* REQ-064：已登录才显示的第 4 按钮「档案管理」→ 档案列表
+      （样式与三模块按钮同款：竖排窄条 → hover 展开；点击离开落地页进 cases） */
+  loggedIn && /*#__PURE__*/React.createElement("button", {
+    key: 'cases',
+    type: "button",
+    className: module === 'cases' ? 'active expanded' : '',
+    style: {
+      background: '#2C385C'
+    },
+    onClick: () => onCases(),
+    "aria-label": "档案管理"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "list",
+    size: 20,
+    color: "#fff"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rail-label"
+  }, "档案管理")));
+}
+
+// REQ-071：Banner 正中「模块」下拉导航 —— 全部支持功能（按三大模块分组，仅标题）。
+// 直达页：九法合一→nine-pick / 生肖流年→zodiac / 临时起卦→divination /
+// 星座→astrology / 塔罗→tarot / 雷诺曼→lenormand / MBTI→mbti。
+// item: {label, page, module, skin} —— module 同步左侧 bg/落地面板，skin 与 HUB 卡片跳转口径一致。
+const MOD_NAV_GROUPS = [{
+  title: '国学预测',
+  color: '#3E7C6B',
+  items: [{
+    label: '九法合一',
+    page: 'nine-pick',
+    module: 'guoxue',
+    skin: 'guoxue'
+  }, {
+    label: '生肖流年',
+    page: 'zodiac',
+    module: 'guoxue',
+    skin: 'guoxue'
+  }, {
+    label: '临时起卦',
+    page: 'divination',
+    module: 'guoxue',
+    skin: 'guoxue'
+  }]
+}, {
+  title: '西式占卜',
+  color: '#5B4B8A',
+  items: [{
+    label: '星座',
+    page: 'astrology',
+    module: 'xishi',
+    skin: 'xingzuo'
+  }, {
+    label: '塔罗',
+    page: 'tarot',
+    module: 'xishi',
+    skin: 'tarot'
+  }, {
+    label: '雷诺曼',
+    page: 'lenormand',
+    module: 'xishi',
+    skin: 'tarot'
+  }]
+}, {
+  title: 'MBTI',
+  color: '#4A5BB5',
+  items: [{
+    label: 'MBTI 人格测试',
+    page: 'mbti',
+    module: 'mbti',
+    skin: 'mbti'
+  }]
+}];
+// Banner 正中「模块」下拉按钮：点击弹出分组直达列表；点项即达对应功能页
+function TopbarModNav({
+  onGo
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = e => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = e => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+  const go = item => {
+    setOpen(false);
+    onGo(item);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "topbar-modnav",
+    ref: wrapRef
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "modnav-btn",
+    type: "button",
+    onClick: () => setOpen(o => !o),
+    "aria-haspopup": "menu",
+    "aria-expanded": open ? 'true' : 'false',
+    "aria-label": "模块导航"
+  }, "模块", /*#__PURE__*/React.createElement("span", {
+    className: "caret",
+    "aria-hidden": "true"
+  })), open && /*#__PURE__*/React.createElement("div", {
+    className: "modnav-drop",
+    role: "menu",
+    "aria-label": "全部模块"
+  }, MOD_NAV_GROUPS.map(g => /*#__PURE__*/React.createElement("div", {
+    key: g.title,
+    className: "modnav-group"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modnav-group-title"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mg-dot",
+    style: {
+      background: g.color
+    }
+  }), g.title), g.items.map(it => /*#__PURE__*/React.createElement("button", {
+    key: it.page,
+    className: "modnav-item",
+    role: "menuitem",
+    type: "button",
+    onClick: () => go(it)
+  }, it.label))))));
 }
 
 // Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 余额¥ + 汉堡按钮 + 下拉（切模块回落地页 / 退出登录）
@@ -12528,6 +12708,15 @@ function App() {
     setPage('landing');
     setParams({});
   };
+  // REQ-071：Banner 正中「模块」下拉直达功能页 —— 先同步 module + 皮肤（与 HUB 卡片
+  // 跳转口径一致），再 navigate；未登录点受限页由 BUG-002 拦截引导去登录。
+  const goFeature = item => {
+    if (!item || !item.page) return;
+    if (page === 'mbti-share') switchShareGuestSession(false);
+    setModule(item.module || 'guoxue');
+    applySkin(item.skin || 'guoxue');
+    navigate(item.page);
+  };
   const pages = {
     landing: /*#__PURE__*/React.createElement(LandingPage, {
       module: module,
@@ -12634,7 +12823,11 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, UI_COPY.brand.tagline)), /*#__PURE__*/React.createElement(TopbarMenu, {
+  }, UI_COPY.brand.tagline)), /* REQ-071：正中「模块」下拉（在「太初」与右上角 余额/汉堡 之间，
+    用 flex 中列 + space-between 等距留白，不遮挡两侧） */
+  /*#__PURE__*/React.createElement(TopbarModNav, {
+    onGo: goFeature
+  }), /*#__PURE__*/React.createElement(TopbarMenu, {
     loggedIn: !!token,
     onAuth: () => navigate('auth'),
     onPickModule: selectModule,
@@ -12648,7 +12841,10 @@ function App() {
     key: page
   }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
     module: module,
-    onSelect: selectModule
+    onSelect: selectModule,
+    /* REQ-064：已登录才显示「档案管理」第 4 按钮 */
+    loggedIn: !!token,
+    onCases: () => navigate('cases')
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
     onClose: () => setCreditModal(null)
