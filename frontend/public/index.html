@@ -6980,6 +6980,10 @@ function MbtiPage({
   const [caseLoading, setCaseLoading] = useState(true);
   const [caseErrored, setCaseErrored] = useState('');
   const [caseId, setCaseId] = useState(null); // 判型结果将回写该档案 case.mbti_type
+  // REQ-047：分享按钮（仅 scored 判型且有档案时可用）
+  const [shareUrl, setShareUrl] = useState(null); // 完整分享链接（window.location.origin + d.url）
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareErr, setShareErr] = useState('');
   const total = questions && questions.length ? questions.length : 0;
   // —— 拉取题库（GET /api/mbti/questions）——
   const load = async () => {
@@ -7088,6 +7092,9 @@ function MbtiPage({
     setInfoErr('');
     setScoring(false);
     setScoreErr('');
+    setShareUrl(null);
+    setShareLoading(false);
+    setShareErr('');
   };
   // —— 我已知道类型：直接输入（BUG-005：拉取 GET /api/mbti/types/{type_code} 的类型详解，不再固定"暂无文案"）——
   const pickType = async t => {
@@ -7106,6 +7113,42 @@ function MbtiPage({
     } finally {
       setInfoLoading(false);
     }
+  };
+  // —— REQ-047：生成分享链接（POST /api/mbti/share，需鉴权；后端返回相对路径 /mbti/share/{token}）——
+  const shareResult = async () => {
+    if (shareLoading) return;
+    setShareLoading(true);
+    setShareErr('');
+    try {
+      const res = await api('/mbti/share', {
+        method: 'POST',
+        body: JSON.stringify({
+          case_id: Number(caseId)
+        })
+      });
+      const d = res && res.data || res || {};
+      if (!d || !d.token || !d.url) throw new Error(d && d.message || '生成分享链接失败，请重试。');
+      setShareUrl(window.location.origin + d.url);
+    } catch (e) {
+      setShareErr(e && e.message || '生成分享链接失败，请重试。');
+    } finally {
+      setShareLoading(false);
+    }
+  };
+  // —— 复制分享链接：优先 Clipboard API，失败回退 window.prompt 供手动复制 ——
+  const copyShare = async () => {
+    if (!shareUrl) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        toast('链接已复制');
+        return;
+      }
+    } catch (e) {/* 走下方回退 */}
+    try {
+      window.prompt('请复制以下分享链接：', shareUrl);
+    } catch (e) {/* prompt 不可用则仅提示 */}
+    toast('请在弹窗中手动复制链接');
   };
   // —— 五栏文案值 → 段落行数组（兼容 string / string[] / 换行分隔）——
   const toLines = v => {
@@ -7172,6 +7215,16 @@ function MbtiPage({
       : el('div', {className: 'card'},
           el('div', {className: 'section-title'}, '四维倾向（各维度答题数）'),
           MBTI_DIMS.map(bar));
+    // REQ-047：分享仅对「已判型（scored）且有档案」的结果开放
+    const canShare = result.mode === 'scored' && !!caseId;
+    const shareSection = canShare ? el('div', {className: 'card'},
+      shareUrl ? el('div', {style: {display: 'flex', alignItems: 'center', gap: 8}},
+        el('input', {readOnly: true, value: shareUrl, onFocus: e => e.target.select(), title: shareUrl,
+          style: {flex: 1, minWidth: 0, fontSize: 12, color: 'var(--text-2)', border: '1px solid var(--border)', background: 'var(--paper)', borderRadius: 8, padding: '8px 10px', outline: 'none'}}),
+        el('button', {type: 'button', className: 'btn btn-outline', style: {width: 'auto', flex: 'none', fontSize: 13}, onClick: copyShare}, '复制'))
+      : el(React.Fragment, null,
+          shareErr ? el('div', {className: 'error', style: {marginBottom: 8, textAlign: 'left'}}, shareErr) : null,
+          el('button', {type: 'button', className: 'btn btn-outline', style: {width: '100%'}, onClick: shareResult}, shareLoading ? '生成中…' : '分享结果，邀请朋友测评'))) : null;
     body = el(React.Fragment, null,
       el('div', {className: 'card', style: {textAlign: 'center'}},
         el('div', {className: 'mbti-type-big'}, t),
@@ -7181,6 +7234,7 @@ function MbtiPage({
       el('div', {className: 'card'},
         el('div', {className: 'section-title'}, '16 型人格'),
         typeGrid(t)),
+      shareSection,
       el('div', {className: 'back-row'},
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '重新测试'),
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
@@ -7271,6 +7325,160 @@ function MbtiPage({
     body);
 }
 
+/* ---------- REQ-047：免登录分享答题页（/mbti/share/{token} 直达 · 公开免登录） ---------- */
+function MbtiSharePage({
+  token,
+  onNavigate
+}) {
+  const el = React.createElement;
+  const [caseName, setCaseName] = useState('');
+  const [questions, setQuestions] = useState([]);
+  const [idx, setIdx] = useState(0);
+  const [answers, setAnswers] = useState([]); // [{question_id, choice}]
+  const [scoring, setScoring] = useState(false);
+  const [result, setResult] = useState(null); // {type, scores}
+  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState('');
+  const total = questions && questions.length ? questions.length : 0;
+  const base = '/mbti/share/' + encodeURIComponent(token);
+  // —— 拉取分享题库（GET /api/mbti/share/{token}，免登录、不带鉴权依赖）——
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      setErrored('');
+      try {
+        const res = await api(base);
+        const d = res && res.data || res || {};
+        const list = d.questions || [];
+        if (!list.length) throw new Error('题库为空');
+        if (alive) {
+          setCaseName(d.case_name || '');
+          setQuestions(list);
+        }
+      } catch (e) {
+        // 404 / 网络失败 → 统一按「链接失效」提示
+        if (alive) setErrored('分享链接不存在或已失效');
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [token]);
+  // —— 提交答案并判型（POST /api/mbti/share/{token}/score，免登录）——
+  const submitShare = async list => {
+    if (!list || !total || list.length !== total) return;
+    setScoring(true);
+    try {
+      const res = await api(base + '/score', {
+        method: 'POST',
+        body: JSON.stringify({
+          answers: list
+        })
+      });
+      const d = res && res.data || res || {};
+      if (!d || !d.type) throw new Error(d && d.message || '判型失败，请重试。');
+      setResult({
+        type: d.type,
+        scores: d.scores || {}
+      });
+    } catch (e) {
+      // 保留在最后一题，用户可重新点选项重试
+      toast(e && e.message || '判型失败，请重试。');
+    } finally {
+      setScoring(false);
+    }
+  };
+  // 点击选项：记录该题答案并自动下一题；最后一题则自动提交判型
+  const choose = key => {
+    if (scoring || !total) return;
+    const q = questions[idx];
+    if (!q) return;
+    const next = answers.slice();
+    next[idx] = {
+      question_id: q.id,
+      choice: key
+    };
+    setAnswers(next);
+    if (idx + 1 < total) setIdx(idx + 1); else submitShare(next);
+  };
+  // —— 再测一次：清空答案与结果 ——
+  const reset = () => {
+    setIdx(0);
+    setAnswers([]);
+    setScoring(false);
+    setResult(null);
+    setErrored('');
+  };
+  let body;
+  if (result) {
+    const t = result.type || 'INTJ';
+    // —— 单维双向比例条（复用 MbtiPage 视觉）——
+    const bar = d => {
+      const s = result.scores ? result.scores[d.k] || {} : {};
+      const lc = s[d.l] || 0;
+      const rc = s[d.r] || 0;
+      const sum = lc + rc || 1;
+      const lp = Math.round(lc / sum * 100);
+      const rp = 100 - lp;
+      return el('div', {key: d.k, className: 'mbti-bar'},
+        el('span', {className: 'bb-label', style: {width: 'auto', minWidth: 44, textAlign: 'left'}}, d.l + ' ' + lc),
+        el('span', {className: 'bb-track'},
+          el('span', {className: 'bb-fill', style: {left: 0, width: lp + '%', background: 'var(--skin-accent)'}}),
+          el('span', {className: 'bb-fill', style: {right: 0, width: rp + '%', background: 'var(--skin-accent-soft)'}})),
+        el('span', {className: 'bb-label', style: {width: 'auto', minWidth: 44, textAlign: 'right'}}, d.r + ' ' + rc));
+    };
+    const barsCard = result.scores ? el('div', {className: 'card'},
+      el('div', {className: 'section-title'}, '四维倾向（各维度答题数）'),
+      MBTI_DIMS.map(bar)) : null;
+    // 简化展示：大字类型 + 「结果已记录」；如需完整五栏文案可在后续复用 GET /api/mbti/types/{type}
+    body = el(React.Fragment, null,
+      el('div', {className: 'card', style: {textAlign: 'center'}},
+        el('div', {className: 'mbti-type-big'}, t),
+        el('div', {className: 'mbti-alias'}, caseName ? '已完成「' + caseName + '」的测评 · 结果已记录' : '测评完成 · 结果已记录')),
+      barsCard,
+      el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: reset}, '再测一次'),
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+  } else if (loading) {
+    body = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px'}}, '分享题库加载中…');
+  } else if (errored) {
+    body = el('div', {className: 'card failed-box'},
+      el('div', {className: 'section-title'}, '无法打开分享'),
+      el('div', {className: 'error'}, errored),
+      el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+        el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, '回到首页')));
+  } else if (!total) {
+    body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
+  } else {
+    // —— 免登录答题视图 ——
+    const q = questions[idx];
+    const answered = Math.min(answers.length, total);
+    const pct = total ? Math.round(answered / total * 100) : 0;
+    body = el('div', {className: 'card'},
+      el('div', {style: {display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, fontSize: 12, color: 'var(--text-3)', marginBottom: 2}},
+        el('span', null, '第 ' + (idx + 1) + ' / ' + total + ' 题'),
+        el('span', {style: {display: 'flex', gap: 10, alignItems: 'center'}},
+          el('button', {style: {fontSize: 12, color: 'var(--skin-accent)', fontWeight: 600}, onClick: () => {
+            setIdx(0);
+            setAnswers([]);
+          }}, '重新开始'))),
+      el('div', {className: 'mbti-progress'}, el('i', {style: {width: pct + '%'}})),
+      scoring ? el('div', {style: {textAlign: 'center', color: 'var(--text-2)', padding: '18px 0'}}, '判型中…') : el(React.Fragment, null,
+        el('div', {style: {fontSize: 17, fontWeight: 700, color: 'var(--text-1)', lineHeight: 1.6, margin: '10px 0'}}, q.text),
+        el('div', {style: {display: 'flex', flexDirection: 'column', gap: 10}},
+          (q.options || []).map(o => el('button', {key: o.key, className: 'btn btn-outline', onClick: () => choose(o.key)}, o.key + '. ' + o.text))),
+        idx > 0 ? el('div', {className: 'back-row'},
+          el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setIdx(idx - 1)}, '上一题')) : null));
+  }
+  return el('div', {className: 'container'},
+    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
+    caseName && !result ? el('div', {style: {fontSize: 13, color: 'var(--text-2)', marginBottom: 2}}, '为「' + caseName + '」填写 MBTI') : null,
+    body);
+}
+
 
 // ---- App Router ----
 function App() {
@@ -7296,6 +7504,24 @@ function App() {
         p2: {}
       }, '');
       resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
+    }
+  }, []);
+  // REQ-047：分享链接直达免登录答题页（/mbti/share/{token}）。此 effect 放在 token 恢复之后，
+  // 保证分享链接优先于「已登录自动进 cases / 默认 landing」。
+  useEffect(() => {
+    const m = window.location.pathname.match(/^\/mbti\/share\/([A-Za-z0-9_-]+)/);
+    if (m && m[1]) {
+      const tk = m[1];
+      setPage('mbti-share');
+      setParams({
+        token: tk
+      });
+      window.history.replaceState({
+        p: 'mbti-share',
+        p2: {
+          token: tk
+        }
+      }, '');
     }
   }, []);
   useEffect(() => {
@@ -7427,6 +7653,10 @@ function App() {
       onNavigate: navigate
     }),
     mbti: /*#__PURE__*/React.createElement(MbtiPage, {
+      onNavigate: navigate
+    }),
+    'mbti-share': /*#__PURE__*/React.createElement(MbtiSharePage, {
+      token: params.token,
       onNavigate: navigate
     })
   };
