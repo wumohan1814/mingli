@@ -142,6 +142,33 @@ def _result_row(result_id: int):
         session.close()
 
 
+def _new_case_named(uid: int, name: str = "测试档案") -> int:
+    """直插一个带 name 的 case（REQ-047 分享落地页展示 case_name 用）。"""
+    from app.database import AnalyticsSession
+    from app.models import Case
+
+    session = AnalyticsSession()
+    try:
+        case = Case(user_id=uid, name=name, input_json={"question": "事业运势"})
+        session.add(case)
+        session.commit()
+        session.refresh(case)
+        return case.id
+    finally:
+        session.close()
+
+
+def _share_link_rows(case_id: int):
+    from app.database import AnalyticsSession
+    from app.models import MbtiShareLink
+
+    session = AnalyticsSession()
+    try:
+        return session.query(MbtiShareLink).filter_by(case_id=case_id).all()
+    finally:
+        session.close()
+
+
 def _event_rows(event_name: str, user_id: int):
     from app.database import OpsSession
     from app.models.ops import Event
@@ -540,4 +567,187 @@ def test_api_results_isolation_404(mbti_client):
     # 未带鉴权 → 400（Header 必填）
     resp = mbti_client.get(f"/api/mbti/results/{rid}")
     assert resp.status_code == 400
+
+
+# ------------------------------------------------------------ 端点：分享链接生成（REQ-047①） ----
+def test_api_share_create_idempotent(mbti_client):
+    """POST /api/mbti/share：本人档案 → {token, url}；重复调用幂等复用同一 token，
+    mbti_share_links 该 case 仅一行。"""
+    uid = _new_user()
+    cid = _new_case_named(uid)
+    auth = _auth_header(uid)
+
+    resp1 = mbti_client.post("/api/mbti/share", json={"case_id": cid}, headers=auth)
+    assert resp1.status_code == 200, resp1.text
+    data1 = resp1.json()["data"]
+    assert data1["token"] and len(data1["token"]) > 0
+    assert data1["url"] == "/mbti/share/" + data1["token"]
+
+    resp2 = mbti_client.post("/api/mbti/share", json={"case_id": cid}, headers=auth)
+    assert resp2.status_code == 200, resp2.text
+    data2 = resp2.json()["data"]
+    assert data2["token"] == data1["token"], "同一 case 应幂等复用 token"
+    assert data2["url"] == data1["url"]
+
+    links = _share_link_rows(cid)
+    assert len(links) == 1
+    assert links[0].token == data1["token"]
+
+
+def test_api_share_create_isolation_404_and_auth(mbti_client):
+    """归属/鉴权：他人档案 / 不存在 → 404；缺 Authorization → 400。"""
+    uid = _new_user()
+    other = _new_user()
+    other_cid = _new_case_named(other)
+
+    resp = mbti_client.post("/api/mbti/share", json={"case_id": other_cid}, headers=_auth_header(uid))
+    assert resp.status_code == 404, resp.text
+    resp = mbti_client.post("/api/mbti/share", json={"case_id": 999999}, headers=_auth_header(uid))
+    assert resp.status_code == 404, resp.text
+    resp = mbti_client.post("/api/mbti/share", json={"case_id": other_cid})
+    assert resp.status_code == 400, resp.text  # Header 必填
+    assert _share_link_rows(other_cid) == []
+
+
+# ------------------------------------------------------------ 端点：分享落地页 + 免登录判型（REQ-047） ----
+def test_api_share_landing_public_and_404(mbti_client):
+    """GET /api/mbti/share/{token}：免登录返回 {case_name, questions(60)}；
+    无效 token → 404。"""
+    uid = _new_user()
+    cid = _new_case_named(uid, name="张三的档案")
+    token = mbti_client.post("/api/mbti/share", json={"case_id": cid},
+                             headers=_auth_header(uid)).json()["data"]["token"]
+
+    resp = mbti_client.get(f"/api/mbti/share/{token}")   # 无 Authorization
+    assert resp.status_code == 200, resp.text
+    data = resp.json()["data"]
+    assert data["case_name"] == "张三的档案"
+    assert data["questions"] == _questions() and len(data["questions"]) == 60
+
+    resp = mbti_client.get("/api/mbti/share/not-a-real-token")
+    assert resp.status_code == 404, resp.text
+
+
+def test_api_share_score_no_writeback_and_history(mbti_client):
+    """免登录判型核心契约：主人先判型（ESTJ，回写 case.mbti_type），他人经分享
+    两次填写（INFP / INTJ）→ ①每次存为一条历史记录（user_id=档案主人）；
+    ②**不回写** case.mbti_type（仍 ESTJ）；③埋点 props 带 source=share。"""
+    uid = _new_user()
+    cid = _new_case_named(uid)
+    auth = _auth_header(uid)
+
+    # 主人先答全 A → ESTJ（写主人结果 + 回写档案类型）
+    owner = mbti_client.post("/api/mbti/score",
+                             json={"case_id": cid, "answers": _answers_by_key("A")},
+                             headers=auth)
+    assert owner.json()["data"]["type"] == "ESTJ"
+    assert _case_row(cid).mbti_type == "ESTJ"
+
+    token = mbti_client.post("/api/mbti/share", json={"case_id": cid},
+                             headers=auth).json()["data"]["token"]
+
+    # 他人（免登录）答全 B → INFP：作为第二条记录，不回写档案类型
+    resp1 = mbti_client.post(f"/api/mbti/share/{token}/score",
+                             json={"answers": _answers_by_key("B")})
+    assert resp1.status_code == 200, resp1.text
+    d1 = resp1.json()["data"]
+    assert d1["type"] == "INFP"
+    assert isinstance(d1["id"], int) and d1["id"] > 0
+
+    row1 = _result_row(d1["id"])
+    assert row1.user_id == uid, "分享填写记录应归属档案主人"
+    assert row1.case_id == cid
+    assert row1.type == "INFP"
+    assert row1.answers_json == _answers_by_key("B")
+    assert _case_row(cid).mbti_type == "ESTJ", "他人填写不得覆盖档案主人类型"
+
+    # 再次免登录填写（pole 形态 INTJ）→ 又新增一条记录（不覆盖既有记录）
+    resp2 = mbti_client.post(f"/api/mbti/share/{token}/score",
+                             json={"answers": _answers_by_pole({"EI": "I", "SN": "N",
+                                                                "TF": "T", "JP": "J"})})
+    assert resp2.status_code == 200, resp2.text
+    d2 = resp2.json()["data"]
+    assert d2["type"] == "INTJ"
+    assert d2["id"] != d1["id"]
+    assert _result_row(d2["id"]).type == "INTJ"
+    assert _case_row(cid).mbti_type == "ESTJ"   # 仍未回写
+
+    # 埋点：mbti_score × 3（主人 1 + 分享 2），分享的 props 带 source=share
+    events = _event_rows("mbti_score", uid)
+    assert len(events) == 3
+    share_events = [e for e in events if (e.props or {}).get("source") == "share"]
+    assert len(share_events) == 2
+    assert all(e.props["case_id"] == cid for e in share_events)
+    types_seen = {e.props["type"] for e in share_events}
+    assert types_seen == {"INFP", "INTJ"}
+
+
+def test_api_share_score_invalid_token_and_bad_answers(mbti_client):
+    """分享判型错误分支：无效 token → 404；答案非法（空/维度不全）→ 400；
+    均不落库不埋点。"""
+    uid = _new_user()
+    cid = _new_case_named(uid)
+    token = mbti_client.post("/api/mbti/share", json={"case_id": cid},
+                             headers=_auth_header(uid)).json()["data"]["token"]
+
+    resp = mbti_client.post("/api/mbti/share/not-a-real-token/score",
+                            json={"answers": _answers_by_key("A")})
+    assert resp.status_code == 404, resp.text
+
+    resp = mbti_client.post(f"/api/mbti/share/{token}/score", json={"answers": []})
+    assert resp.status_code == 400, resp.text
+    resp = mbti_client.post(f"/api/mbti/share/{token}/score",
+                            json={"answers": [{"question_id": 1, "choice": "A"}]})
+    assert resp.status_code == 400, resp.text
+
+    assert _event_rows("mbti_score", uid) == []
+
+
+# ------------------------------------------------------------ 端点：按 case 列出历史记录（REQ-047②） ----
+def test_api_results_list_by_case(mbti_client):
+    """GET /api/mbti/results?case_id=：本人列出该档案全部记录（id 倒序），
+    每项 {id,type,scores,created_at}，不含 answers_json；他人/不存在档案 → 404；
+    缺 Authorization → 400。"""
+    uid = _new_user()
+    cid = _new_case_named(uid)
+    auth = _auth_header(uid)
+    other = _new_user()
+
+    # 造 3 条：主人 ESTJ → 分享 INFP → 分享 INTJ（id 递增：INTJ 最新）
+    mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": _answers_by_key("A")},
+                     headers=auth)
+    token = mbti_client.post("/api/mbti/share", json={"case_id": cid},
+                             headers=auth).json()["data"]["token"]
+    mbti_client.post(f"/api/mbti/share/{token}/score", json={"answers": _answers_by_key("B")})
+    mbti_client.post(f"/api/mbti/share/{token}/score",
+                     json={"answers": _answers_by_pole({"EI": "I", "SN": "N",
+                                                        "TF": "T", "JP": "J"})})
+
+    resp = mbti_client.get(f"/api/mbti/results?case_id={cid}", headers=auth)
+    assert resp.status_code == 200, resp.text
+    data = resp.json()["data"]
+    assert data["total"] == 3
+    items = data["items"]
+    types_order = [it["type"] for it in items]
+    assert types_order == ["INTJ", "INFP", "ESTJ"], "应按 id 倒序（最新在前）"
+    assert all(items[i]["id"] > items[i + 1]["id"] for i in range(len(items) - 1))
+    first = items[0]
+    assert set(first.keys()) >= {"id", "type", "scores", "created_at"}
+    assert "answers" not in first and "answers_json" not in first
+    assert first["scores"] == {"EI": {"E": 0, "I": 15}, "SN": {"S": 0, "N": 15},
+                               "TF": {"T": 15, "F": 0}, "JP": {"J": 15, "P": 0}}
+
+    # 隔离：他人列该档案 / 不存在档案 → 404；缺鉴权 → 400
+    resp = mbti_client.get(f"/api/mbti/results?case_id={cid}", headers=_auth_header(other))
+    assert resp.status_code == 404, resp.text
+    resp = mbti_client.get("/api/mbti/results?case_id=999999", headers=auth)
+    assert resp.status_code == 404, resp.text
+    resp = mbti_client.get(f"/api/mbti/results?case_id={cid}")
+    assert resp.status_code == 400, resp.text
+
+    # 与路径版 GET /mbti/results/{id} 并存：取单条仍可用
+    rid = items[-1]["id"]
+    resp = mbti_client.get(f"/api/mbti/results/{rid}", headers=auth)
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["data"]["id"] == rid
 
