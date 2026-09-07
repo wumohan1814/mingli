@@ -13,14 +13,18 @@ from typing import Optional
 
 from app.database import get_analytics_db
 from app.models import (
+    AstrologyReading,
     Calibration,
     Case,
     CaseStatus,
     Chart,
     Conversation,
+    Divination,
     Job,
     JobType,
     JobStatus,
+    MbtiResult,
+    MbtiShareLink,
     MethodResult,
     Phase,
     RouteDecision,
@@ -725,7 +729,8 @@ async def delete_case(
     db: Session = Depends(get_analytics_db),
 ):
     """删除档案：先删子表（charts/method_results/calibrations/conversations/jobs/
-    route_decisions 按 case_id 删，外键顺序子表在前），最后删 case 行。"""
+    route_decisions/divinations/astrology_readings/mbti_results/mbti_share_links
+    按 case_id 删，外键顺序子表在前），最后删 case 行。"""
     user_id = get_user_id_from_token(authorization)
     case = _get_owned_case(db, case_id, user_id)  # 归属校验（非本人 404）
 
@@ -737,6 +742,10 @@ async def delete_case(
         Conversation,
         Job,
         RouteDecision,
+        Divination,
+        AstrologyReading,
+        MbtiResult,
+        MbtiShareLink,
     ):
         db.query(model).filter_by(case_id=case.id).delete(synchronize_session=False)
     db.delete(case)
