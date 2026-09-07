@@ -82,7 +82,11 @@
       background-repeat:no-repeat;animation:twinkle 6s ease-in-out infinite}
     @keyframes twinkle{0%,100%{opacity:.35}50%{opacity:.7}}
 
-    .app-shell{position:relative;z-index:1;min-height:100vh;padding-top:58px;padding-bottom:104px}
+    /* REQ-060：全局页脚贴底 —— .app-shell 改为 flex 纵列：页面内容 .view-enter flex:1 吸收余高，
+       内容不足一屏时把页脚（免责声明等）推贴视口底；内容超一屏时随文档流自然落页尾（不悬浮、不遮挡）。
+       100dvh 兜底移动端动态视口；env(safe-area-inset-bottom) 避开 iOS 底部指示条。无 JS 监听。 */
+    .app-shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;padding-top:58px;padding-bottom:env(safe-area-inset-bottom)}
+    .app-shell>.view-enter{flex:1 0 auto}
     .container{max-width:480px;margin:0 auto;padding:24px 20px}
 
     /* 顶部固定 Banner（随主题换色） */
@@ -3657,7 +3661,15 @@ function WaitingPage({
       color: 'var(--text-3)',
       marginTop: 4
     }
-  }, "每个方法约需数分钟，全程约 30–60 分钟；可先去做别的事，本页会持续等待。"), /*#__PURE__*/React.createElement("button", {
+  }, "每个方法约需数分钟，全程约 30–60 分钟；可先去做别的事，本页会持续等待。"), status !== 'succeeded' && /*#__PURE__*/React.createElement("p", {
+    // REQ-058：等待开始时展示提醒文案（回到首页入口本页已有，位于下方按钮）
+    style: {
+      textAlign: 'center',
+      fontSize: 11,
+      color: 'var(--text-3)',
+      marginTop: 2
+    }
+  }, "排盘等待时间偏长，可先去体验其他功能"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     style: {
       marginTop: 12
