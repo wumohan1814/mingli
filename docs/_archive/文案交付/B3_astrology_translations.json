@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "doc": "B3 星盘格局英文翻译（中文映射补全）",
+    "req": "BUG-007",
+    "source": "原创映射，参照 caelus patterns.js 现有 kind 键名（commit e723d37 已有部分映射，本表补全遗漏项）",
+    "tone": "术语化、中性；与占星通行中文译名一致",
+    "target": "后端星盘模块的中文映射表（星座结果页 + 档案命盘页 两处同源共用，避免重复维护）",
+    "complianceNote": "仅为天文/占星术语翻译，不构成任何运势断言"
+  },
+  "patterns": {
+    "grand_cross": "大十字格局",
+    "mystic_rectangle": "神秘矩形格局",
+    "kite": "风筝格局",
+    "t_square": "T 三角格局",
+    "grand_trine": "大三角格局",
+    "yod": "上帝之指（贤者之指）",
+    "stellium_sign": "星座群星（同星座三体以上）",
+    "stellium_house": "宫位群星（同宫位三体以上）"
+  },
+  "planets": {
+    "Sun": "太阳",
+    "Moon": "月亮",
+    "Mercury": "水星",
+    "Venus": "金星",
+    "Mars": "火星",
+    "Jupiter": "木星",
+    "Saturn": "土星",
+    "Uranus": "天王星",
+    "Neptune": "海王星",
+    "Pluto": "冥王星",
+    "NorthNode": "北交点",
+    "SouthNode": "南交点",
+    "Chiron": "凯龙星",
+    "Lilith": "莉莉丝",
+    "Asc": "上升点（ASC）",
+    "MC": "中天（MC）",
+    "IC": "天底（IC）",
+    "Dsc": "下降点（DSC）"
+  },
+  "aspects": {
+    "conjunction": "合相",
+    "sextile": "六分相",
+    "square": "四分相",
+    "trine": "三分相",
+    "quincunx": "补十二分相（150°）",
+    "opposition": "对分相"
+  },
+  "usage_note": "建议将 patterns / planets / aspects 三张映射表抽为单一共享常量（如 astrologyLabels.ts），星座结果页与档案命盘页均从此导入，确保两处翻译同源、后续仅维护一处。"
+}
