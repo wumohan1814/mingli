@@ -92,6 +92,8 @@ def ensure_schema() -> None:
     - conversations.topic（板块追问归档，跨次持久化）
     - astrology_readings.case_id / mbti_results.case_id / cases.mbti_type
       （统一档案体系：星座、MBTI 复用 cases 档案并回写 mbti_type）
+    - cases.phone / cases.email（REQ-065 CRM 化：手机号/邮箱，建档选填、
+      独立列供列表/档案详情直接查询，不再只塞 input_json）
 
     整张新表（如 credits 的 recharge_codes）不在此 ALTER：main.py lifespan 里
     `Base.metadata.create_all`（checkfirst=True）对老库/新库都幂等建缺表，本函数
@@ -110,6 +112,10 @@ def ensure_schema() -> None:
             conn.execute(text("ALTER TABLE cases ADD COLUMN name VARCHAR(128)"))
         if case_cols and "mbti_type" not in case_cols:
             conn.execute(text("ALTER TABLE cases ADD COLUMN mbti_type VARCHAR(8)"))
+        if case_cols and "phone" not in case_cols:
+            conn.execute(text("ALTER TABLE cases ADD COLUMN phone VARCHAR(32)"))
+        if case_cols and "email" not in case_cols:
+            conn.execute(text("ALTER TABLE cases ADD COLUMN email VARCHAR(128)"))
         conv_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(conversations)"))]
         if conv_cols and "topic" not in conv_cols:
             conn.execute(text("ALTER TABLE conversations ADD COLUMN topic VARCHAR(64)"))

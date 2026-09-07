@@ -11,6 +11,8 @@ def build_archive(case: Case, db: Session) -> dict:
     """从数据库聚合命理档案"""
     return {
         "caseId": str(case.id),
+        "phone": case.phone,
+        "email": case.email,
         "input": case.input_json,
         "status": case.status.value if case.status else None,
         "chart": _get_chart(case, db),
