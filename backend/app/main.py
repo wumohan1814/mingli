@@ -228,6 +228,10 @@ class SPAStaticFiles(StaticFiles):
         except StarletteHTTPException as exc:
             if exc.status_code != 404:
                 raise
+            # API / 后台前缀的 404 不回退 index.html：保留 /api/* 与 /admin/* 的
+            # 404 语义（未注册接口 / 非法 key 不应返回前端页面）。
+            if path.startswith("admin/") or path.startswith("api/"):
+                raise
             # StaticFiles.directory 是挂载时传入的 str（如 "../frontend/public"），
             # 不能直接做 str / index.html 除法，须经 Path 拼接（与父类 lookup_path
             # 的 cwd 解析基准一致）。
