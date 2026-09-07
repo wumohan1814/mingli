@@ -1,4 +1,5 @@
 """太初 · 命理 H5 后端（FastAPI 模块化单体 MVP）"""
+import asyncio
 import logging
 import subprocess
 from contextlib import asynccontextmanager
@@ -18,6 +19,7 @@ from app.database import (
     FeedbackBase,
     OpsBase,
     analytics_engine,
+    ensure_agent_memory_fts,
     ensure_schema,
     feedback_engine,
     ops_engine,
@@ -75,6 +77,30 @@ async def lifespan(app: FastAPI):
     # 孤儿 job 恢复：服务重启后把 pending/running 任务置为 failed（请重新触发）
     _recover_orphan_jobs()
 
+    # REQ-077：FTS5 全文索引 + 同步触发器（幂等；须在 create_all 之后调用，
+    # 此时 agent_memories 表已存在）。放 ensure_schema() 同区段（方案书 §1.6）。
+    try:
+        ensure_agent_memory_fts()
+    except Exception:
+        # FTS 不可用只降级（召回静默为空），不阻断启动
+        logger.warning("agent_memories FTS 初始化失败（记忆召回将降级为空）", exc_info=True)
+
+    # REQ-077：记忆抽取 worker —— 进程内单 asyncio 协程（非进程/线程/daemon，
+    # 方案书 §2.1/§2.8）。启动先恢复残留 pending/running 任务（置为可重试），
+    # 再拉起 worker；关停时 cancel（未完成任务保留表内由下次启动恢复）。
+    memory_worker = None
+    try:
+        from app.memory.service import (
+            memory_worker_loop,
+            recover_pending_tasks as recover_memory_tasks,
+        )
+
+        recover_memory_tasks()
+        memory_worker = asyncio.create_task(memory_worker_loop())
+        logger.info("记忆抽取 worker 协程已启动")
+    except Exception:
+        logger.warning("记忆抽取 worker 启动失败（记忆抽取降级不可用）", exc_info=True)
+
     # 拉起常驻排盘服务（HTTP 优先路径；engine 已内置 subprocess 降级）
     try:
         proc = subprocess.Popen(
@@ -115,6 +141,16 @@ async def lifespan(app: FastAPI):
 
     yield
 
+    # REQ-077：优雅关停记忆抽取 worker（cancel + 等收尾；当前 LLM 调用随事件循环
+    # 中断，任务行保持 running → 下次启动 _recover 恢复补跑，方案书 §2.8）
+    if memory_worker is not None:
+        memory_worker.cancel()
+        try:
+            await memory_worker
+        except asyncio.CancelledError:
+            pass
+        logger.info("记忆抽取 worker 协程已停止")
+
     if scheduler is not None:
         scheduler.shutdown(wait=False)
         logger.info("金数据充值轮询任务已停止")
@@ -135,6 +171,7 @@ from app.api.cases import router as cases_router
 from app.api.divination import router as divination_router
 from app.api.jobs import router as jobs_router
 from app.api.mbti import router as mbti_router
+from app.api.memory import router as memory_router
 from app.api.pair import router as pair_router
 from app.api.settings import router as settings_router
 from app.api.tarot import router as tarot_router
@@ -175,6 +212,7 @@ app.include_router(astrology_router)
 app.include_router(mbti_router)
 app.include_router(pair_router)
 app.include_router(settings_router)
+app.include_router(memory_router)
 app.include_router(credits_router)
 app.include_router(events_router)
 

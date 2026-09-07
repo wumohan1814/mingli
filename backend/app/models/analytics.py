@@ -1,7 +1,8 @@
 """用户分析库 ORM 模型（taichu_analytics）"""
 from datetime import datetime, timedelta
 from sqlalchemy import (
-    Column, Integer, String, Text, Boolean, Float, DateTime, ForeignKey, JSON, Enum as SAEnum,
+    Column, Integer, String, Text, Boolean, Float, DateTime, ForeignKey, JSON,
+    Enum as SAEnum, CheckConstraint, Index, UniqueConstraint, text,
 )
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -418,3 +419,73 @@ class UserSetting(Base):
     card_images = Column(Boolean, default=True)         # ⑥牌面图片显示
     agent_enabled = Column(Boolean, default=True)       # ⑦太初先生 Agent
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AgentMemory(Base):
+    """AI 伙伴长期记忆事实表（agent_memories，REQ-077，方案书 §1.2）。
+
+    每条 = 一条跨会话稳定事实（用户偏好/身份/目标/习惯/经历），user_id 为多用户
+    隔离键。软删走 deleted_at（检索一律过滤 deleted_at IS NULL；软删时服务层同步
+    摘除 FTS 镜像行——基表 UPDATE OF deleted_at 不触发 §1.3 的 content 更新触发器）。
+
+    去重域 UNIQUE(user_id, content_hash)：content 先归一（trim/全半角/空白折叠/
+    小写）再 sha1；重复陈述只刷新（importance 取 max、updated_at 前移），不新增行。
+    表由 main.py lifespan 的 Base.metadata.create_all 幂等建（老库自动补，无需 ALTER）。
+    """
+    __tablename__ = "agent_memories"
+    __table_args__ = (
+        UniqueConstraint("user_id", "content_hash", name="ux_agent_memories_user_hash"),
+        Index("ix_agent_memories_user_created", "user_id", "deleted_at", "created_at"),
+        Index("ix_agent_memories_user_type", "user_id", "fact_type"),
+        CheckConstraint("length(content) <= 500", name="ck_agent_memories_content_len"),
+        CheckConstraint("importance >= 0 AND importance <= 1", name="ck_agent_memories_importance"),
+        CheckConstraint("trust >= 0 AND trust <= 1", name="ck_agent_memories_trust"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id = Column(Integer, nullable=True)          # 可选归属档案（普通列无 FK，删除档案不级联）
+    content = Column(Text, nullable=False)            # 事实正文（中文自然语句，≤500 字）
+    fact_type = Column(String(16), nullable=False, default="preference")  # preference|identity|goal|event|habit|general
+    importance = Column(Float, nullable=False, default=0.5)   # 0~1
+    trust = Column(Float, nullable=False, default=0.7)        # 0~1（规则抽取固定 0.75）
+    content_hash = Column(String(40), nullable=False)         # 归一文本 sha1（去重/刷新键）
+    source_type = Column(String(16), nullable=False, default="agent_chat")  # 来源（预留 agent_chat）
+    source_msg_id = Column(Integer, nullable=True)   # 来源消息 id（指向 agent_messages，普通列无 FK）
+    source_task_id = Column(Integer, nullable=True)  # 写入该条事实的抽取任务 id（溯源）
+    tags_json = Column(Text, nullable=True)          # 抽取标签（JSON 数组文本，MVP 仅展示）
+    access_count = Column(Integer, nullable=False, default=0)   # 累计被召回次数
+    last_recalled_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    deleted_at = Column(DateTime, nullable=True)     # 软删标记；检索一律过滤
+
+
+class AgentMemoryTask(Base):
+    """抽取任务队列表（agent_memory_tasks，REQ-077，方案书 §1.4/§2）。
+
+    持久化队列：REQ-076 每回合返回响应后 enqueue 一行（<1ms，零 LLM），进程内
+    worker 认领执行 LLM 抽取；状态机 pending → running → done / dead（重试≤3 次
+    指数退避后 dead，dead 前规则兜底抽取）。任务区间 (start_msg_id, end_msg_id]
+    指向 agent_messages 的 user 消息（游标随任务同一事务推进，跨重启可恢复）。
+    表由 main.py lifespan 的 Base.metadata.create_all 幂等建。
+    """
+    __tablename__ = "agent_memory_tasks"
+    __table_args__ = (
+        Index("ix_agent_memory_tasks_status_due", "status", "next_retry_at"),
+        Index(
+            "ix_agent_memory_tasks_user_pending", "user_id",
+            sqlite_where=text("status IN ('pending', 'running')"),
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    start_msg_id = Column(Integer, nullable=False, default=0)  # 抽取游标起点（上次已抽取的最新消息 id）
+    end_msg_id = Column(Integer, nullable=False)               # 本轮要抽到的消息 id（同用户 pending 合并时前滚）
+    status = Column(String(16), nullable=False, default="pending")  # pending|running|done|dead
+    attempts = Column(Integer, nullable=False, default=0)
+    next_retry_at = Column(DateTime, nullable=True)            # 指数退避后的最早可执行时间
+    last_error = Column(Text, nullable=True)                   # 最近一次失败原因（截断 200 字符）
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
