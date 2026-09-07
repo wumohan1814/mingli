@@ -79,3 +79,29 @@ class PromptVersion(OpsBase):
     content = Column(Text, nullable=False)
     admin_user_id = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class AssetSlot(OpsBase):
+    """素材热更槽（REQ-059，运维库 asset_slots）：后台素材管理上传即热更前台展示。
+
+    key 全局唯一（跨 kind）；kind 分类（String16 白名单，admin 写端点校验）：
+      - module     模块级 3 槽背景（国学预测 / 西式占卜 / MBTI 落地页背景，
+                   落地页与 Hub 页复用同一张）
+      - method     Hub 方法级 N 槽背景（国学 Hub / 西式 Hub 每个方法选项独立
+                   背景图，按选项 key）
+      - mbti_type  MBTI 16 型结果背景（16 槽，按 mbti_type，仅结果/详情页展示）
+      - card       卡牌素材（塔罗 78 + 雷诺曼 36 卡面，按卡 key 统一查看与更换）
+      - agent      太初先生会话页背景槽（key=agent）
+    url 为素材地址：已上传文件的相对路径（/uploads/assets/...）或完整 URL。
+    未配置 / 删除该行 → 前台回退既有 CSS 艺术背景。热更：前台 GET /api/assets
+    每次实时查表，无启动缓存，后台 PUT/DELETE 立即生效、无需重启。
+    建表：main.py lifespan 里 OpsBase.metadata.create_all（checkfirst=True）幂等。
+    """
+    __tablename__ = "asset_slots"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    key = Column(String(64), unique=True, nullable=False, index=True)
+    kind = Column(String(16), nullable=False, default="module")
+    url = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

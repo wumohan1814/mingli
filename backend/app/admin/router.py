@@ -19,11 +19,12 @@ data 内带 requires_confirmation=true 标记（确认交互由 OpenClaw/用户�
 """
 import logging
 import re
+import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 from collections import defaultdict
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, Query, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -59,7 +60,7 @@ from app.models import (
     User,
 )
 from app.models.feedback import Feedback
-from app.models.ops import AdminAuditLog, ErrorReport, Event, PromptVersion
+from app.models.ops import AdminAuditLog, AssetSlot, ErrorReport, Event, PromptVersion
 from app.profile.archive import build_archive
 
 logger = logging.getLogger(__name__)
@@ -152,6 +153,7 @@ EVENT_NAME_ZH = {
     "astrology_chart": "星座星盘",
     "astrology_interpret": "星座解读",
     "mbti_score": "MBTI判型",
+    "case_share_fill": "分享帮填",
 }
 
 
@@ -193,6 +195,15 @@ class CreateUserRequest(BaseModel):
     username: str = Field(min_length=3, max_length=64)
     password: str = Field(min_length=6, max_length=128)
     nickname: str | None = Field(default=None, max_length=128)
+
+
+class AssetUpsertRequest(BaseModel):
+    """PUT /admin/assets/{key} body（REQ-059）：url 可为已上传文件的相对路径
+    （POST /admin/assets/upload 返回 /uploads/assets/...）或完整 http(s) URL。
+    key 与路径参数冗余（与前端表单对齐），传入时须与路径 key 一致。"""
+    kind: str = Field(min_length=1, max_length=16)
+    url: str = Field(min_length=1, max_length=2048)
+    key: str | None = Field(default=None, max_length=64)
 
 
 # --- 提示词工具 ---
@@ -1197,3 +1208,220 @@ def agent_reset_user_case(
         "message": "ok",
         "data": {"reset": True, "requires_confirmation": True},
     }
+
+
+# =========================================================================== #
+# 素材管理（REQ-059，/admin/assets/*；operator+）
+#
+# 后台素材热更：asset_slots 表（运维库，见 app.models.ops.AssetSlot）的 key→url
+# 槽。上传即热更：前台 GET /api/assets（app.api.assets）每次实时查表、无启动缓存，
+# PUT/DELETE 后无需重启立即生效；未配置 / 删除的槽 → 前台回退既有 CSS 艺术背景。
+#
+#   槽分类 kind ∈ {module, method, mbti_type, card, agent}（见模型 docstring）；
+#   key 全局唯一、字符白名单 [A-Za-z0-9_-]（防路径穿越 / 脏 key）。
+#
+#   文件上传流程（MVP 双通道，前端任选）：
+#     ① 真实文件：POST /admin/assets/upload（multipart）→ 校验扩展名 jpg/jpeg/png/webp
+#        + 大小 ≤5MB → 存 backend/uploads/assets/（uuid 重命名）→ 返回相对路径
+#        /uploads/assets/<file> → 再 PUT /admin/assets/{key} 入库；
+#     ② 只填地址：PUT /admin/assets/{key} body {kind, url}，url 直接给完整 URL
+#        （如 CDN 直传文件）或任何同源 / 开头的相对路径（如复用 frontend/public
+#        既有静态资源），不上传文件。
+#
+# 审计约定：所有写动作必记 AdminAuditLog，action = upload_asset / edit_asset /
+# delete_asset，target_type="asset"，target_id=key（upload 为文件名）。
+# =========================================================================== #
+# key 合法字符：字母/数字开头，字母数字 - _ ，总长 ≤64（跨 kind 全局唯一）
+_ASSET_KEY_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
+# 槽分类白名单（与 ops.AssetSlot.kind 的 String16 约定一致）
+ASSET_KINDS = ("module", "method", "mbti_type", "card", "agent")
+# 上传文件扩展名白名单（前端渲染的图片格式）+ 大小上限 5MB
+ASSET_ALLOWED_EXTS = (".jpg", ".jpeg", ".png", ".webp")
+ASSET_MAX_BYTES = 5 * 1024 * 1024
+# 上传落盘目录：backend/uploads/assets（router.py 位于 backend/app/admin/，
+# parents[2] = backend；main.py 以同一路径挂 /uploads 静态托管）
+ASSETS_UPLOAD_DIR = Path(__file__).resolve().parents[2] / "uploads" / "assets"
+
+
+def _validate_asset_key(key: str) -> str:
+    """素材 key 白名单校验（防脏 key / 路径穿越 / 超长）。"""
+    key = (key or "").strip()
+    if not _ASSET_KEY_RE.match(key):
+        raise BizError(ERR_PARAM, f"素材 key 非法: {key!r}（仅字母/数字/-/_，长度 1-64）")
+    return key
+
+
+def _validate_asset_url(url: str) -> str:
+    """素材 url 校验：http(s):// 完整 URL，或以 / 开头的同源相对路径。
+    相对路径拒绝协议相对（//）与 .. 段（防把 URL 指到站点外 / 上级目录）。"""
+    url = (url or "").strip()
+    if not url:
+        raise BizError(ERR_PARAM, "素材 url 不能为空")
+    if url.startswith(("http://", "https://")):
+        return url
+    if url.startswith("/") and not url.startswith("//") and ".." not in url:
+        return url
+    raise BizError(
+        ERR_PARAM, "素材 url 须为 http(s):// 完整 URL 或以 / 开头的相对路径（不含 ..）"
+    )
+
+
+@router.get("/assets")
+def list_assets(
+    kind: str = Query("", max_length=16),
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_ops_db),
+):
+    """列出所有素材槽（key/kind/url/updated_at）；kind 非空时按分类过滤。"""
+    query = db.query(AssetSlot)
+    k = (kind or "").strip()
+    if k:
+        if k not in ASSET_KINDS:
+            raise BizError(ERR_PARAM, f"未知素材分类: {k}（可用 {ASSET_KINDS}）")
+        query = query.filter_by(kind=k)
+    rows = query.order_by(AssetSlot.kind, AssetSlot.key).all()
+    items = [
+        {
+            "key": r.key,
+            "kind": r.kind,
+            "url": r.url,
+            "updated_at": r.updated_at.isoformat() if r.updated_at else None,
+        }
+        for r in rows
+    ]
+    return {"code": 0, "message": "ok", "data": {"items": items}}
+
+
+@router.post("/assets/upload")
+def upload_asset(
+    file: UploadFile = File(...),
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_ops_db),
+):
+    """上传素材文件（operator+，multipart）→ 存 backend/uploads/assets/ 并返回
+    可访问相对路径；随后用该 url 调 PUT /admin/assets/{key} 完成入槽。
+
+    校验：扩展名 jpg/jpeg/png/webp（按原文件名后缀）、大小 ≤5MB（读满上限+1 字节
+    即停，超大文件不整读进内存）、非空。落盘文件名 uuid 重命名（防路径穿越 /
+    重名覆盖）。上传只产生文件 + upload_asset 审计，不直接入槽（是否入槽、入哪
+    个槽由随后的 PUT 决定；文件可能被多个槽复用）。
+    """
+    orig = file.filename or ""
+    ext = Path(orig).suffix.lower()
+    if ext not in ASSET_ALLOWED_EXTS:
+        raise BizError(
+            ERR_PARAM, f"仅支持图片格式 {'/'.join(ASSET_ALLOWED_EXTS)}（收到 {ext or '无扩展名'}）"
+        )
+    try:
+        ASSETS_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        data = file.file.read(ASSET_MAX_BYTES + 1)
+    except Exception:
+        logger.exception("素材上传读取失败 filename=%s", orig)
+        raise BizError(ERR_INTERNAL, "素材上传失败")
+    if len(data) > ASSET_MAX_BYTES:
+        raise BizError(ERR_PARAM, f"素材文件过大（上限 {ASSET_MAX_BYTES // (1024 * 1024)}MB）")
+    if not data:
+        raise BizError(ERR_PARAM, "上传文件为空")
+    filename = f"{uuid.uuid4().hex}{ext}"
+    try:
+        (ASSETS_UPLOAD_DIR / filename).write_bytes(data)
+    except Exception:
+        logger.exception("素材落盘失败 filename=%s", filename)
+        raise BizError(ERR_INTERNAL, "素材保存失败")
+    db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="upload_asset",
+            target_type="asset",
+            target_id=filename,
+            detail=f"上传素材文件 {orig}（{len(data)} 字节，未入槽；待 PUT 绑定 key）",
+        )
+    )
+    db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {
+            "url": f"/uploads/assets/{filename}",
+            "filename": filename,
+            "size": len(data),
+        },
+    }
+
+
+@router.put("/assets/{key}")
+def upsert_asset(
+    key: str,
+    req: AssetUpsertRequest,
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_ops_db),
+):
+    """上传/替换素材槽（operator+，upsert）：url 入库后前台 GET /api/assets 立即可见
+    （热更，无缓存）。url 可为 upload 返回的相对路径或完整 URL；重复 PUT 同 key
+    即替换。写审计 action=edit_asset（detail 含分类 + url 摘要）。"""
+    key = _validate_asset_key(key)
+    if req.key is not None and req.key.strip() and _validate_asset_key(req.key) != key:
+        raise BizError(ERR_PARAM, "body.key 与路径 key 不一致")
+    if req.kind not in ASSET_KINDS:
+        raise BizError(ERR_PARAM, f"未知素材分类: {req.kind}（可用 {ASSET_KINDS}）")
+    url = _validate_asset_url(req.url)
+
+    now = datetime.utcnow()
+    row = db.query(AssetSlot).filter_by(key=key).first()
+    is_new = row is None
+    if is_new:
+        row = AssetSlot(key=key, kind=req.kind, url=url, created_at=now, updated_at=now)
+        db.add(row)
+    else:
+        row.kind = req.kind
+        row.url = url
+        row.updated_at = now
+    db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="edit_asset",
+            target_type="asset",
+            target_id=key,
+            detail=f"{'新增' if is_new else '替换'}素材槽 {key}（kind={req.kind}，url={url}）",
+        )
+    )
+    db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {
+            "key": key,
+            "kind": req.kind,
+            "url": url,
+            "updated_at": now.isoformat(timespec="seconds"),
+        },
+    }
+
+
+@router.delete("/assets/{key}")
+def delete_asset(
+    key: str,
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_ops_db),
+):
+    """删除素材槽恢复默认（operator+）：删 asset_slots 行 + 审计 delete_asset。
+
+    只删槽配置、不删 /uploads/assets 下已上传的文件（可能被其他槽复用，且删除
+    后如需恢复默认即回到 CSS 艺术背景，不必清理文件）；前台未配置即回退 CSS。
+    """
+    key = _validate_asset_key(key)
+    row = db.query(AssetSlot).filter_by(key=key).first()
+    if row is None:
+        raise BizError(ERR_NOT_FOUND, "素材槽不存在")
+    db.delete(row)
+    db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="delete_asset",
+            target_type="asset",
+            target_id=key,
+            detail=f"删除素材槽 {key}（kind={row.kind}，恢复默认）",
+        )
+    )
+    db.commit()
+    return {"code": 0, "message": "ok", "data": {"key": key, "deleted": True}}

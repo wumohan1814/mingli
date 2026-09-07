@@ -32,3 +32,6 @@ reference/
 temp/
 .workbuddy/
 
+
+# 素材上传运行时目录（REQ-059；admin 上传落盘，不入库）
+backend/uploads/
