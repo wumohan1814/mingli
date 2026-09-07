@@ -64,3 +64,18 @@ class ErrorReport(OpsBase):
     source = Column(String(16), nullable=True)  # frontend | backend
     stack = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class PromptVersion(OpsBase):
+    """提示词版本快照（REQ-048）。
+
+    每次后台编辑 / 回滚 prompt 前把"将要写盘的内容"落一份快照到运维库，
+    支持查看历史版本与回滚。内容不设外键（prompt_key 是文件 key 而非表行）。
+    """
+    __tablename__ = "prompt_versions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    prompt_key = Column(String(64), nullable=False, index=True)
+    content = Column(Text, nullable=False)
+    admin_user_id = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
