@@ -450,6 +450,20 @@
     .zrel .zv{flex:1;min-width:0;color:var(--text-1);font-weight:600;line-height:1.75;word-break:break-all}
     /* C6：五行关系 / 风险关系 通用解读小字（确定性，零 LLM） */
     .zrel-guide{font-size:12px;color:var(--text-3);line-height:1.85;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);text-align:left}
+    /* 生肖流年：流年年份切换条（档案选择卡下方、结果上方；← 上一年 / 下一年 →） */
+    .year-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
+    .year-nav .yn-btn{min-width:110px;padding:9px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--paper);color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer;transition:.14s;font-family:inherit;line-height:1.4}
+    .year-nav .yn-btn:hover:not(:disabled){border-color:var(--skin-accent);color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .year-nav .yn-btn:disabled{opacity:.45;cursor:not-allowed}
+    .year-nav .yn-cur{min-width:120px;text-align:center;font-size:20px;font-weight:800;color:var(--text-1);line-height:1.25}
+    .year-nav .yn-cur small{display:block;font-size:11px;color:var(--text-3);font-weight:500;letter-spacing:.02em}
+    /* 五行关系合并卡：色块标题区（五行关系 + classification + C1 一句话解读） */
+    .wx-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px;letter-spacing:.12em;opacity:.85;font-weight:700}
+    .wx-hd .wx-cls{font-size:16px;font-weight:800;letter-spacing:.02em;opacity:1}
+    .wx-s{font-size:12.5px;font-weight:500;line-height:1.85;margin-top:7px;opacity:.95;word-break:break-word}
+    .zrel-box{margin-top:12px}
+    /* 贵人色块内 C2 贵人静态解读（nobleDetail 有内容才渲染） */
+    .noble-sub{margin-top:10px;padding:8px 10px;text-align:left;font-size:12px;font-weight:500;line-height:1.85;color:var(--skin-accent);background:rgba(255,255,255,.5);border-radius:8px}
 
     /* ===== 临时起卦 ===== */
     .method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
@@ -5682,9 +5696,12 @@ function ZodiacMedallion({
 function ZodiacPage({
   onNavigate
 }) {
-  // REQ-052：生肖流年改为「档案驱动」——选择档案 → 出生年份自动推算生肖；流年固定当前年，不可手动改。
+  // 生肖流年档案驱动：选择档案 → 出生年份自动推算生肖（生肖固定不变，仅流年年份可切换）。
+  // 流年年份默认当前年，可在档案卡下方用「上一年 / 下一年」按钮切换（范围 当前年±10），切换后自动重新推演。
   const curYear = new Date().getFullYear();
-  const year = curYear;
+  const MIN_YEAR = curYear - 10;
+  const MAX_YEAR = curYear + 10;
+  const [year, setYear] = useState(curYear);
   const [z, setZ] = useState(-1); // 推算出的生肖 index（-1 = 尚未选档案）
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -5693,6 +5710,17 @@ function ZodiacPage({
   const [selId, setSelId] = useState(''); // 当前选中档案 caseId
   const runRef = useRef(0); // 选中档案次数（同生肖档案重复选择也强制重跑）
   const [runId, setRunId] = useState(0);
+  // 切换流年年份：生肖 z 不变，仅改 year；已选档案（z ≥ 0）时递增 runId → 下方 effect 依新 year 自动重跑
+  const shiftYear = d => {
+    const n = Math.min(MAX_YEAR, Math.max(MIN_YEAR, year + d));
+    if (n === year) return;
+    if (z >= 0) {
+      setLoading(true); // 立即进入「推演中」，避免残留上一年结果闪现
+      runRef.current += 1; // 新 runId：丢弃上一年的在途响应
+      setRunId(runRef.current);
+    }
+    setYear(n);
+  };
   const load = async () => {
     const myRun = runRef.current;
     setLoading(true);
@@ -5714,10 +5742,10 @@ function ZodiacPage({
       if (runRef.current === myRun) setLoading(false);
     }
   };
-  // 仅在选中档案后自动出结果：z 生效 + runId 递增 → 触发一次 load
+  // 自动出结果：选档案（z 生效 + runId 递增）或 流年年份变化（点「上一年/下一年」）→ 触发一次 load
   useEffect(() => {
     if (z >= 0 && runId > 0) load();
-  }, [z, runId]);
+  }, [z, runId, year]);
   // 拉当前用户档案列表（列表项含 birthYear，用于出生年 → 生肖）
   useEffect(() => {
     let alive = true;
@@ -5812,6 +5840,21 @@ function ZodiacPage({
   // BUG-003：风险/有利关系仅在后端返回非空数组时展示
   const hasRisk = !!(data && Array.isArray(data.riskRelations) && data.riskRelations.length);
   const hasFav = !!(data && Array.isArray(data.favorableRelations) && data.favorableRelations.length);
+  // C1：五行关系一句话解读（有则展示，无则兜底 '—'）
+  const relCopyTxt = data && typeof data.relationCopy === 'string' && data.relationCopy.trim() ? data.relationCopy : '—';
+  // C2：贵人静态解读行（nobleDetail 为对象且有内容才渲染；子字段缺失/空串兜底 '—'）
+  const nobleLines = [];
+  {
+    const nd = data && data.nobleDetail && typeof data.nobleDetail === 'object' ? data.nobleDetail : null;
+    const pushLine = (label, v, who, exp) => {
+      if (v) nobleLines.push(label + '（' + (who || '—') + '）' + (exp ? '：' + exp : ''));
+    };
+    if (nd) {
+      pushLine('六合贵人', nd['六合'], (nd['六合'] && nd['六合'].partner) || '', (nd['六合'] && nd['六合'].explain) || '');
+      pushLine('三合贵人', nd['三合'], (nd['三合'] && nd['三合'].partners) || '', (nd['三合'] && nd['三合'].explain) || '');
+      if (nd['天乙贵人']) nobleLines.push('天乙贵人（' + ((nd['天乙贵人'].partners) || '—') + '）' + ((nd['天乙贵人'].note) ? '：' + nd['天乙贵人'].note : ''));
+    }
+  }
   const selCase = (caseList || []).find(x => String(x.caseId) === String(selId)) || null;
   const zName = z >= 0 && ZODIAC[z] ? ZODIAC[z] : '';
   const erLine = (k, v) => React.createElement("div", {
@@ -5863,9 +5906,9 @@ function ZodiacPage({
       value: String(c.caseId)
     }, (c.name || '未命名档案') + (c.birthYear ? '（' + c.birthYear + ' 年生）' : '')))), selCase ? React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；流年取当前年份 ", year, " 年（生肖由出生年自动推算，不可手动修改）") : React.createElement("p", {
+    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；当前查看流年 ", year, " 年（生肖由出生年推算、固定不变，可在下方切换其它年份）") : React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算，流年固定当前年，不可手动修改）"));
+    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算；下方按钮可切换 2027、2028 等其它流年年份）"));
   }
   return React.createElement("div", {
     className: "container"
@@ -5878,7 +5921,25 @@ function ZodiacPage({
     className: "card"
   }, React.createElement("div", {
     className: "label"
-  }, "选择档案"), picker), loading ? React.createElement("div", {
+  }, "选择档案"), picker), token && Array.isArray(caseList) && caseList.length ? React.createElement("div", {
+    className: "card"
+  }, React.createElement("div", {
+    className: "label"
+  }, "流年年份（生肖不变，仅切换查看的流年）"), React.createElement("div", {
+    className: "year-nav"
+  }, React.createElement("button", {
+    type: "button",
+    className: "yn-btn",
+    disabled: year <= MIN_YEAR,
+    onClick: () => shiftYear(-1)
+  }, "← 上一年"), React.createElement("div", {
+    className: "yn-cur"
+  }, year, " 年", React.createElement("small", null, "范围 ", MIN_YEAR, "–", MAX_YEAR, " · 默认 ", curYear, " 年")), React.createElement("button", {
+    type: "button",
+    className: "yn-btn",
+    disabled: year >= MAX_YEAR,
+    onClick: () => shiftYear(1)
+  }, "下一年 →"))) : null, loading ? React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
@@ -5933,26 +5994,32 @@ function ZodiacPage({
       fontWeight: 700
     }
   }, starName)) : null,
-  /* —— 贵人 + 五行关系（summary 分类卡） —— */
+  /* —— 贵人色块（内容保留；C2 nobleDetail 有内容才追加解读，子字段缺失兜底 '—'） —— */
   React.createElement("div", {
-    className: "row-gap"
-  }, React.createElement("div", {
-    className: "noble-card",
-    style: {
-      flex: 1
-    }
-  }, "贵人", React.createElement("br", null), data.noble || data.tianyiNoble || '本年无'), React.createElement("div", {
-    className: 'rel-card ' + elemCls,
-    style: {
-      flex: 1
-    }
-  }, "五行关系", React.createElement("br", null), erCls || '—')),
-  /* —— BUG-003：五行关系明细（relation / zodiacWuxing / yearStemWuxing / kind / classification 全渲染，空值兜底 —） —— */
+    className: "noble-card"
+  }, "贵人", React.createElement("br", null), data.noble || data.tianyiNoble || '本年无', nobleLines.length ? React.createElement("div", {
+    className: "noble-sub"
+  }, nobleLines.map((ln, i) => React.createElement("div", {
+    key: i,
+    style: i ? {
+      marginTop: 6
+    } : undefined
+  }, ln))) : null),
+  /* —— 五行关系：summary 色块 + 明细 合并为一张卡（色块标题区 = classification + C1 一句话；
+        其下直接接明细行（流年干支/关系类型/关系判定/生克详情/生肖地支本气/流年年干五行）+ C6 通用解读） —— */
   React.createElement("div", {
     className: "card"
   }, React.createElement("div", {
-    className: "section-title"
-  }, "五行关系明细"), erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—'), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.elementRelation)),
+    className: 'rel-card ' + elemCls
+  }, React.createElement("div", {
+    className: "wx-hd"
+  }, "五行关系", React.createElement("span", {
+    className: "wx-cls"
+  }, erCls || '—')), React.createElement("p", {
+    className: "wx-s"
+  }, relCopyTxt)), React.createElement("div", {
+    className: "zrel-box"
+  }, erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.elementRelation)),
   /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */
   hasRisk ? React.createElement("div", {
     className: "card"
@@ -5997,7 +6064,7 @@ function ZodiacPage({
       color: 'var(--text-2)',
       padding: '28px 16px'
     }
-  }, "选择档案后将自动推演（生肖 = 出生年份推算 · 流年 = 当前年份）"), React.createElement("div", {
+  }, "选择档案后将自动推演（生肖 = 出生年份推算、固定不变 · 流年默认当前年份，可在上方切换 2027、2028 等）"), React.createElement("div", {
     className: "back-row"
   }, React.createElement("button", {
     className: "btn btn-outline",
