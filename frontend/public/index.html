@@ -4825,6 +4825,8 @@ function ArchivePage({
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
   const [caseTitle, setCaseTitle] = useState('未命名档案');
+  // REQ-054：删除星盘 / MBTI 历史记录成功后 +1，驱动下方 useEffect 重跑 load() 重新拉取档案
+  const [reloadTick, setReloadTick] = useState(0);
   // REQ-040：页头取「当前档案的用户命名」。后端 /archive 聚合包可能不带顶层 name、
   // input_json 亦无 name（case 名只存在 case 表），因此取值链：input.name → payload 顶层
   // name/case_name → 静默回查 GET /cases 列表按 caseId 匹配 → 兜底「未命名档案」。
@@ -4855,7 +4857,7 @@ function ArchivePage({
       }
     };
     load();
-  }, [caseId]);
+  }, [caseId, reloadTick]);
   if (loading) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -4990,6 +4992,35 @@ function ArchivePage({
   const mbtiRecords = mbtiInfo && Array.isArray(mbtiInfo.results) ? mbtiInfo.results : [];
   const fmtArchiveTime = t => t ? String(t).replace('T', ' ').slice(0, 16) : '';
 
+  // REQ-054：档案内历史记录逐条删除 —— 二次确认后 DELETE 对应记录，成功后 toast + 触发
+  // reloadArchive()（reloadTick+1 重跑上方 useEffect 的 load()，astroCard/mbtiCard 由 data
+  // 派生自动重渲染；删除主展示记录后其余记录 / 空态亦由派生逻辑判空兜底）。
+  const reloadArchive = () => setReloadTick(t => t + 1);
+  const doDeleteRecord = async (e, rec, kind) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const rid = rec && rec.id;
+    if (rid == null) {
+      toast('该记录缺少编号，无法删除。');
+      return;
+    }
+    const tip = kind === 'astro' ? '确认删除这条星盘记录？删除后不可恢复。' : '确认删除这条 MBTI 判型记录？删除后不可恢复。';
+    if (!window.confirm(tip)) return;
+    try {
+      const path = kind === 'astro' ? '/astrology/charts/' : '/mbti/results/';
+      const res = await api(path + rid, {
+        method: 'DELETE'
+      });
+      // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
+      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '删除失败');
+      toast('已删除');
+      reloadArchive();
+    } catch (err) {
+      toast(err && err.message || '删除失败，请重试。');
+    }
+  };
+  const removeAstroRecord = (e, rec) => doDeleteRecord(e, rec, 'astro');
+  const removeMbtiResult = (e, rec) => doDeleteRecord(e, rec, 'mbti');
+
   // REQ-039 退回细化①：占星盘卡片直接展示完整星盘（chart.natal 完整本命盘，取自档案
   // 已生成记录、无需重新生成）；无 chart 数据的记录退化为记录条目。
   // ②：「查看」跳星座页带 caseId（AstrologyPage 自动复用已有星盘，不再要求重新生成）
@@ -5030,12 +5061,22 @@ function ArchivePage({
         color: 'var(--text-2)',
         marginTop: 2
       }
-    }, "生成于 ", at) : null), /*#__PURE__*/React.createElement("button", {
+    }, "生成于 ", at) : null), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        flex: 'none'
+      }
+    }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini",
       onClick: () => onNavigate('astrology', {
         caseId
       })
-    }, "查看"));
+    }, "查看"), /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      onClick: e => removeAstroRecord(e, a)
+    }, "删除")));
     return /*#__PURE__*/React.createElement("div", {
       key: a && a.id != null ? a.id : i,
       style: {
@@ -5122,8 +5163,22 @@ function ArchivePage({
   const mbtiCard = mbtiInfo && (mbtiInfo.mbti_type || mbtiRecords.length > 0) && R('div', {
     className: 'card'
   }, R('div', {
-    className: 'section-title'
-  }, 'MBTI 人格'), mbtiType ? R('div', {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 10,
+      margin: '4px 0 8px'
+    }
+  }, R('div', {
+    className: 'section-title',
+    style: {
+      margin: 0
+    }
+  }, 'MBTI 人格'), mbtiMainRes && mbtiMainRes.id != null ? R('button', {
+    className: 'btn btn-outline btn-mini',
+    onClick: e => removeMbtiResult(e, mbtiMainRes)
+  }, '删除') : null), mbtiType ? R('div', {
     style: {
       textAlign: 'center',
       padding: '2px 0 6px'
@@ -5169,24 +5224,35 @@ function ArchivePage({
   }, '历史判型记录'), mbtiOtherRes.map((r, i) => {
     const t = r && r.type ? String(r.type) : '未知';
     const at = fmtArchiveTime(r && r.created_at);
+    const isLast = i === mbtiOtherRes.length - 1;
     return R('div', {
       key: r && r.id != null ? r.id : i,
-      className: 'kv'
-    }, R('span', {
-      className: 'k',
       style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '8px 0',
+        borderBottom: isLast ? 'none' : '1px solid var(--border)'
+      }
+    }, R('span', {
+      style: {
+        flex: 'none',
         fontSize: 15,
         fontWeight: 700,
         color: 'var(--text-1)'
       }
     }, t), R('span', {
-      className: 'v',
       style: {
+        flex: 1,
         fontSize: 12,
         fontWeight: 400,
-        color: 'var(--text-2)'
+        color: 'var(--text-2)',
+        textAlign: 'right'
       }
-    }, at || '—'));
+    }, at || '—'), R('button', {
+      className: 'btn btn-outline btn-mini',
+      onClick: e => removeMbtiResult(e, r)
+    }, '删除'));
   })) : null);
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
