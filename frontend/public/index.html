@@ -4541,14 +4541,21 @@ function WuyunPlate({
 }
 
 // —— 盘面 Tab 容器（默认展开八字盘）——
+// REQ-053 L2：档案页已展示 natal 完整盘面（AstroNatalPanel）时 hideWestern=true，
+// 「占星盘」tab（charts.western）从完整盘面中隐去 —— 同档案只呈现一份完整占星展示；
+// 无 natal（回退 charts.western 归一化展示）时保留该 tab。
 function ChartView({
   chartData,
-  degraded
+  degraded,
+  hideWestern
 }) {
   const d = chartData || {};
   const deg = arr(degraded).map(s => s.replace(/-/g, '_'));
   const isDeg = k => deg.includes(k);
   const [tab, setTab] = useState('bazi');
+  useEffect(() => {
+    if (hideWestern && tab === 'western') setTab('bazi');
+  }, [hideWestern, tab]);
   const tabs = [{
     id: 'bazi',
     label: '八字盘'
@@ -4567,7 +4574,7 @@ function ChartView({
   }, {
     id: 'wuyun',
     label: '五运六气'
-  }];
+  }].filter(t => !(hideWestern && t.id === 'western'));
   return /*#__PURE__*/React.createElement("div", {
     className: "card chart-view"
   }, /*#__PURE__*/React.createElement("div", {
@@ -4615,8 +4622,73 @@ const ASTRO_SCOPE_CN = {
 function astroScopeLabel(scope) {
   return ASTRO_SCOPE_CN[scope] || scope;
 }
+// REQ-053 L1：共享盘面渲染单元 —— AstrologyPage（星座页）与档案内 AstroNatalPanel 共用，
+// 消除两处重复 ~70 行：行星落座/四轴行 astroPointRow + 元素/模式 chip 与逆行/格局
+// AstroSummaryChips（wheel 两处仍共享 AstroWheel）。
+const astroEl = React.createElement;
+function astroPointRow(p, i) {
+  return astroEl('div', {
+    key: i,
+    className: 'planet-row'
+  }, astroEl('span', {
+    className: 'pr-sym'
+  }, PLANET_SYM[p.label] || '·'), astroEl('span', {
+    style: {
+      flex: 1
+    }
+  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
+}
+function AstroSummaryChips({
+  s,
+  detail,
+  wrapStyle,
+  pStyle
+}) {
+  const sum = s && typeof s === 'object' ? s : {};
+  const elSum = sum.elements || {};
+  const modSum = sum.modalities || {};
+  const retrograde = Array.isArray(sum.retrograde) ? sum.retrograde : [];
+  const patterns = Array.isArray(sum.patterns) ? sum.patterns : [];
+  const chip = (k, item) => astroEl('span', {
+    key: k,
+    className: 'tag'
+  }, k + ' ' + (item && item.count != null ? item.count : 0));
+  const lines = [];
+  if (detail) {
+    ['elements', 'modalities'].forEach(grp => {
+      const o = grp === 'elements' ? elSum : modSum;
+      Object.keys(o).forEach(k => {
+        const item = o[k];
+        if (item && Array.isArray(item.list) && item.list.length) {
+          lines.push(astroEl('div', {
+            key: grp + k,
+            style: {
+              fontSize: 11,
+              color: 'var(--text-3)',
+              lineHeight: 1.8
+            }
+          }, (grp === 'elements' ? '元素' : '模式') + '·' + k + '：' + item.list.join('、')));
+        }
+      });
+    });
+  }
+  return astroEl(React.Fragment, null, astroEl('div', {
+    className: 'row-gap',
+    style: wrapStyle
+  }, Object.keys(elSum).map(k => chip(k, elSum[k])), Object.keys(modSum).map(k => chip(k, modSum[k]))), lines.length ? astroEl('div', {
+    style: {
+      marginTop: 6
+    }
+  }, lines) : null, astroEl('p', {
+    style: pStyle || {
+      marginTop: 8,
+      fontSize: 13,
+      color: 'var(--text-2)'
+    }
+  }, '逆行：', retrograde.length ? retrograde.join('、') : '无', '\u3000|\u3000格局：', patterns.length ? patterns.join('、') : '无'));
+}
 // REQ-039 退回细化①：档案内直接渲染 astrology 记录 chart.natal 的完整本命盘。
-// 复用星座页的 astroNorm / AstroWheel / 行星-四轴行 / 元素格局标签；判空不崩。
+// 复用星座页的 astroNorm / AstroWheel / astroPointRow / AstroSummaryChips；判空不崩。
 function AstroNatalPanel({
   chart
 }) {
@@ -4624,16 +4696,6 @@ function AstroNatalPanel({
   const natal = astroNorm(chart && chart.natal ? chart.natal : null);
   const birthInfo = natal.birth || {};
   const birthMeta = [birthInfo.dateTime ? '出生 ' + birthInfo.dateTime : '', birthInfo.location ? '地点 ' + birthInfo.location : ''].filter(Boolean).join(' ｜ ');
-  const pointRow = (p, i) => el('div', {
-    key: i,
-    className: 'planet-row'
-  }, el('span', {
-    className: 'pr-sym'
-  }, PLANET_SYM[p.label] || '·'), el('span', {
-    style: {
-      flex: 1
-    }
-  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
   if (!natal.planets.length && !natal.angles.length) {
     return el('div', {
       style: {
@@ -4643,11 +4705,6 @@ function AstroNatalPanel({
       }
     }, '该条星盘数据不完整，无法展示盘面。');
   }
-  const sum = natal.summary;
-  const chip = (k, item) => el('span', {
-    key: k,
-    className: 'tag'
-  }, k + ' ' + (item && item.count != null ? item.count : 0));
   return el('div', null, el('div', {
     style: {
       textAlign: 'center',
@@ -4667,23 +4724,22 @@ function AstroNatalPanel({
     style: {
       marginTop: 8
     }
-  }, '行星落座落宫'), natal.planets.map(pointRow)), natal.angles.length > 0 && el('div', null, el('div', {
+  }, '行星落座落宫'), natal.planets.map(astroPointRow)), natal.angles.length > 0 && el('div', null, el('div', {
     className: 'sub-title',
     style: {
       marginTop: 8
     }
-  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.map(pointRow)), el('div', {
-    className: 'row-gap',
-    style: {
+  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.map(astroPointRow)), el(AstroSummaryChips, {
+    s: natal.summary,
+    wrapStyle: {
       marginTop: 10
-    }
-  }, Object.keys(sum.elements).map(k => chip(k, sum.elements[k])), Object.keys(sum.modalities).map(k => chip(k, sum.modalities[k]))), el('p', {
-    style: {
+    },
+    pStyle: {
       marginTop: 6,
       fontSize: 13,
       color: 'var(--text-2)'
     }
-  }, '逆行：', sum.retrograde.length ? sum.retrograde.join('、') : '无', '　|　格局：', sum.patterns.length ? sum.patterns.join('、') : '无'));
+  }));
 }
 function ArchivePage({
   caseId,
@@ -4782,13 +4838,50 @@ function ArchivePage({
     calibrated: '已校准',
     predicted: '已预测'
   };
-  const genderText = inp.gender === 'female' ? '女' : inp.gender === 'male' ? '男' : inp.gender || '-';
-  const rows = [['出生年', inp.birth_year], ['出生月', inp.birth_month], ['出生日', inp.birth_day], ['出生时辰', inp.birth_hour], ['性别', genderText], ['出生地', inp.birthplace || '-'], ['经度', inp.longitude != null ? inp.longitude : '未提供'], ['纬度', inp.latitude != null ? inp.latitude : '未提供'], ['真太阳时', inp.true_solar_time ? '是' : '否']];
-
-  // 完整盘面：chart.data 即后端 chart_json（含八字/紫微/占星/七政/奇门/五运六气）；degraded 为已降级方法列表
+  // REQ-053 ①②③：完整盘面 chart.data 即后端 chart_json（含八字/紫微/占星/七政/奇门/五运六气）；
+  // degraded 为已降级方法列表 —— 干支/农历/生肖等展示需先取到它，故移到此处在 rows 之前。
   const chart = data && data.chart || {};
   const chartData = chart.data || {};
   const degradedList = Array.isArray(chart.degraded) ? chart.degraded : chart.degraded ? [chart.degraded] : [];
+  const notEmpty = v => v !== null && v !== undefined && String(v).trim() !== '' ? String(v).trim() : null;
+  // —— ① 出生年月日时辰：公历 年/月/日 合并；时辰取 input 的 birth_hour（0-23 小时，
+  //    旧档案兼容 hour 字段）折算十二时辰地支名（与 REQ-055 SHICHEN 同规则：23/0 子时）
+  const BIRTH_BRANCH = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+  const yTxt = notEmpty(inp.birth_year);
+  const mTxt = notEmpty(inp.birth_month);
+  const dTxt = notEmpty(inp.birth_day);
+  const hRaw = inp.birth_hour != null && String(inp.birth_hour).trim() !== '' ? inp.birth_hour : inp.hour != null && String(inp.hour).trim() !== '' ? inp.hour : null;
+  const hBranch = hRaw != null && Number.isFinite(Number(hRaw)) ? BIRTH_BRANCH[Math.floor((Number(hRaw) + 1) / 2) % 12] || null : null;
+  const birthDT = [yTxt ? yTxt + ' 年' : null, mTxt ? mTxt + ' 月' : null, dTxt ? dTxt + ' 日' : null, hBranch ? hBranch + '时' : null].filter(Boolean).join(' ') || null;
+  // —— ① 中式干支传统写法：取 chart.data 八字四柱 ganzhi（年/月/日/时柱；未提供时辰则省略时柱）
+  const baziP = chartData.bazi && chartData.bazi.pillars && typeof chartData.bazi.pillars === 'object' ? chartData.bazi.pillars : null;
+  const pillarGz = p => p && typeof p === 'object' && ((p.gan || '') + (p.zhi || '')) ? String(p.gan || '') + String(p.zhi || '') : null;
+  const ganzhiText = [['year', '年'], ['month', '月'], ['day', '日'], ['hour', '时']].map(([k, suf]) => {
+    const g = baziP && pillarGz(baziP[k]);
+    return g ? g + suf : null;
+  }).filter(Boolean).join(' ') || null;
+  // —— ① 农历生日：chart.data.calendar.lunar（如「一九九〇年四月廿六」）
+  const lunarText = chartData.calendar && notEmpty(chartData.calendar.lunar);
+  // —— ③ 生肖：按公历出生年份（年 % 12 → 鼠牛虎兔龙蛇马羊猴鸡狗猪；简单按公历年，不追农历年界）
+  const ZODIAC_CN = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+  const ySrc = yTxt || notEmpty(chartData.input && chartData.input.year) || (chartData.calendar && typeof chartData.calendar.solar === 'string' ? chartData.calendar.solar.slice(0, 4) : null);
+  const zodiacText = (() => {
+    const y = Number(ySrc);
+    if (!Number.isFinite(y)) return null;
+    return ZODIAC_CN[((y - 4) % 12 + 12) % 12] || null;
+  })();
+  const genderText = inp.gender === 'female' ? '女' : inp.gender === 'male' ? '男' : null;
+  // —— ② 出生地坐标：经度/纬度合并单字段（如「经度 116.4°E · 纬度 39.9°N」；缺则「未提供」）
+  const fmtDir = (v, posSuf, negSuf) => {
+    if (v === null || v === undefined || v === '') return null;
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return String(Math.abs(n)) + '°' + (n >= 0 ? posSuf : negSuf);
+  };
+  const lngTxt = fmtDir(inp.longitude, 'E', 'W');
+  const latTxt = fmtDir(inp.latitude, 'N', 'S');
+  const coordText = [lngTxt ? '经度 ' + lngTxt : null, latTxt ? '纬度 ' + latTxt : null].filter(Boolean).join(' · ') || '未提供';
+  const rows = [['出生年月日时辰', birthDT], ['中式干支传统写法', ganzhiText], ['农历生日', lunarText], ['生肖', zodiacText], ['性别', genderText], ['出生地', notEmpty(inp.birthplace)], ['出生地坐标', coordText], ['真太阳时', inp.true_solar_time ? '是' : '否']];
 
   // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
   // 整体契合度若能取到数值则展示，否则只展示反馈条数
@@ -4825,6 +4918,15 @@ function ArchivePage({
   // 已生成记录、无需重新生成）；无 chart 数据的记录退化为记录条目。
   // ②：「查看」跳星座页带 caseId（AstrologyPage 自动复用已有星盘，不再要求重新生成）
   const astroMain = astroRecords.find(a => a && a.chart && a.chart.natal) || null;
+  // REQ-053 L2：同档案只呈现一份完整占星展示 —— natal 完整盘面可正常渲染（AstroNatalPanel）
+  // 时，完整盘面的「占星盘」tab（charts.western）隐去，避免双份重复；无 natal 时该 tab 保留
+  // 作 charts.western 归一化兜底。无经纬度建档（western=null 降级）而 natal 已有记录时，
+  // natal 为唯一占星来源（AstroNatalPanel），western tab 本就无数据，一并隐藏保持一致。
+  const hideWesternTab = (() => {
+    if (!astroMain || !astroMain.chart) return false;
+    const n = astroNorm(astroMain.chart.natal || null);
+    return n.planets.length > 0 || n.angles.length > 0;
+  })();
   const astroCard = astroRecords.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -5045,14 +5147,15 @@ function ArchivePage({
     className: "k"
   }, r[0]), /*#__PURE__*/React.createElement("span", {
     className: "v"
-  }, r[1] != null && r[1] !== '' ? r[1] : '-'))), (!inp.longitude || !inp.latitude) && /*#__PURE__*/React.createElement("p", {
+  }, r[1] != null && r[1] !== '' ? r[1] : '—'))), (!inp.longitude || !inp.latitude) && /*#__PURE__*/React.createElement("p", {
     className: "coord-hint",
     style: {
       marginTop: 8
     }
   }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), astroCard, mbtiCard, data && data.chart && chartData && /*#__PURE__*/React.createElement(ChartView, {
     chartData: chartData,
-    degraded: degradedList
+    degraded: degradedList,
+    hideWestern: hideWesternTab
   }), data && data.calibrations && (calibCount != null || calibFitText != null) && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -7900,17 +8003,7 @@ function AstrologyPage({
     }
   }, t[1])));
 
-  // ---- 本命盘渲染 ----
-  const pointRow = (p, i) => el('div', {
-    key: i,
-    className: 'planet-row'
-  }, el('span', {
-    className: 'pr-sym'
-  }, PLANET_SYM[p.label] || '·'), el('span', {
-    style: {
-      flex: 1
-    }
-  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
+  // ---- 本命盘渲染（行星/四轴行、元素/模式/逆行/格局 chips 均复用 REQ-053 L1 共享单元） ----
   const birthMeta = [birthInfo.dateTime ? '出生 ' + birthInfo.dateTime : '', birthInfo.location ? '地点 ' + birthInfo.location : ''].filter(Boolean).join(' ｜ ');
   const natalCard = el('div', {
     className: 'card',
@@ -8001,58 +8094,25 @@ function AstrologyPage({
     className: 'card'
   }, el('div', {
     className: 'section-title'
-  }, '行星落座落宫'), natal.planets.length ? natal.planets.map(pointRow) : el('div', {
+  }, '行星落座落宫'), natal.planets.length ? natal.planets.map(astroPointRow) : el('div', {
     className: 'error'
   }, '暂无行星数据'), el('div', {
     className: 'section-title',
     style: {
       marginTop: 12
     }
-  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.length ? natal.angles.map(pointRow) : el('div', {
+  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.length ? natal.angles.map(astroPointRow) : el('div', {
     className: 'error'
   }, '暂无四轴数据'));
 
-  const elSum = natal.summary.elements;
-  const modSum = natal.summary.modalities;
-  const sumSum = natal.summary;
-  const tagChip = (k, item) => el('span', {
-    key: k,
-    className: 'tag'
-  }, k + ' ' + (item && item.count != null ? item.count : 0));
-  const detailLines = [];
-  ['elements', 'modalities'].forEach(grp => {
-    const o = grp === 'elements' ? elSum : modSum;
-    Object.keys(o).forEach(k => {
-      const item = o[k];
-      if (item && Array.isArray(item.list) && item.list.length) {
-        detailLines.push(el('div', {
-          key: grp + k,
-          style: {
-            fontSize: 11,
-            color: 'var(--text-3)',
-            lineHeight: 1.8
-          }
-        }, (grp === 'elements' ? '元素' : '模式') + '·' + k + '：' + item.list.join('、')));
-      }
-    });
-  });
   const sumCard = el('div', {
     className: 'card'
   }, el('div', {
     className: 'section-title'
-  }, '元素 / 模式 / 格局'), el('div', {
-    className: 'row-gap'
-  }, Object.keys(elSum).map(k => tagChip(k, elSum[k])), Object.keys(modSum).map(k => tagChip(k, modSum[k]))), detailLines.length ? el('div', {
-    style: {
-      marginTop: 6
-    }
-  }, detailLines) : null, el('p', {
-    style: {
-      marginTop: 8,
-      fontSize: 13,
-      color: 'var(--text-2)'
-    }
-  }, '逆行：', sumSum.retrograde.length ? sumSum.retrograde.join('、') : '无', '\u3000|\u3000格局：', sumSum.patterns.length ? sumSum.patterns.join('、') : '无'));
+  }, '元素 / 模式 / 格局'), el(AstroSummaryChips, {
+    s: natal.summary,
+    detail: true
+  }));
   const interpCard = el('div', {
     className: 'card'
   }, el('div', {
