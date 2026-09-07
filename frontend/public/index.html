@@ -831,6 +831,53 @@
     .tc-set-status.failed{color:var(--cinnabar)}
     .tc-set-status.failed .ss-dot{background:var(--cinnabar)}
     .tc-set-guest{font-size:12px;color:var(--text-3);background:var(--paper);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:9px 12px;line-height:1.7;margin-top:10px}
+    /* ===== REQ-076：太初先生 Agent —— 右上角图标入口 + 会话页 ===== */
+    /* 右上角图标按钮（位于「余额」与右上角汉堡菜单之间；agent_enabled 开才显示） */
+    .agent-top-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
+      background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
+    .agent-top-btn:hover{background:rgba(128,128,150,.32)}
+    /* 会话页：固定视口内聊天（顶部标题+档案下拉 / 计费提示 / 消息区 / 输入区） */
+    .agent-page{display:flex;flex-direction:column;height:calc(100vh - 58px);height:calc(100dvh - 58px);
+      max-width:520px;margin:0 auto;padding:16px 16px 8px;box-sizing:border-box}
+    .agent-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+    .agent-title{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--text-1);
+      display:flex;align-items:center;gap:6px;line-height:1.4}
+    .agent-pick{position:relative;flex:1;min-width:150px}
+    .agent-pick select{width:100%;padding:8px 30px 8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);
+      background:var(--surface);color:var(--text-1);font-size:13px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;
+      background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);
+      background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+    .agent-pick select:focus{border-color:var(--skin-accent)}
+    .agent-pick select:disabled{opacity:.6;cursor:not-allowed}
+    .agent-pick-hint{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text-3);pointer-events:none}
+    .agent-bill{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);line-height:1.6;margin-bottom:8px;flex-wrap:wrap}
+    .agent-bill .bill-link{color:var(--skin-accent);cursor:pointer;font-weight:600;border-bottom:1px dashed rgba(62,124,107,.45)}
+    .agent-bill .agent-sel-tag{color:var(--skin-accent);font-weight:600}
+    .agent-chat{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;
+      gap:10px;padding:14px;background:var(--surface);border:1px solid rgba(26,33,56,.04);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-card);overscroll-behavior:contain}
+    .agent-msg{display:flex;max-width:86%}
+    .agent-msg.user{align-self:flex-end;justify-content:flex-end}
+    .agent-msg.assistant{align-self:flex-start}
+    .agent-bubble{padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+    .agent-msg.user .agent-bubble{background:var(--skin-accent);color:var(--skin-accent-ink);border-bottom-right-radius:4px}
+    .agent-msg.assistant .agent-bubble{background:var(--paper);color:var(--text-1);border-bottom-left-radius:4px}
+    .agent-msg.hint .agent-bubble{background:var(--skin-accent-soft);color:var(--skin-accent);font-size:12.5px;line-height:1.7}
+    .agent-msg.pending .agent-bubble{background:var(--paper);color:var(--text-3)}
+    .agent-loading{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text-3);font-size:13px;padding:36px 10px}
+    .agent-loading-dot{width:8px;height:8px;border-radius:50%;background:var(--gold-500);animation:pulse 1.2s ease-in-out infinite}
+    .agent-empty{text-align:center;color:var(--text-3);font-size:13px;line-height:1.9;padding:36px 12px}
+    .agent-empty-icon{font-size:26px;margin-bottom:8px;opacity:.8}
+    .agent-err{background:#FFF0F0;color:var(--cinnabar);padding:10px 12px;border-radius:var(--radius-sm);font-size:12.5px;margin-bottom:8px;line-height:1.6}
+    .agent-input-row{display:flex;gap:8px;margin-top:10px;flex:none}
+    .agent-input{flex:1;min-width:0;padding:11px 12px;border:1px solid var(--border);border-radius:var(--radius-md);
+      font-size:14px;background:var(--surface);color:var(--text-1);outline:none}
+    .agent-input:focus{border-color:var(--skin-accent)}
+    .agent-input:disabled{opacity:.7}
+    .agent-send{flex:none;width:76px;padding:11px 0;border:none;border-radius:var(--radius-md);background:var(--skin-accent);
+      color:var(--skin-accent-ink);font-size:14px;font-weight:600;cursor:pointer;transition:box-shadow .2s}
+    .agent-send:hover:not(:disabled){box-shadow:0 4px 14px rgba(26,33,56,.2)}
+    .agent-send:disabled{opacity:.55;cursor:not-allowed}
     /* REQ-066④：分享表单「太初 UI」品牌条（share_taichu_ui 开时显示在答题卡顶部） */
     .tc-share-brand{border-bottom:1px dashed var(--border);padding:2px 0 12px;margin:0 0 12px}
     .tc-share-brand-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -1219,7 +1266,7 @@ const API = '/api';
 let token = '';
 let refreshToken = '';
 // BUG-002: 需登录才能访问的页面白名单（landing/auth/guoxue-hub/xishi-hub 保持公开）
-const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick'];
+const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick','agent'];
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
 let onUnauthorized = null;
@@ -6652,7 +6699,9 @@ function TopbarMenu({
   onCases,
   onSettings,
   onLogout,
-  onCredits
+  onCredits,
+  onAgent,
+  agentEnabled
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -6683,7 +6732,18 @@ function TopbarMenu({
     ref: wrapRef
   }, /*#__PURE__*/React.createElement(BannerBalance, {
     onClick: onCredits || undefined
-  }), /*#__PURE__*/React.createElement("button", {
+  }), /* REQ-076：太初先生 Agent 图标入口 —— 位于「余额」与右上角菜单（汉堡）之间；
+      agent_enabled 开（默认）才显示；关闭入口时隐藏（既有会话与数据保留，重开可见） */
+  agentEnabled && /*#__PURE__*/React.createElement("button", {
+    className: "agent-top-btn",
+    type: "button",
+    title: "太初先生",
+    "aria-label": "太初先生",
+    onClick: onAgent
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "chat",
+    size: 18
+  })), /*#__PURE__*/React.createElement("button", {
     className: "menu-btn",
     type: "button",
     onClick: () => setOpen(o => !o),
@@ -14274,6 +14334,225 @@ function SettingsPage({
       React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('landing'); } }, '回到首页')));
 }
 
+// ===== REQ-076：太初先生 Agent 会话页 =====
+// 固定 session 对话（C 端对话大师）：顶部档案下拉（仅本人档案，可随时切换）；
+// 未选档案可闲聊，咨询档案相关内容时前端先温柔提示选档案（后端 master.md 亦引导）。
+// 三接口：GET /api/agent/greeting（开场白，零扣费）、GET /api/agent/messages
+// （本人历史，id 升序，limit=50）、POST /api/agent/chat（每来回按 LLM 实际 token
+// 扣积分，小额计费；5002 余额不足由 api() 拦截弹 CreditInsufficientModal）。
+// 纯文本 pre-wrap 展示（assistant 为自然语言纯文本），无 dangerouslySetInnerHTML。
+const AGENT_CASE_KEYWORDS = ['档案','命盘','八字','紫微','星盘','本命','排盘','命宫','身宫','大运','流年'];
+function agentLooksCaseRelated(text) {
+  return AGENT_CASE_KEYWORDS.some(function (k) { return text.indexOf(k) >= 0; });
+}
+function AgentPage({
+  onNavigate
+}) {
+  const el = React.createElement;
+  // null=加载中；[]=无档案；数组=已就绪（仅本人档案）
+  const [caseList, setCaseList] = useState(null);
+  const [caseErr, setCaseErr] = useState('');
+  const [caseId, setCaseId] = useState(''); // ''=未选（闲聊）
+  // 会话：null=加载中；数组=已就绪 [{role:'user'|'assistant', content, hint?, pending?}]
+  const [messages, setMessages] = useState(null);
+  const [loadErr, setLoadErr] = useState('');
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendErr, setSendErr] = useState('');
+  const chatRef = useRef(null);
+
+  // ① 档案下拉数据源：GET /cases（登录后本人档案列表）
+  useEffect(function () {
+    let alive = true;
+    (async function () {
+      try {
+        const r = await api('/cases', { method: 'GET' });
+        if (!alive) return;
+        const arr = (r && r.data && r.data.cases) || (r && r.cases) || [];
+        setCaseList(Array.isArray(arr) ? arr : []);
+      } catch (e) {
+        if (!alive) return;
+        if (e && e.status === 401) return; // 401 由 App 统一跳登录
+        setCaseErr((e && e.message) || '档案列表加载失败，请重试。');
+        setCaseList([]);
+      }
+    })();
+    return function () { alive = false; };
+  }, []);
+
+  // ② 进入页面：开场白（零扣费）+ 历史。开场白作为第一条 assistant 消息展示；
+  //    历史为空且已有开场白时不重复展示。
+  useEffect(function () {
+    let alive = true;
+    (async function () {
+      let g = '';
+      try {
+        const gr = await api('/agent/greeting');
+        if (alive && gr && gr.data && gr.data.greeting) g = String(gr.data.greeting);
+      } catch (_) {/* 开场白失败不阻塞历史加载 */}
+      let hist = [];
+      let err = '';
+      try {
+        const hr = await api('/agent/messages?limit=50');
+        const list = (hr && hr.data && hr.data.messages) || (hr && hr.messages) || [];
+        hist = (Array.isArray(list) ? list : []).map(function (m) {
+          return { role: m.role === 'user' ? 'user' : 'assistant', content: String(m.content != null ? m.content : '') };
+        });
+      } catch (e) {
+        err = (e && e.message) || '历史消息加载失败，请重试。';
+      }
+      if (!alive) return;
+      let msgs;
+      if (hist.length) {
+        // 开场白已在历史首条时避免重复
+        if (g && hist[0].role === 'assistant' && hist[0].content === g) msgs = hist;
+        else if (g) msgs = [{ role: 'assistant', content: g, greeting: true }].concat(hist);
+        else msgs = hist;
+      } else if (g) {
+        msgs = [{ role: 'assistant', content: g, greeting: true }];
+      } else {
+        msgs = [];
+      }
+      setMessages(msgs);
+      if (err) setLoadErr(err);
+    })();
+    return function () { alive = false; };
+  }, []);
+
+  // ③ 消息变化 → 滚动到底
+  useEffect(function () {
+    const node = chatRef.current;
+    if (node) node.scrollTop = node.scrollHeight;
+  }, [messages, sending]);
+
+  const caseName = function (id) {
+    const c = (caseList || []).find(function (x) { return String(x.caseId) === String(id); });
+    if (!c) return '';
+    const nm = (c.name && String(c.name).trim()) || '档案 ' + c.caseId;
+    if (c.birthYear != null && c.birthYear !== '') return nm + '（' + String(c.birthYear) + ' 年）';
+    return nm;
+  };
+
+  // ④ 发送：追加 user 气泡 + （可选）前端温柔提示 + 「正在聆听…」占位 → POST chat
+  //    → 用 reply 替换占位；失败（5002 余额不足已弹充值引导）移除占位并展示错误文本。
+  const handleSend = async function () {
+    const text = input.trim();
+    if (!text || sending) return;
+    setSendErr('');
+    setInput('');
+    const willHint = !caseId && agentLooksCaseRelated(text);
+    const next = [{ role: 'user', content: text }];
+    if (willHint) next.push({ role: 'assistant', content: '可先在上方选择档案，以便结合你的命盘与你细说。', hint: true });
+    next.push({ role: 'assistant', content: '正在聆听…', pending: true });
+    setMessages(function (prev) { return (prev || []).concat(next); });
+    setSending(true);
+    try {
+      const r = await api('/agent/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message: text, case_id: caseId ? Number(caseId) : null })
+      });
+      const reply = (r && r.data && r.data.reply) ? String(r.data.reply) : '';
+      setMessages(function (prev) {
+        const arr = prev.slice();
+        for (let i = arr.length - 1; i >= 0; i--) {
+          if (arr[i].pending) {
+            arr[i] = { role: 'assistant', content: reply };
+            break;
+          }
+        }
+        return arr;
+      });
+    } catch (e) {
+      setSendErr((e && e.message) || '先生暂时没有回应，请稍后重试。');
+      setMessages(function (prev) { return (prev || []).filter(function (m) { return !m.pending; }); });
+    } finally {
+      setSending(false);
+    }
+  };
+  const onInputKey = function (e) {
+    if (e.key === 'Enter' && !(e.nativeEvent && e.nativeEvent.isComposing)) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const selName = caseId ? caseName(caseId) : '';
+  const pick = el('div', { className: 'agent-pick' },
+    el('select', {
+      value: caseId,
+      onChange: function (e) { setCaseId(e.target.value); setSendErr(''); },
+      disabled: sending || caseList === null,
+      'aria-label': '选择档案（仅本人档案）'
+    },
+    el('option', { value: '' }, '暂不选（闲聊）'),
+    (caseList || []).map(function (c) {
+      const id = String(c.caseId);
+      const nm = (c.name && String(c.name).trim()) || '档案 ' + c.caseId;
+      const label = c.birthYear != null && c.birthYear !== '' ? nm + '（' + String(c.birthYear) + ' 年）' : nm;
+      return el('option', { key: id, value: id }, label);
+    })),
+    caseList === null ? el('div', { className: 'agent-pick-hint' }, '档案加载中…') : null);
+
+  // 计费提示（可点击跳转积分明细，复用既有 credits 入口）
+  const bill = el('div', { className: 'agent-bill' },
+    el('span', null, '每轮对话按实际用量小额扣积分'),
+    el('span', { className: 'bill-link', onClick: function () { onNavigate('credits'); } }, '查看积分明细'),
+    selName ? el('span', { className: 'agent-sel-tag' }, '已选：' + selName) : null);
+
+  // 消息区：加载 / 空态 / 气泡列表 三态
+  let chatBody;
+  if (messages === null) {
+    chatBody = el('div', { className: 'agent-chat' },
+      el('div', { className: 'agent-loading' },
+        el('div', { className: 'agent-loading-dot' }),
+        el('span', null, '正在为你沏茶…')));
+  } else if (messages.length === 0) {
+    chatBody = el('div', { className: 'agent-chat' },
+      el('div', { className: 'agent-empty' },
+        el('div', { className: 'agent-empty-icon' }, '☕'),
+        el('div', null, '太初先生在这儿，有什么想聊聊的？'),
+        el('div', null, '也可以在上方选择档案，让我结合你的命盘与你细说。')));
+  } else {
+    chatBody = el('div', { className: 'agent-chat', ref: chatRef },
+      messages.map(function (m, i) {
+        return el('div', {
+          key: i,
+          className: 'agent-msg ' + m.role + (m.hint ? ' hint' : '') + (m.pending ? ' pending' : '')
+        },
+        el('div', { className: 'agent-bubble' }, m.content));
+      }));
+  }
+
+  const inputRow = el('div', { className: 'agent-input-row' },
+    el('input', {
+      className: 'agent-input',
+      type: 'text',
+      value: input,
+      onChange: function (e) { setInput(e.target.value); },
+      onKeyDown: onInputKey,
+      placeholder: selName ? '向太初先生提问（已结合「' + selName + '」）…' : '与太初先生聊聊，或咨询档案相关内容…',
+      disabled: sending,
+      maxLength: 500
+    }),
+    el('button', {
+      type: 'button',
+      className: 'agent-send',
+      onClick: handleSend,
+      disabled: sending || !input.trim()
+    }, sending ? '聆听中' : '发送'));
+
+  return el('div', { className: 'agent-page' },
+    el('div', { className: 'agent-head' },
+      el('div', { className: 'agent-title' }, el(Icon, { name: 'chat', size: 20 }), ' 太初先生'),
+      pick),
+    bill,
+    loadErr ? el('div', { className: 'agent-err' }, loadErr) : null,
+    caseErr && !(caseList && caseList.length) ? el('div', { className: 'agent-err' }, caseErr) : null,
+    chatBody,
+    sendErr ? el('div', { className: 'agent-err' }, sendErr) : null,
+    inputRow);
+}
+
 // ---- App Router ----
 function App() {
   const [page, setPage] = useState('landing');
@@ -14587,6 +14866,10 @@ function App() {
       loggedIn: !!token,
       onPatch: patchTcSettings,
       onNavigate: navigate
+    }),
+    // REQ-076：太初先生 Agent 会话页（右上角图标入口进入）
+    agent: /*#__PURE__*/React.createElement(AgentPage, {
+      onNavigate: navigate
     })
   };
   return /*#__PURE__*/React.createElement("div", null, /* REQ-066⑤：bg_enabled 开 → 渲染运营背景图层（.bg-layer 模块主题渐变 + .starfield 星点）；
@@ -14623,6 +14906,9 @@ function App() {
     onPickModule: selectModule,
     onCases: () => navigate('cases'),
     onSettings: () => navigate('settings'),
+    /* REQ-076：太初先生 Agent 图标入口（agent_enabled 控制显隐） */
+    onAgent: () => navigate('agent'),
+    agentEnabled: tcSet.agent_enabled !== false,
     onCredits: () => navigate('credits'),
     onLogout: () => doLogout()
   })), /*#__PURE__*/React.createElement("div", {
