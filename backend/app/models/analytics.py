@@ -1,5 +1,5 @@
 """用户分析库 ORM 模型（taichu_analytics）"""
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import (
     Column, Integer, String, Text, Boolean, Float, DateTime, ForeignKey, JSON, Enum as SAEnum,
 )
@@ -366,3 +366,33 @@ class PairReading(Base):
     module = Column(String(16), nullable=False)   # guoxue | xishi | mbti
     result_json = Column(JSON, nullable=True)     # {"content": 配对解析文本}
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+def _share_default_expiry() -> datetime:
+    """case_share_links 缺省有效期：建行时未显式传 expires_at → 7 天后过期。"""
+    return datetime.utcnow() + timedelta(days=7)
+
+
+class CaseShareLink(Base):
+    """帮填一次性分享链接（case_share_links，REQ-070）：免登录代建档案归发起者。
+
+    发起者（鉴权）POST /api/case/share 生成/复用一条**只绑定自己 user_id** 的链接
+    （不绑 case：帮填本质是让访客代发起者**新建**一个档案，档案名由帮填者填）；
+    他人（免登录）GET /api/case/share/{token} 仅可见 owner_name（昵称/手机号脱敏）
+    + 建档字段定义，POST /api/case/share/{token}/submit 代建档案
+    （user_id=发起者、name=帮填者所填姓名）后 token.used=True 一次性失效。
+
+    幂等复用：同一发起者存在 used=False 且未过期的链接时重复点「分享帮填」返回
+    同一 token（与 MbtiShareLink 按 case 查重复用同思路）；被使用/过期后下次生成新链。
+    expires_at 缺省 7 天（_share_default_expiry）；过期后 GET/submit 均判失效。
+    """
+    __tablename__ = "case_share_links"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)  # 发起者
+    token = Column(String(64), unique=True, nullable=False, index=True)            # 一次性 token（token_urlsafe(16)）
+    used = Column(Boolean, default=False)   # True=已代建提交，链接即失效
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=True, default=_share_default_expiry)    # 缺省 7 天
+
+    user = relationship("User")
