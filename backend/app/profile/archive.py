@@ -1,6 +1,9 @@
 """用户档案模块（ADR-0006：DB为唯一事实源）"""
 from sqlalchemy.orm import Session
-from app.models import Case, Chart, MethodResult, Calibration, Conversation
+from app.models import (
+    Case, Chart, MethodResult, Calibration, Conversation,
+    AstrologyReading, MbtiResult,
+)
 
 
 def build_archive(case: Case, db: Session) -> dict:
@@ -13,6 +16,8 @@ def build_archive(case: Case, db: Session) -> dict:
         "calibrations": _get_calibrations(case, db),
         "conversations": _get_conversations(case, db),
         "method_results": _get_method_results(case, db),
+        "astrology": _get_astrology(case, db),
+        "mbti": _get_mbti(case, db),
     }
 
 
@@ -65,3 +70,43 @@ def _get_method_results(case: Case, db: Session) -> list[dict]:
         }
         for r in results
     ]
+
+
+def _get_astrology(case: Case, db: Session) -> list[dict]:
+    """该档案已生成的星座星盘记录（不含 chart_json 全量，控制体积）"""
+    readings = (
+        db.query(AstrologyReading)
+        .filter_by(case_id=case.id)
+        .order_by(AstrologyReading.id.desc())
+        .all()
+    )
+    return [
+        {
+            "id": r.id,
+            "scope": r.scope,
+            "created_at": str(r.created_at),
+        }
+        for r in readings
+    ]
+
+
+def _get_mbti(case: Case, db: Session) -> dict:
+    """该档案的 MBTI：档案主人类型 + 判型记录列表（不含 answers_json 全量）"""
+    results = (
+        db.query(MbtiResult)
+        .filter_by(case_id=case.id)
+        .order_by(MbtiResult.id.desc())
+        .all()
+    )
+    return {
+        "mbti_type": case.mbti_type,
+        "results": [
+            {
+                "id": r.id,
+                "type": r.type,
+                "scores": r.scores_json,
+                "created_at": str(r.created_at),
+            }
+            for r in results
+        ],
+    }
