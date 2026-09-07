@@ -1147,6 +1147,7 @@ function UsersSection() {
 }
 
 /* ============ 提示词管理 ============ */
+const PROMPT_CATEGORY_ORDER = ['方法', '校验/追问', '解读'];
 function PromptsSection() {
   const [items, setItems] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -1157,6 +1158,16 @@ function PromptsSection() {
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState('');
   const [contentErr, setContentErr] = useState('');
+  // 版本历史（选中 key 后加载；列表不含全量 content）
+  const [versions, setVersions] = useState([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+  const [versionsErr, setVersionsErr] = useState('');
+  const [rollbackingId, setRollbackingId] = useState(null);
+  // 查看版本全文（弹窗）
+  const [viewingVer, setViewingVer] = useState(null);
+  const [viewContent, setViewContent] = useState('');
+  const [viewLoading, setViewLoading] = useState(false);
+  const [viewErr, setViewErr] = useState('');
   const loadList = async function () {
     setLoadingList(true);
     setErrored('');
@@ -1173,14 +1184,14 @@ function PromptsSection() {
   useEffect(function () {
     loadList();
   }, []);
-  const openKey = async function (k) {
-    setActiveKey(k);
-    setSavedMsg('');
+  // 拉取当前 key 全文（编辑器 + 回滚后刷新共用）
+  const refreshContent = async function () {
+    if (!activeKey) return;
     setContentErr('');
     setContent('');
     setLoadingContent(true);
     try {
-      const res = await api('/admin/prompts/' + encodeURIComponent(k));
+      const res = await api('/admin/prompts/' + encodeURIComponent(activeKey));
       const d = pickData(res);
       setContent(d && d.content != null ? d.content : '');
     } catch (e) {
@@ -1188,6 +1199,42 @@ function PromptsSection() {
     } finally {
       setLoadingContent(false);
     }
+  };
+  // 拉取版本历史（按 id 倒序，最新在前）
+  const loadVersions = async function (k) {
+    setLoadingVersions(true);
+    setVersionsErr('');
+    try {
+      const res = await api('/admin/prompts/' + encodeURIComponent(k) + '/versions');
+      const d = pickData(res);
+      setVersions(Array.isArray(d.items) ? d.items : []);
+    } catch (e) {
+      setVersionsErr(e.message || '版本历史加载失败');
+      setVersions([]);
+    } finally {
+      setLoadingVersions(false);
+    }
+  };
+  const openKey = function (k) {
+    setActiveKey(k);
+    setSavedMsg('');
+    setContentErr('');
+    setVersionsErr('');
+    setContent('');
+    setVersions([]);
+    setViewingVer(null);
+    setViewContent('');
+    setViewErr('');
+    refreshContent();
+    loadVersions(k);
+  };
+  const closeEditor = function () {
+    setActiveKey(null);
+    setContent('');
+    setSavedMsg('');
+    setVersions([]);
+    setVersionsErr('');
+    setViewingVer(null);
   };
   const saveKey = async function () {
     if (!activeKey) return;
@@ -1204,52 +1251,129 @@ function PromptsSection() {
       setSavedMsg('已保存：' + activeKey);
       toast('保存成功');
       loadList(); // 刷新 mtime
+      loadVersions(activeKey); // 本次保存已落一条新快照
     } catch (e) {
       setContentErr(e.message || '保存失败');
     } finally {
       setSaving(false);
     }
   };
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+  // 查看某版本全文（弹窗）
+  const openVersionView = async function (ver) {
+    if (!activeKey || !ver) return;
+    setViewingVer(ver);
+    setViewContent('');
+    setViewErr('');
+    setViewLoading(true);
+    try {
+      const res = await api('/admin/prompts/' + encodeURIComponent(activeKey) + '/versions/' + ver.id);
+      const d = pickData(res);
+      setViewContent(d && d.content != null ? d.content : '');
+    } catch (e) {
+      setViewErr(e.message || '版本内容加载失败');
+    } finally {
+      setViewLoading(false);
+    }
+  };
+  // 回滚到某版本：POST rollback → toast + 刷新当前内容 + 刷新版本列表
+  const rollbackTo = async function (ver) {
+    if (!activeKey || !ver || rollbackingId != null) return;
+    if (!window.confirm('确认把 [' + activeKey + '] 回滚到 ' + fmtTime(ver.created_at) + '（v' + ver.id + '）的内容？当前文件将被覆盖，并自动生成一条回滚后的新快照。')) return;
+    setRollbackingId(ver.id);
+    setContentErr('');
+    try {
+      const res = await api('/admin/prompts/' + encodeURIComponent(activeKey) + '/rollback/' + ver.id, {
+        method: 'POST'
+      });
+      const d = pickData(res);
+      const vid = d && d.version_id != null ? d.version_id : ver.id;
+      setSavedMsg('已回滚：' + activeKey + ' → v' + vid);
+      toast('已回滚到 v' + vid);
+      loadList();
+      refreshContent();
+      loadVersions(activeKey);
+    } catch (e) {
+      setContentErr(e.message || '回滚失败');
+    } finally {
+      setRollbackingId(null);
+    }
+  };
+  // 按分类分组（固定顺序：方法 → 校验/追问 → 解读；未知分类归"其他"追加在后）
+  const grouped = function () {
+    const byCat = {};
+    items.forEach(function (p) {
+      const c = p.category || '其他';
+      (byCat[c] = byCat[c] || []).push(p);
+    });
+    const order = PROMPT_CATEGORY_ORDER.concat(Object.keys(byCat).filter(function (c) {
+      return PROMPT_CATEGORY_ORDER.indexOf(c) < 0;
+    }));
+    return order.filter(function (c) {
+      return byCat[c] && byCat[c].length;
+    }).map(function (c) {
+      return {
+        category: c,
+        rows: byCat[c]
+      };
+    });
+  }();
+  return React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "page-title"
   }, "提示词"), /*#__PURE__*/React.createElement("p", {
     className: "page-desc"
-  }, "查看与编辑系统提示词（保存后立即生效于新请求）"), errored && /*#__PURE__*/React.createElement("div", {
+  }, "查看与编辑系统提示词（方法 9 / 校验·追问 2 / 解读 4，共 15 个）。保存后立即生效于新请求；每次保存自动生成版本快照，可查看历史并回滚。"), errored && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
   }, errored), loadingList && /*#__PURE__*/React.createElement("p", {
     className: "hint"
   }, "正在加载提示词列表…"), !loadingList && items.length === 0 && !errored && /*#__PURE__*/React.createElement("div", {
     className: "empty-note"
-  }, "暂无提示词"), !loadingList && items.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "card",
-    style: {
-      padding: 0,
-      overflow: 'hidden'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "table-scroll",
-    style: {
-      border: 'none'
-    }
-  }, /*#__PURE__*/React.createElement("table", {
-    className: "admin-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "key"), /*#__PURE__*/React.createElement("th", null, "修改时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, items.map(function (p) {
-    const k = p.key != null ? p.key : p.name;
-    return /*#__PURE__*/React.createElement("tr", {
-      key: k,
-      className: "clickable",
-      onClick: function () {
-        openKey(k);
-      }
-    }, /*#__PURE__*/React.createElement("td", {
+  }, "暂无提示词"), !loadingList && items.length > 0 && grouped.map(function (g) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: g.category,
+      className: "card",
       style: {
-        fontWeight: 600,
-        color: 'var(--jade-deep)'
+        padding: 0,
+        overflow: 'hidden'
       }
-    }, k), /*#__PURE__*/React.createElement("td", null, fmtTime(p.mtime)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-outline btn-mini"
-    }, "编辑")));
-  }))))), activeKey != null && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: '12px 16px 0'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "section-title",
+      style: {
+        margin: '0 0 4px'
+      }
+    }, g.category, /*#__PURE__*/React.createElement("span", {
+      className: "tag gray",
+      style: {
+        marginLeft: 8
+      }
+    }, g.rows.length))), /*#__PURE__*/React.createElement("div", {
+      className: "table-scroll",
+      style: {
+        border: 'none'
+      }
+    }, /*#__PURE__*/React.createElement("table", {
+      className: "admin-table"
+    }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "key"), /*#__PURE__*/React.createElement("th", null, "文件"), /*#__PURE__*/React.createElement("th", null, "修改时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, g.rows.map(function (p) {
+      const k = p.key != null ? p.key : p.name;
+      return /*#__PURE__*/React.createElement("tr", {
+        key: k,
+        className: "clickable",
+        onClick: function () {
+          openKey(k);
+        }
+      }, /*#__PURE__*/React.createElement("td", {
+        style: {
+          fontWeight: 600,
+          color: 'var(--jade-deep)'
+        }
+      }, k), /*#__PURE__*/React.createElement("td", null, p.file || '-'), /*#__PURE__*/React.createElement("td", null, fmtTime(p.updated_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
+        className: "btn btn-outline btn-mini"
+      }, "编辑")));
+    })))));
+  }), activeKey != null && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1270,10 +1394,7 @@ function PromptsSection() {
     }
   }, activeKey)), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline btn-mini",
-    onClick: function () {
-      setActiveKey(null);
-      setContent('');
-    }
+    onClick: closeEditor
   }, "关闭编辑器")), loadingContent && /*#__PURE__*/React.createElement("p", {
     className: "hint",
     style: {
@@ -1321,13 +1442,140 @@ function PromptsSection() {
   }, saving ? '保存中…' : '保存'), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     disabled: saving,
-    onClick: function () {
-      setContent('');
-      setActiveKey(null);
-      setSavedMsg('');
+    onClick: closeEditor
+  }, "放弃修改"))), /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      marginTop: 20,
+      marginBottom: 2
     }
-  }, "放弃修改")))));
+  }, "版本历史", !loadingVersions && versions.length > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "tag gray",
+    style: {
+      marginLeft: 8
+    }
+  }, versions.length)), loadingVersions && /*#__PURE__*/React.createElement("p", {
+    className: "hint",
+    style: {
+      marginTop: 6
+    }
+  }, "正在加载版本历史…"), versionsErr && /*#__PURE__*/React.createElement("div", {
+    className: "error-box",
+    style: {
+      marginTop: 8
+    }
+  }, versionsErr), !loadingVersions && !versionsErr && versions.length === 0 && /*#__PURE__*/React.createElement("p", {
+    className: "hint",
+    style: {
+      marginTop: 6
+    }
+  }, "暂无版本记录：保存一次后自动生成快照"), !loadingVersions && !versionsErr && versions.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "table-scroll",
+    style: {
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "admin-table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "版本"), /*#__PURE__*/React.createElement("th", null, "保存时间"), /*#__PURE__*/React.createElement("th", null, "操作人"), /*#__PURE__*/React.createElement("th", null, "长度"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, versions.map(function (v) {
+    return /*#__PURE__*/React.createElement("tr", {
+      key: v.id
+    }, /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+      className: "tag gray"
+    }, "v" + v.id)), /*#__PURE__*/React.createElement("td", null, fmtTime(v.created_at)), /*#__PURE__*/React.createElement("td", null, v.admin_user_id != null ? '#' + v.admin_user_id : '-'), /*#__PURE__*/React.createElement("td", null, (v.length != null ? v.length : '-') + " 字符"), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      disabled: viewLoading,
+      onClick: function () {
+        openVersionView(v);
+      }
+    }, "查看"), " ", /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      style: {
+        color: 'var(--cinnabar)',
+        borderColor: 'rgba(178,58,58,.45)'
+      },
+      disabled: rollbackingId === v.id,
+      onClick: function () {
+        rollbackTo(v);
+      }
+    }, rollbackingId === v.id ? '回滚中…' : '回滚')));
+
+  }))))), viewingVer && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(18,24,38,.55)',
+      zIndex: 80,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      width: '100%',
+      maxWidth: 880,
+      maxHeight: '82vh',
+      display: 'flex',
+      flexDirection: 'column',
+      marginBottom: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      margin: 0
+    }
+  }, "查看版本：", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'Consolas,Menlo,monospace',
+      fontSize: 13
+    }
+  }, activeKey), " · v" + viewingVer.id + " · " + fmtTime(viewingVer.created_at)), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline btn-mini",
+    onClick: function () {
+      setViewingVer(null);
+      setViewContent('');
+      setViewErr('');
+    }
+  }, "关闭")), viewErr && /*#__PURE__*/React.createElement("div", {
+    className: "error-box",
+    style: {
+      marginTop: 10
+    }
+  }, viewErr), viewLoading && /*#__PURE__*/React.createElement("p", {
+    className: "hint",
+    style: {
+      marginTop: 10
+    }
+  }, "正在加载版本内容…"), !viewLoading && viewContent && /*#__PURE__*/React.createElement("pre", {
+    style: {
+      flex: 1,
+      overflow: 'auto',
+      background: '#f4f0e6',
+      border: '1px solid var(--line)',
+      borderRadius: 'var(--radius-m)',
+      padding: '12px 14px',
+      marginTop: 12,
+      marginBottom: 0,
+      fontFamily: 'Consolas,Menlo,monospace',
+      fontSize: 12.5,
+      lineHeight: 1.7,
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word'
+    }
+  }, viewContent))));
 }
+
 
 /* ============ App：登录态 + 布局 + 路由 ============ */
 function App() {
