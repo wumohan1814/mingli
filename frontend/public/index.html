@@ -101,6 +101,14 @@
       color:var(--skin-banner-ink);background:transparent;border:1px solid var(--skin-banner-ink);line-height:1.4;white-space:nowrap;
       transition:background .18s ease,color .18s ease}
     .menu-login-btn:hover{background:var(--skin-banner-ink);color:var(--skin-banner)}
+
+    /* REQ-051：Banner 右上角全局余额（仅登录；积分 ÷ 汇率 → ¥，汇率动态读 system_configs.recharge_rate，读不到按 10） */
+    .topbar-balance{display:inline-flex;align-items:center;gap:6px;margin-right:10px;padding:6px 12px;border-radius:999px;background:rgba(128,128,150,.2);color:var(--skin-banner-ink);font-size:12.5px;font-weight:600;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums;cursor:pointer;transition:background .18s ease}
+    .topbar-balance:hover{background:rgba(128,128,150,.34)}
+    .topbar-balance.static{cursor:default}
+    .topbar-balance.static:hover{background:rgba(128,128,150,.2)}
+    .topbar-balance .tb-k{font-weight:400;opacity:.8}
+    .topbar-balance .tb-sym{opacity:.92}
     .menu-drop{position:absolute;right:0;top:calc(100% + 10px);z-index:60;min-width:184px;padding:6px;
       background:var(--surface);color:var(--text-1);border:1px solid var(--border);border-radius:14px;
       box-shadow:0 14px 34px rgba(26,33,56,.24);display:flex;flex-direction:column;gap:2px}
@@ -432,6 +440,15 @@
     .conflict-tag{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#fff}
     .c-zhi{background:#B23A3A}.c-chong{background:#E08A2B}.c-xing{background:#5B4B8A}.c-hai{background:#3B7BB0}.c-po{background:#8A93A6}
 
+    /* REQ-052：生肖流年档案下拉 */
+    .zodiac-pick-hint{font-size:12.5px;color:var(--text-2);margin-top:10px;line-height:1.8}
+    .zodiac-pick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    /* BUG-003：五行关系明细行 */
+    .zrel{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:baseline}
+    .zrel:last-child{border-bottom:none}
+    .zrel .zl{flex:none;width:92px;color:var(--text-3)}
+    .zrel .zv{flex:1;min-width:0;color:var(--text-1);font-weight:600;line-height:1.75;word-break:break-all}
+
     /* ===== 临时起卦 ===== */
     .method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
     .method-cell{padding:16px 10px;text-align:center;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:.14s}
@@ -621,7 +638,7 @@ const {
 // ===== B1 全站 UI 文案常量（REQ-037）=====
 // 来源：docs/文案交付/B1_ui_copy.json（去掉 _meta，8 组全量内联）。
 // 集中维护：落地页 / 品牌标语 / 免责声明 / Hub 标题等从此引用。
-// buttons / tips / empty / error 本次仅定义常量，暂不全站替换按钮与提示文案（避免破坏既有交互与断言）。
+// buttons / tips / empty / error 为本轮（C5）全站统一文案源；各模块按钮/提示/错误态均从此引用，不再散落硬编码。
 const UI_COPY = {
   brand: {
     name: '太初',
@@ -658,12 +675,12 @@ const UI_COPY = {
     enter_mbti: '开始人格测试'
   },
   buttons: {
-    create_case: '新建档案',
+    create_case: '新建命理档案',
     choose_case: '选择已有档案',
     generate_chart: '生成星盘',
     start_divination: '开始起卦',
     draw_cards: '抽牌',
-    start_quiz: '开始答题',
+    start_quiz: '开始测试',
     redo: '重新抽卡',
     rechoose: '重选牌阵',
     back: '返回',
@@ -683,7 +700,7 @@ const UI_COPY = {
     loading_read: '解读生成中，趋势正在成形。',
     info_points_cost: '本次解读将消耗积分，结果可随时回看。',
     hint_revision: '补充更准确的信息，可让结果更贴合你的真实处境。',
-    hint_placeholder: '示例：想了解近半年的事业走向。',
+    hint_placeholder: '例如：想了解近半年的事业走向。',
     hint_compliance: '以下为趋势参考，供你自行判断，非确定结论。'
   },
   empty: {
@@ -1429,6 +1446,75 @@ function CreditBalance({
   }, "积分 ", balance == null ? '—' : balance)));
 }
 
+
+// —— REQ-051：Banner 全局余额（¥）——
+// 汇率：1 元 = N 积分，与后端 system_configs.recharge_rate 对齐（默认 10）。
+// 后端当前未开放公开配置接口：先探测 /system/configs 的 recharge_rate，404/失败静默回退常量 10；
+// 模块级记忆保证单次会话只探测一次。换算仅作用于前端展示，积分底层计费/扣费逻辑不变。
+const CREDIT_YUAN_RATE = 10;
+let yuanRatePromise = null;
+function fetchCreditYuanRate() {
+  if (!yuanRatePromise) {
+    yuanRatePromise = (async () => {
+      let rate = CREDIT_YUAN_RATE;
+      try {
+        const r = await api('/system/configs');
+        const cfg = r && r.data && typeof r.data === 'object' ? r.data : r && typeof r === 'object' ? r : null;
+        const raw = cfg && (cfg.recharge_rate != null ? cfg.recharge_rate : cfg.rate != null ? cfg.rate : null);
+        const num = Number(raw);
+        if (Number.isFinite(num) && num > 0) rate = num;
+      } catch (e) {/* 接口未开放/无权限 → 保持默认汇率 */}
+      return rate;
+    })();
+  }
+  return yuanRatePromise;
+}
+// Banner 余额胶囊：复用 fetchCreditBalance() 拉积分 → 积分 ÷ 汇率 = 余额 ¥（保留 2 位小数，不足 1 元显示 ¥0.xx）
+function BannerBalance({
+  onClick
+}) {
+  const [yuan, setYuan] = useState(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      let credits = null;
+      let rate = CREDIT_YUAN_RATE;
+      try {
+        credits = await fetchCreditBalance();
+      } catch (e) {/* 单次拉取失败静默，按失败态展示 */}
+      try {
+        rate = await fetchCreditYuanRate();
+      } catch (e) {/* 保持默认汇率 */}
+      if (!alive) return;
+      if (credits == null) {
+        setFailed(true);
+        setYuan(null);
+      } else {
+        const rn = Number(rate);
+        setYuan(Number(credits) / (Number.isFinite(rn) && rn > 0 ? rn : CREDIT_YUAN_RATE));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const txt = failed ? '--' : yuan == null ? '…' : yuan.toFixed(2);
+  const Tag = onClick ? 'button' : 'span';
+  const tagProps = {
+    className: 'topbar-balance' + (onClick ? '' : ' static'),
+    title: '余额 = 积分 ÷ ' + CREDIT_YUAN_RATE + (onClick ? ' · 点击查看积分明细' : '')
+  };
+  if (onClick) {
+    tagProps.type = 'button';
+    tagProps.onClick = onClick;
+  }
+  return React.createElement(Tag, tagProps, React.createElement("span", {
+    className: "tb-k"
+  }, "余额"), React.createElement("span", {
+    className: "tb-sym"
+  }, "¥"), txt);
+}
 // 充值按钮组件已随充值入口一并隐藏（商户认证未完成）；恢复开放时按需重建：
 // 原实现为一个 btn btn-primary 的「充值」按钮（class 含 btn btn-primary，type=button），
 // onClick 缺省时调用 startRecharge()（charge-code 换金数据表单并轮询到账）。
@@ -1441,7 +1527,7 @@ function CreditInsufficientModal({
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
   // 充值入口暂时隐藏：中性提示，不引导充值
-  const body = need != null && have != null ? '本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。' : '积分不足，请稍后再试。';
+  const body = need != null && have != null ? '本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。' : UI_COPY.error.points_insufficient;
   return /*#__PURE__*/React.createElement("div", {
     className: "modal-mask",
     onClick: onClose
@@ -1450,7 +1536,7 @@ function CreditInsufficientModal({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "modal-title"
-  }, "积分不足"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.error.points_insufficient), /*#__PURE__*/React.createElement("div", {
     className: "modal-body"
   }, body), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
@@ -2167,7 +2253,7 @@ function CasesPage({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('onboarding')
-  }, "+ 新建档案"), /*#__PURE__*/React.createElement("button", {
+  }, '+ ' + UI_COPY.buttons.create_case), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, "回首页")), caseList.length === 0 ? /*#__PURE__*/React.createElement("div", {
@@ -3465,17 +3551,7 @@ function PredictPage({
       borderLeft: '3px solid var(--gold-500)',
       position: 'relative'
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'absolute',
-      top: 12,
-      right: 12
-    }
-  }, /*#__PURE__*/React.createElement(CreditBalance, {
-    onClick: () => onNavigate('credits', {
-      caseId
-    })
-  })), /*#__PURE__*/React.createElement("h2", {
+  }, /*#__PURE__*/React.createElement("h2", {
     className: "title"
   }, "综合解读"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5116,23 +5192,12 @@ function ArchivePage({
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 6
-    }
   }, /*#__PURE__*/React.createElement("h2", {
     className: "title",
     style: {
-      marginBottom: 0
+      marginBottom: 6
     }
-  }, caseTitle), /*#__PURE__*/React.createElement(CreditBalance, {
-    onClick: () => onNavigate('credits', {
-      caseId
-    })
-  })), /*#__PURE__*/React.createElement("p", {
+  }, caseTitle), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 13,
       color: 'var(--text-2)',
@@ -5301,13 +5366,14 @@ function NavRail({
   }, m.label))));
 }
 
-// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示汉堡按钮 + 下拉（切模块回落地页 / 退出登录）
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 余额¥ + 汉堡按钮 + 下拉（切模块回落地页 / 退出登录）
 function TopbarMenu({
   loggedIn,
   onAuth,
   onPickModule,
   onCases,
-  onLogout
+  onLogout,
+  onCredits
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -5332,10 +5398,13 @@ function TopbarMenu({
     className: "menu-login-btn",
     onClick: onAuth
   }, "登录 / 注册"));
+  // REQ-051：已登录 → 余额（¥，积分÷汇率换算）显示在汉堡按钮左侧；点击进积分明细
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
     ref: wrapRef
-  }, /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(BannerBalance, {
+    onClick: onCredits || undefined
+  }), /*#__PURE__*/React.createElement("button", {
     className: "menu-btn",
     type: "button",
     onClick: () => setOpen(o => !o),
@@ -5540,12 +5609,19 @@ function ZodiacMedallion({
 function ZodiacPage({
   onNavigate
 }) {
-  const [z, setZ] = useState(0);
-  const [year, setYear] = useState(new Date().getFullYear());
+  // REQ-052：生肖流年改为「档案驱动」——选择档案 → 出生年份自动推算生肖；流年固定当前年，不可手动改。
+  const curYear = new Date().getFullYear();
+  const year = curYear;
+  const [z, setZ] = useState(-1); // 推算出的生肖 index（-1 = 尚未选档案）
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errored, setErrored] = useState('');
+  const [caseList, setCaseList] = useState(null); // null=读取中；[]=无档案/未登录
+  const [selId, setSelId] = useState(''); // 当前选中档案 caseId
+  const runRef = useRef(0); // 选中档案次数（同生肖档案重复选择也强制重跑）
+  const [runId, setRunId] = useState(0);
   const load = async () => {
+    const myRun = runRef.current;
     setLoading(true);
     setErrored('');
     try {
@@ -5556,16 +5632,75 @@ function ZodiacPage({
           year
         })
       });
+      if (runRef.current !== myRun) return;
       setData(res && res.data || res);
     } catch (e) {
+      if (runRef.current !== myRun) return;
       setErrored(e.message || '生肖流年加载失败，请重试。');
     } finally {
-      setLoading(false);
+      if (runRef.current === myRun) setLoading(false);
     }
   };
+  // 仅在选中档案后自动出结果：z 生效 + runId 递增 → 触发一次 load
   useEffect(() => {
-    load();
-  }, [z, year]);
+    if (z >= 0 && runId > 0) load();
+  }, [z, runId]);
+  // 拉当前用户档案列表（列表项含 birthYear，用于出生年 → 生肖）
+  useEffect(() => {
+    let alive = true;
+    if (!token) {
+      setCaseList([]);
+      return;
+    }
+    (async () => {
+      try {
+        const res = await api('/cases', {
+          method: 'GET'
+        });
+        const list = (res && res.data && Array.isArray(res.data.cases)) ? res.data.cases : (res && Array.isArray(res.cases)) ? res.cases : [];
+        if (alive) setCaseList(list);
+      } catch (e) {
+        if (alive) setCaseList([]);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+  // 选中档案 → 出生年份换算生肖（(year−4)%12 → ZODIAC index）；列表无 birthYear 时回查 /cases/{id}/archive
+  const pickCase = async id => {
+    if (!id) {
+      setSelId('');
+      setZ(-1);
+      setData(null);
+      setErrored('');
+      return;
+    }
+    const c = (caseList || []).find(x => String(x.caseId) === String(id));
+    if (!c) return;
+    let by = c && c.birthYear != null && c.birthYear !== '' ? Number(c.birthYear) : NaN;
+    if (!Number.isFinite(by) || by < 1900 || by > 2200) {
+      try {
+        const ar = await api('/cases/' + id + '/archive');
+        const payload = ar && ar.data || ar || {};
+        const inp = payload.input || payload.input_json || {};
+        const fb = Number(inp.birth_year);
+        if (Number.isFinite(fb)) by = fb;
+      } catch (e) {/* 回查失败按无出生年处理 */}
+    }
+    if (!Number.isFinite(by) || by < 1900 || by > 2200) {
+      toast('该档案缺少有效的出生年份，请先补全档案信息');
+      return;
+    }
+    const idx = ((by - 4) % 12 + 12) % 12;
+    runRef.current += 1;
+    setSelId(String(id));
+    setData(null);
+    setErrored('');
+    setLoading(true);
+    setZ(idx);
+    setRunId(runRef.current);
+  };
   const CONFLICT_CLS = {
     '值太岁': 'c-zhi',
     '冲太岁': 'c-chong',
@@ -5583,90 +5718,125 @@ function ZodiacPage({
     type: '平顺无冲'
   }];
   const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? data.yearGanZhi + ' · ' + data.taiSui.star + '星君' : '';
-  const elemCls = relCls(data && data.elementRelation && data.elementRelation.classification);
+  // BUG-003：五行关系中段字段（elementRelation / relation / zodiacWuxing 全量容错，空值兜底 '—'）
+  const er = data && data.elementRelation && typeof data.elementRelation === 'object' ? data.elementRelation : null;
+  const erCls = er && typeof er.classification === 'string' && er.classification ? er.classification : '';
+  const erKind = er && typeof er.kind === 'string' && er.kind ? er.kind : '';
+  const erLabel = er && typeof er.label === 'string' && er.label ? er.label : '';
+  const erYearWx = er && typeof er.yearStemWuxing === 'string' && er.yearStemWuxing ? er.yearStemWuxing : '';
+  const erZodiacWx = er && typeof er.zodiacWuxing === 'string' && er.zodiacWuxing ? er.zodiacWuxing : '';
+  const relRaw = data && typeof data.relation === 'string' && data.relation ? data.relation : erLabel;
+  // 生克详情带双方五行注释：生肖地支本气（X）生/克 年干五行（Y）
+  const relTxt = relRaw ? relRaw
+    .replace('生肖地支本气', erZodiacWx ? '生肖地支本气（' + erZodiacWx + '）' : '生肖地支本气')
+    .replace('年干五行', erYearWx ? '年干五行（' + erYearWx + '）' : '年干五行') : '';
+  // 本气五行文案：优先后端 B2 顶层 zodiacWuxing（如「水（子）」）；缺失回退机读五行+地支
+  const zxTxt = data && typeof data.zodiacWuxing === 'string' && data.zodiacWuxing.trim() ? data.zodiacWuxing : (erZodiacWx ? erZodiacWx + (data && data.zodiacBranch ? '（' + data.zodiacBranch + '）' : '') : '');
+  // 流年年干五行：如「丙（火）」（丙午年）
+  const yswxTxt = erYearWx ? ((data && data.yearGanZhi && String(data.yearGanZhi).charAt(0)) ? String(data.yearGanZhi).charAt(0) + '（' + erYearWx + '）' : erYearWx) : '';
+  const gzTxt = data && typeof data.yearGanZhi === 'string' ? data.yearGanZhi : '';
+  const elemCls = relCls(erCls);
   // BUG-003：风险/有利关系仅在后端返回非空数组时展示
   const hasRisk = !!(data && Array.isArray(data.riskRelations) && data.riskRelations.length);
   const hasFav = !!(data && Array.isArray(data.favorableRelations) && data.favorableRelations.length);
-  return /*#__PURE__*/React.createElement("div", {
+  const selCase = (caseList || []).find(x => String(x.caseId) === String(selId)) || null;
+  const zName = z >= 0 && ZODIAC[z] ? ZODIAC[z] : '';
+  const erLine = (k, v) => React.createElement("div", {
+    className: "zrel"
+  }, React.createElement("span", {
+    className: "zl"
+  }, k), React.createElement("span", {
+    className: "zv"
+  }, v));
+  // —— 档案选择区（REQ-052）：未登录/无档案 → 引导按钮；有档案 → 下拉，选中即自动推演 ——
+  let picker = null;
+  if (!token) {
+    picker = React.createElement(React.Fragment, null, React.createElement("p", {
+      className: "zodiac-pick-hint"
+    }, "生肖流年需登录后按档案出生年份自动推算，请先登录。"), React.createElement("div", {
+      className: "zodiac-pick-actions"
+    }, React.createElement("button", {
+      className: "btn btn-primary",
+      onClick: () => onNavigate('auth')
+    }, "去登录")));
+  } else if (caseList === null) {
+    picker = React.createElement("p", {
+      className: "zodiac-pick-hint"
+    }, "正在读取档案…");
+  } else if (!caseList.length) {
+    picker = React.createElement(React.Fragment, null, React.createElement("p", {
+      className: "zodiac-pick-hint"
+    }, "还没有可用档案。建档后将按出生年份自动推算对应生肖与流年运程。"), React.createElement("div", {
+      className: "zodiac-pick-actions"
+    }, React.createElement("button", {
+      className: "btn btn-primary",
+      onClick: () => onNavigate('onboarding')
+    }, "去建档"), React.createElement("button", {
+      className: "btn btn-outline",
+      onClick: () => onNavigate('cases')
+    }, "去档案管理")));
+  } else {
+    picker = React.createElement(React.Fragment, null, React.createElement("select", {
+      className: "input",
+      value: selId,
+      onChange: e => pickCase(e.target.value),
+      style: {
+        marginBottom: 0
+      }
+    }, React.createElement("option", {
+      value: ""
+    }, "请选择档案"), caseList.map(c => React.createElement("option", {
+      key: String(c.caseId),
+      value: String(c.caseId)
+    }, (c.name || '未命名档案') + (c.birthYear ? '（' + c.birthYear + ' 年生）' : '')))), selCase ? React.createElement("p", {
+      className: "zodiac-pick-hint"
+    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；流年取当前年份 ", year, " 年（生肖由出生年自动推算，不可手动修改）") : React.createElement("p", {
+      className: "zodiac-pick-hint"
+    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算，流年固定当前年，不可手动修改）"));
+  }
+  return React.createElement("div", {
     className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
+  }, React.createElement(Icon, {
     name: "spark",
     size: 22
-  }), " 生肖流年"), /*#__PURE__*/React.createElement("div", {
+  }), " 生肖流年"), React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "label"
-  }, "选择生肖"), /*#__PURE__*/React.createElement("div", {
-    className: "zodiac-grid"
-  }, ZODIAC.map((n, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: 'zodiac-cell' + (z === i ? ' sel' : ''),
-    onClick: () => setZ(i)
-  }, /*#__PURE__*/React.createElement(ZodiacMedallion, {
-    index: i
-  }), n))), /*#__PURE__*/React.createElement("div", {
-    className: "label",
-    style: {
-      marginTop: 12
-    }
-  }, "选择年份"), /*#__PURE__*/React.createElement("div", {
-    className: "row-gap",
-    style: {
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    style: {
-      width: 'auto',
-      padding: '8px 14px'
-    },
-    onClick: () => setYear(y => y - 1)
-  }, "−"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 18,
-      fontWeight: 700,
-      minWidth: 64,
-      textAlign: 'center'
-    }
-  }, year, " 年"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    style: {
-      width: 'auto',
-      padding: '8px 14px'
-    },
-    onClick: () => setYear(y => y + 1)
-  }, "＋"))), loading ? /*#__PURE__*/React.createElement("div", {
+  }, "选择档案"), picker), loading ? React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
       color: 'var(--text-2)',
       padding: '28px 16px'
     }
-  }, "推演中…") : errored ? /*#__PURE__*/React.createElement("div", {
+  }, "推演中…") : errored ? React.createElement("div", {
     className: "card failed-box"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "section-title"
-  }, "生肖流年加载失败"), /*#__PURE__*/React.createElement("div", {
+  }, "生肖流年加载失败"), React.createElement("div", {
     className: "error"
-  }, errored), /*#__PURE__*/React.createElement("button", {
+  }, errored), React.createElement("button", {
     className: "btn btn-primary",
     onClick: load
-  }, "重试")) : data ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, "重试")) : data ? React.createElement(React.Fragment, null,
+  /* —— 生肖 medallion + 年运程标题（保留展示） —— */
+  React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center'
     }
-  }, /*#__PURE__*/React.createElement(ZodiacMedallion, {
+  }, React.createElement(ZodiacMedallion, {
     index: z,
     size: 40
-  }), /*#__PURE__*/React.createElement("div", {
+  }), React.createElement("div", {
     style: {
       fontSize: 18,
       fontWeight: 700
     }
-  }, data.zodiac, " · ", year, " 年运程"), /*#__PURE__*/React.createElement("div", {
+  }, data.zodiac, " · ", year, " 年运程"), React.createElement("div", {
     style: {
       marginTop: 8,
       display: 'flex',
@@ -5674,72 +5844,92 @@ function ZodiacPage({
       justifyContent: 'center',
       flexWrap: 'wrap'
     }
-  }, conflicts.map((c, i) => /*#__PURE__*/React.createElement("span", {
+  }, conflicts.map((c, i) => React.createElement("span", {
     key: i,
     className: 'conflict-tag ' + conflictCls(c.type)
-  }, c.type)))), starName ? /*#__PURE__*/React.createElement("div", {
+  }, c.type)))), starName ? React.createElement("div", {
     className: "card taisui-card"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     style: {
       fontSize: 13,
       color: 'var(--cinnabar)'
     }
-  }, "值年星君"), /*#__PURE__*/React.createElement("div", {
+  }, "值年星君"), React.createElement("div", {
     style: {
       fontSize: 17,
       fontWeight: 700
     }
-  }, starName)) : null, /*#__PURE__*/React.createElement("div", {
+  }, starName)) : null,
+  /* —— 贵人 + 五行关系（summary 分类卡） —— */
+  React.createElement("div", {
     className: "row-gap"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "noble-card",
     style: {
       flex: 1
     }
-  }, "贵人", /*#__PURE__*/React.createElement("br", null), data.noble || data.tianyiNoble || '本年无'), /*#__PURE__*/React.createElement("div", {
+  }, "贵人", React.createElement("br", null), data.noble || data.tianyiNoble || '本年无'), React.createElement("div", {
     className: 'rel-card ' + elemCls,
     style: {
       flex: 1
     }
-  }, "五行关系", /*#__PURE__*/React.createElement("br", null), data.elementRelation ? data.elementRelation.classification : '', /*#__PURE__*/React.createElement("br", null), data.relation || '')), /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */ hasRisk ? /*#__PURE__*/React.createElement("div", {
+  }, "五行关系", React.createElement("br", null), erCls || '—')),
+  /* —— BUG-003：五行关系明细（relation / zodiacWuxing / yearStemWuxing / kind / classification 全渲染，空值兜底 —） —— */
+  React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
+    className: "section-title"
+  }, "五行关系明细"), erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')),
+  /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */
+  hasRisk ? React.createElement("div", {
+    className: "card"
+  }, React.createElement("div", {
     className: "section-title",
     style: {
       color: 'var(--cinnabar)'
     }
-  }, "风险关系"), /*#__PURE__*/React.createElement("div", {
+  }, "风险关系"), React.createElement("div", {
     className: "signal-list"
-  }, data.riskRelations.map((s, i) => /*#__PURE__*/React.createElement("div", {
+  }, data.riskRelations.map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "· ", /*#__PURE__*/React.createElement("span", null, s))))) : null, /* BUG-003：有利关系区块（同上，空则不渲染） */ hasFav ? /*#__PURE__*/React.createElement("div", {
+  }, "· ", React.createElement("span", null, s))))) : null,
+  /* BUG-003：有利关系区块（同上，空则不渲染） */
+  hasFav ? React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "section-title",
     style: {
       color: 'var(--skin-accent)'
     }
-  }, "有利关系"), /*#__PURE__*/React.createElement("div", {
+  }, "有利关系"), React.createElement("div", {
     className: "signal-list"
-  }, data.favorableRelations.map((s, i) => /*#__PURE__*/React.createElement("div", {
+  }, data.favorableRelations.map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "· ", /*#__PURE__*/React.createElement("span", null, s))))) : null, /*#__PURE__*/React.createElement("div", {
+  }, "· ", React.createElement("span", null, s))))) : null,
+  React.createElement("div", {
     className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, React.createElement("div", {
     className: "section-title"
-  }, "行动建议"), /*#__PURE__*/React.createElement("div", {
+  }, "行动建议"), React.createElement("div", {
     className: "signal-list"
-  }, (data.actionSignals || []).map((s, i) => /*#__PURE__*/React.createElement("div", {
+  }, (data.actionSignals || []).map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "💡 ", /*#__PURE__*/React.createElement("span", null, s)))))) : null, /*#__PURE__*/React.createElement("div", {
+  }, "💡 ", React.createElement("span", null, s)))))) : React.createElement("div", {
+    className: "card",
+    style: {
+      textAlign: 'center',
+      color: 'var(--text-2)',
+      padding: '28px 16px'
+    }
+  }, "选择档案后将自动推演（生肖 = 出生年份推算 · 流年 = 当前年份）"), React.createElement("div", {
     className: "back-row"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('guoxue-hub')
-  }, "返回选项"), /*#__PURE__*/React.createElement("button", {
+  }, "返回选项"), React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, "回到首页")));
@@ -6256,7 +6446,7 @@ function DivinationPage({
         style: { marginTop: 10 },
         disabled: loading,
         onClick: run
-      }, loading ? '起卦中…' : '开始起卦')),
+      }, loading ? '起卦中…' : UI_COPY.buttons.start_divination)),
     body,
     React.createElement('div', { className: 'back-row fill' },
       data ? React.createElement('button', { className: 'btn btn-outline', onClick: run }, '重新起卦') : null,
@@ -6997,7 +7187,7 @@ function TarotPage({
   const drawFoot = React.createElement(React.Fragment, null,
     drawBody,
     React.createElement('div', { className: 'back-row fill' },
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { draw(spread); } }, '重新抽卡'),
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { draw(spread); } }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '重选牌阵'),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
   return React.createElement('div', { className: 'container' },
@@ -7439,7 +7629,7 @@ function LenormandPage({
   const drawFoot = React.createElement(React.Fragment, null,
     body,
     React.createElement('div', { className: 'back-row fill' },
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { load(spread); } }, '重新抽牌'),
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { load(spread); } }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '重选牌阵'),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
   return React.createElement('div', { className: 'container' },
@@ -7952,7 +8142,7 @@ function AstrologyPage({
         width: 'auto'
       },
       onClick: () => onNavigate('onboarding', { returnTo: 'astrology' })
-    }, '新建档案')));
+    }, UI_COPY.buttons.create_case)));
   }
   const formCard = el('div', {
     className: 'card'
@@ -7973,7 +8163,7 @@ function AstrologyPage({
     className: 'sh-arr'
   }, '→'), el('span', {
     className: 'sh' + (caseId && !data ? ' cur' : '')
-  }, '② 生成星盘'), el('span', {
+  }, '② ' + UI_COPY.buttons.generate_chart), el('span', {
     className: 'sh-arr'
   }, '→'), el('span', {
     className: 'sh' + (data ? ' cur' : '')
@@ -7984,7 +8174,7 @@ function AstrologyPage({
     },
     disabled: loading || !caseId,
     onClick: () => load('natal')
-  }, loading ? '星盘生成中…' : '生成星盘'));
+  }, loading ? '星盘生成中…' : UI_COPY.buttons.generate_chart));
 
   // ---- 盘型 tab：MVP 先只开放本命盘，其余置灰「敬请期待」 ----
   const tabsNode = el('div', {
@@ -8705,9 +8895,9 @@ function MbtiPage({
               el('div', {style: {display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%', paddingBottom: 10, marginBottom: 10, borderBottom: '1px dashed var(--border)'}}, shareZone))
               : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, '请先勾选上方一份档案：未测档案可开始测试；已测档案勾选后直接显示其 MBTI 结果。'),
             el('div', {className: 'back-row', style: {justifyContent: 'center', margin: 0}},
-              el('button', {className: 'btn btn-primary', style: {width: 'auto'}, disabled: !selCase, title: selCase ? '' : '请先勾选档案', onClick: () => setStarted(true)}, '开始测试'),
+              el('button', {className: 'btn btn-primary', style: {width: 'auto'}, disabled: !selCase, title: selCase ? '' : '请先勾选档案', onClick: () => setStarted(true)}, UI_COPY.buttons.start_quiz),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入'),
-              el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, '新建档案'),
+              el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, UI_COPY.buttons.create_case),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'))));
       }
       body = gate;
@@ -9152,6 +9342,7 @@ function App() {
     onAuth: () => navigate('auth'),
     onPickModule: selectModule,
     onCases: () => navigate('cases'),
+    onCredits: () => navigate('credits'),
     onLogout: () => logout()
   })), /*#__PURE__*/React.createElement("div", {
     className: "app-shell"
