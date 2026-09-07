@@ -354,7 +354,8 @@
     .modal-body{font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.6}
 
     /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
-    .nav-rail{position:fixed;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:42;padding:6px 0}
+    /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
+    .nav-rail{position:fixed;left:0;top:64px;transform:none;display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:42;padding:6px 0}
     .nav-rail button{position:relative;border:none;border-radius:0 14px 14px 0;width:58px;padding:14px 6px;min-height:96px;cursor:pointer;
       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
       color:#fff;font-size:13px;font-weight:600;line-height:1.25;letter-spacing:1px;
@@ -369,6 +370,10 @@
       box-shadow:5px 4px 18px rgba(0,0,0,.32);filter:brightness(1.06)}
     .nav-rail button.expanded:hover{width:132px}
     .nav-rail button.expanded .rail-label{writing-mode:horizontal-tb;text-orientation:mixed;letter-spacing:1px}
+    /* BUG-001：手机小屏下落地宣传卡片右移错开，避开左侧 nav-rail（展开按钮宽 132px，留间隙） */
+    @media (max-width:480px){
+      .landing-hero{margin-left:150px;margin-right:auto}
+    }
 
     /* ===== HUB 入口卡 ===== */
     .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
@@ -1150,8 +1155,9 @@ function LandingPage({
     }
   };
   const c = MODS[module] || MODS.guoxue;
+  // BUG-001：外层加 landing-hero 类，小屏媒体查询负责右移避开左侧导航栏按钮
   return /*#__PURE__*/React.createElement("div", {
-    className: "container"
+    className: "container landing-hero"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
@@ -2097,7 +2103,7 @@ function CasesPage({
         fontSize: 13
       },
       onClick: () => openRename(c)
-    }, "命名"), /*#__PURE__*/React.createElement("button", {
+    }, "重命名"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
       style: {
         padding: '8px',
@@ -4870,6 +4876,9 @@ function ZodiacPage({
   }];
   const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? data.yearGanZhi + ' · ' + data.taiSui.star + '星君' : '';
   const elemCls = relCls(data && data.elementRelation && data.elementRelation.classification);
+  // BUG-003：风险/有利关系仅在后端返回非空数组时展示
+  const hasRisk = !!(data && Array.isArray(data.riskRelations) && data.riskRelations.length);
+  const hasFav = !!(data && Array.isArray(data.favorableRelations) && data.favorableRelations.length);
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
@@ -4980,12 +4989,36 @@ function ZodiacPage({
     style: {
       flex: 1
     }
-  }, "贵人", /*#__PURE__*/React.createElement("br", null), data.noble || '本年无'), /*#__PURE__*/React.createElement("div", {
+  }, "贵人", /*#__PURE__*/React.createElement("br", null), data.noble || data.tianyiNoble || '本年无'), /*#__PURE__*/React.createElement("div", {
     className: 'rel-card ' + elemCls,
     style: {
       flex: 1
     }
-  }, "五行关系", /*#__PURE__*/React.createElement("br", null), data.elementRelation ? data.elementRelation.classification : '', /*#__PURE__*/React.createElement("br", null), data.relation || '')), /*#__PURE__*/React.createElement("div", {
+  }, "五行关系", /*#__PURE__*/React.createElement("br", null), data.elementRelation ? data.elementRelation.classification : '', /*#__PURE__*/React.createElement("br", null), data.relation || '')), /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */ hasRisk ? /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      color: 'var(--cinnabar)'
+    }
+  }, "风险关系"), /*#__PURE__*/React.createElement("div", {
+    className: "signal-list"
+  }, data.riskRelations.map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "signal-item"
+  }, "· ", /*#__PURE__*/React.createElement("span", null, s))))) : null, /* BUG-003：有利关系区块（同上，空则不渲染） */ hasFav ? /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      color: 'var(--skin-accent)'
+    }
+  }, "有利关系"), /*#__PURE__*/React.createElement("div", {
+    className: "signal-list"
+  }, data.favorableRelations.map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "signal-item"
+  }, "· ", /*#__PURE__*/React.createElement("span", null, s))))) : null, /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-title"
@@ -6963,13 +6996,23 @@ function MbtiPage({
     setScoring(false);
     setScoreErr('');
   };
-  // —— 我已知道类型：直接输入 ——
-  const pickType = t => {
+  // —— 我已知道类型：直接输入（BUG-005：拉取 GET /api/mbti/types/{type_code} 的类型详解，不再固定"暂无文案"）——
+  const pickType = async t => {
     setResult({id: null, type: t, scores: null, mode: 'manual'});
     setInfo(null);
-    setInfoLoading(false);
+    setInfoLoading(true);
     setInfoErr('');
     setView('result');
+    try {
+      const rr = await api('/mbti/types' + '/' + encodeURIComponent(t));
+      const dd = rr && rr.data || rr || {};
+      setInfo(dd.type_info || null);
+      if (!dd.type_info) setInfoErr('该类型暂无详细文案');
+    } catch (e) {
+      setInfoErr(e && e.message || '类型文案加载失败，请重试。');
+    } finally {
+      setInfoLoading(false);
+    }
   };
   // —— 五栏文案值 → 段落行数组（兼容 string / string[] / 换行分隔）——
   const toLines = v => {
@@ -6986,7 +7029,8 @@ function MbtiPage({
   };
   const cur = view === 'quiz' && total ? questions[idx] : null;
   const isManual = result && result.mode === 'manual';
-  const alias = isManual ? '—' : infoLoading && !info ? '加载中…' : info && info.alias ? info.alias : '—';
+  // BUG-005：无论 scored / manual，只要 info 就展示别名；manual 拉取中则显示加载中
+  const alias = info && info.alias ? info.alias : infoLoading && !info ? '加载中…' : '—';
   // —— 结果页：单维双向比例条（左端计数 / 右端计数 / 中间双向填充）——
   const bar = d => {
     const s = result && result.scores ? result.scores[d.k] || {} : {};
@@ -7020,13 +7064,14 @@ function MbtiPage({
         }}, '返回重试题库')) : null);
   } else if (view === 'result' && result) {
     const t = result.type || 'INTJ';
-    const colsCard = isManual ? el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}}, '（手动输入类型，暂无详细文案）')
-      : info ? el('div', {className: 'card'}, MBTI_FIELDS.map(f => {
+    // BUG-005：优先渲染 info 五栏文案（无论 scored / manual）；仅当 isManual 且无 info 时显示手动占位提示
+    const colsCard = info ? el('div', {className: 'card'}, MBTI_FIELDS.map(f => {
           const lines = toLines(info[f[0]]);
           return el('div', {key: f[0], style: {margin: '6px 0'}},
             el('div', {className: 'section-title', style: {marginBottom: 4}}, f[1]),
             lines.length ? lines.map((x, i) => el('p', {key: i, style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8}}, '· ' + x)) : el('p', {style: {fontSize: 13, color: 'var(--text-3)'}}, '—'));
         }))
+      : isManual ? el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}}, '（手动输入类型，暂无详细文案）')
       : el('div', {className: 'card', style: {color: 'var(--text-3)', fontSize: 13, textAlign: 'center'}},
           infoLoading ? '类型文案加载中…' : (infoErr || '暂无类型文案'), result.id ? el('div', {className: 'back-row', style: {justifyContent: 'center'}},
             el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => fetchInfo(result.id)}, '重新加载文案')) : null);
