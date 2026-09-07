@@ -400,7 +400,7 @@
     /* ===== 生肖流年 ===== */
     .zodiac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
     .zodiac-cell{padding:12px 4px;text-align:center;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:14px;font-weight:600;color:var(--text-1);transition:.14s}
-    .zodiac-cell .ze{font-size:22px;display:block;margin-bottom:2px}
+    .zodiac-cell .zodiac-medallion{display:block;margin:0 auto 2px}
     .zodiac-cell.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
     .taisui-card{text-align:center;border:1.5px solid var(--cinnabar);border-radius:var(--radius-lg);padding:16px;background:rgba(178,58,58,.05)}
     .noble-card{text-align:center;border-radius:var(--radius-lg);padding:14px;background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:600}
@@ -4030,6 +4030,7 @@ function ZiweiPlate({
 
 // —— 占星盘 ——
 const PLANET_CN = {
+  // B3（docs/文案交付/B3_astrology_translations.json）planets 补全
   Sun: '太阳',
   Moon: '月亮',
   Mercury: '水星',
@@ -4040,11 +4041,19 @@ const PLANET_CN = {
   Uranus: '天王星',
   Neptune: '海王星',
   Pluto: '冥王星',
+  NorthNode: '北交点',
+  SouthNode: '南交点',
+  Chiron: '凯龙星',
+  Lilith: '莉莉丝',
+  Asc: '上升点（ASC）',
+  MC: '中天（MC）',
+  IC: '天底（IC）',
+  Dsc: '下降点（DSC）',
+  // 既有兼容键（带空格/全称变体，供格局行星串回退匹配）
   Ceres: '谷神星',
   Juno: '婚神星',
   Vesta: '灶神星',
   Pallas: '智神星',
-  Chiron: '凯龙星',
   'North Node': '北交点',
   'True North Node': '北交点',
   'South Node': '南交点',
@@ -4053,9 +4062,28 @@ const PLANET_CN = {
   'Part of Spirit': '灵点'
 };
 const PATTERN_CN = {
-  kite: '风筝',
-  t_square: 'T型三角',
-  stellium_sign: '星群'
+  // B3 8 格局（docs/文案交付/B3_astrology_translations.json patterns，覆盖原 3 项）
+  grand_cross: '大十字格局',
+  mystic_rectangle: '神秘矩形格局',
+  kite: '风筝格局',
+  t_square: 'T 三角格局',
+  grand_trine: '大三角格局',
+  yod: '上帝之指（贤者之指）',
+  stellium_sign: '星座群星（同星座三体以上）',
+  stellium_house: '宫位群星（同宫位三体以上）'
+};
+// B3 aspects（备用常量；相位表 type 列已接线 translateAspect）
+const ASPECT_CN = {
+  conjunction: '合相',
+  sextile: '六分相',
+  square: '四分相',
+  trine: '三分相',
+  quincunx: '补十二分相（150°）',
+  opposition: '对分相'
+};
+const translateAspect = t => {
+  const k = String(t == null ? '' : t).trim().toLowerCase();
+  return ASPECT_CN[k] || t;
 };
 const translatePattern = p => {
   const s = String(p || '');
@@ -4116,7 +4144,7 @@ function WesternPlate({
     className: "aspect-table"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "星体1"), /*#__PURE__*/React.createElement("th", null, "星体2"), /*#__PURE__*/React.createElement("th", null, "相位"), /*#__PURE__*/React.createElement("th", null, "紧密"))), /*#__PURE__*/React.createElement("tbody", null, arr(w.aspects).map((a, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
-  }, /*#__PURE__*/React.createElement("td", null, val(a.body1)), /*#__PURE__*/React.createElement("td", null, val(a.body2)), /*#__PURE__*/React.createElement("td", null, val(a.type)), /*#__PURE__*/React.createElement("td", null, val(a.closeness)))))));
+  }, /*#__PURE__*/React.createElement("td", null, val(a.body1)), /*#__PURE__*/React.createElement("td", null, val(a.body2)), /*#__PURE__*/React.createElement("td", null, translateAspect(a.type)), /*#__PURE__*/React.createElement("td", null, val(a.closeness)))))));
 }
 
 // —— 七政四余 ——
@@ -4921,7 +4949,27 @@ function XishiHubPage({
 
 /* ---------- 生肖流年（确定性，零 LLM） ---------- */
 const ZODIAC = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
-const ZE_EMO = ['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'];
+// REQ-041：生肖 medallion 走 art/zodiac/zodiac-icons.svg 的 symbol（顺序对齐 ZODIAC 12 生肖）
+const ZE_IDS = ['zx-rat', 'zx-ox', 'zx-tiger', 'zx-rabbit', 'zx-dragon', 'zx-snake', 'zx-horse', 'zx-goat', 'zx-monkey', 'zx-rooster', 'zx-dog', 'zx-pig'];
+const ZODIAC_SPRITE = './art/zodiac/zodiac-icons.svg';
+function ZodiacMedallion({
+  index,
+  size = 32,
+  className
+}) {
+  const id = ZE_IDS[index];
+  if (!id) return null;
+  return /*#__PURE__*/React.createElement("svg", {
+    className: 'zodiac-medallion' + (className ? ' ' + className : ''),
+    width: size,
+    height: size,
+    viewBox: "0 0 100 100",
+    role: "img",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("use", {
+    href: ZODIAC_SPRITE + '#' + id
+  }));
+}
 function ZodiacPage({
   onNavigate
 }) {
@@ -4989,9 +5037,9 @@ function ZodiacPage({
     key: i,
     className: 'zodiac-cell' + (z === i ? ' sel' : ''),
     onClick: () => setZ(i)
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "ze"
-  }, ZE_EMO[i]), n))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(ZodiacMedallion, {
+    index: i
+  }), n))), /*#__PURE__*/React.createElement("div", {
     className: "label",
     style: {
       marginTop: 12
@@ -5043,11 +5091,10 @@ function ZodiacPage({
     style: {
       textAlign: 'center'
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 40
-    }
-  }, ZE_EMO[z]), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(ZodiacMedallion, {
+    index: z,
+    size: 40
+  }), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 18,
       fontWeight: 700
