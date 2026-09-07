@@ -396,3 +396,25 @@ class CaseShareLink(Base):
     expires_at = Column(DateTime, nullable=True, default=_share_default_expiry)    # 缺省 7 天
 
     user = relationship("User")
+
+
+class UserSetting(Base):
+    """用户功能设置（user_settings，REQ-066）：7 项开关按 user 1:1 持久化。
+
+    GET /api/settings 无记录时返回默认值（不落库）；PUT /api/settings upsert
+    （无记录则建、有则更新，未显式给的字段由列 default 兜底）。
+    default_mode 取值 manual|auto|both（api/settings.py Pydantic 校验，非法 400）。
+    表由 main.py lifespan 的 Base.metadata.create_all 幂等建（老库自动补，无需 ALTER）。
+    """
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    anim_enabled = Column(Boolean, default=True)        # ①动画与抽卡模拟
+    default_mode = Column(String(16), default="auto")   # ②占卜界面默认模式：manual|auto|both
+    banner_dropdown = Column(Boolean, default=False)    # ③Banner 模块下拉导航
+    share_taichu_ui = Column(Boolean, default=True)     # ④分享表单太初 UI
+    bg_enabled = Column(Boolean, default=True)          # ⑤背景图显示
+    card_images = Column(Boolean, default=True)         # ⑥牌面图片显示
+    agent_enabled = Column(Boolean, default=True)       # ⑦太初先生 Agent
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
