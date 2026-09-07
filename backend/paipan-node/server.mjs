@@ -20,8 +20,9 @@
  *   POST /zodiac  {zodiac:"鼠", year:2026}
  *     → 200 application/json，生肖流年运程（已 stripInternal）：
  *       {zodiac, zodiacBranch, yearGanZhi, yearBranch, taiSui:{yearBranch, star},
- *        relation, elementRelation, noble, meeting, conflicts, evidenceGrade,
- *        interpretationBoundary, favorableRelations, riskRelations, actionSignals}
+ *        relation, elementRelation, noble, tianyiNoble?, meeting, conflicts,
+ *        evidenceGrade, interpretationBoundary, favorableRelations, riskRelations,
+ *        actionSignals}
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
  *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
@@ -250,6 +251,27 @@ async function computeExtra(input) {
 
 /* ---------- /zodiac：生肖流年（本地 vendor 的 mingyu-core zodiac） ---------- */
 
+// 地支 → 生肖固定映射（天乙贵人展示用；顺序与引擎 ZODIACS 一致）
+const BRANCH_TO_ZODIAC = {
+  子: '鼠', 丑: '牛', 寅: '虎', 卯: '兔', 辰: '龙', 巳: '蛇',
+  午: '马', 未: '羊', 申: '猴', 酉: '鸡', 戌: '狗', 亥: '猪',
+};
+// 天乙贵人：流年年干 → 贵人所落地支（固定硬编码数据，纯确定性、零 LLM）
+const TIANYI_NOBLE_BRANCHES = {
+  甲: ['丑', '未'], 戊: ['丑', '未'], 庚: ['丑', '未'],
+  乙: ['子', '申'], 己: ['子', '申'],
+  丙: ['亥', '酉'], 丁: ['亥', '酉'],
+  壬: ['卯', '巳'], 癸: ['卯', '巳'],
+  辛: ['寅', '午'],
+};
+
+function getTianyiNoble(yearGan) {
+  // 流年年干（如 "丙"）→ "天乙贵人：猪、鸡"；无法识别时返回空串，由调用方兜底
+  const branches = TIANYI_NOBLE_BRANCHES[yearGan];
+  if (!branches || !branches.length) return '';
+  return `天乙贵人：${branches.map((b) => BRANCH_TO_ZODIAC[b] || b).join('、')}`;
+}
+
 function computeZodiac(input) {
   // 必填校验：input 非对象 / zodiac 缺失或非字符串 → 客户端错误（对齐 /ziwei 校验风格）
   if (!input || typeof input !== 'object' || Array.isArray(input)
@@ -264,6 +286,17 @@ function computeZodiac(input) {
   // 这里单独从 getYearTaiSui 取回并入响应，供前端「值年星君」卡展示。
   if (raw.yearGanZhi) {
     result.taiSui = getYearTaiSui(raw.yearGanZhi);  // {yearBranch, star}
+  }
+  // BUG-003：引擎 noble（六合/三合贵人）仅在生肖与流年命中六合/三合时非空，
+  // 否则为 null → 前端「贵人」卡空白。此处当 noble 为空/缺失时补确定性
+  // tianyiNoble（天乙贵人，按流年年干查固定映射），保证「贵人」卡永远有内容；
+  // 前端会优先展示 noble，故仅在 noble 为空时设置。
+  if (!result.noble) {
+    const yearGanZhi = raw.yearGanZhi || result.yearGanZhi;
+    if (typeof yearGanZhi === 'string' && yearGanZhi.length > 0) {
+      const tianyi = getTianyiNoble(yearGanZhi.charAt(0));
+      if (tianyi) result.tianyiNoble = tianyi;
+    }
   }
   return result;
 }
