@@ -43,6 +43,7 @@ from app.errors import (
     ERR_NOT_FOUND,
     ERR_PARAM,
 )
+from app.events.service import record_event
 from app.models import (
     Calibration,
     Case,
@@ -162,6 +163,11 @@ EVENT_NAME_ZH = {
     "case_share_fill": "分享帮填",
     # REQ-076：太初先生 Agent 对话
     "agent_message": "太初先生对话",
+    # REQ-078：埋点补全（配对解析 / 星座恋爱关系 / 手动输入 / 素材上传）
+    "pair_analysis": "配对解析",
+    "zodiac_match": "星座恋爱关系",
+    "manual_input": "手动输入",
+    "asset_upload": "素材上传",
 }
 
 
@@ -1346,6 +1352,18 @@ def upload_asset(
         )
     )
     db.commit()
+    # REQ-078：素材上传埋点（写库失败静默，不阻断业务；本端点无素材槽 key，
+    # key 由随后的 PUT /assets/{key} 入槽，故只记文件名/大小/扩展名）
+    record_event(
+        "asset_upload",
+        user_id=admin["admin_id"],
+        props={
+            "filename": orig,
+            "stored_filename": filename,
+            "ext": ext.lstrip("."),
+            "size": len(data),
+        },
+    )
     return {
         "code": 0,
         "message": "ok",
