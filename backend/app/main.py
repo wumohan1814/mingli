@@ -6,9 +6,10 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
 from app.database import (
@@ -209,7 +210,35 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 async def health():
     return {"status": "ok", "version": "0.1.0"}
 
+
+class SPAStaticFiles(StaticFiles):
+    """SPA fallback 静态服务：真实文件直接返回，404 一律回退 index.html。
+
+    StaticFiles(html=True) 只对磁盘上真实存在的文件/目录生效：/mbti/share/<token>
+    等纯前端虚拟路径（磁盘无对应文件）会抛 404，导致免登录分享链接无法直达前端路由
+    （REQ-047）。这里捕获 404 后改返 index.html，由前端自行解析 token。
+
+    注意：StaticFiles 内部抛的是 starlette.exceptions.HTTPException，fastapi.HTTPException
+    是其子类而非父类，故不能用于捕获这里抛出的 404。
+    """
+
+    async def get_response(self, path: str, scope):
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as exc:
+            if exc.status_code != 404:
+                raise
+            # StaticFiles.directory 是挂载时传入的 str（如 "../frontend/public"），
+            # 不能直接做 str / index.html 除法，须经 Path 拼接（与父类 lookup_path
+            # 的 cwd 解析基准一致）。
+            index_path = Path(self.directory) / "index.html"
+            if index_path.is_file():
+                return FileResponse(str(index_path))
+            # index.html 也不存在：维持 404，不崩溃。
+            raise
+
+
 # Serve frontend static files at root (after API routes)
 frontend_path = Path("../frontend/public")
 if frontend_path.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+    app.mount("/", SPAStaticFiles(directory=str(frontend_path), html=True), name="frontend")
