@@ -3,8 +3,9 @@
 数据源约定：
   - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
-  - 提示词            → 直接读/写 backend/prompts/**/*.md（15 个文件类 prompt：
-                        method-prompts 9 / shared 2 / interpret 4）；每次写前先落
+  - 提示词            → 直接读/写 backend/prompts/**/*.md（18 个文件类 prompt：
+                        method-prompts 9 / shared 2 / interpret 4 / pair 3）；
+                        每次写前先落
                         PromptVersion 版本快照到运维库（可查看历史 / 回滚），写必记审计。
 
 鉴权：Bearer JWT（type=admin）。viewer 可读全部（含版本历史/版本全文）；operator+
@@ -68,7 +69,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 15 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 18 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -89,12 +90,17 @@ PROMPT_FILES = {
     "divination": "interpret/divination.md",
     "lenormand": "interpret/lenormand.md",
     "tarot": "interpret/tarot.md",
+    # pair（3，REQ-072：三大模块配对解析）
+    "guoxue": "pair/guoxue.md",
+    "xishi": "pair/xishi.md",
+    "mbti": "pair/mbti.md",
 }
 # key → 中文分类（按所在目录；前端列表分组展示）
 _CATEGORY_BY_PROMPT_DIR = {
     "method-prompts": "方法",
     "shared": "校验/追问",
     "interpret": "解读",
+    "pair": "配对",
 }
 PROMPT_CATEGORY = {
     key: _CATEGORY_BY_PROMPT_DIR.get(Path(rel).parent.name, "其他")
@@ -495,11 +501,11 @@ def get_user_case_archive(
     return {"code": 0, "message": "ok", "data": build_archive(case, db)}
 
 
-# --- 路由：提示词（15 个文件类 prompt：method-prompts 9 / shared 2 / interpret 4） ---
+# --- 路由：提示词（18 个文件类 prompt：method-prompts 9 / shared 2 / interpret 4 / pair 3） ---
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 15 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 18 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []

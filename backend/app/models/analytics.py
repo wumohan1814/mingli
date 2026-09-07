@@ -343,3 +343,26 @@ class MbtiShareLink(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     case = relationship("Case")
+
+
+class PairReading(Base):
+    """双人配对解析记录（pair_readings，REQ-072）：三大模块 LLM 配对解析结果留存。
+
+    由 POST /api/pair/analyze 在 LLM 成功后落一行（module 校验白名单 guoxue /
+    xishi / mbti），result_json 存 {"content": 配对解析文本}；LLM 失败不落行
+    （502 提示重试），无缓存复用语义——每次请求均新起一次解析。
+
+    case_id_1 / case_id_2 为普通 Integer（**不建 case 外键**）：删除档案时不级联
+    处理，历史配对记录保留（列存 id 足够展示/排查，避免删除联动复杂）。
+    """
+    __tablename__ = "pair_readings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    case_id_1 = Column(Integer, nullable=False)   # 档案一 id（普通 Integer，无 FK）
+    case_id_2 = Column(Integer, nullable=False)   # 档案二 id（普通 Integer，无 FK）
+    relation_type = Column(String(32), nullable=False)  # 恋爱/朋友/家人/同事等
+    question = Column(Text, nullable=True)        # 用户补充关注点（可选）
+    module = Column(String(16), nullable=False)   # guoxue | xishi | mbti
+    result_json = Column(JSON, nullable=True)     # {"content": 配对解析文本}
+    created_at = Column(DateTime, default=datetime.utcnow)
