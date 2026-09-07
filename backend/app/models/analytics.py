@@ -79,6 +79,8 @@ class Case(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     name = Column(String(128), nullable=True)
     mbti_type = Column(String(8), nullable=True)   # 该档案主人的 MBTI 类型（如 INTJ；POST /api/mbti/score 回写）
+    phone = Column(String(32), nullable=True)      # 手机号（REQ-065：非必填，CRM 列表/档案详情展示）
+    email = Column(String(128), nullable=True)     # 电子邮箱（REQ-065：非必填，CRM 列表/档案详情展示）
     input_json = Column(JSON, nullable=True)
     current_stage = Column(Integer, default=0)
     status = Column(SAEnum(CaseStatus), default=CaseStatus.created)

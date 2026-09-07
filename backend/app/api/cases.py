@@ -2,13 +2,14 @@
 import asyncio
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 
 from app.database import get_analytics_db
@@ -146,7 +147,47 @@ def _list_chart_summary(chart_json) -> dict:
 
 
 # --- 请求模型 ---
-class CreateCaseRequest(BaseModel):
+class CaseContactFields(BaseModel):
+    """REQ-065 选填联系方式公共字段（建档 Create / PATCH 修改共用）。
+
+    - phone：11 位纯数字；email：须含 @（简单格式校验）。
+    - 空白串视为未填 → None；格式非法由 field_validator 抛 ValueError，
+      main.py 的 RequestValidationError 处理器统一转 400「参数错误」信封。
+    """
+
+    phone: Optional[str] = None
+    email: Optional[str] = None
+
+    @field_validator("phone")
+    @classmethod
+    def _validate_phone(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        v = v.strip()
+        if not v:
+            return None
+        if not re.fullmatch(r"\d{11}", v):
+            raise ValueError("手机号须为 11 位数字")
+        return v
+
+    @field_validator("email")
+    @classmethod
+    def _validate_email(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        v = v.strip()
+        if not v:
+            return None
+        # 简单格式校验：含且仅含一个 @，@ 两侧非空，不含空白
+        if v.count("@") != 1 or any(c.isspace() for c in v):
+            raise ValueError("邮箱格式不正确（需包含 @）")
+        local, _, domain = v.partition("@")
+        if not local or not domain:
+            raise ValueError("邮箱格式不正确（需包含 @）")
+        return v
+
+
+class CreateCaseRequest(CaseContactFields):
     birth_year: int
     birth_month: int
     birth_day: int
@@ -170,8 +211,12 @@ class ReviseRequest(BaseModel):
     topic: Optional[str] = None
 
 
-class RenameCaseRequest(BaseModel):
-    """档案命名：PATCH /api/cases/{case_id} body"""
+class RenameCaseRequest(CaseContactFields):
+    """档案命名/联系方式修改：PATCH /api/cases/{case_id} body
+
+    name 必填（保留重命名语义）；phone/email 选填（REQ-065「修改」入口可编辑，
+    格式校验同上：11 位数字手机号 / 含 @ 邮箱，非法抛 400）。
+    """
     name: str
 
 
@@ -185,9 +230,13 @@ async def create_case(
     """建档"""
     user_id = get_user_id_from_token(authorization)
 
+    # REQ-065：phone/email 写入独立列（列表/详情可直接查询，不再只塞 input_json）；
+    # input_json 仅落建档表单的出生/性别/主问等原字段
     case = Case(
         user_id=user_id,
-        input_json=req.model_dump(),
+        input_json=req.model_dump(exclude={"phone", "email"}),
+        phone=req.phone,
+        email=req.email,
         status=CaseStatus.created,
     )
     db.add(case)
@@ -248,6 +297,8 @@ async def list_cases(
             {
                 "caseId": str(case.id),
                 "name": case.name,
+                "phone": case.phone,
+                "email": case.email,
                 "birthYear": inp.get("birth_year"),
                 "gender": inp.get("gender"),
                 "birthplace": inp.get("birthplace"),
@@ -707,18 +758,31 @@ async def rename_case(
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """档案命名：更新 case.name（多用户隔离，非本人 404）"""
+    """档案命名/联系方式修改：更新 case.name 与选填 phone/email（多用户隔离，非本人 404）
+
+    REQ-065：phone/email 仅在请求显式提供时更新（model_fields_set 判定），
+    避免纯重命名（只发 name）误把联系方式清空；发送 "" 可清空为 None。
+    """
     user_id = get_user_id_from_token(authorization)
     case = _get_owned_case(db, case_id, user_id)
 
     case.name = req.name
+    if "phone" in req.model_fields_set:
+        case.phone = req.phone
+    if "email" in req.model_fields_set:
+        case.email = req.email
     db.commit()
     db.refresh(case)
 
     return {
         "code": 0,
         "message": "ok",
-        "data": {"caseId": str(case.id), "name": case.name},
+        "data": {
+            "caseId": str(case.id),
+            "name": case.name,
+            "phone": case.phone,
+            "email": case.email,
+        },
     }
 
 
