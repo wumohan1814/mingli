@@ -549,6 +549,35 @@ def test_api_results_get_and_type_info(mbti_client):
         assert data["type_info"][f]
 
 
+# ------------------------------------------------------------ 端点：16 型公开查询（BUG-005） ----
+def test_api_types_public_endpoint(mbti_client):
+    """GET /api/mbti/types/{type}（公开、免鉴权，BUG-005 manual 输入取文案）：
+    大小写不敏感命中返回 {type, type_info} 五栏；非法类型 400；零扣费零埋点零落库。"""
+    # 免鉴权可访问（不带 Authorization 头）
+    resp = mbti_client.get("/api/mbti/types/intj")
+    assert resp.status_code == 200, resp.text
+    data = resp.json()["data"]
+    assert data["type"] == "INTJ"                      # 转大写规范化
+    assert data["type_info"]["alias"] == _types()["INTJ"]["alias"]
+    for f in TYPE_FIELDS:
+        assert data["type_info"][f]
+
+    # 合法类型均能查到 16 型（抽查 3 型）
+    for code in ("ENFP", "ISTJ", "ESFJ"):
+        resp = mbti_client.get(f"/api/mbti/types/{code.lower()}")
+        assert resp.status_code == 200 and resp.json()["data"]["type"] == code
+
+    # 非法类型 → 400
+    resp = mbti_client.get("/api/mbti/types/XXXX")
+    assert resp.status_code == 400, resp.text
+    assert "未知 MBTI 类型" in resp.json()["message"]
+
+    # 纯只读：无扣费、无埋点（mbti_score 事件不存在）
+    assert _credit_rows(999999) == []
+    rows = _event_rows("mbti_score", 999999)
+    assert rows == []
+
+
 def test_api_results_isolation_404(mbti_client):
     """隔离 404：跨用户读他人结果 / 不存在的 id → 404。"""
     uid = _new_user()
