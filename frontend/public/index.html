@@ -473,16 +473,9 @@
 .tarot-card .tc-detail{font-size:12px;color:var(--text-2);line-height:1.8;text-align:left;width:100%;margin-top:2px}
 .tarot-card .tc-element{font-size:10px;color:var(--text-3);text-align:center}
 .tarot-card .tc-ph{display:flex;width:100%;height:100%;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;padding:6px;text-align:center;box-sizing:border-box}
-/* REQ-042/043：塔罗/雷诺曼交互改版样式（入口扇形 / 步骤编号 / 方向标签 / 问题输入 / 占问摘要 / 全宽底栏 / 公版署名） */
-.deck-fan{position:relative;height:152px;margin:2px auto 4px;max-width:360px}
-.deck-fan .deck-fan-card{position:absolute;left:50%;bottom:2px;transform-origin:50% 100%;object-fit:cover;border-radius:10px;box-shadow:0 10px 22px rgba(0,0,0,.26);border:1px solid rgba(255,255,255,.16);background:#5B4B8A}
-.deck-fan .deck-fan-card.is-cover{border-color:var(--skin-accent);box-shadow:0 12px 26px rgba(0,0,0,.32)}
+/* REQ-042/043 v2：塔罗/雷诺曼改版样式（步骤编号 / 问题输入 / 占问摘要 / 牌阵单列 / 集中牌义段落 / 全宽底栏 / 公版署名） */
 .section-title.step-title{display:flex;align-items:center;gap:7px}
 .step-title .st-no{flex:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);font-size:11px;font-weight:700}
-.dir-row{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 4px}
-.dir-row .tag{cursor:pointer;padding:7px 15px;font-size:13px;background:var(--surface);border:1px solid var(--border);color:var(--text-2);transition:background .14s,border-color .14s,color .14s}
-.dir-row .tag:hover{border-color:var(--skin-accent);color:var(--skin-accent)}
-.dir-row .tag.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);box-shadow:0 3px 10px rgba(0,0,0,.16)}
 .q-input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;line-height:1.6;background:var(--paper);color:var(--text-1);resize:none;outline:none;margin:2px 0 4px}
 .q-input:focus{border-color:var(--skin-accent);box-shadow:0 0 0 2px var(--skin-accent-soft)}
 .q-input::placeholder{color:var(--text-3)}
@@ -490,6 +483,25 @@
 .back-row.fill > *{flex:1 1 0;width:auto;min-width:0}
 .back-row.fill .btn{padding:13px 6px;font-size:14px;white-space:nowrap}
 .deck-credit{font-size:10px;color:var(--text-3);text-align:center;margin:6px 0 2px;letter-spacing:.03em;opacity:.85}
+/* REQ-042/043 v2：牌阵选择改为单列按钮列表（每项全宽：标题 + 一行适用说明） */
+.method-list{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.method-list .method-cell{width:100%;box-sizing:border-box;text-align:left;padding:11px 14px}
+.method-list .method-cell .mn{font-size:15px}
+.method-list .method-cell .md{font-size:12px;color:var(--text-3);margin-top:2px;text-align:left}
+/* REQ-042/043 v2：抽卡结果 图/文拆分 —— 下方集中牌义段落（自第一张起逐张） */
+.mean-panel{border-top:1px dashed var(--border);padding-top:12px;margin-top:2px}
+.mean-panel .mp-title{font-size:14px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
+.mean-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px}
+.mean-item:last-child{margin-bottom:0}
+.mean-item .mi-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;line-height:1.5}
+.mean-item .mi-pos{font-size:12px;color:var(--skin-accent);background:var(--skin-accent-soft);border-radius:var(--radius-pill);padding:1px 9px;font-weight:700;flex:none}
+.mean-item .mi-name{font-weight:700;color:var(--text-1)}
+.mean-item .mi-orient{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;flex:none}
+.mean-item .mi-orient.up{background:rgba(62,124,107,.14);color:#3E7C6B}
+.mean-item .mi-orient.rev{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+.mean-item .mi-theme{font-size:12px;font-weight:700;color:var(--skin-accent);margin-top:7px;text-align:left}
+.mean-item .mi-txt{font-size:13px;color:var(--text-2);line-height:1.8;margin-top:4px;text-align:left}
+.mean-item .mi-kw{font-size:12px;color:var(--text-3);margin-top:4px;text-align:left}
     .suit-wands{background:#C96A3B}.suit-cups{background:#3B7BB0}.suit-swords{background:#8A93A6}.suit-pentacles{background:#C9A24B}.suit-major{background:#5B4B8A}
     .tc-pos{font-size:12px;color:var(--skin-accent);font-weight:600;text-align:center;margin-bottom:4px}
 
@@ -6316,22 +6328,27 @@ const TAROT_DECK = [{
 const TAROT_SPREADS = [{
   id: 'single',
   name: '单张',
+  desc: '快速指引 · 一事一问，直接看核心建议',
   pos: ['核心']
 }, {
   id: 'three',
-  name: '三张（过去-现在-未来）',
+  name: '三张',
+  desc: '过去-现在-未来 · 看清事情的发展脉络',
   pos: ['过去', '现在', '未来']
 }, {
   id: 'love',
   name: '爱情',
+  desc: '感情关系 · 双方内心、现状与走向建议',
   pos: ['你的内心', '对方的内心', '关系现状', '发展建议', '未来走向']
 }, {
   id: 'career',
   name: '事业',
+  desc: '职场抉择 · 现状、优劣势与行动建议',
   pos: ['当前状况', '优势', '挑战', '机会', '行动建议', '结果']
 }, {
   id: 'decision',
-  name: '选择（二择一）',
+  name: '选择',
+  desc: '二择一决策 · 比较两条路径并给最佳建议',
   pos: ['现状', '选择A', '选择A结果', '选择B', '选择B结果', '最佳建议']
 }];
 /* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
@@ -6395,17 +6412,20 @@ function normTarotCard(c) {
   };
 }
 function TarotCard({
-  item
+  item,
+  showMeaning
 }) {
   const rev = !!(item && item.reversed);
   const suit = (item && item.suit) || 'major';
   const name = (item && item.name) || '牌';
   // A2：固定牌义正文（后端 upright/reversed 字段，非 LLM；判空容错，无正文时不渲染该区块）
+  // REQ-042 v2：showMeaning=false 时卡内不嵌牌义（仅图/标题/关键词标签），牌义统一走下方段落
   const bodyText = rev
     ? ((item && (item.reversedText || (typeof item.reversed === 'string' ? item.reversed : ''))) || '')
     : ((item && item.upright) || '');
+  const withMean = showMeaning !== false && !!bodyText;
   const bodyTag = rev ? '逆位含义' : '正位含义';
-  const body = bodyText ? React.createElement('div', {
+  const body = withMean ? React.createElement('div', {
     className: 'tc-mean'
   }, React.createElement('div', {
     className: 'tc-mean-tag'
@@ -6419,7 +6439,7 @@ function TarotCard({
   }, item && item.pos ? React.createElement('div', {
     className: 'tc-pos'
   }, item.pos) : null, React.createElement('div', {
-    className: 'tarot-card suit-' + suit + (rev ? ' reversed' : '') + (bodyText ? ' has-mean' : '')
+    className: 'tarot-card suit-' + suit + (rev ? ' reversed' : '') + (withMean ? ' has-mean' : '')
   }, React.createElement('div', {
     className: 'tc-imgwrap'
   }, item && item.img ? React.createElement('img', {
@@ -6444,7 +6464,6 @@ function TarotPage({
 }) {
   const [step, setStep] = useState('menu'); // menu -> draw
   const [spread, setSpread] = useState(null);
-  const [dir, setDir] = useState('');
   const [question, setQuestion] = useState('');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -6452,28 +6471,9 @@ function TarotPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
-  const DIRS = ['爱情', '事业', '财运', '综合', '成长'];
-  // REQ-042：入口扇形 —— 每次 mount（或返回 menu）随机选 3–4 张 TAROT_DECK 牌面（去重），
-  // 与封面组合；cover 插在中间位置，渲染时统一扇形排布。
-  const pickFan = function () {
-    const cnt = 3 + Math.floor(Math.random() * 2);
-    const seen = [];
-    let guard = 0;
-    while (seen.length < cnt && guard++ < 300) {
-      const k = Math.floor(Math.random() * TAROT_DECK.length);
-      if (seen.indexOf(k) === -1) seen.push(k);
-    }
-    const arr = seen.map(function (k) { return TAROT_DECK[k].thumb; });
-    arr.splice(Math.floor(arr.length / 2), 0, './tarot/rider-waite/thumb/Cover.webp');
-    return arr.map(function (src) {
-      return { src: src, cover: src.indexOf('Cover') !== -1 };
-    });
-  };
-  const [fanCards, setFanCards] = useState(pickFan);
+  // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（可选）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
-    // REQ-042：未选方向时牌阵无效 —— toast 提示并拦截，不抽牌
-    if (!dir) { toast('请先选择预测方向'); return; }
     setSpread(sp);
     setStep('draw');
     setData(null);
@@ -6481,9 +6481,9 @@ function TarotPage({
     setInterp('');
     setInterpErr('');
     setLoading(true);
-    // REQ-042：占问文本真正传给后端（问题文本拼接「占问方向 + 问题」）
+    // REQ-042 v2：问题文本直接透传给后端（方向已删，不再拼接「占问方向：」前缀）
     const askTrim = (question || '').trim();
-    const askBodyQ = askTrim ? (dir ? '占问方向：' + dir + '；问题：' + askTrim : askTrim) : (dir ? '占问方向：' + dir : null);
+    const askBodyQ = askTrim ? askTrim : null;
     try {
       const res = await api('/tarot/draw', {
         method: 'POST',
@@ -6516,14 +6516,26 @@ function TarotPage({
     setErrored('');
     setInterp('');
     setInterpErr('');
-    setFanCards(pickFan()); // 返回 menu 时重掷入口扇形
   };
   const drawData = (data && data.draw) || null;
   const cards = drawData && Array.isArray(drawData.cards) ? drawData.cards : [];
   const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || '抽卡结果';
   const askQ = (question || '').trim();
-  // REQ-042：draw 结果标题「spreadName · dir」下行问题回显（dir 由标题展示）
+  // REQ-042 v2：draw 顶部承接所填占问问题文本（保留）
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  // REQ-042 v2：下方集中牌义段落 —— 自第一张起逐张：卡位 + 牌名 + 正/逆位标签 + 含义正文 + 关键词
+  const meanItems = cards.map(function (c, i) {
+    const n = normTarotCard(c);
+    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
+    const meanText = n.reversed ? (n.reversedText || '') : (n.upright || '');
+    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' },
+      React.createElement('div', { className: 'mi-head' },
+        React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
+        React.createElement('span', { className: 'mi-name' }, n.name),
+        React.createElement('span', { className: 'mi-orient' + (n.reversed ? ' rev' : ' up') }, n.reversed ? '逆位' : '正位')),
+      meanText ? React.createElement('div', { className: 'mi-txt' }, meanText) : null,
+      kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
+  });
   let drawBody = null;
   if (loading) {
     drawBody = React.createElement('div', { className: 'card' },
@@ -6537,11 +6549,16 @@ function TarotPage({
       React.createElement('button', { className: 'btn btn-primary', onClick: function () { draw(spread); } }, '重试'));
   } else if (data) {
     drawBody = React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title' }, spreadName, dir ? ' · ' + dir : ''),
+      React.createElement('div', { className: 'section-title' }, spreadName),
       askEcho,
+      // REQ-042 v2：上方仅平铺本次抽到的全部卡（图/标题/关键词标签），卡内不嵌牌义
       React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
-        return React.createElement(TarotCard, { key: i, item: normTarotCard(c) });
+        return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
       })),
+      // REQ-042 v2：牌义集中到下方段落（固定可复用文案，非 LLM，自第一张起）
+      React.createElement('div', { className: 'mean-panel' },
+        React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+        meanItems),
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       React.createElement('div', { className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'),
       React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '综合解读（付费）'),
@@ -6549,51 +6566,26 @@ function TarotPage({
         React.createElement('div', { className: 'interp-title' }, '综合解读'),
         React.createElement('div', { className: 'interp-body' }, interp)) : null);
   }
-  // REQ-042：入口扇形（封面 + 随机 3–4 张牌面，绕底部中心弧形展开）
-  const fanEls = fanCards.map(function (it, i) {
-    const n = fanCards.length;
-    const deg = Math.round((i - (n - 1) / 2) * 6);
-    const w = it.cover ? 86 : 64;
-    const h = it.cover ? 136 : 102;
-    return React.createElement('img', {
-      key: i,
-      className: 'deck-fan-card' + (it.cover ? ' is-cover' : ''),
-      src: it.src,
-      alt: it.cover ? '塔罗牌库封面' : '塔罗牌面预览',
-      loading: 'lazy',
-      style: { width: w, height: h, transform: 'rotate(' + deg + 'deg)', zIndex: i + 1 }
-    });
-  });
-  // REQ-042：menu 强引导链路 ① 选择预测方向 → ② 占问问题（可选）→ ③ 选择牌阵
-  const menuBody = React.createElement(React.Fragment, null,
-    React.createElement('div', { className: 'deck-fan' }, fanEls),
-    React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '选择预测方向'),
-      React.createElement('div', { className: 'dir-row' }, DIRS.map(function (d) {
-        return React.createElement('span', {
-          key: d,
-          className: 'tag' + (dir === d ? ' sel' : ''),
-          onClick: function () { setDir(dir === d ? '' : d); }
-        }, d);
-      })),
-      React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '占问问题（可选）'),
-      React.createElement('textarea', {
-        className: 'q-input',
-        rows: 2,
-        maxLength: 300,
-        placeholder: '示例：我与TA的关系走向？ / 这段事业该如何选择？',
-        value: question,
-        onChange: function (e) { setQuestion(e.target.value); }
-      }),
-      React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '3'), '选择牌阵'),
-      React.createElement('div', { className: 'method-grid' }, TAROT_SPREADS.map(function (s) {
-        return React.createElement('div', {
-          key: s.id,
-          className: 'method-cell',
-          onClick: function () { draw(s); }
-        }, React.createElement('div', { className: 'mn' }, s.name));
-      }))));
-  // REQ-042：draw 底部三按钮改全宽并列大按钮
+  // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（可选）→ ② 选择牌阵（单列按钮 + 适用说明）
+  const menuBody = React.createElement('div', { className: 'card' },
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（可选）'),
+    React.createElement('textarea', {
+      className: 'q-input',
+      rows: 2,
+      maxLength: 300,
+      placeholder: '示例：我与TA的关系走向？ / 这段事业该如何选择？',
+      value: question,
+      onChange: function (e) { setQuestion(e.target.value); }
+    }),
+    React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
+    React.createElement('div', { className: 'method-list' }, TAROT_SPREADS.map(function (s) {
+      return React.createElement('div', {
+        key: s.id,
+        className: 'method-cell',
+        onClick: function () { draw(s); }
+      }, React.createElement('div', { className: 'mn' }, s.name), s.desc ? React.createElement('div', { className: 'md' }, s.desc) : null);
+    })));
+  // REQ-042 v2：draw 底部三按钮全宽并列大按钮（重新抽卡/重选牌阵/返回，保持）
   const drawFoot = React.createElement(React.Fragment, null,
     drawBody,
     React.createElement('div', { className: 'back-row fill' },
@@ -6603,7 +6595,7 @@ function TarotPage({
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
     step === 'menu' ? menuBody : drawFoot,
-    // REQ-042：公版署名从牌库条移至页面底部小字
+    // REQ-042：公版署名以页脚小字展示（保持）
     React.createElement('div', { className: 'deck-credit' }, 'Rider-Waite-Smith 1909 公版'));
 }
 
@@ -6864,14 +6856,17 @@ const LENORMAND_DECK = [{
 const LENORMAND_SPREADS = [{
   id: 'single',
   name: '单张',
+  desc: '快速指引 · 一事一问，直取核心线索',
   n: 1
 }, {
   id: 'three',
   name: '三张',
+  desc: '起因-现状-走向 · 串联事件的发展脉络',
   n: 3
 }, {
   id: 'grid',
   name: '九宫格',
+  desc: '九格大局 · 环绕中心展开完整图景',
   n: 9
 }];
 /* 后端雷诺曼牌名 → 前端 LENORMAND_DECK 卡面映射（个别译名差异） */
@@ -6896,23 +6891,20 @@ function lnCardOf(c) {
   };
 }
 function lnCardEl(item, idx) {
-  const hasText = !!(item && (item.theme || item.detail));
+  // REQ-043 v2：卡位仅放卡面（图/标题/关键词标签），theme/detail 解释全部归拢到下方段落
   return React.createElement('div', { key: idx, style: { textAlign: 'center' } },
     item.pos ? React.createElement('div', { className: 'tc-pos' }, item.pos) : null,
-    React.createElement('div', { className: 'tarot-card suit-' + item.suit + (hasText ? ' has-mean' : '') },
+    React.createElement('div', { className: 'tarot-card suit-' + item.suit },
       React.createElement('div', { className: 'tc-imgwrap' },
         item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || '#3E7C6B' } }, item.name)),
       React.createElement('div', { className: 'tc-name' }, item.name),
-      React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / ')),
-      item.theme ? React.createElement('div', { className: 'tc-theme' }, item.theme) : null,
-      item.detail ? React.createElement('div', { className: 'tc-detail' }, item.detail) : null));
+      React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
 }
 function LenormandPage({
   onNavigate
 }) {
   const [step, setStep] = useState('menu'); // menu -> draw
   const [spread, setSpread] = useState(null);
-  const [dir, setDir] = useState('');
   const [question, setQuestion] = useState('');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -6920,17 +6912,14 @@ function LenormandPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
-  // REQ-043：与塔罗对齐，复用同一组预测方向
-  const DIRS = ['爱情', '事业', '财运', '综合', '成长'];
+  // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（可选）→ ② 选择牌阵
   const load = async sp => {
     if (loading || !sp) return;
-    // REQ-043：未选方向时牌阵无效 —— toast 提示并拦截，不抽牌
-    if (!dir) { toast('请先选择预测方向'); return; }
     const apiType = sp.id === 'grid' ? 'nine' : (sp.id || 'single');
-    // REQ-043：问题文本放入 seed.question 交给后端（后端不收则至少前端回显）
+    // REQ-043 v2：问题文本直接放入 seed.question（方向已删，不再拼接前缀）
     const askTrim = (question || '').trim();
     const seedObj = { spreadType: apiType };
-    if (askTrim || dir) seedObj.question = askTrim ? (dir ? '占问方向：' + dir + '；问题：' + askTrim : askTrim) : ('占问方向：' + dir);
+    if (askTrim) seedObj.question = askTrim;
     setSpread(sp);
     setStep('draw');
     setData(null);
@@ -6975,8 +6964,20 @@ function LenormandPage({
   const cards = result && Array.isArray(result.cards) ? result.cards : [];
   const spreadName = (result && result.spreadName) || (spread && spread.name) || '抽牌结果';
   const askQ = (question || '').trim();
-  // REQ-043：draw 结果标题「spreadName · dir」下行问题回显（dir 由标题展示）
+  // REQ-043 v2：draw 顶部承接所填占问问题文本
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  // REQ-043 v2：解释全部归拢到下方段落 —— 自第一张起：卡位 + 牌名 + 主题 + 细节
+  const meanItems = cards.map(function (c, i) {
+    const it = lnCardOf(c);
+    const kwLine = (it.keywords && it.keywords.length) ? it.keywords.join(' / ') : '';
+    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' },
+      React.createElement('div', { className: 'mi-head' },
+        React.createElement('span', { className: 'mi-pos' }, it.pos || ('第' + (i + 1) + '张')),
+        React.createElement('span', { className: 'mi-name' }, it.name)),
+      it.theme ? React.createElement('div', { className: 'mi-theme' }, it.theme) : null,
+      it.detail ? React.createElement('div', { className: 'mi-txt' }, it.detail) : null,
+      kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
+  });
   let body = null;
   if (loading) {
     body = React.createElement('div', { className: 'card' },
@@ -6990,11 +6991,16 @@ function LenormandPage({
       React.createElement('button', { className: 'btn btn-primary', onClick: function () { load(spread); } }, '重试'));
   } else if (data) {
     body = React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title' }, spreadName, dir ? ' · ' + dir : ''),
+      React.createElement('div', { className: 'section-title' }, spreadName),
       askEcho,
+      // REQ-043 v2：上方卡位仅平铺卡面（图/标题/关键词标签），不放解释
       React.createElement('div', { className: 'card-fan' }, cards.map(function (c, i) {
         return lnCardEl(lnCardOf(c), i);
       })),
+      // REQ-043 v2：主题/细节解释归拢到下方段落（固定可复用文案，自第一张起）
+      React.createElement('div', { className: 'mean-panel' },
+        React.createElement('div', { className: 'mp-title' }, '各张牌义'),
+        meanItems),
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       React.createElement('div', { className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'),
       React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '深度解读（付费）'),
@@ -7002,17 +7008,9 @@ function LenormandPage({
         React.createElement('div', { className: 'interp-title' }, '深度解读'),
         React.createElement('div', { className: 'interp-body' }, interp)) : null);
   }
-  // REQ-043：menu 与塔罗一致 —— ① 方向 → ② 问题（可选）→ ③ 牌阵（theme/detail 牌义展示不变）
+  // REQ-043 v2：menu = ① 占问问题（可选）→ ② 选择牌阵（单列按钮 + 适用说明）
   const menuBody = React.createElement('div', { className: 'card' },
-    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '选择预测方向'),
-    React.createElement('div', { className: 'dir-row' }, DIRS.map(function (d) {
-      return React.createElement('span', {
-        key: d,
-        className: 'tag' + (dir === d ? ' sel' : ''),
-        onClick: function () { setDir(dir === d ? '' : d); }
-      }, d);
-    })),
-    React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '占问问题（可选）'),
+    React.createElement('div', { className: 'section-title step-title' }, React.createElement('span', { className: 'st-no' }, '1'), '占问问题（可选）'),
     React.createElement('textarea', {
       className: 'q-input',
       rows: 2,
@@ -7021,15 +7019,15 @@ function LenormandPage({
       value: question,
       onChange: function (e) { setQuestion(e.target.value); }
     }),
-    React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '3'), '选择牌阵'),
-    React.createElement('div', { className: 'method-grid' }, LENORMAND_SPREADS.map(function (s) {
+    React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
+    React.createElement('div', { className: 'method-list' }, LENORMAND_SPREADS.map(function (s) {
       return React.createElement('div', {
         key: s.id,
         className: 'method-cell',
         onClick: function () { load(s); }
-      }, React.createElement('div', { className: 'mn' }, s.name));
+      }, React.createElement('div', { className: 'mn' }, s.name), s.desc ? React.createElement('div', { className: 'md' }, s.desc) : null);
     })));
-  // REQ-043：draw 底部三按钮改全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项）
+  // REQ-043 v2：draw 底部三按钮全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项，保持）
   const drawFoot = React.createElement(React.Fragment, null,
     body,
     React.createElement('div', { className: 'back-row fill' },
