@@ -383,6 +383,33 @@
     .modal.ask-modal .modal-title{text-align:center}
     .ask-cap{font-size:13px;font-weight:700;color:var(--text-1);margin:2px 0 4px}
 
+    /* ===== REQ-072：三大模块「配对解析」入口条 + PairModal（选两档案+关系类型+关注点） ===== */
+    .pair-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:12px 14px;margin:0 0 14px}
+    .pair-entry .pe-main{flex:1;min-width:220px}
+    .pair-entry .pe-title{font-size:14.5px;font-weight:700;color:var(--text-1)}
+    .pair-entry .pe-sub{font-size:11.5px;color:var(--text-2);line-height:1.7;margin-top:2px}
+    .pair-entry .btn{flex:none;width:auto;padding:9px 18px;font-size:13.5px;border-radius:var(--radius-pill)}
+    .modal.pair-modal{max-width:560px;width:100%;text-align:left;max-height:88vh;overflow-y:auto}
+    .pair-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+    .pair-hd-title{font-size:18px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:8px}
+    .pair-x{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--paper);color:var(--text-2);font-size:13px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
+    .pair-x:hover{color:var(--skin-accent);border-color:var(--skin-accent)}
+    .pair-sub{font-size:12px;color:var(--text-3);line-height:1.7;margin-bottom:10px}
+    .pair-pay{font-size:12px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:8px 11px;margin:0 0 14px;line-height:1.7}
+    .pair-sec{margin:0 0 12px}
+    .pair-sec-label{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:6px}
+    .ps-n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);font-size:11px;font-weight:700}
+    .pair-field{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-1);font-size:14px;font-family:inherit;line-height:1.5;margin:0}
+    .pair-field:focus{outline:none;border-color:var(--skin-accent)}
+    textarea.pair-field{resize:vertical;min-height:66px}
+    .pair-rel{display:flex;flex-wrap:wrap;gap:8px}
+    .pair-rel .btn{width:auto;flex:none;margin:0;padding:7px 15px;font-size:13px;font-weight:600;border-radius:var(--radius-pill)}
+    .pair-rel .btn.sel{background:var(--skin-accent);border-color:var(--skin-accent);color:var(--skin-accent-ink)}
+    .pair-err{font-size:13px;color:var(--cinnabar);background:rgba(178,58,58,.08);border:1px solid rgba(178,58,58,.28);border-radius:var(--radius-sm);padding:10px 12px;line-height:1.7;margin:0 0 12px;white-space:pre-wrap}
+    .pair-busy{font-size:13px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:10px 12px;margin:0 0 12px;line-height:1.7}
+    .pair-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .pair-foot .btn{width:auto;flex:none;padding:10px 18px;font-size:14px}
+
     /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
     /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
     .nav-rail{position:fixed;left:0;top:64px;transform:none;display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:42;padding:6px 0}
@@ -806,6 +833,15 @@ function switchShareGuestSession(entering) {
 let creditInsuffHandler = null;
 function setCreditInsuffHandler(fn) {
   creditInsuffHandler = fn;
+}
+// REQ-072：配对解析弹窗处理器 —— PairModal 在 App 根部渲染（跨三大模块复用），
+// 模块页/入口经 openPairAnalyze({module}) 打开（App 经 useEffect 注册 setPairAnalyzeOpener）。
+let pairAnalyzeOpener = null;
+function setPairAnalyzeOpener(fn) {
+  pairAnalyzeOpener = fn;
+}
+function openPairAnalyze(opts) {
+  if (pairAnalyzeOpener) pairAnalyzeOpener(opts || {});
 }
 // 充值链接：严禁前端硬编码；由后端/部署时注入 window.TAICHU_RECHARGE_URL。
 // 未注入时回退占位，保证按钮可点击不报错（待后端下发真实小鹅通链接）。
@@ -1620,6 +1656,294 @@ function CreditInsufficientModal({
       marginTop: 8
     }
   }, "知道了")));
+}
+
+// ===== REQ-072：配对解析弹窗（国学 / 西式 / MBTI 三大模块共用，module 参数不同） =====
+// 交互：选两份不同档案（GET /cases）→ 关系类型单选（恋爱/朋友/家人/同事/其他）→ 可选自由关注点
+// → POST /api/pair/analyze（module 由入口带入）→ 展示 interpretation。
+// 缺数据档案由后端 400 detail 直接展示（提示先生成，不自动生成）；余额不足走既有 5002 → creditInsuffHandler。
+const PAIR_MODULE_META = {
+  guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）' },
+  xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）' },
+  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）' }
+};
+const PAIR_RELATIONS = ['恋爱', '朋友', '家人', '同事', '其他'];
+function PairModal({
+  cfg,
+  onClose
+}) {
+  const el = React.createElement;
+  const meta = (cfg && PAIR_MODULE_META[cfg.module]) || PAIR_MODULE_META.guoxue;
+  const [caseList, setCaseList] = useState(null); // null=加载中 / [] = 无档案 / 数组=已就绪
+  const [listErr, setListErr] = useState('');
+  const [aId, setAId] = useState('');
+  const [bId, setBId] = useState('');
+  const [rel, setRel] = useState('');
+  const [relOther, setRelOther] = useState('');
+  const [question, setQuestion] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [res, setRes] = useState(null); // {id, interpretation}
+  // 档案选项展示：档案名 + 出生年（MBTI 模块附加已测类型标签）
+  const optLabel = c => {
+    const id = c.caseId;
+    const nm = (c.name && String(c.name).trim()) || '档案 ' + id;
+    const bits = [];
+    if (c.birthYear != null && c.birthYear !== '') bits.push(String(c.birthYear) + ' 年');
+    if (cfg && cfg.module === 'mbti' && c.mbti_type) bits.push('已测 ' + String(c.mbti_type));
+    return nm + (bits.length ? '（' + bits.join(' · ') + '）' : '');
+  };
+  const caseName = id => {
+    const c = (caseList || []).find(x => String(x.caseId) === String(id));
+    return c ? ((c.name && String(c.name).trim()) || '档案 ' + c.caseId) : '';
+  };
+  // 打开即拉档案列表（PairModal 每次打开都是全新挂载，无需清表单）
+  const load = async () => {
+    setListErr('');
+    setCaseList(null);
+    try {
+      const r = await api('/cases', {
+        method: 'GET'
+      });
+      const list = r && r.data && r.data.cases || r && r.cases || [];
+      setCaseList(list);
+    } catch (e) {
+      // 未登录/会话过期（401）：App 已跳登录页（onUnauthorized），直接关掉弹窗即可
+      if (e && e.status === 401) {
+        onClose();
+        return;
+      }
+      setListErr(e && e.message ? e.message : '档案列表加载失败，请重试。');
+      setCaseList([]);
+    }
+  };
+  useEffect(() => {
+    load();
+    return () => {};
+  }, []);
+  const pick = which => e => {
+    const v = e.target.value;
+    const other = which === 'a' ? bId : aId;
+    if (v && other && String(v) === String(other)) {
+      toast('两份档案不能相同，请另选一份');
+      if (which === 'a') setAId('');else setBId('');
+      return;
+    }
+    setErr('');
+    setRes(null);
+    if (which === 'a') setAId(v);else setBId(v);
+  };
+  const pickRel = r => {
+    setRel(r);
+    setErr('');
+    setRes(null);
+  };
+  const submit = async () => {
+    if (busy) return;
+    if (!aId) {
+      toast('请先选择档案 A');
+      return;
+    }
+    if (!bId) {
+      toast('请先选择档案 B');
+      return;
+    }
+    if (String(aId) === String(bId)) {
+      toast('两份档案不能相同');
+      return;
+    }
+    let relation = rel;
+    if (!relation) {
+      toast('请选择关系类型（恋爱 / 朋友 / 家人 / 同事…）');
+      return;
+    }
+    if (relation === '其他') {
+      const custom = String(relOther || '').trim();
+      relation = custom || '其他';
+    }
+    setBusy(true);
+    setErr('');
+    setRes(null);
+    try {
+      const body = {
+        case_id_1: Number(aId),
+        case_id_2: Number(bId),
+        relation_type: relation,
+        module: cfg.module
+      };
+      const qq = String(question || '').trim();
+      if (qq) body.question = qq;
+      const r = await api('/pair/analyze', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+      const d = r && r.data ? r.data : r;
+      setRes({
+        id: d && d.id != null ? d.id : null,
+        relation: relation,
+        interpretation: (d && d.interpretation) || '（暂无解读内容）'
+      });
+    } catch (e) {
+      // 缺数据 400：detail 直接展示（「该档案未排盘/未生成星盘/未测 MBTI，请先生成后再配对解析」）；
+      // 余额不足 5002：api() 已自动弹既有 creditInsuffHandler 充值引导，此处同文案展示
+      if (e && e.status === 401) {
+        onClose();
+        return;
+      }
+      setErr(e && e.message ? e.message : '配对解析失败，请重试。');
+    } finally {
+      setBusy(false);
+    }
+  };
+  const listLoading = caseList === null;
+  const listEmpty = !listLoading && !listErr && Array.isArray(caseList) && caseList.length === 0;
+  // 档案下拉共用选项
+  const caseOptions = [el('option', {
+    key: '__ph__',
+    value: ''
+  }, '— 请选择档案 —')].concat(Array.isArray(caseList) ? caseList.map(c => el('option', {
+    key: String(c.caseId),
+    value: String(c.caseId)
+  }, optLabel(c))) : []);
+  return el('div', {
+    className: 'modal-mask',
+    onClick: busy ? null : onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    onClick: e => e.stopPropagation()
+  }, el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: cfg && cfg.module === 'xishi' ? 'orbit' : cfg && cfg.module === 'mbti' ? 'spark' : 'nine',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), meta.title), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: '关闭'
+  }, '✕')), el('div', {
+    className: 'pair-sub'
+  }, '选择两份档案，基于' + meta.dataTxt + '，让 AI 解析两人的关系契合、相处模式与建议。'), el('div', {
+    className: 'pair-pay'
+  }, '配对解析为付费 LLM 解读：按 token 计费，约 15–20 积分，解读成功后即时扣费（余额不足将自动提示）。'), err ? el('div', {
+    className: 'pair-err'
+  }, err) : null, busy ? el('div', {
+    className: 'pair-busy'
+  }, '配对解析生成中（LLM 撰写约需 10–40 秒），请勿重复提交…') : null, res ? el('div', null, el('div', {
+    className: 'interp-title'
+  }, '配对解析结果'), el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      margin: '8px 0 2px',
+      lineHeight: 1.7
+    }
+  }, '「' + caseName(aId) + ' × ' + caseName(bId) + '」 · ' + res.relation), el('div', {
+    className: 'interp-body',
+    style: {
+      marginBottom: 12
+    }
+  }, res.interpretation)) : null, listLoading ? el('div', {
+    className: 'pair-busy'
+  }, '档案列表加载中…') : listErr ? el('div', null, el('div', {
+    className: 'pair-err'
+  }, listErr), el('div', {
+    className: 'pair-foot',
+    style: {
+      marginTop: 0
+    }
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: load
+  }, '重试档案'))) : listEmpty ? el('div', {
+    className: 'pair-err'
+  }, '暂无可用档案：' + meta.prepTxt + '。') : el(React.Fragment, null, el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, 'A'), '档案一'), el('select', {
+    className: 'pair-field',
+    value: aId,
+    onChange: pick('a')
+  }, caseOptions)), el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, 'B'), '档案二', el('span', {
+    style: {
+      fontWeight: 400,
+      color: 'var(--text-3)',
+      fontSize: 11.5
+    }
+  }, '（需与档案一不同）'), bId && aId ? el('span', {
+    style: {
+      fontWeight: 400,
+      color: 'var(--skin-accent)',
+      fontSize: 11.5
+    }
+  }, '已选：' + caseName(bId)) : null), el('select', {
+    className: 'pair-field',
+    value: bId,
+    onChange: pick('b')
+  }, caseOptions)), el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, '①'), '关系类型'), el('div', {
+    className: 'pair-rel'
+  }, PAIR_RELATIONS.map(r => el('button', {
+    key: r,
+    type: 'button',
+    className: 'btn btn-outline' + (rel === r ? ' sel' : ''),
+    onClick: () => pickRel(r)
+  }, r))), rel === '其他' ? el('input', {
+    className: 'pair-field',
+    style: {
+      marginTop: 8
+    },
+    value: relOther,
+    onChange: e => setRelOther(e.target.value),
+    placeholder: '自定义关系类型（如：合伙人 / 师徒 / 暧昧）',
+    maxLength: 20
+  }) : null), el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, '②'), '自由关注点', el('span', {
+    style: {
+      fontWeight: 400,
+      color: 'var(--text-3)',
+      fontSize: 11.5
+    }
+  }, '（选填）')), el('textarea', {
+    className: 'pair-field',
+    value: question,
+    onChange: e => setQuestion(e.target.value),
+    placeholder: '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…'
+  }))), el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose
+  }, '关闭'), el('button', {
+    type: 'button',
+    className: 'btn btn-primary',
+    disabled: busy || listLoading || listEmpty,
+    onClick: submit
+  }, busy ? '配对解析中…' : '开始配对解析'))));
 }
 
 // 积分明细页
@@ -5725,6 +6049,27 @@ function GuoxueHubPage({
     name: "nine",
     size: 22
   }), UI_COPY.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
+    className: "pair-entry"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pe-main"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pe-title"
+  }, "配对解析"), /*#__PURE__*/React.createElement("div", {
+    className: "pe-sub"
+  }, "选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，约 15–20 积分）")), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    onClick: () => {
+      // 国学 HUB 属公开页（无需登录即可浏览）：未登录先引导去登录页，避免白弹选档案弹窗
+      if (!token) {
+        onNavigate('auth');
+        return;
+      }
+      openPairAnalyze({
+        module: 'guoxue'
+      });
+    }
+  }, "配对解析")), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -10258,7 +10603,21 @@ function AstrologyPage({
   }, el(Icon, {
     name: 'orbit',
     size: 22
-  }), ' 星座'), formCard, tabsNode, body, el('div', {
+  }), ' 星座'), el('div', {
+    className: 'pair-entry'
+  }, el('div', {
+    className: 'pe-main'
+  }, el('div', {
+    className: 'pe-title'
+  }, '配对解析'), el('div', {
+    className: 'pe-sub'
+  }, '选择两份档案，基于双方星座本命星盘解读两人的关系契合、相处模式与建议（付费 LLM，约 15–20 积分）')), el('button', {
+    className: 'btn btn-outline',
+    type: 'button',
+    onClick: () => openPairAnalyze({
+      module: 'xishi'
+    })
+  }, '配对解析')), formCard, tabsNode, body, el('div', {
     className: 'back-row'
   }, data ? el('button', {
     className: 'btn btn-outline',
@@ -10812,6 +11171,11 @@ function MbtiPage({
   return el('div', {className: 'container'},
     el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
     el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, '16 型人格测评 · 60 题 · 判型与文案由后端接口提供'),
+    el('div', {className: 'pair-entry'},
+      el('div', {className: 'pe-main'},
+        el('div', {className: 'pe-title'}, '配对解析'),
+        el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，约 15–20 积分）')),
+      el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, '配对解析')),
     body);
 }
 
@@ -11013,6 +11377,7 @@ function App() {
     return 'guoxue';
   });
   const [creditModal, setCreditModal] = useState(null);
+  const [pairCfg, setPairCfg] = useState(null); // REQ-072：配对解析弹窗配置 {module}，非空时渲染 PairModal
   useEffect(() => {
     // BUG-011：分享落地页（/mbti/share/{token}）是公开免登录入口 → 命中时跳过本地
     // token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存会话保持空（访客
@@ -11073,6 +11438,11 @@ function App() {
   useEffect(() => {
     setCreditInsuffHandler(info => setCreditModal(info));
     return () => setCreditInsuffHandler(null);
+  }, []);
+  // REQ-072：注册「配对解析」弹窗处理器：模块页 openPairAnalyze() → 驱动 PairModal 渲染
+  useEffect(() => {
+    setPairAnalyzeOpener(opts => setPairCfg(opts));
+    return () => setPairAnalyzeOpener(null);
   }, []);
   const navigate = (p, p2 = {}) => {
     // BUG-011：离开分享落地页（页面跳转）→ 先恢复本地会话（若有本地 token 的同浏览器
@@ -11254,6 +11624,9 @@ function App() {
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
     onClose: () => setCreditModal(null)
+  }), pairCfg && /*#__PURE__*/React.createElement(PairModal, {
+    cfg: pairCfg,
+    onClose: () => setPairCfg(null)
   }));
 }
 // BUG-009：App 根部错误边界（class 组件，渲染期异常不再白屏）——任何页面组件
