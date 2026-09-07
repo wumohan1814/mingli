@@ -450,6 +450,54 @@
     .palm-disk .pd-point{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transform:translate(-50%,-50%);left:50%;top:50%}
     .palm-disk .pd-point.hit{box-shadow:0 0 0 4px var(--gold-500)}
 
+    /* ===== REQ-055：六爻分列布局（爻位|爻象|六亲|纳甲|世应|阴阳|六神） ===== */
+    .ly-wrap{overflow-x:auto;margin-top:4px}
+    .ly-grid{display:flex;flex-direction:column;min-width:600px}
+    .ly-head,.ly-row{display:grid;grid-template-columns:46px 64px 56px 52px 46px 1fr 56px;gap:2px 8px;align-items:center;padding:5px 8px}
+    .ly-head{font-size:11px;color:var(--text-3);letter-spacing:.08em;padding-top:2px;padding-bottom:3px}
+    .ly-head > span,.mh-head > span{text-align:center}
+    .ly-row{border-top:1px solid var(--border);font-size:13px;color:var(--text-1)}
+    .ly-row .c{text-align:center;white-space:nowrap;overflow:hidden}
+    .ly-row .c-pos{color:var(--text-3)}
+    .ly-row .c-rel,.ly-row .c-nj{font-size:12px;color:var(--text-2)}
+    .ly-row .c-god{font-size:11px;color:var(--text-3)}
+    .ly-row .c-bar{justify-self:center}
+    .ly-row .c-name{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+    .ly-row .c-wr{display:flex;justify-content:center}
+    .ly-row.moving{background:rgba(184,137,62,.16)}
+    .ly-row .mv-badge,.mv-badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;background:var(--gold-500);border-radius:999px;padding:1px 6px;line-height:1.5;flex:none}
+    .wr-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;border-radius:999px;font-size:11px;font-weight:800;color:#fff;background:var(--cinnabar);padding:0 6px;line-height:1.5;flex:none;box-shadow:0 1px 3px rgba(178,58,58,.35)}
+    /* 梅花易数爻列（类六爻：爻位|爻象|阴阳|体用） */
+    .mh-gua{border-top:1px dashed var(--border);margin-top:8px;padding-top:6px}
+    .mh-gua-t{font-size:12px;font-weight:700;color:var(--text-2);margin:2px 0 4px}
+    .mh-wrap{overflow-x:auto}
+    .mh-grid{display:flex;flex-direction:column;min-width:320px}
+    .mh-head,.mh-row{display:grid;grid-template-columns:46px 64px 70px 64px;gap:2px 8px;align-items:center;padding:3px 8px}
+    .mh-head{font-size:11px;color:var(--text-3);letter-spacing:.08em;padding-top:2px;padding-bottom:2px}
+    .mh-row{border-top:1px solid var(--border);font-size:13px;color:var(--text-1)}
+    .mh-row .c{text-align:center;white-space:nowrap}
+    .mh-row .c-pos{color:var(--text-3)}
+    .mh-row .c-bar{justify-self:center}
+    .mh-row .c-name{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+    .ty-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;border-radius:999px;font-size:11px;font-weight:800;padding:0 6px;line-height:1.5;flex:none}
+    .ty-badge.ti{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .ty-badge.yong{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    /* ===== REQ-055：免费静态解读区 / 时间选项 ===== */
+    .free-card{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .free-card .fc-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
+    .free-block{margin-bottom:8px}
+    .free-block:last-child{margin-bottom:0}
+    .free-block .fb-label{font-size:12px;font-weight:700;color:var(--ink-600);margin-bottom:2px}
+    .free-block .fb-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+    .free-block .fb-tip{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.6}
+    .dt-row{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 2px}
+    .dt-field{flex:1 1 160px;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .dt-cap{font-size:12px;color:var(--text-2)}
+    .dt-cap em{font-style:normal;color:var(--cinnabar);margin-left:2px}
+    .dt-input{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--paper);color:var(--text-1);font-size:14px;font-family:inherit;outline:none}
+    .dt-input:focus{border-color:var(--skin-accent);box-shadow:0 0 0 2px var(--skin-accent-soft)}
+    .time-note{font-size:11px;color:var(--text-3);margin:2px 0 0;line-height:1.6}
+
     /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
     .tarot-card{width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -5634,6 +5682,26 @@ const DIVIN_METHODS = [{
 
 const DIVIN_API_METHOD = { sign: 'ssgw' };
 const YAO_LABEL = ['初', '二', '三', '四', '五', '上'];
+/* REQ-055：梅花/小六壬 时间选项（12 时辰，date 默认今天、时辰默认当前） */
+const SHICHEN_ARR = [
+  { n: '子', start: 23, range: '23:00–00:59' },
+  { n: '丑', start: 1, range: '01:00–02:59' },
+  { n: '寅', start: 3, range: '03:00–04:59' },
+  { n: '卯', start: 5, range: '05:00–06:59' },
+  { n: '辰', start: 7, range: '07:00–08:59' },
+  { n: '巳', start: 9, range: '09:00–10:59' },
+  { n: '午', start: 11, range: '11:00–12:59' },
+  { n: '未', start: 13, range: '13:00–14:59' },
+  { n: '申', start: 15, range: '15:00–16:59' },
+  { n: '酉', start: 17, range: '17:00–18:59' },
+  { n: '戌', start: 19, range: '19:00–20:59' },
+  { n: '亥', start: 21, range: '21:00–22:59' }
+];
+const TIME_METHODS = { meihua: true, xiaoliuren: true };
+const pad2 = function (x) { return String(x).padStart(2, '0'); };
+const todayStr = function () { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
+/* 当前小时 → 时辰下标（23:00/00:00 均为子时），时辰起始小时即该时辰内任一可解析时刻 */
+const nowShichen = function () { return Math.floor((new Date().getHours() + 1) / 2) % 12; };
 function yaoView(v) {
   const n = typeof v === 'number' ? v : null;
   const s = String(v);
@@ -5642,6 +5710,19 @@ function yaoView(v) {
   if (n === 8 || s === '少阴' || s === '阴') return { name: '少阴', cls: 'yin', moving: false };
   if (n === 7 || s === '少阳' || s === '阳') return { name: '少阳', cls: '', moving: false };
   return { name: s || '爻', cls: '', moving: /老|动/.test(s) };
+}
+/* REQ-055：六爻整齐列表 —— 爻位|爻线|六亲|纳甲|世应|阴阳(动)|六神 固定分列对齐 */
+function wrCellAt(wrArr, i) {
+  if (!wrArr) return '';
+  // 兼容旧结果：worldAndResponse = [世爻位, 应爻位] 的数字数组（需先于通用字符串分支判断）
+  if (wrArr.length === 2 && typeof wrArr[0] === 'number' && typeof wrArr[1] === 'number') {
+    if (i + 1 === wrArr[0]) return '世';
+    if (i + 1 === wrArr[1]) return '应';
+    return '';
+  }
+  const v = wrArr[i];
+  if (v != null && v !== '') return String(v);
+  return '';
 }
 function DivLiuyaoView(res) {
   const changing = {};
@@ -5655,27 +5736,39 @@ function DivLiuyaoView(res) {
   const najia = Array.isArray(res.najiaDizhi) ? res.najiaDizhi : null;
   const sGods = Array.isArray(res.sixGods) ? res.sixGods : null;
   const wAndR = Array.isArray(res.worldAndResponse) ? res.worldAndResponse : null;
-  const rows = [];
-  if (arr || oldLines) {
-    const src = arr || oldLines;
-    for (let i = 0; i < Math.min(src.length, 6); i++) {
+  const src = arr || oldLines;
+  const rowEls = [];
+  if (src) {
+    const n = Math.min(src.length, 6);
+    for (let i = 0; i < n; i++) {
       const raw = arr ? src[i] : (Array.isArray(src[i]) ? src[i][0] : src[i]);
       const info = yaoView(raw);
       const mv = changing[i + 1] || info.moving;
       const sr = sixRel && sixRel[i] != null ? String(sixRel[i]) : '';
       const nj = najia && najia[i] != null ? String(najia[i]) : '';
       const sg = sGods && sGods[i] != null ? String(sGods[i]) : '';
-      const wr = wAndR && wAndR[i] != null ? String(wAndR[i]) : '';
+      const wr = wrCellAt(wAndR, i);
       const cells = [];
-      cells.push(React.createElement('span', { key: 'pos', style: { width: 30, color: 'var(--text-3)' } }, YAO_LABEL[i] + '爻'));
-      if (sr) cells.push(React.createElement('span', { key: 'rel', style: { fontSize: 12, color: 'var(--text-3)' } }, sr));
-      if (nj) cells.push(React.createElement('span', { key: 'nj', style: { fontSize: 12, color: 'var(--text-3)' } }, nj));
-      if (wr) cells.push(React.createElement('span', { key: 'wr', style: { fontSize: 13, fontWeight: 700, color: 'var(--cinnabar)' } }, wr));
-      cells.push(React.createElement('span', { key: 'bar', className: 'yao-bar ' + info.cls }));
-      cells.push(React.createElement('span', { key: 'name' }, info.name + (mv ? '（动）' : '')));
-      if (sg) cells.push(React.createElement('span', { key: 'god', style: { fontSize: 11, color: 'var(--text-3)' } }, sg));
-      rows.push(React.createElement('div', { key: i, className: 'yao-line' }, cells));
+      // 列序：爻位 | 爻线(阴阳符号) | 六亲 | 纳甲地支 | 世/应 | 阴阳名(含动爻标记) | 六神
+      cells.push(React.createElement('span', { key: 'pos', className: 'c c-pos' }, YAO_LABEL[i] + '爻'));
+      cells.push(React.createElement('span', { key: 'bar', className: 'yao-bar c-bar ' + info.cls }));
+      cells.push(React.createElement('span', { key: 'rel', className: 'c c-rel' }, sr));
+      cells.push(React.createElement('span', { key: 'nj', className: 'c c-nj' }, nj));
+      cells.push(React.createElement('span', { key: 'wr', className: 'c c-wr' }, wr ? React.createElement('span', { className: 'wr-badge' }, wr) : null));
+      cells.push(React.createElement('span', { key: 'name', className: 'c-name' }, info.name, mv ? React.createElement('span', { key: 'mvb', className: 'mv-badge' }, '动') : null));
+      cells.push(React.createElement('span', { key: 'god', className: 'c c-god' }, sg));
+      rowEls.push(React.createElement('div', { key: i, className: 'ly-row' + (mv ? ' moving' : '') }, cells));
     }
+  }
+  let grid = null;
+  if (rowEls.length) {
+    const head = ['爻位', '爻象', '六亲', '纳甲', '世应', '阴阳', '六神'].map(function (h, i) {
+      return React.createElement('span', { key: i, className: 'c' }, h);
+    });
+    grid = React.createElement('div', { className: 'ly-wrap' },
+      React.createElement('div', { className: 'ly-grid' },
+        React.createElement('div', { className: 'ly-head' }, head),
+        rowEls));
   }
   const nameText = res.originalName ? (res.originalName + (res.changedName ? ' 之 ' + res.changedName : '') + (res.interName && !res.changedName ? '（互卦 ' + res.interName + '）' : '')) : (res.name || '');
   const palaceText = res.palace ? ((res.palace.name || '') + (res.palace.wuxing ? '（' + res.palace.wuxing + '）' : '') + (res.palaceStage ? ' · ' + res.palaceStage : '')) : (res.palaceStage || '');
@@ -5684,16 +5777,47 @@ function DivLiuyaoView(res) {
   if (palaceText) meta.push(React.createElement('div', { key: 'p' }, '宫位：' + palaceText));
   if (ganzhiText) meta.push(React.createElement('div', { key: 'g' }, '干支：' + ganzhiText));
   return React.createElement('div', null,
-    rows.length ? rows : null,
-    nameText ? React.createElement('div', { style: { fontWeight: 700, marginTop: rows.length ? 6 : 0 } }, nameText) : null,
+    grid,
+    nameText ? React.createElement('div', { style: { fontWeight: 700, marginTop: grid ? 8 : 0 } }, nameText) : null,
     meta.length ? React.createElement('div', { style: { marginTop: 6, fontSize: 12, color: 'var(--text-2)', lineHeight: 1.7 } }, meta) : null);
 }
 function DivMeihuaView(res) {
   const gua = function (g) { return g && g.name ? g.name + (g.element ? '（' + g.element + '）' : '') : ''; };
-  const head = [];
-  if (res.originalName) head.push('本卦 ' + res.originalName);
-  if (res.interName) head.push('互卦 ' + res.interName);
-  if (res.changedName) head.push('变卦 ' + res.changedName);
+  const sym = function (h) { return h && h.symbol ? h.symbol : ''; };
+  const parts = [];
+  if (res.originalName) parts.push('本卦 ' + res.originalName + (sym(res.mainHexagram) ? ' ' + sym(res.mainHexagram) : ''));
+  if (res.interName) parts.push('互卦 ' + res.interName + (sym(res.interHexagram) ? ' ' + sym(res.interHexagram) : ''));
+  if (res.changedName && res.changedName !== res.originalName) parts.push('变卦 ' + res.changedName + (sym(res.changedHexagram) ? ' ' + sym(res.changedHexagram) : ''));
+  const items = [];
+  if (parts.length) items.push(React.createElement('div', { key: 'head', style: { fontWeight: 700, lineHeight: 1.8 } }, parts.join(' · ')));
+  // REQ-055 ③：本卦爻列（类六爻：爻位|爻象|阴阳(含动)|体用），其余卦以卦名+卦符展示
+  const rowEls = [];
+  if (Array.isArray(res.yaosDetail) && res.yaosDetail.length) {
+    const ys = res.yaosDetail.slice().sort(function (a, b) { return (a.position || 0) - (b.position || 0); });
+    for (let i = 0; i < Math.min(ys.length, 6); i++) {
+      const y = ys[i] || {};
+      const pos = y.position != null ? y.position : (i + 1);
+      const moving = Boolean(y.isChanging);
+      const yang = y.yaoType === '阳';
+      const ty = String(y.tiYong || '');
+      const barCls = moving ? (yang ? 'old-yang' : 'old-yin') : (yang ? '' : 'yin');
+      const cells = [];
+      cells.push(React.createElement('span', { key: 'p', className: 'c c-pos' }, YAO_LABEL[pos - 1] + '爻'));
+      cells.push(React.createElement('span', { key: 'b', className: 'yao-bar c-bar ' + barCls }));
+      cells.push(React.createElement('span', { key: 'n', className: 'c-name' }, yang ? '阳' : '阴', moving ? React.createElement('span', { key: 'm', className: 'mv-badge' }, '动') : null));
+      cells.push(React.createElement('span', { key: 't', className: 'c' }, ty ? React.createElement('span', { className: 'ty-badge ' + (ty === '体' ? 'ti' : 'yong') }, ty) : null));
+      rowEls.push(React.createElement('div', { key: pos, className: 'mh-row' }, cells));
+    }
+  }
+  if (rowEls.length) {
+    const head = ['爻位', '爻象', '阴阳', '体用'].map(function (h, i) { return React.createElement('span', { key: i, className: 'c' }, h); });
+    items.push(React.createElement('div', { key: 'gua', className: 'mh-gua' },
+      React.createElement('div', { className: 'mh-gua-t' }, '本卦爻象（初爻 → 上爻 逐爻排列，体/用按动爻分属）'),
+      React.createElement('div', { className: 'mh-wrap' },
+        React.createElement('div', { className: 'mh-grid' },
+          React.createElement('div', { className: 'mh-head' }, head),
+          rowEls))));
+  }
   const detail = [];
   const ti = res.tiGua || {};
   const yo = res.yongGua || {};
@@ -5702,12 +5826,20 @@ function DivMeihuaView(res) {
   if (mv.description || mv.yaoName || mv.position) detail.push('动爻：' + (mv.description || '第' + mv.position + '爻动'));
   const an = res.analysis || {};
   if (an.tiYongRelation) detail.push('体用关系：' + an.tiYongRelation + (an.tiYongSeasonEvaluation ? '；' + an.tiYongSeasonEvaluation : ''));
+  if (an.timelineTrend && an.timelineTrend.summary) detail.push('阶段趋势：' + (an.timelineTrend.trend ? an.timelineTrend.trend + '。' : '') + an.timelineTrend.summary);
   if (res.up || res.down || res.dong) detail.push('上卦 ' + res.up + ' · 下卦 ' + res.down + ' · 动爻 ' + res.dong);
-  const items = [];
-  if (head.length) items.push(React.createElement('div', { key: 'head', style: { fontWeight: 700 } }, head.join(' · ')));
   detail.forEach(function (t, i) {
     items.push(React.createElement('div', { key: 'd' + i, style: { marginTop: 6, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7 } }, t));
   });
+  const meta = [];
+  const gz = res.ganzhi;
+  if (gz) {
+    const gzText = [gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' ');
+    if (gzText) meta.push('干支：' + gzText);
+  }
+  const calc = res.calculation || {};
+  if (calc.method || calc.methodKey) meta.push('起卦：' + (calc.method || calc.methodKey));
+  if (meta.length) items.push(React.createElement('div', { key: 'meta', style: { marginTop: 6, fontSize: 12, color: 'var(--text-2)', lineHeight: 1.7 } }, meta.join(' · ')));
   return React.createElement('div', null, items);
 }
 function DivXiaoliurenView(res) {
@@ -5738,6 +5870,117 @@ function DivSsgwView(res) {
   if (extra.length) items.push(React.createElement('div', { key: 'extra', style: { marginTop: 8, fontSize: 12, color: 'var(--text-3)' } }, extra.join(' · ')));
   return React.createElement('div', null, items);
 }
+
+/* ---------- REQ-055：免费静态解读（占位文案，正文由文字 Agent 后补） ---------- */
+const PH_WENAN = '文案待补充';
+const PH_HEX_SUFFIX = '（64 卦大意正文后续交付）';
+function FreeCard(title, blocks) {
+  const kids = [React.createElement('div', { key: 't', className: 'fc-title' }, title)];
+  blocks.forEach(function (b, i) {
+    const inner = [];
+    if (b.label) inner.push(React.createElement('div', { key: 'l', className: 'fb-label' }, b.label));
+    if (b.text) inner.push(React.createElement('div', { key: 'x', className: 'fb-txt' }, b.text));
+    if (b.tip) inner.push(React.createElement('div', { key: 'p', className: 'fb-tip' }, b.tip));
+    kids.push(React.createElement('div', { key: 'b' + i, className: 'free-block' }, inner));
+  });
+  return React.createElement('div', { className: 'free-card' }, kids);
+}
+function LiuyaoFreeReading(res) {
+  const blocks = [];
+  const originalName = res.originalName || res.name || '';
+  const changedName = (res.changedName && res.changedName !== originalName) ? res.changedName : '';
+  blocks.push({
+    label: '本卦大意',
+    text: originalName ? ('「' + originalName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX) : PH_WENAN + '。',
+    tip: '以本卦卦名、卦辞与大象为纲，看整件事的基调与当前态势。'
+  });
+  if (changedName) {
+    blocks.push({
+      label: '变卦大意',
+      text: '「' + changedName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX,
+      tip: '动爻成之卦，代表事态推进之后的走向与结局。'
+    });
+  } else {
+    blocks.push({
+      label: '变卦大意',
+      text: '无变卦（静卦）。',
+      tip: '六爻安静，以本卦卦意与世应用神为主，不另取变卦之象。'
+    });
+  }
+  const chg = Array.isArray(res.changingYaos) ? res.changingYaos : [];
+  if (chg.length) {
+    blocks.push({
+      label: '动爻提示',
+      text: chg.map(function (y) { return '第' + (y && y.position != null ? y.position : '?') + '爻动：' + PH_WENAN + '。'; }).join('\n'),
+      tip: '动爻是事态变化的关节点：动爻所临六亲及其与世应的生克关系，决定事情的进退取舍（逐爻断语正文后补）。'
+    });
+  } else {
+    blocks.push({
+      label: '动爻提示',
+      text: '无动爻。',
+      tip: '静卦以卦意为体，以世应、用神与月建日辰的生克关系参断。'
+    });
+  }
+  const wAndR = Array.isArray(res.worldAndResponse) ? res.worldAndResponse : null;
+  const wrParts = [];
+  if (wAndR) {
+    for (let i = 0; i < 6; i++) {
+      const s = wrCellAt(wAndR, i);
+      if (s === '世' || s === '应') wrParts.push((s === '世' ? '世爻' : '应爻') + '在' + YAO_LABEL[i] + '爻（第' + (i + 1) + '爻）');
+    }
+  }
+  blocks.push({
+    label: '世应含义',
+    text: '世爻代表求测者自身、立场与当前处境；应爻代表对方、环境与所问之事。' + (wrParts.length ? '本卦' + wrParts.join('，') + '。' : ''),
+    tip: '问自身与当下看世爻，问他人、合作与外部环境看应爻；世应相生相合多为顺，相冲相克多为阻。'
+  });
+  return FreeCard('卦理解读（免费）', blocks);
+}
+function MeihuaFreeReading(res) {
+  const blocks = [];
+  const originalName = res.originalName || '';
+  const changedName = (res.changedName && res.changedName !== originalName) ? res.changedName : '';
+  blocks.push({
+    label: '本卦大意',
+    text: originalName ? ('「' + originalName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX) : PH_WENAN + '。'
+  });
+  if (changedName) {
+    blocks.push({
+      label: '变卦趋势',
+      text: '「' + changedName + '」卦意通用解释' + PH_WENAN + '。' + PH_HEX_SUFFIX
+    });
+  }
+  const mv = res.movingYao || {};
+  const an = res.analysis || {};
+  blocks.push({
+    label: '通用提示',
+    text: '梅花易数以体用生克为断事主线：体卦为己、为求测者，用卦为事、为对方，动爻所在即事态变化的关节点。'
+      + (mv.position != null ? '本卦第' + mv.position + '爻为动爻。' : '')
+      + (an.tiYongRelation ? '本卦体用关系：' + an.tiYongRelation + '。' : '')
+      + '体用比和、用生体、体克用多主顺遂省力；用克体、体生用则多费心耗力。互卦主事之中段，变卦主事之结局。',
+    tip: '以上为静态规则参考，仅供自我觉察，不构成任何决策建议。'
+  });
+  return FreeCard('免费解读', blocks);
+}
+function XiaoliurenFreeReading(res) {
+  const blocks = [];
+  const primary = res.primary || {};
+  const name = primary.name || res.point || '';
+  const seq = res.sequence || {};
+  const seqNames = [seq.month, seq.day, seq.hour].map(function (p) { return p && p.name ? p.name : ''; }).filter(Boolean);
+  blocks.push({
+    label: '掌诀含义',
+    text: name ? ('「' + name + '」掌诀含义' + PH_WENAN + '。') : (PH_WENAN + '。'),
+    tip: '落宫掌诀是小六壬断事的核心口诀，具体诀文正文后补。'
+  });
+  blocks.push({
+    label: '通用提示',
+    text: (seqNames.length === 3 ? '本课自' + seqNames[0] + '起，经' + seqNames[1] + '，落于' + seqNames[2] + '。' : '')
+      + '小六壬按「月 → 日 → 时」依序顺数至落宫断事：起宫见事端，行宫见过程，落宫为事之归结；落宫吉凶宜结合所问之事与自身处境综合体会。',
+    tip: '以上为静态规则参考，仅供自我觉察，不构成任何决策建议。'
+  });
+  return FreeCard('免费解读', blocks);
+}
 function DivinationPage({
   onNavigate
 }) {
@@ -5749,19 +5992,44 @@ function DivinationPage({
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
   const [question, setQuestion] = useState('');
+  // REQ-055 ⑤：梅花/小六壬时间选项（日期默认今天 + 时辰默认当前，必填）
+  const [timeDate, setTimeDate] = useState(todayStr());
+  const [shichen, setShichen] = useState(nowShichen());
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
+  const isTimeMethod = Boolean(TIME_METHODS[method]);
   const run = async () => {
     if (loading) return;
+    // 梅花/小六壬：日期与时辰必填（输入框默认已带值，用户清空日期时拦截）
+    if (isTimeMethod) {
+      if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
+        toast('请先选择起卦日期（必填）');
+        return;
+      }
+      if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
+        toast('请选择起卦时辰（必填）');
+        return;
+      }
+    }
     setLoading(true);
     setErrored('');
     setData(null);
     setInterp('');
     setInterpErr('');
+    // 时间类方法把所选 日期+时辰 组装为东八区 ISO 传给 Node 起卦服务
+    // （meihua 读顶层 customDate；xiaoliuren 走 params.customDate；seed 键原样透传）
+    const seed = {};
+    if (qText) seed.question = qText;
+    if (isTimeMethod) {
+      const startH = (SHICHEN_ARR[shichen] || SHICHEN_ARR[0]).start;
+      const customDate = timeDate + 'T' + pad2(startH) + ':00:00+08:00';
+      if (method === 'xiaoliuren') seed.params = { customDate: customDate };
+      else seed.customDate = customDate;
+    }
     try {
       const res = await api('/divinations', {
         method: 'POST',
-        body: JSON.stringify({ method: apiMethod, case_id: null, seed: qText ? { question: qText } : {} })
+        body: JSON.stringify({ method: apiMethod, case_id: null, seed: seed })
       });
       setData((res && res.data) || res);
     } catch (e) {
@@ -5795,6 +6063,13 @@ function DivinationPage({
   if (result != null && view == null) {
     view = React.createElement('pre', { style: { fontSize: 11, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: 'var(--text-2)' } }, JSON.stringify(result, null, 2));
   }
+  // REQ-055 ②④：卦象结果下方的免费静态解读（付费「深度断卦」按钮之前）
+  let freeReading = null;
+  if (result && typeof result === 'object') {
+    if (method === 'liuyao') freeReading = LiuyaoFreeReading(result);
+    else if (method === 'meihua') freeReading = MeihuaFreeReading(result);
+    else if (method === 'xiaoliuren') freeReading = XiaoliurenFreeReading(result);
+  }
   let body = null;
   if (loading) {
     body = React.createElement('div', { className: 'card' },
@@ -5810,6 +6085,7 @@ function DivinationPage({
       React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
       qText ? React.createElement('div', { className: 'ask-echo' }, '问题：', qText) : null,
       view,
+      freeReading,
       result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       React.createElement('div', { className: 'pay-hint' }, '深度断卦为付费 LLM 解读，约 12 积分（点击前将预检余额）'),
@@ -5833,10 +6109,36 @@ function DivinationPage({
               setData(null);
               setInterp('');
               setInterpErr('');
+              // 切到梅花/小六壬时，时间默认刷新为今天 + 当前时辰
+              if (TIME_METHODS[x.id] && x.id !== method) {
+                setTimeDate(todayStr());
+                setShichen(nowShichen());
+              }
             }
           }
         }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
       })),
+      isTimeMethod ? React.createElement('div', { key: 'tm', className: 'time-box' },
+        React.createElement('div', { className: 'section-title', style: { marginTop: 12 } }, '占问时间（' + ((m && m.name) || apiMethod) + ' 起卦必填）'),
+        React.createElement('div', { className: 'dt-row' },
+          React.createElement('label', { className: 'dt-field' },
+            React.createElement('span', { className: 'dt-cap' }, '日期', React.createElement('em', null, '*')),
+            React.createElement('input', {
+              type: 'date',
+              className: 'dt-input',
+              value: timeDate,
+              onChange: function (e) { setTimeDate(e.target.value); }
+            })),
+          React.createElement('label', { className: 'dt-field' },
+            React.createElement('span', { className: 'dt-cap' }, '时辰', React.createElement('em', null, '*')),
+            React.createElement('select', {
+              className: 'dt-input',
+              value: shichen,
+              onChange: function (e) { setShichen(Number(e.target.value)); }
+            }, SHICHEN_ARR.map(function (s, i) {
+              return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
+            })))),
+        React.createElement('div', { className: 'time-note' }, '以所选日期与时辰起卦（默认今天 + 当前时辰）；六爻 / 观音灵签不取此时间。')) : null,
       React.createElement('div', { className: 'section-title', style: { marginTop: 12 } }, '占问问题（可选）'),
       React.createElement('textarea', {
         className: 'q-input',
