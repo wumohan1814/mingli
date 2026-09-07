@@ -562,6 +562,39 @@ def test_api_astrology_chart_idempotent_reuse(astrology_client, monkeypatch):
     assert len(calls) == 2
 
 
+def test_api_astrology_chart_delete(astrology_client, monkeypatch):
+    """REQ-054 DELETE /astrology/charts/{id}：本人删除 → 行消失（再 GET 404）；
+    跨用户/不存在 → 404；零扣费零埋点。"""
+    import app.api.astrology as astro_mod
+
+    uid = _new_user()
+    other = _new_user()
+    cid = _new_case(uid, birthplace="上海")
+    calls: list = []
+    _fake_node_post(monkeypatch, astro_mod, payload=SAMPLE_ASTROLOGY_CHART, calls=calls)
+    auth = _auth_header(uid)
+
+    r = astrology_client.post("/api/astrology/chart", json={"case_id": cid}, headers=auth)
+    rid = r.json()["data"]["id"]
+
+    # 他人删除 → 404（隔离）
+    r = astrology_client.delete(f"/api/astrology/charts/{rid}", headers=_auth_header(other))
+    assert r.status_code == 404, r.text
+    # 本人删除 → 200 deleted
+    r = astrology_client.delete(f"/api/astrology/charts/{rid}", headers=auth)
+    assert r.status_code == 200, r.text
+    assert r.json()["data"] == {"deleted": True, "id": rid}
+    # 已删除 → 再 GET/再删 → 404；行确实消失
+    r = astrology_client.get(f"/api/astrology/charts/{rid}", headers=auth)
+    assert r.status_code == 404
+    r = astrology_client.delete(f"/api/astrology/charts/{rid}", headers=auth)
+    assert r.status_code == 404
+    assert _reading_row(rid) is None
+    # 零扣费；埋点 = 首次生成时的 1 条 astrology_chart（删除端点本身不写埋点）
+    assert _credit_rows(uid) == []
+    assert len(_event_rows("astrology_chart", uid)) == 1
+
+
 def test_api_astrology_chart_non_natal_fullscope(astrology_client, monkeypatch):
     """scope != natal：date_str 透传为 dateStr，落库 scope 原值；返回 chart 含 fullScope。"""
     import app.api.astrology as astro_mod

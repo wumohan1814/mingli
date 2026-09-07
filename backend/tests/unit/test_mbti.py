@@ -549,6 +549,39 @@ def test_api_results_get_and_type_info(mbti_client):
         assert data["type_info"][f]
 
 
+# ------------------------------------------------------------ 端点：历史记录删除（REQ-054） ----
+def test_api_result_delete(mbti_client):
+    """REQ-054 DELETE /mbti/results/{id}：本人删除 → 行消失（再 GET 404）；
+    跨用户/不存在 → 404；删除不回写 case.mbti_type。"""
+    from app.database import AnalyticsSession
+    from app.models import Case
+
+    uid = _new_user()
+    cid = _new_case(uid)
+    other = _new_user()
+    resp = mbti_client.post("/api/mbti/score", json={"case_id": cid, "answers": _answers_by_key("B")},
+                            headers=_auth_header(uid))
+    rid = resp.json()["data"]["id"]
+
+    # 他人删除 → 404（隔离）
+    r = mbti_client.delete(f"/api/mbti/results/{rid}", headers=_auth_header(other))
+    assert r.status_code == 404, r.text
+    # 本人删除 → 200 deleted
+    r = mbti_client.delete(f"/api/mbti/results/{rid}", headers=_auth_header(uid))
+    assert r.status_code == 200, r.text
+    assert r.json()["data"] == {"deleted": True, "id": rid}
+    # 已删除 → 再读/再删 → 404；行消失
+    r = mbti_client.delete(f"/api/mbti/results/{rid}", headers=_auth_header(uid))
+    assert r.status_code == 404
+    # case.mbti_type 保留（删除历史记录不回写档案类型）
+    session = AnalyticsSession()
+    try:
+        case = session.query(Case).filter_by(id=cid).first()
+        assert case.mbti_type == "INFP"
+    finally:
+        session.close()
+
+
 # ------------------------------------------------------------ 端点：16 型公开查询（BUG-005） ----
 def test_api_types_public_endpoint(mbti_client):
     """GET /api/mbti/types/{type}（公开、免鉴权，BUG-005 manual 输入取文案）：
