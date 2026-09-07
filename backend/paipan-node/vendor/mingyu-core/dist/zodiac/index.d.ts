@@ -22,15 +22,20 @@ export interface ZodiacYearFortune {
     /** 年干与生肖五行关系 */
     relation: string;
     elementRelation: ZodiacElementRelation;
-    /** 三合/六合贵人 */
-    noble: string | null;
+    /** 本气五行展示文案（B2 确定性文案，如“水（子）”；elementRelation.zodiacWuxing 为机读五行） */
+    zodiacWuxing: string;
+    /** 三合/六合贵人（流年命中时）；否则为 B2 贵人兜底文案（BUG-003），保证非空 */
+    noble: string;
     /** 两支同属固定三会组；只记录关系，不表示完整三会成局 */
     meeting: string | null;
     conflicts: TaiSuiConflict[];
     evidenceGrade: '轻量';
     interpretationBoundary: '仅限生肖与流年关系';
+    /** 流年有利关系；计算为空时以 B2「有利关系」模板回填，保证非空 */
     favorableRelations: string[];
+    /** 流年风险关系；计算为空时以 B2 该生肖「风险关系」文案回填，保证非空 */
     riskRelations: string[];
+    /** 行动建议；计算为空时以 B2 该生肖「行动建议」回填，保证非空 */
     actionSignals: string[];
     evidenceAnalysis: import('./evidence').ZodiacEvidenceAnalysis;
     prompt: string;
