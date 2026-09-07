@@ -2247,7 +2247,8 @@ function CasesPage({
   }));
 }
 function OnboardingPage({
-  onNavigate
+  onNavigate,
+  returnTo
 }) {
   const reg = typeof window !== 'undefined' && window.REGIONS || {};
   const curYear = new Date().getFullYear();
@@ -2429,9 +2430,20 @@ function OnboardingPage({
       try {
         localStorage.removeItem('taichu_onboarding_form');
       } catch (e) {/* 忽略 */}
-      onNavigate('waiting', {
-        caseId
-      });
+      // REQ-046：模块页进入建档（returnTo=astrology/mbti）→ 建档成功直接回跳该模块主流程页（携带 caseId）；其余默认进 waiting
+      if (returnTo === 'astrology') {
+        onNavigate('astrology', {
+          caseId
+        });
+      } else if (returnTo === 'mbti') {
+        onNavigate('mbti', {
+          caseId
+        });
+      } else {
+        onNavigate('waiting', {
+          caseId
+        });
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -5495,7 +5507,9 @@ function DivinationPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
+  const [question, setQuestion] = useState('');
   const apiMethod = DIVIN_API_METHOD[method] || method;
+  const qText = (question || '').trim();
   const run = async () => {
     if (loading) return;
     setLoading(true);
@@ -5506,7 +5520,7 @@ function DivinationPage({
     try {
       const res = await api('/divinations', {
         method: 'POST',
-        body: JSON.stringify({ method: apiMethod, case_id: null, seed: {} })
+        body: JSON.stringify({ method: apiMethod, case_id: null, seed: qText ? { question: qText } : {} })
       });
       setData((res && res.data) || res);
     } catch (e) {
@@ -5553,6 +5567,7 @@ function DivinationPage({
   } else if (data) {
     body = React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
+      qText ? React.createElement('div', { className: 'ask-echo' }, '问题：', qText) : null,
       view,
       result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
@@ -5581,16 +5596,25 @@ function DivinationPage({
           }
         }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
       })),
+      React.createElement('div', { className: 'section-title', style: { marginTop: 12 } }, '占问问题（可选）'),
+      React.createElement('textarea', {
+        className: 'q-input',
+        rows: 2,
+        maxLength: 300,
+        placeholder: '示例：这件事的走向？ / 该不该推进？',
+        value: question,
+        onChange: function (e) { setQuestion(e.target.value); }
+      }),
       React.createElement('button', {
         className: 'btn btn-primary',
-        style: { marginTop: 14 },
+        style: { marginTop: 10 },
         disabled: loading,
         onClick: run
       }, loading ? '起卦中…' : '开始起卦')),
     body,
-    React.createElement('div', { className: 'back-row' },
-      data ? React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: run }, '重新起卦') : null,
-      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('guoxue-hub'); } }, '返回选项')));
+    React.createElement('div', { className: 'back-row fill' },
+      data ? React.createElement('button', { className: 'btn btn-outline', onClick: run }, '重新起卦') : null,
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, '返回选项')));
 }
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
@@ -7122,7 +7146,7 @@ function AstrologyPage({
       style: {
         width: 'auto'
       },
-      onClick: () => onNavigate('onboarding')
+      onClick: () => onNavigate('onboarding', { returnTo: 'astrology' })
     }, '去建档'), el('button', {
       className: 'btn btn-outline',
       style: {
@@ -7132,7 +7156,8 @@ function AstrologyPage({
     }, '管理档案')));
   } else {
     // BUG-006：档案改为明显可选卡片（档案名 + 出生年/性别/出生地 meta + 圆形选中勾）
-    casePick = el('div', {
+    // REQ-046：列表下方补「新建档案」入口 → 建档完成后 returnTo 回跳星座页
+    casePick = el(React.Fragment, null, el('div', {
       className: 'case-opts'
     }, caseList.map(c => {
       const sel = caseId != null && Number(caseId) === Number(c.caseId);
@@ -7152,7 +7177,18 @@ function AstrologyPage({
       }, meta)), el('span', {
         className: 'co-check'
       }, sel ? '✓' : ''));
-    }));
+    })), el('div', {
+      className: 'back-row',
+      style: {
+        justifyContent: 'center'
+      }
+    }, el('button', {
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto'
+      },
+      onClick: () => onNavigate('onboarding', { returnTo: 'astrology' })
+    }, '新建档案')));
   }
   const formCard = el('div', {
     className: 'card'
@@ -7778,7 +7814,7 @@ function MbtiPage({
           el('div', {style: {fontSize: 15, fontWeight: 700, marginBottom: 8}}, '请先在国学预测中建档'),
           el('p', {style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8, marginBottom: 4}}, 'MBTI 判型结果会写入档案的 mbti_type。你还没有任何档案，请先建立一份出生档案再回来测试。'),
           el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('onboarding')}, '去建档'),
+            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, '去建档'),
             el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'),
             el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
       } else {
@@ -7801,6 +7837,7 @@ function MbtiPage({
                 el('span', {className: 'co-check'}, sel ? '✓' : ''));
             })),
           el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+            el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, '新建档案'),
             el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => onNavigate('cases')}, '管理档案'),
             el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
       }
@@ -8115,7 +8152,8 @@ function App() {
       onNavigate: navigate
     }),
     onboarding: /*#__PURE__*/React.createElement(OnboardingPage, {
-      onNavigate: navigate
+      onNavigate: navigate,
+      returnTo: params.returnTo
     }),
     waiting: /*#__PURE__*/React.createElement(WaitingPage, {
       caseId: params.caseId,
