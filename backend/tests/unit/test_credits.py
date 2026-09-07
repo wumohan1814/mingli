@@ -193,22 +193,29 @@ def test_transactions_paging():
     manual(uid, 5, "补偿", admin_id=7)  # delta +5，共 3 条
 
     required_keys = {"id", "delta", "type", "tokens", "amount", "ref", "note", "createdAt"}
+    # REQ-063：明细可读化——每条额外带 label（中文标签）与 case_name（档案名，可能 None）
+    readable_keys = {"label", "case_name"}
 
     page1 = transactions(uid, limit=2, offset=0)
     assert len(page1) == 2
     # 最新在前：manual(+5) -> consume(-2)
     assert [t["type"] for t in page1] == ["manual", "consume"]
     assert [t["delta"] for t in page1] == [5, -2]
-    assert required_keys <= page1[0].keys()
+    assert required_keys | readable_keys <= page1[0].keys()
     assert page1[0]["createdAt"] is not None
     # 首条 tokens 为 None（入账流），次条 tokens=1500（消费流）
     assert page1[0]["tokens"] is None
     assert page1[1]["tokens"] == 1500
+    # REQ-063 标签：manual→手动赠送、无 ref 的 consume→消耗；两笔均无档案
+    assert page1[0]["label"] == "手动赠送" and page1[0]["case_name"] is None
+    assert page1[1]["label"] == "消耗" and page1[1]["case_name"] is None
 
     page2 = transactions(uid, limit=2, offset=2)
     assert len(page2) == 1
     assert page2[0]["type"] == "free"
     assert page2[0]["delta"] == 100
+    assert page2[0]["label"] == "注册赠送"
+    assert page2[0]["case_name"] is None
 
     page3 = transactions(uid, limit=2, offset=3)
     assert page3 == []  # 越界返回空
