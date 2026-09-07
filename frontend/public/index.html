@@ -4,9 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>太初 · 识己于星，安己于时</title>
-  <script src="./vendor/react.production.min.js"></script>
-  <script src="./vendor/react-dom.production.min.js"></script>
-  <script src="./vendor/regions.js"></script>
+  <!-- BUG-009：脚本必须用根绝对路径 /vendor/...（不能用相对 ./vendor/...）。
+       分享链接直达页路径为 /mbti/share/{token}，相对路径会被浏览器解析为
+       /mbti/share/vendor/... → SPA fallback 回退 index.html（text/html 被当 JS 执行）
+       → React 加载失败 → 整页白屏。站点部署在域名根，根绝对路径在首页与深层路由都正确。 -->
+  <script src="/vendor/react.production.min.js"></script>
+  <script src="/vendor/react-dom.production.min.js"></script>
+  <script src="/vendor/regions.js"></script>
   <style>
     :root{
       /* 主色 墨蓝 / 靛青 */
@@ -9702,7 +9706,36 @@ function App() {
     onClose: () => setCreditModal(null)
   }));
 }
-ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById('root'));
+// BUG-009：App 根部错误边界（class 组件，渲染期异常不再白屏）——任何页面组件
+// （含 MbtiSharePage）在 render 阶段抛错时，捕获并展示「页面出错了 + 错误信息 +
+// 返回首页」，而不是渲染空白的 <div id="root">，便于真机定位错误。
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error: error || true };
+  }
+  componentDidCatch(error, info) {
+    console.error('[ErrorBoundary] 页面渲染出错:', error, info);
+  }
+  render() {
+    if (this.state.error) {
+      const raw = this.state.error;
+      const msg = raw && raw.message ? String(raw.message) : String(raw);
+      return React.createElement('div', { className: 'container', style: { padding: '40px 16px', textAlign: 'center' } },
+        React.createElement('div', { className: 'card failed-box' },
+          React.createElement('div', { className: 'section-title' }, '页面出错了'),
+          React.createElement('div', { className: 'error', style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } },
+            '错误信息：' + msg),
+          React.createElement('div', { className: 'back-row', style: { justifyContent: 'center' } },
+            React.createElement('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => { window.location.assign('/'); } }, '返回首页'))));
+    }
+    return this.props.children;
+  }
+}
+ReactDOM.render(/*#__PURE__*/React.createElement(ErrorBoundary, null, /*#__PURE__*/React.createElement(App, null)), document.getElementById('root'));
   </script>
 </body>
 </html>
