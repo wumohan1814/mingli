@@ -1,5 +1,6 @@
 """用户档案模块（ADR-0006：DB为唯一事实源）"""
 from sqlalchemy.orm import Session
+from app.api.mbti import load_types
 from app.models import (
     Case, Chart, MethodResult, Calibration, Conversation,
     AstrologyReading, MbtiResult,
@@ -73,7 +74,7 @@ def _get_method_results(case: Case, db: Session) -> list[dict]:
 
 
 def _get_astrology(case: Case, db: Session) -> list[dict]:
-    """该档案已生成的星座星盘记录（不含 chart_json 全量，控制体积）"""
+    """该档案已生成的星座星盘记录（只带 chart.natal 控制体积，供档案内直接展示完整盘面）"""
     readings = (
         db.query(AstrologyReading)
         .filter_by(case_id=case.id)
@@ -85,21 +86,36 @@ def _get_astrology(case: Case, db: Session) -> list[dict]:
             "id": r.id,
             "scope": r.scope,
             "created_at": str(r.created_at),
+            # REQ-039 退回细化：chart 只保留 natal（= r.chart_json["natal"]），
+            # 供档案内直接渲染完整本命盘；chart_json 缺失/非 dict 时判空为 None
+            "chart": _natal_chart(r.chart_json),
         }
         for r in readings
     ]
 
 
+def _natal_chart(chart_json) -> dict | None:
+    """把 AstrologyReading.chart_json（{natal, fullScope?}）裁成 {natal}；判空兜底 None"""
+    if not isinstance(chart_json, dict) or not isinstance(chart_json.get("natal"), dict):
+        return None
+    return {"natal": chart_json.get("natal")}
+
+
 def _get_mbti(case: Case, db: Session) -> dict:
-    """该档案的 MBTI：档案主人类型 + 判型记录列表（不含 answers_json 全量）"""
+    """该档案的 MBTI：档案主人类型 + 该型五栏文案 type_info + 判型记录列表
+    （不含 answers_json 全量，控制体积；type_info 从 mbti/data/types.json 实时取）"""
     results = (
         db.query(MbtiResult)
         .filter_by(case_id=case.id)
         .order_by(MbtiResult.id.desc())
         .all()
     )
+    # type_info 同 GET /api/mbti/results/{id} 口径：类型大小写不敏感、取五栏文案
+    mbti_type = (case.mbti_type or "").strip().upper()
+    type_info = load_types().get(mbti_type) or {} if mbti_type else {}
     return {
         "mbti_type": case.mbti_type,
+        "type_info": type_info,
         "results": [
             {
                 "id": r.id,
