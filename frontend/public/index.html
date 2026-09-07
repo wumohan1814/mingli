@@ -437,14 +437,12 @@
     .method-cell.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
     .method-cell.todo{opacity:.5;cursor:not-allowed}
     .yao-line{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-1);padding:4px 0}
-    /* BUG-004: 阳爻=整条实线；阴爻=两条短横线中间断开（标准卦象）；老阴同构、色用朱砂 */
+    /* BUG-004: 爻线图形不依赖 ::before/::after 伪元素，改用 background linear-gradient 绘制：
+       阳爻(.yao-bar 默认/.old-yang)= 全长实线；阴爻(.yin/.old-yin)= 左22px + 中10px空隙 + 右22px 双短线；老阳金色、老阴朱砂 */
     .yao-bar{height:6px;width:54px;border-radius:3px;background:var(--ink-300);flex:0 0 auto}
     .yao-bar.old-yang{background:var(--gold-500)}
-    .yao-bar.yin,.yao-bar.old-yin{background:transparent;position:relative}
-    .yao-bar.yin::before,.yao-bar.yin::after,.yao-bar.old-yin::before,.yao-bar.old-yin::after{content:"";position:absolute;top:0;width:22px;height:6px;border-radius:3px;background:var(--ink-300)}
-    .yao-bar.yin::before,.yao-bar.old-yin::before{left:0}
-    .yao-bar.yin::after,.yao-bar.old-yin::after{right:0}
-    .yao-bar.old-yin::before,.yao-bar.old-yin::after{background:var(--cinnabar)}
+    .yao-bar.yin{background:linear-gradient(to right,var(--ink-300) 0 22px,transparent 22px 32px,var(--ink-300) 32px 54px)}
+    .yao-bar.old-yin{background:linear-gradient(to right,var(--cinnabar) 0 22px,transparent 22px 32px,var(--cinnabar) 32px 54px)}
     .palm-disk{width:200px;height:200px;border-radius:50%;margin:14px auto;position:relative;background:radial-gradient(circle,var(--skin-accent-soft),transparent 70%);border:2px solid var(--skin-accent)}
     .palm-disk .pd-point{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transform:translate(-50%,-50%);left:50%;top:50%}
     .palm-disk .pd-point.hit{box-shadow:0 0 0 4px var(--gold-500)}
