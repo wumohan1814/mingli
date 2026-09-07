@@ -133,6 +133,8 @@ def ensure_schema() -> None:
       （统一档案体系：星座、MBTI 复用 cases 档案并回写 mbti_type）
     - cases.phone / cases.email（REQ-065 CRM 化：手机号/邮箱，建档选填、
       独立列供列表/档案详情直接查询，不再只塞 input_json）
+    - divinations.focus_interpretations（REQ-075 六爻焦点详解缓存：老库补列，
+      新库由 create_all 建全）
 
     整张新表（如 credits 的 recharge_codes）不在此 ALTER：main.py lifespan 里
     `Base.metadata.create_all`（checkfirst=True）对老库/新库都幂等建缺表，本函数
@@ -165,6 +167,11 @@ def ensure_schema() -> None:
         mbti_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(mbti_results)"))]
         if mbti_cols and "case_id" not in mbti_cols:
             conn.execute(text("ALTER TABLE mbti_results ADD COLUMN case_id INTEGER"))
+
+        # REQ-075：divinations 补 focus_interpretations（六爻焦点详解缓存 JSON，缺列才加）
+        div_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(divinations)"))]
+        if div_cols and "focus_interpretations" not in div_cols:
+            conn.execute(text("ALTER TABLE divinations ADD COLUMN focus_interpretations JSON"))
 
         # system_configs 种子：积分默认值（key 不存在才插入，幂等；不覆盖后台已改的配置）。
         sc_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(system_configs)"))]

@@ -3,8 +3,8 @@
 数据源约定：
   - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
-  - 提示词            → 直接读/写 backend/prompts/**/*.md（18 个文件类 prompt：
-                        method-prompts 9 / shared 2 / interpret 4 / pair 3）；
+  - 提示词            → 直接读/写 backend/prompts/**/*.md（19 个文件类 prompt：
+                        method-prompts 9 / shared 2 / interpret 5 / pair 3）；
                         每次写前先落
                         PromptVersion 版本快照到运维库（可查看历史 / 回滚），写必记审计。
 
@@ -70,7 +70,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 18 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 19 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -86,9 +86,10 @@ PROMPT_FILES = {
     # shared（2）
     "revise": "shared/revise.md",
     "validation": "shared/validation.md",
-    # interpret（4）
+    # interpret（5，含 REQ-075 六爻焦点详解）
     "astrology": "interpret/astrology.md",
     "divination": "interpret/divination.md",
+    "divination_focus": "interpret/divination_focus.md",
     "lenormand": "interpret/lenormand.md",
     "tarot": "interpret/tarot.md",
     # pair（3，REQ-072：三大模块配对解析）
@@ -147,6 +148,7 @@ EVENT_NAME_ZH = {
     "zodiac_fortune": "生肖流年",
     "divination_cast": "起卦",
     "divination_interpret": "断卦解读",
+    "divination_focus_interpret": "六爻焦点详解",
     "tarot_draw": "塔罗抽牌",
     "tarot_interpret": "塔罗解读",
     "lenormand_draw": "雷诺曼抽牌",
@@ -512,11 +514,11 @@ def get_user_case_archive(
     return {"code": 0, "message": "ok", "data": build_archive(case, db)}
 
 
-# --- 路由：提示词（18 个文件类 prompt：method-prompts 9 / shared 2 / interpret 4 / pair 3） ---
+# --- 路由：提示词（19 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 3） ---
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 18 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 19 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []

@@ -20,6 +20,7 @@ app/credits/poller.py）：
   revise:{case_id}              多轮修正/板块追问（追问）
   query:{case_id}:{method_key}  单法直问（prediction 单法 analyze）
   divination:{id}               起卦断卦 / 雷诺曼解读（按 divinations.method 区分）
+  divination_focus:{id}:{focus} 六爻焦点详解（REQ-075，按 divinations.method 区分）
   tarot:{id}                    塔罗解读（tarot_readings 无 case_id 列，档案名恒空）
   astrology:{id}                星座本命解读
   serial:{serial}               金数据充值（type=recharge 的流水）
@@ -68,7 +69,7 @@ DIVINATION_METHOD_ZH = {
 def parse_ref(ref) -> dict | None:
     """ref → 结构化 dict；None/空/无法识别 → None。
 
-    返回的 kind ∈ job|revise|query|divination|tarot|astrology|serial。
+    返回的 kind ∈ job|revise|query|divination|divination_focus|tarot|astrology|serial。
     """
     if not ref or not isinstance(ref, str):
         return None
@@ -83,6 +84,8 @@ def parse_ref(ref) -> dict | None:
         return {"kind": "query", "case_id": int(parts[1]), "method": parts[2]}
     if kind == "divination" and len(parts) == 2 and parts[1].isdigit():
         return {"kind": "divination", "divination_id": int(parts[1])}
+    if kind == "divination_focus" and len(parts) == 3 and parts[1].isdigit() and parts[2]:
+        return {"kind": "divination_focus", "divination_id": int(parts[1]), "focus": parts[2]}
     if kind == "tarot" and len(parts) == 2 and parts[1].isdigit():
         return {"kind": "tarot", "tarot_id": int(parts[1])}
     if kind == "astrology" and len(parts) == 2 and parts[1].isdigit():
@@ -114,6 +117,7 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
       - revise:{case_id} → 「追问」；
       - divination:{id} → divinations.method=lenormand 时「雷诺曼解读」，
         其余「起卦深度解读」（method 未传/记录缺失同样走「起卦深度解读」）；
+      - divination_focus:{id}:{focus} → 「六爻焦点详解」（REQ-075，仅六爻）；
       - tarot:{id} → 「塔罗解读」；
       - astrology:{id} → 「星座本命解读」；
       - query:{case_id}:{method} → 「单法直问·{法}」（单法直问为 prediction 单法分析）；
@@ -140,6 +144,8 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
         return "追问"
     if kind == "divination":
         return DIVINATION_METHOD_ZH.get(_enum_value(divination_method), "起卦深度解读")
+    if kind == "divination_focus":
+        return "六爻焦点详解"
     if kind == "tarot":
         return "塔罗解读"
     if kind == "astrology":
@@ -158,7 +164,8 @@ def label_case_map(session, rows) -> dict[int, dict]:
     档案名反查（REQ-063 §2）：
       - job:{id}:{m}  → jobs.case_id → cases.name（jobs 表记录消耗时的档案）；
       - revise/query  → ref 内 case_id → cases.name；
-      - divination:{id} → divinations.case_id（可空）→ cases.name；
+      - divination:{id} / divination_focus:{id}:{focus} → divinations.case_id（可空）
+        → cases.name（REQ-075 六爻焦点详解同 divinations 反查）；
       - astrology:{id} → astrology_readings.case_id（可空）→ cases.name；
       - tarot:{id}   → tarot_readings **无 case_id 列**，档案名恒 None；
       - 入账/未识别/关联档案缺失/档案未命名 → case_name=None。
@@ -176,7 +183,7 @@ def label_case_map(session, rows) -> dict[int, dict]:
             job_ids.add(p["job_id"])
         elif p["kind"] in ("revise", "query"):
             direct_case_ids.add(p["case_id"])
-        elif p["kind"] == "divination":
+        elif p["kind"] in ("divination", "divination_focus"):
             div_ids.add(p["divination_id"])
         elif p["kind"] == "astrology":
             astro_ids.add(p["astrology_id"])
@@ -220,7 +227,7 @@ def label_case_map(session, rows) -> dict[int, dict]:
                     case_id = job.case_id
             elif kind in ("revise", "query"):
                 case_id = p["case_id"]
-            elif kind == "divination":
+            elif kind in ("divination", "divination_focus"):
                 div = divs.get(p["divination_id"])
                 if div is not None:
                     div_method = div.method
