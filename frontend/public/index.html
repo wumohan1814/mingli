@@ -376,17 +376,33 @@
       .landing-hero{margin-left:150px;margin-right:auto}
     }
 
-    /* ===== HUB 入口卡 ===== */
+    /* ===== HUB 入口卡（REQ-038：竖向单列 + 横向卡片） ===== */
     .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
-    .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
-    .hub-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);cursor:pointer;overflow:hidden;transition:transform .14s,box-shadow .2s}
+    .hub-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+    .hub-card{position:relative;display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;box-sizing:border-box;padding:16px 18px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);cursor:pointer;overflow:hidden;transition:transform .14s,box-shadow .2s}
     .hub-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(26,33,56,.18)}
-    .hub-card .hc-bar{position:absolute;left:0;top:0;bottom:0;width:5px}
-    .hub-card .hc-ico{width:30px;height:30px;color:var(--skin-accent)}
+    .hub-card .hc-bar{position:absolute;left:0;top:0;bottom:0;width:5px;height:100%}
+    .hub-card .hc-ico{flex:none;width:34px;height:34px;color:var(--skin-accent)}
+    .hub-card .hc-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
     .hub-card .hc-name{font-size:17px;font-weight:700;color:var(--text-1)}
     .hub-card .hc-sub{font-size:12px;color:var(--text-3);line-height:1.5}
     .hub-card.disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4)}
     .hub-card.disabled:hover{transform:none;box-shadow:none}
+
+    /* ===== BUG-006：档案可选卡片（星座 / MBTI 选档案用，含明显选中态） ===== */
+    .step-hint{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;margin:2px 0 10px;color:var(--text-3)}
+    .step-hint .sh{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--radius-pill);background:var(--paper);border:1px solid var(--border);line-height:1.5}
+    .step-hint .sh.cur{background:var(--skin-accent-soft);border-color:var(--skin-accent);color:var(--skin-accent);font-weight:600}
+    .step-hint .sh-arr{color:var(--text-3);opacity:.75}
+    .case-opts{display:flex;flex-direction:column;gap:8px;margin:4px 0 10px}
+    .case-opt{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;text-align:left;padding:11px 13px;border-radius:var(--radius-md);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;font-family:inherit;transition:border-color .14s,background .14s,box-shadow .14s;line-height:1.4}
+    .case-opt:hover{border-color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .case-opt.sel{border-color:var(--skin-accent);background:var(--skin-accent-soft);box-shadow:inset 0 0 0 1px var(--skin-accent)}
+    .case-opt .co-main{flex:1;min-width:0}
+    .case-opt .co-name{display:block;font-size:15px;font-weight:700;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .case-opt .co-meta{display:block;font-size:12px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .case-opt .co-check{flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .14s}
+    .case-opt.sel .co-check{border-color:var(--skin-accent);background:var(--skin-accent);color:var(--skin-accent-ink)}
 
     /* ===== 通用卡片 / 标签 ===== */
     .tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--skin-accent-soft);color:var(--skin-accent)}
@@ -4480,11 +4496,30 @@ function ArchivePage({
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
+  const [caseTitle, setCaseTitle] = useState('未命名档案');
+  // REQ-040：页头取「当前档案的用户命名」。后端 /archive 聚合包可能不带顶层 name、
+  // input_json 亦无 name（case 名只存在 case 表），因此取值链：input.name → payload 顶层
+  // name/case_name → 静默回查 GET /cases 列表按 caseId 匹配 → 兜底「未命名档案」。
+  const pickName = v => v && typeof v === 'string' && v.trim() ? v.trim() : '';
   useEffect(() => {
     const load = async () => {
       try {
         const res = await api('/cases/' + caseId + '/archive');
-        setData(res.data || res);
+        const payload = (res && res.data) || res || {};
+        setData(payload);
+        const inp0 = payload.input || {};
+        let nm = pickName(inp0.name) || pickName(payload.name) || pickName(payload.case_name);
+        if (!nm) {
+          try {
+            const lr = await api('/cases', {
+              method: 'GET'
+            });
+            const list = (lr && lr.data && lr.data.cases) || (lr && lr.cases) || [];
+            const hit = list.find(x => String(x.caseId) === String(caseId));
+            if (hit) nm = pickName(hit.name);
+          } catch (e) {/* 回查失败静默，走兜底文案 */}
+        }
+        setCaseTitle(nm || '未命名档案');
       } catch (e) {
         setErrored(e.message || '加载档案失败');
       } finally {
@@ -4676,7 +4711,7 @@ function ArchivePage({
     style: {
       marginBottom: 0
     }
-  }, "我的命理档案"), /*#__PURE__*/React.createElement(CreditBalance, {
+  }, caseTitle), /*#__PURE__*/React.createElement(CreditBalance, {
     onClick: () => onNavigate('credits', {
       caseId
     })
@@ -4754,7 +4789,10 @@ function ArchivePage({
       }
     }, m.content)));
   })), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row"
+    className: "flex-row",
+    style: {
+      flexWrap: 'wrap'
+    }
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('predict', {
@@ -4763,18 +4801,31 @@ function ArchivePage({
   }, "查看解读"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('cases')
-  }, "回到档案列表")), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, "回到档案列表"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, "回到首页")), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
+  }, "回到首页")), /*#__PURE__*/React.createElement("div", {
+    className: "flex-row",
     style: {
-      marginTop: 12
-    },
-    onClick: logout
-  }, "退出登录"));
+      flexWrap: 'wrap',
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onNavigate('predict', {
+      caseId
+    })
+  }, "国学预测"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onNavigate('tarot', {
+      caseId
+    })
+  }, "西式占卜"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onNavigate('mbti', {
+      caseId
+    })
+  }, "MBTI")));
 }
 
 // ===== 横向扩展：左侧导航栏 + 各模块页面 =====
@@ -4967,10 +5018,12 @@ function GuoxueHubPage({
     size: 28,
     className: "hc-ico"
   }), /*#__PURE__*/React.createElement("div", {
+    className: "hc-body"
+  }, /*#__PURE__*/React.createElement("div", {
     className: "hc-name"
   }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
-  }, c.sub)))));
+  }, c.sub))))));
 }
 
 /* ---------- 西式占卜 HUB ---------- */
@@ -5035,10 +5088,12 @@ function XishiHubPage({
     size: 28,
     className: "hc-ico"
   }), /*#__PURE__*/React.createElement("div", {
+    className: "hc-body"
+  }, /*#__PURE__*/React.createElement("div", {
     className: "hc-name"
   }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
-  }, c.sub)))));
+  }, c.sub))))));
 }
 
 /* ---------- 生肖流年（确定性，零 LLM） ---------- */
@@ -6961,26 +7016,28 @@ function AstrologyPage({
       onClick: () => onNavigate('cases')
     }, '管理档案')));
   } else {
-    casePick = el('div', null, el('div', {
-      className: 'row-gap',
-      style: {
-        margin: '6px 0 2px'
-      }
+    // BUG-006：档案改为明显可选卡片（档案名 + 出生年/性别/出生地 meta + 圆形选中勾）
+    casePick = el('div', {
+      className: 'case-opts'
     }, caseList.map(c => {
       const sel = caseId != null && Number(caseId) === Number(c.caseId);
-      const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ');
+      const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
+      const nm = c.name || '档案 ' + c.caseId;
       return el('button', {
         key: c.caseId,
         type: 'button',
-        className: 'tag' + (sel ? ' sel' : ''),
-        style: {
-          cursor: 'pointer',
-          border: '1px solid ' + (sel ? 'var(--skin-accent)' : 'var(--border)'),
-          fontWeight: 500
-        },
+        className: 'case-opt' + (sel ? ' sel' : ''),
         onClick: () => setCaseId(c.caseId)
-      }, (c.name || '档案 ' + c.caseId) + (meta ? '（' + meta + '）' : ''));
-    })));
+      }, el('span', {
+        className: 'co-main'
+      }, el('span', {
+        className: 'co-name'
+      }, nm), el('span', {
+        className: 'co-meta'
+      }, meta)), el('span', {
+        className: 'co-check'
+      }, sel ? '✓' : ''));
+    }));
   }
   const formCard = el('div', {
     className: 'card'
@@ -6993,10 +7050,22 @@ function AstrologyPage({
       lineHeight: 1.7,
       marginBottom: 4
     }
-  }, '生辰信息自动取自所选档案（出生日期 / 时间 / 性别 / 出生地经纬度），排盘为确定性计算、免费。'), casePick, el('button', {
+  }, '生辰信息自动取自所选档案（出生日期 / 时间 / 性别 / 出生地经纬度），排盘为确定性计算、免费。'), el('div', {
+    className: 'step-hint'
+  }, el('span', {
+    className: 'sh' + (caseId ? '' : ' cur')
+  }, '① 选择档案'), el('span', {
+    className: 'sh-arr'
+  }, '→'), el('span', {
+    className: 'sh' + (caseId && !data ? ' cur' : '')
+  }, '② 生成星盘'), el('span', {
+    className: 'sh-arr'
+  }, '→'), el('span', {
+    className: 'sh' + (data ? ' cur' : '')
+  }, '③ 查看解读')), casePick, el('button', {
     className: 'btn btn-primary',
     style: {
-      marginTop: 12
+      marginTop: 4
     },
     disabled: loading || !caseId,
     onClick: () => load('natal')
@@ -7601,10 +7670,20 @@ function MbtiPage({
         gate = el('div', {className: 'card'},
           el('div', {className: 'section-title'}, '选择档案 · 开始答题'),
           el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案的 mbti_type，选择后自动开始答题。'),
-          el('div', {className: 'row-gap', style: {margin: '6px 0 2px'}},
+          el('div', {className: 'step-hint'},
+            el('span', {className: 'sh cur'}, '① 选择档案'),
+            el('span', {className: 'sh-arr'}, '→'),
+            el('span', {className: 'sh'}, '② 自动开始答题')),
+          el('div', {className: 'case-opts'},
             caseList.map(c => {
-              const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ');
-              return el('button', {key: c.caseId, type: 'button', className: 'tag', style: {cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 500}, onClick: () => setCaseId(c.caseId)}, (c.name || '档案 ' + c.caseId) + (meta ? '（' + meta + '）' : ''));
+              const sel = caseId != null && Number(caseId) === Number(c.caseId);
+              const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
+              const nm = c.name || '档案 ' + c.caseId;
+              return el('button', {key: c.caseId, type: 'button', className: 'case-opt' + (sel ? ' sel' : ''), onClick: () => setCaseId(c.caseId)},
+                el('span', {className: 'co-main'},
+                  el('span', {className: 'co-name'}, nm),
+                  el('span', {className: 'co-meta'}, meta)),
+                el('span', {className: 'co-check'}, sel ? '✓' : ''));
             })),
           el('div', {className: 'back-row', style: {justifyContent: 'center'}},
             el('button', {className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: () => onNavigate('cases')}, '管理档案'),
