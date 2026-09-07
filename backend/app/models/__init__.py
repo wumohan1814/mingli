@@ -5,6 +5,7 @@ from app.models.analytics import (
     CreditAccount, CreditTransaction, RechargeCode, SystemConfig,
     RegisterLimit, Divination, TarotReading, AstrologyReading, MbtiResult,
     MbtiShareLink, PairReading, CaseShareLink, UserSetting,
+    AgentMemory, AgentMemoryTask,
     CaseStatus, JobType, JobStatus, Phase,
 )
 from app.models.feedback import Feedback, FeedbackSummary, FeedbackType
@@ -23,6 +24,7 @@ __all__ = [
     "CreditAccount", "CreditTransaction", "RechargeCode", "SystemConfig",
     "RegisterLimit", "Divination", "TarotReading", "AstrologyReading", "MbtiResult",
     "MbtiShareLink", "PairReading", "CaseShareLink", "UserSetting",
+    "AgentMemory", "AgentMemoryTask",
     "CaseStatus", "JobType", "JobStatus", "Phase",
     "Feedback", "FeedbackSummary", "FeedbackType",
     "Event", "AdminUser", "AdminAuditLog", "ErrorReport",

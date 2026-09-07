@@ -85,6 +85,45 @@ def get_ops_db():
         session.close()
 
 
+def ensure_agent_memory_fts() -> None:
+    """REQ-077：FTS5 全文索引（agent_memories_fts，trigram）+ 同步触发器（幂等）。
+
+    方案书 §1.3/§1.6：在 lifespan 的 `Base.metadata.create_all` 之后调用（此时
+    agent_memories 表已存在）。采用 **FTS5 内容表自持镜像**（rowid = agent_memories.id），
+    中文 tokenizer 用内建 **trigram**，与事实表由数据库触发器自动同步。
+
+    实测结论（SQLite 3.50.4，本机）：
+    - trigram tokenizer 内建可用（≥3 字符子串查询可命中，2 字查询返回空集不报错），
+      短查询降级由检索层负责（memory/service.py recall 的 recency 兜底）；
+    - trigram 表**不支持** FTS5 特殊 'delete' 命令（SQL logic error），故 DELETE 同步
+      用普通 `DELETE FROM agent_memories_fts WHERE rowid=old.id`（实测可用）。
+
+    user_id 刻意不进 FTS 列：多用户共享同一全文索引，隔离靠召回 SQL join 回事实表后
+    强制 `m.user_id = :uid` 过滤（方案书 §4）。软删（UPDATE deleted_at）不触发下面的
+    `AFTER UPDATE OF content` 触发器，服务层软删时显式 DELETE 该 FTS 行。
+
+    SQLite 的 CREATE VIRTUAL TABLE / CREATE TRIGGER 均支持 IF NOT EXISTS，本函数可
+    重复执行（幂等）。
+    """
+    statements = (
+        # 内容表自持镜像 + trigram（中文 ≥3 字子串可检索）
+        "CREATE VIRTUAL TABLE IF NOT EXISTS agent_memories_fts USING fts5(content, tokenize = 'trigram')",
+        # 插入同步：新事实进索引
+        "CREATE TRIGGER IF NOT EXISTS agent_memories_ai AFTER INSERT ON agent_memories "
+        "BEGIN INSERT INTO agent_memories_fts(rowid, content) VALUES (new.id, new.content); END",
+        # 物理删除同步：摘索引行（trigram 不支持 'delete' 命令，用普通 DELETE）
+        "CREATE TRIGGER IF NOT EXISTS agent_memories_ad AFTER DELETE ON agent_memories "
+        "BEGIN DELETE FROM agent_memories_fts WHERE rowid = old.id; END",
+        # content 更新同步：先摘后插；去重刷新只 UPDATE 时间戳/importance 不触发此触发器
+        "CREATE TRIGGER IF NOT EXISTS agent_memories_au AFTER UPDATE OF content ON agent_memories "
+        "BEGIN DELETE FROM agent_memories_fts WHERE rowid = old.id; "
+        "INSERT INTO agent_memories_fts(rowid, content) VALUES (new.id, new.content); END",
+    )
+    with analytics_engine.begin() as conn:
+        for stmt in statements:
+            conn.execute(text(stmt))
+
+
 def ensure_schema() -> None:
     """轻量幂等迁移：为老库补齐缺失列（SQLite ADD COLUMN）。
     - jobs.result_json（预测任务落库）
