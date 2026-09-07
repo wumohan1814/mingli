@@ -11028,6 +11028,235 @@ function zodiacTrendText(kind, signCn, gender) {
     return '文案待补充';
   }
 }
+/* ================= REQ-057：星座 · 恋爱关系（太阳星座匹配轻板块） =================
+   P3 区分：与 REQ-030「配对解析」（双档案合盘、付费 LLM、独立入口）不同，本条仅展示
+   「当前档案太阳星座 × 其余 11 星座」的静态固定匹配（免费、零请求、非双人生辰合盘）。
+   文案策略：结构先行、正文后补 —— 本轮正文统一占位「文案待补充」，分值为基础规则默认占位；
+   正式文案由文字 Agent 后续按 12×11 对整体交付（届时填充 SUN_LOVE_TEXT 表、覆盖占位值即可）。
+   合规口径：与 REQ-045 三格 / 文案轮次同一体系 —— 趋势参考口吻，页面级免责沿用全局页脚。 */
+const SUN_LOVE_ORDER = ['白羊', '金牛', '双子', '巨蟹', '狮子', '处女', '天秤', '天蝎', '射手', '摩羯', '水瓶', '双鱼'];
+const SUN_LOVE_ELEMENT = {
+  '白羊': '火',
+  '金牛': '土',
+  '双子': '风',
+  '巨蟹': '水',
+  '狮子': '火',
+  '处女': '土',
+  '天秤': '风',
+  '天蝎': '水',
+  '射手': '火',
+  '摩羯': '土',
+  '水瓶': '风',
+  '双鱼': '水'
+};
+/* 每对说明正文表：键 = 太阳1_太阳2（12×11 对，与三格/文案轮次同文案体系）；正文后补时整表填充 */
+const SUN_LOVE_TEXT = {};
+const SUN_LOVE_TEXT_PH = '文案待补充';
+function sunLoveText(mine, other) {
+  const t = SUN_LOVE_TEXT[String(mine) + '_' + String(other)];
+  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
+}
+/* 占位默认分值（正文后补可整体覆盖）：同元素 = 三合默契（火象三合 / 土象三合…）；
+   火+风、土+水 = 传统互补次之；其余 = 中性占位。仅为给展示与排序一个确定的基础，非最终口径。 */
+function sunLoveScore(mine, other) {
+  if (mine === other) return 0;
+  const a = SUN_LOVE_ELEMENT[mine];
+  const b = SUN_LOVE_ELEMENT[other];
+  if (!a || !b) return 0;
+  if (a === b) return 92;
+  if (a === '火' && b === '风' || a === '风' && b === '火' || a === '土' && b === '水' || a === '水' && b === '土') return 82;
+  return 70;
+}
+function sunLovePairs(mine) {
+  return SUN_LOVE_ORDER.filter(function (s) {
+    return s !== mine;
+  }).map(function (s) {
+    return {
+      sign: s,
+      pct: sunLoveScore(mine, s),
+      txt: sunLoveText(mine, s)
+    };
+  }).sort(function (x, y) {
+    return y.pct - x.pct || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
+  });
+}
+/* 恋爱关系弹窗（PairModal 同款容器样式）：有太阳星座 → 与其余 11 星座匹配宫格；
+   无太阳星座（未生成星盘/未选档案）→ 「请先生成星盘」引导，不展示空表 */
+function SunLoveModal({
+  sunCn,
+  caseName,
+  onClose,
+  onGoChart
+}) {
+  const el = React.createElement;
+  const me = String(sunCn || '').trim();
+  const hasSun = !!me && SUN_LOVE_ORDER.indexOf(me) !== -1;
+  const list = hasSun ? sunLovePairs(me) : [];
+  const starN = pct => pct >= 90 ? 5 : pct >= 80 ? 4 : 3;
+  const FULL = '★★★★★';
+  const EMPTY = '☆☆☆☆☆';
+  const cells = list.map(function (p) {
+    const n = starN(p.pct);
+    return el('div', {
+      key: p.sign,
+      style: {
+        border: '1px solid var(--border)',
+        background: 'var(--paper)',
+        borderRadius: 10,
+        padding: '8px 10px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+        minWidth: 0
+      }
+    }, el('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 6
+      }
+    }, el('span', {
+      style: {
+        fontSize: 14,
+        fontWeight: 700,
+        color: 'var(--text-1)',
+        whiteSpace: 'nowrap'
+      }
+    }, SIGN_SYM[SUN_LOVE_ORDER.indexOf(p.sign)] + ' ' + p.sign), el('span', {
+      style: {
+        fontSize: 15,
+        fontWeight: 800,
+        color: 'var(--skin-accent)',
+        fontVariantNumeric: 'tabular-nums',
+        whiteSpace: 'nowrap'
+      }
+    }, p.pct + '%')), el('div', {
+      style: {
+        fontSize: 12,
+        lineHeight: 1,
+        letterSpacing: 1
+      }
+    }, el('span', {
+      style: {
+        color: '#C9A24B'
+      }
+    }, FULL.slice(0, n)), el('span', {
+      style: {
+        color: 'var(--text-3)',
+        opacity: .5
+      }
+    }, EMPTY.slice(0, 5 - n))), el('div', {
+      style: {
+        fontSize: 11.5,
+        color: 'var(--text-3)',
+        lineHeight: 1.6
+      }
+    }, p.txt));
+  });
+  const hd = el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: 'orbit',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), '恋爱关系 · 太阳星座匹配'), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: '关闭'
+  }, '✕'));
+  const sub = el('div', {
+    className: 'pair-sub'
+  }, hasSun ? '以「' + (caseName ? caseName : '当前档案') + ' · 太阳' + me + '」为基准，查看与其余 11 星座的恋爱匹配度。分值越高表示性格层面越合拍（静态轻内容、免费、不扣积分）。' : '本板块以档案的太阳星座为基准做恋爱匹配（免费静态轻内容，区别于双档案合盘的「配对解析」）。');
+  let inner = null;
+  if (hasSun) {
+    inner = el('div', null, el('div', {
+      className: 'pair-sec-label',
+      style: {
+        marginTop: 4
+      }
+    }, el('span', {
+      className: 'ps-n'
+    }, '我'), '太阳星座 · ', me, '（其余 11 星座匹配度，按基础合意从高到低）'), el('div', {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))',
+        gap: 8,
+        marginTop: 6
+      }
+    }, cells));
+  } else {
+    inner = el('div', {
+      style: {
+        background: 'var(--paper)',
+        border: '1px dashed var(--border)',
+        borderRadius: 12,
+        padding: '14px 16px',
+        textAlign: 'center'
+      }
+    }, el('div', {
+      style: {
+        fontSize: 15,
+        fontWeight: 800,
+        color: 'var(--text-1)',
+        marginBottom: 6
+      }
+    }, '太阳星座未知 · ' + (caseName ? '请先生成星盘' : '请先选择档案')), el('div', {
+      style: {
+        fontSize: 12.5,
+        color: 'var(--text-2)',
+        lineHeight: 1.8
+      }
+    }, caseName ? '当前已选档案「' + caseName + '」尚未生成本命星盘，无法确定太阳星座。点击「去生成星盘」免费排盘（确定性计算；该档案已生成过则直接复用、不重复计费），成功后再次点击「恋爱关系」入口即可查看。' : '尚未选择档案。请先在上方「选择档案 · 生成免费本命盘」中选择一份档案并生成/查看星盘，确定太阳星座后再来查看恋爱匹配。'), el('div', {
+      style: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 10,
+        marginTop: 12,
+        flexWrap: 'wrap'
+      }
+    }, caseName ? el('button', {
+      type: 'button',
+      className: 'btn btn-primary',
+      style: {
+        width: 'auto'
+      },
+      onClick: onGoChart
+    }, '去生成星盘') : null, el('button', {
+      type: 'button',
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto'
+      },
+      onClick: onClose
+    }, '关闭')));
+  }
+  const disclaimer = el('div', {
+    className: 'pair-pay'
+  }, '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋或其他现实建议；如需基于双方完整星盘的深度合盘，请使用上方「配对解析」。');
+  return el('div', {
+    className: 'modal-mask',
+    onClick: onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    style: {
+      maxWidth: 620
+    },
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, hd, sub, inner, disclaimer, hasSun ? el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose
+  }, '关闭')) : null));
+}
+
 /* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
 /* 把后端 natal / 单盘结构归一化成前端渲染结构（兼容 DEMO 字段与真实字段，缺字段不崩） */
 function astroNorm(scope) {
@@ -11248,6 +11477,8 @@ function AstrologyPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
+  // REQ-057：恋爱关系（太阳星座匹配）弹窗开关
+  const [loveOpen, setLoveOpen] = useState(false);
   const TAB_LIST = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日']];
   const chart = data && data.chart ? data.chart : null;
   const natalRaw = chart && chart.natal ? chart.natal : null;
@@ -11800,14 +12031,38 @@ function AstrologyPage({
     }, '在上方选择一份档案，点击「生成星盘」或「查看星盘」（该档案已生成过的星盘会直接展示、不重复计费；生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
   }
 
-  return el('div', {
+  // ---- REQ-057：恋爱关系（太阳星座匹配）入口与数据源 ----
+  // 太阳星座优先取「当前已生成/查看的本命盘」（与盘面三格同源）；本会话未生成但该档案历史已排过盘
+  // （detailMap.hasNatal + sunCn，与档案卡 meta「太阳X」同口径）也可直接判定，无需重复排盘；
+  // 两者皆无 → 弹窗内给「请先生成星盘 / 请先选择档案」引导。
+  const loveSelCase = caseId == null ? null : (caseList.find(c => Number(c.caseId) === Number(caseId)) || null);
+  const loveCaseName = loveSelCase ? ((loveSelCase.name && String(loveSelCase.name).trim()) || '档案 ' + loveSelCase.caseId) : '';
+  const loveDet = detailMap[caseId == null ? '' : String(caseId)];
+  const loveSunCn = data && natalRaw && dataCaseId.current != null && caseId != null && Number(dataCaseId.current) === Number(caseId) && sunSign
+    ? sunSign
+    : (loveDet && loveDet.hasNatal && loveDet.sunCn ? loveDet.sunCn : '');
+  const loveEntry = el('div', {
+    className: 'pair-entry'
+  }, el('div', {
+    className: 'pe-main'
+  }, el('div', {
+    className: 'pe-title'
+  }, '恋爱关系'), el('div', {
+    className: 'pe-sub'
+  }, '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱匹配度 —— 静态娱乐向参考、免费、不扣积分（太阳星座需先生成/查看本命盘；深度双人合盘请用下方「配对解析」）')), el('button', {
+    className: 'btn btn-outline',
+    type: 'button',
+    onClick: () => setLoveOpen(true)
+  }, '恋爱关系'));
+
+  return el(React.Fragment, null, el('div', {
     className: 'container'
   }, el('div', {
     className: 'hub-title'
   }, el(Icon, {
     name: 'orbit',
     size: 22
-  }), ' 星座'), el('div', {
+  }), ' 星座'), loveEntry, el('div', {
     className: 'pair-entry'
   }, el('div', {
     className: 'pe-main'
@@ -11841,7 +12096,15 @@ function AstrologyPage({
       width: 'auto'
     },
     onClick: () => onNavigate('landing')
-  }, '回到首页')));
+  }, '回到首页'))), loveOpen ? el(SunLoveModal, {
+    sunCn: loveSunCn,
+    caseName: loveCaseName,
+    onClose: () => setLoveOpen(false),
+    onGoChart: () => {
+      setLoveOpen(false);
+      load('natal');
+    }
+  }) : null);
 }
 
 /* ---------- MBTI 人格测试（后端题库 /api/mbti/questions · 计分 /api/mbti/score · 文案 /api/mbti/results） ---------- */
