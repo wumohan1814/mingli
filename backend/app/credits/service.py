@@ -25,6 +25,7 @@ import math
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.credits.labels import label_case_map
 from app.database import AnalyticsSession, OpsSession
 from app.errors import ERR_BILLING, ERR_INSUFFICIENT_CREDIT, BizError
 from app.models import CreditAccount, CreditTransaction
@@ -215,7 +216,9 @@ def manual(user_id: int, delta: int, note: str = "", admin_id: int | None = None
 def transactions(user_id: int, limit: int = 50, offset: int = 0) -> list:
     """流水分页（按 id 倒序，最新在前）。
 
-    返回 [{id, delta, type, tokens, amount, ref, note, createdAt}]。
+    REQ-063：每条额外返回可读化字段 label（ref+type → 中文标签）与
+    case_name（消耗档案名，可能为 None）。返回
+    [{id, delta, type, tokens, amount, ref, note, createdAt, label, case_name}]。
     """
     session = AnalyticsSession()
     try:
@@ -227,6 +230,8 @@ def transactions(user_id: int, limit: int = 50, offset: int = 0) -> list:
             .limit(limit)
             .all()
         )
+        # 同 session 内批量反查 label / case_name（jobs/divinations/astrology_readings/cases）
+        decorated = label_case_map(session, rows)
         return [
             {
                 "id": t.id,
@@ -237,6 +242,8 @@ def transactions(user_id: int, limit: int = 50, offset: int = 0) -> list:
                 "ref": t.ref,
                 "note": t.note,
                 "createdAt": t.created_at.isoformat(timespec="seconds") if t.created_at else None,
+                "label": decorated[t.id]["label"],
+                "case_name": decorated[t.id]["case_name"],
             }
             for t in rows
         ]
