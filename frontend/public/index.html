@@ -450,13 +450,10 @@
     .zrel .zv{flex:1;min-width:0;color:var(--text-1);font-weight:600;line-height:1.75;word-break:break-all}
     /* C6：五行关系 / 风险关系 通用解读小字（确定性，零 LLM） */
     .zrel-guide{font-size:12px;color:var(--text-3);line-height:1.85;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);text-align:left}
-    /* 生肖流年：流年年份切换条（档案选择卡下方、结果上方；← 上一年 / 下一年 →） */
-    .year-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
-    .year-nav .yn-btn{min-width:110px;padding:9px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--paper);color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer;transition:.14s;font-family:inherit;line-height:1.4}
-    .year-nav .yn-btn:hover:not(:disabled){border-color:var(--skin-accent);color:var(--skin-accent);background:var(--skin-accent-soft)}
-    .year-nav .yn-btn:disabled{opacity:.45;cursor:not-allowed}
-    .year-nav .yn-cur{min-width:120px;text-align:center;font-size:20px;font-weight:800;color:var(--text-1);line-height:1.25}
-    .year-nav .yn-cur small{display:block;font-size:11px;color:var(--text-3);font-weight:500;letter-spacing:.02em}
+    /* 生肖流年：结果卡标题两侧年份切换箭头（← / →；仅出结果即 data 非空时随标题渲染） */
+    .zodiac-year-arrow{width:36px;height:36px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--border);background:var(--paper);color:var(--text-2);font-size:19px;font-weight:700;line-height:1;cursor:pointer;transition:.14s;font-family:inherit;padding:0}
+    .zodiac-year-arrow:hover:not(:disabled){border-color:var(--skin-accent);color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .zodiac-year-arrow:disabled{opacity:.4;cursor:not-allowed}
     /* 五行关系合并卡：色块标题区（五行关系 + classification + C1 一句话解读） */
     .wx-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px;letter-spacing:.12em;opacity:.85;font-weight:700}
     .wx-hd .wx-cls{font-size:16px;font-weight:800;letter-spacing:.02em;opacity:1}
@@ -5697,7 +5694,7 @@ function ZodiacPage({
   onNavigate
 }) {
   // 生肖流年档案驱动：选择档案 → 出生年份自动推算生肖（生肖固定不变，仅流年年份可切换）。
-  // 流年年份默认当前年，可在档案卡下方用「上一年 / 下一年」按钮切换（范围 当前年±10），切换后自动重新推演。
+  // 流年年份默认当前年；出结果后点结果标题两侧「← / →」箭头切换（范围 当前年±10），切换后自动重新推演。
   const curYear = new Date().getFullYear();
   const MIN_YEAR = curYear - 10;
   const MAX_YEAR = curYear + 10;
@@ -5742,7 +5739,7 @@ function ZodiacPage({
       if (runRef.current === myRun) setLoading(false);
     }
   };
-  // 自动出结果：选档案（z 生效 + runId 递增）或 流年年份变化（点「上一年/下一年」）→ 触发一次 load
+  // 自动出结果：选档案（z 生效 + runId 递增）或 流年年份变化（点结果标题 ←/→ 箭头）→ 触发一次 load
   useEffect(() => {
     if (z >= 0 && runId > 0) load();
   }, [z, runId, year]);
@@ -5906,9 +5903,9 @@ function ZodiacPage({
       value: String(c.caseId)
     }, (c.name || '未命名档案') + (c.birthYear ? '（' + c.birthYear + ' 年生）' : '')))), selCase ? React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；当前查看流年 ", year, " 年（生肖由出生年推算、固定不变，可在下方切换其它年份）") : React.createElement("p", {
+    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；当前查看流年 ", year, " 年（生肖由出生年推算、固定不变；出结果后点标题两侧箭头切换年份）") : React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算；下方按钮可切换 2027、2028 等其它流年年份）"));
+    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算；出结果后点标题两侧箭头切换 2027、2028 等其它流年年份）"));
   }
   return React.createElement("div", {
     className: "container"
@@ -5921,25 +5918,7 @@ function ZodiacPage({
     className: "card"
   }, React.createElement("div", {
     className: "label"
-  }, "选择档案"), picker), token && Array.isArray(caseList) && caseList.length ? React.createElement("div", {
-    className: "card"
-  }, React.createElement("div", {
-    className: "label"
-  }, "流年年份（生肖不变，仅切换查看的流年）"), React.createElement("div", {
-    className: "year-nav"
-  }, React.createElement("button", {
-    type: "button",
-    className: "yn-btn",
-    disabled: year <= MIN_YEAR,
-    onClick: () => shiftYear(-1)
-  }, "← 上一年"), React.createElement("div", {
-    className: "yn-cur"
-  }, year, " 年", React.createElement("small", null, "范围 ", MIN_YEAR, "–", MAX_YEAR, " · 默认 ", curYear, " 年")), React.createElement("button", {
-    type: "button",
-    className: "yn-btn",
-    disabled: year >= MAX_YEAR,
-    onClick: () => shiftYear(1)
-  }, "下一年 →"))) : null, loading ? React.createElement("div", {
+  }, "选择档案"), picker), loading ? React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
@@ -5956,7 +5935,7 @@ function ZodiacPage({
     className: "btn btn-primary",
     onClick: load
   }, "重试")) : data ? React.createElement(React.Fragment, null,
-  /* —— 生肖 medallion + 年运程标题（保留展示） —— */
+  /* —— 生肖 medallion + 年运程标题（保留展示；标题左右各加 ← / → 箭头切换流年年份，生肖不变） —— */
   React.createElement("div", {
     className: "card",
     style: {
@@ -5967,10 +5946,29 @@ function ZodiacPage({
     size: 40
   }), React.createElement("div", {
     style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12
+    }
+  }, React.createElement("button", {
+    type: "button",
+    className: "zodiac-year-arrow",
+    "aria-label": "上一年",
+    disabled: year <= MIN_YEAR,
+    onClick: () => shiftYear(-1)
+  }, "←"), React.createElement("div", {
+    style: {
       fontSize: 18,
       fontWeight: 700
     }
-  }, data.zodiac, " · ", year, " 年运程"), React.createElement("div", {
+  }, data.zodiac, " · ", year, " 年运程"), React.createElement("button", {
+    type: "button",
+    className: "zodiac-year-arrow",
+    "aria-label": "下一年",
+    disabled: year >= MAX_YEAR,
+    onClick: () => shiftYear(1)
+  }, "→")), React.createElement("div", {
     style: {
       marginTop: 8,
       display: 'flex',
