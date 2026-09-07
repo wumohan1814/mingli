@@ -26,6 +26,11 @@
                                   created_at}（不含 answers_json 全量，控制体积）。
                                   与路径版 GET /results/{result_id} 并存
                                   （REQ-047②：档案内回看各次填写记录）。
+  - DELETE /api/mbti/results/{result_id}
+                                  鉴权（REQ-054）：按 id+user_id 隔离删除单条历史
+                                  记录（复用 _get_owned_result，不存在 404），删除
+                                  前二次确认由前端做。保守起见不回写 case.mbti_type
+                                  （仅删结果行，避免误清档案当前类型）。
   - POST /api/mbti/share          鉴权：body {case_id:int}（须为本人档案，
                                   非本人/不存在 404）：为该档案生成/复用免登录
                                   分享链接（幂等，已有则复用 token），返回
@@ -337,3 +342,26 @@ def get_mbti_result(
         "scores": row.scores_json,
         "type_info": type_info,
     }}
+
+
+@router.delete("/mbti/results/{result_id}")
+def delete_mbti_result(
+    result_id: int,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """删除单条 MBTI 历史记录（REQ-054）：id+user_id 隔离（复用
+    _get_owned_result），不存在 404；删除前二次确认由前端负责，后端仅删除
+    该行并 commit。
+
+    注意：即使删除的是档案当前 mbti_type 对应的结果，也**不回写**
+    case.mbti_type（仅删历史记录行，档案类型保留）——REQ-054 未明确联动
+    清档，保守起见避免误清档案当前类型。零 LLM 零扣费；不写埋点。"""
+    user_id = get_user_id_from_token(authorization)
+    row = _get_owned_result(db, result_id, user_id)
+
+    db.delete(row)
+    db.commit()
+
+    return {"code": 0, "message": "ok",
+            "data": {"deleted": True, "id": result_id}}
