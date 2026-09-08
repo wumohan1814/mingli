@@ -1072,6 +1072,16 @@
     .ssgw-res-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.24);color:#EADCC0}
     .ssgw-res-ghost:active{transform:translateY(1px)}
 
+    /* ---- REQ-104 + BUG-016：六爻/梅花/小六壬 独立结果页（复用 ssgw-res 全屏骨架，统一 4 法风格）---- */
+    .ssgw-res-disc{font-size:11px;color:rgba(110,74,36,.62);text-align:center;line-height:1.7;margin-top:12px;padding-top:8px;border-top:1px dashed rgba(122,77,34,.22);font-family:var(--font-sans)}
+    .ssgw-gua-view{margin-top:2px}
+    .ssgw-gua-free{margin-top:12px;padding-top:10px;border-top:1px solid rgba(122,77,34,.25)}
+    /* ---- REQ-105：起卦操作界面 占问问题默认折叠（进入不弹输入法/输入框；点击拟输入框展开，留空可直接起卦）---- */
+    .q-entry{width:100%;box-sizing:border-box;padding:11px 12px;border:1px dashed var(--border);border-radius:var(--radius-sm);font-size:13.5px;color:var(--text-3);cursor:pointer;background:var(--paper);display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 4px;line-height:1.5}
+    .q-entry:active{background:var(--skin-accent-soft);border-color:var(--skin-accent)}
+    .q-entry .qe-plus{flex:none;font-size:16px;color:var(--skin-accent);font-weight:700;line-height:1}
+    .q-collapse{display:inline-block;margin-top:4px;padding:4px 2px;font-size:12px;color:var(--text-3);background:none;border:none;cursor:pointer;text-decoration:underline}
+
     /* ---- 六爻起卦：铜钱 + 爻列 ---- */
     .ly-cast-area{position:relative;display:flex;flex-direction:column;align-items:center;width:min(92vw,340px);margin-top:6px}
     .ly-coins{display:flex;gap:26px;align-items:center;justify-content:center;height:86px;margin-bottom:8px}
@@ -11116,10 +11126,40 @@ function SsgwResultScreen(props) {
     interp ? React.createElement(React.Fragment, null,
       React.createElement('div', { className: 'interp-title' }, UI_COPY.divin.sign_interp_title),
       React.createElement('div', { className: 'interp-body' }, interp)) : null));
+  // REQ-104：独立结果页统一口径 —— 结果页免责尾注（复用既有品牌免责常量，不新造文案）
+  cardKids.push(React.createElement('div', { key: 'disc', className: 'ssgw-res-disc' }, UI_COPY.landing.disclaimer_short));
   return React.createElement('div', { className: 'ssgw-res-screen' },
     React.createElement('div', { className: 'ssgw-res-head' },
       React.createElement('div', { className: 'ssgw-res-kicker' }, UI_COPY.divin.sign_kicker),
       React.createElement('span', { className: 'ssgw-res-sub' }, UI_COPY.divin.sign_head_sub)),
+    React.createElement('div', { className: 'ssgw-res-scroll' },
+      React.createElement('div', { className: 'ssgw-res-card' }, cardKids)),
+    React.createElement('div', { className: 'ssgw-res-foot' },
+      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onRedo }, UI_COPY.buttons.redo_divination),
+      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onBack }, UI_COPY.buttons.back_options)));
+}
+
+/* ---------------- REQ-104 + BUG-016：六爻/梅花/小六壬 独立结果页 ----------------
+   卦象结果不再内联在「临时起卦」选项列表下方（BUG-016），统一改走全屏独立视图；
+   复用 .ssgw-res-* 骨架（与观音灵签 REQ-081 独立页同风格）；底部「重新起卦 / 回到选项」
+   全宽并列大按钮。免费静态解读（REQ-055）+ 深度断卦付费入口 + 免责尾注（LIUYAO_DISCLAIMER
+   现有常量）全部保留。 */
+function GuaResultScreen(props) {
+  const { kicker, sub, kids, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack } = props;
+  const cardKids = kids.slice();
+  cardKids.push(React.createElement('div', { key: 'pay', className: 'ssgw-res-pay' },
+    React.createElement('div', { className: 'pay-hint' }, UI_COPY.divin.sign_pay_hint),
+    React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: onInterpret },
+      interpLoading ? UI_COPY.tips.interpreting_liuyao : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
+    interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+    interp ? React.createElement(React.Fragment, null,
+      React.createElement('div', { className: 'interp-title' }, UI_COPY.divin.sign_interp_title),
+      React.createElement('div', { className: 'interp-body' }, interp)) : null));
+  cardKids.push(React.createElement('div', { key: 'disc', className: 'ssgw-res-disc' }, LIUYAO_DISCLAIMER));
+  return React.createElement('div', { className: 'ssgw-res-screen' },
+    React.createElement('div', { className: 'ssgw-res-head' },
+      React.createElement('div', { className: 'ssgw-res-kicker' }, kicker),
+      React.createElement('span', { className: 'ssgw-res-sub' }, sub)),
     React.createElement('div', { className: 'ssgw-res-scroll' },
       React.createElement('div', { className: 'ssgw-res-card' }, cardKids)),
     React.createElement('div', { className: 'ssgw-res-foot' },
@@ -11485,6 +11525,8 @@ function DivinationPage({
   // REQ-075：六爻焦点详解 —— focus key → {txt, loading, err, open}（本盘结果缓存，同 focus 再点直接展示不再请求）
   const [focusMap, setFocusMap] = useState({});
   const [question, setQuestion] = useState('');
+  // REQ-105：占问问题输入框默认折叠（进入起卦操作界面不弹输入法/输入框；点击拟输入框展开填写，留空可直接起卦）
+  const [qOpen, setQOpen] = useState(false);
   // REQ-055 ⑤：梅花/小六壬时间选项（日期默认今天 + 时辰默认当前，必填）
   const [timeDate, setTimeDate] = useState(todayStr());
   const [shichen, setShichen] = useState(nowShichen());
@@ -11629,6 +11671,7 @@ function DivinationPage({
   // REQ-069：每次打开弹窗重置手动录入内容
   // REQ-066②：默认模式按功能设置 default_mode —— manual=默认手动录入入口 / auto=自动起卦（现状）/ both=并行不预设（保留上次所选）
   const resetManualState = function () {
+    setQOpen(false); // REQ-105：每次进入起卦界面，占问问题输入默认折叠
     setAskMode(tcAskNextDefault(askMode));
     setYaoPick(blankYaoRows());
     setSignNo(null);
@@ -11881,30 +11924,9 @@ function DivinationPage({
       React.createElement('div', { className: 'section-title' }, '起卦失败'),
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: retryAsk }, UI_COPY.buttons.retry));
-  } else if (data && method !== 'sign') {
-    // REQ-081②：观音灵签结果改走全屏独立结果界面（SsgwResultScreen），不再内联于本页底部
-    body = React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
-      qText ? React.createElement('div', { className: 'ask-echo' }, '问题：', qText) : null,
-      manLabel ? React.createElement('div', { className: 'man-flag' }, '录入：', manLabel) : null,
-      view,
-      freeReading,
-      method === 'liuyao' && result && data && data.id ? React.createElement(LiuyaoFocusPanel, {
-        key: 'focus',
-        res: result,
-        focusMap: focusMap,
-        onDetail: focusDetail,
-        onToggle: toggleFocus
-      }) : null,
-      result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
-      interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
-      manWarn ? React.createElement('div', { className: 'warn-note' }, manWarn) : null,
-      React.createElement('div', { className: 'pay-hint' }, '深度断卦为付费 LLM 解读，按实际用量扣余额（¥）（点击前将预检余额）'),
-      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting_liuyao : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
-      interp ? React.createElement(React.Fragment, null,
-        React.createElement('div', { className: 'interp-title' }, '断卦结果'),
-        React.createElement('div', { className: 'interp-body' }, interp)) : null);
   }
+  // REQ-104 + BUG-016：六爻/梅花/小六壬 卦象结果不再内联于本页（原 data && method !== 'sign' 分支
+  // 已移除）—— 起卦成功后统一走全屏独立结果页 GuaResultScreen（见下方 return）。
   // ===== REQ-069 手动录入面板（弹窗内按方法渲染）=====
   const setYRow = function (i, v) {
     setYaoPick(prev => prev.map(function (r, j) { return j === i ? { yang: (r.yang === v ? null : v), mv: r.mv } : r; }));
@@ -12020,6 +12042,40 @@ function DivinationPage({
   // 全屏独立视图展示（自动摇签 / 手动选签共用）；卦象结果不再内联于本页最下方。
   const signScreenOn = method === 'sign' && !!data && !asking && !animStage && !errored;
   const signRes = (result && method === 'sign') ? result : null;
+  // REQ-104 + BUG-016：六爻/梅花/小六壬 卦象结果 → 全屏独立结果页（数据就绪且不在操作面板/演出/错误态）
+  const guaResultOn = method !== 'sign' && !!data && !asking && !animStage && !errored && !!view;
+  const guaSub = method === 'liuyao' ? '本卦已成 · 六亲世应参断'
+    : method === 'meihua' ? '本卦已成 · 体用生克察应'
+      : method === 'xiaoliuren' ? '落宫已定 · 速断所问吉凶'
+        : '卦象已成 · 心诚则灵';
+  let guaKids = [];
+  if (guaResultOn) {
+    if (qText) guaKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
+    if (manLabel) guaKids.push(React.createElement('div', { key: 'm', className: 'ssgw-res-man' }, '录入：', manLabel));
+    guaKids.push(React.createElement('div', { key: 'view', className: 'ssgw-gua-view' }, view));
+    if (freeReading) guaKids.push(React.createElement('div', { key: 'free', className: 'ssgw-gua-free' }, freeReading));
+    if (method === 'liuyao' && result && data && data.id) guaKids.push(React.createElement(LiuyaoFocusPanel, {
+      key: 'focus',
+      res: result,
+      focusMap: focusMap,
+      onDetail: focusDetail,
+      onToggle: toggleFocus
+    }));
+    if (result && result.text) guaKids.push(React.createElement('p', { key: 'tx', style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)));
+    if (manWarn) guaKids.push(React.createElement('div', { key: 'warn', className: 'warn-note' }, manWarn));
+  }
+  // REQ-104：回到选项 —— 清空本盘结果并回到起卦选项列表视图（停留在 /divination，不跳模块 HUB）
+  const backToOptions = function () {
+    setData(null);
+    setErrored('');
+    setInterp('');
+    setInterpErr('');
+    setFocusMap({});
+    setAnimStage(null);
+    setAsking(false);
+    setManLabel('');
+    setManWarn('');
+  };
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
     React.createElement('div', { className: 'card' },
@@ -12033,25 +12089,29 @@ function DivinationPage({
       }))),
     body,
     React.createElement('div', { className: 'back-row fill' },
-      data ? React.createElement('button', { className: 'btn btn-outline', onClick: function () { openAsk(m); } }, UI_COPY.buttons.redo_divination) : null,
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options)),
-    asking ? React.createElement('div', { className: 'modal-mask', onClick: closeAsk },
-      React.createElement('div', { className: 'modal ask-modal' + (askMode === 'manual' ? ' long' : ''), onClick: function (e) { e.stopPropagation(); } },
-        React.createElement('div', { className: 'modal-title' }, ((m && m.name) || apiMethod), ' · ' + (askMode === 'manual' ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
-        modeSwitch,
-        // REQ-044 v2.1：占问问题可选 —— 留空可直接起卦，填写则随 seed 带入断卦上下文
-        React.createElement('div', { className: 'ask-cap' }, UI_COPY.divin.ask_label),
-        React.createElement('textarea', {
-          className: 'q-input',
-          rows: 2,
-          maxLength: 300,
-          autoFocus: true,
-          placeholder: UI_COPY.divin.ask_ph,
-          value: question,
-          onChange: function (e) { setQuestion(e.target.value); }
-        }),
-        React.createElement('div', { className: 'ask-opt-note' }, UI_COPY.divin.ask_opt_note),
-        isTimeMethod ? React.createElement('div', { key: 'tm' },
+    // REQ-105：起卦操作界面（原弹窗改内联面板）—— 进入默认不弹输入法/问题框；
+    // 占问问题默认折叠，点击拟输入框展开填写（可留空直接起卦）
+    asking ? React.createElement('div', { className: 'card divin-cast' },
+      React.createElement('div', { className: 'section-title' }, ((m && m.name) || apiMethod), ' · ' + (askMode === 'manual' ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
+      modeSwitch,
+      qOpen
+        ? React.createElement('div', { key: 'qo' },
+            React.createElement('div', { className: 'ask-cap' }, UI_COPY.divin.ask_label),
+            React.createElement('textarea', {
+              className: 'q-input',
+              rows: 2,
+              maxLength: 300,
+              placeholder: UI_COPY.divin.ask_ph,
+              value: question,
+              onChange: function (e) { setQuestion(e.target.value); }
+            }),
+            React.createElement('div', { className: 'ask-opt-note' }, UI_COPY.divin.ask_opt_note),
+            React.createElement('button', { type: 'button', className: 'q-collapse', onClick: function () { setQOpen(false); } }, '收起问题输入'))
+        : React.createElement('div', { className: 'q-entry', onClick: function () { setQOpen(true); } },
+            React.createElement('span', null, qText ? '已填占问问题：' + qText + '（点击修改）' : '占问问题（选填）· 点击填写'),
+            React.createElement('span', { className: 'qe-plus' }, '＋')),
+      isTimeMethod ? React.createElement('div', { key: 'tm' },
           React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '起卦时间（必填）'),
           React.createElement('div', { className: 'dt-row' },
             React.createElement('label', { className: 'dt-field' },
@@ -12072,12 +12132,33 @@ function DivinationPage({
                 return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
               })))),
           React.createElement('div', { className: 'time-note' }, '默认今天 + 当前时辰，可按实际起卦/掐指时刻调整。')) : null,
-        manualPanel,
-        React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
-          React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
-          askMode === 'manual'
-            ? React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startManual }, manualStartLabel)
-            : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination)))) : null,
+      manualPanel,
+      React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
+        React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
+        askMode === 'manual'
+          ? React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startManual }, manualStartLabel)
+          : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination))) : null,
+    // REQ-104 + BUG-016：六爻/梅花/小六壬 结果 → 全屏独立结果页（含回到选项）
+    guaResultOn ? React.createElement(GuaResultScreen, {
+      kicker: (m && m.name) || apiMethod,
+      sub: guaSub,
+      kids: guaKids,
+      interp: interp,
+      interpErr: interpErr,
+      interpLoading: interpLoading,
+      payEnough: payEnough,
+      onInterpret: interpret,
+      onRedo: function () {
+        setData(null);
+        setErrored('');
+        setInterp('');
+        setInterpErr('');
+        setFocusMap({});
+        setAnimStage(null);
+        openAsk(m);
+      },
+      onBack: backToOptions
+    }) : null,
     signScreenOn && signRes ? React.createElement(SsgwResultScreen, {
       res: signRes,
       qText: qText,
@@ -12096,7 +12177,7 @@ function DivinationPage({
         setAnimStage(null);
         openAsk(m);
       },
-      onBack: function () { onNavigate('guoxue-hub'); }
+      onBack: backToOptions
     }) : null);
 }
 
