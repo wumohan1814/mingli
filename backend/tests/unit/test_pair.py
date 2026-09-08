@@ -333,6 +333,86 @@ def test_pair_mbti_success_case_type(pair_client, monkeypatch):
     assert _pair_rows(uid)[0].module == "mbti"
 
 
+def test_pair_bazi_success_full_chain(pair_client, monkeypatch):
+    """REQ-093④ bazi 成功链路：双档案各带 chart → profile 为八字画像（_bazi_digest
+    口径）→ system=prompts/pair/bazi.md → 扣费 ref=pair:{id} → 落行 module=bazi
+    → 埋点 props={module:bazi}。"""
+    uid = _new_user()
+    cid1, cid2 = _new_case(uid), _new_case(uid)
+    _add_chart(cid1, _chart_snapshot())
+    _add_chart(cid2, _chart_snapshot())
+    from app.credits.service import recharge
+    recharge(uid, 100, "free", note="pytest 预充")
+
+    content = "配对解析（mock）：八字五行互补，用神相济，宜多磨合。"
+    calls: list = []
+    _fake_chat(monkeypatch, calls, content=content, tokens=1500)
+
+    resp = pair_client.post(
+        "/api/pair/analyze",
+        json={"case_id_1": cid1, "case_id_2": cid2,
+              "relation_type": "恋爱", "question": "想了解五行是否互补",
+              "module": "bazi"},
+        headers=_auth_header(uid),
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["code"] == 0
+    rid = body["data"]["id"]
+    assert body["data"]["interpretation"] == content
+
+    # messages 契约：system = prompts/pair/bazi.md；profile 为八字画像（更细的 bazi 摘要）
+    assert len(calls) == 1
+    msg = calls[0]["messages"]
+    assert calls[0]["json_mode"] is False
+    assert len(msg) == 2 and msg[0]["role"] == "system"
+    assert "八字配对" in msg[0]["content"] and "合参" in msg[0]["content"]
+    user_payload = json.loads(msg[1]["content"])
+    assert user_payload["relation_type"] == "恋爱"
+    for key in ("person_a", "person_b"):
+        profile = user_payload[key]["profile"]
+        assert profile["dayMaster"] and profile["dayMasterWuxing"]
+        assert profile["pillars"]["day"]["gan"]          # 四柱含干支
+        assert profile["pillars"]["day"]["nayin"]        # 纳音
+        assert profile["pillars"]["day"]["shishen_gan"]  # 十神
+        assert profile["ming_gong"] and profile["shen_gong"]   # 命宫/身宫
+        assert isinstance(profile["shensha"], list) and profile["shensha"]
+
+    # 即时扣费：ref=pair:{id}，tokens=1500 → delta=-2
+    txs = _consume_rows(uid)
+    assert len(txs) == 1
+    assert txs[0].ref == f"pair:{rid}"
+    assert txs[0].delta == -2
+
+    rows = _pair_rows(uid)
+    assert len(rows) == 1 and rows[0].module == "bazi"
+    assert rows[0].case_id_1 == cid1 and rows[0].case_id_2 == cid2
+    assert rows[0].result_json == {"content": content}
+
+    evs = _event_rows("pair_analysis", uid)
+    assert len(evs) == 1
+    assert evs[0].props == {"module": "bazi", "relation_type": "恋爱"}
+
+
+def test_pair_bazi_missing_chart_400(pair_client, monkeypatch):
+    """bazi：档案无 chart → 400「未排盘…请先生成」（不调 LLM、不扣费）。"""
+    uid = _new_user()
+    cid1, cid2 = _new_case(uid), _new_case(uid)
+    calls: list = []
+    _fake_chat(monkeypatch, calls)
+    resp = pair_client.post(
+        "/api/pair/analyze",
+        json={"case_id_1": cid1, "case_id_2": cid2,
+              "relation_type": "恋爱", "module": "bazi"},
+        headers=_auth_header(uid),
+    )
+    assert resp.status_code == 400, resp.text
+    assert "未排盘" in resp.json()["message"] and "请先生成" in resp.json()["message"]
+    assert calls == []
+    assert _consume_rows(uid) == []
+    assert _pair_rows(uid) == []
+
+
 def test_pair_missing_data_400_not_auto_generate(pair_client, monkeypatch):
     """缺数据 → 400 提示先生成（不自动生成、不调 LLM、不扣费）；三种模块分别覆盖。"""
     uid = _new_user()
@@ -483,7 +563,7 @@ def test_pair_llm_error_502_no_persist(pair_client, monkeypatch):
 
 
 def test_pair_prompts_registered_and_bounded():
-    """REQ-048 归属：3 份 pair prompt 注册进 admin PROMPT_FILES（后台可热改/回滚），
+    """REQ-048 归属：4 份 pair prompt 注册进 admin PROMPT_FILES（后台可热改/回滚），
     文件存在、带合规免责、篇幅受控。"""
     from app.admin.router import PROMPT_FILES
 
@@ -491,6 +571,7 @@ def test_pair_prompts_registered_and_bounded():
         "guoxue": "pair/guoxue.md",
         "xishi": "pair/xishi.md",
         "mbti": "pair/mbti.md",
+        "bazi": "pair/bazi.md",  # REQ-093④ 八字配对
     }
     for key, rel in expected.items():
         assert PROMPT_FILES[key] == rel, f"{key} 未注册到后台提示词白名单"
