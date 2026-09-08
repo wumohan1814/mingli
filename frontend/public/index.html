@@ -20,6 +20,10 @@
   <script src="/vendor/react.production.min.js"></script>
   <script src="/vendor/react-dom.production.min.js"></script>
   <script src="/vendor/regions.js"></script>
+  <!-- T1–T4 文案接入（REQ-083 / REQ-095 正式文案）：星座 / 生肖三关系匹配 792 对「分值 + 说明」数据。
+       数据文件 frontend/public/data/pairs.js（文案轮次交付物，更新时只替换该文件；根绝对路径约定）。
+       必须在 React 组件主脚本之前引入。 -->
+  <script src="/data/pairs.js"></script>
   <style>
     :root{
       /* 主色 墨蓝 / 靛青 */
@@ -211,6 +215,8 @@
     .btn-primary{background:var(--skin-accent);color:var(--skin-accent-ink);box-shadow:0 4px 16px rgba(26,33,56,.18)}
     .btn-gold{background:var(--gold-500);color:#fff}
     .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-1)}
+    /* REQ-102：三关系按键图标（引用 art/icons/icon-sprite-i1-i4.svg 的 symbol；只做引用不改内容） */
+    .ic{flex:0 0 auto;display:block;vertical-align:middle}
     .btn-mini{width:auto;flex:none;padding:4px 12px;font-size:12px;line-height:1.5;border-radius:var(--radius-pill)}
     .input{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:16px;margin:8px 0;background:var(--surface);color:var(--text-1)}
     .input:focus{outline:none;border-color:var(--skin-accent)}
@@ -577,6 +583,8 @@
     .zrel .zv{flex:1;min-width:0;color:var(--text-1);font-weight:600;line-height:1.75;word-break:break-all}
     /* C6：五行关系 / 风险关系 通用解读小字（确定性，零 LLM） */
     .zrel-guide{font-size:12px;color:var(--text-3);line-height:1.85;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);text-align:left}
+    /* REQ-103：五行关系 / 风险关系「查看解析」超链接（点击弹名词解释窗口） */
+    .zrel-guide-link{color:var(--skin-accent);text-decoration:underline;cursor:pointer;font-weight:600}
     /* 生肖流年：结果卡标题两侧年份切换箭头（← / →；仅出结果即 data 非空时随标题渲染） */
     .zodiac-year-arrow{width:36px;height:36px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--border);background:var(--paper);color:var(--text-2);font-size:19px;font-weight:700;line-height:1;cursor:pointer;transition:.14s;font-family:inherit;padding:0}
     .zodiac-year-arrow:hover:not(:disabled){border-color:var(--skin-accent);color:var(--skin-accent);background:var(--skin-accent-soft)}
@@ -1481,7 +1489,7 @@ const UI_COPY = {
     tip: '你还没有任何命理档案。请先完成下方建档；建好至少 1 份档案后，即可解锁全部功能（含各占卜 / 测试模块、功能设置与太初先生）。'
   },
   // REQ-082 / REQ-083：星座「恋爱 / 朋友 / 上下级」关系匹配入口与弹窗文案（静态轻内容、免费；
-  // 分值用恋爱同款基础规则，正文本轮占位「文案待补充」——正式文案后补时只填 SUN_FRIEND_TEXT / SUN_BOSS_TEXT 表即可）
+  // 分值 + 说明文字从 window.TC_PAIRS（/data/pairs.js，T1–T3 文案交付）查表渲染）
   sunRel: {
     cardTitle: '太阳星座 · 关系匹配',
     entryNote: '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱 / 朋友 / 上下级关系匹配 —— 静态娱乐向参考、免费、不扣余额（需先生成 / 查看本命盘；深度双人合盘请用页面顶部「配对解析」）。',
@@ -1497,12 +1505,12 @@ const UI_COPY = {
     noSunHeadNoCase: '太阳星座未知 · 请先选择档案',
     modalNoSunCase: '当前已选档案「{case}」尚未生成本命星盘，无法确定太阳星座。点击「去生成星盘」免费排盘（确定性计算；该档案已生成过则直接复用、不重复计费），成功后回到本页再点「看{rel}关系」即可查看。',
     modalNoSunNoCase: '尚未选择档案。请先在上方「选择档案 · 生成免费本命盘」中选择一份档案并生成/查看星盘，确定太阳星座后再来查看{rel}关系匹配。',
-    modalFoot: '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整星盘的深度合盘，请使用页面顶部「配对解析」。'
+    modalFoot: '说明：太阳星座匹配仅为性格层面的娱乐参考（5 星制分值 + 趋势参考说明，仅供娱乐与启发），不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整星盘的深度合盘，请使用页面顶部「配对解析」。'
   },
   // REQ-095：生肖流年「恋爱 / 朋友 / 上下级」三关系匹配（与星座 REQ-083 同机制：当前档案生肖
   // （出生属相，地支）× 其余 11 生肖，固定分值 + 静态说明；分值用地支关系基础规则：
-  // 六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0；正文本轮占位「文案待补充」，
-  // 正式文案后补时只填 ZODIAC_LOVE_TEXT / ZODIAC_FRIEND_TEXT / ZODIAC_BOSS_TEXT 表即可）
+  // 六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0；说明文字从 window.TC_PAIRS
+  // （/data/pairs.js，T4 文案交付）查表渲染）
   zodiacRel: {
     cardTitle: '生肖 · 关系匹配',
     entryNote: '以当前档案生肖为基准，查看与其余 11 生肖的恋爱 / 朋友 / 上下级关系匹配 —— 依据生肖地支基础关系（六合 / 三合 / 相冲 / 相害 / 三刑）给出固定分值，静态娱乐向参考、免费、不扣余额。',
@@ -1511,8 +1519,8 @@ const UI_COPY = {
     btnBoss: '上下级',
     relName: { love: '恋爱', friend: '朋友', boss: '上下级' },
     modalTitle: { love: '恋爱关系 · 生肖匹配', friend: '朋友关系 · 生肖匹配', boss: '上下级关系 · 生肖匹配' },
-    modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），本轮正文暂以「文案待补充」占位（静态轻内容、免费、不扣余额）。',
-    modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，本轮分值为基础规则换算、正文「文案待补充」，仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「九法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
+    modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），配趋势参考说明（静态轻内容、免费、不扣余额）。',
+    modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「九法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
   },
   // REQ-093UI：九法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
   // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）
@@ -8361,13 +8369,37 @@ function ZodiacMedallion({
     href: ZODIAC_SPRITE + '#' + id
   }));
 }
+/* REQ-102：三关系按键图标 —— 引用 art/icons/icon-sprite-i1-i4.svg（I1–I4 正式美术 23 枚 symbol）的
+   symbol：恋爱=rel-love、朋友=rel-friend、上下级=rel-boss。与 ZODIAC_SPRITE 同机制（<use href> 外部引用），
+   尺寸 28–36px，此处取 28px；只做引用、不改动 SVG 内容。kind: 'love' | 'friend' | 'boss' */
+const REL_SPRITE = '/art/icons/icon-sprite-i1-i4.svg';
+function RelIcon({
+  kind,
+  size = 28
+}) {
+  const id = kind === 'friend' ? 'rel-friend' : kind === 'boss' ? 'rel-boss' : 'rel-love';
+  return React.createElement('svg', {
+    className: 'ic',
+    style: {
+      width: size,
+      height: size,
+      flex: 'none'
+    },
+    viewBox: '0 0 100 100',
+    role: 'img',
+    'aria-hidden': 'true'
+  }, React.createElement('use', {
+    href: REL_SPRITE + '#' + id
+  }));
+}
 /* ================= REQ-095：生肖流年「恋爱 / 朋友 / 上下级」三关系匹配 =================
    与星座 REQ-083 同机制：以「当前档案生肖（出生属相，对应地支）× 其余 11 生肖」给固定匹配分值
    + 静态说明（12×11）。分值用地支关系基础规则：六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、
    其余=3.0（换算成百分/星级展示参考星座宫格样式）。
-   文案策略同 REQ-083：正文本轮统一占位「文案待补充」（空表 + 取值函数），正式文案后补时只填
-   ZODIAC_LOVE_TEXT / ZODIAC_FRIEND_TEXT / ZODIAC_BOSS_TEXT 表（键 = 生肖1生肖2 中文名，12×11）即可，
-   分值换算逻辑不需改动。本模块展示纯前端固定数据（免费、零请求、非双人生辰合盘）。 */
+   文案（T4 生肖 132×3 对「分值 + 说明」）从 window.TC_PAIRS 查表（frontend/public/data/pairs.js，
+   文案轮次交付物，更新时只替换该文件；键 = 生肖单字名 self/other，如 鼠_牛）。分值沿用下方确定性
+   地支规则换算（与 T4 JSON 分值逐一一致，已验证），故展示逻辑不需改动；查表失败时优雅降级为兜底说明
+   （不报错）。本模块展示纯前端固定数据（免费、零请求、非双人生辰合盘）。 */
 /* 地支基础关系集（index 与 ZODIAC 12 生肖对齐：0=鼠(子) … 11=猪(亥)） */
 const ZD_BRANCH = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 const LIUHE_PAIRS = [[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]]; // 六合：子丑 寅亥 卯戌 辰酉 巳申 午未
@@ -8414,15 +8446,22 @@ function zodiacRelCode(a, b) {
   if (s === 2) return zdPairHit(CHONG_PAIRS, a, b) ? '相冲' : '相刑';
   return '中性';
 }
-/* 每对说明正文表：键 = 生肖1生肖2（12×11 对，正文后补时整表填充）；本轮空表占位「文案待补充」 */
-const ZODIAC_LOVE_TEXT = {};
-const ZODIAC_FRIEND_TEXT = {};
-const ZODIAC_BOSS_TEXT = {};
-const ZODIAC_REL_TEXT_PH = '文案待补充';
+/* 说明正文：从 window.TC_PAIRS 查表（self=当前生肖单字名、other=对方；kind 映射 shengxiao_love /
+   shengxiao_friend / shengxiao_boss）。查表失败 → 兜底说明（优雅降级，不报错） */
+const REL_TEXT_FALLBACK = '该组合的详细说明暂未收录，以上分值仅供趋势参考。';
 function zodiacRelText(kind, mine, other) {
-  const T = kind === 'friend' ? ZODIAC_FRIEND_TEXT : kind === 'boss' ? ZODIAC_BOSS_TEXT : ZODIAC_LOVE_TEXT;
-  const t = T && T[String(mine) + '_' + String(other)];
-  return t && String(t).trim() ? t : ZODIAC_REL_TEXT_PH;
+  const key = kind === 'friend' ? 'shengxiao_friend' : kind === 'boss' ? 'shengxiao_boss' : 'shengxiao_love';
+  const mod = window.TC_PAIRS && window.TC_PAIRS[key];
+  const pairs = mod && Array.isArray(mod.pairs) ? mod.pairs : null;
+  if (pairs) {
+    for (let i = 0; i < pairs.length; i++) {
+      const p = pairs[i];
+      if (p && String(p.self) === String(mine) && String(p.other) === String(other)) {
+        return p.text && String(p.text).trim() ? p.text : REL_TEXT_FALLBACK;
+      }
+    }
+  }
+  return REL_TEXT_FALLBACK;
 }
 /* 生成「当前生肖 index × 其余 11 生肖」匹配列表（分值/关系/百分 + 静态文案），分值降序、同分按生肖序 */
 function zodiacRelPairs(mineIdx, kind) {
@@ -8619,6 +8658,60 @@ function ZodiacRelModal({
     onClick: onClose
   }, UI_COPY.buttons.close)) : null));
 }
+/* REQ-103：生肖流年「风险关系 / 五行关系」名词解释弹窗 —— 结果页下方原直接展示的解释文案改为
+   超链接「查看解析」+ 弹出窗口；正文复用 UI_COPY.zodiacGuide 既有解释内容（不新增文案）。
+   kind: 'element'（五行关系）| 'risk'（风险关系），对应 zodiacGuide.elementRelation / riskRelation。 */
+function ZodiacGuideModal({
+  kind,
+  onClose
+}) {
+  const el = React.createElement;
+  const k = kind === 'risk' ? 'risk' : 'element';
+  const title = k === 'risk' ? '风险关系 · 名词解释' : '五行关系 · 名词解释';
+  const body = k === 'risk' ? UI_COPY.zodiacGuide.riskRelation : UI_COPY.zodiacGuide.elementRelation;
+  return el('div', {
+    className: 'modal-mask',
+    onClick: onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    style: {
+      maxWidth: 560
+    },
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: 'spark',
+    size: 18,
+    color: 'var(--skin-accent)'
+  }), title), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: UI_COPY.buttons.close
+  }, '✕')), el('div', {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-2)',
+      lineHeight: 1.9,
+      textAlign: 'left',
+      wordBreak: 'break-word',
+      maxHeight: '60vh',
+      overflowY: 'auto',
+      padding: '2px 2px 4px'
+    }
+  }, body), el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose
+  }, UI_COPY.buttons.close))));
+}
 function ZodiacPage({
   onNavigate
 }) {
@@ -8638,6 +8731,8 @@ function ZodiacPage({
   const [runId, setRunId] = useState(0);
   // REQ-095：生肖三关系弹窗（null | 'love' | 'friend' | 'boss'；值年星君上方三键 → ZodiacRelModal）
   const [relKind, setRelKind] = useState(null);
+  // REQ-103：五行关系 / 风险关系 名词解释弹窗（null | 'element' | 'risk'；「查看解析」链接 → ZodiacGuideModal）
+  const [guideOpen, setGuideOpen] = useState(null);
   // 切换流年年份：生肖 z 不变，仅改 year；已选档案（z ≥ 0）时递增 runId → 下方 effect 依新 year 自动重跑
   const shiftYear = d => {
     const n = Math.min(MAX_YEAR, Math.max(MIN_YEAR, year + d));
@@ -8792,8 +8887,8 @@ function ZodiacPage({
   }, k), React.createElement("span", {
     className: "zv"
   }, v));
-  // REQ-095：值年星君色块上方「恋爱 / 朋友 / 上下级」三关系入口（样式参考星座 REQ-083 三键；
-  // 仅已选档案并出结果后渲染 —— 未选择档案时不显示）
+  // REQ-095：值年星君色块上方「恋爱 / 朋友 / 上下级」三关系入口（REQ-102：圆角矩形按键 + 标题前图标
+  // rel-love / rel-friend / rel-boss，与星座 REQ-083 三键同样式统一；仅已选档案并出结果后渲染 —— 未选择档案时不显示）
   const relEntry = z >= 0 && data ? React.createElement("div", {
     className: "card",
     style: {
@@ -8827,12 +8922,15 @@ function ZodiacPage({
         flex: 'none',
         padding: '9px 14px',
         fontSize: 14,
-        borderRadius: 'var(--radius-pill)'
+        borderRadius: 'var(--radius-md)'
       },
       onClick: function () {
         setRelKind(it[0]);
       }
-    }, it[1]);
+    }, React.createElement(RelIcon, {
+      kind: it[0],
+      size: 28
+    }), it[1]);
   }))) : null;
   // —— 档案选择区（REQ-052）：未登录/无档案 → 引导按钮；有档案 → 下拉，选中即自动推演 ——
   let picker = null;
@@ -8990,7 +9088,16 @@ function ZodiacPage({
     className: "wx-s"
   }, relCopyTxt)), React.createElement("div", {
     className: "zrel-box"
-  }, erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.elementRelation)),
+  }, erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')), React.createElement("p", {
+    className: "zrel-guide"
+  }, React.createElement("a", {
+    href: "javascript:void(0)",
+    className: "zrel-guide-link",
+    onClick: function (e) {
+      e.preventDefault();
+      setGuideOpen('element');
+    }
+  }, "查看解析：五行关系"))),
   /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */
   hasRisk ? React.createElement("div", {
     className: "card"
@@ -9004,7 +9111,16 @@ function ZodiacPage({
   }, data.riskRelations.map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "· ", React.createElement("span", null, s))), React.createElement("p", {className: "zrel-guide"}, UI_COPY.zodiacGuide.riskRelation))) : null,
+  }, "· ", React.createElement("span", null, s))), React.createElement("p", {
+    className: "zrel-guide"
+  }, React.createElement("a", {
+    href: "javascript:void(0)",
+    className: "zrel-guide-link",
+    onClick: function (e) {
+      e.preventDefault();
+      setGuideOpen('risk');
+    }
+  }, "查看解析：风险关系")))) : null,
   /* BUG-003：有利关系区块（同上，空则不渲染） */
   hasFav ? React.createElement("div", {
     className: "card"
@@ -9048,6 +9164,9 @@ function ZodiacPage({
     mineIdx: z,
     caseName: selCase ? (selCase.name || '档案 ' + selCase.caseId) : '',
     onClose: () => setRelKind(null)
+  }) : null, guideOpen ? React.createElement(ZodiacGuideModal, {
+    kind: guideOpen,
+    onClose: () => setGuideOpen(null)
   }) : null);
 }
 
@@ -13954,81 +14073,54 @@ function zodiacTrendText(kind, signCn, gender) {
 /* ================= REQ-057：星座 · 恋爱关系（太阳星座匹配轻板块） =================
    P3 区分：与 REQ-030「配对解析」（双档案合盘、付费 LLM、独立入口）不同，本条仅展示
    「当前档案太阳星座 × 其余 11 星座」的静态固定匹配（免费、零请求、非双人生辰合盘）。
-   文案策略：结构先行、正文后补 —— 本轮正文统一占位「文案待补充」，分值为基础规则默认占位；
-   正式文案由文字 Agent 后续按 12×11 对整体交付（届时填充 SUN_LOVE_TEXT 表、覆盖占位值即可）。
+   文案（T1–T3 星座 132×3 对「分值 + 说明」）从 window.TC_PAIRS 查表（frontend/public/data/pairs.js，
+   文案轮次交付物，更新时只替换该文件；self/other 用「白羊座…双鱼座」全名，与 T1T3_zodiac_*.json 一致）。
+   查表失败时优雅降级为兜底说明（不报错）。
    合规口径：与 REQ-045 三格 / 文案轮次同一体系 —— 趋势参考口吻，页面级免责沿用全局页脚。 */
 const SUN_LOVE_ORDER = ['白羊', '金牛', '双子', '巨蟹', '狮子', '处女', '天秤', '天蝎', '射手', '摩羯', '水瓶', '双鱼'];
-const SUN_LOVE_ELEMENT = {
-  '白羊': '火',
-  '金牛': '土',
-  '双子': '风',
-  '巨蟹': '水',
-  '狮子': '火',
-  '处女': '土',
-  '天秤': '风',
-  '天蝎': '水',
-  '射手': '火',
-  '摩羯': '土',
-  '水瓶': '风',
-  '双鱼': '水'
-};
-/* 每对说明正文表：键 = 太阳1_太阳2（12×11 对，与三格/文案轮次同文案体系）；正文后补时整表填充 */
-const SUN_LOVE_TEXT = {};
-const SUN_LOVE_TEXT_PH = '文案待补充';
-function sunLoveText(mine, other) {
-  const t = SUN_LOVE_TEXT[String(mine) + '_' + String(other)];
-  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
+/* 星座全名（与 T1T3_zodiac_*.json 的 self/other 取值一致；索引对齐 SUN_LOVE_ORDER） */
+const SUN_FULL = ['白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座'];
+function sunFullOf(short) {
+  const i = SUN_LOVE_ORDER.indexOf(short);
+  return i >= 0 ? SUN_FULL[i] : '';
 }
-/* 占位默认分值（正文后补可整体覆盖）：同元素 = 三合默契（火象三合 / 土象三合…）；
-   火+风、土+水 = 传统互补次之；其余 = 中性占位。仅为给展示与排序一个确定的基础，非最终口径。 */
-function sunLoveScore(mine, other) {
-  if (mine === other) return 0;
-  const a = SUN_LOVE_ELEMENT[mine];
-  const b = SUN_LOVE_ELEMENT[other];
-  if (!a || !b) return 0;
-  if (a === b) return 92;
-  if (a === '火' && b === '风' || a === '风' && b === '火' || a === '土' && b === '水' || a === '水' && b === '土') return 82;
-  return 70;
+/* 按关系 kind 从 window.TC_PAIRS 查 self=全名 mineFull、other=全名 otherFull 的配对；命中返回该条，未命中返回 null */
+function sunPairLookup(kind, mineFull, otherFull) {
+  const key = kind === 'friend' ? 'zodiac_friend' : kind === 'boss' ? 'zodiac_boss' : 'zodiac_love';
+  const mod = window.TC_PAIRS && window.TC_PAIRS[key];
+  const pairs = mod && Array.isArray(mod.pairs) ? mod.pairs : null;
+  if (!pairs) return null;
+  for (let i = 0; i < pairs.length; i++) {
+    const p = pairs[i];
+    if (p && String(p.self) === String(mineFull) && String(p.other) === String(otherFull)) {
+      return p;
+    }
+  }
+  return null;
 }
+/* 生成「当前太阳星座 × 其余 11 星座」匹配列表（kind: 'love' | 'friend' | 'boss'；分值 + 说明文字
+   取自 TC_PAIRS，分值降序、同分按星座序）。REQ-083 恋爱 / 朋友 / 上下级三关系统一走本函数 */
+function sunRelPairs(mine, kind) {
+  const k = kind === 'friend' || kind === 'boss' ? kind : 'love';
+  const mineFull = sunFullOf(mine);
+  if (!mineFull) return [];
+  return SUN_LOVE_ORDER.filter(function (s) {
+    return s !== mine;
+  }).map(function (s) {
+    const hit = sunPairLookup(k, mineFull, sunFullOf(s));
+    return {
+      sign: s,
+      score: hit && hit.score != null ? hit.score : null,
+      pct: hit && hit.score != null ? Math.round(hit.score / 5 * 100) : 0,
+      txt: hit && hit.text && String(hit.text).trim() ? hit.text : REL_TEXT_FALLBACK
+    };
+  }).sort(function (x, y) {
+    return (y.score == null ? -1 : y.score) - (x.score == null ? -1 : x.score) || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
+  });
+}
+/* REQ-057：恋爱关系弹窗沿用 sunRelPairs(mine, 'love') */
 function sunLovePairs(mine) {
-  return SUN_LOVE_ORDER.filter(function (s) {
-    return s !== mine;
-  }).map(function (s) {
-    return {
-      sign: s,
-      pct: sunLoveScore(mine, s),
-      txt: sunLoveText(mine, s)
-    };
-  }).sort(function (x, y) {
-    return y.pct - x.pct || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
-  });
-}
-/* REQ-083：朋友 / 上下级关系正文表（与恋爱同机制：键 = 太阳1_太阳2，12×11 对；本轮空表占位
-   「文案待补充」，正式文案由文字 Agent 后补整表填充即可；取值函数与 sunLoveText 同款） */
-const SUN_FRIEND_TEXT = {};
-const SUN_BOSS_TEXT = {};
-function sunFriendText(mine, other) {
-  const t = SUN_FRIEND_TEXT[String(mine) + '_' + String(other)];
-  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
-}
-function sunBossText(mine, other) {
-  const t = SUN_BOSS_TEXT[String(mine) + '_' + String(other)];
-  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
-}
-/* REQ-083：按关系 textFn 生成「当前太阳星座 × 其余 11 星座」匹配列表（分值复用恋爱同款基础规则 sunLoveScore） */
-function sunRelPairs(mine, textFn) {
-  const tf = typeof textFn === 'function' ? textFn : sunLoveText;
-  return SUN_LOVE_ORDER.filter(function (s) {
-    return s !== mine;
-  }).map(function (s) {
-    return {
-      sign: s,
-      pct: sunLoveScore(mine, s),
-      txt: tf(mine, s)
-    };
-  }).sort(function (x, y) {
-    return y.pct - x.pct || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
-  });
+  return sunRelPairs(mine, 'love');
 }
 /* 恋爱关系弹窗（PairModal 同款容器样式）：有太阳星座 → 与其余 11 星座匹配宫格；
    无太阳星座（未生成星盘/未选档案）→ 「请先生成星盘」引导，不展示空表 */
@@ -14042,11 +14134,11 @@ function SunLoveModal({
   const me = String(sunCn || '').trim();
   const hasSun = !!me && SUN_LOVE_ORDER.indexOf(me) !== -1;
   const list = hasSun ? sunLovePairs(me) : [];
-  const starN = pct => pct >= 90 ? 5 : pct >= 80 ? 4 : 3;
+  const starN = sc => sc >= 5 ? 5 : sc >= 4.5 ? 4 : sc >= 3 ? 3 : 2;
   const FULL = '★★★★★';
   const EMPTY = '☆☆☆☆☆';
   const cells = list.map(function (p) {
-    const n = starN(p.pct);
+    const n = starN(p.score);
     return el('div', {
       key: p.sign,
       style: {
@@ -14081,7 +14173,7 @@ function SunLoveModal({
         fontVariantNumeric: 'tabular-nums',
         whiteSpace: 'nowrap'
       }
-    }, p.pct + '%')), el('div', {
+    }, p.score != null ? '分 ' + p.score : '—')), el('div', {
       style: {
         fontSize: 12,
         lineHeight: 1,
@@ -14186,7 +14278,7 @@ function SunLoveModal({
   }
   const disclaimer = el('div', {
     className: 'pair-pay'
-  }, '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋或其他现实建议；如需基于双方完整星盘的深度合盘，请使用上方「配对解析」。');
+  }, '说明：太阳星座匹配仅为性格层面的娱乐参考（5 星制分值 + 趋势参考说明，仅供娱乐与启发），不构成婚恋或其他现实建议；如需基于双方完整星盘的深度合盘，请使用上方「配对解析」。');
   return el('div', {
     className: 'modal-mask',
     onClick: onClose
@@ -14208,16 +14300,16 @@ function SunLoveModal({
 }
 
 /* REQ-083：朋友 / 上下级关系弹窗 —— 与 SunLoveModal 同款容器（PairModal 同款样式）：
-   分值复用恋爱同款基础规则（sunLoveScore 元素规则）；正文取 SUN_FRIEND_TEXT / SUN_BOSS_TEXT
-   （本轮空表占位「文案待补充」）；kind: 'friend' | 'boss'，标题分别「朋友关系 / 上下级关系 · 太阳星座匹配」。 */
+   分值 + 说明文字从 window.TC_PAIRS 查表（sunRelPairs(mine, kind)，T2 / T3 文案交付）；
+   kind: 'friend' | 'boss'，标题分别「朋友关系 / 上下级关系 · 太阳星座匹配」。 */
 function fmtTpl(t, kv) {
   return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {
     return kv && kv[k] != null ? kv[k] : '{' + k + '}';
   });
 }
 const SUN_REL_KINDS = {
-  friend: { title: UI_COPY.sunRel.modalFriendTitle, rel: UI_COPY.sunRel.relName.friend, textFn: sunFriendText },
-  boss: { title: UI_COPY.sunRel.modalBossTitle, rel: UI_COPY.sunRel.relName.boss, textFn: sunBossText }
+  friend: { title: UI_COPY.sunRel.modalFriendTitle, rel: UI_COPY.sunRel.relName.friend, kind: 'friend' },
+  boss: { title: UI_COPY.sunRel.modalBossTitle, rel: UI_COPY.sunRel.relName.boss, kind: 'boss' }
 };
 function SunRelationModal({
   kind,
@@ -14230,13 +14322,13 @@ function SunRelationModal({
   const meta = SUN_REL_KINDS[kind] || SUN_REL_KINDS.friend;
   const me = String(sunCn || '').trim();
   const hasSun = !!me && SUN_LOVE_ORDER.indexOf(me) !== -1;
-  const list = hasSun ? sunRelPairs(me, meta.textFn) : [];
+  const list = hasSun ? sunRelPairs(me, meta.kind) : [];
   const relCn = meta.rel;
-  const starN = pct => pct >= 90 ? 5 : pct >= 80 ? 4 : 3;
+  const starN = sc => sc >= 5 ? 5 : sc >= 4.5 ? 4 : sc >= 3 ? 3 : 2;
   const FULL = '★★★★★';
   const EMPTY = '☆☆☆☆☆';
   const cells = list.map(function (p) {
-    const n = starN(p.pct);
+    const n = starN(p.score);
     return el('div', {
       key: p.sign,
       style: {
@@ -14271,7 +14363,7 @@ function SunRelationModal({
         fontVariantNumeric: 'tabular-nums',
         whiteSpace: 'nowrap'
       }
-    }, p.pct + '%')), el('div', {
+    }, p.score != null ? '分 ' + p.score : '—')), el('div', {
       style: {
         fontSize: 12,
         lineHeight: 1,
@@ -15124,7 +15216,8 @@ function AstrologyPage({
   // （detailMap.hasNatal + sunCn，与档案卡 meta「太阳X」同口径）也可直接判定，无需重复排盘；
   // 两者皆无 → 弹窗内给「请先生成星盘 / 请先选择档案」引导。
   // REQ-082③ / REQ-083：入口位置移到「太阳/月亮/上升 · 整体趋势」卡与「本命深度解读」卡之间
-  // （仅盘面数据就绪时随盘展示）；未选择档案时不渲染。同排三个普通按钮：恋爱 / 朋友 / 上下级。
+  // （仅盘面数据就绪时随盘展示）；未选择档案时不渲染。同排三个按键（REQ-102：圆角矩形 + 标题前图标
+  // rel-love / rel-friend / rel-boss，与生肖 REQ-095 三键同样式统一）：恋爱 / 朋友 / 上下级。
   const relSelCase = caseId == null ? null : (caseList.find(c => Number(c.caseId) === Number(caseId)) || null);
   const relCaseName = relSelCase ? ((relSelCase.name && String(relSelCase.name).trim()) || '档案 ' + relSelCase.caseId) : '';
   const relDet = detailMap[caseId == null ? '' : String(caseId)];
@@ -15158,13 +15251,16 @@ function AstrologyPage({
         flex: 'none',
         padding: '9px 14px',
         fontSize: 14,
-        borderRadius: 'var(--radius-pill)'
+        borderRadius: 'var(--radius-md)'
       },
       onClick: function () {
         track('zodiac_match', {});
         setRelOpen(it[0]);
       }
-    }, it[1]);
+    }, el(RelIcon, {
+      kind: it[0],
+      size: 28
+    }), it[1]);
   })));
 
   // ---- 三态 body ----

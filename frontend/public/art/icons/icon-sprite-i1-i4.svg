@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <style>
+      .med{fill:#1B2A4A}
+      .ring{fill:none;stroke:#C9A24B;stroke-width:2.2}
+      .ring2{fill:none;stroke:#C9A24B;stroke-width:0.8;opacity:.5}
+      .ico{fill:none;stroke:#E8C77A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+      .dot{fill:#E8C77A}
+      .fillg{fill:#E8C77A}
+    </style>
+  </defs>
+
+  <!-- ===================== I1 星座 ×12 ===================== -->
+
+  <!-- 白羊 Aries -->
+  <symbol id="cx-aries" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,42 L48,48 L58,44 L66,52"/>
+    <circle class="dot" cx="38" cy="42" r="2"/><circle class="dot" cx="48" cy="48" r="2"/><circle class="dot" cx="58" cy="44" r="2"/><circle class="dot" cx="66" cy="52" r="2"/>
+  </symbol>
+
+  <!-- 金牛 Taurus -->
+  <symbol id="cx-taurus" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,58 L50,50 L62,58 M38,58 L30,44 L26,32 M62,58 L70,44 L74,32"/>
+    <circle class="dot" cx="50" cy="50" r="2"/><circle class="dot" cx="38" cy="58" r="2"/><circle class="dot" cx="62" cy="58" r="2"/><circle class="dot" cx="30" cy="44" r="2"/><circle class="dot" cx="26" cy="32" r="2"/><circle class="dot" cx="70" cy="44" r="2"/><circle class="dot" cx="74" cy="32" r="2"/>
+  </symbol>
+
+  <!-- 双子 Gemini -->
+  <symbol id="cx-gemini" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,34 L38,66 M62,34 L62,66 M38,34 L62,34 M38,66 L34,72 M62,66 L66,72"/>
+    <circle class="dot" cx="38" cy="34" r="2"/><circle class="dot" cx="62" cy="34" r="2"/><circle class="dot" cx="38" cy="66" r="2"/><circle class="dot" cx="62" cy="66" r="2"/><circle class="dot" cx="34" cy="72" r="2"/><circle class="dot" cx="66" cy="72" r="2"/>
+  </symbol>
+
+  <!-- 巨蟹 Cancer -->
+  <symbol id="cx-cancer" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M50,30 L40,46 L34,62 M50,30 L60,46 L66,62"/>
+    <circle class="dot" cx="50" cy="30" r="2"/><circle class="dot" cx="40" cy="46" r="2"/><circle class="dot" cx="34" cy="62" r="2"/><circle class="dot" cx="60" cy="46" r="2"/><circle class="dot" cx="66" cy="62" r="2"/>
+  </symbol>
+
+  <!-- 狮子 Leo -->
+  <symbol id="cx-leo" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,30 L42,42 L48,50 L54,56 M54,56 L66,54 L46,66 L54,56"/>
+    <circle class="dot" cx="38" cy="30" r="2"/><circle class="dot" cx="42" cy="42" r="2"/><circle class="dot" cx="48" cy="50" r="2"/><circle class="dot" cx="54" cy="56" r="2"/><circle class="dot" cx="66" cy="54" r="2"/><circle class="dot" cx="46" cy="66" r="2"/>
+  </symbol>
+
+  <!-- 处女 Virgo -->
+  <symbol id="cx-virgo" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M50,30 L46,48 M46,48 L38,56 M46,48 L54,56 M46,48 L44,64 M44,64 L40,72 M44,64 L48,72"/>
+    <circle class="dot" cx="50" cy="30" r="2"/><circle class="dot" cx="46" cy="48" r="2"/><circle class="dot" cx="38" cy="56" r="2"/><circle class="dot" cx="54" cy="56" r="2"/><circle class="dot" cx="44" cy="64" r="2"/><circle class="dot" cx="40" cy="72" r="2"/><circle class="dot" cx="48" cy="72" r="2"/>
+  </symbol>
+
+  <!-- 天秤 Libra -->
+  <symbol id="cx-libra" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M50,26 L50,46 M34,46 L66,46 M34,46 L34,58 M66,46 L66,58 M30,58 Q34,63 38,58 M62,58 Q66,63 70,58"/>
+    <circle class="dot" cx="50" cy="26" r="2"/><circle class="dot" cx="34" cy="46" r="2"/><circle class="dot" cx="66" cy="46" r="2"/>
+  </symbol>
+
+  <!-- 天蝎 Scorpio -->
+  <symbol id="cx-scorpio" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M32,38 L42,42 L52,48 L58,58 L52,66 L44,66 L40,58"/>
+    <circle class="dot" cx="32" cy="38" r="2"/><circle class="dot" cx="42" cy="42" r="2"/><circle class="dot" cx="52" cy="48" r="2"/><circle class="dot" cx="58" cy="58" r="2"/><circle class="dot" cx="52" cy="66" r="2"/><circle class="dot" cx="44" cy="66" r="2"/><circle class="dot" cx="40" cy="58" r="2"/>
+  </symbol>
+
+  <!-- 射手 Sagittarius -->
+  <symbol id="cx-sagittarius" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M28,68 L62,38 M62,38 L54,40 M62,38 L60,30 M28,68 Q20,52 30,40"/>
+    <circle class="dot" cx="28" cy="68" r="2"/><circle class="dot" cx="62" cy="38" r="2"/><circle class="dot" cx="30" cy="40" r="2"/>
+  </symbol>
+
+  <!-- 摩羯 Capricorn -->
+  <symbol id="cx-capricorn" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,36 L64,36 M38,36 L50,58 M64,36 L50,58 M50,58 L48,68 L42,70"/>
+    <circle class="dot" cx="38" cy="36" r="2"/><circle class="dot" cx="64" cy="36" r="2"/><circle class="dot" cx="50" cy="58" r="2"/><circle class="dot" cx="48" cy="68" r="2"/><circle class="dot" cx="42" cy="70" r="2"/>
+  </symbol>
+
+  <!-- 水瓶 Aquarius -->
+  <symbol id="cx-aquarius" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M30,46 Q37,40 44,46 Q51,52 58,46 Q65,40 72,46 M30,60 Q37,54 44,60 Q51,66 58,60 Q65,54 72,60"/>
+    <circle class="dot" cx="30" cy="46" r="2"/><circle class="dot" cx="72" cy="46" r="2"/><circle class="dot" cx="30" cy="60" r="2"/><circle class="dot" cx="72" cy="60" r="2"/>
+  </symbol>
+
+  <!-- 双鱼 Pisces -->
+  <symbol id="cx-pisces" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M32,34 L50,56 L68,34"/>
+    <circle class="ico" cx="28" cy="30" r="6"/><circle class="ico" cx="72" cy="30" r="6"/>
+    <path class="ico" d="M28,30 L22,26 M72,30 L78,26"/>
+    <circle class="dot" cx="32" cy="34" r="2"/><circle class="dot" cx="50" cy="56" r="2"/><circle class="dot" cx="68" cy="34" r="2"/>
+  </symbol>
+
+  <!-- ===================== I2 三关系 ×3 ===================== -->
+
+  <!-- 恋爱 love -->
+  <symbol id="rel-love" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M50,72 C36,60 28,50 28,42 C28,34 35,30 41,32 C45,33 48,37 50,40 C52,37 55,33 59,32 C65,30 72,34 72,42 C72,50 64,60 50,72 Z"/>
+  </symbol>
+
+  <!-- 朋友 friend -->
+  <symbol id="rel-friend" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <circle class="ico" cx="38" cy="38" r="5"/>
+    <circle class="ico" cx="62" cy="38" r="5"/>
+    <path class="ico" d="M32,66 L38,50 L44,66 M56,66 L62,50 L68,66"/>
+  </symbol>
+
+  <!-- 上下级 boss -->
+  <symbol id="rel-boss" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M38,32 L46,36 M62,32 L54,36"/>
+    <path class="ico" d="M46,34 L54,34 L52,42 L48,42 Z"/>
+    <path class="ico" d="M48,42 L52,42 L56,72 L44,72 Z"/>
+  </symbol>
+
+  <!-- ===================== I3 配对关系 ×5 ===================== -->
+
+  <!-- 恋爱 love -->
+  <symbol id="pair-love" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M50,72 C36,60 28,50 28,42 C28,34 35,30 41,32 C45,33 48,37 50,40 C52,37 55,33 59,32 C65,30 72,34 72,42 C72,50 64,60 50,72 Z"/>
+  </symbol>
+
+  <!-- 朋友 friend -->
+  <symbol id="pair-friend" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <circle class="ico" cx="38" cy="38" r="5"/>
+    <circle class="ico" cx="62" cy="38" r="5"/>
+    <path class="ico" d="M32,66 L38,50 L44,66 M56,66 L62,50 L68,66"/>
+  </symbol>
+
+  <!-- 家人 family -->
+  <symbol id="pair-family" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M30,46 L50,30 L70,46 M34,46 L34,70 L66,70 L66,46 M46,70 L46,56 L54,56 L54,70"/>
+  </symbol>
+
+  <!-- 同事 colleague -->
+  <symbol id="pair-colleague" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="ico" d="M34,48 L66,48 L66,68 L34,68 Z"/>
+    <path class="ico" d="M44,48 L44,42 Q44,38 50,38 Q56,38 56,42 L56,48"/>
+    <path class="ico" d="M48,48 L52,48"/>
+  </symbol>
+
+  <!-- 其他 other -->
+  <symbol id="pair-other" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <path class="fillg" d="M50,32 L54,46 L68,50 L54,54 L50,68 L46,54 L32,50 L46,46 Z"/>
+    <circle class="dot" cx="34" cy="34" r="1.8"/><circle class="dot" cx="66" cy="66" r="1.8"/>
+  </symbol>
+
+  <!-- ===================== I4 三功能 ×3 ===================== -->
+
+  <!-- 九法配对 pair -->
+  <symbol id="fn-pair" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <circle class="ico" cx="42" cy="50" r="14"/><circle class="ico" cx="58" cy="50" r="14"/>
+  </symbol>
+
+  <!-- 八字配对 bazi -->
+  <symbol id="fn-bazi" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <circle class="ico" cx="50" cy="50" r="22"/>
+    <path class="ico" d="M50,28 L50,72 M28,50 L72,50"/>
+    <circle class="dot" cx="50" cy="38" r="2"/><circle class="dot" cx="50" cy="62" r="2"/><circle class="dot" cx="38" cy="50" r="2"/><circle class="dot" cx="62" cy="50" r="2"/>
+  </symbol>
+
+  <!-- 档案起名 name -->
+  <symbol id="fn-name" viewBox="0 0 100 100">
+    <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+    <rect class="ico" x="34" y="40" width="32" height="22" rx="5"/>
+    <circle class="ico" cx="44" cy="51" r="2.6"/>
+    <path class="fillg" d="M60,46 l1.6,3.4 3.6,.4 -2.7,2.5 .8,3.6 -3.3,-1.9 -3.3,1.9 .8,-3.6 -2.7,-2.5 3.6,-.4 Z"/>
+  </symbol>
+
+</svg>
