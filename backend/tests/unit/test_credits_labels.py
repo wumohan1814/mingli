@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""REQ-063 积分流水可读化回归（backend/tests/unit/test_credits_labels.py）。
+"""REQ-063 余额流水可读化回归（backend/tests/unit/test_credits_labels.py）。
 
 覆盖（labels.py 映射 + service.transactions 附加字段）：
   1. ref_label 纯函数：job 断前尘/预测前缀、revise/divination/tarot/astrology/

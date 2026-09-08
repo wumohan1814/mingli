@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""C 端积分 API：余额查询 / 流水分页 / 充值码生成（均需 JWT Bearer）。
+"""C 端余额 API：余额查询 / 流水分页 / 充值码生成（均需 JWT Bearer）。
 
-- GET  /api/credits/balance       → {code:0, message:"ok", data:{balance, totalConsumed, totalRecharged}}
+- GET  /api/credits/balance       → {code:0, message:"ok", data:{balance, balance_yuan, totalConsumed, totalRecharged}}
 - GET  /api/credits/transactions  → {code:0, message:"ok", data:{items, total}}（最新在前）
 - POST /api/credits/charge-code   → {code:0, message:"ok", data:{code, url}}（生成一次性充值码 + 金数据跳转 URL）
 """
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/credits", tags=["credits"])
 
 @router.get("/balance")
 def get_balance(authorization: str = Header(...)):
-    """当前用户积分账户：余额 + 累计消费 + 累计充值。"""
+    """当前用户余额账户：余额 + 累计消费 + 累计充值（balance_yuan = 余额元口径 ¥）。"""
     user_id = get_user_id_from_token(authorization)
     # balance() 对无账户用户自动建 balance=0 账户并 commit，随后可直接读全字段
     bal = balance(user_id)
@@ -34,7 +34,8 @@ def get_balance(authorization: str = Header(...)):
             "code": 0,
             "message": "ok",
             "data": {
-                "balance": bal,
+                "balance": bal,                       # 存储单位（1 单位 = 1000 tokens），保留原字段防前端断档
+                "balance_yuan": round(bal / 10, 2),   # 展示口径：余额 ¥ = balance ÷ 10（1 元 = 10 存储单位）
                 "totalConsumed": acc.total_consumed if acc is not None else 0,
                 "totalRecharged": acc.total_recharged if acc is not None else 0,
             },
@@ -49,7 +50,7 @@ def get_transactions(
     offset: int = 0,
     authorization: str = Header(...),
 ):
-    """当前用户积分流水分页（按时间倒序，最新在前），total 为该用户流水总数。"""
+    """当前用户余额流水分页（按时间倒序，最新在前），total 为该用户流水总数。"""
     user_id = get_user_id_from_token(authorization)
     limit = min(max(int(limit), 1), 200)   # 防呆：1..200
     offset = max(int(offset), 0)

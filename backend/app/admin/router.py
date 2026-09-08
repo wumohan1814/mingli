@@ -13,7 +13,7 @@
 
 Agent 运维工具端点（REQ-050，/admin/agent/*）：OpenClaw Agent 经既有 bb3a.mingli.example.com
 接入点直调后台 API。鉴权用 Agent 专用静态 token（require_agent，TAICHU_AGENT_TOKEN），
-与 admin 账号密码 / admin JWT 完全独立（互不可用）。写动作（赠积分/重置密码/重置 case）
+与 admin 账号密码 / admin JWT 完全独立（互不可用）。写动作（余额调整/重置密码/重置 case）
 审计：admin_user_id=0 + detail 前缀 "[agent]"，与人工 admin 审计区分；高风险端点响应
 data 内带 requires_confirmation=true 标记（确认交互由 OpenClaw/用户侧完成，本端只标记）。
 """
@@ -33,7 +33,7 @@ from sqlalchemy.orm import Session
 from app.admin.auth import admin_login, require_agent, require_role
 from app.auth.router import hash_password
 from app.config import settings
-from app.credits.service import manual, recharge
+from app.credits.service import adjust_balance, manual_adjust, recharge
 from app.database import get_analytics_db, get_feedback_db, get_ops_db
 from app.errors import (
     BizError,
@@ -143,9 +143,9 @@ EVENT_NAME_ZH = {
     "llm_call": "LLM 调用",
     "error": "错误",
     "api_request": "API 请求",
-    "credit_consume": "积分消耗",
-    "credit_recharge": "积分充值",
-    "credit_insufficient": "积分不足",
+    "credit_consume": "余额消耗",
+    "credit_recharge": "余额充值",
+    "credit_insufficient": "余额不足",
     # 横向扩展 Phase A–D 事件（HUB 浏览 / 生肖流年 / 起卦断卦 / 塔罗 / 雷诺曼 /
     # 星座 / MBTI），一次补全
     "guoxue_hub_view": "国学HUB浏览",
@@ -187,8 +187,10 @@ class PromptUpdateRequest(BaseModel):
 
 
 class CreditManualRequest(BaseModel):
+    """后台余额充值/余额调整请求：金额为**元(¥) 口径**，可正（充值）可负（扣减）。
+    内部 ×10 折算回存储单位（1 元 = 10 存储单位）落账。"""
     user_id: int
-    delta: int
+    amount_yuan: float
     note: str = Field(default="", max_length=500)
 
 
@@ -467,7 +469,7 @@ def list_users(
     if kw:
         query = query.filter(User.username.like(f"%{kw}%"))
     users = query.order_by(User.id.desc()).limit(50).all()
-    # 一次查询取这些用户的积分账户（CreditAccount 与 User 同在业务库 AnalyticsSession）
+    # 一次查询取这些用户的余额账户（CreditAccount 与 User 同在业务库 AnalyticsSession）
     accounts = (
         db.query(CreditAccount)
         .filter(CreditAccount.user_id.in_([u.id for u in users]))
@@ -478,7 +480,8 @@ def list_users(
         {
             "id": u.id,
             "username": u.username,
-            "balance": balance_map.get(u.id, 0),
+            "balance": balance_map.get(u.id, 0),  # 存储单位（1 单位 = 1000 tokens）
+            "balance_yuan": round(balance_map.get(u.id, 0) / 10, 2),  # 展示口径：余额 ¥ = balance ÷ 10
             "created_at": u.created_at.isoformat() if u.created_at else None,
         }
         for u in users
@@ -700,21 +703,34 @@ def rollback_prompt(
     return {"code": 0, "message": "ok", "data": {"key": key, "version_id": version_id}}
 
 
-# --- 路由：积分手动分发（operator+） ---
+# --- 路由：余额充值 / 余额调整（operator+） ---
 @router.post("/credits/manual")
 def manual_credit(
     req: CreditManualRequest,
     admin: dict = Depends(require_role("operator")),
 ):
-    """后台手动赠送积分（operator+）。
+    """后台余额充值 / 余额调整（operator+，支持增与减）。
 
-    delta 必须为正整数；入账 + 审计（action=credit_manual）由
-    app.credits.service.manual 内部完成，本端点不重复写 audit。
+    amount_yuan 为**元(¥) 口径**（正数充值、负数扣减）；内部 ×10 折算回存储单位
+    （1 元 = 10 存储单位）。入账 + 审计（action=credit_manual，detail 注明「¥X」）由
+    app.credits.service.manual_adjust 内部完成，本端点不重复写 audit。
     """
-    if req.delta <= 0:
+    if req.amount_yuan == 0:
         raise BizError(ERR_PARAM, "参数错误")
-    result = manual(req.user_id, req.delta, note=req.note, admin_id=admin["admin_id"])
-    return {"code": 0, "message": "ok", "data": {"balance": result["balance"]}}
+    result = manual_adjust(
+        req.user_id,
+        req.amount_yuan,
+        note=req.note,
+        admin_id=admin["admin_id"],
+    )
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {
+            "balance": result["balance"],
+            "balance_yuan": round(result["balance"] / 10, 2),
+        },
+    }
 
 
 # --- 路由：运维动作（换 key / 重置密码 / 重置档案，operator+） ---
@@ -800,7 +816,7 @@ def reset_user_case(
     ops_db: Session = Depends(get_ops_db),
 ):
     """重置某 case 档案（operator+）：删 charts/method_results/calibrations/
-    conversations，case 行保留且 status 置 created（保留 user 与积分）+ audit。
+    conversations，case 行保留且 status 置 created（保留 user 与余额）+ audit。
 
     按架构 §3.2：只删上述四类结果行；jobs / route_decisions 为历史任务记录，
     一并保留（新流程会追加新行，不读取旧行）。
@@ -839,10 +855,10 @@ def create_user(
 ):
     """后台新增 C 端用户（operator+）。
 
-    username 唯一校验（重复抛 1003 冲突）→ hash_password 建用户 → 注册赠送积分
+    username 唯一校验（重复抛 1003 冲突）→ hash_password 建用户 → 注册赠送余额
     （recharge type=free，与 C 端 register 同口径 settings.free_credit_on_register）
     → 运维库写 AdminAuditLog(action=create_user)。审计不含明文密码。
-    事务顺序：业务库建用户 commit → 积分赠送（独立 session）→ 审计 commit。
+    事务顺序：业务库建用户 commit → 余额赠送（独立 session）→ 审计 commit。
     """
     username = (req.username or "").strip()
     if not username:
@@ -863,12 +879,12 @@ def create_user(
         raise BizError(ERR_CONFLICT, "用户名已存在")
     db.refresh(user)
 
-    # 注册赠送积分：失败不阻断建号（与 C 端 register 同策略），仅记日志
+    # 注册赠送余额：失败不阻断建号（与 C 端 register 同策略），仅记日志
     try:
         recharge(user.id, settings.free_credit_on_register, "free", note="后台新增用户")
     except Exception:
         logger.exception(
-            "后台新增用户赠送积分失败 user_id=%s username=%s", user.id, username
+            "后台新增用户赠送余额失败 user_id=%s username=%s", user.id, username
         )
 
     ops_db.add(
@@ -878,7 +894,8 @@ def create_user(
             target_type="user",
             target_id=str(user.id),
             detail=(
-                f"后台新增用户 {username}（赠送 {settings.free_credit_on_register} 积分）"
+                f"后台新增用户 {username}（注册赠送 {settings.free_credit_on_register} "
+                f"存储单位 = ¥{settings.free_credit_on_register / 10:g}）"
             ),
         )
     )
@@ -952,7 +969,7 @@ def delete_user(
             action="delete_user",
             target_type="user",
             target_id=str(user_id),
-            detail=f"删除用户 {username}（级联清除其档案/对话/积分等全部数据）",
+            detail=f"删除用户 {username}（级联清除其档案/对话/余额等全部数据）",
         )
     )
     ops_db.commit()
@@ -966,8 +983,8 @@ def delete_user(
 # （TAICHU_AGENT_TOKEN，独立于 admin 账号密码/admin JWT——两套 token 互不可用）。
 # 查看类端点与 /admin/* 对应端点返回同构；写端点复用 /admin/* 相同业务逻辑，
 # 审计约定：admin_user_id=0（约定值 = Agent/系统调用，区别于人工 admin id）+
-# detail 前缀 "[agent]"（如 "[agent] 赠送积分 user_id=..."），与人工审计区分。
-# 高风险写端点（赠积分/重置密码/重置 case）响应 data 内带 requires_confirmation=true
+# detail 前缀 "[agent]"（如 "[agent] 余额调整 user_id=..."），与人工审计区分。
+# 高风险写端点（余额调整/重置密码/重置 case）响应 data 内带 requires_confirmation=true
 # 标记；确认交互由 OpenClaw/用户侧完成，本端只执行 + 标记。
 # =========================================================================== #
 
@@ -1022,14 +1039,14 @@ def agent_get_report(
     return {"code": 0, "message": "ok", "data": {"metric": metric, "days": days, "items": items}}
 
 
-# --- 用户查询（查看类，与 GET /admin/users 同构，含积分余额） ---
+# --- 用户查询（查看类，与 GET /admin/users 同构，含余额） ---
 @router.get("/agent/users")
 def agent_list_users(
     q: str = Query("", max_length=64),
     _agent: dict = Depends(require_agent),
     db: Session = Depends(get_analytics_db),
 ):
-    """Agent 按 username 模糊搜 C 端用户（含积分余额；与 /admin/users 同构）。"""
+    """Agent 按 username 模糊搜 C 端用户（含余额；与 /admin/users 同构）。"""
     kw = q.strip()
     query = db.query(User)
     if kw:
@@ -1046,6 +1063,7 @@ def agent_list_users(
             "id": u.id,
             "username": u.username,
             "balance": balance_map.get(u.id, 0),
+            "balance_yuan": round(balance_map.get(u.id, 0) / 10, 2),
             "created_at": u.created_at.isoformat() if u.created_at else None,
         }
         for u in users
@@ -1110,27 +1128,30 @@ def agent_list_errors(
     }
 
 
-# --- 赠积分（高风险写操作，复用 credits.service.recharge 入账逻辑） ---
+# --- 余额充值 / 余额调整（高风险写操作，复用 credits.service 入账逻辑） ---
 @router.post("/agent/credits/manual")
 def agent_manual_credit(
     req: CreditManualRequest,
     _agent: dict = Depends(require_agent),
     ops_db: Session = Depends(get_ops_db),
 ):
-    """Agent 赠送积分（高风险，需人工确认）。
+    """Agent 余额充值 / 余额调整（高风险，需人工确认，支持增与减）。
 
-    入账等价复用 credits.service.manual 内部逻辑：recharge(type=manual) 写业务库
-    （独立 AnalyticsSession，自动 commit）；**不直接调 manual()**——它内部会再写一条
-    无 [agent] 标注、admin_user_id=admin_id 的审计，无法满足"审计单次 + 标注 Agent
-    来源"，故审计由本端点自写一条（admin_user_id=0 + detail "[agent] 赠送积分 ..."）。
-    data.requires_confirmation=true 标记高风险；确认交互由 OpenClaw/用户侧完成。
+    amount_yuan 为**元(¥) 口径**（正数充值、负数扣减）；内部 ×10 折算回存储单位
+    （1 元 = 10 存储单位）后复用 credits.service.adjust_balance 入账逻辑（业务库
+    独立 AnalyticsSession，自动 commit）；**不直接调 manual_adjust()**——它内部会
+    再写一条无 [agent] 标注、admin_user_id=admin_id 的审计，无法满足"审计单次 +
+    标注 Agent 来源"，故审计由本端点自写一条（admin_user_id=0 + detail
+    "[agent] 余额调整 ..."）。data.requires_confirmation=true 标记高风险；
+    确认交互由 OpenClaw/用户侧完成。
     """
-    if req.delta <= 0:
+    if req.amount_yuan == 0:
         raise BizError(ERR_PARAM, "参数错误")
-    result = recharge(req.user_id, req.delta, type="manual", note=req.note)
+    delta = int(round(req.amount_yuan * 10))
+    result = adjust_balance(req.user_id, delta, note=req.note)
     detail = (
-        f"[agent] 赠送积分 user_id={req.user_id} delta={req.delta}"
-        f"（当前余额 {result['balance']}）"
+        f"[agent] 余额调整 user_id={req.user_id} amount_yuan={req.amount_yuan:g}"
+        f"（delta={delta:+d} 存储单位，当前余额 {result['balance']}）"
     )
     if req.note:
         detail += f"，备注：{req.note}"
@@ -1145,7 +1166,11 @@ def agent_manual_credit(
     return {
         "code": 0,
         "message": "ok",
-        "data": {"balance": result["balance"], "requires_confirmation": True},
+        "data": {
+            "balance": result["balance"],
+            "balance_yuan": round(result["balance"] / 10, 2),
+            "requires_confirmation": True,
+        },
     }
 
 
@@ -1196,7 +1221,7 @@ def agent_reset_user_case(
     """Agent 重置某 case 档案（高风险，需人工确认）。
 
     业务逻辑与 /admin 版一致（删 charts/method_results/calibrations/conversations，
-    case 行保留且 status 置 created，保留 user 与积分）；审计由本端点写
+    case 行保留且 status 置 created，保留 user 与余额）；审计由本端点写
     （admin_user_id=0 + "[agent]" 前缀）。data.requires_confirmation=true 标记高风险。
     """
     case = db.query(Case).filter_by(id=req.case_id, user_id=user_id).first()

@@ -199,14 +199,14 @@ async def register(
     db.commit()
     db.refresh(user)
 
-    # 注册赠送积分（架构 §4.4：free_credit_on_register 默认 100）：失败只记日志，不阻断注册
+    # 注册赠送余额（架构 §4.4：free_credit_on_register 默认 100）：失败只记日志，不阻断注册
     try:
         from app.credits.service import recharge
         recharge(user.id, settings.free_credit_on_register, "free", note="注册赠送")
     except Exception:
-        logger.exception("注册赠送积分失败 user_id=%s username=%s", user.id, req.username)
+        logger.exception("注册赠送余额失败 user_id=%s username=%s", user.id, req.username)
 
-    # 注册成功（建用户 + 赠积分后）落一条限流计数，供后续 IP/设备维度判定
+    # 注册成功（建用户 + 赠余额后）落一条限流计数，供后续 IP/设备维度判定
     db.add(RegisterLimit(ip=ip, device_fingerprint=device_fp))
     db.commit()
 

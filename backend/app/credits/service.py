@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""积分核心服务（taichu_analytics 库：credit_accounts / credit_transactions）。
+"""余额核心服务（taichu_analytics 库：credit_accounts / credit_transactions）。
 
-换算：**1 积分 = 1000 tokens**，扣费 = `ceil(tokens / 1000)`（向上取整）。
+换算：**1 存储单位 = 1000 tokens**，扣费 = `ceil(tokens / 1000)`（向上取整）；
+展示口径：**余额 ¥ = balance ÷ 10**（1 元 = 10 存储单位 = 10,000 tokens）。
     >>> consume(uid, 2500)  # delta = -ceil(2500/1000) = -3
 
 session 纪律：
@@ -39,7 +40,7 @@ _RECHARGE_TYPES = ("recharge", "manual", "free", "refund")
 # 账户
 # --------------------------------------------------------------------------- #
 def get_account(session: Session, user_id: int) -> CreditAccount:
-    """取用户积分账户；不存在则创建 balance=0 账户并返回。
+    """取用户余额账户；不存在则创建 balance=0 账户并返回。
 
     作用于调用方传入的 session（便于与更大事务组合），**不自行 commit**——
     commit 由本模块内自开 session 的公共函数（或传入 session 的调用方）负责。
@@ -77,7 +78,7 @@ def balance(user_id: int) -> int:
 
 
 def check_balance(user_id: int) -> None:
-    """预检余额：余额 <= 0 抛 BizError(5002 积分不足)，detail 含当前余额。"""
+    """预检余额：余额 <= 0 抛 BizError(5002 余额不足)，detail 含当前余额。"""
     session = AnalyticsSession()
     try:
         account = get_account(session, user_id)
@@ -86,8 +87,8 @@ def check_balance(user_id: int) -> None:
         if bal <= 0:
             raise BizError(
                 ERR_INSUFFICIENT_CREDIT,
-                "积分不足",
-                detail=f"当前余额 {bal}，请先充值",
+                "余额不足",
+                detail=f"当前余额 {bal} 存储单位（约 ¥{round(bal / 10, 2)}），请先充值",
             )
     except Exception:
         session.rollback()
@@ -100,7 +101,7 @@ def check_balance(user_id: int) -> None:
 # 扣费
 # --------------------------------------------------------------------------- #
 def consume(user_id: int, tokens: int, ref: str | None = None) -> dict:
-    """按 tokens 扣积分：delta = -ceil(tokens / 1000)，写 consume 流水。
+    """按 tokens 扣余额：delta = -ceil(tokens / 1000)，写 consume 流水。
 
     允许余额扣成负数（下次 check_balance 拦截）；同步累计 total_consumed。
     返回 {"balance", "delta", "tokens"}（balance 为扣后余额）。
@@ -178,14 +179,97 @@ def recharge(
 
 
 def manual(user_id: int, delta: int, note: str = "", admin_id: int | None = None) -> dict:
-    """后台手动赠送积分 = recharge(type=manual) + ops 库写 admin_audit_logs。
+    """后台余额充值（delta 为正的存储单位）= adjust_balance + ops 库写 admin_audit_logs。
 
     audit 字段：admin_user_id=admin_id, action="credit_manual",
     target_type="user", target_id=str(user_id), detail=含 delta/余额/备注。
     """
-    result = recharge(user_id, delta, type="manual", note=note)
+    result = adjust_balance(user_id, delta, note=note)
 
-    detail = f"手动赠送积分 {delta}（当前余额 {result['balance']}）"
+    detail = f"余额充值 {delta} 存储单位（当前余额 {result['balance']}）"
+    if note:
+        detail += f"，备注：{note}"
+
+    session = OpsSession()
+    try:
+        session.add(
+            AdminAuditLog(
+                admin_user_id=admin_id,
+                action="credit_manual",
+                target_type="user",
+                target_id=str(user_id),
+                detail=detail,
+            )
+        )
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+    return result
+
+
+def adjust_balance(user_id: int, delta: int, note: str = "") -> dict:
+    """按存储单位调整余额（可正可负），写 type=manual 流水；**不写审计**（由调用方负责）。
+
+    - delta > 0：充值入账（累计 total_recharged，语义同 recharge type=manual）；
+    - delta < 0：扣减（累计 total_consumed，允许扣成负数，与 consume 同策略）。
+    返回 {"balance", "delta"}（balance 为调整后余额）。
+    """
+    if not isinstance(delta, int) or delta == 0:
+        raise BizError(ERR_BILLING, "计费异常", detail=f"adjust_balance 的 delta 必须为非零整数: {delta}")
+
+    session = AnalyticsSession()
+    try:
+        account = get_account(session, user_id)
+        account.balance += delta
+        if delta > 0:
+            account.total_recharged += delta
+        else:
+            account.total_consumed += -delta
+        session.add(
+            CreditTransaction(
+                user_id=user_id,
+                delta=delta,
+                type="manual",
+                tokens=None,
+                note=note or None,
+            )
+        )
+        session.commit()
+        return {"balance": account.balance, "delta": delta}
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def manual_adjust(
+    user_id: int,
+    amount_yuan: float,
+    note: str = "",
+    admin_id: int | None = None,
+) -> dict:
+    """后台余额充值 / 余额调整（operator+ 端点落地，支持增与减）。
+
+    amount_yuan 为**元(¥) 口径**（可正可负）：正数=充值（增加余额），负数=扣减
+    （减少余额）。内部 ×10 折算回存储单位（1 元 = 10 存储单位）后调
+    adjust_balance 写 type=manual 流水，并写 ops 库 admin_audit_logs
+    （action="credit_manual"，detail 注明「¥X」）。返回 {"balance", "delta"}。
+    """
+    if not isinstance(amount_yuan, (int, float)) or not (amount_yuan > 0 or amount_yuan < 0):
+        raise BizError(ERR_BILLING, "计费异常", detail=f"余额调整金额必须为非零数字（元口径）: {amount_yuan!r}")
+    delta = int(round(amount_yuan * 10))  # 元 → 存储单位（1 元 = 10 存储单位）
+    if delta == 0:
+        raise BizError(ERR_BILLING, "计费异常", detail=f"余额调整金额过小，折算存储单位为 0: {amount_yuan}")
+
+    result = adjust_balance(user_id, delta, note=note)
+
+    verb = "余额充值" if delta > 0 else "余额调整（扣减）"
+    detail = f"{verb} ¥{amount_yuan:g}（delta={delta:+d} 存储单位，当前余额 {result['balance']}）"
     if note:
         detail += f"，备注：{note}"
 

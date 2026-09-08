@@ -173,7 +173,7 @@ def ensure_schema() -> None:
         if div_cols and "focus_interpretations" not in div_cols:
             conn.execute(text("ALTER TABLE divinations ADD COLUMN focus_interpretations JSON"))
 
-        # system_configs 种子：积分默认值（key 不存在才插入，幂等；不覆盖后台已改的配置）。
+        # system_configs 种子：余额默认值（key 不存在才插入，幂等；不覆盖后台已改的配置）。
         sc_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(system_configs)"))]
         if sc_cols:
             def _fmt(v) -> str:

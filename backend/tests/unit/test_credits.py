@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""积分核心服务单测（backend/tests/unit/test_credits.py）。
+"""余额核心服务单测（backend/tests/unit/test_credits.py）。
 
 依赖 tests/conftest.py：
   - 任何 app.* import 前已把 TAICHU_DB_PATH / TAICHU_OPS_DB_PATH 指向 session 级
@@ -8,11 +8,11 @@
 
 隔离：每用例自建独立 User 行（uuid 用户名）+ 独立 user_id，用例间互不污染。
 
-覆盖（docs/架构设计-积分系统开发方案.md §10）：
+覆盖（docs/架构设计-积分系统开发方案.md §10，该旧文档仍沿用历史术语）：
   1. consume 向上取整：2500→-3、500→-1、1000→-1；
   2. check_balance 余额 0 / 负 → BizError 5002；
   3. recharge 入账 + total_recharged + 流水；
-  4. manual 手动赠送 + ops 库写 admin_audit_logs；
+  4. manual 余额充值 + ops 库写 admin_audit_logs；
   5. transactions 流水分页 limit/offset。
 """
 from __future__ import annotations

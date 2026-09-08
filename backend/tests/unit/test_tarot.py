@@ -513,7 +513,7 @@ def test_api_tarot_draw_success(tarot_client, monkeypatch):
     assert len(rows) == 1
     assert rows[0].props == {"spread_type": "three"}
 
-    # 抽牌免费：零积分流水
+    # 抽牌免费：零余额流水
     assert _credit_rows(uid) == []
 
 
@@ -690,7 +690,7 @@ def test_api_tarot_interpret_insufficient_balance(tarot_client, monkeypatch):
     assert resp.status_code == 502, resp.text
     body = resp.json()
     assert body["code"] == 5002
-    assert "积分不足" in body["message"]
+    assert "余额不足" in body["message"]
     assert chat_calls == []                # 预检拦截，未调 LLM
     assert _credit_rows(uid) == []
 

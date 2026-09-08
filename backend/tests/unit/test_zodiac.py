@@ -20,7 +20,7 @@ taiSui 顶层键（值年太岁星君名只出现在 prompt 文本里）；serve
 单独经 getYearTaiSui(yearGanZhi) 取回并入响应，故 /zodiac 端点契约顶层含
 taiSui:{yearBranch, star}，契约断言落在 conflicts / yearGanZhi / yearBranch / taiSui 上。
 
-生肖流年不落盘面、不扣积分：本文件不做 chart / credit 增量断言，正是该契约。
+生肖流年不落盘面、不扣余额：本文件不做 chart / credit 增量断言，正是该契约。
 """
 from __future__ import annotations
 
@@ -393,7 +393,7 @@ def test_api_zodiac_fortune_connection_error_502(zodiac_client, monkeypatch):
 
 
 def test_api_zodiac_fortune_never_charges(zodiac_client, monkeypatch):
-    """契约：生肖流年不扣积分 —— 调用后该用户无任何 CreditTransaction 流水。"""
+    """契约：生肖流年不扣余额 —— 调用后该用户无任何 CreditTransaction 流水。"""
     uid = 900006
     _patch_node_post(monkeypatch, payload=SAMPLE_ZODIAC_DATA)
     resp = zodiac_client.post(

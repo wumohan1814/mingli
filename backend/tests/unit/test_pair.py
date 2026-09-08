@@ -5,7 +5,7 @@
   1. 成功链路（guoxue）：鉴权 + 双档案（各带 chart）→ code:0 + {id, interpretation}；
      messages 契约（system=prompts/pair/guoxue.md；user JSON 含 relation_type /
      question / person_a / person_b，profile 为 bazi 摘要）；即时扣费
-     （ref=pair:{id}，tokens→ceil 积分）；落 pair_readings（含 relation_type /
+     （ref=pair:{id}，tokens→ceil 存储单位）；落 pair_readings（含 relation_type /
      question / module / result_json={"content":...}）；pair_analysis 埋点
      props={module, relation_type}；
   2. 三模块数据源：
@@ -451,7 +451,7 @@ def test_pair_insufficient_balance_5002(pair_client, monkeypatch):
     assert resp.status_code == 502, resp.text
     body = resp.json()
     assert body["code"] == 5002
-    assert "积分不足" in body["message"]
+    assert "余额不足" in body["message"]
     assert calls == []                # 预检拦截，未调 LLM
     assert _pair_rows(uid) == []
 

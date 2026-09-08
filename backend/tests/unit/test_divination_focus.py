@@ -320,7 +320,7 @@ def test_focus_insufficient_balance_502(focus_client, monkeypatch):
     assert resp.status_code == 502, resp.text
     body = resp.json()
     assert body["code"] == 5002
-    assert "积分不足" in body["message"]
+    assert "余额不足" in body["message"]
     assert chat_calls == []                # 预检拦截，未调 LLM
     assert _consume_rows(uid) == []
 

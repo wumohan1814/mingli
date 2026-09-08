@@ -485,7 +485,7 @@ def test_api_divination_cast_success(divination_client, monkeypatch):
     assert rows[0].case_id == cid
     assert rows[0].props == {"method": "liuyao"}
 
-    # 起卦免费：零积分流水
+    # 起卦免费：零余额流水
     assert _credit_rows(uid) == []
 
 
@@ -704,7 +704,7 @@ def test_api_divination_interpret_insufficient_balance(divination_client, monkey
     assert resp.status_code == 502, resp.text
     body = resp.json()
     assert body["code"] == 5002
-    assert "积分不足" in body["message"]
+    assert "余额不足" in body["message"]
     assert chat_calls == []                # 预检拦截，未调 LLM
     assert _credit_rows(uid) == []
 

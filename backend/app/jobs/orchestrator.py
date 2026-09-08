@@ -76,7 +76,7 @@ _MAX_PROPOSITIONS = 10
 
 
 def _check_balance_or_fail(session, job: Job, label: str) -> bool:
-    """计费预检（任务开头）：余额不足（BizError 5002）→ job=failed("积分不足")，
+    """计费预检（任务开头）：余额不足（BizError 5002）→ job=failed("余额不足")，
     commit 后返回 False（不跑 LLM）；余额充足返回 True。
 
     非 5002 的 BizError 原样上抛，交给外层 except 统一置 failed 并记录真实原因。
@@ -87,16 +87,16 @@ def _check_balance_or_fail(session, job: Job, label: str) -> bool:
         if exc.code != ERR_INSUFFICIENT_CREDIT:
             raise
         job.status = JobStatus.failed
-        job.error = "积分不足"
+        job.error = "余额不足"
         session.commit()
-        logger.warning("%s任务因积分不足未执行 job_id=%s user_id=%s",
+        logger.warning("%s任务因余额不足未执行 job_id=%s user_id=%s",
                        label, job.id, job.user_id)
         return False
     return True
 
 
 def _charge_method(user_id: int, tokens, ref: str) -> None:
-    """逐法扣费：该法 LLM 已调用（该协程 context 的 usage 账本已累加）即按 tokens 扣积分。
+    """逐法扣费：该法 LLM 已调用（该协程 context 的 usage 账本已累加）即按 tokens 扣余额。
 
     容错口径与任务收尾一致：扣费失败只记日志、不阻断任务进度。
     tokens <= 0（未产生消耗，如 LLMError 未成功返回）直接跳过。

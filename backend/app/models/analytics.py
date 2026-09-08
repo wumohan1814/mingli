@@ -184,7 +184,7 @@ class RouteDecision(Base):
 
 
 class CreditAccount(Base):
-    """积分账户（credit_accounts，user_id 1:1）"""
+    """余额账户（credit_accounts，user_id 1:1）"""
     __tablename__ = "credit_accounts"
 
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
@@ -196,7 +196,7 @@ class CreditAccount(Base):
 
 
 class CreditTransaction(Base):
-    """积分流水（credit_transactions，delta>0 入账 / delta<0 消费）"""
+    """余额流水（credit_transactions，delta>0 入账 / delta<0 消费）"""
     __tablename__ = "credit_transactions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -508,8 +508,8 @@ class AgentMessage(Base):
     - user 消息：tokens=None（不计费，计费按整轮 assistant 消息口径）；
     - assistant 消息：tokens = 该回合 LLM 实际 total_tokens（余额明细/审计对账用，
       与 credits.consume 的 tokens 一致，供 agent_message 埋点与消费流水核对）。
-    计费口径（REQ-076②）：每来回按 LLM 实际 token 即时 consume（ceil 积分、
-    1 积分=1000 tokens，同 interpret），不预扣。
+    计费口径（REQ-076②）：每来回按 LLM 实际 token 即时 consume（ceil 存储单位、
+    1 存储单位=1000 tokens，同 interpret），不预扣。
     case_id 为所选「默认档案」（仅本人档案，会话顶部下拉；防越权在 API 层按
     id+user_id 校验）。表由 main.py lifespan 的 Base.metadata.create_all 幂等建
     （老库自动补，无需 ALTER）。

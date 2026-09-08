@@ -4,7 +4,7 @@
 设计见 docs/架构设计-支付系统-金数据.md §9.6：
   - 支付成功判定集：生产只认 TRADE_SUCCESS；settings.jinshuju_allow_mock=True 时
     额外认 MOCK_PAY_SUCCESS（模拟表单自测）。**生产环境必须 TAICHU_JINSHUJU_ALLOW_MOCK=false**，
-    否则模拟表单会白送积分。
+    否则模拟表单会白送余额。
   - 幂等逻辑：充值码 resolve 只认 `unused` 且未过期 → 充值成功立刻 mark_used 置
     `used` → 同一 entry / 同一码被重复拉到（轮询天然重拉）时 resolve 返回 None
     直接跳过，绝不重复入账。
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 # 支付成功判定集（模块加载时按 allow_mock 定型；改配置需重启生效）
 PAID_STATUSES = {"TRADE_SUCCESS"}
-if settings.jinshuju_allow_mock:            # 生产设 false，防止模拟表单白送积分
+if settings.jinshuju_allow_mock:            # 生产设 false，防止模拟表单白送余额
     PAID_STATUSES.add("MOCK_PAY_SUCCESS")
 
 
@@ -103,7 +103,7 @@ def _recharge_one_entry(entry: dict) -> None:
         logger.warning("entry serial=%s 档位金额异常 %s，跳过", serial, amount)
         return
 
-    # 4) 充值：delta = int(amount * recharge_rate)（1 元 = 10 积分）
+    # 4) 充值：delta = int(amount * recharge_rate)（1 元 = 10 存储单位）
     delta = int(amount * settings.recharge_rate)
     recharge(user_id, delta, type="recharge", amount=amount, ref=f"serial:{serial}")
 
