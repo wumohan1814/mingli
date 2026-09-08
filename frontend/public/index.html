@@ -442,6 +442,7 @@
     .modal.ask-modal{max-width:420px;text-align:left}
     .modal.ask-modal .modal-title{text-align:center}
     .ask-cap{font-size:13px;font-weight:700;color:var(--text-1);margin:2px 0 4px}
+    .ask-opt-note{font-size:11.5px;color:var(--text-3);margin:0 0 2px;line-height:1.6;font-family:var(--font-sans)}
 
     /* ===== REQ-072：三大模块「配对解析」入口条 + PairModal（选两档案+关系类型+关注点） ===== */
     .pair-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:12px 14px;margin:0 0 14px}
@@ -1019,6 +1020,40 @@
     /* 签文笺纸纹理替换点（可选素材 --art-ssgw-paper；未配置时保持现有白卡） */
     .card.ssgw-paper{background-image:var(--art-ssgw-paper,none);background-size:cover;background-position:center}
 
+    /* ---- REQ-081：观音灵签独立结果展示界面（全屏独立视图，不再内联于临时起卦页底部） ---- */
+    .ssgw-res-screen{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;
+      background:radial-gradient(140% 120% at 50% 4%,#453E33 0%,#26231E 52%,#121110 100%);color:#EDE2C9;
+      font-family:var(--font-serif);padding:calc(18px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+      overflow:hidden;touch-action:manipulation;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
+    .ssgw-res-head{flex:none;text-align:center;margin-top:4px}
+    .ssgw-res-kicker{font-size:11px;letter-spacing:.34em;color:#B49A6C;font-family:var(--font-sans)}
+    .ssgw-res-sub{display:block;font-size:19px;font-weight:700;letter-spacing:.14em;color:#F4E7C8;margin-top:4px}
+    .ssgw-res-scroll{position:relative;width:min(92vw,440px);flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;margin-top:14px;padding:0 4px 2px;min-height:0}
+    .ssgw-res-scroll::-webkit-scrollbar{width:4px}
+    .ssgw-res-scroll::-webkit-scrollbar-thumb{background:rgba(232,201,138,.35);border-radius:4px}
+    .ssgw-res-card{background:#F6F0DF;background-image:var(--art-ssgw-paper,none);background-size:cover;background-position:center;
+      color:#43341F;border:1px solid rgba(198,158,96,.6);border-radius:16px;padding:18px 16px 16px;
+      box-shadow:0 16px 42px rgba(0,0,0,.45)}
+    .ssgw-res-echo{font-size:12.5px;color:#8A6B45;text-align:center;line-height:1.7;margin-bottom:10px;font-family:var(--font-sans);word-break:break-word}
+    .ssgw-res-man{font-size:11.5px;color:#9C6E2E;text-align:center;margin-bottom:8px;font-family:var(--font-sans)}
+    .ssgw-res-bigno{text-align:center;font-size:27px;font-weight:800;color:#8A2F2F;letter-spacing:.12em;line-height:1.25}
+    .ssgw-res-name{display:block;text-align:center;font-size:13px;font-weight:700;color:#6E4A24;letter-spacing:.05em;margin-top:2px;font-family:var(--font-sans)}
+    .ssgw-res-poem{margin-top:12px;padding:10px 6px;text-align:center;white-space:pre-wrap;font-size:15.5px;line-height:2;color:#43341F;
+      background:rgba(0,0,0,.035);border-top:1px dashed rgba(122,77,34,.35);border-bottom:1px dashed rgba(122,77,34,.35)}
+    .ssgw-res-extra{margin-top:10px;text-align:center;font-size:11.5px;color:#8A6B45;line-height:1.8;font-family:var(--font-sans)}
+    .ssgw-res-free{margin-top:12px;padding-top:10px;border-top:1px solid rgba(122,77,34,.25)}
+    .ssgw-res-free .rf-title{font-size:11.5px;font-weight:800;color:#8A2F2F;letter-spacing:.28em;text-align:center;font-family:var(--font-sans)}
+    .ssgw-res-free .rf-jixiong{display:block;width:max-content;margin:8px auto 2px;font-size:11.5px;color:#FDF6E8;background:#8A2F2F;
+      border-radius:999px;padding:3px 12px;letter-spacing:.1em;font-family:var(--font-sans)}
+    .ssgw-res-free .rf-item{margin-top:8px;font-size:13px;line-height:1.9;color:#4A3A28}
+    .ssgw-res-free .rf-item b{display:block;font-size:11.5px;color:#9C6E2E;font-family:var(--font-sans);margin-bottom:2px;letter-spacing:.08em}
+    .ssgw-res-pay{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(122,77,34,.3)}
+    .ssgw-res-foot{flex:none;display:flex;gap:10px;width:min(92vw,440px);margin-top:14px}
+    .ssgw-res-foot .btn{flex:1 1 0;min-width:0;width:auto;padding:13px 6px;font-size:15px;border-radius:12px;font-family:var(--font-sans)}
+    .ssgw-res-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.24);color:#EADCC0}
+    .ssgw-res-ghost:active{transform:translateY(1px)}
+
     /* ---- 六爻起卦：铜钱 + 爻列 ---- */
     .ly-cast-area{position:relative;display:flex;flex-direction:column;align-items:center;width:min(92vw,340px);margin-top:6px}
     .ly-coins{display:flex;gap:26px;align-items:center;justify-content:center;height:86px;margin-bottom:8px}
@@ -1275,6 +1310,23 @@ const UI_COPY = {
     finish_pick: '完成选牌',
     share_fill: '分享帮填',
     copy_link: '复制链接'
+  },
+  // REQ-044 v2.1：临时起卦弹窗占问问题改「可选」（留空可直接起卦，填写则带入断卦上下文）
+  // REQ-081：观音灵签 摇签热区扩至全屏 + 独立结果展示界面 文案
+  divin: {
+    ask_label: '占问问题（选填）',
+    ask_ph: '示例：这件事的走向？ / 该不该推进？（可留空直接起卦）',
+    ask_opt_note: '选填：填写后将带入断卦上下文；留空可直接起卦。',
+    sign_kicker: '观音灵签',
+    sign_head_sub: '此签已定 · 心诚则灵',
+    sign_tap_tap: '未检测到摇动传感器，请点击画面任意处求签',
+    sign_tap_any: '点击画面任意处',
+    sign_tap_or: '，或摇一摇手机，求一支签',
+    sign_free_head: '签意 · 免费',
+    sign_free_zonglun: '解签总论',
+    sign_free_core: '签意核心',
+    sign_pay_hint: '深度断卦为付费 LLM 解读，按实际用量扣余额（¥）（点击前将预检余额）',
+    sign_interp_title: '断卦结果'
   },
   // REQ-070 / BUG-012：「分享帮填」—— 生成一次性链接给朋友免登录代填档案（POST /api/case/share，幂等复用未用链接）
   shareFill: {
@@ -10758,7 +10810,14 @@ function ArtStageFrame(opts) {
     React.createElement('div', { className: 'stage-title' }, opts.title),
     opts.sub ? React.createElement('div', { className: 'stage-sub' }, opts.sub) : null));
   if (opts.children) kids.push(opts.children);
-  return React.createElement('div', { className: 'art-stage' }, kids);
+  // REQ-081①：观音灵签 全屏任意处点击触发摇签 —— onTap 挂到整层舞台（排除 跳过/取消 功能按钮）
+  const rootTap = opts.onTap
+    ? function (e) {
+      if (e && e.target && e.target.closest && e.target.closest('.art-skip,.art-cancel')) return;
+      opts.onTap(e);
+    }
+    : null;
+  return React.createElement('div', { className: 'art-stage', onClick: rootTap }, kids);
 }
 /* 翻牌卡正面（占位/正片共用：有 img 用图，无则色块占位；塔罗逆位沿用 rotate180 语义） */
 function ArtCardFront(props) {
@@ -10880,8 +10939,8 @@ function SsgwTubeStage(props) {
   if (ph === 'idle') {
     hint = React.createElement('div', { className: 'stage-hint' },
       motionMode === 'tap'
-        ? '未检测到摇动传感器，请点击签筒求签'
-        : React.createElement('span', null, React.createElement('span', { className: 'h-key' }, '点击签筒'), '，或摇一摇手机，求一支签'));
+        ? UI_COPY.divin.sign_tap_tap
+        : React.createElement('span', null, React.createElement('span', { className: 'h-key' }, UI_COPY.divin.sign_tap_any), UI_COPY.divin.sign_tap_or));
   }
   const zone = React.createElement('div', { className: 'ssgw-zone' },
     React.createElement('div', { className: 'ssgw-land-glow' + (ph === 'landed' || ph === 'finish' ? ' on' : '') }),
@@ -10907,8 +10966,65 @@ function SsgwTubeStage(props) {
     skip: onSkip,
     cancel: (ph === 'idle' && onExit) ? onExit : null,
     cancelLabel: '返回重选',
+    // REQ-081①：摇签等待期整个画面可点击触发（保留点击签筒/摇晃兜底）
+    onTap: (ph === 'idle') ? clickTube : null,
     children: children
   });
+}
+
+/* ---------------- 观音灵签：独立结果展示界面（REQ-081②） ----------------
+   摇签/手动选签成功后进入全屏独立视图：大字「第 N 签」+ 签诗 + 免费签意
+   + 付费「深度解读」入口；底部「重新起卦 / 返回」全宽并列大按钮。不再把
+   卦象结果内联在「临时起卦」页面最下方。 */
+function SsgwResultScreen(props) {
+  const { res, qText, manLabel, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack } = props;
+  const number = (res && res.number != null) ? res.number : (res && res.no != null ? res.no : null);
+  const title = (res && res.title) ? String(res.title) : '';
+  const poem = (res && res.poem) ? String(res.poem) : '';
+  const draw = (res && res.draw && typeof res.draw === 'object' && !Array.isArray(res.draw)) ? res.draw : {};
+  const det = (res && res.details && typeof res.details === 'object' && !Array.isArray(res.details)) ? res.details : null;
+  // title 惯例含「第N签 · …」前缀，与大字签号重复时剥掉，仅留签题
+  const cleanName = title.replace(/^第[0-9一二三四五六七八九十百千]+签\s*[·、]?\s*/, '').trim();
+  const cardKids = [];
+  if (qText) cardKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
+  if (manLabel) cardKids.push(React.createElement('div', { key: 'm', className: 'ssgw-res-man' }, '录入：', manLabel));
+  if (number != null) cardKids.push(React.createElement('div', { key: 'no', className: 'ssgw-res-bigno' }, '第 ' + number + ' 签'));
+  if (cleanName) cardKids.push(React.createElement('div', { key: 'nm', className: 'ssgw-res-name' }, cleanName));
+  if (poem) cardKids.push(React.createElement('div', { key: 'poem', className: 'ssgw-res-poem' }, poem));
+  const extras = [];
+  if (number != null && draw.poolSize) extras.push('签池共 ' + draw.poolSize + ' 支');
+  if (draw.method) extras.push('抽签方式：' + (draw.method === 'manual' ? '手动录入' : '自动摇签'));
+  if (extras.length) cardKids.push(React.createElement('div', { key: 'ex', className: 'ssgw-res-extra' }, extras.join(' · ')));
+  if (res && res.text) cardKids.push(React.createElement('p', { key: 'tx', style: { marginTop: 8, color: '#6E4A24', lineHeight: 1.7, fontSize: 12.5 } }, String(res.text)));
+  // 免费签意（后端确定性签解字段，静态零 LLM；字段缺失则整段不展示）
+  const freeKids = [];
+  const ji = det && det['吉凶'] ? String(det['吉凶']) : '';
+  const zong = det && det['解签总论'] ? String(det['解签总论']) : '';
+  const core = det && det['此签核心'] ? String(det['此签核心']) : '';
+  if (ji) freeKids.push(React.createElement('span', { key: 'ji', className: 'rf-jixiong' }, ji));
+  if (zong) freeKids.push(React.createElement('div', { key: 'z', className: 'rf-item' }, React.createElement('b', null, UI_COPY.divin.sign_free_zonglun), zong));
+  if (core) freeKids.push(React.createElement('div', { key: 'c', className: 'rf-item' }, React.createElement('b', null, UI_COPY.divin.sign_free_core), core));
+  if (freeKids.length) {
+    cardKids.push(React.createElement('div', { key: 'free', className: 'ssgw-res-free' },
+      React.createElement('div', { className: 'rf-title' }, UI_COPY.divin.sign_free_head), freeKids));
+  }
+  cardKids.push(React.createElement('div', { key: 'pay', className: 'ssgw-res-pay' },
+    React.createElement('div', { className: 'pay-hint' }, UI_COPY.divin.sign_pay_hint),
+    React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: onInterpret },
+      interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
+    interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+    interp ? React.createElement(React.Fragment, null,
+      React.createElement('div', { className: 'interp-title' }, UI_COPY.divin.sign_interp_title),
+      React.createElement('div', { className: 'interp-body' }, interp)) : null));
+  return React.createElement('div', { className: 'ssgw-res-screen' },
+    React.createElement('div', { className: 'ssgw-res-head' },
+      React.createElement('div', { className: 'ssgw-res-kicker' }, UI_COPY.divin.sign_kicker),
+      React.createElement('span', { className: 'ssgw-res-sub' }, UI_COPY.divin.sign_head_sub)),
+    React.createElement('div', { className: 'ssgw-res-scroll' },
+      React.createElement('div', { className: 'ssgw-res-card' }, cardKids)),
+    React.createElement('div', { className: 'ssgw-res-foot' },
+      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onRedo }, UI_COPY.buttons.redo_divination),
+      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onBack }, UI_COPY.buttons.back_options)));
 }
 
 /* ---------------- 六爻起卦演出：逐爻掷 3 铜钱 × 6（yaos 前端先定 → replay 固定） ---------------- */
@@ -11290,6 +11406,12 @@ function DivinationPage({
   const [castYaos, setCastYaos] = useState(null); // 六爻动画用逐爻值（前端掷币预演 → options.yaos replay 固定）
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
+  // REQ-044 v2.1：占问问题可选 —— 有填才随 seed 透传（留空直接起卦，不传空 question）
+  const mkSeed = function (extra) {
+    const s = Object.assign({}, extra || {});
+    if (qText) s.question = qText;
+    return s;
+  };
   const isTimeMethod = Boolean(TIME_METHODS[method]);
   // 手动模式可用的方法：六爻/梅花（逐爻共用录入器）、观音灵签（签号）、小六壬（三数/掌诀）
   const manualable = method === 'liuyao' || method === 'meihua' || method === 'sign' || method === 'xiaoliuren';
@@ -11353,14 +11475,9 @@ function DivinationPage({
       setLoading(false);
     }
   };
-  // REQ-044 v2 自动起卦（沿用既有链路：确定性随机/时间起卦，免费）
+  // REQ-044 v2/v2.1 自动起卦（沿用既有链路：确定性随机/时间起卦，免费；占问问题可选，留空直接起卦）
   const run = async () => {
     if (loading) return;
-    // REQ-044 v2：占问问题必填（弹窗「开始起卦」已前置校验；此处兜底历史调用路径如失败重试）
-    if (!qText) {
-      toast('请填写占问问题');
-      return;
-    }
     // 梅花/小六壬：日期与时辰必填（输入框默认已带值，用户清空日期时拦截）
     if (isTimeMethod && !timeValid()) return;
     // 时间类方法把所选 日期+时辰 组装为东八区 ISO 传给 Node 起卦服务
@@ -11445,14 +11562,11 @@ function DivinationPage({
     setAsking(true);
   };
   const closeAsk = () => setAsking(false);
-  // REQ-044 v2：弹窗「开始起卦」：问题必填 → 关弹窗 → run()（梅花/小六壬时间必填由 run() 内部校验）
+  // REQ-044 v2.1：弹窗「开始起卦」—— 占问问题可选（留空直接起卦，填写则随 seed 带入断卦上下文），
+  //               点选即关弹窗 → run()（梅花/小六壬时间必填由 run() 内部校验）
   // REQ-061：REQ-066① 开时自动模式进入动效演出层（签筒 / 逐爻掷币 / 梅花环聚 / 掌诀走宫），
   //          演出结束 & 数据就绪后转既有 v2 结果布局；① 关或手动路径不重演、直接出结果。
   const startAsk = () => {
-    if (!(question || '').trim()) {
-      toast('请填写占问问题');
-      return;
-    }
     setLastManual(null);
     setAsking(false);
     if (!tcShouldPlayAnim()) { run(); return; }
@@ -11480,7 +11594,7 @@ function DivinationPage({
       }
       setCastYaos(ys);
       setAnimStage('liuyao');
-      doCast({ question: qText, options: { yaos: ys } }, null);
+      doCast(mkSeed({ options: { yaos: ys } }), null);
       return;
     }
     // 梅花 / 小六壬：取数先行（run 组装 customDate 并 doCast），动画按后端结果做氛围演出，不本地复制引擎
@@ -11488,12 +11602,9 @@ function DivinationPage({
     run();
   };
   // REQ-069：手动「记录并…」总入口 —— 按方法分发：六爻/梅花逐爻成卦、灵签按签号、小六壬三数/掌诀
+  // REQ-044 v2.1：占问问题可选 —— 留空（qText 为空）同样允许录入起卦
   const startManual = () => {
-    const q = (question || '').trim();
-    if (!q) {
-      toast('请填写占问问题');
-      return;
-    }
+    const q = qText;
     if (method === 'liuyao' || method === 'meihua') {
       if (!yaoPick || yaoPick.length !== 6 || yaoPick.some(function (r) { return r.yang == null; })) {
         toast('请把 6 爻逐爻点选完整（每爻选阳或阴）');
@@ -11505,7 +11616,7 @@ function DivinationPage({
         return;
       }
       if (isTimeMethod && !timeValid()) return;
-      const seed = { question: q };
+      const seed = q ? { question: q } : {};
       if (method === 'liuyao') {
         seed.options = { yaos: yaoPick.map(function (r) { return YAO_VAL_OF(r.yang, r.mv); }) };
       } else {
@@ -11537,9 +11648,11 @@ function DivinationPage({
       setAsking(false);
       // drawRandomSign 的 replay 样本把随机签固定在所选签号上（签文=该签，随机仅作落库通道）
       const meta = { method: 'sign', label: '签号 ' + signNo + '（手动录入）' };
-      setLastManual({ seed: { question: q, options: { replay: [signReplaySample(signNo)] } }, meta: meta });
+      const seed = { options: { replay: [signReplaySample(signNo)] } };
+      if (q) seed.question = q;
+      setLastManual({ seed: seed, meta: meta });
       track('manual_input', { method: method });
-      doCast({ question: q, options: { replay: [signReplaySample(signNo)] } }, meta);
+      doCast(seed, meta);
     } else if (method === 'xiaoliuren') {
       if (!timeValid()) return;
       let expected = '';
@@ -11562,7 +11675,7 @@ function DivinationPage({
         }
         expected = XLR_PALACE_ORDER[xlrPalace];
       }
-      const seed = { question: q, params: { customDate: timeSeedFor() } };
+      const seed = q ? { question: q, params: { customDate: timeSeedFor() } } : { params: { customDate: timeSeedFor() } };
       const meta = {
         method: 'xiaoliuren',
         expected: expected,
@@ -11579,11 +11692,11 @@ function DivinationPage({
   const retryAsk = function () {
     if (lastManual) { doCast(lastManual.seed, lastManual.meta); return; }
     if (method === 'sign' && signNo >= 1 && signNo <= SSGW_POOL_SIZE) {
-      doCast({ question: qText, options: { replay: [signReplaySample(signNo)] } }, null);
+      doCast(mkSeed({ options: { replay: [signReplaySample(signNo)] } }), null);
       return;
     }
     if (method === 'liuyao' && Array.isArray(castYaos) && castYaos.length === 6 && !loading) {
-      doCast({ question: qText, options: { yaos: castYaos } }, null);
+      doCast(mkSeed({ options: { yaos: castYaos } }), null);
       return;
     }
     run();
@@ -11617,11 +11730,11 @@ function DivinationPage({
       fixedNo: (signNo >= 1 && signNo <= SSGW_POOL_SIZE) ? signNo : 1,
       resultReady: resultReady,
       failed: castFailed,
-      onDraw: function (n) { doCast({ question: qText, options: { replay: [signReplaySample(n)] } }, null); },
+      onDraw: function (n) { doCast(mkSeed({ options: { replay: [signReplaySample(n)] } }), null); },
       onFinish: function () { setAnimStage(null); },
       onSkip: function () {
         if (loading || data) { setAnimStage(null); return; }
-        doCast({ question: qText, options: { replay: [signReplaySample(signNo >= 1 && signNo <= SSGW_POOL_SIZE ? signNo : 1)] } }, null);
+        doCast(mkSeed({ options: { replay: [signReplaySample(signNo >= 1 && signNo <= SSGW_POOL_SIZE ? signNo : 1)] } }), null);
         setAnimStage(null);
       },
       onExit: function () { setAnimStage(null); openAsk(m); }
@@ -11668,9 +11781,9 @@ function DivinationPage({
       React.createElement('div', { className: 'section-title' }, '起卦失败'),
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: retryAsk }, UI_COPY.buttons.retry));
-  } else if (data) {
-    // REQ-061：灵签结果笺纸纹理槽（--art-ssgw-paper 可选素材，缺省无视觉差异）
-    body = React.createElement('div', { className: 'card' + (method === 'sign' ? ' ssgw-paper' : '') },
+  } else if (data && method !== 'sign') {
+    // REQ-081②：观音灵签结果改走全屏独立结果界面（SsgwResultScreen），不再内联于本页底部
+    body = React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'section-title' }, '卦象结果（' + ((m && m.name) || apiMethod) + '）'),
       qText ? React.createElement('div', { className: 'ask-echo' }, '问题：', qText) : null,
       manLabel ? React.createElement('div', { className: 'man-flag' }, '录入：', manLabel) : null,
@@ -11803,6 +11916,10 @@ function DivinationPage({
     : method === 'meihua' ? '记录梅花并成卦'
       : method === 'sign' ? '确认该签并展示'
         : '记录结果并起课';
+  // REQ-081②：观音灵签独立结果界面 —— 数据就绪且不在弹窗/签筒演出/错误态时，
+  // 全屏独立视图展示（自动摇签 / 手动选签共用）；卦象结果不再内联于本页最下方。
+  const signScreenOn = method === 'sign' && !!data && !asking && !animStage && !errored;
+  const signRes = (result && method === 'sign') ? result : null;
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
     React.createElement('div', { className: 'card' },
@@ -11822,16 +11939,18 @@ function DivinationPage({
       React.createElement('div', { className: 'modal ask-modal' + (askMode === 'manual' ? ' long' : ''), onClick: function (e) { e.stopPropagation(); } },
         React.createElement('div', { className: 'modal-title' }, ((m && m.name) || apiMethod), ' · ' + (askMode === 'manual' ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
         modeSwitch,
-        React.createElement('div', { className: 'ask-cap' }, '占问问题（必填）'),
+        // REQ-044 v2.1：占问问题可选 —— 留空可直接起卦，填写则随 seed 带入断卦上下文
+        React.createElement('div', { className: 'ask-cap' }, UI_COPY.divin.ask_label),
         React.createElement('textarea', {
           className: 'q-input',
           rows: 2,
           maxLength: 300,
           autoFocus: true,
-          placeholder: '示例：这件事的走向？ / 该不该推进？',
+          placeholder: UI_COPY.divin.ask_ph,
           value: question,
           onChange: function (e) { setQuestion(e.target.value); }
         }),
+        React.createElement('div', { className: 'ask-opt-note' }, UI_COPY.divin.ask_opt_note),
         isTimeMethod ? React.createElement('div', { key: 'tm' },
           React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '起卦时间（必填）'),
           React.createElement('div', { className: 'dt-row' },
@@ -11858,7 +11977,27 @@ function DivinationPage({
           React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
           askMode === 'manual'
             ? React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startManual }, manualStartLabel)
-            : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination)))) : null);
+            : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination)))) : null,
+    signScreenOn && signRes ? React.createElement(SsgwResultScreen, {
+      res: signRes,
+      qText: qText,
+      manLabel: manLabel,
+      interp: interp,
+      interpErr: interpErr,
+      interpLoading: interpLoading,
+      payEnough: payEnough,
+      onInterpret: interpret,
+      onRedo: function () {
+        setData(null);
+        setErrored('');
+        setInterp('');
+        setInterpErr('');
+        setFocusMap({});
+        setAnimStage(null);
+        openAsk(m);
+      },
+      onBack: function () { onNavigate('guoxue-hub'); }
+    }) : null);
 }
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
