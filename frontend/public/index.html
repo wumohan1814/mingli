@@ -184,6 +184,9 @@
     /* REQ-062：落地页宣传色块（国学/西式/MBTI 三模块共用 .landing-hero .card）白底 70% 半透明；
        只改背景不设整体 opacity，色块内文字/图标保持 100% 不透明 */
     .landing-hero .card{background:rgba(255,255,255,.7)}
+    /* REQ-064：落地页主按钮下方「档案管理」透明小按钮（字号 13px < 主按钮 16px；仅登录渲染） */
+    .landing-cases-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;flex:none;margin:14px auto 0;padding:6px 14px;font-size:13px;font-weight:500;line-height:1.5;background:transparent;border:1px solid transparent;border-radius:var(--radius-pill);color:var(--text-2);cursor:pointer;transition:color .15s,border-color .15s,opacity .15s}
+    .landing-cases-btn:hover{color:var(--skin-accent);border-color:var(--border)}
     .feature{border-left:3px solid var(--skin-accent)}
     .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
     .btn:active{transform:translateY(1px)}
@@ -1243,6 +1246,7 @@ const UI_COPY = {
     rechoose: '重选牌阵',
     back: '返回',
     view_archive: '查看档案',
+    manage_cases: '档案管理',
     back_to_list: '回到档案列表',
     back_home: '回到首页',
     deep_read: '本命深度解读',
@@ -2037,9 +2041,11 @@ function SkinSwitcher({
 }
 
 // ---- Pages ----
+// REQ-064 v2：三大模块落地宣传页 —— 主按钮下方「档案管理」透明小按钮（仅登录显示，点击进档案管理列表）
 function LandingPage({
   module,
-  onNavigate
+  onNavigate,
+  loggedIn
 }) {
   // 各模块的「落地宣传页」配置：主标题 / 副标题 / 简介 / 主按钮 → 对应 HUB 或测试页
   const MODS = {
@@ -2103,7 +2109,12 @@ function LandingPage({
   }, c.intro), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate(c.to)
-  }, c.cta)));
+  }, c.cta), /* REQ-064：主按钮正下方「档案管理」透明小按钮（字号小于主按钮；仅登录显示；点击进档案管理列表） */
+  loggedIn && /*#__PURE__*/React.createElement("button", {
+    className: "landing-cases-btn",
+    type: "button",
+    onClick: () => onNavigate('cases')
+  }, UI_COPY.buttons.manage_cases)));
 }
 
 // —— 余额系统组件（沿用国学皮肤令牌，不新增配色）——
@@ -3649,6 +3660,9 @@ function OnboardingPage({
   }, [form]);
   const cityNames = form.birth_province && reg[form.birth_province] ? Object.keys(reg[form.birth_province]) : [];
   const districtNames = form.birth_province && form.birth_city && reg[form.birth_province] && reg[form.birth_province][form.birth_city] ? Object.keys(reg[form.birth_province][form.birth_city]) : [];
+  // REQ-091：建档下拉「点击即填入」—— 出生年/月/日/时辰/性别/出生地均使用原生 <select>，
+  // onChange 即点即填（选项点选即提交，无「确定/取消」步骤）；原生选择器移动端自带取消（点外部/返回键），
+  // 非滑动式选择器故无「滑动预览自动提交」问题；日期/时辰/闰月联动校验由 saveCase 边界检查与出生地级联保留。
   const update = k => e => setForm({
     ...form,
     [k]: e.target.value
@@ -6688,11 +6702,11 @@ const RAIL_MODS = [{
   color: '#4A5BB5',
   icon: 'spark'
 }];
+// REQ-064 v2：首页左侧导航恢复为 3 键（国学预测 / 西式占卜 / MBTI）；
+// 「档案管理」第 4 键已撤销，入口迁移至三大模块落地宣传页主按钮下方的透明小按钮（仅登录显示）。
 function NavRail({
   module,
-  onSelect,
-  loggedIn,
-  onCases
+  onSelect
 }) {
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav-rail",
@@ -6711,24 +6725,7 @@ function NavRail({
     color: "#fff"
   }), /*#__PURE__*/React.createElement("span", {
     className: "rail-label"
-  }, m.label))), /* REQ-064：已登录才显示的第 4 按钮「档案管理」→ 档案列表
-      （样式与三模块按钮同款：竖排窄条 → hover 展开；点击离开落地页进 cases） */
-  loggedIn && /*#__PURE__*/React.createElement("button", {
-    key: 'cases',
-    type: "button",
-    className: module === 'cases' ? 'active expanded' : '',
-    style: {
-      background: '#2C385C'
-    },
-    onClick: () => onCases(),
-    "aria-label": "档案管理"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "list",
-    size: 20,
-    color: "#fff"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "rail-label"
-  }, "档案管理")));
+  }, m.label))));
 }
 
 // REQ-071：Banner 正中「模块」下拉导航 —— 全部支持功能（按三大模块分组，仅标题）。
@@ -14973,6 +14970,8 @@ function App() {
   const pages = {
     landing: /*#__PURE__*/React.createElement(LandingPage, {
       module: module,
+      /* REQ-064：仅登录显示「档案管理」入口 */
+      loggedIn: !!token,
       onNavigate: navigate
     }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
@@ -15115,10 +15114,7 @@ function App() {
     style: tcSet.anim_enabled ? undefined : { animation: 'none' }
   }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
     module: module,
-    onSelect: selectModule,
-    /* REQ-064：已登录才显示「档案管理」第 4 按钮 */
-    loggedIn: !!token,
-    onCases: () => navigate('cases')
+    onSelect: selectModule
   }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
     onClose: () => setCreditModal(null)
