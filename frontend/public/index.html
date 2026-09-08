@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>太初 · 识己于星，安己于时</title>
+  <!-- REQ-098：PWA —— manifest + 主题色 + iOS Safari「添加到主屏幕」适配。
+       资源一律根绝对路径（BUG-009 约定）：/manifest.webmanifest、/art/pwa/…。
+       主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 -->
+  <meta name="theme-color" content="#1A2138" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/art/pwa/apple-touch-icon-180.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="太初" />
   <!-- BUG-009：脚本必须用根绝对路径 /vendor/...（不能用相对 ./vendor/...）。
        分享链接直达页路径为 /mbti/share/{token}，相对路径会被浏览器解析为
        /mbti/share/vendor/... → SPA fallback 回退 index.html（text/html 被当 JS 执行）
@@ -17165,6 +17174,15 @@ class ErrorBoundary extends React.Component {
   }
 }
 ReactDOM.render(/*#__PURE__*/React.createElement(ErrorBoundary, null, /*#__PURE__*/React.createElement(App, null)), document.getElementById('root'));
+  </script>
+  <script>
+    // REQ-098：注册最小 Service Worker（sw.js：仅 cache-as-you-go 缓存 /art /vendor /tarot /lenormand 图片；
+    // /api、HTML/文档一律不缓存）。失败静默降级：不支持 / 非 HTTPS / 注册失败均不报错，退回纯网络态。
+    if ('serviceWorker' in navigator) {
+      try {
+        navigator.serviceWorker.register('/sw.js').catch(function () { /* 静默 */ });
+      } catch (err) { /* 静默 */ }
+    }
   </script>
 </body>
 </html>
