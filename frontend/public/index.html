@@ -120,7 +120,7 @@
       transition:background .18s ease,color .18s ease}
     .menu-login-btn:hover{background:var(--skin-banner-ink);color:var(--skin-banner)}
 
-    /* REQ-051：Banner 右上角全局余额（仅登录；积分 ÷ 汇率 → ¥，汇率动态读 system_configs.recharge_rate，读不到按 10） */
+    /* REQ-051/REQ-087：右上角菜单面板顶部余额（仅登录、点开菜单即见；余额 ÷ 汇率 → ¥，汇率动态读 system_configs.recharge_rate，读不到按 10） */
     .topbar-balance{display:inline-flex;align-items:center;gap:6px;margin-right:10px;padding:6px 12px;border-radius:999px;background:rgba(128,128,150,.2);color:var(--skin-banner-ink);font-size:12.5px;font-weight:600;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums;cursor:pointer;transition:background .18s ease}
     .topbar-balance:hover{background:rgba(128,128,150,.34)}
     .topbar-balance.static{cursor:default}
@@ -140,7 +140,7 @@
 
     /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
        受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
-       两侧留白相等 → 不遮挡左侧「太初」与右上角 余额/汉堡。 */
+       两侧留白相等 → 不遮挡左侧「太初」与右上角菜单/汉堡。 */
     .topbar-modnav{position:relative;display:flex;align-items:center;flex:none}
     .topbar-modnav .modnav-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
       font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;color:var(--skin-banner-ink);
@@ -389,13 +389,22 @@
     .empty-note{font-size:13px;color:var(--text-3);background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
     .deg-banner{font-size:12px;color:var(--cinnabar);background:rgba(178,58,58,.08);border-radius:var(--radius-md);padding:8px 10px;margin-bottom:6px;line-height:1.6}
 
-    /* —— 积分系统（沿用国学皮肤令牌，不新增配色）—— */
+    /* —— 余额系统（沿用国学皮肤令牌，不新增配色）—— */
     .credit-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--radius-pill);background:var(--skin-banner);color:#fff;font-size:13px;font-weight:600;cursor:pointer;line-height:1.5;transition:transform .12s,box-shadow .2s}
     .credit-pill:hover{box-shadow:0 4px 14px rgba(178,58,58,.28)}
     .credit-pill.warn{background:var(--cinnabar)}
     .credit-pill .pill-bal{font-variant-numeric:tabular-nums}
     .credit-pill.skeleton{width:96px;height:26px;padding:0;border:none;background:linear-gradient(90deg,#e9e2d6 25%,#f4efe6 37%,#e9e2d6 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
     .credit-balance-wrap{display:inline-flex;align-items:center;gap:8px}
+
+    /* REQ-086：付费操作统一「¥ 消耗」角标（余额 0 / 不足 → 警示红 warn + title「余额不足」） */
+    .pay-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;padding:1px 7px;border-radius:999px;
+      font-size:11px;font-weight:600;line-height:1.5;color:#fff;background:var(--skin-accent);vertical-align:middle;white-space:nowrap;flex:none}
+    .pay-badge.warn{background:var(--cinnabar)}
+    /* REQ-087：右上角菜单面板最顶部「余额 ¥X」（仅登录、点开菜单即见；点击进余额消耗明细） */
+    .menu-item.menu-balance{border-bottom:1px solid var(--border);margin-bottom:3px;padding-bottom:10px}
+    .menu-item.menu-balance .mb-val{font-weight:700;font-variant-numeric:tabular-nums;margin-left:1px}
+    .menu-item.menu-balance.warn{color:var(--cinnabar)}
     .txn-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
     .txn-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md)}
     .txn-icon{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
@@ -616,7 +625,7 @@
     .free-block .fb-label{font-size:12px;font-weight:700;color:var(--ink-600);margin-bottom:2px}
     .free-block .fb-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
     .free-block .fb-tip{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.6}
-    /* ===== REQ-075：六爻焦点详解（逐项点击 → LLM 结合本盘+爻辞针对性解读，小额积分付费） ===== */
+    /* ===== REQ-075：六爻焦点详解（逐项点击 → LLM 结合本盘+爻辞针对性解读，小额余额付费） ===== */
     .focus-card{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
     .focus-card .fc-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
     .focus-intro{font-size:12px;color:var(--text-3);line-height:1.7;margin-bottom:4px}
@@ -842,7 +851,7 @@
     .tc-set-status.failed .ss-dot{background:var(--cinnabar)}
     .tc-set-guest{font-size:12px;color:var(--text-3);background:var(--paper);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:9px 12px;line-height:1.7;margin-top:10px}
     /* ===== REQ-076：太初先生 Agent —— 右上角图标入口 + 会话页 ===== */
-    /* 右上角图标按钮（位于「余额」与右上角汉堡菜单之间；agent_enabled 开才显示） */
+    /* 右上角图标按钮（位于品牌区与右上角汉堡菜单之间；agent_enabled 开才显示） */
     .agent-top-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
       background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
     .agent-top-btn:hover{background:rgba(128,128,150,.32)}
@@ -1237,20 +1246,42 @@ const UI_COPY = {
     back_to_list: '回到档案列表',
     back_home: '回到首页',
     deep_read: '本命深度解读',
-    buy_points: '购买积分',
+    buy_points: '购买余额',
     login: '登录',
     register: '注册',
     logout: '退出登录',
     confirm: '确认',
-    cancel: '取消'
+    cancel: '取消',
+    retry: '重试',
+    close: '关闭',
+    back_options: '返回选项',
+    redo_divination: '重新起卦',
+    skip_anim: '跳过动画',
+    flip_all: '一键全翻',
+    flip_done: '已全部翻开',
+    step_back: '上一步',
+    reselect_all: '全部重选',
+    reselect_spread: '改选牌阵',
+    auto_pick: '自动抽牌',
+    manual_pick: '手动选牌',
+    upright: '正位',
+    reversed: '逆位',
+    interpret_pay: '深度解读（付费）',
+    start_predict: '开始预测',
+    finish_pick: '完成选牌'
   },
   tips: {
     loading_chart: '正在为你推演星图，请稍候……',
     loading_read: '解读生成中，趋势正在成形。',
-    info_points_cost: '本次解读将消耗积分，结果可随时回看。',
+    info_points_cost: '本次解读将按用量扣余额（¥），结果可随时回看。',
     hint_revision: '补充更准确的信息，可让结果更贴合你的真实处境。',
     hint_placeholder: '例如：想了解近半年的事业走向。',
-    hint_compliance: '以下为趋势参考，供你自行判断，非确定结论。'
+    hint_compliance: '以下为趋势参考，供你自行判断，非确定结论。',
+    processing: '处理中…',
+    submitting: '提交中…',
+    interpreting: '解读中…',
+    interpreting_liuyao: '断卦中…',
+    generating_chart: '星盘生成中…'
   },
   empty: {
     no_case: '还没有命理档案。新建一份，开启你的趋势参考。',
@@ -1262,7 +1293,7 @@ const UI_COPY = {
     net_error: '网络似乎打了个盹，请稍后重试。',
     auth_expired: '登录状态已失效，请重新登录以继续。',
     param_invalid: '信息填写不完整或有误，请检查后再试。',
-    points_insufficient: '积分不足，补足后可继续本次解读。',
+    points_insufficient: '余额不足，补足后可继续本次解读。',
     unknown: '出现了一点小状况，请稍后再试；若持续发生可联系我们。',
     rate_limit: '操作过于频繁，稍作停留后再继续吧。'
   },
@@ -1382,7 +1413,7 @@ function switchShareGuestSession(entering) {
     }
   }
 }
-// 积分不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
+// 余额不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
 let creditInsuffHandler = null;
 function setCreditInsuffHandler(fn) {
   creditInsuffHandler = fn;
@@ -1447,7 +1478,7 @@ function startRechargePoll(preBalance, startAt) {
       const b = await fetchCreditBalance();
       if (b != null && b > rechargePreBalance) {
         stopRechargePoll();
-        toast('充值成功，积分已到账');
+        toast('充值成功，余额已到账');
       }
     } catch (e) {/* 单次查询失败静默，下轮重试 */}
   };
@@ -1735,7 +1766,7 @@ async function api(path, options = {}) {
   err.code = errBody && typeof errBody.code === 'number' ? errBody.code : null;
   err.status = r.status;
   err.payload = errBody;
-  // 统一拦截「积分不足」错误码，弹充值引导弹窗（由 App 注册 handler 渲染）
+  // 统一拦截「余额不足」错误码，弹充值引导弹窗（由 App 注册 handler 渲染）
   if (err.code === 5002 && creditInsuffHandler) creditInsuffHandler(errBody || {});
   throw err;
 }
@@ -2075,7 +2106,7 @@ function LandingPage({
   }, c.cta)));
 }
 
-// —— 积分系统组件（沿用国学皮肤令牌，不新增配色）——
+// —— 余额系统组件（沿用国学皮肤令牌，不新增配色）——
 
 // 余额胶囊：自拉数据，loading 骨架，余额≤0 红字警示；点击进明细页
 function CreditBalance({
@@ -2103,10 +2134,10 @@ function CreditBalance({
   }, []);
   if (loading) return /*#__PURE__*/React.createElement("div", {
     className: "credit-pill skeleton",
-    "aria-label": "加载积分"
+    "aria-label": "加载余额"
   });
   const neg = balance == null || Number(balance) <= 0;
-  // 充值入口暂时隐藏（商户认证未完成）：仅保留余额胶囊展示与「查看积分明细」跳转，不再渲染「充值」链接
+  // 充值入口暂时隐藏（商户认证未完成）：仅保留余额胶囊展示与「查看余额明细」跳转，不再渲染「充值」链接
   return /*#__PURE__*/React.createElement("span", {
     className: "credit-balance-wrap"
   }, /*#__PURE__*/React.createElement("span", {
@@ -2114,20 +2145,20 @@ function CreditBalance({
     role: "button",
     tabIndex: 0,
     onClick: onClick,
-    title: neg ? '积分不足' : '查看积分明细'
+    title: neg ? '余额不足' : '查看余额明细'
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "spark",
     size: 14
   }), /*#__PURE__*/React.createElement("span", {
     className: "pill-bal"
-  }, "积分 ", balance == null ? '—' : balance)));
+  }, "余额 ¥", balance == null ? '—' : (Number(balance) / CREDIT_YUAN_RATE).toFixed(2))));
 }
 
 
-// —— REQ-051：Banner 全局余额（¥）——
-// 汇率：1 元 = N 积分，与后端 system_configs.recharge_rate 对齐（默认 10）。
+// —— REQ-051/REQ-087：右上角菜单余额（¥）——
+// 汇率：1 元 = N 存储单位，与后端 system_configs.recharge_rate 对齐（默认 10）。
 // 后端当前未开放公开配置接口：先探测 /system/configs 的 recharge_rate，404/失败静默回退常量 10；
-// 模块级记忆保证单次会话只探测一次。换算仅作用于前端展示，积分底层计费/扣费逻辑不变。
+// 模块级记忆保证单次会话只探测一次。换算仅作用于前端展示，余额底层计费/扣费逻辑不变。
 const CREDIT_YUAN_RATE = 10;
 let yuanRatePromise = null;
 function fetchCreditYuanRate() {
@@ -2146,7 +2177,7 @@ function fetchCreditYuanRate() {
   }
   return yuanRatePromise;
 }
-// Banner 余额胶囊：复用 fetchCreditBalance() 拉积分 → 积分 ÷ 汇率 = 余额 ¥（保留 2 位小数，不足 1 元显示 ¥0.xx）
+// Banner 余额胶囊（REQ-087 后不再直接渲染于 Banner，保留为通用余额读数组件；点击进余额明细）
 function BannerBalance({
   onClick
 }) {
@@ -2180,7 +2211,7 @@ function BannerBalance({
   const Tag = onClick ? 'button' : 'span';
   const tagProps = {
     className: 'topbar-balance' + (onClick ? '' : ' static'),
-    title: '余额 = 积分 ÷ ' + CREDIT_YUAN_RATE + (onClick ? ' · 点击查看积分明细' : '')
+    title: '余额 = 存储单位 ÷ ' + CREDIT_YUAN_RATE + (onClick ? ' · 点击查看余额明细' : '')
   };
   if (onClick) {
     tagProps.type = 'button';
@@ -2191,6 +2222,106 @@ function BannerBalance({
   }, "余额"), React.createElement("span", {
     className: "tb-sym"
   }, "¥"), txt);
+}
+
+// ===== REQ-086：付费操作统一「¥ 消耗」角标 =====
+// payBadge(enabled)：返回角标元素（小函数，可复用于所有会扣余额的按钮）。
+//   enabled=true（默认）→ 主题色角标 + title「按实际用量从余额扣除」；
+//   enabled=false（余额 0 / 不足）→ 警示红（warn）+ title「余额不足」。
+// 模块级共享余额查询（fetchPayBalanceYuan）：同会话内所有角标只发一次 /credits/balance，
+// 失败静默按「充足」处理（真正扣费仍由后端 5002 拦截兜底，本查询仅驱动角标警示色）。
+let payBalanceQuery = null;
+function fetchPayBalanceYuan() {
+  if (!payBalanceQuery) {
+    payBalanceQuery = (async () => {
+      let credits = null;
+      let rate = CREDIT_YUAN_RATE;
+      try {
+        credits = await fetchCreditBalance();
+      } catch (e) {/* 失败按充足处理 */}
+      try {
+        rate = await fetchCreditYuanRate();
+      } catch (e) {/* 保持默认汇率 */}
+      if (credits == null) return null;
+      const rn = Number(rate);
+      return Number(credits) / (Number.isFinite(rn) && rn > 0 ? rn : CREDIT_YUAN_RATE);
+    })();
+  }
+  return payBalanceQuery;
+}
+function usePaySufficient() {
+  const [enough, setEnough] = useState(true);
+  useEffect(() => {
+    let alive = true;
+    fetchPayBalanceYuan().then(function (y) {
+      if (alive) setEnough(y == null ? true : y > 0);
+    }).catch(function () {
+      if (alive) setEnough(true);
+    });
+    return function () { alive = false; };
+  }, []);
+  return enough;
+}
+function payBadge(enabled) {
+  const ok = enabled !== false;
+  return React.createElement("span", {
+    key: 'paybadge',
+    className: 'pay-badge' + (ok ? '' : ' warn'),
+    title: ok ? '按实际用量从余额扣除' : '余额不足，补足后可继续',
+    "aria-label": ok ? '¥ 消耗：按实际用量从余额扣除' : '¥ 消耗：余额不足'
+  }, "¥ 消耗");
+}
+
+// REQ-087：右上角菜单面板最顶部「余额 ¥X」（仅登录、点开菜单即见；点击进余额消耗明细）。
+// 复用 fetchCreditBalance()（拉余额）与 fetchCreditYuanRate()（汇率）→ ¥ = 余额 ÷ 汇率；
+// 余额 ≤ 0 → 警示红（warn）。明细口径对齐 REQ-063（项目中文标签 + 消耗档案名 + 余额单位），跳转即 credits 页。
+function MenuBalance({
+  onClick
+}) {
+  const [yuan, setYuan] = useState(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      let credits = null;
+      let rate = CREDIT_YUAN_RATE;
+      try {
+        credits = await fetchCreditBalance();
+      } catch (e) {/* 单次拉取失败静默，按失败态展示 */}
+      try {
+        rate = await fetchCreditYuanRate();
+      } catch (e) {/* 保持默认汇率 */}
+      if (!alive) return;
+      if (credits == null) {
+        setFailed(true);
+        setYuan(null);
+      } else {
+        const rn = Number(rate);
+        setYuan(Number(credits) / (Number.isFinite(rn) && rn > 0 ? rn : CREDIT_YUAN_RATE));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const txt = failed ? '--' : yuan == null ? '…' : yuan.toFixed(2);
+  const neg = yuan != null && yuan <= 0;
+  return React.createElement("button", {
+    type: "button",
+    className: 'menu-item menu-balance' + (neg ? ' warn' : ''),
+    role: "menuitem",
+    title: (neg ? '余额不足，' : '') + '点击查看余额明细',
+    onClick: function () {
+      if (onClick) onClick();
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mi-dot",
+    style: {
+      background: '#B8893E'
+    }
+  }), "余额 ", /*#__PURE__*/React.createElement("span", {
+    className: "mb-val"
+  }, "¥", txt));
 }
 // 充值按钮组件已随充值入口一并隐藏（商户认证未完成）；恢复开放时按需重建：
 // 原实现为一个 btn btn-primary 的「充值」按钮（class 含 btn btn-primary，type=button），
@@ -2204,7 +2335,7 @@ function CreditInsufficientModal({
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
   // 充值入口暂时隐藏：中性提示，不引导充值
-  const body = need != null && have != null ? '本次推演约需 ' + need + ' 积分，当前余额 ' + have + ' 积分。' : UI_COPY.error.points_insufficient;
+  const body = need != null && have != null ? '本次推演约需 ¥' + (Number(need) / CREDIT_YUAN_RATE).toFixed(2) + '，当前余额 ¥' + (Number(have) / CREDIT_YUAN_RATE).toFixed(2) + '。' : UI_COPY.error.points_insufficient;
   return /*#__PURE__*/React.createElement("div", {
     className: "modal-mask",
     onClick: onClose
@@ -2251,6 +2382,8 @@ function PairModal({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [res, setRes] = useState(null); // {id, interpretation}
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   // 档案选项展示：档案名 + 出生年（MBTI 模块附加已测类型标签）
   const optLabel = c => {
     const id = c.caseId;
@@ -2390,12 +2523,12 @@ function PairModal({
     type: 'button',
     className: 'pair-x',
     onClick: onClose,
-    title: '关闭'
+    title: UI_COPY.buttons.close
   }, '✕')), el('div', {
     className: 'pair-sub'
   }, '选择两份档案，基于' + meta.dataTxt + '，让 AI 解析两人的关系契合、相处模式与建议。'), el('div', {
     className: 'pair-pay'
-  }, '配对解析为付费 LLM 解读：按 token 计费，约 15–20 积分，解读成功后即时扣费（余额不足将自动提示）。'), err ? el('div', {
+  }, '配对解析为付费 LLM 解读：按实际用量扣余额（¥），解读成功后即时扣费（余额不足将自动提示）。'), err ? el('div', {
     className: 'pair-err'
   }, err) : null, busy ? el('div', {
     className: 'pair-busy'
@@ -2505,15 +2638,15 @@ function PairModal({
     type: 'button',
     className: 'btn btn-outline',
     onClick: onClose
-  }, '关闭'), el('button', {
+  }, UI_COPY.buttons.close), el('button', {
     type: 'button',
     className: 'btn btn-primary',
     disabled: busy || listLoading || listEmpty,
     onClick: submit
-  }, busy ? '配对解析中…' : '开始配对解析'))));
+  }, busy ? '配对解析中…' : ['开始配对解析', payBadge(payEnough)]))));
 }
 
-// 积分明细页
+// 余额明细页
 function CreditTransactionsPage({
   caseId,
   onNavigate
@@ -2526,7 +2659,7 @@ function CreditTransactionsPage({
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  // REQ-063：本页积分记载统一改按余额单位展示（¥ = 积分 ÷ 汇率）。
+  // REQ-063：本页余额记载统一按余额单位展示（¥ = 余额 ÷ 汇率）。
   // 复用 REQ-051 的 fetchCreditYuanRate()（模块级记忆只探测一次），失败/未就绪回退常量 10。
   const [yuanRate, setYuanRate] = useState(null);
   useEffect(() => {
@@ -2565,7 +2698,7 @@ function CreditTransactionsPage({
       setOffset(off + list.length);
       await loadBalance();
     } catch (e) {
-      if (!append) setErrored(e.message || '积分记录加载失败，请重试。');
+      if (!append) setErrored(e.message || '余额记录加载失败，请重试。');
     } finally {
       if (append) setLoadingMore(false);else setLoading(false);
     }
@@ -2584,7 +2717,7 @@ function CreditTransactionsPage({
         const r = await api('/credits/balance');
         const b = r.data && r.data.balance != null ? r.data.balance : r.balance;
         if (b != null && enterBalance.current != null && Number(b) > enterBalance.current) {
-          toast('充值成功，积分已到账');
+          toast('充值成功，余额已到账');
           setBalance(Number(b));
           load(0, false);
         }
@@ -2643,7 +2776,7 @@ function CreditTransactionsPage({
       className: "card failed-box"
     }, /*#__PURE__*/React.createElement("h2", {
       className: "title"
-    }, "积分明细加载失败"), /*#__PURE__*/React.createElement("div", {
+    }, "余额明细加载失败"), /*#__PURE__*/React.createElement("div", {
       className: "error"
     }, errored), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-primary",
@@ -2680,7 +2813,7 @@ function CreditTransactionsPage({
       color: 'var(--text-3)',
       marginTop: 4
     }
-  }, "换算：1 元 = ", rate, " 积分（余额 ¥ = 积分 ÷ 汇率）"))), /*#__PURE__*/React.createElement("div", {
+  }, "换算：1 元 = ", rate, " 存储单位（余额 ¥ = 存储单位 ÷ 汇率）"))), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
   }, "余额明细"), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "card",
@@ -2837,10 +2970,10 @@ function AuthPage({
       refreshToken = res.refresh_token || res.data && res.data.refresh_token;
       localStorage.setItem('taichu_token', token || '');
       localStorage.setItem('taichu_refresh_token', refreshToken || '');
-      // 注册成功：提示新用户赠送积分（数量以后端 free_credit_granted 为准，缺失则用通用文案）
+      // 注册成功：提示新用户赠送余额（数量以后端 free_credit_granted 为准，缺失则用通用文案）
       if (!isLogin) {
         const free = res.data && res.data.free_credit_granted || res.free_credit_granted;
-        toast(free != null ? '已赠送 ' + free + ' 积分' : '注册成功，赠送积分已到账');
+        toast(free != null ? '已赠送余额 ¥' + (Number(free) / CREDIT_YUAN_RATE).toFixed(2) : '注册成功，余额已到账');
       }
       // BUG-002: 登录/注册成功 → 若有被拦截的受限页回跳目标则先回跳，否则进入档案列表
       if (authRedirect) {
@@ -2997,7 +3130,7 @@ function AuthPage({
     style: {
       marginTop: 16
     }
-  }, loading ? '处理中...' : isLogin ? UI_COPY.buttons.login : UI_COPY.buttons.register)), /*#__PURE__*/React.createElement("p", {
+  }, loading ? UI_COPY.tips.processing : isLogin ? UI_COPY.buttons.login : UI_COPY.buttons.register)), /*#__PURE__*/React.createElement("p", {
     style: {
       textAlign: 'center',
       marginTop: 16,
@@ -4502,6 +4635,8 @@ function PredictPage({
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
   const [history, setHistory] = useState([]);
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const ref = useRef({
     timer: null,
     timeout: null,
@@ -4802,7 +4937,7 @@ function PredictPage({
       caseId,
       context: report && report.summary || ''
     })
-  }, "追问解读"), /*#__PURE__*/React.createElement("button", {
+  }, ["追问解读", payBadge(payEnough)]), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('archive', {
       caseId
@@ -4844,6 +4979,8 @@ function RevisePage({
   });
   const [input, setInput] = useState('');
   const [regenerating, setRegenerating] = useState(false);
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
 
   // 重新生成解读：POST predict 拿 jobId，轮询到 succeeded（或 failed/超时）再回解读页；
   // 此时 PredictPage 读 /report 已是最新成功的预测任务，直接展示新解读。
@@ -4949,14 +5086,14 @@ function RevisePage({
       width: 80
     },
     onClick: handleSend
-  }, "发送")), /*#__PURE__*/React.createElement("button", {
+  }, ["发送", payBadge(payEnough)])), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     style: {
       marginTop: 12
     },
     onClick: handleRegenerate,
     disabled: regenerating
-  }, regenerating ? '重新生成中…' : '重新生成解读'), /*#__PURE__*/React.createElement("div", {
+  }, regenerating ? '重新生成中…' : ['重新生成解读', payBadge(payEnough)]), /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       marginTop: 8
@@ -4994,6 +5131,8 @@ function TopicPage({
 }) {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [messages, setMessages] = useState(() => [{
     role: 'assistant',
     content: topic ? '以上是「' + topic + '」板块的完整解读，您可就这一板块继续追问。' : '您想进一步了解哪些细节？'
@@ -5200,7 +5339,7 @@ function TopicPage({
     },
     onClick: handleSend,
     disabled: sending
-  }, sending ? '回复中' : '发送')), /*#__PURE__*/React.createElement("div", {
+  }, sending ? '回复中' : ['发送', payBadge(payEnough)])), /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       marginTop: 12
@@ -6705,7 +6844,7 @@ function TopbarModNav({
   }, it.label))))));
 }
 
-// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 余额¥ + 汉堡按钮 + 下拉（切模块回落地页 / 功能设置 / 档案管理 / 退出登录）
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 汉堡按钮 + 下拉（余额¥置顶 + 切模块回落地页 / 功能设置 / 档案管理 / 退出登录）
 function TopbarMenu({
   loggedIn,
   onAuth,
@@ -6740,13 +6879,11 @@ function TopbarMenu({
     className: "menu-login-btn",
     onClick: onAuth
   }, "登录 / 注册"));
-  // REQ-051：已登录 → 余额（¥，积分÷汇率换算）显示在汉堡按钮左侧；点击进积分明细
+  // REQ-087：已登录 → 余额（¥，余额÷汇率换算）不再直接显示在 Banner，移入右上角菜单面板最顶部；点击进余额明细
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
     ref: wrapRef
-  }, /*#__PURE__*/React.createElement(BannerBalance, {
-    onClick: onCredits || undefined
-  }), /* REQ-076：太初先生 Agent 图标入口 —— 位于「余额」与右上角菜单（汉堡）之间；
+  }, /* REQ-076：太初先生 Agent 图标入口 —— 位于右上角菜单（汉堡）左侧；
       agent_enabled 开（默认）才显示；关闭入口时隐藏（既有会话与数据保留，重开可见） */
   agentEnabled && /*#__PURE__*/React.createElement("button", {
     className: "agent-top-btn",
@@ -6774,7 +6911,14 @@ function TopbarMenu({
   }))), open && /*#__PURE__*/React.createElement("div", {
     className: "menu-drop",
     role: "menu"
-  }, RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
+  }, /* REQ-087：菜单面板最顶部 = 「余额 ¥X」（仅登录、点开菜单即见；点击进余额消耗明细） */
+  /*#__PURE__*/React.createElement(MenuBalance, {
+    key: 'menu-balance',
+    onClick: () => {
+      setOpen(false);
+      onCredits && onCredits();
+    }
+  }), RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
     key: m.id,
     className: "menu-item",
     role: "menuitem",
@@ -6888,6 +7032,8 @@ function NinePickPage({
   onNavigate
 }) {
   const el = React.createElement;
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   // null = 读取中；[] = 无档案
   const [list, setList] = useState(null);
   const [errored, setErrored] = useState('');
@@ -6947,7 +7093,7 @@ function NinePickPage({
         width: 'auto'
       },
       onClick: load
-    }, '重试'), el('button', {
+    }, UI_COPY.buttons.retry), el('button', {
       className: 'btn btn-outline',
       style: {
         width: 'auto'
@@ -7023,7 +7169,7 @@ function NinePickPage({
     }
   }, el('div', {
     className: 'section-title'
-  }, '九法合一操作'), selCase ? el('div', null, el('div', {
+  }, '开始九法合一'), selCase ? el('div', null, el('div', {
     style: {
       fontSize: 12,
       color: 'var(--text-2)',
@@ -7067,7 +7213,7 @@ function NinePickPage({
     onClick: () => onNavigate('waiting', {
       caseId: selId
     })
-  }, '跑九法合一开始预测'), el('button', {
+  }, [UI_COPY.buttons.start_predict, payBadge(payEnough)]), el('button', {
     className: 'btn btn-outline',
     style: {
       flex: '1 1 190px'
@@ -7083,7 +7229,15 @@ function NinePickPage({
       color: 'var(--text-3)',
       lineHeight: 1.7
     }
-  }, '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑九法）与「跑九法合一开始预测」（未跑 / 续跑）两个操作。'));
+  }, '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑九法）与「跑九法合一开始预测」（未跑 / 续跑）两个操作。'), el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--cinnabar)',
+      fontWeight: 600,
+      marginTop: 8,
+      lineHeight: 1.7
+    }
+  }, '表示九法合一，开始预测会消耗大量余额，因为会同时跑9个方法。'));
   const listActions = list && list.length > 0 ? el('div', {
     style: {
       display: 'flex',
@@ -7158,6 +7312,8 @@ function GuoxueHubPage({
   onNavigate,
   applySkin
 }) {
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const cards = [{
     name: '九法合一解读',
     sub: '选择档案 · 跑九法或查看/修改解读（八字·紫微·西占·七政·奇门·五运六气等 9 法综合）',
@@ -7192,7 +7348,7 @@ function GuoxueHubPage({
     className: "pe-title"
   }, "配对解析"), /*#__PURE__*/React.createElement("div", {
     className: "pe-sub"
-  }, "选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，约 15–20 积分）")), /*#__PURE__*/React.createElement("button", {
+  }, "选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，按实际用量扣余额 ¥）")), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
     onClick: () => {
@@ -7205,7 +7361,7 @@ function GuoxueHubPage({
         module: 'guoxue'
       });
     }
-  }, "配对解析")), /*#__PURE__*/React.createElement("div", {
+  }, ["配对解析", payBadge(payEnough)])), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -9216,11 +9372,11 @@ const LIUYAO_GENERIC = {
 /* S07：合规尾注（追加在免费解读区末尾，沿用 REQ-006 免责口径） */
 const LIUYAO_DISCLAIMER = '以上内容由传统卦理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。';
 
-/* REQ-075：六爻焦点详解文案（动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读，小额积分即时扣费） */
+/* REQ-075：六爻焦点详解文案（动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读，小额余额即时扣费） */
 const LIUYAO_FOCUS_CN = {
   'title': '焦点详解（付费）',
-  'intro': '结合本盘爻象（yaosDetail）与 64 卦爻辞原文，对动爻、世应、空亡·月破·日破、暗动、回头生克、化空化墓逐项做针对性解读（每项小额积分扣费；同项结果自动缓存，再次点击不再重复扣费）。',
-  'pay_tip': '详解（小额积分）',
+  'intro': '结合本盘爻象（yaosDetail）与 64 卦爻辞原文，对动爻、世应、空亡·月破·日破、暗动、回头生克、化空化墓逐项做针对性解读（每项按用量扣余额；同项结果自动缓存，再次点击不再重复扣费）。',
+  'pay_tip': '详解（扣余额）',
   'miss': '本盘无此标记',
   'loading': '详解生成中…',
   'expand': '展开',
@@ -9311,10 +9467,12 @@ function LiuyaoTermCard(res) {
   });
   return FreeCard('卦理词条（免费）', blocks);
 }
-/* ---------- REQ-075：六爻焦点详解 —— 动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读（小额积分即时扣费）。
+/* ---------- REQ-075：六爻焦点详解 —— 动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读（小额余额即时扣费）。
    命中判定复用 S05 术语短释（LiuyaoTermCard 同一套 yaosDetail 富字段逻辑）；未命中置灰「本盘无此标记」不请求；世应恒可点。
    三态：loading 文案 / 失败 err 文案 / 成功 interpretation 可折叠面板（复用 interp-body 解析面板样式）；本地缓存已取结果（同 focus 再点直接展示不再请求）。 ---------- */
 function LiuyaoFocusPanel({ res, focusMap, onDetail, onToggle }) {
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const yaos = Array.isArray(res.yaosDetail) ? res.yaosDetail.slice() : [];
   const any = function (fn) { return yaos.some(fn); };
   const hasMoving = Boolean((Array.isArray(res.changingYaos) && res.changingYaos.length) || any(function (y) { return Boolean(y.isChanging); }));
@@ -9341,7 +9499,7 @@ function LiuyaoFocusPanel({ res, focusMap, onDetail, onToggle }) {
     } else if (st.txt) {
       kids.push(React.createElement('button', { key: 'tg', type: 'button', className: 'focus-btn' + (st.open ? ' on' : ''), onClick: function () { onToggle(it.key); } }, st.open ? LIUYAO_FOCUS_CN.collapse : LIUYAO_FOCUS_CN.expand));
     } else {
-      kids.push(React.createElement('button', { key: 'go', type: 'button', className: 'focus-btn', onClick: function () { onDetail(it.key); } }, LIUYAO_FOCUS_CN.pay_tip));
+      kids.push(React.createElement('button', { key: 'go', type: 'button', className: 'focus-btn', onClick: function () { onDetail(it.key); } }, [LIUYAO_FOCUS_CN.pay_tip, payBadge(payEnough)]));
     }
     if (st.err) kids.push(React.createElement('span', { key: 'er', className: 'focus-note err' }, st.err));
     if (st.txt && st.open) {
@@ -9566,8 +9724,8 @@ function ArtStageFrame(opts) {
     React.createElement('div', { key: 'bg', className: 'stage-bg' }),
     React.createElement('div', { key: 'fx', className: 'art-fx-wrap' }, artFxEls(10))
   ];
-  if (opts.skip) kids.push(React.createElement('button', { key: 'sk', type: 'button', className: 'art-skip', onClick: opts.skip }, '跳过动画'));
-  if (opts.cancel) kids.push(React.createElement('button', { key: 'cc', type: 'button', className: 'art-cancel', onClick: opts.cancel }, opts.cancelLabel || '返回'));
+  if (opts.skip) kids.push(React.createElement('button', { key: 'sk', type: 'button', className: 'art-skip', onClick: opts.skip }, UI_COPY.buttons.skip_anim));
+  if (opts.cancel) kids.push(React.createElement('button', { key: 'cc', type: 'button', className: 'art-cancel', onClick: opts.cancel }, opts.cancelLabel || UI_COPY.buttons.back));
   kids.push(React.createElement('div', { key: 'cap', className: 'stage-cap' },
     React.createElement('div', { className: 'stage-title' }, opts.title),
     opts.sub ? React.createElement('div', { className: 'stage-sub' }, opts.sub) : null));
@@ -10071,6 +10229,8 @@ function ArtStageSkipNote() {
 function DivinationPage({
   onNavigate
 }) {
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [method, setMethod] = useState('liuyao');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -10479,7 +10639,7 @@ function DivinationPage({
     body = React.createElement('div', { className: 'card failed-box' },
       React.createElement('div', { className: 'section-title' }, '起卦失败'),
       React.createElement('div', { className: 'error' }, errored),
-      React.createElement('button', { className: 'btn btn-primary', onClick: retryAsk }, '重试'));
+      React.createElement('button', { className: 'btn btn-primary', onClick: retryAsk }, UI_COPY.buttons.retry));
   } else if (data) {
     // REQ-061：灵签结果笺纸纹理槽（--art-ssgw-paper 可选素材，缺省无视觉差异）
     body = React.createElement('div', { className: 'card' + (method === 'sign' ? ' ssgw-paper' : '') },
@@ -10498,8 +10658,8 @@ function DivinationPage({
       result && result.text ? React.createElement('p', { style: { marginTop: 8, color: 'var(--text-2)', lineHeight: 1.7 } }, String(result.text)) : null,
       interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
       manWarn ? React.createElement('div', { className: 'warn-note' }, manWarn) : null,
-      React.createElement('div', { className: 'pay-hint' }, '深度断卦为付费 LLM 解读，约 12 积分（点击前将预检余额）'),
-      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '断卦中…' : '深度断卦（付费）'),
+      React.createElement('div', { className: 'pay-hint' }, '深度断卦为付费 LLM 解读，按实际用量扣余额（¥）（点击前将预检余额）'),
+      React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting_liuyao : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
       interp ? React.createElement(React.Fragment, null,
         React.createElement('div', { className: 'interp-title' }, '断卦结果'),
         React.createElement('div', { className: 'interp-body' }, interp)) : null);
@@ -10628,8 +10788,8 @@ function DivinationPage({
       }))),
     body,
     React.createElement('div', { className: 'back-row fill' },
-      data ? React.createElement('button', { className: 'btn btn-outline', onClick: function () { openAsk(m); } }, '重新起卦') : null,
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, '返回选项')),
+      data ? React.createElement('button', { className: 'btn btn-outline', onClick: function () { openAsk(m); } }, UI_COPY.buttons.redo_divination) : null,
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options)),
     asking ? React.createElement('div', { className: 'modal-mask', onClick: closeAsk },
       React.createElement('div', { className: 'modal ask-modal' + (askMode === 'manual' ? ' long' : ''), onClick: function (e) { e.stopPropagation(); } },
         React.createElement('div', { className: 'modal-title' }, ((m && m.name) || apiMethod), ' · ' + (askMode === 'manual' ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
@@ -11280,6 +11440,8 @@ function TarotCard({
 function TarotPage({
   onNavigate
 }) {
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [step, setStep] = useState('menu'); // menu -> pick(手动选牌) | draw
   const [spread, setSpread] = useState(null);
   const [question, setQuestion] = useState('');
@@ -11528,7 +11690,7 @@ function TarotPage({
     drawBody = React.createElement('div', { className: 'card failed-box' },
       React.createElement('div', { className: 'section-title' }, '抽牌失败'),
       React.createElement('div', { className: 'error' }, errored),
-      React.createElement('button', { className: 'btn btn-primary', onClick: redo }, '重试'));
+      React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
     const bodyKids = [
       React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
@@ -11550,7 +11712,7 @@ function TarotPage({
           React.createElement('span', { className: 'fc-progress' },
             '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
             left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
-          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? '一键全翻' : '已全部翻开'));
+          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? UI_COPY.buttons.flip_all : UI_COPY.buttons.flip_done));
         const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
           React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
           cards.map(function (c, i) { return flipMeanItem(c, i); }));
@@ -11571,8 +11733,8 @@ function TarotPage({
         meanItems));
     }
     if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
-    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '综合解读为付费 LLM，约 20 积分（点击前将预检余额）'));
-    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '综合解读（付费）'));
+    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '综合解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
+    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
     if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
       React.createElement('div', { className: 'interp-title' }, '综合解读'),
       React.createElement('div', { className: 'interp-body' }, interp)));
@@ -11593,8 +11755,8 @@ function TarotPage({
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
     React.createElement('div', { className: 'mode-switch' },
-      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, '自动抽牌'),
-      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, '手动选牌')),
+      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
+      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick)),
     React.createElement('div', { className: 'method-list' }, TAROT_SPREADS.map(function (s) {
       return React.createElement('div', {
         key: s.id,
@@ -11637,8 +11799,8 @@ function TarotPage({
     React.createElement('div', { className: 'pick-progress' },
       '正在选第 ', React.createElement('b', null, Math.min(picks.length + 1, posLen)), '/', posLen, ' 张：', React.createElement('b', null, spread && spread.pos[picks.length] ? spread.pos[picks.length] : ''), ' — 请先在下方定这张牌的正/逆位，再点选牌库中的牌。'),
     React.createElement('div', { className: 'or-row' },
-      React.createElement('button', { type: 'button', className: 'or-btn up' + (pickOri === 'up' ? ' sel' : ''), onClick: function () { setPickOri('up'); } }, '正位'),
-      React.createElement('button', { type: 'button', className: 'or-btn rev' + (pickOri === 'rev' ? ' sel' : ''), onClick: function () { setPickOri('rev'); } }, '逆位')),
+      React.createElement('button', { type: 'button', className: 'or-btn up' + (pickOri === 'up' ? ' sel' : ''), onClick: function () { setPickOri('up'); } }, UI_COPY.buttons.upright),
+      React.createElement('button', { type: 'button', className: 'or-btn rev' + (pickOri === 'rev' ? ' sel' : ''), onClick: function () { setPickOri('rev'); } }, UI_COPY.buttons.reversed)),
     React.createElement('div', { className: 'pick-slots' }, slotChips),
     React.createElement('div', { className: 'dk-filters' }, suitFilters.map(function (f) {
       return React.createElement('button', {
@@ -11652,18 +11814,18 @@ function TarotPage({
     dkCells.length ? React.createElement('div', { className: 'dk-grid' }, dkCells)
       : React.createElement('div', { className: 'dk-hint' }, '当前筛选下无可用牌（或该牌阵已选满）。'),
     React.createElement('div', { style: { display: 'flex', gap: 8, marginTop: 12 } },
-      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: undoPick, disabled: !picks.length }, '上一步'),
-      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: clearPicks, disabled: !picks.length }, '全部重选')),
+      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: undoPick, disabled: !picks.length }, UI_COPY.buttons.step_back),
+      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: clearPicks, disabled: !picks.length }, UI_COPY.buttons.reselect_all)),
     React.createElement('div', { className: 'back-row fill', style: { marginTop: 8 } },
-      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '改选牌阵'),
-      React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== posLen || !posLen }, loading ? '提交中…' : '完成选牌（' + picks.length + '/' + posLen + '）')));
+      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.reselect_spread),
+      React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== posLen || !posLen }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + posLen + '）')));
   // REQ-042 v2：draw 底部三按钮全宽并列大按钮（重新抽卡/重选牌阵/返回，保持）
   const drawFoot = React.createElement(React.Fragment, null,
     drawBody,
     React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
     step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot),
@@ -11975,6 +12137,8 @@ function lnCardEl(item, idx) {
 function LenormandPage({
   onNavigate
 }) {
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [step, setStep] = useState('menu'); // menu -> pick(手动选牌) | draw
   const [spread, setSpread] = useState(null);
   const [question, setQuestion] = useState('');
@@ -12211,7 +12375,7 @@ function LenormandPage({
     body = React.createElement('div', { className: 'card failed-box' },
       React.createElement('div', { className: 'section-title' }, '抽牌失败'),
       React.createElement('div', { className: 'error' }, errored),
-      React.createElement('button', { className: 'btn btn-primary', onClick: redo }, '重试'));
+      React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
     const bodyKids = [
       React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
@@ -12231,7 +12395,7 @@ function LenormandPage({
           React.createElement('span', { className: 'fc-progress' },
             '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
             left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
-          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? '一键全翻' : '已全部翻开'));
+          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? UI_COPY.buttons.flip_all : UI_COPY.buttons.flip_done));
         const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
           React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
           cards.map(function (c, i) { return flipMeanItem(c, i); }));
@@ -12250,8 +12414,8 @@ function LenormandPage({
         meanItems));
     }
     if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
-    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '深度解读为付费 LLM，约 15 积分（点击前将预检余额）'));
-    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? '解读中…' : '深度解读（付费）'));
+    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '深度解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
+    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
     if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
       React.createElement('div', { className: 'interp-title' }, '深度解读'),
       React.createElement('div', { className: 'interp-body' }, interp)));
@@ -12272,8 +12436,8 @@ function LenormandPage({
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
     React.createElement('div', { className: 'mode-switch' },
-      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, '自动抽牌'),
-      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, '手动选牌')),
+      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
+      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick)),
     React.createElement('div', { className: 'method-list' }, LENORMAND_SPREADS.map(function (s) {
       return React.createElement('div', {
         key: s.id,
@@ -12316,18 +12480,18 @@ function LenormandPage({
     dkCells.length ? React.createElement('div', { className: 'dk-grid' }, dkCells)
       : React.createElement('div', { className: 'dk-hint' }, '该牌阵已选满。'),
     React.createElement('div', { style: { display: 'flex', gap: 8, marginTop: 12 } },
-      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: undoPick, disabled: !picks.length }, '上一步'),
-      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: clearPicks, disabled: !picks.length }, '全部重选')),
+      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: undoPick, disabled: !picks.length }, UI_COPY.buttons.step_back),
+      React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: clearPicks, disabled: !picks.length }, UI_COPY.buttons.reselect_all)),
     React.createElement('div', { className: 'back-row fill', style: { marginTop: 8 } },
-      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, '改选牌阵'),
-      React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== need }, loading ? '提交中…' : '完成选牌（' + picks.length + '/' + need + '）')));
+      React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.reselect_spread),
+      React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== need }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + need + '）')));
   // REQ-043 v2：draw 底部三按钮全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项，保持）
   const drawFoot = React.createElement(React.Fragment, null,
     body,
     React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
-      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, '返回选项')));
+      React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'nine', size: 22 }), ' 雷诺曼'),
     step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot));
@@ -12577,11 +12741,11 @@ function SunLoveModal({
     type: 'button',
     className: 'pair-x',
     onClick: onClose,
-    title: '关闭'
+    title: UI_COPY.buttons.close
   }, '✕'));
   const sub = el('div', {
     className: 'pair-sub'
-  }, hasSun ? '以「' + (caseName ? caseName : '当前档案') + ' · 太阳' + me + '」为基准，查看与其余 11 星座的恋爱匹配度。分值越高表示性格层面越合拍（静态轻内容、免费、不扣积分）。' : '本板块以档案的太阳星座为基准做恋爱匹配（免费静态轻内容，区别于双档案合盘的「配对解析」）。');
+  }, hasSun ? '以「' + (caseName ? caseName : '当前档案') + ' · 太阳' + me + '」为基准，查看与其余 11 星座的恋爱匹配度。分值越高表示性格层面越合拍（静态轻内容、免费、不扣余额）。' : '本板块以档案的太阳星座为基准做恋爱匹配（免费静态轻内容，区别于双档案合盘的「配对解析」）。');
   let inner = null;
   if (hasSun) {
     inner = el('div', null, el('div', {
@@ -12643,7 +12807,7 @@ function SunLoveModal({
         width: 'auto'
       },
       onClick: onClose
-    }, '关闭')));
+    }, UI_COPY.buttons.close)));
   }
   const disclaimer = el('div', {
     className: 'pair-pay'
@@ -12665,7 +12829,7 @@ function SunLoveModal({
     type: 'button',
     className: 'btn btn-outline',
     onClick: onClose
-  }, '关闭')) : null));
+  }, UI_COPY.buttons.close)) : null));
 }
 
 /* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
@@ -12877,6 +13041,8 @@ function AstrologyPage({
   initCaseId
 }) {
   const el = React.createElement;
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [tab, setTab] = useState('natal');
   const [caseList, setCaseList] = useState([]);
   const [caseLoading, setCaseLoading] = useState(true);
@@ -13213,7 +13379,7 @@ function AstrologyPage({
       disabled: loading || !caseId,
       title: caseId ? '' : '请先选择一份档案',
       onClick: () => load('natal')
-    }, loading ? '星盘生成中…' : UI_COPY.buttons.generate_chart),
+    }, loading ? UI_COPY.tips.generating_chart : UI_COPY.buttons.generate_chart),
     caseId ? el('button', {
       className: 'btn btn-outline',
       style: {
@@ -13372,14 +13538,14 @@ function AstrologyPage({
     }
   }, interpErr) : null, el('div', {
     className: 'pay-hint'
-  }, '本命深度解读为付费 LLM，约 18 积分（点击前将预检余额；缓存命中零扣费）'), el('button', {
+  }, '本命深度解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额；缓存命中零扣费）'), el('button', {
     className: 'btn btn-outline',
     style: {
       marginTop: 8
     },
     disabled: interpLoading || !data || !data.id,
     onClick: interpret
-  }, interpLoading ? '解读生成中…' : '[可选] 本命深度解读（付费）'), interp ? el(React.Fragment, null, el('div', {
+  }, interpLoading ? '解读生成中…' : ['[可选] 本命深度解读（付费）', payBadge(payEnough)]), interp ? el(React.Fragment, null, el('div', {
     className: 'interp-title'
   }, '解读结果'), el('div', {
     className: 'interp-body'
@@ -13417,7 +13583,7 @@ function AstrologyPage({
     }, errored), el('button', {
       className: 'btn btn-primary',
       onClick: () => load('natal')
-    }, '重试'));
+    }, UI_COPY.buttons.retry));
   } else if (data && !natalRaw) {
     body = el('div', {
       className: 'card failed-box'
@@ -13460,7 +13626,7 @@ function AstrologyPage({
     className: 'pe-title'
   }, '恋爱关系'), el('div', {
     className: 'pe-sub'
-  }, '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱匹配度 —— 静态娱乐向参考、免费、不扣积分（太阳星座需先生成/查看本命盘；深度双人合盘请用下方「配对解析」）')), el('button', {
+  }, '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱匹配度 —— 静态娱乐向参考、免费、不扣余额（太阳星座需先生成/查看本命盘；深度双人合盘请用下方「配对解析」）')), el('button', {
     className: 'btn btn-outline',
     type: 'button',
     onClick: () => {
@@ -13484,13 +13650,13 @@ function AstrologyPage({
     className: 'pe-title'
   }, '配对解析'), el('div', {
     className: 'pe-sub'
-  }, '选择两份档案，基于双方星座本命星盘解读两人的关系契合、相处模式与建议（付费 LLM，约 15–20 积分）')), el('button', {
+  }, '选择两份档案，基于双方星座本命星盘解读两人的关系契合、相处模式与建议（付费 LLM，按实际用量扣余额 ¥）')), el('button', {
     className: 'btn btn-outline',
     type: 'button',
     onClick: () => openPairAnalyze({
       module: 'xishi'
     })
-  }, '配对解析')), formCard, tabsNode, body, el('div', {
+  }, ['配对解析', payBadge(payEnough)])), formCard, tabsNode, body, el('div', {
     className: 'back-row'
   }, data ? el('button', {
     className: 'btn btn-outline',
@@ -13504,7 +13670,7 @@ function AstrologyPage({
       width: 'auto'
     },
     onClick: () => onNavigate('xishi-hub')
-  }, '返回选项'), el('button', {
+  }, UI_COPY.buttons.back_options), el('button', {
     className: 'btn btn-outline',
     style: {
       width: 'auto'
@@ -13530,6 +13696,8 @@ function MbtiPage({
   initCaseId
 }) {
   const el = React.createElement;
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
   const [view, setView] = useState('quiz'); // quiz | grid | result
   const [questions, setQuestions] = useState([]);
   const [qLoading, setQLoading] = useState(true);
@@ -13949,7 +14117,7 @@ function MbtiPage({
         el('div', {className: 'section-title'}, '题库加载失败'),
         el('div', {className: 'error'}, qErrored),
         el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-          el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: load}, '重试'),
+          el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: load}, UI_COPY.buttons.retry),
           el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入')));
     } else if (!cur) {
       body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, '题库为空'));
@@ -13965,7 +14133,7 @@ function MbtiPage({
           el('div', {className: 'section-title'}, '档案列表加载失败'),
           el('div', {className: 'error'}, caseErrored),
           el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: loadCases}, '重试')));
+            el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: loadCases}, UI_COPY.buttons.retry)));
       } else if (!caseList.length) {
         gate = el('div', {className: 'card', style: {textAlign: 'center', padding: '22px 16px'}},
           el('div', {style: {fontSize: 15, fontWeight: 700, marginBottom: 8}}, '请先在国学预测中建档'),
@@ -14055,8 +14223,8 @@ function MbtiPage({
     el('div', {className: 'pair-entry'},
       el('div', {className: 'pe-main'},
         el('div', {className: 'pe-title'}, '配对解析'),
-        el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，约 15–20 积分）')),
-      el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, '配对解析')),
+        el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）')),
+      el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, ['配对解析', payBadge(payEnough)])),
     body);
 }
 
@@ -14359,11 +14527,22 @@ function SettingsPage({
 // ===== REQ-076：太初先生 Agent 会话页 =====
 // 固定 session 对话（C 端对话大师）：顶部档案下拉（仅本人档案，可随时切换）；
 // 未选档案可闲聊，咨询档案相关内容时前端先温柔提示选档案（后端 master.md 亦引导）。
-// 三接口：GET /api/agent/greeting（开场白，零扣费）、GET /api/agent/messages
-// （本人历史，id 升序，limit=50）、POST /api/agent/chat（每来回按 LLM 实际 token
-// 扣积分，小额计费；5002 余额不足由 api() 拦截弹 CreditInsufficientModal）。
+// 接口：GET /api/agent/messages（本人历史，id 升序，limit=50）、POST /api/agent/chat
+// （每来回按 LLM 实际 token 扣余额，小额计费；5002 余额不足由 api() 拦截弹 CreditInsufficientModal）。
+// BUG-014：开场白不再取 GET /api/agent/greeting（后端当前返回的是开发说明文件文本，不应作为开场展示）；
+// 改由前端「既有 4 候选」随机 4 选 1 作为首条 assistant 消息（对齐 REQ-076⑤⑥：候选池独立、仅开场用、不并回 system prompt）。
 // 纯文本 pre-wrap 展示（assistant 为自然语言纯文本），无 dangerouslySetInnerHTML。
 const AGENT_CASE_KEYWORDS = ['档案','命盘','八字','紫微','星盘','本命','排盘','命宫','身宫','大运','流年'];
+// BUG-014：开场白候选池（对齐 backend/prompts/agent/greeting.md 既有 4 条话术；仅开场展示用，不入 system prompt）
+const AGENT_GREETINGS = [
+  '有缘相见，我是太初先生。人生如棋局，落子无悔；心事如浮云，看开即散。今日有什么想说的，不妨慢慢道来。',
+  '来，先坐，喝口茶。命里的事急不来，心里的事放得下。你我闲话几句，你想从哪儿说起？',
+  '贫道太初，陪你聊聊这烟火人间。悲欢离合、得失起落，看开了都是修行。近来可有什么心事？',
+  '一盏清茶，几句闲话。我是太初先生，懂些命理，更懂人心。今日相逢，你想问些什么，或只是想找人说说话？'
+];
+function randomAgentGreeting() {
+  return AGENT_GREETINGS[Math.floor(Math.random() * AGENT_GREETINGS.length)];
+}
 function agentLooksCaseRelated(text) {
   return AGENT_CASE_KEYWORDS.some(function (k) { return text.indexOf(k) >= 0; });
 }
@@ -14382,6 +14561,8 @@ function AgentPage({
   const [sending, setSending] = useState(false);
   const [sendErr, setSendErr] = useState('');
   const chatRef = useRef(null);
+  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
+  const payEnough = usePaySufficient();
 
   // ① 档案下拉数据源：GET /cases（登录后本人档案列表）
   useEffect(function () {
@@ -14402,16 +14583,12 @@ function AgentPage({
     return function () { alive = false; };
   }, []);
 
-  // ② 进入页面：开场白（零扣费）+ 历史。开场白作为第一条 assistant 消息展示；
-  //    历史为空且已有开场白时不重复展示。
+  // ② 进入页面：开场白 + 历史。开场白作为第一条 assistant 消息展示；
+  //    BUG-014：开场白由前端 4 候选随机 4 选 1（不再取 /agent/greeting，避免把「开发说明文件」文本当开场展示）；
+  //    有历史 → 原样展示历史（开场白只在全新会话出现，不重复前置）。
   useEffect(function () {
     let alive = true;
     (async function () {
-      let g = '';
-      try {
-        const gr = await api('/agent/greeting');
-        if (alive && gr && gr.data && gr.data.greeting) g = String(gr.data.greeting);
-      } catch (_) {/* 开场白失败不阻塞历史加载 */}
       let hist = [];
       let err = '';
       try {
@@ -14426,14 +14603,10 @@ function AgentPage({
       if (!alive) return;
       let msgs;
       if (hist.length) {
-        // 开场白已在历史首条时避免重复
-        if (g && hist[0].role === 'assistant' && hist[0].content === g) msgs = hist;
-        else if (g) msgs = [{ role: 'assistant', content: g, greeting: true }].concat(hist);
-        else msgs = hist;
-      } else if (g) {
-        msgs = [{ role: 'assistant', content: g, greeting: true }];
+        // BUG-014：有历史 → 原样展示（开场白仅在全新会话随机 4 选 1 作为首条，不重复前置）
+        msgs = hist;
       } else {
-        msgs = [];
+        msgs = [{ role: 'assistant', content: randomAgentGreeting(), greeting: true }];
       }
       setMessages(msgs);
       if (err) setLoadErr(err);
@@ -14515,10 +14688,10 @@ function AgentPage({
     })),
     caseList === null ? el('div', { className: 'agent-pick-hint' }, '档案加载中…') : null);
 
-  // 计费提示（可点击跳转积分明细，复用既有 credits 入口）
+  // 计费提示（可点击跳转余额明细，复用既有 credits 入口）
   const bill = el('div', { className: 'agent-bill' },
-    el('span', null, '每轮对话按实际用量小额扣积分'),
-    el('span', { className: 'bill-link', onClick: function () { onNavigate('credits'); } }, '查看积分明细'),
+    el('span', null, '每轮对话按实际用量扣余额（¥）'),
+    el('span', { className: 'bill-link', onClick: function () { onNavigate('credits'); } }, '查看余额明细'),
     selName ? el('span', { className: 'agent-sel-tag' }, '已选：' + selName) : null);
 
   // 消息区：加载 / 空态 / 气泡列表 三态
@@ -14561,7 +14734,7 @@ function AgentPage({
       className: 'agent-send',
       onClick: handleSend,
       disabled: sending || !input.trim()
-    }, sending ? '聆听中' : '发送'));
+    }, sending ? '聆听中' : ['发送', payBadge(payEnough)]));
 
   return el('div', { className: 'agent-page' },
     el('div', { className: 'agent-head' },
@@ -14718,7 +14891,7 @@ function App() {
   }, [skin]);
   onUnauthorized = () => setPage('auth');
 
-  // 注册「积分不足」弹窗处理器：api() 拦截到 5002 时回调，驱动 modal 渲染
+  // 注册「余额不足」弹窗处理器：api() 拦截到 5002 时回调，驱动 modal 渲染
   useEffect(() => {
     setCreditInsuffHandler(info => setCreditModal(info));
     return () => setCreditInsuffHandler(null);
@@ -14917,7 +15090,7 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, UI_COPY.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「太初」与右上角 余额/汉堡 之间，
+  }, UI_COPY.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「太初」与右上角菜单/汉堡 之间，
      用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
      banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
   tcSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
