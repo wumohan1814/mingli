@@ -1406,6 +1406,52 @@ const UI_COPY = {
     modalNoSunCase: '当前已选档案「{case}」尚未生成本命星盘，无法确定太阳星座。点击「去生成星盘」免费排盘（确定性计算；该档案已生成过则直接复用、不重复计费），成功后回到本页再点「看{rel}关系」即可查看。',
     modalNoSunNoCase: '尚未选择档案。请先在上方「选择档案 · 生成免费本命盘」中选择一份档案并生成/查看星盘，确定太阳星座后再来查看{rel}关系匹配。',
     modalFoot: '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整星盘的深度合盘，请使用页面顶部「配对解析」。'
+  },
+  // REQ-095：生肖流年「恋爱 / 朋友 / 上下级」三关系匹配（与星座 REQ-083 同机制：当前档案生肖
+  // （出生属相，地支）× 其余 11 生肖，固定分值 + 静态说明；分值用地支关系基础规则：
+  // 六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0；正文本轮占位「文案待补充」，
+  // 正式文案后补时只填 ZODIAC_LOVE_TEXT / ZODIAC_FRIEND_TEXT / ZODIAC_BOSS_TEXT 表即可）
+  zodiacRel: {
+    cardTitle: '生肖 · 关系匹配',
+    entryNote: '以当前档案生肖为基准，查看与其余 11 生肖的恋爱 / 朋友 / 上下级关系匹配 —— 依据生肖地支基础关系（六合 / 三合 / 相冲 / 相害 / 三刑）给出固定分值，静态娱乐向参考、免费、不扣余额。',
+    btnLove: '恋爱',
+    btnFriend: '朋友',
+    btnBoss: '上下级',
+    relName: { love: '恋爱', friend: '朋友', boss: '上下级' },
+    modalTitle: { love: '恋爱关系 · 生肖匹配', friend: '朋友关系 · 生肖匹配', boss: '上下级关系 · 生肖匹配' },
+    modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），本轮正文暂以「文案待补充」占位（静态轻内容、免费、不扣余额）。',
+    modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，本轮分值为基础规则换算、正文「文案待补充」，仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「九法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
+  },
+  // REQ-093UI：九法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
+  // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）
+  ninePickPair: {
+    title: '双人合盘',
+    sub: '选择两份档案，由 AI 合参两人缘分与相处建议（付费 LLM，按实际用量扣余额 ¥）：「配对解析」基于双方排盘信息（九法合一数据）；「八字配对」基于双方八字排盘。',
+    btnGuoxue: '配对解析',
+    btnBazi: '八字配对'
+  },
+  // REQ-094UI：九法合一选档案页「起名」（选单一档案后可用 → POST /api/namer/name；
+  // 姓氏必填（≤2 字）+ 起名方向选填；未选档案 / 档案未排盘时按后端 400 detail 展示提示）
+  namer: {
+    btn: '起名',
+    noCaseHint: '未选择档案时不可用：请先在上方勾选一份档案。',
+    needChartHint: '该档案尚未排盘（无盘面数据）：提交起名时后端将提示「先生成排盘」。',
+    title: '起名 · 依八字取用',
+    caseLine: '为档案「{case}」起名：由 AI 结合该档案八字排盘推算用字，返回一组推荐名字与理由。',
+    surnameLabel: '姓氏（必填）',
+    surnamePh: '请输入姓氏（最多 2 字）',
+    directionLabel: '起名方向（选填）',
+    directionPh: '如：五行喜用补益 / 期望寓意 / 风格偏好…',
+    surnameRequired: '请先填写姓氏',
+    surnameTooLong: '姓氏请控制在 2 个字以内',
+    submit: '开始起名',
+    submitting: '起名中…',
+    resultTitle: '推荐名字',
+    reasonLabel: '理由',
+    adjustedTag: '已调整',
+    emptyNames: '（本轮暂无名字返回，请稍后重试）',
+    notes: '说明：所列为姓名学方向的 AI 参考建议，最终是否采用请结合家庭约定与个人喜好自行判断（文化娱乐向参考，不构成现实决策依据）。',
+    submitFail: '起名失败，请重试。'
   }
 };
 const API = '/api';
@@ -2525,7 +2571,9 @@ function CreditInsufficientModal({
 const PAIR_MODULE_META = {
   guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）' },
   xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）' },
-  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）' }
+  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）' },
+  // REQ-093UI④：八字配对 —— 入口在九法合一选档案页底部；module='bazi' 走同一 POST /api/pair/analyze
+  bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）' }
 };
 const PAIR_RELATIONS = ['恋爱', '朋友', '家人', '同事', '其他'];
 function PairModal({
@@ -7468,6 +7516,8 @@ function NinePickPage({
   const [list, setList] = useState(null);
   const [errored, setErrored] = useState('');
   const [selId, setSelId] = useState(caseId != null && String(caseId).trim() ? String(caseId) : '');
+  // REQ-094UI：起名弹窗开合（选单一档案后按钮可用）
+  const [namerOpen, setNamerOpen] = useState(false);
   const load = async () => {
     setErrored('');
     try {
@@ -7591,6 +7641,35 @@ function NinePickPage({
       }, sel ? '✓' : ''));
     }));
   }
+  // REQ-094UI：起名行（选单一档案后可用 → 打开 NamerModal；档案未排盘时提交由后端 400 detail
+  // 「先生成排盘」直接展示于弹窗内，前端不强判排盘态）
+  const namerRow = el('div', {
+    style: {
+      display: 'flex',
+      gap: 10,
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      marginTop: 12,
+      paddingTop: 12,
+      borderTop: '1px dashed var(--border)'
+    }
+  }, el('button', {
+    className: 'btn btn-outline',
+    style: {
+      flex: '1 1 190px'
+    },
+    disabled: !selCase,
+    title: !selCase ? UI_COPY.namer.btnNoCaseTitle : (stSel.go ? '' : UI_COPY.namer.btnNoChartTitle),
+    onClick: () => setNamerOpen(true)
+  }, UI_COPY.namer.btn), el('span', {
+    style: {
+      flex: '1 1 220px',
+      minWidth: 0,
+      fontSize: 11.5,
+      color: 'var(--text-3)',
+      lineHeight: 1.7
+    }
+  }, !selCase ? UI_COPY.namer.noCaseHint : (stSel.go ? '' : UI_COPY.namer.needChartHint)));
   // —— 操作区：勾选档案后出现两个动作 ——
   const actionCard = el('div', {
     className: 'card',
@@ -7667,7 +7746,7 @@ function NinePickPage({
       marginTop: 8,
       lineHeight: 1.7
     }
-  }, '表示九法合一，开始预测会消耗大量余额，因为会同时跑9个方法。'));
+  }, '表示九法合一，开始预测会消耗大量余额，因为会同时跑9个方法。'), namerRow);
   const listActions = list && list.length > 0 ? el('div', {
     style: {
       display: 'flex',
@@ -7690,6 +7769,36 @@ function NinePickPage({
     },
     onClick: () => onNavigate('cases')
   }, '管理档案')) : null;
+  // REQ-093UI：底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，置于页面最下方
+  // 「返回选项」上方；配对解析=高亮主按钮（guoxue 模块），八字配对=同区次按钮（bazi 模块））
+  const pairEntry = list && list.length > 0 ? el('div', {
+    className: 'pair-entry',
+    style: {
+      marginTop: 10,
+      marginBottom: 0
+    }
+  }, el('div', {
+    className: 'pe-main'
+  }, el('div', {
+    className: 'pe-title'
+  }, UI_COPY.ninePickPair.title), el('div', {
+    className: 'pe-sub'
+  }, UI_COPY.ninePickPair.sub)), el('div', {
+    style: {
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap',
+      alignItems: 'center'
+    }
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-primary',
+    onClick: () => openPairAnalyze({ module: 'guoxue' })
+  }, [UI_COPY.ninePickPair.btnGuoxue, payBadge(payEnough)]), el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: () => openPairAnalyze({ module: 'bazi' })
+  }, [UI_COPY.ninePickPair.btnBazi, payBadge(payEnough)]))) : null;
   return el('div', {
     className: 'container'
   }, el('div', {
@@ -7723,18 +7832,220 @@ function NinePickPage({
       lineHeight: 1.7,
       marginBottom: 4
     }
-  }, '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。'), pickBody, listActions, actionCard), el('div', {
+  }, '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。'), pickBody, listActions, actionCard), pairEntry, el('div', {
     className: 'back-row'
   }, el('button', {
     className: 'btn btn-outline',
     onClick: () => onNavigate('guoxue-hub')
-  }, '返回国学首页'), el('button', {
-    className: 'btn btn-outline',
-    onClick: () => onNavigate('cases')
-  }, '档案列表'), el('button', {
+  }, UI_COPY.buttons.back_options), el('button', {
     className: 'btn btn-outline',
     onClick: () => onNavigate('landing')
-  }, UI_COPY.buttons.back_home)));
+  }, UI_COPY.buttons.back_home)), namerOpen ? el(NamerModal, {
+    caseId: selId,
+    caseName: selNm,
+    onClose: () => setNamerOpen(false)
+  }) : null);
+}
+
+/* ---------- REQ-094UI：起名弹窗（单档案 → POST /api/namer/name；姓氏必填 ≤2 字 + 方向选填） ----------
+   契约：body {case_id:int, surname:str(必填), direction?:str} → {code:0, data:{names:[{name,full,reason,adjusted}],
+   notes, adjusted}}；name=不含姓氏的名、full=全名、reason=理由、adjusted=是否按规则调整。
+   未选档案 / 档案未排盘：后端 400 detail 直接展示于弹窗（提示先生成排盘），前端不重复造文案。 */
+function NamerModal({
+  caseId,
+  caseName,
+  onClose
+}) {
+  const el = React.createElement;
+  const C = UI_COPY.namer;
+  const [surname, setSurname] = useState('');
+  const [direction, setDirection] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [res, setRes] = useState(null); // {names:[{name,full,reason,adjusted}], notes, adjusted}
+  const submit = async () => {
+    if (busy) return;
+    const sn = String(surname || '').trim();
+    if (!sn) {
+      toast(C.surnameRequired);
+      return;
+    }
+    if (sn.length > 2) {
+      toast(C.surnameTooLong);
+      return;
+    }
+    setBusy(true);
+    setErr('');
+    setRes(null);
+    try {
+      const body = {
+        case_id: Number(caseId),
+        surname: sn
+      };
+      const dd = String(direction || '').trim();
+      if (dd) body.direction = dd;
+      const r = await api('/namer/name', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+      const d = r && r.data ? r.data : (r || {});
+      setRes(d && typeof d === 'object' ? d : {});
+    } catch (e) {
+      // 未排盘等业务 400：后端 detail（如「先生成排盘…」）直接透传展示
+      setErr(e && e.message ? e.message : C.submitFail);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const list = res && Array.isArray(res.names) ? res.names : [];
+  const notesTxt = res && typeof res.notes === 'string' && res.notes.trim() ? res.notes.trim() : '';
+  const hd = el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: 'nine',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), C.title), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: UI_COPY.buttons.close
+  }, '✕'));
+  const sub = el('div', {
+    className: 'pair-sub'
+  }, fmtTpl(C.caseLine, {
+    case: caseName ? caseName : '档案 ' + caseId
+  }));
+  const form = el('div', null, el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, '姓'), '姓氏'), el('input', {
+    className: 'pair-field',
+    value: surname,
+    onChange: e => setSurname(e.target.value),
+    placeholder: C.surnamePh,
+    maxLength: 2
+  })), el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, '向'), '起名方向', el('span', {
+    style: {
+      fontWeight: 400,
+      color: 'var(--text-3)',
+      fontSize: 11.5
+    }
+  }, '（选填）')), el('input', {
+    className: 'pair-field',
+    value: direction,
+    onChange: e => setDirection(e.target.value),
+    placeholder: C.directionPh,
+    maxLength: 40
+  })));
+  const result = res ? el('div', null, el('div', {
+    className: 'interp-title'
+  }, C.resultTitle), list.length ? list.map(function (it, i) {
+    const full = it && typeof it.full === 'string' && it.full.trim() ? it.full.trim() : '';
+    const given = it && typeof it.name === 'string' && it.name.trim() ? it.name.trim() : '';
+    const reason = it && typeof it.reason === 'string' && it.reason.trim() ? it.reason.trim() : '';
+    const adjusted = !!(it && it.adjusted);
+    return el('div', {
+      key: i,
+      style: {
+        border: '1px solid var(--border)',
+        background: 'var(--paper)',
+        borderRadius: 10,
+        padding: '10px 12px',
+        marginTop: 8
+      }
+    }, el('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        flexWrap: 'wrap'
+      }
+    }, full ? el('span', {
+      style: {
+        fontSize: 17,
+        fontWeight: 800,
+        color: 'var(--skin-accent)'
+      }
+    }, full) : null, given ? el('span', {
+      style: {
+        fontSize: 12.5,
+        color: 'var(--text-2)',
+        fontWeight: 600
+      }
+    }, '名「' + given + '」') : null, adjusted ? el('span', {
+      style: {
+        fontSize: 11,
+        fontWeight: 700,
+        color: '#C9A24B',
+        border: '1px solid #C9A24B',
+        borderRadius: 'var(--radius-pill)',
+        padding: '1px 7px'
+      }
+    }, C.adjustedTag) : null), reason ? el('div', {
+      style: {
+        fontSize: 12,
+        color: 'var(--text-2)',
+        lineHeight: 1.75,
+        marginTop: 6,
+        whiteSpace: 'pre-line'
+      }
+    }, C.reasonLabel + '：' + reason) : null);
+  }) : el('div', {
+    style: {
+      fontSize: 12.5,
+      color: 'var(--text-3)',
+      padding: '6px 2px'
+    }
+  }, C.emptyNames), notesTxt ? el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-2)',
+      background: 'var(--skin-accent-soft)',
+      borderRadius: 'var(--radius-sm)',
+      padding: '8px 11px',
+      marginTop: 10,
+      lineHeight: 1.7
+    }
+  }, notesTxt) : null) : null;
+  return el('div', {
+    className: 'modal-mask',
+    onClick: busy ? null : onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, hd, sub, err ? el('div', {
+    className: 'pair-err'
+  }, err) : null, busy ? el('div', {
+    className: 'pair-busy'
+  }, C.submitting) : null, form, result, el('div', {
+    className: 'pair-pay'
+  }, C.notes), el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose,
+    disabled: busy
+  }, UI_COPY.buttons.close), el('button', {
+    type: 'button',
+    className: 'btn btn-primary',
+    disabled: busy,
+    onClick: submit
+  }, busy ? C.submitting : C.submit))));
 }
 
 /* ---------- 国学预测 HUB ---------- */
@@ -7742,17 +8053,9 @@ function GuoxueHubPage({
   onNavigate,
   applySkin
 }) {
-  // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
-  const payEnough = usePaySufficient();
-  // REQ-082①：国学「配对解析」由顶部入口条改为「与功能入口同款 hub-card 样式」，并置于本页最下方
-  // （跟在九法合一 / 生肖流年 / 临时起卦之后）；国学 HUB 属公开页 —— 未登录先引导去登录页
-  const openPair = () => {
-    if (!token) {
-      onNavigate('auth');
-      return;
-    }
-    openPairAnalyze({ module: 'guoxue' });
-  };
+  // REQ-093UI：国学「配对解析」入口已由本 HUB 迁入「九法合一 · 选择档案」页底部（原 REQ-082① 的
+  // hub-card 移除，改在九法合一页作高亮主按钮，紧邻档案选择便于发起双档案配对）；
+  // 本 HUB 保留 九法合一 / 生肖流年 / 临时起卦 三个功能入口（国学 HUB 属公开页）。
   const cards = [{
     name: '九法合一解读',
     sub: '选择档案 · 跑九法或查看/修改解读（八字·紫微·西占·七政·奇门·五运六气等 9 法综合）',
@@ -7771,12 +8074,6 @@ function GuoxueHubPage({
     bar: 'var(--gold-500)',
     ico: 'orbit',
     to: () => onNavigate('divination')
-  }, {
-    name: '配对解析',
-    sub: '选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，按实际用量扣余额 ¥）',
-    bar: 'var(--gold-500)',
-    ico: 'flat',
-    pair: true
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -7788,15 +8085,9 @@ function GuoxueHubPage({
   }), UI_COPY.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
-    key: c.pair ? 'pair' : i,
+    key: i,
     className: "hub-card",
-    onClick: () => {
-      if (c.pair) {
-        openPair();
-        return;
-      }
-      c.to();
-    }
+    onClick: () => c.to()
   }, /*#__PURE__*/React.createElement("span", {
     className: "hc-bar",
     style: {
@@ -7810,7 +8101,7 @@ function GuoxueHubPage({
     className: "hc-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hc-name"
-  }, c.name, c.pair ? payBadge(payEnough) : null), /*#__PURE__*/React.createElement("div", {
+  }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
   }, c.sub))))));
 }
@@ -7908,6 +8199,264 @@ function ZodiacMedallion({
     href: ZODIAC_SPRITE + '#' + id
   }));
 }
+/* ================= REQ-095：生肖流年「恋爱 / 朋友 / 上下级」三关系匹配 =================
+   与星座 REQ-083 同机制：以「当前档案生肖（出生属相，对应地支）× 其余 11 生肖」给固定匹配分值
+   + 静态说明（12×11）。分值用地支关系基础规则：六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、
+   其余=3.0（换算成百分/星级展示参考星座宫格样式）。
+   文案策略同 REQ-083：正文本轮统一占位「文案待补充」（空表 + 取值函数），正式文案后补时只填
+   ZODIAC_LOVE_TEXT / ZODIAC_FRIEND_TEXT / ZODIAC_BOSS_TEXT 表（键 = 生肖1生肖2 中文名，12×11）即可，
+   分值换算逻辑不需改动。本模块展示纯前端固定数据（免费、零请求、非双人生辰合盘）。 */
+/* 地支基础关系集（index 与 ZODIAC 12 生肖对齐：0=鼠(子) … 11=猪(亥)） */
+const ZD_BRANCH = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+const LIUHE_PAIRS = [[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]]; // 六合：子丑 寅亥 卯戌 辰酉 巳申 午未
+const SANHE_GROUPS = [[0, 4, 8], [2, 6, 10], [3, 7, 11], [5, 9, 1]]; // 三合：申子辰 亥卯未 寅午戌 巳酉丑
+const CHONG_PAIRS = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]]; // 相冲：子午 丑未 寅申 卯酉 辰戌 巳亥
+const HAI_PAIRS = [[0, 7], [1, 6], [2, 5], [3, 4], [8, 11], [9, 10]]; // 相害：子未 丑午 寅巳 卯辰 申亥 酉戌
+const XING_PAIRS = [[0, 3], [2, 5], [2, 8], [5, 8], [1, 10], [7, 10], [1, 7]]; // 相刑：子卯 / 寅巳申 / 丑戌未（去重）
+/* 三合按组展开为无序对（升序），供统一判定 */
+const SANHE_PAIRS = [];
+for (let gi = 0; gi < SANHE_GROUPS.length; gi++) {
+  const g = SANHE_GROUPS[gi];
+  for (let ai = 0; ai < g.length; ai++) {
+    for (let bi = ai + 1; bi < g.length; bi++) {
+      SANHE_PAIRS.push([Math.min(g[ai], g[bi]), Math.max(g[ai], g[bi])]);
+    }
+  }
+}
+function zdPairHit(pairs, a, b) {
+  const lo = Math.min(a, b);
+  const hi = Math.max(a, b);
+  for (let i = 0; i < pairs.length; i++) {
+    const p = pairs[i];
+    if (p[0] === lo && p[1] === hi) return true;
+  }
+  return false;
+}
+/* 分值判定（确定性）：六合 → 三合 → 相冲 → 相害 → 三刑 → 其余；重复命中按更高分值关系计
+   （如 巳申=六合+三刑 → 六合；寅巳=相害+三刑 → 相害；寅申/丑未=相冲+三刑 → 相冲，同分无歧义） */
+function zodiacRelScore(a, b) {
+  if (a === b) return 0;
+  if (zdPairHit(LIUHE_PAIRS, a, b)) return 5;
+  if (zdPairHit(SANHE_PAIRS, a, b)) return 4.5;
+  if (zdPairHit(CHONG_PAIRS, a, b)) return 2;
+  if (zdPairHit(HAI_PAIRS, a, b)) return 2.5;
+  if (zdPairHit(XING_PAIRS, a, b)) return 2;
+  return 3;
+}
+function zodiacRelCode(a, b) {
+  if (a === b) return '';
+  const s = zodiacRelScore(a, b);
+  if (s === 5) return '六合';
+  if (s === 4.5) return '三合';
+  if (s === 2.5) return '相害';
+  if (s === 2) return zdPairHit(CHONG_PAIRS, a, b) ? '相冲' : '相刑';
+  return '中性';
+}
+/* 每对说明正文表：键 = 生肖1生肖2（12×11 对，正文后补时整表填充）；本轮空表占位「文案待补充」 */
+const ZODIAC_LOVE_TEXT = {};
+const ZODIAC_FRIEND_TEXT = {};
+const ZODIAC_BOSS_TEXT = {};
+const ZODIAC_REL_TEXT_PH = '文案待补充';
+function zodiacRelText(kind, mine, other) {
+  const T = kind === 'friend' ? ZODIAC_FRIEND_TEXT : kind === 'boss' ? ZODIAC_BOSS_TEXT : ZODIAC_LOVE_TEXT;
+  const t = T && T[String(mine) + '_' + String(other)];
+  return t && String(t).trim() ? t : ZODIAC_REL_TEXT_PH;
+}
+/* 生成「当前生肖 index × 其余 11 生肖」匹配列表（分值/关系/百分 + 静态文案），分值降序、同分按生肖序 */
+function zodiacRelPairs(mineIdx, kind) {
+  const me = mineIdx != null && ZODIAC[mineIdx] ? ZODIAC[mineIdx] : '';
+  if (!me) return [];
+  const out = [];
+  for (let i = 0; i < ZODIAC.length; i++) {
+    if (i === mineIdx) continue;
+    const sc = zodiacRelScore(mineIdx, i);
+    out.push({
+      sign: ZODIAC[i],
+      idx: i,
+      score: sc,
+      code: zodiacRelCode(mineIdx, i),
+      pct: Math.round(sc / 5 * 100),
+      txt: zodiacRelText(kind, me, ZODIAC[i])
+    });
+  }
+  out.sort(function (x, y) {
+    return y.score - x.score || x.idx - y.idx;
+  });
+  return out;
+}
+/* REQ-095：生肖三关系弹窗（PairModal / 星座 SunRelationModal 同款容器与宫格样式；生肖由出生年份
+   推算、固定不变，故必有数据，无「先生成星盘」引导态）。kind: 'love' | 'friend' | 'boss'。 */
+function ZodiacRelModal({
+  kind,
+  mineIdx,
+  caseName,
+  onClose
+}) {
+  const el = React.createElement;
+  const k = kind === 'friend' || kind === 'boss' ? kind : 'love';
+  const meta = UI_COPY.zodiacRel;
+  const relCn = meta.relName && meta.relName[k] ? meta.relName[k] : '';
+  const mTitle = meta.modalTitle && meta.modalTitle[k] ? meta.modalTitle[k] : '关系匹配 · 生肖';
+  const me = mineIdx != null && ZODIAC[mineIdx] ? ZODIAC[mineIdx] : '';
+  const hasMe = !!me;
+  const list = hasMe ? zodiacRelPairs(mineIdx, k) : [];
+  const starN = sc => sc >= 5 ? 5 : sc >= 4.5 ? 4 : sc >= 3 ? 3 : 2;
+  const FULL = '★★★★★';
+  const EMPTY = '☆☆☆☆☆';
+  const tagCls = code => code === '六合' || code === '三合' ? 'var(--skin-accent)' : code === '中性' ? 'var(--text-3)' : 'var(--cinnabar)';
+  const cells = list.map(function (p) {
+    const n = starN(p.score);
+    return el('div', {
+      key: p.sign,
+      style: {
+        border: '1px solid var(--border)',
+        background: 'var(--paper)',
+        borderRadius: 10,
+        padding: '8px 10px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+        minWidth: 0
+      }
+    }, el('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 6
+      }
+    }, el('span', {
+      style: {
+        fontSize: 14,
+        fontWeight: 700,
+        color: 'var(--text-1)',
+        whiteSpace: 'nowrap'
+      }
+    }, p.sign + '（' + ZD_BRANCH[p.idx] + '）'), el('span', {
+      style: {
+        fontSize: 15,
+        fontWeight: 800,
+        color: 'var(--skin-accent)',
+        fontVariantNumeric: 'tabular-nums',
+        whiteSpace: 'nowrap'
+      }
+    }, p.pct + '%')), el('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        fontSize: 11,
+        fontWeight: 700,
+        whiteSpace: 'nowrap'
+      }
+    }, el('span', {
+      style: {
+        color: tagCls(p.code),
+        background: 'transparent',
+        padding: 0
+      }
+    }, p.code), el('span', {
+      style: {
+        color: 'var(--text-3)',
+        fontWeight: 400
+      }
+    }, '分 ' + p.score)), el('div', {
+      style: {
+        fontSize: 12,
+        lineHeight: 1,
+        letterSpacing: 1
+      }
+    }, el('span', {
+      style: {
+        color: '#C9A24B'
+      }
+    }, FULL.slice(0, n)), el('span', {
+      style: {
+        color: 'var(--text-3)',
+        opacity: .5
+      }
+    }, EMPTY.slice(0, 5 - n))), el('div', {
+      style: {
+        fontSize: 11.5,
+        color: 'var(--text-3)',
+        lineHeight: 1.6
+      }
+    }, p.txt));
+  });
+  const hd = el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: 'spark',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), mTitle), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: UI_COPY.buttons.close
+  }, '✕'));
+  const sub = el('div', {
+    className: 'pair-sub'
+  }, hasMe ? fmtTpl(meta.modalSub, {
+    case: caseName ? caseName : '当前档案',
+    me: me,
+    rel: relCn
+  }) : '生肖未知：请先在生肖流年页选择一份档案。');
+  let inner = null;
+  if (hasMe) {
+    inner = el('div', null, el('div', {
+      className: 'pair-sec-label',
+      style: {
+        marginTop: 4
+      }
+    }, el('span', {
+      className: 'ps-n'
+    }, '我'), '生肖 · ', me, '（', ZD_BRANCH[mineIdx], '）对 其余 11 生肖匹配度，按地支基础分值从高到低'), el('div', {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))',
+        gap: 8,
+        marginTop: 6
+      }
+    }, cells));
+  } else {
+    inner = el('div', {
+      style: {
+        background: 'var(--paper)',
+        border: '1px dashed var(--border)',
+        borderRadius: 12,
+        padding: '14px 16px',
+        textAlign: 'center',
+        fontSize: 13,
+        color: 'var(--text-2)',
+        lineHeight: 1.8
+      }
+    }, '未取得当前档案生肖，无法生成匹配表。');
+  }
+  const disclaimer = el('div', {
+    className: 'pair-pay'
+  }, meta.modalFoot);
+  return el('div', {
+    className: 'modal-mask',
+    onClick: onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    style: {
+      maxWidth: 620
+    },
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, hd, sub, inner, disclaimer, hasMe ? el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose
+  }, UI_COPY.buttons.close)) : null));
+}
 function ZodiacPage({
   onNavigate
 }) {
@@ -7925,6 +8474,8 @@ function ZodiacPage({
   const [selId, setSelId] = useState(''); // 当前选中档案 caseId
   const runRef = useRef(0); // 选中档案次数（同生肖档案重复选择也强制重跑）
   const [runId, setRunId] = useState(0);
+  // REQ-095：生肖三关系弹窗（null | 'love' | 'friend' | 'boss'；值年星君上方三键 → ZodiacRelModal）
+  const [relKind, setRelKind] = useState(null);
   // 切换流年年份：生肖 z 不变，仅改 year；已选档案（z ≥ 0）时递增 runId → 下方 effect 依新 year 自动重跑
   const shiftYear = d => {
     const n = Math.min(MAX_YEAR, Math.max(MIN_YEAR, year + d));
@@ -8079,6 +8630,48 @@ function ZodiacPage({
   }, k), React.createElement("span", {
     className: "zv"
   }, v));
+  // REQ-095：值年星君色块上方「恋爱 / 朋友 / 上下级」三关系入口（样式参考星座 REQ-083 三键；
+  // 仅已选档案并出结果后渲染 —— 未选择档案时不显示）
+  const relEntry = z >= 0 && data ? React.createElement("div", {
+    className: "card",
+    style: {
+      padding: '14px 16px'
+    }
+  }, React.createElement("div", {
+    className: "section-title",
+    style: {
+      marginBottom: 4
+    }
+  }, UI_COPY.zodiacRel.cardTitle), React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      lineHeight: 1.7,
+      marginBottom: 8
+    }
+  }, UI_COPY.zodiacRel.entryNote), React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap'
+    }
+  }, [['love', UI_COPY.zodiacRel.btnLove], ['friend', UI_COPY.zodiacRel.btnFriend], ['boss', UI_COPY.zodiacRel.btnBoss]].map(function (it) {
+    return React.createElement("button", {
+      key: it[0],
+      type: "button",
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto',
+        flex: 'none',
+        padding: '9px 14px',
+        fontSize: 14,
+        borderRadius: 'var(--radius-pill)'
+      },
+      onClick: function () {
+        setRelKind(it[0]);
+      }
+    }, it[1]);
+  }))) : null;
   // —— 档案选择区（REQ-052）：未登录/无档案 → 引导按钮；有档案 → 下拉，选中即自动推演 ——
   let picker = null;
   if (!token) {
@@ -8197,7 +8790,7 @@ function ZodiacPage({
   }, conflicts.map((c, i) => React.createElement("span", {
     key: i,
     className: 'conflict-tag ' + conflictCls(c.type)
-  }, c.type)))), starName ? React.createElement("div", {
+  }, c.type)))), relEntry, starName ? React.createElement("div", {
     className: "card taisui-card"
   }, React.createElement("div", {
     style: {
@@ -8288,7 +8881,12 @@ function ZodiacPage({
   }, "返回选项"), React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, UI_COPY.buttons.back_home)));
+  }, UI_COPY.buttons.back_home)), relKind ? React.createElement(ZodiacRelModal, {
+    kind: relKind,
+    mineIdx: z,
+    caseName: selCase ? (selCase.name || '档案 ' + selCase.caseId) : '',
+    onClose: () => setRelKind(null)
+  }) : null);
 }
 
 /* ---------- 临时起卦 ---------- */
