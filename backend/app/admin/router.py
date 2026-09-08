@@ -3,9 +3,9 @@
 数据源约定：
   - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
-  - 提示词            → 直接读/写 backend/prompts/**/*.md（21 个文件类 prompt：
-                        method-prompts 9 / shared 2 / interpret 5 / pair 3）；
-                        每次写前先落
+  - 提示词            → 直接读/写 backend/prompts/**/*.md（23 个文件类 prompt：
+                        method-prompts 9 / shared 2 / interpret 5 / pair 4 /
+                        agent 2 / namer 1）；每次写前先落
                         PromptVersion 版本快照到运维库（可查看历史 / 回滚），写必记审计。
 
 鉴权：Bearer JWT（type=admin）。viewer 可读全部（含版本历史/版本全文）；operator+
@@ -71,7 +71,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 21 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 23 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -93,13 +93,16 @@ PROMPT_FILES = {
     "divination_focus": "interpret/divination_focus.md",
     "lenormand": "interpret/lenormand.md",
     "tarot": "interpret/tarot.md",
-    # pair（3，REQ-072：三大模块配对解析）
+    # pair（4，REQ-072 三大模块 + REQ-093④ 八字配对）
     "guoxue": "pair/guoxue.md",
     "xishi": "pair/xishi.md",
     "mbti": "pair/mbti.md",
+    "bazi": "pair/bazi.md",
     # agent（2，REQ-076：太初先生主角色 prompt + 开场白话术；均用户不可改、后台可热改）
     "agent_master": "agent/master.md",
     "agent_greeting": "agent/greeting.md",
+    # namer（1，REQ-094：八字/九法起名 master）
+    "namer_master": "namer/master.md",
 }
 # key → 中文分类（按所在目录；前端列表分组展示）
 _CATEGORY_BY_PROMPT_DIR = {
@@ -529,11 +532,11 @@ def get_user_case_archive(
     return {"code": 0, "message": "ok", "data": build_archive(case, db)}
 
 
-# --- 路由：提示词（21 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 3） ---
+# --- 路由：提示词（23 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 4 / agent 2 / namer 1） ---
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 21 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 23 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []

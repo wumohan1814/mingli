@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""配对解析 API 路由（REQ-072 · 横向扩展）：三大模块 LLM「配对解析」。
+"""配对解析 API 路由（REQ-072 · 横向扩展）：四大模块 LLM「配对解析」。
 
 交互契约：前端从档案列表选任意两个档案 → 指定关系类型（恋爱/朋友/家人/同事等
 预设单选）+ 可选补充关注点 question → LLM 按所选档案与该模块数据做配对解析。
@@ -8,7 +8,7 @@
 计费契约（对齐 interpret 即时扣费）：
   - POST /api/pair/analyze 鉴权 Bearer，body {case_id_1:int, case_id_2:int,
     relation_type:str, question?:str, module:str}。module ∈ guoxue / xishi /
-    mbti，校验不通过 → 400。
+    mbti / bazi（bazi 为 REQ-093④ 八字配对），校验不通过 → 400。
     流程：两档案归属校验（filter_by id+user_id，非本人/不存在 404）→ 按 module
     取双方数据（任一档案缺数据 → 400 提示先生成，**不自动生成**）→ check_balance
     预检（余额不足抛 BizError 5002，全局处理器转 502 信封）→ LLM chat
@@ -21,13 +21,17 @@
 数据源（与既有解读端点口径一致）：
   - guoxue：读 charts.chart_json 的 bazi 摘要（复用 cases._chart_summary 口径，
     含日主/五行/四柱干支/纳音/十神等）；
+  - bazi（REQ-093④）：同样读 charts.chart_json，但用本文件 _bazi_digest 抽取
+    更细的**八字画像**（四柱干支/五行/纳音/十神/十二长生 + 身宫/命宫/胎元/旬空
+    + 神煞名）；用神/五行喜忌不在排盘数据内，由 LLM 依日主旺衰推导（对齐
+    method-prompts/bazi-pattern.md 的取用神口径）；
   - xishi：读 astrology_readings.chart_json 的 natal 摘要（复用
     astrology._natal_digest 口径，含日月升、行星落座落宫、相位、元素模式）；
   - mbti：case.mbti_type 优先、缺失回退 MbtiResult 最近 type；scores 取该型
     最近一次结果（分享填写记录不回写档案类型，故按 type 匹配过滤）；
     type_info 评语从 mbti/data/types.json 实时取（复用 mbti.load_types）。
 
-提示词：backend/prompts/pair/{guoxue,xishi,mbti}.md 三份已纳入后台
+提示词：backend/prompts/pair/{guoxue,xishi,mbti,bazi}.md 四份已纳入后台
 （REQ-048 文件类热改 + 版本回滚，见 app/admin/router.py PROMPT_FILES）。
 """
 import json
@@ -60,6 +64,7 @@ PAIR_PROMPT_DIR = Path(__file__).resolve().parents[2] / "prompts" / "pair"
 # 开放模块白名单 → 数据取数说明（缺数据 400 文案里的动作关键词）
 PAIR_MODULES = {
     "guoxue": ("排盘", "未排盘"),
+    "bazi": ("排盘", "未排盘"),  # REQ-093④ 八字配对（与 guoxue 同源 charts，但画像更细）
     "xishi": ("星盘", "未生成星盘"),
     "mbti": ("MBTI 测评", "未测 MBTI"),
 }
@@ -117,6 +122,67 @@ def _load_guoxue_profile(db: Session, case: Case) -> dict:
     return _chart_summary(chart_row.chart_json)
 
 
+def _bazi_digest(chart_json: dict) -> dict:
+    """从 chart dict 抽取「八字画像」（REQ-093④ bazi 配对用）。
+
+    口径对齐 paipan bazi 切片（method-prompts/bazi-pattern.md 输入字段）：
+    四柱干支/五行/纳音/十神/十二长生 + 身宫/命宫/胎元/旬空 + 神煞名（仅副证）。
+    用神/五行喜忌**不在排盘数据内**（由 LLM 依日主旺衰推导，对齐 bazi-pattern
+    取用神口径），此处给出推导所需的原始材料（日主五行 + 四柱干支五行 + 十神）。
+    chart_json 非法或 bazi 缺失时返回空 dict（由调用方判 400）。
+    """
+    if not isinstance(chart_json, dict):
+        return {}
+    bazi = chart_json.get("bazi") or {}
+    calendar = chart_json.get("calendar") or {}
+    meta = chart_json.get("meta") or {}
+    pillars = bazi.get("pillars") or {}
+
+    def _pillar(seg):
+        if not isinstance(seg, dict):
+            return None
+        return {
+            "gan": seg.get("gan", ""),
+            "zhi": seg.get("zhi", ""),
+            "gan_wuxing": seg.get("gan_wuxing", ""),
+            "zhi_wuxing": seg.get("zhi_wuxing", ""),
+            "nayin": seg.get("nayin", ""),
+            "shishen_gan": seg.get("shishen_gan", ""),
+            "shishen_zhi": seg.get("shishen_zhi") or [],
+            "dish": seg.get("dish", ""),
+        }
+
+    return {
+        "dayMaster": bazi.get("day_master") or "",
+        "dayMasterWuxing": bazi.get("day_master_wuxing") or "",
+        "solar": calendar.get("solar") or "",
+        "lunar": calendar.get("lunar") or "",
+        "pillars": {
+            "year": _pillar(pillars.get("year")),
+            "month": _pillar(pillars.get("month")),
+            "day": _pillar(pillars.get("day")),
+            "hour": _pillar(pillars.get("hour")),
+        },
+        "shen_gong": bazi.get("shen_gong") or "",
+        "ming_gong": bazi.get("ming_gong") or "",
+        "tai_yuan": bazi.get("tai_yuan") or "",
+        "xun_kong": bazi.get("xun_kong") or "",
+        "shensha": [
+            s.get("name", "") for s in (bazi.get("shensha") or [])
+            if isinstance(s, dict) and s.get("name")
+        ],
+        "degraded_methods": meta.get("degraded_methods") or [],
+    }
+
+
+def _load_bazi_profile(db: Session, case: Case) -> dict:
+    """八字（REQ-093④）：charts.chart_json 的八字画像（_bazi_digest 口径）。"""
+    chart_row = db.query(Chart).filter_by(case_id=case.id).first()
+    if chart_row is None or not isinstance(chart_row.chart_json, dict):
+        raise _err(400, f"该档案未排盘，请先生成后再配对解析（case {case.id}）")
+    return _bazi_digest(chart_row.chart_json)
+
+
 def _load_xishi_profile(db: Session, case: Case) -> dict:
     """西式：astrology_readings.chart_json 的 natal 摘要（复用 astrology._natal_digest）"""
     readings = (
@@ -168,6 +234,7 @@ def _load_mbti_profile(db: Session, case: Case) -> dict:
 # module → 档案数据取数器（person.profile 内容随模块而异）
 _PROFILE_LOADERS = {
     "guoxue": _load_guoxue_profile,
+    "bazi": _load_bazi_profile,
     "xishi": _load_xishi_profile,
     "mbti": _load_mbti_profile,
 }
@@ -208,7 +275,7 @@ async def analyze_pair(
     # ① module 白名单 + relation_type 必填（先于建档归属/数据校验，快速失败）
     module = (body.module or "").strip().lower()
     if module not in PAIR_MODULES:
-        raise _err(400, f"不支持的模块: {body.module}（可选 guoxue/xishi/mbti）")
+        raise _err(400, f"不支持的模块: {body.module}（可选 guoxue/xishi/mbti/bazi）")
     relation_type = (body.relation_type or "").strip()
     if not relation_type:
         raise _err(400, "请选择关系类型（relation_type 不能为空）")
