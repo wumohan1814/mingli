@@ -1274,6 +1274,13 @@ const UI_COPY = {
     start_predict: '开始预测',
     finish_pick: '完成选牌'
   },
+  // REQ-089 v2：档案详情「修改信息」（档案名/手机号/邮箱）与建档信息联系方式行文案
+  caseDetail: {
+    edit_btn: '修改信息',
+    edit_title: '修改档案信息',
+    phone_label: '手机号',
+    email_label: '邮箱'
+  },
   tips: {
     loading_chart: '正在为你推演星图，请稍候……',
     loading_read: '解读生成中，趋势正在成形。',
@@ -3200,10 +3207,16 @@ function RenameModal({
 
 // REQ-065「修改联系方式」模态框：可编辑 手机号/邮箱（均选填，空串=清空），格式校验在提交侧
 // （手机号 11 位数字、邮箱含 @）；提交由父级 PATCH /cases/{id} 传 name+phone+email。
+// REQ-089 v2：档案详情「修改信息」复用本框 —— nameEditable=true 时额外开放档案名输入框，
+// title 可自定义；CasesPage（档案列表）不传这些参数即保持原「修改联系方式」形态。
 function CaseContactModal({
+  title,
   name,
   phone,
   email,
+  nameEditable,
+  nameValue,
+  onName,
   onPhone,
   onEmail,
   onConfirm,
@@ -3218,7 +3231,21 @@ function CaseContactModal({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "modal-title"
-  }, "修改联系方式"), /*#__PURE__*/React.createElement("div", {
+  }, title || "修改联系方式"), nameEditable ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", {
+    className: "label",
+    htmlFor: "edit-case-name"
+  }, "档案名称"), /*#__PURE__*/React.createElement("input", {
+    id: "edit-case-name",
+    className: "input",
+    type: "text",
+    maxLength: 30,
+    value: nameValue || '',
+    onChange: onName,
+    placeholder: "请输入档案名称",
+    onKeyDown: e => {
+      if (e.key === 'Enter') onConfirm();
+    }
+  })) : /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
@@ -6123,6 +6150,17 @@ function ArchivePage({
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
   const [caseTitle, setCaseTitle] = useState('未命名档案');
+  // REQ-089 v2：联系方式回填 —— case 表字段可能不在 /archive 聚合包内，由 load() 回查后写入
+  const [casePhone, setCasePhone] = useState('');
+  const [caseEmail, setCaseEmail] = useState('');
+  // REQ-089 v2：「修改信息」模态框（档案名 + 手机号 + 邮箱）状态
+  const [editOpen, setEditOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editBusy, setEditBusy] = useState(false);
+  // REQ-089 v2：MBTI 历史判型行「点开回看四维倾向」当前展开的记录 id
+  const [mbtiExpandId, setMbtiExpandId] = useState(null);
   // REQ-054：删除星盘 / MBTI 历史记录成功后 +1，驱动下方 useEffect 重跑 load() 重新拉取档案
   const [reloadTick, setReloadTick] = useState(0);
   // REQ-040：页头取「当前档案的用户命名」。后端 /archive 聚合包可能不带顶层 name、
@@ -6137,17 +6175,27 @@ function ArchivePage({
         setData(payload);
         const inp0 = payload.input || {};
         let nm = pickName(inp0.name) || pickName(payload.name) || pickName(payload.case_name);
-        if (!nm) {
+        // REQ-089 v2：联系方式（手机号/邮箱）同样可能不在 /archive 聚合包内 —— 取值链
+        // input → payload 顶层 → GET /cases 列表回查；与档案名一样缺则留空（建档信息区显示「—」）。
+        let ph = pickName(inp0.phone) || pickName(payload.phone) || pickName(payload.phone_number);
+        let em = pickName(inp0.email) || pickName(payload.email);
+        if (!nm || !ph || !em) {
           try {
             const lr = await api('/cases', {
               method: 'GET'
             });
             const list = (lr && lr.data && lr.data.cases) || (lr && lr.cases) || [];
             const hit = list.find(x => String(x.caseId) === String(caseId));
-            if (hit) nm = pickName(hit.name);
+            if (hit) {
+              if (!nm) nm = pickName(hit.name);
+              if (!ph) ph = pickName(hit.phone);
+              if (!em) em = pickName(hit.email);
+            }
           } catch (e) {/* 回查失败静默，走兜底文案 */}
         }
         setCaseTitle(nm || '未命名档案');
+        setCasePhone(ph || '');
+        setCaseEmail(em || '');
       } catch (e) {
         setErrored(e.message || '加载档案失败');
       } finally {
@@ -6257,7 +6305,7 @@ function ArchivePage({
   const lngTxt = fmtDir(inp.longitude, 'E', 'W');
   const latTxt = fmtDir(inp.latitude, 'N', 'S');
   const coordText = [lngTxt ? '经度 ' + lngTxt : null, latTxt ? '纬度 ' + latTxt : null].filter(Boolean).join(' · ') || '未提供';
-  const rows = [['出生年月日时辰', birthDT], ['中式干支传统写法', ganzhiText], ['农历生日', lunarText], ['生肖', zodiacText], ['性别', genderText], ['出生地', notEmpty(inp.birthplace)], ['出生地坐标', coordText], ['真太阳时', inp.true_solar_time ? '是' : '否']];
+  const rows = [['出生年月日时辰', birthDT], ['中式干支传统写法', ganzhiText], ['农历生日', lunarText], ['生肖', zodiacText], ['性别', genderText], ['出生地', notEmpty(inp.birthplace)], ['出生地坐标', coordText], ['真太阳时', inp.true_solar_time ? '是' : '否'], [UI_COPY.caseDetail.phone_label, casePhone], [UI_COPY.caseDetail.email_label, caseEmail]];
 
   // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
   // 整体契合度若能取到数值则展示，否则只展示反馈条数
@@ -6294,6 +6342,50 @@ function ArchivePage({
   // reloadArchive()（reloadTick+1 重跑上方 useEffect 的 load()，astroCard/mbtiCard 由 data
   // 派生自动重渲染；删除主展示记录后其余记录 / 空态亦由派生逻辑判空兜底）。
   const reloadArchive = () => setReloadTick(t => t + 1);
+  // REQ-089 v2「修改信息」：打开 / 关闭 / 提交 —— 提交 PATCH name+phone+email，
+  // 成功后重拉档案（页头档案名 + 建档信息手机号/邮箱随之刷新）。不改动出生等排盘信息。
+  const openEditInfo = () => {
+    setEditName(caseTitle === '未命名档案' ? '' : caseTitle);
+    setEditPhone(casePhone);
+    setEditEmail(caseEmail);
+    setEditBusy(false);
+    setEditOpen(true);
+  };
+  const closeEditInfo = () => {
+    if (!editBusy) setEditOpen(false);
+  };
+  const submitEditInfo = async () => {
+    const name = String(editName || '').trim();
+    const phone = String(editPhone || '').trim();
+    const email = String(editEmail || '').trim();
+    if (phone && !/^\d{11}$/.test(phone)) {
+      toast('手机号须为 11 位数字');
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+$/.test(email)) {
+      toast('邮箱格式不正确（需包含 @）');
+      return;
+    }
+    setEditBusy(true);
+    try {
+      const res = await api('/cases/' + caseId, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          name: name || '未命名档案',
+          phone: phone || null,
+          email: email || null
+        })
+      });
+      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '修改失败');
+      toast('修改成功');
+      setEditOpen(false);
+      reloadArchive();
+    } catch (err) {
+      toast(err && err.message || '修改失败，请重试。');
+    } finally {
+      setEditBusy(false);
+    }
+  };
   const doDeleteRecord = async (e, rec, kind) => {
     if (e && e.stopPropagation) e.stopPropagation();
     const rid = rec && rec.id;
@@ -6319,10 +6411,12 @@ function ArchivePage({
   const removeAstroRecord = (e, rec) => doDeleteRecord(e, rec, 'astro');
   const removeMbtiResult = (e, rec) => doDeleteRecord(e, rec, 'mbti');
 
-  // REQ-039 退回细化①：占星盘卡片直接展示完整星盘（chart.natal 完整本命盘，取自档案
-  // 已生成记录、无需重新生成）；无 chart 数据的记录退化为记录条目。
-  // ②：「查看」跳星座页带 caseId（AstrologyPage 自动复用已有星盘，不再要求重新生成）
-  const astroMain = astroRecords.find(a => a && a.chart && a.chart.natal) || null;
+  // REQ-089 v2：占星盘板块 —— 只取「最新一条记录」（created_at 倒序，优先选含完整 natal
+  // 盘面的记录），且仅展示盘面（星盘图）；不展示行星落座落宫 / 四轴 / 逆行格局 / 文字说明，
+  // 不保留历史列表（删除当前记录后重拉自动展示次新一条）。
+  const astroSorted = astroRecords.slice().sort((x, y) => String((y && y.created_at) || '').localeCompare(String((x && x.created_at) || '')));
+  const astroMain = astroSorted.find(a => a && a.chart && a.chart.natal) || astroSorted[0] || null;
+  const astroNatalNorm = astroMain && astroMain.chart ? astroNorm(astroMain.chart.natal || null) : null;
   // REQ-053 L2：同档案只呈现一份完整占星展示 —— natal 完整盘面可正常渲染（AstroNatalPanel）
   // 时，完整盘面的「占星盘」tab（charts.western）隐去，避免双份重复；无 natal 时该 tab 保留
   // 作 charts.western 归一化兜底。无经纬度建档（western=null 降级）而 natal 已有记录时，
@@ -6332,93 +6426,70 @@ function ArchivePage({
     const n = astroNorm(astroMain.chart.natal || null);
     return n.planets.length > 0 || n.angles.length > 0;
   })();
-  const astroCard = astroRecords.length > 0 && /*#__PURE__*/React.createElement("div", {
+  const astroCard = astroMain && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "section-title"
-  }, "占星盘"), astroRecords.map((a, i) => {
-    const label = astroScopeLabel(a && a.scope);
-    const at = fmtArchiveTime(a && a.created_at);
-    const isMain = astroMain && a && astroMain.id != null && a.id === astroMain.id;
-    const head = /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10
-      }
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 14,
-        fontWeight: 600,
-        color: 'var(--text-1)'
-      }
-    }, label), at ? /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 12,
-        color: 'var(--text-2)',
-        marginTop: 2
-      }
-    }, "生成于 ", at) : null), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        flex: 'none'
-      }
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-outline btn-mini",
-      onClick: () => onNavigate('astrology', {
-        caseId
-      })
-    }, "查看"), /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-outline btn-mini",
-      onClick: e => removeAstroRecord(e, a)
-    }, "删除")));
-    return /*#__PURE__*/React.createElement("div", {
-      key: a && a.id != null ? a.id : i,
-      style: {
-        padding: isMain ? '4px 0 10px' : '8px 0',
-        borderBottom: '1px solid var(--border)'
-      }
-    }, head, isMain ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontSize: 12,
-        color: 'var(--text-3)',
-        margin: '4px 0 2px'
-      }
-    }, "以下为本命盘完整盘面（取自档案已生成记录，无需重新生成）。"), /*#__PURE__*/React.createElement(AstroNatalPanel, {
-      chart: astroMain.chart
-    })) : a && a.chart && !a.chart.natal ? /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontSize: 12,
-        color: 'var(--text-3)',
-        marginTop: 4
-      }
-    }, "该条星盘数据缺失，无法展示盘面。") : null);
-  }));
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "section-title",
+    style: {
+      marginBottom: 0
+    }
+  }, "占星盘"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-2)',
+      marginTop: 2
+    }
+  }, astroScopeLabel(astroMain && astroMain.scope), fmtArchiveTime(astroMain && astroMain.created_at) ? ' · 生成于 ' + fmtArchiveTime(astroMain && astroMain.created_at) : '')), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      flex: 'none'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline btn-mini",
+    onClick: () => onNavigate('astrology', {
+      caseId
+    })
+  }, "查看"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline btn-mini",
+    onClick: e => removeAstroRecord(e, astroMain)
+  }, "删除"))), astroNatalNorm && (astroNatalNorm.planets.length > 0 || astroNatalNorm.angles.length > 0) ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      margin: '4px 0 2px'
+    }
+  }, /*#__PURE__*/React.createElement(AstroWheel, {
+    data: astroNatalNorm
+  })) : /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-3)',
+      margin: '6px 0 2px'
+    }
+  }, "该条星盘数据缺失，无法展示盘面。"));
 
-  // REQ-039 退回细化③：MBTI 卡片完整展示 —— 主类型大字 + alias + 最近一条判型结果的
-  // 四维倾向条（scores）+ 16 型五栏评语（type_info，答题与手动选型均覆盖）；判空兜底。
+  // REQ-089 v2：MBTI 人格板块 —— 仅展示「最新一次判型结果」的主类型大字 + 别名 +
+  // 四维倾向条（scores）；16 型长文案（优势/盲点/职场/关系/成长建议等 type_info 段落）不再展示。
+  // 历史判型记录保留（可回看：点历史行展开该次判型的四维倾向条）。
   const R = React.createElement;
   const mbtiType = mbtiInfo && mbtiInfo.mbti_type ? String(mbtiInfo.mbti_type).toUpperCase() : '';
   const mbtiTypeInfo = mbtiInfo && mbtiInfo.type_info && typeof mbtiInfo.type_info === 'object' ? mbtiInfo.type_info : null;
-  const mbtiMainRes = (mbtiRecords.find(r => r && r.type && mbtiType && String(r.type).toUpperCase() === mbtiType) || null) || (mbtiRecords.length ? mbtiRecords[0] : null);
-  const mbtiOtherRes = mbtiRecords.filter(r => r && (!mbtiMainRes || mbtiMainRes.id == null || r.id == null || r.id !== mbtiMainRes.id));
-  const mbtiLines = v => {
-    const out = [];
-    const push = s => {
-      if (s == null) return;
-      String(s).split('\n').forEach(x => {
-        x = x.trim();
-        if (x) out.push(x);
-      });
-    };
-    if (Array.isArray(v)) v.forEach(push); else push(v);
-    return out;
-  };
-  const mbtiBar = d => {
-    const s = mbtiMainRes && mbtiMainRes.scores ? mbtiMainRes.scores[d.k] || {} : {};
+  // created_at 倒序 → 首位为「最新一次判型」；与 case.mbti_type 一致者作为主展示，其余进历史。
+  const mbtiSorted = mbtiRecords.slice().sort((x, y) => String((y && y.created_at) || '').localeCompare(String((x && x.created_at) || '')));
+  const mbtiMainRes = (mbtiSorted.find(r => r && r.type && mbtiType && String(r.type).toUpperCase() === mbtiType) || null) || (mbtiSorted.length ? mbtiSorted[0] : null);
+  const mbtiOtherRes = mbtiSorted.filter(r => r && (!mbtiMainRes || mbtiMainRes.id == null || r.id == null || r.id !== mbtiMainRes.id));
+  const mbtiShowType = mbtiType || (mbtiMainRes && mbtiMainRes.type ? String(mbtiMainRes.type).toUpperCase() : '');
+  const mbtiBar = (d, rec) => {
+    const src = rec || mbtiMainRes || null;
+    const s = src && src.scores ? src.scores[d.k] || {} : {};
     const lc = s[d.l] || 0;
     const rc = s[d.r] || 0;
     const sum = lc + rc || 1;
@@ -6476,44 +6547,18 @@ function ArchivePage({
   }, 'MBTI 人格'), mbtiMainRes && mbtiMainRes.id != null ? R('button', {
     className: 'btn btn-outline btn-mini',
     onClick: e => removeMbtiResult(e, mbtiMainRes)
-  }, '删除') : null), mbtiType ? R('div', {
+  }, '删除') : null), mbtiShowType ? R('div', {
     style: {
       textAlign: 'center',
       padding: '2px 0 6px'
     }
   }, R('span', {
     className: 'mbti-type-big'
-  }, mbtiType), mbtiTypeInfo && mbtiTypeInfo.alias ? R('div', {
+  }, mbtiShowType), mbtiTypeInfo && mbtiTypeInfo.alias ? R('div', {
     className: 'mbti-alias'
   }, mbtiTypeInfo.alias) : null) : null, mbtiMainRes && mbtiMainRes.scores ? R('div', null, R('div', {
     className: 'sub-title'
-  }, '四维倾向（答题计数）'), MBTI_DIMS.map(mbtiBar)) : null, mbtiTypeInfo ? R('div', null, MBTI_FIELDS.map(f => {
-    const lines = mbtiLines(mbtiTypeInfo[f[0]]);
-    return R('div', {
-      key: f[0],
-      style: {
-        margin: '4px 0'
-      }
-    }, R('div', {
-      className: 'section-title',
-      style: {
-        marginBottom: 2,
-        fontSize: 13
-      }
-    }, f[1]), lines.length ? lines.map((x, i) => R('p', {
-      key: i,
-      style: {
-        fontSize: 13,
-        color: 'var(--text-2)',
-        lineHeight: 1.8
-      }
-    }, '· ' + x)) : R('p', {
-      style: {
-        fontSize: 13,
-        color: 'var(--text-3)'
-      }
-    }, '—'));
-  })) : null, mbtiOtherRes.length > 0 ? R('div', {
+  }, '四维倾向（答题计数）'), MBTI_DIMS.map(d => mbtiBar(d))) : null, mbtiOtherRes.length > 0 ? R('div', {
     style: {
       marginTop: 10
     }
@@ -6523,15 +6568,23 @@ function ArchivePage({
     const t = r && r.type ? String(r.type) : '未知';
     const at = fmtArchiveTime(r && r.created_at);
     const isLast = i === mbtiOtherRes.length - 1;
+    const rid = r && r.id != null ? r.id : i;
+    const expanded = mbtiExpandId === rid;
     return R('div', {
-      key: r && r.id != null ? r.id : i,
+      key: rid,
+      style: {
+        borderBottom: isLast ? 'none' : '1px solid var(--border)'
+      }
+    }, R('div', {
       style: {
         display: 'flex',
         alignItems: 'center',
         gap: 10,
         padding: '8px 0',
-        borderBottom: isLast ? 'none' : '1px solid var(--border)'
-      }
+        cursor: 'pointer'
+      },
+      title: r && r.scores ? '点击回看该次判型的四维倾向' : '该次判型无答题明细',
+      onClick: () => setMbtiExpandId(expanded ? null : rid)
     }, R('span', {
       style: {
         flex: 'none',
@@ -6550,7 +6603,16 @@ function ArchivePage({
     }, at || '—'), R('button', {
       className: 'btn btn-outline btn-mini',
       onClick: e => removeMbtiResult(e, r)
-    }, '删除'));
+    }, '删除')), expanded && r && r.scores ? R('div', {
+      style: {
+        padding: '0 0 10px'
+      }
+    }, R('div', {
+      className: 'sub-title',
+      style: {
+        fontSize: 12
+      }
+    }, '四维倾向（答题计数）'), MBTI_DIMS.map(d => mbtiBar(d, r))) : null);
   })) : null);
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -6581,7 +6643,17 @@ function ArchivePage({
     style: {
       marginTop: 8
     }
-  }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), astroCard, mbtiCard, data && data.chart && chartData && /*#__PURE__*/React.createElement(ChartView, {
+  }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), /* REQ-089 v2：第一个色块（建档信息卡）下方的「修改信息」入口 —— 档案名/手机号/邮箱 */
+  /*#__PURE__*/React.createElement("div", {
+    className: "flex-row",
+    style: {
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    onClick: openEditInfo
+  }, UI_COPY.caseDetail.edit_btn)), astroCard, mbtiCard, data && data.chart && chartData && /*#__PURE__*/React.createElement(ChartView, {
     chartData: chartData,
     degraded: degradedList,
     hideWestern: hideWesternTab
@@ -6635,30 +6707,32 @@ function ArchivePage({
         whiteSpace: 'pre-wrap'
       }
     }, m.content)));
-  })), /*#__PURE__*/React.createElement("div", {
+  })), /* REQ-090 v2：底部按钮 —— 第一行「回到档案列表 / 回到首页」两键并列 */
+  /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       flexWrap: 'wrap'
     }
   }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    title: "九法合一是档案的一种使用方式：先选档案（当前档案已预选），再查看/修改解读结果或跑九法合一开始预测",
-    onClick: () => onNavigate('nine-pick', {
-      caseId
-    })
-  }, "九法合一解读"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('cases')
   }, UI_COPY.buttons.back_to_list), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
-  }, UI_COPY.buttons.back_home)), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.buttons.back_home)), /* REQ-090 v2：第二行「国学预测 / 西式占卜 / MBTI」三键并列且颜色一致，
+      携带当前档案直达对应模块（九法合一 / 塔罗 / MBTI 均带 caseId 预选当前档案） */
+  /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       flexWrap: 'wrap',
       marginTop: 8
     }
   }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onNavigate('nine-pick', {
+      caseId
+    })
+  }, "国学预测"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('tarot', {
       caseId
@@ -6668,7 +6742,21 @@ function ArchivePage({
     onClick: () => onNavigate('mbti', {
       caseId
     })
-  }, "MBTI")));
+  }, "MBTI")), /* REQ-089 v2：「修改信息」模态框（档案名 + 手机号 + 邮箱，均可编辑） */
+  editOpen && /*#__PURE__*/React.createElement(CaseContactModal, {
+    title: UI_COPY.caseDetail.edit_title,
+    nameEditable: true,
+    name: caseTitle === '未命名档案' ? '' : caseTitle,
+    nameValue: editName,
+    onName: e => setEditName(e.target.value),
+    phone: editPhone,
+    onPhone: e => setEditPhone(e.target.value),
+    email: editEmail,
+    onEmail: e => setEditEmail(e.target.value),
+    onConfirm: submitEditInfo,
+    onCancel: closeEditInfo,
+    busy: editBusy
+  }));
 }
 
 // ===== 横向扩展：左侧导航栏 + 各模块页面 =====
