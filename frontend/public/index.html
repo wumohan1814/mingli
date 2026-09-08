@@ -16493,6 +16493,208 @@ function AgentPage({
     inputRow);
 }
 
+// ===== REQ-080：真实子路径路由（history API · pathname ⇄ 页面 双向映射）=====
+// 映射口径见 docs/模块URL映射表-REQ080.md（2026-09-08 需求方确认）：
+//   /→landing  /guoxue→guoxue-hub  /xishi→xishi-hub  /mbti→mbti  /jiufa→nine-pick
+//   /zodiac→zodiac  /divination→divination  /astrology→astrology  /tarot→tarot
+//   /lenormand→lenormand  /cases→cases  /cases/:id→archive  /agent→agent
+//   /settings→settings  /login|/register→auth  /mbti/share/:token→mbti-share
+//   /case/share/:token→case-share
+// Hub 页以 pages dict 实际名为准：guoxue-hub/xishi-hub 落 /guoxue、/xishi（URL 不带 -hub 后缀）；
+// 九法合一页实际名 nine-pick → /jiufa；auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
+// 反向 /register 亦反解为 auth。映射表外的工作流中间页（onboarding/waiting/calibration/predict/
+// revise/topic/credits）携带 caseId/topic/context 等长文本、刻意不做深链：pathFor 返回 null →
+// 只切换 React 视图、不写 URL 也不新增 history 条目（浏览器后退直达上一真实路径页）。
+const REQ080_PAGE_PATH = {
+  landing: '/',
+  'guoxue-hub': '/guoxue',
+  'xishi-hub': '/xishi',
+  mbti: '/mbti',
+  'nine-pick': '/jiufa',
+  zodiac: '/zodiac',
+  divination: '/divination',
+  astrology: '/astrology',
+  tarot: '/tarot',
+  lenormand: '/lenormand',
+  cases: '/cases',
+  agent: '/agent',
+  settings: '/settings',
+  auth: '/login'
+};
+// 动态段路径：URL ⇄ params 互转（:id / :token），一律 encodeURIComponent 编解码；
+// 参数缺失时回退到该模块列表页（/cases、/mbti/share、/case/share），避免 /undefined 死链。
+const REQ080_DYNAMIC = [{
+  page: 'archive',
+  param: 'caseId',
+  toUrl: v => v == null || v === '' ? '/cases' : '/cases/' + encodeURIComponent(v),
+  fromUrl: s => ({
+    caseId: decodeSeg(s)
+  })
+}, {
+  page: 'mbti-share',
+  param: 'token',
+  toUrl: v => v == null || v === '' ? '/mbti/share' : '/mbti/share/' + encodeURIComponent(v),
+  fromUrl: s => ({
+    token: decodeSeg(s)
+  })
+}, {
+  page: 'case-share',
+  param: 'token',
+  toUrl: v => v == null || v === '' ? '/case/share' : '/case/share/' + encodeURIComponent(v),
+  fromUrl: s => ({
+    token: decodeSeg(s)
+  })
+}];
+// 深链/刷新直落模块功能页时同步模块与皮肤（口径与「Banner 模块下拉直达 / HUB 卡片」一致，
+// 对应 MOD_NAV_GROUPS item.module/skin 与 MODULE_HUB，避免直落 tarot/astrology 仍沿用旧模块皮肤）；
+// landing/auth/cases/settings/agent/archive 等中立页不在表内（保持当前模块与皮肤）。
+const REQ080_PAGE_THEME = {
+  'guoxue-hub': {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  'xishi-hub': {
+    module: 'xishi',
+    skin: 'xishi'
+  },
+  'nine-pick': {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  zodiac: {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  divination: {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  astrology: {
+    module: 'xishi',
+    skin: 'xingzuo'
+  },
+  tarot: {
+    module: 'xishi',
+    skin: 'tarot'
+  },
+  lenormand: {
+    module: 'xishi',
+    skin: 'tarot'
+  },
+  mbti: {
+    module: 'mbti',
+    skin: 'mbti'
+  }
+};
+function decodeSeg(s) {
+  try {
+    return decodeURIComponent(s);
+  } catch (e) {
+    return s; // 非法 % 编码 → 原样兜底
+  }
+}
+// pathname 形态归一化：剔除 query/hash、折叠重复斜杠、去尾斜杠（根路径除外）
+function req080NormPath(raw) {
+  let p = String(raw || '');
+  let q = p.indexOf('?');
+  if (q >= 0) p = p.slice(0, q);
+  q = p.indexOf('#');
+  if (q >= 0) p = p.slice(0, q);
+  if (!p) p = '/';
+  p = p.replace(/\/{2,}/g, '/');
+  if (p.length > 1 && p.slice(-1) === '/') p = p.replace(/\/+$/, '') || '/';
+  return p;
+}
+// 正向：page+params → 真实子路径；映射表外的中间页返回 null（不写 URL）
+function req080PathFor(p, p2) {
+  p2 = p2 || {};
+  if (Object.prototype.hasOwnProperty.call(REQ080_PAGE_PATH, p)) return REQ080_PAGE_PATH[p];
+  for (let i = 0; i < REQ080_DYNAMIC.length; i++) {
+    if (REQ080_DYNAMIC[i].page === p) return REQ080_DYNAMIC[i].toUrl(p2[REQ080_DYNAMIC[i].param]);
+  }
+  return null;
+}
+// 反向：pathname → {page, params, norm, canon}；无法识别的路径返回 null（调用方
+// replaceState('/') 回落地页）。norm=归一化路径，canon=该页面规范路径；二者不一致
+// （尾斜杠 / 重复斜杠 / index.html / 编码形态等旧书签旧链接）→ 以 canon 归一化重定向，不产生死链。
+function req080ParsePath(raw) {
+  const norm = req080NormPath(raw);
+  if (norm === '/' || norm === '/index.html') return {
+    page: 'landing',
+    params: {},
+    norm: norm,
+    canon: '/'
+  };
+  // 静态段（/login 命中 auth；/register 单独保留其规范路径）
+  for (const pg in REQ080_PAGE_PATH) {
+    if (REQ080_PAGE_PATH[pg] === norm) return {
+      page: pg,
+      params: {},
+      norm: norm,
+      canon: REQ080_PAGE_PATH[pg]
+    };
+  }
+  if (norm === '/register') return {
+    page: 'auth',
+    params: {},
+    norm: norm,
+    canon: '/register'
+  };
+  // 分享深链无 token 段（/mbti/share、/case/share 及尾斜杠形态）也进分享页，判空渲染
+  // 「链接无效 / 缺少链接参数」，不请求 /undefined（BUG-009 加固口径保留）。
+  if (norm === '/mbti/share') return {
+    page: 'mbti-share',
+    params: {
+      token: ''
+    },
+    norm: norm,
+    canon: '/mbti/share'
+  };
+  if (norm === '/case/share') return {
+    page: 'case-share',
+    params: {
+      token: ''
+    },
+    norm: norm,
+    canon: '/case/share'
+  };
+  // 动态段
+  let m = norm.match(/^\/cases\/([^/]+)$/);
+  if (m) {
+    const params = REQ080_DYNAMIC[0].fromUrl(m[1]);
+    return {
+      page: 'archive',
+      params: params,
+      norm: norm,
+      canon: '/cases/' + encodeURIComponent(params.caseId)
+    };
+  }
+  m = norm.match(/^\/mbti\/share\/(.+)$/);
+  if (m) {
+    const params = REQ080_DYNAMIC[1].fromUrl(m[1]);
+    return {
+      page: 'mbti-share',
+      params: params,
+      norm: norm,
+      canon: '/mbti/share/' + encodeURIComponent(params.token)
+    };
+  }
+  m = norm.match(/^\/case\/share\/(.+)$/);
+  if (m) {
+    const params = REQ080_DYNAMIC[2].fromUrl(m[1]);
+    return {
+      page: 'case-share',
+      params: params,
+      norm: norm,
+      canon: '/case/share/' + encodeURIComponent(params.token)
+    };
+  }
+  return null; // 未知路径
+}
+function req080ThemeFor(page) {
+  return REQ080_PAGE_THEME[page] || null;
+}
+
 // ---- App Router ----
 function App() {
   const [page, setPage] = useState('landing');
@@ -16581,12 +16783,35 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tcSet]);
   useEffect(() => {
+    // REQ-080：App 启动（带/不带 token）统一入口 —— 解析 location.pathname 反向得 {page, params}，
+    // 取代原先「启动即 cases/onboarding + 两个分享 effect 各读一次 pathname」的状态式启动；
+    // 刷新停留 / 深链直达 / 分享 token / 旧书签旧链接归一化统一经此解析。既有门禁等价保留：
+    // BUG-011+REQ-070 分享页访客隔离、BUG-002 未登录直达受限页回跳登录、REQ-092 0 档强制建档。
+    const parsed = req080ParsePath(window.location.pathname);
+    if (!parsed) {
+      // 未知/失效路径 → replaceState('/') 回落地页（不白屏、不做独立 404 页）
+      try {
+        window.history.replaceState(null, '', '/');
+      } catch (e) {}
+      setPage('landing');
+      setParams({});
+      return;
+    }
+    // 归一化重定向：路径形态非规范（尾斜杠 / 重复斜杠 / index.html 等旧形态）→ replaceState 校正
+    if (parsed.canon && parsed.canon !== parsed.norm) {
+      try {
+        window.history.replaceState(null, '', parsed.canon);
+      } catch (e) {}
+    }
+    const isShare = parsed.page === 'mbti-share' || parsed.page === 'case-share';
     // BUG-011 + REQ-070：分享落地页（/mbti/share/{token}、/case/share/{token}）是公开免登录
-    // 入口 → 命中时跳过本地 token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存
-    // 会话保持空（访客隔离）；localStorage 原样保留，离开分享页时再由 switchShareGuestSession 恢复。
-    if (isMbtiSharePath(window.location.pathname) || isCaseSharePath(window.location.pathname)) {
+    // 入口 → 跳过本地 token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存会话保持空
+    // （访客隔离）；localStorage 原样保留，离开分享页时再由 switchShareGuestSession 恢复。
+    if (isShare) {
       token = '';
       refreshToken = '';
+      setPage(parsed.page);
+      setParams(parsed.params || {});
       return;
     }
     const saved = localStorage.getItem('taichu_token');
@@ -16595,81 +16820,42 @@ function App() {
       const savedR = localStorage.getItem('taichu_refresh_token');
       if (savedR) refreshToken = savedR;
       resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
-      // REQ-092：启动带 token → 先实时校验档案数再落页 —— 0 档强制进新建档案（未完成建档
-      // 关闭页面 / 退出登录后重进，同样由此回到新建档案）；≥1 档才自动进入档案列表。
+    }
+    // REQ-080：深链/刷新直落模块功能页时同步模块与皮肤（口径同「模块下拉直达 / HUB 卡片」）
+    const th = req080ThemeFor(parsed.page);
+    if (th) {
+      setModule(th.module);
+      applySkin(th.skin);
+    }
+    // BUG-002：未登录直达受限页 → 拦截并记回跳目标，改去登录页（登录/注册成功后回跳该页）
+    if (AUTH_REQUIRED_PAGES.indexOf(parsed.page) >= 0 && !token) {
+      authRedirect = {
+        p: parsed.page,
+        p2: parsed.params || {}
+      };
+      setPage('auth');
+      setParams({});
+      return;
+    }
+    // 已登录（会话在身）仍直达 /login、/register：与旧「启动带 token 自动进档案列表」等价 → /cases
+    if (parsed.page === 'auth' && token) {
+      setPage('cases');
+      setParams({});
+      return;
+    }
+    setPage(parsed.page);
+    setParams(parsed.params || {});
+    // REQ-092：启动带 token → 实时校验档案数再落页 —— 0 档强制进新建档案（未完成建档
+    // 关闭页面 / 退出登录后重进，同样由此回到新建档案）；≥1 档保持解析页不动
+    // （REQ-080：刷新停留于当前子路径，取代旧「一律进档案列表」）。
+    if (token) {
       checkCaseGate().then(() => {
         if (!token) return; // 会话已过期（api() 401 已清 token 并跳登录页）→ 不覆盖登录页
         if (forceOnboarding === true) {
           setPage('onboarding');
           setParams({});
-          window.history.replaceState({
-            p: 'onboarding',
-            p2: {}
-          }, '');
-        } else {
-          setPage('cases');
-          setParams({});
-          window.history.replaceState({
-            p: 'cases',
-            p2: {}
-          }, '');
         }
       });
-    }
-  }, []);
-  // REQ-047：分享链接直达免登录答题页（/mbti/share/{token}）。此 effect 放在 token 恢复之后，
-  // 保证分享链接优先于「已登录自动进 cases / 默认 landing」。
-  useEffect(() => {
-    // BUG-009 加固③：URL token 解析加固 ——
-    // ① 主正则 [A-Za-z0-9_-]+ 已覆盖后端 secrets.token_urlsafe 的 base64url 全字符集；
-    // ② 追加 ([^/?#]+) 兜底，兼容 token 含其它字符 / 历史遗留编码；
-    // ③ /mbti/share 或 /mbti/share/（无 token 段）也路由进 mbti-share，由页面判空渲染
-    //    「分享链接无效」，而不是落到 landing/cases 或发 /api/mbti/share/undefined。
-    const p = window.location.pathname;
-    const noToken = /^\/mbti\/share\/?$/.test(p);
-    let tk = '';
-    if (!noToken) {
-      let m = p.match(/^\/mbti\/share\/([A-Za-z0-9_-]+)/);
-      if (!m || !m[1]) m = p.match(/^\/mbti\/share\/([^/?#]+)/);
-      if (m && m[1]) tk = m[1];
-    }
-    if (noToken || tk) {
-      setPage('mbti-share');
-      setParams({
-        token: tk
-      });
-      window.history.replaceState({
-        p: 'mbti-share',
-        p2: {
-          token: tk
-        }
-      }, '');
-    }
-  }, []);
-  // REQ-070：档案「分享帮填」落地页直达（/case/share/{token} 公开免登录）——同置于 token 恢复
-  // effect 之后，保证分享链接优先于「已登录自动进 cases / 默认 landing」；token 解析加固同
-  // BUG-009 口径（主正则覆盖 base64url 全字符集 + 兜底正则），无 token 段的 /case/share（含尾
-  // 斜杠）也路由进 case-share，由页面按「缺少链接参数」渲染，绝不请求 /case/share/undefined。
-  useEffect(() => {
-    const p = window.location.pathname;
-    const noToken = /^\/case\/share\/?$/.test(p);
-    let tk = '';
-    if (!noToken) {
-      let m = p.match(/^\/case\/share\/([A-Za-z0-9_-]+)/);
-      if (!m || !m[1]) m = p.match(/^\/case\/share\/([^/?#]+)/);
-      if (m && m[1]) tk = m[1];
-    }
-    if (noToken || tk) {
-      setPage('case-share');
-      setParams({
-        token: tk
-      });
-      window.history.replaceState({
-        p: 'case-share',
-        p2: {
-          token: tk
-        }
-      }, '');
     }
   }, []);
   useEffect(() => {
@@ -16708,36 +16894,48 @@ function App() {
     }
     setPage(p);
     setParams(p2);
+    // REQ-080：真实子路径路由 —— 映射页 pushState 写入真实 pathname（URL 不再保持上一页不变）；
+    // 映射表外的工作流中间页（onboarding/waiting/calibration/predict/revise/topic/credits）
+    // 不做深链：不写 URL、不新增 history 条目（仅切换视图，浏览器后退回到上一真实路径页）。
+    // 注：上方 REQ-092/BUG-002 门禁对 p 的改写（onboarding/auth）走同一规则。
     try {
-      window.history.pushState({
-        p: p,
-        p2: p2
-      }, '');
+      const url = req080PathFor(p, p2);
+      if (url !== null) {
+        window.history.pushState({}, '', url);
+      }
     } catch (e) {}
     track('page_view', {
       page: p
     });
   };
   useEffect(() => {
-    const onPop = ev => {
-      const st = ev && ev.state;
-      let next = st && st.p ? st.p : 'landing';
+    // REQ-080：popstate（浏览器前进/后退）依 location.pathname 反向得 {page, params} ——
+    // 刷新后重进 / 直接收藏 / 复制分享所建的历史条目一律按真实子路径还原；
+    // 未知路径 → replaceState('/') 回落地页（不白屏、不做独立 404 页）。
+    // 门禁等价保留：REQ-092 强制建档期前进/后退钉回新建档案；BUG-011/REQ-070 跨越分享落地页
+    // 同步访客会话。工作流中间页不落真实路径（navigate 未为其新增条目），后退落在上一真实页。
+    const onPop = () => {
+      const parsed = req080ParsePath(window.location.pathname);
+      let next = parsed ? parsed.page : null;
+      const nxt = parsed ? parsed.params || {} : {};
+      if (!next) {
+        try {
+          window.history.replaceState(null, '', '/');
+        } catch (e) {}
+        next = 'landing';
+      }
       // REQ-092：强制建档期浏览器前进/后退不得绕开门禁——回退到历史功能页一律钉回新建档案
       // （分享帮填访客页与未登录态不受影响）
-      if (forceOnboarding === true && token && !isGuestSharePageName(next) && next !== 'onboarding' && next !== 'auth') next = 'onboarding';
+      if (forceOnboarding === true && token && !isGuestSharePageName(next) && next !== 'onboarding' && next !== 'auth') {
+        next = 'onboarding';
+      }
       // BUG-011 + REQ-070：浏览器前进/后退跨越分享落地页（mbti-share / case-share）时同步
       // 切换访客会话——进入分享页先置空内存 token（先于渲染，分享页任何 api 都不带
       // Authorization）；离开分享页若有本地 token 则恢复正常登录态。
       if (isGuestSharePageName(next) && !isGuestSharePageName(page)) switchShareGuestSession(true);
       else if (!isGuestSharePageName(next) && isGuestSharePageName(page)) switchShareGuestSession(false);
-      const st2 = st && st.p === next ? st : next === 'landing' ? null : { p: next, p2: {} };
-      if (st2 && st2.p) {
-        setPage(st2.p);
-        setParams(st2.p2 || {});
-      } else {
-        setPage('landing');
-        setParams({});
-      }
+      setPage(next);
+      setParams(next === 'onboarding' ? {} : nxt);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
