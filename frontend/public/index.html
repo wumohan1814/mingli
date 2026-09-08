@@ -1383,6 +1383,10 @@ const UI_COPY = {
   zodiacGuide: {
     elementRelation: '五行（金、木、水、火、土）是传统中用来理解事物相生相克、流转制衡的一套文化视角。在生肖流年里，它表现为「流年天干五行」与「你生肖地支本气五行」之间的生、克、同类（比和）等互动。若流年五行生旺你的生肖本气，可视作一种顺势相济、气场较为和顺的倾向；若流年五行克制你的生肖本气，则可理解为一份需要留意的压力或阻力，宜稳守、预留缓冲；若两者同类比和，则相对平和、少有牵扯。这些只是文化视角下的趋势性参考，用来帮助你理解当年的节律与侧重，而非对现实事件的决定性判语。真正如何度过这一年，仍取决于你清醒的判断与持续的行动。',
     riskRelation: '风险关系指生肖年支与流年年支之间，依传统地支关系表可能命中的「值（同支）、六冲、相害、相破、相刑」等固定关系。它们是一份提示「易有波动、宜多留心的领域」的分类标签。其中「冲」主变动与对冲，宜留意计划被打乱；「害」主隐微牵绊，宜谨言避嫌；「破」主暗中损耗，宜护好既有成果；「刑」主纠葛反复，宜缓处人际与契约；「值」（同支）主本命临年，宜沉淀自省。命中并不代表必然发生不利，未命中也不代表全然无忧——它们更像一份给你的「留意清单」，而非对吉凶的定论。请理性看待，重大现实决策仍以你自己的判断与专业意见为准。'
+  },
+  // REQ-092：新用户建档强制门禁 —— 0 档案登录账号强制先新建档案时的提示文案
+  forceGate: {
+    tip: '你还没有任何命理档案。请先完成下方建档；建好至少 1 份档案后，即可解锁全部功能（含各占卜 / 测试模块、功能设置与太初先生）。'
   }
 };
 const API = '/api';
@@ -1500,6 +1504,48 @@ function isCaseSharePath(p) {
 // 分享落地页页名（mbti-share / case-share）判定：App 内页切换/前进后退跨越分享页时统一切换访客会话
 function isGuestSharePageName(p) {
   return p === 'mbti-share' || p === 'case-share';
+}
+// ===== REQ-092：新用户建档强制门禁（登录账号 0 档案 → 强制先新建档案） =====
+// 触发条件（一律以 GET /cases 实时校验为准）：新注册 / 删光全部 / 无档案存量账号 = 0 档即强制；
+// ≥1 档案 → 放行。强制期全部功能入口（含 landing、各 HUB、功能设置、太初先生等不依赖档案的
+// 功能也一并拦截）重定向到新建档案 onboarding；仅放行 onboarding/auth 与分享帮填访客页
+// （/case/share、/mbti/share 未登录访客不受门禁影响）。
+// 状态机：null=本会话未决（未登录 / 尚未校验），true=0 档强制中，false=≥1 档放行。
+// 关键点重校验：登录/注册成功（AuthPage）、启动带 token（App 首挂载 effect）、删光档案
+// （CasesPage）；建档成功 ≥1 档即置 false 解锁（OnboardingPage）。校验失败不误锁（按放行处理）。
+// 未完成建档关闭页面/退出登录：下次启动/登录仍会因 0 档被重新强制回到新建档案，无需额外持久化。
+let forceOnboarding = null;
+
+// REQ-092 校验器：GET /cases 判档案数 → 更新 forceOnboarding；false→true 转换时补埋点一次
+// （事件名沿用全局 snake_case 风格：force_onboarding）。未登录直接复位不校验。
+async function checkCaseGate() {
+  if (!token) {
+    forceOnboarding = null;
+    return;
+  }
+  let list = null;
+  try {
+    const res = await api('/cases', {
+      method: 'GET'
+    });
+    list = res && res.data && res.data.cases || (res && res.cases) || [];
+  } catch (e) {
+    // 拉取失败 / 会话过期（api() 401 已清 token 并跳登录页）：不误锁 —— 仍登录按放行，否则复位
+    forceOnboarding = token ? false : null;
+    return;
+  }
+  const hasCase = Array.isArray(list) && list.length >= 1;
+  if (hasCase) {
+    forceOnboarding = false;
+    return;
+  }
+  if (forceOnboarding !== true) {
+    // 0 档 → 进入强制建档门禁（仅 false→true 转换打一次埋点，避免重复触发重复上报）
+    forceOnboarding = true;
+    track('force_onboarding', {
+      cases: 0
+    });
+  }
 }
 // 余额不足弹窗处理器：由 App 注册（setCreditInsuffHandler），api() 在拦截到 5002 时调用
 let creditInsuffHandler = null;
@@ -1861,6 +1907,8 @@ async function api(path, options = {}) {
 function logout() {
   token = '';
   refreshToken = '';
+  // REQ-092：登出即解除本会话建档门禁状态（下次登录/启动再按档案数重新校验）
+  forceOnboarding = null;
   localStorage.removeItem('taichu_token');
   localStorage.removeItem('taichu_refresh_token');
   if (onUnauthorized) onUnauthorized();
@@ -3070,6 +3118,9 @@ function AuthPage({
         const free = res.data && res.data.free_credit_granted || res.free_credit_granted;
         toast(free != null ? '已赠送余额 ¥' + (Number(free) / CREDIT_YUAN_RATE).toFixed(2) : '注册成功，余额已到账');
       }
+      // REQ-092：登录/注册成功 → 先实时校验档案数（0 档 → forceOnboarding=true，下方受限落页
+      // 会被 App navigate 守卫统一重定向到新建档案；≥1 档 → 正常回跳 / 进入档案列表）
+      await checkCaseGate();
       // BUG-002: 登录/注册成功 → 若有被拦截的受限页回跳目标则先回跳，否则进入档案列表
       if (authRedirect) {
         const r = authRedirect;
@@ -3654,6 +3705,13 @@ function CasesPage({
       if (res && res.code != null && res.code !== 0) throw new Error(res.message || '删除失败');
       setCaseList(list => list.filter(x => x.caseId !== c.caseId));
       toast('档案已删除');
+      // REQ-092：删光全部档案（当前列表只剩被删这一条）→ 重校验触发强制建档门禁：
+      // 0 档 → 立即强制进入新建档案（与「新注册/无档案存量账号」同一口径）
+      if (caseList.length === 1) {
+        checkCaseGate().then(() => {
+          if (forceOnboarding === true) onNavigate('onboarding');
+        });
+      }
     } catch (e) {
       alert(e.message || '删除失败，请重试。');
     }
@@ -3844,7 +3902,9 @@ function CasesPage({
 }
 function OnboardingPage({
   onNavigate,
-  returnTo
+  returnTo,
+  // REQ-092：true=本账号 0 档案被强制建档中 → 顶部提示解锁规则
+  forced
 }) {
   const reg = typeof window !== 'undefined' && window.REGIONS || {};
   const curYear = new Date().getFullYear();
@@ -4053,6 +4113,9 @@ function OnboardingPage({
       });
       // 注意：cases 接口返回 {code,data:{caseId}} 信封
       const caseId = res.data && res.data.caseId || res.caseId;
+      // REQ-092：建档成功（账号已有 ≥1 档案）→ 强制门禁立即解锁放行，后续进入档案/模块流程
+      // 不再被 navigate 守卫重定向回本页
+      forceOnboarding = false;
       if (nameRaw) {
         try {
           await api('/cases/' + caseId, {
@@ -4127,7 +4190,19 @@ function OnboardingPage({
     className: "card"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "title"
-  }, "建档 · 输入生辰信息"), error && /*#__PURE__*/React.createElement("div", {
+  }, "建档 · 输入生辰信息"), forced && /*#__PURE__*/React.createElement("div", {
+    role: "alert",
+    style: {
+      background: 'rgba(184,137,62,.12)',
+      border: '1px solid rgba(184,137,62,.45)',
+      borderRadius: 8,
+      padding: '10px 12px',
+      marginBottom: 12,
+      color: 'var(--text-1)',
+      fontSize: 13,
+      lineHeight: 1.7
+    }
+  }, UI_COPY.forceGate.tip), error && /*#__PURE__*/React.createElement("div", {
     className: "error",
     style: {
       marginBottom: 12
@@ -15512,12 +15587,27 @@ function App() {
       token = saved;
       const savedR = localStorage.getItem('taichu_refresh_token');
       if (savedR) refreshToken = savedR;
-      setPage('cases'); // 已登录自动进入档案列表
-      window.history.replaceState({
-        p: 'cases',
-        p2: {}
-      }, '');
       resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
+      // REQ-092：启动带 token → 先实时校验档案数再落页 —— 0 档强制进新建档案（未完成建档
+      // 关闭页面 / 退出登录后重进，同样由此回到新建档案）；≥1 档才自动进入档案列表。
+      checkCaseGate().then(() => {
+        if (!token) return; // 会话已过期（api() 401 已清 token 并跳登录页）→ 不覆盖登录页
+        if (forceOnboarding === true) {
+          setPage('onboarding');
+          setParams({});
+          window.history.replaceState({
+            p: 'onboarding',
+            p2: {}
+          }, '');
+        } else {
+          setPage('cases');
+          setParams({});
+          window.history.replaceState({
+            p: 'cases',
+            p2: {}
+          }, '');
+        }
+      });
     }
   }, []);
   // REQ-047：分享链接直达免登录答题页（/mbti/share/{token}）。此 effect 放在 token 恢复之后，
@@ -15595,6 +15685,13 @@ function App() {
     // 本人），再走 BUG-002 受限页判断；无本地 token 的访客维持未登录，受限操作仍会被
     // 下方拦截引导去登录页。
     if (isGuestSharePageName(page) && !isGuestSharePageName(p)) switchShareGuestSession(false);
+    // REQ-092：登录态 0 档案强制建档门禁 —— 置于 BUG-002 登录门禁之前：强制期仅放行
+    // onboarding/auth 与分享帮填访客页（访客态不受门禁影响），其余所有导航请求
+    // （含 landing / 各 HUB / settings / agent 等不依赖档案的功能）一律重定向到新建档案。
+    if (forceOnboarding === true && token && !isGuestSharePageName(p) && p !== 'onboarding' && p !== 'auth') {
+      p = 'onboarding';
+      p2 = {};
+    }
     // BUG-002: 未登录访问受限页 → 拦截并记回跳目标，改去登录页（不 pushState、不 track）
     if (AUTH_REQUIRED_PAGES.indexOf(p) >= 0 && !token) {
       authRedirect = { p: p, p2: p2 };
@@ -15617,15 +15714,19 @@ function App() {
   useEffect(() => {
     const onPop = ev => {
       const st = ev && ev.state;
-      const next = st && st.p ? st.p : 'landing';
+      let next = st && st.p ? st.p : 'landing';
+      // REQ-092：强制建档期浏览器前进/后退不得绕开门禁——回退到历史功能页一律钉回新建档案
+      // （分享帮填访客页与未登录态不受影响）
+      if (forceOnboarding === true && token && !isGuestSharePageName(next) && next !== 'onboarding' && next !== 'auth') next = 'onboarding';
       // BUG-011 + REQ-070：浏览器前进/后退跨越分享落地页（mbti-share / case-share）时同步
       // 切换访客会话——进入分享页先置空内存 token（先于渲染，分享页任何 api 都不带
       // Authorization）；离开分享页若有本地 token 则恢复正常登录态。
       if (isGuestSharePageName(next) && !isGuestSharePageName(page)) switchShareGuestSession(true);
       else if (!isGuestSharePageName(next) && isGuestSharePageName(page)) switchShareGuestSession(false);
-      if (st && st.p) {
-        setPage(st.p);
-        setParams(st.p2 || {});
+      const st2 = st && st.p === next ? st : next === 'landing' ? null : { p: next, p2: {} };
+      if (st2 && st2.p) {
+        setPage(st2.p);
+        setParams(st2.p2 || {});
       } else {
         setPage('landing');
         setParams({});
@@ -15647,6 +15748,12 @@ function App() {
     if (isGuestSharePageName(page)) switchShareGuestSession(false);
     setModule(id);
     applySkin(h.skin);
+    // REQ-092：0 档案强制建档期不允许落到公共落地页（任何入口都钉在新建档案）
+    if (forceOnboarding === true && token) {
+      setPage('onboarding');
+      setParams({});
+      return;
+    }
     setPage('landing');
     setParams({});
   };
@@ -15675,7 +15782,9 @@ function App() {
     }),
     onboarding: /*#__PURE__*/React.createElement(OnboardingPage, {
       onNavigate: navigate,
-      returnTo: params.returnTo
+      returnTo: params.returnTo,
+      // REQ-092：0 档案强制建档中 → 展示「先建档解锁全部功能」提示条
+      forced: forceOnboarding === true
     }),
     waiting: /*#__PURE__*/React.createElement(WaitingPage, {
       caseId: params.caseId,
