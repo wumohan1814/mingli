@@ -145,6 +145,24 @@
     .toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(10px);background:#2C385C;color:#fff;
       padding:9px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.22s;z-index:60}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* 素材管理（REQ-059 / BUG-018） */
+    .asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+    .asset-slot{border:1px solid var(--line);border-radius:var(--radius-m);padding:10px;background:#FDFBF6;display:flex;flex-direction:column;gap:8px}
+    .asset-preview{position:relative;height:120px;border-radius:var(--radius-s);overflow:hidden;background:linear-gradient(135deg,rgba(62,124,107,.18),rgba(184,137,62,.25));border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+    .asset-preview img{width:100%;height:100%;object-fit:cover;display:block}
+    .asset-preview .asset-ph{font-size:12px;color:var(--ink-3);text-align:center;padding:8px;line-height:1.5}
+    .asset-preview .asset-mask{position:absolute;inset:0;pointer-events:none}
+    .asset-title{font-size:13px;font-weight:600;color:var(--ink-1);display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+    .asset-key{font-size:11px;color:var(--ink-3);font-family:Consolas,Menlo,monospace;word-break:break-all;text-align:right}
+    .asset-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .asset-actions{display:flex;gap:6px}
+    .asset-form{border-top:1px dashed var(--line);padding-top:8px;margin-top:2px}
+    .asset-form .label{margin-top:6px}
+    .asset-form-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .asset-form-row .input{flex:1;min-width:150px}
+    .asset-mask-row{display:flex;gap:14px;flex-wrap:wrap}
+    .asset-mask-row > div{flex:1;min-width:130px}
   </style>
 </head>
 <body>
@@ -194,9 +212,9 @@ function toast(msg) {
 // 统一请求：path 传完整 /admin/... 路径；响应 {code,data} 信封，code!==0 抛错；401 自动登出
 async function api(path, options) {
   options = options || {};
-  const headers = Object.assign({
-    'Content-Type': 'application/json'
-  }, options.headers || {});
+  const headers = Object.assign({}, options.headers || {});
+  // FormData（素材上传）由浏览器自动带 multipart boundary，禁止手动设 JSON Content-Type
+  if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
   const tk = getToken();
   if (tk) headers['Authorization'] = 'Bearer ' + tk;
   let res;
@@ -796,7 +814,7 @@ function UsersSection() {
   const [formErr, setFormErr] = useState('');
   const [savingUser, setSavingUser] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-  const [giftingId, setGiftingId] = useState(null);
+  const [adjustingId, setAdjustingId] = useState(null);
   const [newUser, setNewUser] = useState({ username: '', password: '', nickname: '' });
   const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
   const search = async function (keyword) {
@@ -842,7 +860,7 @@ function UsersSection() {
     }
   };
   const deleteUser = async function (u) {
-    if (!window.confirm('确认删除用户「' + u.username + '」（id: ' + u.id + '）？\n将级联删除该用户的全部档案、对话、积分等数据，且不可恢复！')) return;
+    if (!window.confirm('确认删除用户「' + u.username + '」（id: ' + u.id + '）？\n将级联删除该用户的全部档案、对话、余额等数据，且不可恢复！')) return;
     setDeletingId(u.id);
     try {
       await api('/admin/users/' + encodeURIComponent(u.id), { method: 'DELETE' });
@@ -854,36 +872,37 @@ function UsersSection() {
       search(q); // 成功/失败都刷新（失败如 1002 说明已被他人删除）
     }
   };
-  // 赠送积分（operator+ 才有此按钮；POST /admin/credits/manual）
-  const grantCredits = async function (u) {
-    const raw = window.prompt('为「' + u.username + '」（id: ' + u.id + '）赠送积分，请输入数量（正整数）：', '');
+  // 余额充值 / 余额调整（operator+ 才有此按钮；POST /admin/credits/manual，
+  // 后端 CreditManualRequest = {user_id, amount_yuan(元口径，可正可负), note}，留审计）
+  const adjustBalance = async function (u) {
+    const raw = window.prompt('为「' + u.username + '」（id: ' + u.id + '）余额充值 / 余额调整\n请输入金额（单位：元，可带 2 位小数）：\n正数 = 充值（增加余额）\n负数 = 扣减（减少余额）', '');
     if (raw === null) return; // 用户取消
     const text = String(raw).trim();
-    if (!/^[1-9]\d*$/.test(text)) {
-      alert('积分数量必须为正整数，未提交');
+    const amount = parseFloat(text);
+    if (!/^-?\d+(\.\d{1,2})?$/.test(text) || !isFinite(amount) || amount === 0) {
+      alert('金额必须为非零数字（元，最多 2 位小数），未提交');
       return;
     }
-    const delta = parseInt(text, 10);
-    const noteRaw = window.prompt('备注（可选，直接点击确定跳过）：', '');
+    const noteRaw = window.prompt('备注（可选，直接点击确定跳过；会写入审计记录）：', '');
     const note = noteRaw === null ? '' : String(noteRaw).trim().slice(0, 500);
-    setGiftingId(u.id);
+    setAdjustingId(u.id);
     try {
       const res = await api('/admin/credits/manual', {
         method: 'POST',
         body: JSON.stringify({
           user_id: u.id,
-          delta: delta,
+          amount_yuan: amount,
           note: note
         })
       });
       const d = pickData(res);
-      const bal = d && d.balance != null ? d.balance : delta;
-      toast('赠送成功，当前余额 ' + bal);
+      const yuan = d && d.balance_yuan != null ? d.balance_yuan : amount;
+      toast('余额调整成功，当前余额 ¥' + yuan);
       search(q); // 刷新列表（重新拉取余额）
     } catch (err) {
-      alert(err.message || '赠送失败');
+      alert(err.message || '余额调整失败');
     } finally {
-      setGiftingId(null);
+      setAdjustingId(null);
     }
   };
   const openUser = async function (u) {
@@ -1015,7 +1034,7 @@ function UsersSection() {
     style: {
       margin: '0 0 6px'
     }
-  }, "后台直接创建 C 端账号（免验证码），注册赠送积分按系统配置自动到账。"), formErr && /*#__PURE__*/React.createElement("div", {
+  }, "后台直接创建 C 端账号（免验证码），注册赠送余额按系统配置自动到账。"), formErr && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
   }, formErr), /*#__PURE__*/React.createElement("form", {
     onSubmit: createUser
@@ -1105,7 +1124,7 @@ function UsersSection() {
     }
   }, /*#__PURE__*/React.createElement("table", {
     className: "admin-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "id"), /*#__PURE__*/React.createElement("th", null, "用户名"), /*#__PURE__*/React.createElement("th", null, "积分"), /*#__PURE__*/React.createElement("th", null, "创建时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, users.map(function (u) {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "id"), /*#__PURE__*/React.createElement("th", null, "用户名"), /*#__PURE__*/React.createElement("th", null, "余额"), /*#__PURE__*/React.createElement("th", null, "创建时间"), /*#__PURE__*/React.createElement("th", null, "操作"))), /*#__PURE__*/React.createElement("tbody", null, users.map(function (u) {
     return /*#__PURE__*/React.createElement("tr", {
       key: u.id,
       className: "clickable",
@@ -1118,8 +1137,9 @@ function UsersSection() {
         color: 'var(--jade-deep)'
       }
     }, u.username), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
-      className: "tag gold"
-    }, "余额 ", u.balance != null ? u.balance : 0)), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
+      className: "tag gold",
+      title: u.balance != null ? u.balance + ' 存储单位（1 元 = 10 存储单位 = 10,000 tokens）' : ''
+    }, "¥", u.balance_yuan != null ? u.balance_yuan : u.balance != null ? Math.round(u.balance / 10 * 100) / 100 : 0)), /*#__PURE__*/React.createElement("td", null, fmtTime(u.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         gap: 6,
@@ -1128,14 +1148,14 @@ function UsersSection() {
       }
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini"
-    }, "查看档案"), canWrite && /*#__PURE__*/React.createElement("button", {
+    }, "查看用户"), canWrite && /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline btn-mini",
-      disabled: giftingId === u.id,
+      disabled: adjustingId === u.id,
       onClick: function (e) {
         e.stopPropagation();
-        grantCredits(u);
+        adjustBalance(u);
       }
-    }, giftingId === u.id ? '赠送中…' : '赠积分'), canWrite && /*#__PURE__*/React.createElement("button", {
+    }, adjustingId === u.id ? '调整中…' : '余额充值/调整'), canWrite && /*#__PURE__*/React.createElement("button", {
       className: "btn btn-danger btn-mini",
       disabled: deletingId === u.id,
       onClick: function (e) {
@@ -1577,6 +1597,393 @@ function PromptsSection() {
 }
 
 
+/* ============ 素材管理（REQ-059 / BUG-018） ============ */
+// 槽位全集（与 backend/app/admin/router.py /admin/assets/* 契约一致）：
+//   module(3) / method(6) / mbti_type(16) / card(塔罗 78 + 雷诺曼 36) / agent(5)
+// 卡面 key 约定：tarot-<牌名文件 stem>（对齐 frontend/public/tarot/rider-waite/webp/*）/
+// lenormand-01…36（对齐 frontend/public/lenormand/*）。蒙版字段：opacity(0~1) + mask_color(hex)。
+const ASSET_MBTI_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+const ASSET_TAROT = [
+  ['00_Fool', '愚者'], ['01_Magician', '魔术师'], ['02_High_Priestess', '女祭司'], ['03_Empress', '皇后'],
+  ['04_Emperor', '皇帝'], ['05_Hierophant', '教皇'], ['06_Lovers', '恋人'], ['07_Chariot', '战车'],
+  ['08_Strength', '力量'], ['09_Hermit', '隐士'], ['10_Wheel_of_Fortune', '命运之轮'], ['11_Justice', '正义'],
+  ['12_Hanged_Man', '倒吊人'], ['13_Death', '死神'], ['14_Temperance', '节制'], ['15_Devil', '恶魔'],
+  ['16_Tower', '高塔'], ['17_Star', '星星'], ['18_Moon', '月亮'], ['19_Sun', '太阳'],
+  ['20_Judgement', '审判'], ['21_World', '世界'],
+  ['Wands01', '权杖王牌'], ['Wands02', '权杖二'], ['Wands03', '权杖三'], ['Wands04', '权杖四'],
+  ['Wands05', '权杖五'], ['Wands06', '权杖六'], ['Wands07', '权杖七'], ['Wands08', '权杖八'],
+  ['Wands09', '权杖九'], ['Wands10', '权杖十'], ['Wands11', '权杖侍从'], ['Wands12', '权杖骑士'],
+  ['Wands13', '权杖王后'], ['Wands14', '权杖国王'],
+  ['Cups01', '圣杯王牌'], ['Cups02', '圣杯二'], ['Cups03', '圣杯三'], ['Cups04', '圣杯四'],
+  ['Cups05', '圣杯五'], ['Cups06', '圣杯六'], ['Cups07', '圣杯七'], ['Cups08', '圣杯八'],
+  ['Cups09', '圣杯九'], ['Cups10', '圣杯十'], ['Cups11', '圣杯侍从'], ['Cups12', '圣杯骑士'],
+  ['Cups13', '圣杯王后'], ['Cups14', '圣杯国王'],
+  ['Swords01', '宝剑王牌'], ['Swords02', '宝剑二'], ['Swords03', '宝剑三'], ['Swords04', '宝剑四'],
+  ['Swords05', '宝剑五'], ['Swords06', '宝剑六'], ['Swords07', '宝剑七'], ['Swords08', '宝剑八'],
+  ['Swords09', '宝剑九'], ['Swords10', '宝剑十'], ['Swords11', '宝剑侍从'], ['Swords12', '宝剑骑士'],
+  ['Swords13', '宝剑王后'], ['Swords14', '宝剑国王'],
+  ['Pents01', '钱币王牌'], ['Pents02', '钱币二'], ['Pents03', '钱币三'], ['Pents04', '钱币四'],
+  ['Pents05', '钱币五'], ['Pents06', '钱币六'], ['Pents07', '钱币七'], ['Pents08', '钱币八'],
+  ['Pents09', '钱币九'], ['Pents10', '钱币十'], ['Pents11', '钱币侍从'], ['Pents12', '钱币骑士'],
+  ['Pents13', '钱币王后'], ['Pents14', '钱币国王']
+].map(function (p) {
+  return { key: 'tarot-' + p[0], label: p[1] };
+});
+const ASSET_LENORMAND = [
+  ['01', '骑手'], ['02', '三叶草'], ['03', '船'], ['04', '房子'], ['05', '树'], ['06', '云'],
+  ['07', '蛇'], ['08', '棺材'], ['09', '花束'], ['10', '镰刀'], ['11', '鞭子'], ['12', '鸟'],
+  ['13', '小孩'], ['14', '狐狸'], ['15', '熊'], ['16', '星星'], ['17', '鹳'], ['18', '狗'],
+  ['19', '塔'], ['20', '花园'], ['21', '山'], ['22', '路口'], ['23', '老鼠'], ['24', '心'],
+  ['25', '戒指'], ['26', '书'], ['27', '信'], ['28', '男人'], ['29', '女人'], ['30', '百合'],
+  ['31', '太阳'], ['32', '月亮'], ['33', '钥匙'], ['34', '鱼'], ['35', '锚'], ['36', '十字']
+].map(function (p) {
+  return { key: 'lenormand-' + p[0], label: p[1] };
+});
+const ASSET_CATALOG = [{
+  kind: 'module',
+  title: '模块级背景（3 槽）',
+  desc: '落地页与对应 Hub 页复用同一张背景（REQ-059①），未配置回退 CSS 渐变。',
+  slots: [{ key: 'module-guoxue', label: '国学预测' }, { key: 'module-xishi', label: '西式占卜' }, { key: 'module-mbti', label: 'MBTI' }]
+}, {
+  kind: 'method',
+  title: 'Hub 方法级背景（6 槽）',
+  desc: '国学 Hub 与西式 Hub 中每个方法选项独立背景，按选项 key（REQ-059②）。',
+  slots: [{ key: 'method-nine', label: '九法合一' }, { key: 'method-zodiac', label: '生肖流年' }, { key: 'method-divination', label: '六爻起卦' }, { key: 'method-astrology', label: '星座星盘' }, { key: 'method-tarot', label: '塔罗' }, { key: 'method-lenormand', label: '雷诺曼' }]
+}, {
+  kind: 'mbti_type',
+  title: 'MBTI 16 型结果背景（16 槽）',
+  desc: '按类型代码（INTJ…ESFP），仅 MBTI 结果页 / 人格详情展示，未上传回退默认（REQ-059④）。',
+  slots: ASSET_MBTI_TYPES.map(function (t) {
+    return { key: t, label: t };
+  })
+}, {
+  kind: 'card',
+  title: '塔罗卡面（78 张）',
+  desc: 'key 为 tarot-<牌名文件 stem>；上传替换后前台抽牌 / 翻牌 / 结果即时生效（REQ-059⑤）。',
+  slots: ASSET_TAROT
+}, {
+  kind: 'card',
+  title: '雷诺曼卡面（36 张）',
+  desc: 'key 为 lenormand-01…36（REQ-059⑤）。',
+  slots: ASSET_LENORMAND
+}, {
+  kind: 'agent',
+  title: '太初先生会话背景（5 槽）',
+  desc: 'agent-1…agent-5：每次进入会话 / 对话中每 10 分钟从已填充槽随机抽取 1 张；空白槽不参与抽取，全部空白回退默认样式（REQ-059⑥）。',
+  slots: [1, 2, 3, 4, 5].map(function (n) {
+    return { key: 'agent-' + n, label: '会话背景 ' + n };
+  })
+}];
+function AssetsSection() {
+  const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
+  const [byKey, setByKey] = useState({}); // key → {key,kind,url,opacity,mask_color,updated_at}
+  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState('');
+  const [openKey, setOpenKey] = useState(null);
+  const [busy, setBusy] = useState({}); // key → 'upload'|'save'|'delete'
+  const [draft, setDraft] = useState({ url: '', opacity: '', maskColor: '#000000' });
+  const load = async function () {
+    setLoading(true);
+    setErrored('');
+    try {
+      const res = await api('/admin/assets');
+      const d = pickData(res);
+      const map = {};
+      (Array.isArray(d.items) ? d.items : []).forEach(function (it) {
+        map[it.key] = it;
+      });
+      setByKey(map);
+    } catch (e) {
+      setErrored(e.message || '素材列表加载失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(function () {
+    load();
+  }, []);
+  const openEditor = function (slot) {
+    const it = byKey[slot.key];
+    setOpenKey(slot.key);
+    setDraft({
+      url: it && it.url ? it.url : '',
+      opacity: it && it.opacity != null ? String(it.opacity) : '',
+      maskColor: it && it.mask_color ? it.mask_color : '#000000'
+    });
+  };
+  const closeEditor = function () {
+    setOpenKey(null);
+  };
+  // 按后端 AssetUpsertRequest 组装 PUT body：{kind, url, key, opacity?, mask_color?}
+  const buildBody = function (slot, url) {
+    const body = { kind: slot.kind, key: slot.key, url: String(url || '').trim() };
+    const raw = String(draft.opacity || '').trim();
+    const op = parseFloat(raw);
+    if (raw !== '' && isFinite(op) && op >= 0 && op <= 1) {
+      body.opacity = op;
+      if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(draft.maskColor)) body.mask_color = draft.maskColor;
+    }
+    return body;
+  };
+  const saveSlot = async function (slot) {
+    const url = String(draft.url || '').trim();
+    if (!url) {
+      toast('请先填写素材地址或上传文件');
+      return;
+    }
+    setBusy(Object.assign({}, busy, (function () {
+      const o = {};
+      o[slot.key] = 'save';
+      return o;
+    })()));
+    try {
+      await api('/admin/assets/' + encodeURIComponent(slot.key), {
+        method: 'PUT',
+        body: JSON.stringify(buildBody(slot, url))
+      });
+      toast('已保存：' + slot.label + '（' + slot.key + '）');
+      setOpenKey(null);
+      load();
+    } catch (e) {
+      toast(e.message || '保存失败');
+    } finally {
+      setBusy(Object.assign({}, busy, (function () {
+        const o = {};
+        o[slot.key] = null;
+        return o;
+      })()));
+    }
+  };
+  const uploadFile = async function (slot, file) {
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    setBusy(Object.assign({}, busy, (function () {
+      const o = {};
+      o[slot.key] = 'upload';
+      return o;
+    })()));
+    try {
+      // ① POST /admin/assets/upload（multipart，字段名 file）→ 返回相对路径
+      const res = await api('/admin/assets/upload', { method: 'POST', body: fd });
+      const d = pickData(res);
+      if (!d || !d.url) throw new Error('上传未返回素材地址');
+      // ② PUT /admin/assets/{key} 绑定入槽（上传即替换，保留蒙版草稿）
+      setDraft(Object.assign({}, draft, { url: d.url }));
+      await api('/admin/assets/' + encodeURIComponent(slot.key), {
+        method: 'PUT',
+        body: JSON.stringify(buildBody(slot, d.url))
+      });
+      toast('已上传并替换：' + slot.label);
+      setOpenKey(null);
+      load();
+    } catch (e) {
+      toast(e.message || '上传失败');
+    } finally {
+      setBusy(Object.assign({}, busy, (function () {
+        const o = {};
+        o[slot.key] = null;
+        return o;
+      })()));
+    }
+  };
+  const deleteSlot = async function (slot) {
+    if (!window.confirm('确认删除素材槽「' + slot.key + '」并恢复默认？\n前台将回退该槽的 CSS 艺术背景（已上传文件保留在服务器，可被其他槽复用）。')) return;
+    setBusy(Object.assign({}, busy, (function () {
+      const o = {};
+      o[slot.key] = 'delete';
+      return o;
+    })()));
+    try {
+      await api('/admin/assets/' + encodeURIComponent(slot.key), { method: 'DELETE' });
+      toast('已删除恢复默认：' + slot.key);
+      if (openKey === slot.key) setOpenKey(null);
+      load();
+    } catch (e) {
+      toast(e.message || '删除失败');
+    } finally {
+      setBusy(Object.assign({}, busy, (function () {
+        const o = {};
+        o[slot.key] = null;
+        return o;
+      })()));
+    }
+  };
+  const configuredCount = function (keys) {
+    return keys.filter(function (k) {
+      return byKey[k] && byKey[k].url;
+    }).length;
+  };
+  // 单个槽卡片：预览（含蒙版示意） + 状态 + operator 配置区
+  const renderSlot = function (slot) {
+    const it = byKey[slot.key];
+    const url = it && it.url ? it.url : '';
+    const opacity = it && it.opacity != null ? it.opacity : null;
+    const color = it && it.mask_color ? it.mask_color : '#000000';
+    const isOpen = openKey === slot.key;
+    const b = busy[slot.key];
+    return React.createElement("div", {
+      key: slot.key,
+      className: "asset-slot"
+    }, React.createElement("div", {
+      className: "asset-preview"
+    }, url ? React.createElement("img", {
+      src: url,
+      alt: slot.label,
+      loading: "lazy"
+    }) : React.createElement("div", {
+      className: "asset-ph"
+    }, "未配置 · 回退 CSS 渐变"), opacity != null && React.createElement("div", {
+      className: "asset-mask",
+      style: {
+        background: color,
+        opacity: opacity
+      }
+    })), React.createElement("div", {
+      className: "asset-title"
+    }, React.createElement("span", null, slot.label), React.createElement("span", {
+      className: "asset-key"
+    }, slot.key)), React.createElement("div", {
+      className: "asset-meta"
+    }, url ? React.createElement("span", {
+      className: "tag ok"
+    }, "已配置") : React.createElement("span", {
+      className: "tag gray"
+    }, "未配置"), opacity != null && React.createElement("span", {
+      className: "tag gold"
+    }, "蒙版 ", opacity, " @ ", color)), canWrite && React.createElement("div", {
+      className: "asset-actions"
+    }, isOpen ? React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      onClick: closeEditor
+    }, "收起") : React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      onClick: function () {
+        openEditor(slot);
+      }
+    }, "配置")), isOpen && canWrite && React.createElement("div", {
+      className: "asset-form"
+    }, React.createElement("label", {
+      className: "label"
+    }, "素材地址（完整 URL 或以 / 开头的相对路径）"), React.createElement("div", {
+      className: "asset-form-row"
+    }, React.createElement("input", {
+      className: "input",
+      value: draft.url,
+      placeholder: "/uploads/assets/xxx.webp 或 https://…",
+      onChange: function (e) {
+        setDraft(Object.assign({}, draft, {
+          url: e.target.value
+        }));
+      }
+    }), React.createElement("label", {
+      className: "btn btn-outline btn-mini",
+      style: {
+        flex: 'none',
+        cursor: 'pointer',
+        margin: 0
+      }
+    }, b === 'upload' ? '上传中…' : '上传文件替换', React.createElement("input", {
+      type: "file",
+      accept: "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp",
+      style: {
+        display: 'none'
+      },
+      onChange: function (e) {
+        const f = e.target.files && e.target.files[0];
+        if (f) uploadFile(slot, f);
+        e.target.value = '';
+      }
+    }))), React.createElement("div", {
+      className: "asset-mask-row"
+    }, React.createElement("div", null, React.createElement("label", {
+      className: "label"
+    }, "蒙版不透明度（0~1，留空=不启用）"), React.createElement("input", {
+      className: "input",
+      type: "number",
+      min: 0,
+      max: 1,
+      step: 0.05,
+      value: draft.opacity,
+      placeholder: "如 0.35",
+      onChange: function (e) {
+        setDraft(Object.assign({}, draft, {
+          opacity: e.target.value
+        }));
+      }
+    })), React.createElement("div", null, React.createElement("label", {
+      className: "label"
+    }, "蒙版颜色（hex）"), React.createElement("input", {
+      className: "input",
+      type: "color",
+      value: /^#[0-9a-fA-F]{6}$/.test(draft.maskColor) ? draft.maskColor : '#000000',
+      onChange: function (e) {
+        setDraft(Object.assign({}, draft, {
+          maskColor: e.target.value
+        }));
+      }
+    }))), React.createElement("div", {
+      className: "asset-form-row",
+      style: {
+        marginTop: 8
+      }
+    }, React.createElement("button", {
+      className: "btn btn-primary btn-mini",
+      disabled: b != null,
+      onClick: function () {
+        saveSlot(slot);
+      }
+    }, b === 'save' ? '保存中…' : '保存配置'), React.createElement("button", {
+      className: "btn btn-danger btn-mini",
+      disabled: b != null,
+      onClick: function () {
+        deleteSlot(slot);
+      }
+    }, b === 'delete' ? '删除中…' : '删除恢复默认'))));
+  };
+  const renderGroup = function (g) {
+    const keys = g.slots.map(function (s) {
+      return s.key;
+    });
+    const done = configuredCount(keys);
+    return React.createElement("div", {
+      key: g.kind + '|' + g.title,
+      className: "card"
+    }, React.createElement("div", {
+      className: "section-title",
+      style: {
+        marginTop: 0
+      }
+    }, g.title, React.createElement("span", {
+      className: "tag gray",
+      style: {
+        marginLeft: 8
+      }
+    }, g.slots.length, " 槽"), React.createElement("span", {
+      className: 'tag ' + (done > 0 ? 'ok' : 'gray'),
+      style: {
+        marginLeft: 6
+      }
+    }, "已配置 ", done, " 槽")), React.createElement("p", {
+      className: "hint",
+      style: {
+        margin: '0 0 12px'
+      }
+    }, g.desc), React.createElement("div", {
+      className: "asset-grid"
+    }, g.slots.map(renderSlot)));
+  };
+  return React.createElement("div", null, React.createElement("h2", {
+    className: "page-title"
+  }, "素材管理"), React.createElement("p", {
+    className: "page-desc"
+  }, "背景图与卡牌素材热更（REQ-059）：上传即替换，前台 GET /api/assets 实时生效、无需重启；未配置 / 删除的槽回退既有 CSS 艺术背景。每槽可配蒙版（不透明度 0~1 + 颜色 hex，REQ-059⑧）。"), errored && React.createElement("div", {
+    className: "error-box"
+  }, errored), loading && React.createElement("p", {
+    className: "hint"
+  }, "正在加载素材槽…"), !loading && !errored && ASSET_CATALOG.map(renderGroup));
+}
+
 /* ============ App：登录态 + 布局 + 路由 ============ */
 function App() {
   const [authed, setAuthed] = useState(function () {
@@ -1621,6 +2028,10 @@ function App() {
     key: 'prompts',
     label: '提示词',
     icon: '📝'
+  }, {
+    key: 'assets',
+    label: '素材',
+    icon: '🖼️'
   }];
   const go = function (k) {
     setSection(k);
@@ -1662,7 +2073,7 @@ function App() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "view-enter",
     key: section
-  }, section === 'reports' && /*#__PURE__*/React.createElement(ReportsSection, null), section === 'users' && /*#__PURE__*/React.createElement(UsersSection, null), section === 'prompts' && /*#__PURE__*/React.createElement(PromptsSection, null)))));
+  }, section === 'reports' && /*#__PURE__*/React.createElement(ReportsSection, null), section === 'users' && /*#__PURE__*/React.createElement(UsersSection, null), section === 'prompts' && /*#__PURE__*/React.createElement(PromptsSection, null), section === 'assets' && /*#__PURE__*/React.createElement(AssetsSection, null)))));
 }
 ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById('root'));
   </script>
