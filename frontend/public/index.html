@@ -1387,6 +1387,25 @@ const UI_COPY = {
   // REQ-092：新用户建档强制门禁 —— 0 档案登录账号强制先新建档案时的提示文案
   forceGate: {
     tip: '你还没有任何命理档案。请先完成下方建档；建好至少 1 份档案后，即可解锁全部功能（含各占卜 / 测试模块、功能设置与太初先生）。'
+  },
+  // REQ-082 / REQ-083：星座「恋爱 / 朋友 / 上下级」关系匹配入口与弹窗文案（静态轻内容、免费；
+  // 分值用恋爱同款基础规则，正文本轮占位「文案待补充」——正式文案后补时只填 SUN_FRIEND_TEXT / SUN_BOSS_TEXT 表即可）
+  sunRel: {
+    cardTitle: '太阳星座 · 关系匹配',
+    entryNote: '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱 / 朋友 / 上下级关系匹配 —— 静态娱乐向参考、免费、不扣余额（需先生成 / 查看本命盘；深度双人合盘请用页面顶部「配对解析」）。',
+    btnLove: '看恋爱关系',
+    btnFriend: '看朋友关系',
+    btnBoss: '看上下级关系',
+    relName: { friend: '朋友', boss: '上下级' },
+    modalFriendTitle: '朋友关系 · 太阳星座匹配',
+    modalBossTitle: '上下级关系 · 太阳星座匹配',
+    modalHasSun: '以「{case} · 太阳{me}」为基准，查看与其余 11 星座的{rel}关系匹配度。分值越高表示性格层面越合拍（静态轻内容、免费、不扣余额）。',
+    modalNoCase: '本板块以档案的太阳星座为基准做{rel}关系匹配（免费静态轻内容，区别于双档案合盘的「配对解析」）。',
+    noSunHeadCase: '太阳星座未知 · 请先生成星盘',
+    noSunHeadNoCase: '太阳星座未知 · 请先选择档案',
+    modalNoSunCase: '当前已选档案「{case}」尚未生成本命星盘，无法确定太阳星座。点击「去生成星盘」免费排盘（确定性计算；该档案已生成过则直接复用、不重复计费），成功后回到本页再点「看{rel}关系」即可查看。',
+    modalNoSunNoCase: '尚未选择档案。请先在上方「选择档案 · 生成免费本命盘」中选择一份档案并生成/查看星盘，确定太阳星座后再来查看{rel}关系匹配。',
+    modalFoot: '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整星盘的深度合盘，请使用页面顶部「配对解析」。'
   }
 };
 const API = '/api';
@@ -7725,6 +7744,15 @@ function GuoxueHubPage({
 }) {
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
+  // REQ-082①：国学「配对解析」由顶部入口条改为「与功能入口同款 hub-card 样式」，并置于本页最下方
+  // （跟在九法合一 / 生肖流年 / 临时起卦之后）；国学 HUB 属公开页 —— 未登录先引导去登录页
+  const openPair = () => {
+    if (!token) {
+      onNavigate('auth');
+      return;
+    }
+    openPairAnalyze({ module: 'guoxue' });
+  };
   const cards = [{
     name: '九法合一解读',
     sub: '选择档案 · 跑九法或查看/修改解读（八字·紫微·西占·七政·奇门·五运六气等 9 法综合）',
@@ -7743,6 +7771,12 @@ function GuoxueHubPage({
     bar: 'var(--gold-500)',
     ico: 'orbit',
     to: () => onNavigate('divination')
+  }, {
+    name: '配对解析',
+    sub: '选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，按实际用量扣余额 ¥）',
+    bar: 'var(--gold-500)',
+    ico: 'flat',
+    pair: true
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -7752,32 +7786,17 @@ function GuoxueHubPage({
     name: "nine",
     size: 22
   }), UI_COPY.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
-    className: "pair-entry"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "pe-main"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "pe-title"
-  }, "配对解析"), /*#__PURE__*/React.createElement("div", {
-    className: "pe-sub"
-  }, "选择两份档案，基于双方排盘信息（九法合一数据）合参两人缘分与相处（付费 LLM，按实际用量扣余额 ¥）")), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: () => {
-      // 国学 HUB 属公开页（无需登录即可浏览）：未登录先引导去登录页，避免白弹选档案弹窗
-      if (!token) {
-        onNavigate('auth');
-        return;
-      }
-      openPairAnalyze({
-        module: 'guoxue'
-      });
-    }
-  }, ["配对解析", payBadge(payEnough)])), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
+    key: c.pair ? 'pair' : i,
     className: "hub-card",
-    onClick: c.to
+    onClick: () => {
+      if (c.pair) {
+        openPair();
+        return;
+      }
+      c.to();
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "hc-bar",
     style: {
@@ -7791,7 +7810,7 @@ function GuoxueHubPage({
     className: "hc-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hc-name"
-  }, c.name), /*#__PURE__*/React.createElement("div", {
+  }, c.name, c.pair ? payBadge(payEnough) : null), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
   }, c.sub))))));
 }
@@ -13066,6 +13085,33 @@ function sunLovePairs(mine) {
     return y.pct - x.pct || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
   });
 }
+/* REQ-083：朋友 / 上下级关系正文表（与恋爱同机制：键 = 太阳1_太阳2，12×11 对；本轮空表占位
+   「文案待补充」，正式文案由文字 Agent 后补整表填充即可；取值函数与 sunLoveText 同款） */
+const SUN_FRIEND_TEXT = {};
+const SUN_BOSS_TEXT = {};
+function sunFriendText(mine, other) {
+  const t = SUN_FRIEND_TEXT[String(mine) + '_' + String(other)];
+  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
+}
+function sunBossText(mine, other) {
+  const t = SUN_BOSS_TEXT[String(mine) + '_' + String(other)];
+  return t && String(t).trim() ? t : SUN_LOVE_TEXT_PH;
+}
+/* REQ-083：按关系 textFn 生成「当前太阳星座 × 其余 11 星座」匹配列表（分值复用恋爱同款基础规则 sunLoveScore） */
+function sunRelPairs(mine, textFn) {
+  const tf = typeof textFn === 'function' ? textFn : sunLoveText;
+  return SUN_LOVE_ORDER.filter(function (s) {
+    return s !== mine;
+  }).map(function (s) {
+    return {
+      sign: s,
+      pct: sunLoveScore(mine, s),
+      txt: tf(mine, s)
+    };
+  }).sort(function (x, y) {
+    return y.pct - x.pct || SUN_LOVE_ORDER.indexOf(x.sign) - SUN_LOVE_ORDER.indexOf(y.sign);
+  });
+}
 /* 恋爱关系弹窗（PairModal 同款容器样式）：有太阳星座 → 与其余 11 星座匹配宫格；
    无太阳星座（未生成星盘/未选档案）→ 「请先生成星盘」引导，不展示空表 */
 function SunLoveModal({
@@ -13223,6 +13269,199 @@ function SunLoveModal({
   const disclaimer = el('div', {
     className: 'pair-pay'
   }, '说明：太阳星座匹配仅为性格层面的娱乐参考（本轮分值为基础占位值、正文「文案待补充」），仅供娱乐与启发，不构成婚恋或其他现实建议；如需基于双方完整星盘的深度合盘，请使用上方「配对解析」。');
+  return el('div', {
+    className: 'modal-mask',
+    onClick: onClose
+  }, el('div', {
+    className: 'modal pair-modal',
+    style: {
+      maxWidth: 620
+    },
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, hd, sub, inner, disclaimer, hasSun ? el('div', {
+    className: 'pair-foot'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: onClose
+  }, UI_COPY.buttons.close)) : null));
+}
+
+/* REQ-083：朋友 / 上下级关系弹窗 —— 与 SunLoveModal 同款容器（PairModal 同款样式）：
+   分值复用恋爱同款基础规则（sunLoveScore 元素规则）；正文取 SUN_FRIEND_TEXT / SUN_BOSS_TEXT
+   （本轮空表占位「文案待补充」）；kind: 'friend' | 'boss'，标题分别「朋友关系 / 上下级关系 · 太阳星座匹配」。 */
+function fmtTpl(t, kv) {
+  return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {
+    return kv && kv[k] != null ? kv[k] : '{' + k + '}';
+  });
+}
+const SUN_REL_KINDS = {
+  friend: { title: UI_COPY.sunRel.modalFriendTitle, rel: UI_COPY.sunRel.relName.friend, textFn: sunFriendText },
+  boss: { title: UI_COPY.sunRel.modalBossTitle, rel: UI_COPY.sunRel.relName.boss, textFn: sunBossText }
+};
+function SunRelationModal({
+  kind,
+  sunCn,
+  caseName,
+  onClose,
+  onGoChart
+}) {
+  const el = React.createElement;
+  const meta = SUN_REL_KINDS[kind] || SUN_REL_KINDS.friend;
+  const me = String(sunCn || '').trim();
+  const hasSun = !!me && SUN_LOVE_ORDER.indexOf(me) !== -1;
+  const list = hasSun ? sunRelPairs(me, meta.textFn) : [];
+  const relCn = meta.rel;
+  const starN = pct => pct >= 90 ? 5 : pct >= 80 ? 4 : 3;
+  const FULL = '★★★★★';
+  const EMPTY = '☆☆☆☆☆';
+  const cells = list.map(function (p) {
+    const n = starN(p.pct);
+    return el('div', {
+      key: p.sign,
+      style: {
+        border: '1px solid var(--border)',
+        background: 'var(--paper)',
+        borderRadius: 10,
+        padding: '8px 10px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+        minWidth: 0
+      }
+    }, el('div', {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 6
+      }
+    }, el('span', {
+      style: {
+        fontSize: 14,
+        fontWeight: 700,
+        color: 'var(--text-1)',
+        whiteSpace: 'nowrap'
+      }
+    }, SIGN_SYM[SUN_LOVE_ORDER.indexOf(p.sign)] + ' ' + p.sign), el('span', {
+      style: {
+        fontSize: 15,
+        fontWeight: 800,
+        color: 'var(--skin-accent)',
+        fontVariantNumeric: 'tabular-nums',
+        whiteSpace: 'nowrap'
+      }
+    }, p.pct + '%')), el('div', {
+      style: {
+        fontSize: 12,
+        lineHeight: 1,
+        letterSpacing: 1
+      }
+    }, el('span', {
+      style: {
+        color: '#C9A24B'
+      }
+    }, FULL.slice(0, n)), el('span', {
+      style: {
+        color: 'var(--text-3)',
+        opacity: .5
+      }
+    }, EMPTY.slice(0, 5 - n))), el('div', {
+      style: {
+        fontSize: 11.5,
+        color: 'var(--text-3)',
+        lineHeight: 1.6
+      }
+    }, p.txt));
+  });
+  const hd = el('div', {
+    className: 'pair-hd'
+  }, el('div', {
+    className: 'pair-hd-title'
+  }, el(Icon, {
+    name: 'orbit',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), meta.title), el('button', {
+    type: 'button',
+    className: 'pair-x',
+    onClick: onClose,
+    title: UI_COPY.buttons.close
+  }, '✕'));
+  const sub = el('div', {
+    className: 'pair-sub'
+  }, hasSun
+    ? fmtTpl(UI_COPY.sunRel.modalHasSun, { case: caseName ? caseName : '当前档案', me: me, rel: relCn })
+    : fmtTpl(UI_COPY.sunRel.modalNoCase, { rel: relCn }));
+  let inner = null;
+  if (hasSun) {
+    inner = el('div', null, el('div', {
+      className: 'pair-sec-label',
+      style: {
+        marginTop: 4
+      }
+    }, el('span', {
+      className: 'ps-n'
+    }, '我'), '太阳星座 · ', me, '（其余 11 星座匹配度，按基础合意从高到低）'), el('div', {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))',
+        gap: 8,
+        marginTop: 6
+      }
+    }, cells));
+  } else {
+    const noCase = !caseName;
+    inner = el('div', {
+      style: {
+        background: 'var(--paper)',
+        border: '1px dashed var(--border)',
+        borderRadius: 12,
+        padding: '14px 16px',
+        textAlign: 'center'
+      }
+    }, el('div', {
+      style: {
+        fontSize: 15,
+        fontWeight: 800,
+        color: 'var(--text-1)',
+        marginBottom: 6
+      }
+    }, noCase ? UI_COPY.sunRel.noSunHeadNoCase : UI_COPY.sunRel.noSunHeadCase), el('div', {
+      style: {
+        fontSize: 12.5,
+        color: 'var(--text-2)',
+        lineHeight: 1.8
+      }
+    }, fmtTpl(noCase ? UI_COPY.sunRel.modalNoSunNoCase : UI_COPY.sunRel.modalNoSunCase, { case: caseName || '', rel: relCn })), el('div', {
+      style: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 10,
+        marginTop: 12,
+        flexWrap: 'wrap'
+      }
+    }, noCase ? null : el('button', {
+      type: 'button',
+      className: 'btn btn-primary',
+      style: {
+        width: 'auto'
+      },
+      onClick: onGoChart
+    }, '去生成星盘'), el('button', {
+      type: 'button',
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto'
+      },
+      onClick: onClose
+    }, UI_COPY.buttons.close)));
+  }
+  const disclaimer = el('div', {
+    className: 'pair-pay'
+  }, UI_COPY.sunRel.modalFoot);
   return el('div', {
     className: 'modal-mask',
     onClick: onClose
@@ -13465,8 +13704,8 @@ function AstrologyPage({
   const [interp, setInterp] = useState('');
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
-  // REQ-057：恋爱关系（太阳星座匹配）弹窗开关
-  const [loveOpen, setLoveOpen] = useState(false);
+  // REQ-057 / REQ-083：恋爱 / 朋友 / 上下级 关系匹配弹窗开关（null=关；'love' | 'friend' | 'boss'）
+  const [relOpen, setRelOpen] = useState(null);
   const TAB_LIST = [['natal', '本命盘'], ['yearly', '流年'], ['monthly', '流月'], ['daily', '流日']];
   const chart = data && data.chart ? data.chart : null;
   const natalRaw = chart && chart.natal ? chart.natal : null;
@@ -13962,6 +14201,54 @@ function AstrologyPage({
     className: 'interp-body'
   }, interp)) : null);
 
+  // ---- REQ-057 / REQ-083：星座关系匹配（恋爱 / 朋友 / 上下级）入口与数据源 ----
+  // 太阳星座优先取「当前已生成/查看的本命盘」（与盘面三格同源）；本会话未生成但该档案历史已排过盘
+  // （detailMap.hasNatal + sunCn，与档案卡 meta「太阳X」同口径）也可直接判定，无需重复排盘；
+  // 两者皆无 → 弹窗内给「请先生成星盘 / 请先选择档案」引导。
+  // REQ-082③ / REQ-083：入口位置移到「太阳/月亮/上升 · 整体趋势」卡与「本命深度解读」卡之间
+  // （仅盘面数据就绪时随盘展示）；未选择档案时不渲染。同排三个普通按钮：恋爱 / 朋友 / 上下级。
+  const relSelCase = caseId == null ? null : (caseList.find(c => Number(c.caseId) === Number(caseId)) || null);
+  const relCaseName = relSelCase ? ((relSelCase.name && String(relSelCase.name).trim()) || '档案 ' + relSelCase.caseId) : '';
+  const relDet = detailMap[caseId == null ? '' : String(caseId)];
+  const relSunCn = data && natalRaw && dataCaseId.current != null && caseId != null && Number(dataCaseId.current) === Number(caseId) && sunSign
+    ? sunSign
+    : (relDet && relDet.hasNatal && relDet.sunCn ? relDet.sunCn : '');
+  const relEntry = el('div', {
+    className: 'card'
+  }, el('div', {
+    className: 'section-title'
+  }, UI_COPY.sunRel.cardTitle), el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      lineHeight: 1.7,
+      marginBottom: 4
+    }
+  }, UI_COPY.sunRel.entryNote), el('div', {
+    style: {
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap'
+    }
+  }, [['love', UI_COPY.sunRel.btnLove], ['friend', UI_COPY.sunRel.btnFriend], ['boss', UI_COPY.sunRel.btnBoss]].map(function (it) {
+    return el('button', {
+      key: it[0],
+      type: 'button',
+      className: 'btn btn-outline',
+      style: {
+        width: 'auto',
+        flex: 'none',
+        padding: '9px 14px',
+        fontSize: 14,
+        borderRadius: 'var(--radius-pill)'
+      },
+      onClick: function () {
+        track('zodiac_match', {});
+        setRelOpen(it[0]);
+      }
+    }, it[1]);
+  })));
+
   // ---- 三态 body ----
   let body = null;
   if (loading) {
@@ -14007,7 +14294,7 @@ function AstrologyPage({
       onClick: () => load('natal')
     }, '重新生成'));
   } else if (data && natalRaw) {
-    body = el(React.Fragment, null, natalCard, tripleCard, interpCard, planetCard, sumCard);
+    body = el(React.Fragment, null, natalCard, tripleCard, caseId == null ? null : relEntry, interpCard, planetCard, sumCard);
   } else {
     body = el('div', {
       className: 'card',
@@ -14019,33 +14306,6 @@ function AstrologyPage({
     }, '在上方选择一份档案，点击「生成星盘」或「查看星盘」（该档案已生成过的星盘会直接展示、不重复计费；生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
   }
 
-  // ---- REQ-057：恋爱关系（太阳星座匹配）入口与数据源 ----
-  // 太阳星座优先取「当前已生成/查看的本命盘」（与盘面三格同源）；本会话未生成但该档案历史已排过盘
-  // （detailMap.hasNatal + sunCn，与档案卡 meta「太阳X」同口径）也可直接判定，无需重复排盘；
-  // 两者皆无 → 弹窗内给「请先生成星盘 / 请先选择档案」引导。
-  const loveSelCase = caseId == null ? null : (caseList.find(c => Number(c.caseId) === Number(caseId)) || null);
-  const loveCaseName = loveSelCase ? ((loveSelCase.name && String(loveSelCase.name).trim()) || '档案 ' + loveSelCase.caseId) : '';
-  const loveDet = detailMap[caseId == null ? '' : String(caseId)];
-  const loveSunCn = data && natalRaw && dataCaseId.current != null && caseId != null && Number(dataCaseId.current) === Number(caseId) && sunSign
-    ? sunSign
-    : (loveDet && loveDet.hasNatal && loveDet.sunCn ? loveDet.sunCn : '');
-  const loveEntry = el('div', {
-    className: 'pair-entry'
-  }, el('div', {
-    className: 'pe-main'
-  }, el('div', {
-    className: 'pe-title'
-  }, '恋爱关系'), el('div', {
-    className: 'pe-sub'
-  }, '以当前档案太阳星座为基准，查看与其余 11 星座的恋爱匹配度 —— 静态娱乐向参考、免费、不扣余额（太阳星座需先生成/查看本命盘；深度双人合盘请用下方「配对解析」）')), el('button', {
-    className: 'btn btn-outline',
-    type: 'button',
-    onClick: () => {
-      track('zodiac_match', {});
-      setLoveOpen(true);
-    }
-  }, '恋爱关系'));
-
   return el(React.Fragment, null, el('div', {
     className: 'container'
   }, el('div', {
@@ -14053,7 +14313,7 @@ function AstrologyPage({
   }, el(Icon, {
     name: 'orbit',
     size: 22
-  }), ' 星座'), loveEntry, el('div', {
+  }), ' 星座'), el('div', {
     className: 'pair-entry'
   }, el('div', {
     className: 'pe-main'
@@ -14087,12 +14347,21 @@ function AstrologyPage({
       width: 'auto'
     },
     onClick: () => onNavigate('landing')
-  }, UI_COPY.buttons.back_home))), loveOpen ? el(SunLoveModal, {
-    sunCn: loveSunCn,
-    caseName: loveCaseName,
-    onClose: () => setLoveOpen(false),
+  }, UI_COPY.buttons.back_home))), relOpen === 'love' ? el(SunLoveModal, {
+    sunCn: relSunCn,
+    caseName: relCaseName,
+    onClose: () => setRelOpen(null),
     onGoChart: () => {
-      setLoveOpen(false);
+      setRelOpen(null);
+      load('natal');
+    }
+  }) : (relOpen === 'friend' || relOpen === 'boss') ? el(SunRelationModal, {
+    kind: relOpen,
+    sunCn: relSunCn,
+    caseName: relCaseName,
+    onClose: () => setRelOpen(null),
+    onGoChart: () => {
+      setRelOpen(null);
       load('natal');
     }
   }) : null);
@@ -14582,6 +14851,12 @@ function MbtiPage({
                     el('span', {className: 'co-meta'}, meta)),
                   el('span', {className: 'co-check'}, sel ? '✓' : ''));
               }))),
+          // REQ-082④：MBTI「配对解析」入口置于「档案操作」与「选择档案」之间（选档案阶段随时可发起双档案配对）
+          el('div', {className: 'pair-entry', style: {marginTop: 10, marginBottom: 0}},
+            el('div', {className: 'pe-main'},
+              el('div', {className: 'pe-title'}, '配对解析'),
+              el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）')),
+            el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, ['配对解析', payBadge(payEnough)])),
           // —— REQ-056②④ 操作区：勾选档案（caseId 非空）后出现完整操作；「分享测试链接」
           // 仅在此操作区展示（不再顶部常驻），仍复用 shareResult/copyShare/shareUrl/shareErr ——
           el('div', {className: 'card', style: {marginTop: 10}},
@@ -14631,11 +14906,6 @@ function MbtiPage({
   return el('div', {className: 'container'},
     el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
     el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, '16 型人格测评 · 60 题 · 判型与文案由后端接口提供'),
-    el('div', {className: 'pair-entry'},
-      el('div', {className: 'pe-main'},
-        el('div', {className: 'pe-title'}, '配对解析'),
-        el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）')),
-      el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, ['配对解析', payBadge(payEnough)])),
     body);
 }
 
