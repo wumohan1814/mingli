@@ -146,6 +146,15 @@
     .menu-sep{height:1px;background:var(--border);margin:4px 8px}
     .menu-item.logout{color:var(--cinnabar)}
     .menu-item.logout:hover{background:rgba(178,58,58,.1);color:var(--cinnabar)}
+    /* PWA：右上角菜单「安装到桌面」常驻项（可安装态突出 + 状态角标；按钮不随安装态消失） */
+    .menu-item .mi-dot.install-dot{background:#7C8BB5}
+    .menu-item.install-ready{background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:600}
+    .menu-item.install-ready .mi-dot.install-dot{background:var(--skin-accent)}
+    .menu-item.install-done{opacity:.72}
+    .menu-item.install-done .mi-dot.install-dot{background:#9FAA7F}
+    .menu-item .mi-tag{margin-left:auto;font-size:11px;line-height:1;padding:3px 7px;border-radius:8px;background:var(--skin-accent);color:var(--surface);flex:none}
+    .menu-item.install-ready .mi-tag{animation:tc-pwa-pulse 1.6s ease-in-out infinite}
+    @keyframes tc-pwa-pulse{0%,100%{opacity:1}50%{opacity:.55}}
 
     /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
        受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
@@ -1319,6 +1328,18 @@ const UI_COPY = {
     finish_pick: '完成选牌',
     share_fill: '分享帮填',
     copy_link: '复制链接'
+  },
+  // PWA：右上角菜单「安装到桌面」常驻按钮（配合已部署 manifest.webmanifest + sw.js；文案均走本组）
+  pwa: {
+    install_app: '安装到桌面',
+    state_ready: '可安装',
+    state_installed: '已安装',
+    install_success: '已开始安装，请按浏览器提示完成',
+    install_cancelled: '已取消安装',
+    install_failed: '安装失败，请稍后重试',
+    installed_toast: '已安装，可在桌面 / 主屏幕打开',
+    already_installed: '已处于应用模式 / 已安装',
+    install_hint: '请用浏览器菜单安装：Chrome / Edge 选「安装应用」，iOS Safari 用「分享 → 添加到主屏幕」'
   },
   // REQ-044 v2.1：临时起卦弹窗占问问题改「可选」（留空可直接起卦，填写则带入断卦上下文）
   // REQ-081：观音灵签 摇签热区扩至全屏 + 独立结果展示界面 文案
@@ -7383,7 +7404,14 @@ function TopbarModNav({
   }, it.label))))));
 }
 
-// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 汉堡按钮 + 下拉（余额¥置顶 + 切模块回落地页 / 功能设置 / 档案管理 / 退出登录）
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 汉堡按钮 + 下拉（余额¥置顶 + 切模块回落地页 / 功能设置 / 档案管理 / 安装到桌面 / 退出登录）
+/* ---------- PWA：右上角菜单「安装到桌面」常驻按钮（配合已部署 manifest.webmanifest + sw.js） ---------- */
+// beforeinstallprompt 只在满足可安装条件时派发一次 → 模块级保存事件引用，点击时再 prompt()
+let deferredInstallPrompt = null;
+// 已安装判定：PWA 独立窗口（display-mode: standalone）或 iOS Safari 主屏模式（navigator.standalone）
+function pwaStandalone() {
+  return !!((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone);
+}
 function TopbarMenu({
   loggedIn,
   onAuth,
@@ -7412,6 +7440,48 @@ function TopbarMenu({
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
+  /* PWA：安装引导状态机 —— ready=已捕获 beforeinstallprompt（可一键安装） / installed=已处于应用模式 / plain=暂不可一键安装（点击走浏览器菜单指引）。
+     监听常驻注册：TopbarMenu 无论登录与否都随顶栏挂载，beforeinstallprompt/appinstalled 不因菜单开合而丢失；state 变化驱动按钮文案/高亮。 */
+  const [pwaState, setPwaState] = useState(() => pwaStandalone() ? 'installed' : deferredInstallPrompt ? 'ready' : 'plain');
+  useEffect(() => {
+    const onBeforeInstall = e => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      setPwaState(s => s === 'installed' ? s : 'ready');
+    };
+    const onInstalled = () => {
+      deferredInstallPrompt = null;
+      setPwaState('installed');
+      toast(UI_COPY.pwa.installed_toast);
+    };
+    window.addEventListener('beforeinstallprompt', onBeforeInstall);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+  const onInstallClick = async () => {
+    setOpen(false);
+    if (deferredInstallPrompt) {
+      try {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') toast(UI_COPY.pwa.install_success);else toast(UI_COPY.pwa.install_cancelled);
+      } catch (err) {
+        toast(UI_COPY.pwa.install_failed);
+      } finally {
+        deferredInstallPrompt = null;
+        setPwaState(pwaStandalone() ? 'installed' : 'plain');
+      }
+      return;
+    }
+    if (pwaStandalone()) {
+      toast(UI_COPY.pwa.already_installed);
+      return;
+    }
+    toast(UI_COPY.pwa.install_hint);
+  };
   if (!loggedIn) return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu"
   }, /*#__PURE__*/React.createElement("button", {
@@ -7495,7 +7565,17 @@ function TopbarMenu({
     style: {
       background: '#3E7C6B'
     }
-  }), "档案管理"), /*#__PURE__*/React.createElement("div", {
+  }), "档案管理"), /* PWA：「安装到桌面」常驻菜单项（永不消失；点击按状态机分派：a 可安装→prompt / b 已安装→提示 / c 其他→浏览器菜单手动安装指引） */
+  /*#__PURE__*/React.createElement("button", {
+    className: pwaState === 'ready' ? 'menu-item install-ready' : pwaState === 'installed' ? 'menu-item install-done' : 'menu-item',
+    role: "menuitem",
+    title: pwaState === 'ready' ? UI_COPY.pwa.install_app : UI_COPY.pwa.install_hint,
+    onClick: onInstallClick
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mi-dot install-dot"
+  }), UI_COPY.pwa.install_app, pwaState !== 'plain' && /*#__PURE__*/React.createElement("span", {
+    className: "mi-tag"
+  }, pwaState === 'ready' ? UI_COPY.pwa.state_ready : UI_COPY.pwa.state_installed)), /*#__PURE__*/React.createElement("div", {
     className: "menu-sep"
   }), /*#__PURE__*/React.createElement("button", {
     className: "menu-item logout",
