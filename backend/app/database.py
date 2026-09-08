@@ -194,3 +194,12 @@ def ensure_schema() -> None:
                         text("INSERT INTO system_configs (key, value) VALUES (:key, :value)"),
                         {"key": key, "value": value},
                     )
+
+    # REQ-059⑧：asset_slots（运维库）补蒙版列 opacity / mask_color（老库 ALTER，
+    # 新库由 OpsBase.metadata.create_all 建全；PRAGMA 探测幂等，重复执行不报错）。
+    with ops_engine.begin() as conn:
+        asset_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(asset_slots)"))]
+        if asset_cols and "opacity" not in asset_cols:
+            conn.execute(text("ALTER TABLE asset_slots ADD COLUMN opacity FLOAT"))
+        if asset_cols and "mask_color" not in asset_cols:
+            conn.execute(text("ALTER TABLE asset_slots ADD COLUMN mask_color VARCHAR(16)"))
