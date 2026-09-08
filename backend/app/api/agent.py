@@ -6,7 +6,7 @@
      咨询档案相关内容先提示选档案（该提示逻辑在 prompts/agent/master.md 角色 prompt
      内约束，本文件只负责数据注入与编排）。
   ② 可就所选档案详细咨询 + 日常闲聊开导；计费 = 每来回（用户一问 + 先生一回）
-     按 LLM 实际 token 扣余额（ceil 积分、1 积分=1000 tokens，同 interpret，
+     按 LLM 实际 token 扣余额（ceil 存储单位、1 存储单位=1000 tokens，同 interpret，
      开启不预扣——先 check_balance 预检、LLM 成功后按实际 total_tokens 即时
      consume）。System Prompt 用户不可改、后台可配置（走 REQ-048 热改+回滚，
      见 app/admin/router.py PROMPT_FILES 的 agent_master / agent_greeting）。
@@ -237,8 +237,8 @@ async def agent_chat(
     content = resp["content"]
     total_tokens = int(resp["usage"]["total_tokens"] or 0)
 
-    # ⑦ 即时扣费：chat 已成功（LLM 已调用），按实际 total_tokens 扣（ceil 积分、
-    #    1 积分=1000 tokens，consume 内部换算）；扣费失败只记日志不阻断落库
+    # ⑦ 即时扣费：chat 已成功（LLM 已调用），按实际 total_tokens 扣（ceil 存储单位、
+    #    1 存储单位=1000 tokens，consume 内部换算）；扣费失败只记日志不阻断落库
     #    （对账口径与 interpret/_charge_llm 一致）。
     ref = f"agent:{user_id}" if case_id is None else f"agent:{user_id}:{case_id}"
     try:

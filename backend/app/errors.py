@@ -6,7 +6,7 @@
   2xxx 认证鉴权（2001 未登录 / 2002 token 过期 / 2003 无权限）
   3xxx case/档案（3001 case 不存在 / 3002 未排盘）
   4xxx 排盘/方法（4001 排盘参数无效 / 4002 方法降级）
-  5xxx LLM/积分（5001 LLM 不可用 / 5002 积分不足 / 5003 计费异常）
+  5xxx LLM/余额（5001 LLM 不可用 / 5002 余额不足 / 5003 计费异常）
   9xxx 系统（9000 内部错误 / 9001 数据库错误）
 """
 from __future__ import annotations
@@ -28,7 +28,7 @@ ERR_NOT_PAIPAN = 3002
 # 排盘/方法
 ERR_PAIPAN_INVALID = 4001
 ERR_METHOD_DEGRADED = 4002
-# LLM/积分
+# LLM/余额
 ERR_LLM_UNAVAILABLE = 5001
 ERR_INSUFFICIENT_CREDIT = 5002
 ERR_BILLING = 5003

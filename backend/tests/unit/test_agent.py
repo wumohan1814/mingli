@@ -5,7 +5,7 @@
   1. GET /api/agent/greeting：鉴权返回开场白文本（含 greeting.md 话术内容）；
      未登录（非 Bearer / 非法令牌）→ 401；
   2. POST /api/agent/chat 成功：落 agent_messages（user/assistant 两行，
-     assistant.tokens=本轮 total_tokens）+ 即时扣费（ref=agent:{uid}，ceil 积分）
+     assistant.tokens=本轮 total_tokens）+ 即时扣费（ref=agent:{uid}，ceil 存储单位）
      + agent_message 埋点 + 记忆抽取入队（mock enqueue 断言调用参数）；
   3. case 越权 404：他人档案 → 404，不调 LLM、不扣费、不落库；
   4. 余额不足 502：预检拦截，不调 LLM、不落库、不扣费；
@@ -220,7 +220,7 @@ def test_greeting_returns_text_and_auth_401(agent_client):
 # ------------------------------------------------------------ chat 成功 ----
 def test_chat_success_persists_and_charges(agent_client, monkeypatch):
     """chat 成功：落 user/assistant 两行（assistant.tokens=本轮 total_tokens）、
-    即时扣费（ref=agent:{uid}，ceil 积分）、agent_message 埋点、抽取入队。"""
+    即时扣费（ref=agent:{uid}，ceil 存储单位）、agent_message 埋点、抽取入队。"""
     uid = _new_user()
     from app.credits.service import recharge
 
@@ -318,7 +318,7 @@ def test_chat_insufficient_balance_502(agent_client, monkeypatch):
     assert resp.status_code == 502, resp.text
     body = resp.json()
     assert body["code"] == 5002
-    assert "积分不足" in body["message"]
+    assert "余额不足" in body["message"]
     assert chat_calls == []                       # 预检拦截
     assert _agent_messages(uid) == []
     assert _consume_rows(uid) == []

@@ -41,7 +41,7 @@ class ZodiacFortuneRequest(BaseModel):
 
 @router.post("/zodiac/fortune")
 async def zodiac_fortune(body: ZodiacFortuneRequest, authorization: str = Header(...)):
-    """生肖流年运程：转发 Node /zodiac 返回引擎结果；不落库、不扣积分。"""
+    """生肖流年运程：转发 Node /zodiac 返回引擎结果；不落库、不扣余额。"""
     user_id = get_user_id_from_token(authorization)
     payload = {"zodiac": body.zodiac, "year": body.year}
 
@@ -65,7 +65,7 @@ async def zodiac_fortune(body: ZodiacFortuneRequest, authorization: str = Header
                        user_id, body.zodiac, str(data)[:200])
         raise HTTPException(status_code=502, detail="生肖流年服务暂不可用，请稍后重试")
 
-    # ② 埋点（写库失败静默，绝不阻断业务）；本功能不落盘面、不扣积分
+    # ② 埋点（写库失败静默，绝不阻断业务）；本功能不落盘面、不扣余额
     record_event("zodiac_fortune", user_id=user_id,
                  props={"zodiac": body.zodiac, "year": body.year})
 

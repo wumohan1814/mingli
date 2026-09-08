@@ -6,9 +6,9 @@
      两套互不可用）；正确 token → 放行；
   2. 查看类：GET /agent/health（与 /api/health 同构）、GET /agent/users（含余额）、
      GET /agent/reports/{metric}、GET /agent/errors（含 aggregate 兜底）；
-  3. 高风险写端点（赠积分 / 重置密码 / 重置 case）：业务生效 + data
+  3. 高风险写端点（余额调整 / 重置密码 / 重置 case）：业务生效 + data
      requires_confirmation=true + 审计 admin_user_id=0 + detail 前缀 "[agent]"；
-  4. 参数校验：非法 metric / 负 delta / 不存在 user/case → 400/404 业务码。
+  4. 参数校验：非法 metric / 金额 0 / 不存在 user/case → 400/404 业务码。
 
 依赖 conftest 的会话级临时库（orchestration_env）。
 
@@ -161,7 +161,7 @@ def test_agent_health_equivalence(agent_client):
 
 
 def test_agent_users_search_with_balance(agent_client):
-    """GET /agent/users：模糊搜用户名 + 返回积分余额；无匹配 → 空列表不报错。"""
+    """GET /agent/users：模糊搜用户名 + 返回余额；无匹配 → 空列表不报错。"""
     uid = _new_user()
     from app.credits.service import recharge
 
@@ -212,17 +212,20 @@ def test_agent_errors_endpoint_shape(agent_client):
 
 
 def test_agent_manual_credit_high_risk_and_audit(agent_client):
-    """POST /agent/credits/manual：入账生效 + requires_confirmation=true +
-    审计 admin_user_id=0 + detail 含 [agent]；delta<=0 → 400。"""
+    """POST /agent/credits/manual：余额充值（元口径 ×10 落存储单位）+ 扣减均生效 +
+    requires_confirmation=true + 审计 admin_user_id=0 + detail 含 [agent]；
+    amount_yuan=0 → 400。"""
     uid = _new_user()
     before = _credit_balance(uid)
 
+    # 正数=余额充值：¥5 → 50 存储单位
     r = agent_client.post("/admin/agent/credits/manual",
-                          json={"user_id": uid, "delta": 50, "note": "测试赠送"},
+                          json={"user_id": uid, "amount_yuan": 5.0, "note": "测试充值"},
                           headers=AGENT_H)
     assert r.status_code == 200, r.text
     data = r.json()["data"]
     assert data["balance"] == before + 50
+    assert data["balance_yuan"] == (before + 50) / 10
     assert data["requires_confirmation"] is True
 
     audits = _audit_rows("credit_manual")
@@ -231,15 +234,20 @@ def test_agent_manual_credit_high_risk_and_audit(agent_client):
     assert audits[0].detail.startswith("[agent]")
     assert f"user_id={uid}" in audits[0].detail
 
-    # 非法 delta → 400（不落账不审计）
+    # 负数=余额扣减：¥-2.5 → -25 存储单位（支持增与减）
     r = agent_client.post("/admin/agent/credits/manual",
-                          json={"user_id": uid, "delta": 0}, headers=AGENT_H)
-    assert r.status_code == 400, r.text
+                          json={"user_id": uid, "amount_yuan": -2.5, "note": "测试扣减"},
+                          headers=AGENT_H)
+    assert r.status_code == 200, r.text
+    assert r.json()["data"]["balance"] == before + 50 - 25
+    assert len(_audit_rows("credit_manual")) == 2
+
+    # 金额为 0 → 400（不落账不审计）
     r = agent_client.post("/admin/agent/credits/manual",
-                          json={"user_id": uid, "delta": -5}, headers=AGENT_H)
+                          json={"user_id": uid, "amount_yuan": 0}, headers=AGENT_H)
     assert r.status_code == 400, r.text
-    assert _credit_balance(uid) == before + 50
-    assert len(_audit_rows("credit_manual")) == 1
+    assert _credit_balance(uid) == before + 50 - 25
+    assert len(_audit_rows("credit_manual")) == 2
 
 
 def test_agent_reset_password_high_risk(agent_client):

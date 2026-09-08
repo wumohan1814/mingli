@@ -13,7 +13,7 @@
     取双方数据（任一档案缺数据 → 400 提示先生成，**不自动生成**）→ check_balance
     预检（余额不足抛 BizError 5002，全局处理器转 502 信封）→ LLM chat
     （json_mode=False，system = prompts/pair/{module}.md 对应系统提示词）→ 成功
-    即时扣费（consume ref=pair:{reading.id}，1 积分=1000 tokens，ceil）→
+    即时扣费（consume ref=pair:{reading.id}，1 存储单位=1000 tokens，ceil）→
     result_json 存 {"content": 解读文本} 落 pair_readings → pair_analysis 埋点
     （props={module, relation_type}）。LLM 失败（LLMError/ValueError）→ 502，
     不落行不扣费，对齐 interpret 语义。

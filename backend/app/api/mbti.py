@@ -164,7 +164,7 @@ def score_mbti(
     """判型（纯代码，免费，落库）：校验 case 归属 → scoring.score →
     落 mbti_results 表（带 case_id）+ 回写 case.mbti_type + mbti_score 埋点。
 
-    零 LLM 零扣费：判型为本地计数，无 chat 调用、无积分扣减。
+    零 LLM 零扣费：判型为本地计数，无 chat 调用、无余额扣减。
     """
     user_id = get_user_id_from_token(authorization)
 

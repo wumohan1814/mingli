@@ -123,10 +123,10 @@ def paipan_case(orchestration_env, chart_snapshot):
             session.refresh(user)
 
             # 计费接入后 run_duan_qian_chen / run_predict 入口会 check_balance；
-            # 测试直接建 User（未走 register 赠送积分），故在此预充积分，让编排回归
-            # 走"已充值用户正常执行"路径（与架构 §4.4 注册送分同口径）。
+            # 测试直接建 User（未走 register 赠送余额），故在此预充余额，让编排回归
+            # 走"已充值用户正常执行"路径（与架构 §4.4 注册送余额同口径）。
             from app.credits.service import recharge
-            recharge(user.id, 100, "free", note="pytest 预充积分")
+            recharge(user.id, 100, "free", note="pytest 预充余额")
 
             case = Case(
                 user_id=user.id,
