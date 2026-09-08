@@ -219,10 +219,14 @@ class CreateUserRequest(BaseModel):
 class AssetUpsertRequest(BaseModel):
     """PUT /admin/assets/{key} body（REQ-059）：url 可为已上传文件的相对路径
     （POST /admin/assets/upload 返回 /uploads/assets/...）或完整 http(s) URL。
-    key 与路径参数冗余（与前端表单对齐），传入时须与路径 key 一致。"""
+    key 与路径参数冗余（与前端表单对齐），传入时须与路径 key 一致。
+    opacity 为该槽背景蒙版不透明度（0~1，REQ-059⑧，缺省不启用）；mask_color
+    为蒙版颜色 hex（如 #000000，缺省默认黑）。"""
     kind: str = Field(min_length=1, max_length=16)
     url: str = Field(min_length=1, max_length=2048)
     key: str | None = Field(default=None, max_length=64)
+    opacity: float | None = Field(default=None, ge=0, le=1)
+    mask_color: str | None = Field(default=None, max_length=16)
 
 
 # --- 提示词工具 ---
@@ -1260,7 +1264,15 @@ def agent_reset_user_case(
 # PUT/DELETE 后无需重启立即生效；未配置 / 删除的槽 → 前台回退既有 CSS 艺术背景。
 #
 #   槽分类 kind ∈ {module, method, mbti_type, card, agent}（见模型 docstring）；
-#   key 全局唯一、字符白名单 [A-Za-z0-9_-]（防路径穿越 / 脏 key）。
+#   key 全局唯一、字符白名单 [A-Za-z0-9_-]（防路径穿越 / 脏 key）。槽位全集：
+#     module     module-guoxue / module-xishi / module-mbti（3 槽）
+#     method     method-nine / method-zodiac / method-divination /
+#                method-astrology / method-tarot / method-lenormand（6 槽）
+#     mbti_type  16 型按类型代码（INTJ…ESFP，16 槽）
+#     card       tarot-<牌名文件 stem>（78 张）+ lenormand-01…36（36 张）
+#     agent      agent-1…agent-5（5 槽随机轮换，REQ-059⑥）
+#   REQ-059⑧ 背景蒙版：opacity（0~1，NULL=不启用）+ mask_color（hex）随槽行存，
+#   PUT 时可选携带；GET /admin/assets 与公开 GET /api/assets 均回蒙版字段。
 #
 #   文件上传流程（MVP 双通道，前端任选）：
 #     ① 真实文件：POST /admin/assets/upload（multipart）→ 校验扩展名 jpg/jpeg/png/webp
@@ -1308,13 +1320,32 @@ def _validate_asset_url(url: str) -> str:
     )
 
 
+# 蒙版颜色：hex 三/六位（#RGB / #RRGGBB，不区分大小写）；空串/None 视为默认黑
+_MASK_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$")
+
+
+def _normalize_mask_color(color: str | None) -> str | None:
+    """蒙版颜色校验：返回规范化 hex（六位大写，如 #000000）；None/空 → None（默认黑）。"""
+    if color is None:
+        return None
+    color = (color or "").strip()
+    if not color:
+        return None
+    if not _MASK_COLOR_RE.match(color):
+        raise BizError(ERR_PARAM, "蒙版颜色须为 hex 色值（#RGB 或 #RRGGBB），如 #000000")
+    if len(color) == 4:  # #RGB → #RRGGBB
+        color = "#" + "".join(ch * 2 for ch in color[1:])
+    return color.upper()
+
+
 @router.get("/assets")
 def list_assets(
     kind: str = Query("", max_length=16),
-    admin: dict = Depends(require_role("operator")),
+    admin: dict = Depends(require_role("viewer")),
     db: Session = Depends(get_ops_db),
 ):
-    """列出所有素材槽（key/kind/url/updated_at）；kind 非空时按分类过滤。"""
+    """列出所有素材槽（key/kind/url/opacity/mask_color/updated_at）；kind 非空时
+    按分类过滤。viewer 可读（对齐提示词 section：viewer 读、operator+ 写）。"""
     query = db.query(AssetSlot)
     k = (kind or "").strip()
     if k:
@@ -1327,6 +1358,8 @@ def list_assets(
             "key": r.key,
             "kind": r.kind,
             "url": r.url,
+            "opacity": r.opacity,
+            "mask_color": r.mask_color,
             "updated_at": r.updated_at.isoformat() if r.updated_at else None,
         }
         for r in rows
@@ -1419,24 +1452,38 @@ def upsert_asset(
     if req.kind not in ASSET_KINDS:
         raise BizError(ERR_PARAM, f"未知素材分类: {req.kind}（可用 {ASSET_KINDS}）")
     url = _validate_asset_url(req.url)
+    mask_color = _normalize_mask_color(req.mask_color)
 
     now = datetime.utcnow()
     row = db.query(AssetSlot).filter_by(key=key).first()
     is_new = row is None
     if is_new:
-        row = AssetSlot(key=key, kind=req.kind, url=url, created_at=now, updated_at=now)
+        row = AssetSlot(
+            key=key,
+            kind=req.kind,
+            url=url,
+            opacity=req.opacity,
+            mask_color=mask_color,
+            created_at=now,
+            updated_at=now,
+        )
         db.add(row)
     else:
         row.kind = req.kind
         row.url = url
+        row.opacity = req.opacity
+        row.mask_color = mask_color
         row.updated_at = now
+    mask_desc = (
+        f"，蒙版 {req.opacity:g}@{mask_color}" if req.opacity is not None else "，蒙版不启用"
+    )
     db.add(
         AdminAuditLog(
             admin_user_id=admin["admin_id"],
             action="edit_asset",
             target_type="asset",
             target_id=key,
-            detail=f"{'新增' if is_new else '替换'}素材槽 {key}（kind={req.kind}，url={url}）",
+            detail=f"{'新增' if is_new else '替换'}素材槽 {key}（kind={req.kind}，url={url}{mask_desc}）",
         )
     )
     db.commit()
@@ -1447,6 +1494,8 @@ def upsert_asset(
             "key": key,
             "kind": req.kind,
             "url": url,
+            "opacity": req.opacity,
+            "mask_color": mask_color,
             "updated_at": now.isoformat(timespec="seconds"),
         },
     }
