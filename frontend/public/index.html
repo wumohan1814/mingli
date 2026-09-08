@@ -16725,8 +16725,15 @@ function App() {
   const tcSavedRef = useRef(Object.assign({}, SETTINGS_DEFAULTS));
   const tcLoadedRef = useRef(false);
   const tcSeqRef = useRef(0); // PUT 序号：忽略乱序返回的旧响应，避免旧响应覆盖新改动
-  const patchTcSettings = function (patch) {
-    setTcSet(function (prev) { return Object.assign({}, prev, patch); });
+  // BUG-013：onPatch 契约为 (key, value)——SettingsPage 两个调用点（开关 onChange、默认模式
+  // onClick）均以 (key, value) 调用；旧实现把首参当「整包对象」合并，导致字符串 key 被
+  // Object.assign 按字符索引铺开、7 项设置永不变更（开关点了不切换、无 PUT）。改为单键写入。
+  const patchTcSettings = function (key, value) {
+    setTcSet(function (prev) {
+      const next = Object.assign({}, prev);
+      next[key] = value;
+      return next;
+    });
   };
   const applyTcSettings = function (next) {
     tcSeqRef.current++; // 使任何在途 PUT 失效（GET/登出覆盖优先）
