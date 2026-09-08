@@ -6644,6 +6644,17 @@ function ArchivePage({
   const pickName = v => v && typeof v === 'string' && v.trim() ? v.trim() : '';
   useEffect(() => {
     const load = async () => {
+      // BUG-015：navigate 的 setPage/setParams 在异步上下文（如 saveCase 的
+      // onNavigate('archive', {caseId})）下不合并，本页会先以 caseId=undefined
+      // 挂载一次；缺 caseId 时禁止发 /cases/undefined/archive（后端 422），
+      // 退出 loading 等真实 caseId 到来重跑本 effect（其余 caseId 页面同款防御）。
+      if (!caseId) {
+        setLoading(false);
+        return;
+      }
+      // BUG-015：新一轮加载先清旧错误 —— 首次 undefined 请求的 422 失败若不清，
+      // 真实 caseId 加载成功后本页仍卡在「档案加载失败」错误态，用户误判档案保存失败。
+      setErrored('');
       try {
         const res = await api('/cases/' + caseId + '/archive');
         const payload = (res && res.data) || res || {};
