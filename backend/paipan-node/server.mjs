@@ -26,7 +26,7 @@
  *       zodiacWuxing 为 B2 本气五行展示文案（如“水（子）”）；贵人三层兜底：
  *       流年命中六合/三合 > B2 贵人（引擎 zodiac/index.js 回填）> tianyiNoble（此处）。
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
- *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"ssgw"|"lenormand",
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"qimen"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
  *                      settings?:{}, params?:{}}
  *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/大六壬课盘/
@@ -40,6 +40,11 @@
  *                      + 阴阳发用 + 五动三动；params.method 四选一 time 时间 / branch 指定地分 /
  *                      number 数字 / random 随机，branch 传 params.branch、number 传 params.number、
  *                      random 无 seed/replay 时引擎以系统安全随机数取地分；确定性零 LLM）
+ *       - qimen       → generateQimen(customDate, qimenMethod, scope, qimenJuMethod)
+ *                      （奇门时家一事一占，REQ-120：scope 四选一 hour 时家（默认）/ day 日家 /
+ *                      month 月家 / year 年家；qimenMethod 二选一 zhuanpan 转盘（默认）/ feipan 飞盘；
+ *                      qimenJuMethod 二选一 chaibu 拆补（默认）/ zhirun 置闰，仅时家/日家生效；
+ *                      九宫四盘（九星/八门/八神/天地盘干）+ 格局 + 反证 + 应期 + 方位；确定性零 LLM）
  *       - ssgw        → drawRandomSign(options)（随机抽签）
  *       - lenormand   → drawLenormandSpread(spreadType||'single', options)
  *                      （雷诺曼 spreadType 由 input.spreadType 提供，非 settings；
@@ -108,6 +113,7 @@ import { generateMeihua } from './vendor/mingyu-core/dist/divination/algorithms/
 import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorithms/xiaoliuren.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
+import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
 import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
@@ -369,6 +375,31 @@ function computeDivination(input) {
         : {};
       params.customDate = toCustomDate(params.customDate);
       raw = generateJinkoujue(params);
+      break;
+    }
+    case 'qimen': {
+      // 奇门时家起局（REQ-120）：一事一占，时/日/月/年四家全做，与 9 法「奇门终身局
+      // qimen-lifetime」命盘类区分。参数契约（透传前端 seed 同名字段）：
+      //   scope        hour 时家（默认）/ day 日家 / month 月家 / year 年家
+      //   qimenMethod  zhuanpan 转盘（默认）/ feipan 飞盘
+      //   qimenJuMethod chaibu 拆补（默认）/ zhirun 置闰（仅时家/日家生效，月家/年家
+      //                引擎固定用月家/年家定局法）
+      // customDate 即前端所选 日期+时辰 组装的东八区 ISO（缺省用当前时间）。
+      const scope = (typeof input.scope === 'string' && input.scope.trim()) ? input.scope.trim() : 'hour';
+      if (!['hour', 'day', 'month', 'year'].includes(scope)) {
+        throw Object.assign(new Error(`Unknown qimen scope: ${scope}`), { clientError: true });
+      }
+      const qimenMethod = (typeof input.qimenMethod === 'string' && input.qimenMethod.trim())
+        ? input.qimenMethod.trim() : 'zhuanpan';
+      if (!['zhuanpan', 'feipan'].includes(qimenMethod)) {
+        throw Object.assign(new Error(`Unknown qimen method: ${qimenMethod}`), { clientError: true });
+      }
+      const qimenJuMethod = (typeof input.qimenJuMethod === 'string' && input.qimenJuMethod.trim())
+        ? input.qimenJuMethod.trim() : 'chaibu';
+      if (!['chaibu', 'zhirun'].includes(qimenJuMethod)) {
+        throw Object.assign(new Error(`Unknown qimen juMethod: ${qimenJuMethod}`), { clientError: true });
+      }
+      raw = generateQimen(customDate, qimenMethod, scope, qimenJuMethod);
       break;
     }
     case 'ssgw': {
