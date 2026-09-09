@@ -40,8 +40,17 @@ router = APIRouter(prefix="/api", tags=["tarot"])
 # tarot.py 位于 backend/app/api/，parents[2] = backend
 TAROT_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "tarot.md"
 
-# Node /tarot 开放给本 API 的牌阵（其余牌阵 Node 支持但前端暂不开放，pydantic 提前拦 400）
-TAROT_SPREAD_TYPES = ("single", "three", "love", "career", "decision")
+# Node /tarot 开放给本 API 的牌阵（REQ-122：现有 5 + 新增 14 全量放开，
+# 对应 vendored tarotSpreads + 太初覆盖层 taichu-tarot-spreads.mjs，pydantic 提前拦未知 key）
+TAROT_SPREAD_TYPES = (
+    # 现有 5
+    "single", "three", "love", "career", "decision",
+    # 用户点名 4（celtic/horseshoe/hexagram 采太初覆盖层牌位，fourSeasons 为新增定义）
+    "celtic", "horseshoe", "hexagram", "fourSeasons",
+    # 直接开放的 vendored 10（牌位沿用 vendored 定义）
+    "chakra", "year", "mindBodySpirit", "holyTriangle", "universal",
+    "fourElements", "relationship", "wealth", "problemSolving", "twelveHouses",
+)
 
 
 def _err(status: int, detail: str) -> HTTPException:
@@ -86,7 +95,12 @@ def _load_tarot_prompt() -> str:
 
 # --- 请求模型 ---
 class TarotDrawRequest(BaseModel):
-    spread_type: Literal["single", "three", "love", "career", "decision"] = Field(
+    spread_type: Literal[
+        "single", "three", "love", "career", "decision",
+        "celtic", "horseshoe", "hexagram", "fourSeasons",
+        "chakra", "year", "mindBodySpirit", "holyTriangle", "universal",
+        "fourElements", "relationship", "wealth", "problemSolving", "twelveHouses",
+    ] = Field(
         description="牌阵类型", default="single",
     )
     question: Optional[str] = Field(default=None, description="用户占问方向（可选）")
