@@ -2,9 +2,9 @@
 
 > 本文档即我的行为准则。冲突时：**用户口头指令 > 本文档 > 项目文档**。
 > 相关文件（本项目实际路径）：
-> - 最高准则：`docs/Retrospective/01-项目准则.md`（跨项目复用工程准则）
-> - 协作守则：`docs/开发测试协作协议.md`（范式见 `docs/Retrospective/06-文档范式-协作守则.md`）
-> - 需求 / Bug 单一事实源：`docs/需求表.md`、`docs/Bug管理表.md`（模板见 `docs/Retrospective/07-文档模板-需求与Bug.md`）
+> - 最高准则：`docs/agent-to-agent/Retrospective/01-项目准则.md`（跨项目复用工程准则）
+> - 协作守则：`docs/agent-to-agent/开发测试协作协议.md`（范式见 `docs/agent-to-agent/Retrospective/06-文档范式-协作守则.md`）
+> - 需求 / Bug 单一事实源：`docs/需求表.md`、`docs/Bug管理表.md`（模板见 `docs/agent-to-agent/Retrospective/07-文档模板-需求与Bug.md`）
 > - 架构基线：`docs/架构设计.md`（唯一现行架构）｜`docs/adr/`（决策记录）
 > - 强制规范：`docs/standards/`（5 份）｜`docs/README.md`（写作约定与索引）
 
@@ -56,7 +56,7 @@
 
 ## 2. 开工操作序（每次开工）
 
-1. `git status` 全量盘一遍 → 识别并行者改动（不碰、不 add）。本仓工作区易有大面积未跟踪/删除（如 `backend/packages/`、`Retrospective/`、`docs/Retrospective/`），只处理本任务相关文件。
+1. `git status` 全量盘一遍 → 识别并行者改动（不碰、不 add）。本仓工作区易有大面积未跟踪/删除（如 `backend/packages/`、`Retrospective/`、`docs/agent-to-agent/Retrospective/`），只处理本任务相关文件。
 2. `git log origin/master..HEAD` → 确认待 push 清单与谁 push（主分支 = `master`）。
 3. 确认"push 批准人 + 网络前提"当前状态；未批准不 push。
 4. 列本轮任务的责任矩阵（谁产、谁落地）。
@@ -85,7 +85,7 @@
 
 ## 6. 定期复盘（经验沉淀）
 
-- **频率**：每个里程碑 / 阶段结束后，以及每轮 session 收尾时（只要踩到值得沉淀的坑），做一次复盘，写入 `Retrospective/` 目录（本仓同时存在根级 `Retrospective/` 与 `docs/Retrospective/`——**复盘工程经验写入根级 `Retrospective/`**，`docs/Retrospective/` 为跨项目可复用资产包）。
+- **频率**：每个里程碑 / 阶段结束后，以及每轮 session 收尾时（只要踩到值得沉淀的坑），做一次复盘，写入 `Retrospective/` 目录（本仓同时存在`docs/agent-to-agent/Retrospective/` 与 `docs/agent-to-agent/Retrospective/`——**复盘工程经验写入`docs/agent-to-agent/Retrospective/`**，`docs/agent-to-agent/Retrospective/` 为跨项目可复用资产包）。
 - **内容边界**：只写**工程经验**，不涉及业务实体——只沉淀"怎么工作 / 怎么协作 / 怎么留痕 / 怎么避坑"，不写产品功能、领域模型、具体第三方实现细节；目标是迁移到下一项目直接复用。
 - **结构固定**：每份复盘文档固定为——**背景、问题/方案、适用场景、可复用结论**；每条经验按"现象 → 根因 → 规则 → 落地检查项"写。
 - **主动抽象**：踩坑、有效方案、协作协议、分配约束都要主动抽象成可迁移结论；一旦出现业务相关内容立即剔除。
