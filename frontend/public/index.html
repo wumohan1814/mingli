@@ -50,7 +50,7 @@
       --skin-banner-ink:#F7F4EC;
       --skin-tag-bg:rgba(0,0,0,.16);
 
-      /* REQ-061⑤：美术必备 6 张（frontend/public/art/…，运行期仅用 WebP α；PNG 为母版随仓库保留）。
+      /* REQ-061⑤：美术素材（frontend/public/art/…，运行期仅用 WebP α；PNG 为母版随仓库保留）。
          url 用根绝对路径（BUG-009：页面经 pushState 无 URL 切换，深层分享路由下相对路径会 404）。
          变量未定义/删除时，各消费者 var(--art-XXX, fallback渐变) 自动回退占位渐变；URL 加载失败则露背景色。 */
       --art-ssgw-tube:url('/art/ssgw/ssgw-tube.webp');
@@ -59,6 +59,7 @@
       --art-card-back-lenormand:url('/art/card-back/card-back-lenormand.webp');
       --art-coin-face:url('/art/liuyao/coin-face.webp');
       --art-coin-back:url('/art/liuyao/coin-back.webp');
+      --art-xlr-palm:url('/art/xiaoliuren/xiaoliuren-palm.webp'); /* REQ-106：小六壬掌诀底图 → .xlr-ring */
     }
     /* 西式占星：内部=深空蓝；顶部 Banner=月银 */
     [data-skin="astrology"]{
@@ -695,6 +696,16 @@
     .free-block .fb-label{font-size:12px;font-weight:700;color:var(--ink-600);margin-bottom:2px}
     .free-block .fb-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
     .free-block .fb-tip{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.6}
+    /* REQ-107：免费解读区折叠菜单（点击标题/块标签展开，默认收起；仅六爻解读区按 fold 标记启用，其余方法直显不变） */
+    .free-card .fc-fold-head{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;
+      text-align:left;background:none;border:none;padding:0;margin:0;cursor:pointer;font-family:inherit;line-height:1.5}
+    .free-card .fc-fold-head .fc-t{color:var(--skin-accent);font-size:13px;font-weight:700}
+    .free-card.card-fold .fc-fold-head{padding-bottom:8px;border-bottom:1px dashed var(--border);margin-bottom:8px}
+    .free-block .fb-fold-head{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;
+      text-align:left;background:none;border:none;padding:0;margin:0;cursor:pointer;font-family:inherit;line-height:1.5;
+      font-size:12px;font-weight:700;color:var(--ink-600)}
+    .free-card .fc-chev,.free-block .fb-chev{flex:none;font-size:11px;color:var(--text-3);transition:transform .16s var(--ease)}
+    .free-card .fc-fold-head.open .fc-chev,.free-block .fb-fold-head.open .fb-chev{transform:rotate(90deg)}
     /* ===== REQ-075：六爻焦点详解（逐项点击 → LLM 结合本盘+爻辞针对性解读，小额余额付费） ===== */
     .focus-card{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
     .focus-card .fc-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
@@ -842,6 +853,11 @@
     .mode-switch{display:flex;gap:6px;background:var(--paper);border:1px solid var(--border);border-radius:999px;padding:3px;margin:2px 0 10px}
     .mode-switch button{flex:1;padding:8px 4px;font-size:13px;font-weight:600;color:var(--text-2);border-radius:999px;transition:.14s;white-space:nowrap;min-width:0}
     .mode-switch button.sel{background:var(--skin-accent);color:var(--skin-accent-ink)}
+    /* BUG-017：默认模式=auto/manual 时，另一入口收起到「切换入口」（小字链接）而非双栏默认展示；仅 both 保留双栏 */
+    .mode-switch-link{display:inline-block;margin:2px 0 10px;padding:6px 14px;font-size:12.5px;font-weight:600;
+      color:var(--skin-accent);background:var(--skin-accent-soft);border:1px dashed var(--skin-accent);
+      border-radius:999px;cursor:pointer;line-height:1.5;font-family:inherit;transition:filter .14s}
+    .mode-switch-link:hover{filter:brightness(1.05)}
     .modal.ask-modal.long{max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .manual-cap{font-size:12px;color:var(--text-3);margin:2px 0 8px;line-height:1.7}
     .yao-pick{display:flex;flex-direction:column;gap:6px;margin:4px 0 2px}
@@ -929,11 +945,13 @@
     .tc-set-status.failed{color:var(--cinnabar)}
     .tc-set-status.failed .ss-dot{background:var(--cinnabar)}
     .tc-set-guest{font-size:12px;color:var(--text-3);background:var(--paper);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:9px 12px;line-height:1.7;margin-top:10px}
-    /* ===== REQ-076：太初先生 Agent —— 右上角图标入口 + 会话页 ===== */
-    /* 右上角图标按钮（位于品牌区与右上角汉堡菜单之间；agent_enabled 开才显示） */
-    .agent-top-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
-      background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
-    .agent-top-btn:hover{background:rgba(128,128,150,.32)}
+    /* ===== REQ-076 + REQ-097：太初先生 Agent —— 右上角文字按钮入口 + 会话页 ===== */
+    /* 右上角文字按钮「对坐谈心」（位于品牌区与右上角汉堡菜单之间；agent_enabled 开才显示；
+       2026-09-09 文案定稿取代旧对话图标，与 REQ-087 余额菜单/右上角布局协调） */
+    .agent-top-text{display:flex;align-items:center;gap:4px;padding:7px 13px;border-radius:999px;
+      background:rgba(128,128,150,.18);color:var(--skin-banner-ink);font-size:13px;font-weight:600;
+      line-height:1.4;white-space:nowrap;transition:background .18s ease}
+    .agent-top-text:hover{background:rgba(128,128,150,.32)}
     /* 会话页：固定视口内聊天（顶部标题+档案下拉 / 计费提示 / 消息区 / 输入区） */
     .agent-page{display:flex;flex-direction:column;height:calc(100vh - 58px);height:calc(100dvh - 58px);
       max-width:520px;margin:0 auto;padding:16px 16px 8px;box-sizing:border-box}
@@ -4240,6 +4258,13 @@ function OnboardingPage({
   const [error, setError] = useState('');
   // REQ-070 / BUG-012：分享帮填（状态/动作见 useCaseShareFill，模板底部渲染 ShareFillModal）
   const shareFill = useCaseShareFill();
+  // REQ-099：进入建档页默认落在页面顶部 —— SPA 视图切换会保留上一页滚动位置（用户反馈进页自动滚到底部），
+  // 统一在本页挂载时回顶（覆盖 REQ-092 强制建档门与各模块「新建档案」入口的落地位置）
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
 
   // 表单防丢失：建档成功进入 waiting 前，form 每次变化都写入 localStorage
   useEffect(() => {
@@ -7642,18 +7667,15 @@ function TopbarMenu({
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
     ref: wrapRef
-  }, /* REQ-076：太初先生 Agent 图标入口 —— 位于右上角菜单（汉堡）左侧；
+  }, /* REQ-076 + REQ-097：太初先生 Agent 文字按钮「对坐谈心」 —— 位于右上角菜单（汉堡）左侧；
       agent_enabled 开（默认）才显示；关闭入口时隐藏（既有会话与数据保留，重开可见） */
   agentEnabled && /*#__PURE__*/React.createElement("button", {
-    className: "agent-top-btn",
+    className: "agent-top-text",
     type: "button",
     title: "太初先生",
     "aria-label": "太初先生",
     onClick: onAgent
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "chat",
-    size: 18
-  })), /*#__PURE__*/React.createElement("button", {
+  }, "对坐谈心"), /*#__PURE__*/React.createElement("button", {
     className: "menu-btn",
     type: "button",
     onClick: () => setOpen(o => !o),
@@ -11009,14 +11031,63 @@ const C4_XIAOLIUREN_SHENS = {
   '空亡': '空亡主落空虚无，谋事易散、难得其实，宜暂收手、另择时机。'
 };
 
-function FreeCard(title, blocks) {
+/* REQ-107：免费解读区折叠 —— 块级折叠（label 作点击头，默认收起；openDefault=true 可直显）。
+   独立函数组件（自带 useState），避免在父级渲染函数里按条件增减 hooks 破坏钩子顺序。 */
+function FreeFoldBlock({ label, text, tip, openDefault }) {
+  const [open, setOpen] = useState(Boolean(openDefault));
+  const inner = [React.createElement('button', {
+    key: 'l',
+    type: 'button',
+    className: 'fb-label fb-fold-head' + (open ? ' open' : ''),
+    onClick: function () { setOpen(!open); },
+    'aria-expanded': open ? 'true' : 'false'
+  }, label, React.createElement('span', { className: 'fb-chev' }, '▸'))];
+  if (open) {
+    if (text) inner.push(React.createElement('div', { key: 'x', className: 'fb-txt' }, text));
+    if (tip) inner.push(React.createElement('div', { key: 'p', className: 'fb-tip' }, tip));
+  }
+  return React.createElement('div', { className: 'free-block foldable' }, inner);
+}
+/* 整卡折叠（卦理词条卡：标题作点击头，默认收起；展开后内部块按 b.fold 各自开合，未标 fold 的直显） */
+function FreeFoldCard({ title, blocks }) {
+  const [open, setOpen] = useState(false);
+  const kids = [React.createElement('button', {
+    key: 't',
+    type: 'button',
+    className: 'fc-title fc-fold-head' + (open ? ' open' : ''),
+    onClick: function () { setOpen(!open); },
+    'aria-expanded': open ? 'true' : 'false'
+  }, React.createElement('span', { className: 'fc-t' }, title), React.createElement('span', { className: 'fc-chev' }, '▸'))];
+  if (open) {
+    blocks.forEach(function (b, i) {
+      if (b.fold) {
+        kids.push(React.createElement(FreeFoldBlock, { key: 'b' + i, label: b.label, text: b.text, tip: b.tip }));
+      } else {
+        const inner = [];
+        if (b.label) inner.push(React.createElement('div', { key: 'l', className: 'fb-label' }, b.label));
+        if (b.text) inner.push(React.createElement('div', { key: 'x', className: 'fb-txt' }, b.text));
+        if (b.tip) inner.push(React.createElement('div', { key: 'p', className: 'fb-tip' }, b.tip));
+        kids.push(React.createElement('div', { key: 'b' + i, className: 'free-block' }, inner));
+      }
+    });
+  }
+  return React.createElement('div', { className: 'free-card card-fold' }, kids);
+}
+function FreeCard(title, blocks, opts) {
+  if (opts && opts.foldCard) {
+    return React.createElement(FreeFoldCard, { title: title, blocks: blocks });
+  }
   const kids = [React.createElement('div', { key: 't', className: 'fc-title' }, title)];
   blocks.forEach(function (b, i) {
-    const inner = [];
-    if (b.label) inner.push(React.createElement('div', { key: 'l', className: 'fb-label' }, b.label));
-    if (b.text) inner.push(React.createElement('div', { key: 'x', className: 'fb-txt' }, b.text));
-    if (b.tip) inner.push(React.createElement('div', { key: 'p', className: 'fb-tip' }, b.tip));
-    kids.push(React.createElement('div', { key: 'b' + i, className: 'free-block' }, inner));
+    if (b.fold) {
+      kids.push(React.createElement(FreeFoldBlock, { key: 'b' + i, label: b.label, text: b.text, tip: b.tip }));
+    } else {
+      const inner = [];
+      if (b.label) inner.push(React.createElement('div', { key: 'l', className: 'fb-label' }, b.label));
+      if (b.text) inner.push(React.createElement('div', { key: 'x', className: 'fb-txt' }, b.text));
+      if (b.tip) inner.push(React.createElement('div', { key: 'p', className: 'fb-tip' }, b.tip));
+      kids.push(React.createElement('div', { key: 'b' + i, className: 'free-block' }, inner));
+    }
   });
   return React.createElement('div', { className: 'free-card' }, kids);
 }
@@ -11036,9 +11107,9 @@ function LiuyaoTermCard(res) {
   const liuqinOrder = ['父母', '兄弟', '子孙', '妻财', '官鬼'];
   const liuqinLines = liuqinOrder.filter(function (n) { return relSet.indexOf(n) !== -1; }).map(function (n) { return LIUQIN_CN[n]; });
   if (liuqinLines.length) blocks.push({ label: '六亲释义（本卦所临）', text: liuqinLines.join('\n') });
-  // S03 六神释义：本卦六爻自下而上各临其一，全部列出作词条
+  // S03 六神释义：本卦六爻自下而上各临其一，全部列出作词条（REQ-107：折叠菜单，点击展开）
   const godOrder = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
-  blocks.push({ label: '六神释义（六爻自下而上各临其一）', text: godOrder.map(function (n) { return LIUSHEN_CN[n]; }).join('\n') });
+  blocks.push({ label: '六神释义（六爻自下而上各临其一）', text: godOrder.map(function (n) { return LIUSHEN_CN[n]; }).join('\n'), fold: true });
   // S05 术语短释：按本课 yaosDetail 富字段（空亡/月破/日破/暗动/回头生克/化空/入墓/六合六冲/伏神）命中取用
   const hits = [];
   const hit = function (key, yes) { if (yes && hits.indexOf(key) === -1) hits.push(key); };
@@ -11059,9 +11130,11 @@ function LiuyaoTermCard(res) {
   blocks.push({
     label: '术语短释（本课命中）',
     text: termLines.length ? termLines.join('\n') : '本课无空亡、月破、日破、暗动、回头生克等特殊术语标记，宜以卦意、世应与用神参看。',
-    tip: TERMS_CN['用忌原仇']
+    tip: TERMS_CN['用忌原仇'],
+    fold: true
   });
-  return FreeCard('卦理词条（免费）', blocks);
+  // REQ-107：卦理词条整卡折叠（标题点击展开；内部 六神释义/术语短释 各自折叠，六亲释义直显）
+  return FreeCard('卦理词条（免费）', blocks, { foldCard: true });
 }
 /* ---------- REQ-075：六爻焦点详解 —— 动爻/世应/空亡·月破·日破/暗动/回头生克/化空化墓 逐项点击 → LLM 结合本盘针对性解读（小额余额即时扣费）。
    命中判定复用 S05 术语短释（LiuyaoTermCard 同一套 yaosDetail 富字段逻辑）；未命中置灰「本盘无此标记」不请求；世应恒可点。
@@ -11135,7 +11208,8 @@ function LiuyaoFreeReading(res) {
     if (lit.length) blocks.push({
       label: '原文引用 · 白话释义',
       text: lit.join('\n'),
-      tip: '原文引自《周易》古籍（公有领域），白话为现代白话修正，仅供文化参考。'
+      tip: '原文引自《周易》古籍（公有领域），白话为现代白话修正，仅供文化参考。',
+      fold: true
     });
   }
   // 变卦大意：changedName 存在且 != originalName 取 HEX_GENERIC 变卦大意；否则静卦（S06）
@@ -11166,13 +11240,15 @@ function LiuyaoFreeReading(res) {
     blocks.push({
       label: '动爻提示',
       text: '通则：' + LIUYAO_GENERIC['动爻'] + '\n' + mvLines.join('\n'),
-      tip: '动爻所临六亲及其与世应的生克关系，影响事情的进退取舍；逐爻详解可由「深度断卦」展开。'
+      tip: '动爻所临六亲及其与世应的生克关系，影响事情的进退取舍；逐爻详解可由「深度断卦」展开。',
+      fold: true
     });
   } else {
     blocks.push({
       label: '动爻提示',
       text: '无动爻（静卦）。',
-      tip: '静卦以卦意为体，以世应、用神与月建日辰的生克关系参断。'
+      tip: '静卦以卦意为体，以世应、用神与月建日辰的生克关系参断。',
+      fold: true
     });
   }
   // 互卦提示：S06 互卦 + 本课互卦名（HEX_MEANINGS 作引文小字）
@@ -11198,6 +11274,7 @@ function LiuyaoFreeReading(res) {
     tip: SHIYING_CN['read']
   });
   // S06 免费区免责 + S07 合规尾注（追加到免费解读区末尾）
+  // REQ-107：卦理解读卡仅「原文引用·白话释义（本卦命中）/ 动爻提示（爻辞命中）」折叠；本卦大意保持直显
   return React.createElement(React.Fragment, null,
     FreeCard('卦理解读（免费）', blocks),
     LiuyaoTermCard(res),
@@ -12437,9 +12514,14 @@ function DivinationPage({
         prevText ? React.createElement('div', { className: 'man-preview' }, prevText) : null);
     }
   }
-  const modeSwitch = React.createElement('div', { className: 'mode-switch' },
-    React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
-    React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel));
+  // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
+  // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
+  const modeSwitch = TC_SETTINGS.default_mode === 'both'
+    ? React.createElement('div', { className: 'mode-switch' },
+        React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
+        React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
+    : React.createElement('button', { type: 'button', className: 'mode-switch-link', onClick: function () { setAskMode(askMode === 'auto' ? 'manual' : 'auto'); } },
+        askMode === 'auto' ? ('改为' + manualLabel) : ('返回' + autoLabel));
   const manualStartLabel = method === 'liuyao' ? '记录六爻并成卦'
     : method === 'meihua' ? '记录梅花并成卦'
       : method === 'sign' ? '确认该签并展示'
@@ -13508,9 +13590,13 @@ function TarotPage({
     }),
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
-    React.createElement('div', { className: 'mode-switch' },
-      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
-      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick)),
+    /* BUG-017：默认模式=auto/manual 时另一入口收起到切换入口，仅 both 保留双栏（REQ-066②） */
+    TC_SETTINGS.default_mode === 'both'
+      ? React.createElement('div', { className: 'mode-switch' },
+          React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
+          React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick))
+      : React.createElement('button', { type: 'button', className: 'mode-switch-link', onClick: function () { setMode(mode === 'auto' ? 'manual' : 'auto'); } },
+          mode === 'auto' ? ('改为' + UI_COPY.buttons.manual_pick) : ('返回' + UI_COPY.buttons.auto_pick)),
     React.createElement('div', { className: 'method-list' }, TAROT_SPREADS.map(function (s) {
       return React.createElement('div', {
         key: s.id,
@@ -14189,9 +14275,13 @@ function LenormandPage({
     }),
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
-    React.createElement('div', { className: 'mode-switch' },
-      React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
-      React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick)),
+    /* BUG-017：默认模式=auto/manual 时另一入口收起到切换入口，仅 both 保留双栏（REQ-066②） */
+    TC_SETTINGS.default_mode === 'both'
+      ? React.createElement('div', { className: 'mode-switch' },
+          React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
+          React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick))
+      : React.createElement('button', { type: 'button', className: 'mode-switch-link', onClick: function () { setMode(mode === 'auto' ? 'manual' : 'auto'); } },
+          mode === 'auto' ? ('改为' + UI_COPY.buttons.manual_pick) : ('返回' + UI_COPY.buttons.auto_pick)),
     React.createElement('div', { className: 'method-list' }, LENORMAND_SPREADS.map(function (s) {
       return React.createElement('div', {
         key: s.id,
