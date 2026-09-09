@@ -26,16 +26,20 @@
  *       zodiacWuxing 为 B2 本气五行展示文案（如“水（子）”）；贵人三层兜底：
  *       流年命中六合/三合 > B2 贵人（引擎 zodiac/index.js 回填）> tianyiNoble（此处）。
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
- *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"ssgw"|"lenormand",
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
  *                      settings?:{}, params?:{}}
  *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/大六壬课盘/
- *       灵签签文/雷诺曼牌阵，已 stripInternal）。method 决定取参位置：
+ *       金口诀课盘/灵签签文/雷诺曼牌阵，已 stripInternal）。method 决定取参位置：
  *       - liuyao      → generateLiuyao(customDate, options)（options 可带手工爻值等）
  *       - meihua      → generateMeihua(customDate, settings)（settings 即报数等）
  *       - xiaoliuren  → generateXiaoliuren(params)（params.customDate 亦接受字符串）
  *       - liuren      → generateLiuren(customDate)（大六壬时辰起课：月将加时起天地盘，
  *                      四课三传/课体/类神/天将/神煞/应期；确定性零 LLM）
+ *       - jinkoujue   → generateJinkoujue(params)（金口诀起课：四位一体人元/贵神/将神/地分
+ *                      + 阴阳发用 + 五动三动；params.method 四选一 time 时间 / branch 指定地分 /
+ *                      number 数字 / random 随机，branch 传 params.branch、number 传 params.number、
+ *                      random 无 seed/replay 时引擎以系统安全随机数取地分；确定性零 LLM）
  *       - ssgw        → drawRandomSign(options)（随机抽签）
  *       - lenormand   → drawLenormandSpread(spreadType||'single', options)
  *                      （雷诺曼 spreadType 由 input.spreadType 提供，非 settings；
@@ -103,6 +107,7 @@ import { generateLiuyao } from './vendor/mingyu-core/dist/divination/algorithms/
 import { generateMeihua } from './vendor/mingyu-core/dist/divination/algorithms/meihua/index.js';
 import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorithms/xiaoliuren.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
+import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
 import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
@@ -353,6 +358,19 @@ function computeDivination(input) {
       // customDate 即前端所选 日期+时辰 组装的东八区 ISO（缺省用当前时间）。
       raw = generateLiuren(customDate);
       break;
+    case 'jinkoujue': {
+      // 金口诀起课（REQ-119）：地分起课 → 四位一体（人元/贵神/将神/地分）+ 阴阳发用 +
+      // 五动三动；确定性零 LLM。params 原样透传引擎，起课方式四选一（time 时间起课 /
+      // branch 指定地分 / number 数字起课 / random 随机起课），branch 传 params.branch、
+      // number 传 params.number，random 无 seed/replay 时引擎以系统安全随机数取地分
+      // （确定性重放可传 seed/replay）。customDate 即前端所选 日期+时辰 组装的东八区 ISO。
+      const params = (input.params && typeof input.params === 'object' && !Array.isArray(input.params))
+        ? { ...input.params }
+        : {};
+      params.customDate = toCustomDate(params.customDate);
+      raw = generateJinkoujue(params);
+      break;
+    }
     case 'ssgw': {
       // 灵签随机抽签；options 可带 seed/replay 以确定性重放
       const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
