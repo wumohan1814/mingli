@@ -741,6 +741,67 @@
     .focus-btn:hover{filter:brightness(1.05)}
     .focus-btn.on{color:var(--text-2);border-color:var(--border);background:var(--surface)}
     .focus-note{font-size:11px;color:var(--text-3);line-height:1.6}
+
+    /* ===== REQ-121：黄历择日（免档案纯国学工具，免费确定性 + 可选付费解读） ===== */
+    .alm-topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;margin-top:4px}
+    .alm-topic-chip{padding:10px 8px;text-align:center;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:.14s;font-size:13px;color:var(--text-1);font-family:inherit;line-height:1.4}
+    .alm-topic-chip:hover{filter:brightness(1.04)}
+    .alm-topic-chip.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);font-weight:700}
+    .alm-custom-in{margin-top:8px}
+    .alm-range-note{font-size:11px;color:var(--text-3);margin-top:4px;line-height:1.6}
+    .alm-parts{margin-top:10px}
+    .alm-part-item{border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-top:8px;background:var(--paper)}
+    .alm-part-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .alm-part-title{font-size:12px;font-weight:700;color:var(--text-2)}
+    .alm-part-name{flex:1;min-width:0}
+    .alm-part-grid{display:flex;gap:10px;flex-wrap:wrap}
+    .alm-part-field{flex:1 1 90px;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .alm-part-field.wide{flex:1 1 140px}
+    .alm-part-cap{font-size:11px;color:var(--text-3)}
+    .alm-part-input{width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--paper);color:var(--text-1);font-size:13px;font-family:inherit;outline:none}
+    .alm-part-input:focus{border-color:var(--skin-accent)}
+    .alm-part-add{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;color:var(--skin-accent);background:var(--skin-accent-soft);border:1px dashed var(--skin-accent);border-radius:var(--radius-pill);padding:6px 14px;cursor:pointer;font-family:inherit;line-height:1.4;transition:filter .14s}
+    .alm-part-add:hover{filter:brightness(1.05)}
+    .alm-run{display:flex;align-items:center;gap:8px;margin-top:14px}
+    .alm-run-note{font-size:11px;color:var(--text-3);line-height:1.6;flex:1}
+    .alm-group-bar{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 10px}
+    .alm-gstat{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px 10px}
+    .alm-gstat b{color:var(--text-1)}
+    .alm-day-card{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:12px 14px;margin-top:10px}
+    .alm-day-card.preferred{border-color:var(--skin-accent);box-shadow:0 0 0 1px var(--skin-accent) inset}
+    .alm-day-card.conditional{border-color:var(--gold-500)}
+    .alm-day-card.caution{opacity:.86}
+    .alm-day-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .alm-day-date{font-size:16px;font-weight:800;color:var(--text-1)}
+    .alm-day-date small{font-weight:600;color:var(--text-2);font-size:12px;margin-left:6px}
+    .alm-status{flex:none;font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px;line-height:1.5}
+    .alm-status.preferred{background:var(--skin-accent);color:var(--skin-accent-ink)}
+    .alm-status.conditional{background:rgba(184,137,62,.18);color:#8a6a1f}
+    .alm-status.caution{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    .alm-day-meta{font-size:12px;color:var(--text-2);line-height:1.8;margin-top:6px}
+    .alm-day-meta b{color:var(--ink-600);font-weight:700;margin-right:2px}
+    .alm-row{font-size:13px;color:var(--text-1);line-height:1.75;margin-top:6px}
+    .alm-row .alm-row-label{display:inline-flex;flex:none;min-width:34px;font-size:12px;font-weight:700;border-radius:var(--radius-sm);padding:1px 7px;margin-right:6px;line-height:1.6}
+    .alm-row.rec .alm-row-label{background:rgba(45,132,88,.14);color:#2d8458}
+    .alm-row.avd .alm-row-label{background:rgba(178,58,58,.12);color:var(--cinnabar)}
+    .alm-row.neu .alm-row-label{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .alm-hls{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+    .alm-tag{font-size:11px;color:var(--skin-accent);background:var(--skin-accent-soft);border-radius:var(--radius-pill);padding:2px 8px;line-height:1.5}
+    .alm-tag.warn{color:var(--cinnabar);background:rgba(178,58,58,.1)}
+    .alm-tag.dim{color:var(--text-3);background:var(--surface)}
+    .alm-hours{margin-top:8px;border-top:1px dashed var(--border);padding-top:6px}
+    .alm-hour-cap{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:4px}
+    .alm-hour-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+    .alm-hour-item{font-size:12px;color:var(--text-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;line-height:1.55;background:var(--paper)}
+    .alm-hour-item .ah-name{font-weight:700;color:var(--text-1)}
+    .alm-hour-item .ah-bad{display:inline-block;margin-left:4px;font-size:10px;color:var(--cinnabar)}
+    .alm-hour-item .ah-good{display:inline-block;margin-left:4px;font-size:10px;color:#2d8458}
+    .alm-hour-item .ah-sub{display:block;font-size:11px;color:var(--text-3);margin-top:2px}
+    .alm-constr{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:8px;white-space:pre-wrap;word-break:break-word}
+    .alm-free{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .alm-free .af-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:6px}
+    .alm-free .af-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+    .alm-disc{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:10px;white-space:pre-wrap;word-break:break-word}
     .focus-note.err{color:var(--cinnabar)}
     .focus-panel{width:100%;margin-top:2px}
     .focus-disclaim{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border)}
@@ -1598,6 +1659,44 @@ const UI_COPY = {
     sign_free_core: '签意核心',
     sign_pay_hint: '深度断卦为付费 LLM 解读，按实际用量扣余额（¥）（点击前将预检余额）',
     sign_interp_title: '断卦结果'
+  },
+  // REQ-121：黄历择日（纯国学工具，免档案）—— 免费确定性起算 + 可选付费深度解读
+  almanac: {
+    title: '黄历择日',
+    sub: '按事项与日期范围比较候选吉日 · 宜忌/冲煞/宿曜/九星/百忌/方位神/逐时时课（确定性计算免费）',
+    topic_label: '事项（10 类）',
+    topic_custom_ph: '自定义事项（如：店铺开业庆典）',
+    range_label: '日期范围（起止，最多 180 天）',
+    start_label: '开始日期',
+    end_label: '结束日期',
+    part_label: '参与者（选填）',
+    part_hint: '参与者按完整公历生日核验与候选日年支/日支的刑冲破害；只需看每日冲煞可不填。',
+    part_name_ph: '称谓（选填，默认「参与人 N」）',
+    part_gender: '性别',
+    part_birth: '出生日期（公历）',
+    part_time: '时辰',
+    part_add: '添加参与者',
+    part_remove: '移除',
+    part_max_warn: '一次最多 30 位参与人',
+    run: '免费起算',
+    running: '正在起算…',
+    login_hint: '黄历择日需登录后使用（免费确定性起算，登录即可用，无需选档案）。',
+    login_btn: '去登录',
+    empty: '请选择事项并填写日期范围后起算',
+    result_title: '候选吉日',
+    status_preferred: '可用候选',
+    status_conditional: '条件候选',
+    status_caution: '慎用候选',
+    group_summary: '按 almanac-evidence 确定性分组：可用候选优先、条件候选次之、慎用候选仅作参考；同组按明确宜项数量与日期稳定排列，不设置吉凶总分。',
+    free_reading_title: '趋势参考（免费）',
+    free_reading: '本次起算按「{topic}」在 {start} 至 {end} 范围内逐日比较历书宜忌、建除十二值、二十八宿、九星、彭祖百忌、方位神与逐时时课（确定性计算，零 LLM 免费）。候选分组只按明确忌项、参与人直接关系和可用时辰区分，不表示成功率或现实吉凶保证；传统排序仅供参考，场地、证件、人员、交通、预算、天气、办理窗口与安全等现实条件永远优先。',
+    pay_hint: '深度解读为付费 LLM 解读（结合事项与候选吉日），按实际用量扣余额（¥）（点击前将预检余额）',
+    interp_title: '深度解读',
+    disclaimer: '以上内容由传统历书与择日规则生成，属趋势参考与娱乐范畴，不构成医疗、投资、司法或任何具有约束力的决策建议；请理性看待，重大决策请依据现实信息。',
+    hour_cap: '逐时时课',
+    hour_more: '展开 12 时辰',
+    hour_less: '收起时辰',
+    no_hours: '（无时辰资料）'
   },
   // REQ-070 / BUG-012：「分享帮填」—— 生成一次性链接给朋友免登录代填档案（POST /api/case/share，幂等复用未用链接）
   shareFill: {
@@ -2523,6 +2622,23 @@ function Icon({
         rx: "10",
         ry: "4.2",
         transform: "rotate(-28 12 12)"
+      }));
+    case 'calendar':
+      /* REQ-121：黄历择日（日历 + 勾选标记） */
+      return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("rect", {
+        x: "3",
+        y: "4.5",
+        width: "18",
+        height: "16",
+        rx: "2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3 9.5h18"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M8 2.5v4"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M16 2.5v4"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "m9.2 15.2 2 2 3.8-4"
       }));
     default:
       return null;
@@ -7667,6 +7783,12 @@ const MOD_NAV_GROUPS = [{
     page: 'divination',
     module: 'guoxue',
     skin: 'guoxue'
+  }, {
+    // REQ-121：黄历择日（免档案纯国学工具，顶栏下拉与 HUB 入口对齐）
+    label: '择日',
+    page: 'almanac',
+    module: 'guoxue',
+    skin: 'guoxue'
   }]
 }, {
   title: '西式占卜',
@@ -8582,6 +8704,13 @@ function GuoxueHubPage({
     bar: 'var(--gold-500)',
     ico: 'orbit',
     to: () => onNavigate('divination')
+  }, {
+    // REQ-121：黄历择日 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学工具，不混入起卦列表）
+    name: '择日',
+    sub: '黄历择日 · 宜忌/冲煞/逐时时课（免费确定性）',
+    bar: 'var(--skin-accent)',
+    ico: 'calendar',
+    to: () => onNavigate('almanac')
   }];
   // REQ-100：同一排 3 键（九法配对 / 八字配对 / 档案起名），与上方三卡同层级同样式。
   const quickCards = [{
@@ -13686,6 +13815,398 @@ function DivinationPage({
     }) : null);
 }
 
+/* ---------- REQ-121：黄历择日（免档案纯国学工具：免费确定性起算 + 可选付费深度解读） ---------- */
+// 事项 10 类（key 对齐 vendored mingyu-core AlmanacTopic：move/marriage/opening/contract/
+// travel/medical/study/burial/renovation/custom；custom 关键词为空，仅按通用历书比较，
+// 用户填写的具体事项文本随 customTopicLabel 透传后端供展示与深度解读引用）
+const ALMANAC_TOPIC_OPTIONS = [
+  { key: 'move', label: '搬家入宅' },
+  { key: 'marriage', label: '订婚结婚' },
+  { key: 'opening', label: '开业启动' },
+  { key: 'contract', label: '签约合作' },
+  { key: 'travel', label: '出行赴任' },
+  { key: 'medical', label: '就医手术' },
+  { key: 'study', label: '考试学习' },
+  { key: 'burial', label: '安葬修坟' },
+  { key: 'renovation', label: '修造动土' },
+  { key: 'custom', label: '自定义' }
+];
+// 参与人时辰（index 对齐引擎 SHICHEN_PERIODS：0 早子时 … 11 亥时 / 12 晚子时）
+const ALMANAC_SHICHEN = [
+  { i: 0, label: '早子时（00-01）' },
+  { i: 1, label: '丑时（01-03）' },
+  { i: 2, label: '寅时（03-05）' },
+  { i: 3, label: '卯时（05-07）' },
+  { i: 4, label: '辰时（07-09）' },
+  { i: 5, label: '巳时（09-11）' },
+  { i: 6, label: '午时（11-13）' },
+  { i: 7, label: '未时（13-15）' },
+  { i: 8, label: '申时（15-17）' },
+  { i: 9, label: '酉时（17-19）' },
+  { i: 10, label: '戌时（19-21）' },
+  { i: 11, label: '亥时（21-23）' },
+  { i: 12, label: '晚子时（23-24）' }
+];
+const ALMANAC_MAX_DAYS = 180;
+// candidateGroups.statusByDate[date] = '可用候选'|'条件候选'|'慎用候选' → 展示态
+const almanacStatusOf = function (groups, date) {
+  const s = groups && groups.statusByDate ? groups.statusByDate[date] : '';
+  if (s === '可用候选') return 'preferred';
+  if (s === '条件候选') return 'conditional';
+  return 'caution'; // 未知/缺失状态一律按慎用兜底展示，不臆造更高级别
+};
+const almanacStatusRank = function (cls) {
+  return cls === 'preferred' ? 0 : cls === 'conditional' ? 1 : 2;
+};
+const ALMANAC_STATUS_CN = { preferred: '可用候选', conditional: '条件候选', caution: '慎用候选' };
+function AlmanacPage({
+  onNavigate
+}) {
+  const payEnough = usePaySufficient();
+  const A = UI_COPY.almanac;
+  const [topic, setTopic] = useState('move');
+  const [customText, setCustomText] = useState('');
+  const [startDate, setStartDate] = useState(todayStr());
+  const [endDate, setEndDate] = useState(function () {
+    const d = new Date();
+    d.setDate(d.getDate() + 29);
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  });
+  const [participants, setParticipants] = useState([]);
+  const [data, setData] = useState(null); // {id, method, result}
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const [hoursOpen, setHoursOpen] = useState({}); // date → bool（逐时时课展开态）
+  const addParticipant = function () {
+    if (participants.length >= 30) {
+      toast(A.part_max_warn);
+      return;
+    }
+    setParticipants(prev => prev.concat([{ name: '', gender: '男', year: '', month: '', day: '', timeIndex: 6 }]));
+  };
+  const patchPart = function (idx, patch) {
+    setParticipants(prev => prev.map(function (p, i) { return i === idx ? Object.assign({}, p, patch) : p; }));
+  };
+  const removePart = function (idx) {
+    setParticipants(prev => prev.filter(function (_, i) { return i !== idx; }));
+  };
+  const toggleHours = function (date) {
+    setHoursOpen(prev => Object.assign({}, prev, { [date]: !prev[date] }));
+  };
+  const rangeValid = function () {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+      toast('请填写起止日期（YYYY-MM-DD）');
+      return false;
+    }
+    const s = new Date(startDate + 'T00:00:00+08:00').getTime();
+    const e = new Date(endDate + 'T00:00:00+08:00').getTime();
+    if (isNaN(s) || isNaN(e) || e < s) {
+      toast('结束日期不得早于开始日期');
+      return false;
+    }
+    if (Math.round((e - s) / 86400000) > ALMANAC_MAX_DAYS - 1) {
+      toast('一次最多比较 180 天，请缩小日期范围');
+      return false;
+    }
+    return true;
+  };
+  const partsValid = function () {
+    for (let i = 0; i < participants.length; i++) {
+      const p = participants[i];
+      const y = Number(p.year), m = Number(p.month), d = Number(p.day);
+      if (!/^\d{4}$/.test(String(p.year).trim()) || y < 1900 || y > 2100) {
+        toast('参与人 ' + (i + 1) + '：出生年份需为 1900-2100 的整数');
+        return false;
+      }
+      if (!/^\d{1,2}$/.test(String(p.month).trim()) || m < 1 || m > 12) {
+        toast('参与人 ' + (i + 1) + '：出生月份需为 1-12');
+        return false;
+      }
+      if (!/^\d{1,2}$/.test(String(p.day).trim()) || d < 1 || d > 31) {
+        toast('参与人 ' + (i + 1) + '：出生日期需为 1-31');
+        return false;
+      }
+    }
+    return true;
+  };
+  const run = async function () {
+    if (loading) return;
+    if (!token) {
+      toast(A.login_hint);
+      onNavigate('auth');
+      return;
+    }
+    if (!rangeValid()) return;
+    if (!partsValid()) return;
+    const seed = {
+      almanac: { topic: topic, startDate: startDate, endDate: endDate }
+    };
+    if (topic === 'custom' && customText.trim()) seed.almanac.customTopicLabel = customText.trim();
+    if (participants.length) {
+      // 引擎要求参与人完整生辰（生肖/年命须由年支推算），缺生日资料无法核验刑冲破害；
+      // 因此参与者按「完整公历生日」收集，dateType 恒为 solar。
+      seed.almanac.participants = participants.map(function (p, i) {
+        return {
+          id: 'p' + (i + 1),
+          name: (p.name || '').trim() || ('参与人' + (i + 1)),
+          gender: p.gender,
+          year: String(p.year).trim(),
+          month: String(p.month).trim(),
+          day: String(p.day).trim(),
+          timeIndex: String(p.timeIndex),
+          dateType: 'solar'
+        };
+      });
+    }
+    setLoading(true);
+    setErrored('');
+    setData(null);
+    setInterp('');
+    setInterpErr('');
+    setHoursOpen({});
+    try {
+      const res = await api('/divinations', {
+        method: 'POST',
+        body: JSON.stringify({ method: 'almanac', case_id: null, seed: seed })
+      });
+      const d = (res && res.data) || res;
+      setData(d);
+      track('almanac_cast', { topic: topic });
+    } catch (e) {
+      setErrored((e && e.message) || '起算失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const interpret = async function () {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无深度解读内容）');
+      track('almanac_interpret', {});
+    } catch (e) {
+      setInterpErr((e && e.message) || '深度解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
+    }
+  };
+  const result = (data && data.result) || null;
+  const groups = (result && result.candidateGroups) || null;
+  const days = Array.isArray(result && result.days) ? result.days.slice() : [];
+  const sortedDays = days.sort(function (a, b) {
+    return almanacStatusRank(almanacStatusOf(groups, a.date)) - almanacStatusRank(almanacStatusOf(groups, b.date));
+  });
+  const statCount = function (cls) {
+    return sortedDays.filter(function (d) { return almanacStatusOf(groups, d.date) === cls; }).length;
+  };
+  const topicLabel = (result && result.topicLabel) || (ALMANAC_TOPIC_OPTIONS.find(function (t) { return t.key === topic; }) || {}).label || '自定义事项';
+  // 逐日卡片
+  const dayCard = function (d) {
+    const cls = almanacStatusOf(groups, d.date);
+    const gz = d.ganzhi || {};
+    const gzText = [gz.year, gz.month, gz.day].filter(Boolean).join(' ');
+    const star28 = d.twentyEightStarDetail || null;
+    const star9 = d.nineStarDetail || null;
+    const rows = [];
+    rows.push(React.createElement('div', { key: 'meta', className: 'alm-day-meta' },
+      React.createElement('b', null, '农历'), d.lunarDate || '—', ' · ',
+      React.createElement('b', null, '干支'), gzText || '—', ' · ',
+      React.createElement('b', null, '建除'), d.dayOfficer || '—', ' · ',
+      React.createElement('b', null, '十二神'), d.twelveStar || '—', ' · ',
+      React.createElement('b', null, '冲煞'), d.clash || '—'));
+    const rec = Array.isArray(d.recommends) && d.recommends.length;
+    const avd = Array.isArray(d.avoids) && d.avoids.length;
+    if (rec) rows.push(React.createElement('div', { key: 'rec', className: 'alm-row rec' },
+      React.createElement('span', { className: 'alm-row-label' }, '宜'), d.recommends.join('、')));
+    if (avd) rows.push(React.createElement('div', { key: 'avd', className: 'alm-row avd' },
+      React.createElement('span', { className: 'alm-row-label' }, '忌'), d.avoids.join('、')));
+    const starLine = [];
+    starLine.push('二十八宿 ' + (d.twentyEightStar || '—') + (star28 ? '（' + [star28.fullName, star28.zone, star28.fortune].filter(Boolean).join(' · ') + '）' : ''));
+    starLine.push('九星 ' + (d.nineStar || '—') + (star9 ? '（' + [star9.fullName, star9.color, star9.wuxing].filter(Boolean).join(' · ') + '）' : ''));
+    if (starLine.length) rows.push(React.createElement('div', { key: 'star', className: 'alm-row neu' },
+      React.createElement('span', { className: 'alm-row-label' }, '宿曜'), starLine.join('　')));
+    if (d.pengZu) rows.push(React.createElement('div', { key: 'pz', className: 'alm-row neu' },
+      React.createElement('span', { className: 'alm-row-label' }, '百忌'), d.pengZu));
+    if (Array.isArray(d.annualDirectionGods) && d.annualDirectionGods.length) {
+      rows.push(React.createElement('div', { key: 'dir', className: 'alm-row neu' },
+        React.createElement('span', { className: 'alm-row-label' }, '方位'), d.annualDirectionGods.map(function (g) {
+          return (g.god || '') + (g.direction ? '（' + g.direction + '）' : '');
+        }).join('、')));
+    }
+    const tags = [];
+    (Array.isArray(d.highlights) ? d.highlights : []).forEach(function (h, i) {
+      tags.push(React.createElement('span', { key: 'h' + i, className: 'alm-tag' }, h));
+    });
+    (Array.isArray(d.cautions) ? d.cautions : []).forEach(function (c, i) {
+      tags.push(React.createElement('span', { key: 'c' + i, className: 'alm-tag warn' }, c));
+    });
+    (Array.isArray(d.participantNotes) ? d.participantNotes : []).forEach(function (n, i) {
+      tags.push(React.createElement('span', { key: 'p' + i, className: 'alm-tag dim' }, n));
+    });
+    if (tags.length) rows.push(React.createElement('div', { key: 'tags', className: 'alm-hls' }, tags));
+    // 逐时时课（折叠展示：默认前 6 个时辰，展开看全部）
+    const hours = Array.isArray(d.hours) ? d.hours : [];
+    const open = Boolean(hoursOpen[d.date]);
+    if (hours.length) {
+      const shown = open ? hours : hours.slice(0, 6);
+      const hourItems = shown.map(function (h, i) {
+        const hTags = [];
+        (Array.isArray(h.highlights) ? h.highlights : []).forEach(function (x, j) {
+          hTags.push(React.createElement('span', { key: 'g' + j, className: 'ah-good' }, x));
+        });
+        (Array.isArray(h.cautions) ? h.cautions : []).forEach(function (x, j) {
+          hTags.push(React.createElement('span', { key: 'b' + j, className: 'ah-bad' }, x));
+        });
+        const pn = (Array.isArray(h.participantNotes) ? h.participantNotes : []).join('；');
+        return React.createElement('div', { key: 'hr' + i, className: 'alm-hour-item' },
+          React.createElement('span', { className: 'ah-name' }, h.name || ''),
+          h.range ? React.createElement('span', { className: 'ah-sub' }, h.range + ' · ' + (h.ganzhi || '') + ' · ' + (h.twelveStar || '')) : null,
+          hTags.length ? React.createElement('span', null, hTags) : null,
+          pn ? React.createElement('span', { className: 'ah-sub' }, pn) : null);
+      });
+      rows.push(React.createElement('div', { key: 'hours', className: 'alm-hours' },
+        React.createElement('div', { className: 'alm-hour-cap' }, A.hour_cap),
+        React.createElement('div', { className: 'alm-hour-grid' }, hourItems),
+        React.createElement('button', { type: 'button', className: 'focus-btn', style: { marginTop: 6 }, onClick: function () { toggleHours(d.date); } },
+          open ? A.hour_less : A.hour_more)));
+    } else {
+      rows.push(React.createElement('div', { key: 'hours', className: 'alm-hours' },
+        React.createElement('div', { className: 'alm-hour-cap' }, A.hour_cap), A.no_hours));
+    }
+    return React.createElement('div', { key: d.date, className: 'alm-day-card ' + cls },
+      React.createElement('div', { className: 'alm-day-head' },
+        React.createElement('div', { className: 'alm-day-date' }, d.date,
+          React.createElement('small', null, (d.weekday || '') + ' · ' + (d.zodiac ? d.zodiac + '日' : ''))),
+        React.createElement('span', { className: 'alm-status ' + cls }, ALMANAC_STATUS_CN[cls] || '慎用候选')),
+      rows);
+  };
+  let body = null;
+  if (loading) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    body = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '起算失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: run }, UI_COPY.buttons.retry));
+  } else if (result && typeof result === 'object') {
+    const freeTxt = A.free_reading
+      .replace('{topic}', topicLabel + (result.customTopicLabel ? '（' + result.customTopicLabel + '）' : ''))
+      .replace('{start}', result.startDate || startDate)
+      .replace('{end}', result.endDate || endDate);
+    const constr = [];
+    (groups && Array.isArray(groups.hardConstraints) ? groups.hardConstraints : []).forEach(function (h) { constr.push(h); });
+    (groups && Array.isArray(groups.realityConstraints) ? groups.realityConstraints : []).forEach(function (r) { constr.push(r); });
+    const partLine = (Array.isArray(result.participants) && result.participants.length)
+      ? result.participants.map(function (p) { return (p.name || '') + (p.zodiac ? '（' + p.zodiac + '）' : ''); }).join('、')
+      : '';
+    body = React.createElement('div', null,
+      React.createElement('div', { className: 'card' },
+        React.createElement('div', { className: 'section-title' }, A.result_title,
+          result.customTopicLabel ? React.createElement('span', { style: { fontSize: 12, fontWeight: 600, color: 'var(--text-2)', marginLeft: 8 } }, '· ' + result.customTopicLabel) : null),
+        React.createElement('div', { className: 'alm-group-bar' },
+          React.createElement('span', { className: 'alm-gstat' }, A.status_preferred, React.createElement('b', null, statCount('preferred')), ' 天'),
+          React.createElement('span', { className: 'alm-gstat' }, A.status_conditional, React.createElement('b', null, statCount('conditional')), ' 天'),
+          React.createElement('span', { className: 'alm-gstat' }, A.status_caution, React.createElement('b', null, statCount('caution')), ' 天')),
+        React.createElement('div', { className: 'alm-constr' }, A.group_summary),
+        partLine ? React.createElement('div', { className: 'alm-constr', style: { color: 'var(--text-2)' } }, '参与人：' + partLine) : null,
+        sortedDays.map(dayCard),
+        constr.length ? React.createElement('div', { className: 'alm-constr' }, '说明：' + constr.join('\n')) : null,
+        React.createElement('div', { className: 'alm-free' },
+          React.createElement('div', { className: 'af-title' }, A.free_reading_title),
+          React.createElement('div', { className: 'af-txt' }, freeTxt)),
+        React.createElement('div', { className: 'pay-hint' }, A.pay_hint),
+        React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret },
+          interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
+        interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+        interp ? React.createElement(React.Fragment, null,
+          React.createElement('div', { className: 'interp-title' }, A.interp_title),
+          React.createElement('div', { className: 'interp-body' }, interp)) : null,
+        React.createElement('div', { className: 'alm-disc' }, A.disclaimer)));
+  }
+  const formCard = React.createElement('div', { className: 'card' },
+    React.createElement('div', { className: 'section-title' }, '择日信息'),
+    React.createElement('div', { className: 'ask-cap' }, A.topic_label, React.createElement('em', null, '*')),
+    React.createElement('div', { className: 'alm-topics' }, ALMANAC_TOPIC_OPTIONS.map(function (t) {
+      return React.createElement('button', {
+        key: t.key,
+        type: 'button',
+        className: 'alm-topic-chip' + (topic === t.key ? ' sel' : ''),
+        onClick: function () { setTopic(t.key); }
+      }, t.label);
+    })),
+    topic === 'custom' ? React.createElement('input', {
+      key: 'cst',
+      className: 'alm-part-input alm-custom-in',
+      type: 'text',
+      maxLength: 60,
+      placeholder: A.topic_custom_ph,
+      value: customText,
+      onChange: function (e) { setCustomText(e.target.value); }
+    }) : null,
+    React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, A.range_label, React.createElement('em', null, '*')),
+    React.createElement('div', { className: 'dt-row' },
+      React.createElement('label', { className: 'dt-field' },
+        React.createElement('span', { className: 'dt-cap' }, A.start_label, React.createElement('em', null, '*')),
+        React.createElement('input', { type: 'date', className: 'dt-input', value: startDate, onChange: function (e) { setStartDate(e.target.value); } })),
+      React.createElement('label', { className: 'dt-field' },
+        React.createElement('span', { className: 'dt-cap' }, A.end_label, React.createElement('em', null, '*')),
+        React.createElement('input', { type: 'date', className: 'dt-input', value: endDate, onChange: function (e) { setEndDate(e.target.value); } }))),
+    React.createElement('div', { className: 'alm-range-note' }, '起止日期默认今天起 30 天，可调整；一次最多比较 180 天。'),
+    React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, A.part_label),
+    React.createElement('div', { className: 'alm-parts' }, participants.map(function (p, idx) {
+      return React.createElement('div', { key: 'p' + idx, className: 'alm-part-item' },
+        React.createElement('div', { className: 'alm-part-head' },
+          React.createElement('span', { className: 'alm-part-title' }, '参与人 ' + (idx + 1)),
+          React.createElement('button', { type: 'button', className: 'focus-btn off', onClick: function () { removePart(idx); } }, A.part_remove)),
+        React.createElement('div', { className: 'alm-part-grid' },
+          React.createElement('div', { className: 'alm-part-field wide' },
+            React.createElement('span', { className: 'alm-part-cap' }, A.part_name_ph),
+            React.createElement('input', { className: 'alm-part-input', type: 'text', maxLength: 20, value: p.name, onChange: function (e) { patchPart(idx, { name: e.target.value }); } })),
+          React.createElement('div', { className: 'alm-part-field' },
+            React.createElement('span', { className: 'alm-part-cap' }, A.part_gender),
+            React.createElement('select', { className: 'alm-part-input', value: p.gender, onChange: function (e) { patchPart(idx, { gender: e.target.value }); } },
+              React.createElement('option', { value: '男' }, '男'),
+              React.createElement('option', { value: '女' }, '女'))),
+          React.createElement('div', { className: 'alm-part-field' },
+            React.createElement('span', { className: 'alm-part-cap' }, '年'),
+            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1900, max: 2100, placeholder: '1990', value: p.year, onChange: function (e) { patchPart(idx, { year: e.target.value }); } })),
+          React.createElement('div', { className: 'alm-part-field' },
+            React.createElement('span', { className: 'alm-part-cap' }, '月'),
+            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1, max: 12, placeholder: '5', value: p.month, onChange: function (e) { patchPart(idx, { month: e.target.value }); } })),
+          React.createElement('div', { className: 'alm-part-field' },
+            React.createElement('span', { className: 'alm-part-cap' }, '日'),
+            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1, max: 31, placeholder: '12', value: p.day, onChange: function (e) { patchPart(idx, { day: e.target.value }); } })),
+          React.createElement('div', { className: 'alm-part-field wide' },
+            React.createElement('span', { className: 'alm-part-cap' }, A.part_time),
+            React.createElement('select', { className: 'alm-part-input', value: p.timeIndex, onChange: function (e) { patchPart(idx, { timeIndex: Number(e.target.value) }); } },
+              ALMANAC_SHICHEN.map(function (s) {
+                return React.createElement('option', { key: s.i, value: s.i }, s.label);
+              })))));
+    })),
+    React.createElement('button', { type: 'button', className: 'alm-part-add', onClick: addParticipant }, '＋ ' + A.part_add),
+    React.createElement('div', { className: 'alm-range-note' }, A.part_hint),
+    React.createElement('div', { className: 'alm-run' },
+      React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
+        loading ? A.running : A.run),
+      React.createElement('span', { className: 'alm-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'calendar', size: 22 }), ' ' + A.title),
+    !token ? React.createElement('div', { className: 'card' },
+      React.createElement('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 10 } }, A.login_hint),
+      React.createElement('button', { className: 'btn btn-primary', onClick: function () { onNavigate('auth'); } }, A.login_btn)) : React.createElement(React.Fragment, null,
+      formCard,
+      body,
+      React.createElement('div', { className: 'back-row fill' },
+        React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options))));
+}
+
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
 const TAROT_DECK = [{
   name: '愚者',
@@ -18304,6 +18825,7 @@ const REQ080_PAGE_PATH = {
   'nine-pick': '/jiufa',
   zodiac: '/zodiac',
   divination: '/divination',
+  almanac: '/almanac',
   astrology: '/astrology',
   tarot: '/tarot',
   lenormand: '/lenormand',
@@ -18357,6 +18879,10 @@ const REQ080_PAGE_THEME = {
     skin: 'guoxue'
   },
   divination: {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  almanac: {
     module: 'guoxue',
     skin: 'guoxue'
   },
@@ -18844,6 +19370,9 @@ function App() {
       onNavigate: navigate
     }),
     divination: /*#__PURE__*/React.createElement(DivinationPage, {
+      onNavigate: navigate
+    }),
+    almanac: /*#__PURE__*/React.createElement(AlmanacPage, {
       onNavigate: navigate
     }),
     tarot: /*#__PURE__*/React.createElement(TarotPage, {
