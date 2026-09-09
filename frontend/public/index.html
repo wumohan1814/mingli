@@ -563,16 +563,25 @@
     .pair-big .pb-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;color:var(--text-1);line-height:1.4}
     .pair-big .pb-sub{font-size:12px;color:var(--text-2);line-height:1.7}
 
-    /* ===== REQ-115：星座「太阳/月亮/上升」三卡横向堆叠（覆盖 REQ-045 罗列三格呈现口径） =====
-       左右滑动切换当前卡；仅当前卡显示完整信息，其后两张卡 3/4 被当前卡遮挡 + 蒙版模糊；
-       每卡星座名称前加 I1 星座图标（cx-*，引用 icon-sprite-i1-i4.svg，只引用不改动）。 */
-    .triple-stack{position:relative;display:flex;overflow:hidden;margin-top:10px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-    .triple-card{flex:0 0 100%;box-sizing:border-box;position:relative;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;min-height:210px;will-change:transform}
+    /* ===== REQ-132：星座「太阳/月亮/上升」三卡环形无限循环 + 横向露边堆叠（覆盖 REQ-115 呈现口径）
+       环形：5 槽位虚拟 track（前克隆 + 3 原 + 后克隆）平移取模无跳变；露边：当前卡居中完整（宽 78%、
+       left 11%），左右各露一张侧边（相邻中心距 78%）；侧卡降透明度可点（点左=上一张/点右=下一张）；
+       底部小圆点指示器 + 左右箭头；星座图标 CxIcon（cx-*）与 A1 趋势文案内容不变。 */
+    .triple-stack{position:relative;width:100%;margin-top:10px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;min-height:236px}
+    .triple-track{position:absolute;inset:0;will-change:transform}
+    .triple-card{position:absolute;left:11%;top:0;bottom:0;width:78%;box-sizing:border-box;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;overflow:hidden;will-change:transform}
     .triple-card .tc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
     .triple-card .tc-title{font-size:13px;font-weight:700;color:var(--skin-accent)}
     .triple-card .tc-sign{display:inline-flex;align-items:center;gap:6px;font-size:18px;font-weight:800;color:var(--text-1)}
     .triple-card .tc-txt{font-size:12.5px;line-height:1.75;color:var(--text-2);white-space:pre-line;margin-top:10px}
-    .triple-card.back{filter:blur(2.5px);opacity:.55;cursor:pointer}
+    .triple-card.side{opacity:.78;cursor:pointer}
+    .triple-card.side .tc-txt{display:none}
+    .triple-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px}
+    .triple-dots{display:flex;gap:8px;align-items:center}
+    .triple-dots button{width:8px;height:8px;border-radius:50%;border:none;padding:0;background:var(--border);cursor:pointer;transition:background .2s,transform .2s}
+    .triple-dots button.on{background:var(--skin-accent);transform:scale(1.3)}
+    .triple-arrow{flex:0 0 auto;border:none;background:var(--skin-accent-soft);color:var(--skin-accent);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .15s}
+    .triple-arrow:active{filter:brightness(.9)}
 
     /* ===== REQ-100：国学 HUB「九法配对 / 八字配对 / 档案起名」同一排 3 键 =====
        与「九法合一 / 生肖流年 / 临时起卦」同层级同样式（hub-card），配 I4 图标
@@ -19096,36 +19105,63 @@ function AstrologyPage({
     { key: 'moon', title: '月亮', sign: moonSign },
     { key: 'rising', title: '上升', sign: ascSign }
   ];
-  // ---- REQ-115：三卡横向堆叠（覆盖 REQ-045 罗列三格呈现口径）——左右滑动切换当前卡；
-  //      仅当前卡显示完整信息，其后两张卡 3/4 被当前卡遮挡 + 蒙版模糊；每卡星座名称前加
-  //      I1 星座图标（cx-*，引用 icon-sprite-i1-i4.svg）。趋势文案内容（A1 72 篇）不变。 ----
-  const tripleCurMax = trendCells.length - 1;
+  // ---- REQ-132：三卡环形无限循环 + 横向露边堆叠（覆盖 REQ-115 呈现口径）——5 槽位虚拟 track
+  //      （前克隆 + 3 原 + 后克隆）平移取模无跳变；当前卡居中完整（宽 78%）、左右各露一张侧边；
+  //      小圆点指示器随循环同步 + 左右箭头；星座图标 CxIcon 与 A1 趋势文案内容不变。 ----
+  const TRIPLE_N = trendCells.length;
+  const TRIPLE_STEP = 78;
+  const TRIPLE_REDUCED = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tripleReal = s => ((s - 1) % TRIPLE_N + TRIPLE_N) % TRIPLE_N;
   const [tripleCur, setTripleCur] = useState(0);
-  const [tripleDx, setTripleDx] = useState(0); // 拖动中横向位移（px）
-  const [tripleDrag, setTripleDrag] = useState(false);
-  const tripleStart = useRef({ x: 0, cur: 0 });
+  const [tripleSlot, setTripleSlot] = useState(1);
+  const [tripleDrag, setTripleDrag] = useState(0);
+  const [tripleDragging, setTripleDragging] = useState(false);
+  const [tripleAnim, setTripleAnim] = useState(!TRIPLE_REDUCED);
+  const tripleStart = useRef({ x: 0 });
   const tripleMoved = useRef(false);
+  const tripleTimer = useRef(null);
+  const tripleReset = () => {
+    setTripleAnim(false);
+    setTripleSlot(1 + tripleCur);
+    requestAnimationFrame(() => requestAnimationFrame(() => setTripleAnim(!TRIPLE_REDUCED)));
+  };
+  const tripleGo = dir => {
+    clearTimeout(tripleTimer.current);
+    const next = (tripleCur + dir + TRIPLE_N) % TRIPLE_N;
+    if (dir > 0 && tripleCur === TRIPLE_N - 1) {
+      setTripleSlot(1 + TRIPLE_N);
+      tripleTimer.current = setTimeout(() => {
+        setTripleCur(0);
+        tripleReset();
+      }, 330);
+    } else if (dir < 0 && tripleCur === 0) {
+      setTripleSlot(0);
+      tripleTimer.current = setTimeout(() => {
+        setTripleCur(TRIPLE_N - 1);
+        tripleReset();
+      }, 330);
+    } else {
+      setTripleCur(next);
+      setTripleSlot(1 + next);
+    }
+  };
   const tripleDown = e => {
-    tripleStart.current = { x: e.clientX, cur: tripleCur };
+    tripleStart.current = { x: e.clientX };
     tripleMoved.current = false;
-    setTripleDrag(true);
+    setTripleDragging(true);
   };
   const tripleMove = e => {
-    if (!tripleDrag) return;
+    if (!tripleDragging) return;
     const d = e.clientX - tripleStart.current.x;
     if (Math.abs(d) > 8) tripleMoved.current = true;
-    setTripleDx(d);
+    setTripleDrag(d);
   };
   const tripleEnd = () => {
-    if (!tripleDrag) return;
-    const d = tripleDx;
-    setTripleDrag(false);
-    setTripleDx(0);
-    if (Math.abs(d) > 48) {
-      const dir = d < 0 ? 1 : -1;
-      const next = Math.max(0, Math.min(tripleCurMax, tripleStart.current.cur + dir));
-      if (next !== tripleStart.current.cur) setTripleCur(next);
-    }
+    if (!tripleDragging) return;
+    const d = tripleDrag;
+    setTripleDragging(false);
+    setTripleDrag(0);
+    if (Math.abs(d) > 48) tripleGo(d < 0 ? 1 : -1);
   };
   const tripleCard = el('div', {
     className: 'card'
@@ -19134,7 +19170,7 @@ function AstrologyPage({
   }, '太阳 / 月亮 / 上升 · 整体趋势'), el('div', {
     className: 'triple-stack',
     style: {
-      cursor: tripleDrag ? 'grabbing' : 'grab'
+      cursor: tripleDragging ? 'grabbing' : 'grab'
     },
     onPointerDown: tripleDown,
     onPointerMove: tripleMove,
@@ -19142,25 +19178,25 @@ function AstrologyPage({
     onPointerCancel: tripleEnd,
     onPointerLeave: tripleEnd,
     role: 'group',
-    'aria-label': '太阳 / 月亮 / 上升 三张趋势卡，可左右滑动切换'
-  }, trendCells.map((cell, i) => {
-    const off = i - tripleCur;
-    const isCur = off === 0;
-    // 后卡偏移 %：右侧后卡约 3/4 被当前卡遮挡（仅露边缘）；更后一张再右移 8%；前卡整体隐藏于左侧
-    const base = isCur ? 0 : (off < 0 ? -100 : off === 1 ? 72 : off === 2 ? 80 : -100);
-    const follow = tripleDrag ? tripleDx * 0.45 : 0;
+    'aria-label': '太阳 / 月亮 / 上升 三张趋势卡，可左右环形滑动切换'
+  }, el('div', {
+    className: 'triple-track',
+    style: {
+      transform: 'translateX(' + (-(tripleSlot * TRIPLE_STEP) + (tripleDragging ? tripleDrag * 0.6 : 0)) + '%)',
+      transition: tripleAnim && !tripleDragging ? 'transform .32s ease' : 'none'
+    }
+  }, [0, 1, 2, 3, 4].map(slot => {
+    const realIdx = tripleReal(slot);
+    const cell = trendCells[realIdx];
+    const isCur = slot === tripleSlot;
     const txt = zodiacTrendText(cell.key, cell.sign, trendGender);
     return el('div', {
-      key: cell.key,
-      className: 'triple-card' + (isCur ? '' : ' back'),
+      key: 'ts' + slot,
+      className: 'triple-card' + (isCur ? '' : ' side'),
       style: {
-        transform: 'translateX(' + base + '%) translateX(' + (isCur ? tripleDx : follow) + 'px)',
-        transition: tripleDrag ? 'none' : 'transform .3s ease',
-        zIndex: isCur ? 3 : (off > 0 ? 3 - off : 1)
+        transform: 'translateX(' + (slot * TRIPLE_STEP) + '%)'
       },
-      onClick: isCur ? null : () => {
-        if (!tripleMoved.current) setTripleCur(i);
-      },
+      onClick: isCur || tripleMoved.current ? null : () => tripleGo(slot < tripleSlot ? -1 : 1),
       'aria-label': (isCur ? '当前卡：' : '后卡：') + cell.title + ' · ' + (cell.sign || '未知')
     }, el('div', {
       className: 'tc-head'
@@ -19174,7 +19210,31 @@ function AstrologyPage({
     }), cell.sign || '——')), isCur ? el('div', {
       className: 'tc-txt'
     }, txt) : null);
-  })));
+  }))), el('div', {
+    className: 'triple-nav'
+  }, el('button', {
+    type: 'button',
+    className: 'triple-arrow',
+    'aria-label': '上一张',
+    onClick: () => tripleGo(-1)
+  }, '‹'), el('div', {
+    className: 'triple-dots'
+  }, trendCells.map((cell, i) => el('button', {
+    key: 'td' + i,
+    type: 'button',
+    className: 'triple-dot' + (i === tripleCur ? ' on' : ''),
+    'aria-label': '第 ' + (i + 1) + ' 张：' + cell.title,
+    onClick: () => {
+      clearTimeout(tripleTimer.current);
+      setTripleCur(i);
+      setTripleSlot(1 + i);
+    }
+  }))), el('button', {
+    type: 'button',
+    className: 'triple-arrow',
+    'aria-label': '下一张',
+    onClick: () => tripleGo(1)
+  }, '›')));
   const planetCard = el('div', {
     className: 'card'
   }, el('div', {
