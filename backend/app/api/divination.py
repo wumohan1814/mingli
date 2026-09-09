@@ -5,14 +5,16 @@
 计费契约：
   - POST /api/divinations 起卦 = 确定性计算，免费：把 {method, ...seed} 转发给常驻
     排盘 Node 服务（paipan-node/server.mjs 的 POST /divination，vendored
-    mingyu-core 六爻/梅花/小六壬/灵签/雷诺曼(lenormand)），成功后落 divinations 表并写
-    divination_cast 埋点，零 LLM 零扣费。
+    mingyu-core 六爻/梅花/小六壬/大六壬(liuren)/灵签/雷诺曼(lenormand)），成功后落
+    divinations 表并写 divination_cast 埋点，零 LLM 零扣费。
   - GET /api/divinations/{id} 读单条 = 只读（零 LLM 零扣费），带 user_id 隔离。
   - POST /api/divinations/{id}/interpret 断卦 = LLM 可选付费：命中
     interpretation_json 缓存直接返回（零 LLM 零扣费）；未命中先 check_balance
     预检（余额不足抛 BizError 5002）→ LLM chat → 成功即时扣费
     （ref=divination:{id}）并把 {"content": 断卦文本} 写入 interpretation_json
     作为缓存。LLM 失败（LLMError/ValueError）→ 502，对齐 cases.py revise。
+    REQ-118：method == liuren 时 body 可带 liuren_template（general/ganqing/shiye/
+    caifu，对齐 vendored LIUREN_TEMPLATE_OPTIONS，缺省 general），随 user JSON 注入。
   - POST /api/divinations/{id}/focus 六爻焦点详解（REQ-075，仅 liuyao）= LLM 可选
     付费：body {focus} 六枚举（非法 400），逐项点击时 LLM 结合该盘 result
     （yaosDetail）+ S08 爻辞原文（user JSON 注入 yao_texts）做「该焦点在本盘意味着
@@ -27,7 +29,7 @@ from pathlib import Path
 from typing import Literal, Optional
 
 import httpx
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -59,7 +61,7 @@ DIVINATION_FOCUS_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" /
 LIUYAO_TEXTS_PATH = Path(__file__).resolve().parents[1] / "data" / "liuyao_yaoci.json"
 
 # Node /divination 当前支持的方法（未知 method 在 pydantic 层提前拦成 400 参数错误）
-DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "ssgw", "lenormand")
+DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "liuren", "ssgw", "lenormand")
 
 # REQ-075 焦点详解六枚举（稳定 key，前端逐项点击透传）
 DIVINATION_FOCUS_KEYS = (
@@ -192,9 +194,18 @@ def _case_chart_summary(db: Session, case_id: Optional[int]) -> Optional[dict]:
 
 # --- 请求模型 ---
 class CastDivinationRequest(BaseModel):
-    method: Literal["liuyao", "meihua", "xiaoliuren", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案）")
+    method: Literal["liuyao", "meihua", "xiaoliuren", "liuren", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案；liuren=大六壬）")
     case_id: Optional[int] = Field(default=None, description="关联国学档案（可空；国学类起卦要求有档案，MVP 允许空由前端拦截；lenormand 不要求）")
     seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）")
+
+
+class InterpretDivinationRequest(BaseModel):
+    """REQ-118 大六壬断课模板（仅 method == liuren 时生效；其余方法忽略）。
+
+    对齐 vendored mingyu-core 的 LiurenTemplateType：general/ganqing/shiye/caifu。
+    """
+    liuren_template: Optional[Literal["general", "ganqing", "shiye", "caifu"]] = Field(
+        default=None, description="大六壬断课模板：general=通用 / ganqing=感情 / shiye=事业 / caifu=财富；缺省 general")
 
 
 class DivinationFocusRequest(BaseModel):
@@ -412,33 +423,45 @@ async def interpret_divination(
     div_id: int,
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
+    body: Optional[InterpretDivinationRequest] = Body(default=None),
 ):
-    """断卦（LLM 可选付费，即时扣费）：缓存优先，未命中预检余额 → chat → 扣费 → 缓存。"""
+    """断卦（LLM 可选付费，即时扣费）：缓存优先，未命中预检余额 → chat → 扣费 → 缓存。
+
+    REQ-118：method == liuren 时 body 可带 liuren_template（通用/感情/事业/财富，
+    对齐 vendored LIUREN_TEMPLATE_OPTIONS，缺省 general），随 user JSON 注入断课 prompt；
+    其余方法忽略 body（向后兼容无 body 调用）。
+    """
     user_id = get_user_id_from_token(authorization)
     div = _get_owned_divination(db, div_id, user_id)
 
     # ① 缓存命中：interpretation_json 非空直接返回（零 LLM 零扣费）
+    #    REQ-118：大六壬缓存带 liuren_template —— 请求模板与缓存模板一致才命中
+    #    （换模板重新断课；同模板二次点击零 LLM 零扣费复用缓存）。
     if isinstance(div.interpretation_json, dict) and div.interpretation_json.get("content"):
-        return {"code": 0, "message": "ok",
-                "data": {"interpretation": div.interpretation_json["content"]}}
+        if div.method == "liuren":
+            want_tpl = body.liuren_template if (body and body.liuren_template) else "general"
+            if div.interpretation_json.get("liuren_template") == want_tpl:
+                return {"code": 0, "message": "ok",
+                        "data": {"interpretation": div.interpretation_json["content"]}}
+        else:
+            return {"code": 0, "message": "ok",
+                    "data": {"interpretation": div.interpretation_json["content"]}}
 
     # ② 计费预检：余额不足抛 BizError 5002（全局处理器转 502 信封），不放行 LLM
     check_balance(user_id)
 
     # ③ 组装 messages：按 method 选解读 prompt（lenormand → lenormand.md，其余 → divination.md）
-    #    + 牌面 result + 关联 case 的 chart 摘要
+    #    + 牌面/课式 result + 关联 case 的 chart 摘要；liuren 额外注入断课模板
     prompt_path = LENORMAND_PROMPT_PATH if div.method == "lenormand" else DIVINATION_PROMPT_PATH
     chart_summary = _case_chart_summary(db, div.case_id)  # case_id 为空 → None
+    user_payload: dict = {"method": div.method, "result": div.result_json,
+                          "chart_summary": chart_summary}
+    if div.method == "liuren":
+        template = body.liuren_template if (body and body.liuren_template) else "general"
+        user_payload["liurenTemplate"] = template
     messages = [
         {"role": "system", "content": _load_divination_prompt(prompt_path)},
-        {
-            "role": "user",
-            "content": json.dumps(
-                {"method": div.method, "result": div.result_json,
-                 "chart_summary": chart_summary},
-                ensure_ascii=False,
-            ),
-        },
+        {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
     ]
 
     # ④ LLM 断卦（非 json_mode 取自然语言文本，对齐 revise）
@@ -453,9 +476,13 @@ async def interpret_divination(
     # ⑤ 即时扣费：chat 已成功（LLM 已调用），扣费失败只记日志不阻断缓存落库
     _charge_llm(user_id, resp["usage"]["total_tokens"], ref=f"divination:{div.id}", what="断卦")
 
-    # ⑥ 断卦文本写入 interpretation_json（缓存），二次 interpret 直接命中
+    # ⑥ 断卦文本写入 interpretation_json（缓存），二次 interpret 直接命中；
+    #    REQ-118：大六壬缓存同时记录 liuren_template，模板不一致视为未命中
     content = resp["content"]
-    div.interpretation_json = {"content": content}
+    if div.method == "liuren":
+        div.interpretation_json = {"content": content, "liuren_template": template}
+    else:
+        div.interpretation_json = {"content": content}
     db.commit()
 
     record_event("divination_interpret", user_id=user_id, case_id=div.case_id,
