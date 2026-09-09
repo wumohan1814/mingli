@@ -68,7 +68,9 @@
       --art-card-back-tarot:url('/art/card-back/card-back-tarot-v2.webp');
       /* REQ-129 E：塔罗牌桌背景（art/tarot-bg/tarot-table.webp，中央 60% 纯净读牌区）→ .rd-box 牌桌容器 */
       --art-tarot-table:url('/art/tarot-bg/tarot-table.webp');
-      --art-card-back-lenormand:url('/art/card-back/card-back-lenormand.webp');
+      --art-card-back-lenormand:url('/art/card-back/card-back-lenormand-v2.webp');
+      /* REQ-130⑤：雷诺曼牌桌背景（art/lenormand-bg/lenormand-table.webp，中央读牌区暗化）→ .rd-box.leno-table 牌桌容器 */
+      --art-table-lenormand:url('/art/lenormand-bg/lenormand-table.webp');
       --art-coin-face:url('/art/liuyao/coin-face.webp');
       --art-coin-back:url('/art/liuyao/coin-back.webp');
       --art-xlr-palm:url('/art/xiaoliuren/xiaoliuren-palm.webp'); /* REQ-106：小六壬掌诀底图 → .xlr-ring */
@@ -1794,6 +1796,8 @@
       /* REQ-129 E：牌桌神秘底纹背景（tarot-table.webp）作牌桌容器底图 cover 全幅；var 未定义回退透明 */
       background-image:var(--art-tarot-table,none);background-size:cover;background-position:center;
       border-radius:16px;overflow:hidden;isolation:isolate}
+    /* REQ-130⑤：雷诺曼读牌板复用 .rd-box 骨架，牌桌背景换雷诺曼航海占卜桌布（中央暗化保卡可读） */
+    .rd-box.leno-table{background-image:var(--art-table-lenormand,none)}
     /* REQ-129 E：桌布暗角柔化（中心读牌区最透、向四缘渐深）保卡片可读；pointer-events:none 不挡点卡放大 */
     .rd-box::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
       background:radial-gradient(ellipse at 50% 42%,rgba(10,8,20,.08) 0%,rgba(10,8,20,.36) 70%,rgba(10,8,20,.52) 100%)}
@@ -17347,18 +17351,48 @@ const LENORMAND_SPREADS = [{
   id: 'single',
   name: '单张',
   desc: '快速指引 · 一事一问，直取核心线索',
-  n: 1
+  n: 1,
+  pos: ['核心线索']
 }, {
   id: 'three',
   name: '三张',
   desc: '起因-现状-走向 · 串联事件的发展脉络',
-  n: 3
+  n: 3,
+  pos: ['起因', '现状', '走向']
+}, {
+  id: 'five',
+  name: '五牌十字',
+  desc: '十字展开 · 背景、处境、隐藏、助力与走向',
+  n: 5,
+  pos: ['过去背景', '当前处境', '隐藏因素', '外在助力', '最终走向']
+}, {
+  id: 'relationship',
+  name: '关系',
+  desc: '关系透视 · 状态、纽带、隐藏与后续走向',
+  n: 5,
+  pos: ['你的状态', '对方状态', '关系纽带', '隐藏因素', '后续走向']
+}, {
+  id: 'decision',
+  name: '选择',
+  desc: '二择一 · 处境、两路走向与关键建议',
+  n: 6,
+  pos: ['当前处境', '选择A', '选择A走向', '选择B', '选择B走向', '关键建议']
 }, {
   id: 'grid',
   name: '九宫格',
   desc: '九格大局 · 环绕中心展开完整图景',
-  n: 9
+  n: 9,
+  pos: ['左上', '上方', '右上', '左侧', '核心', '右侧', '左下', '下方', '右下']
+}, {
+  id: 'element',
+  name: '元素',
+  desc: '四元素 · 火水风土的能量侧重',
+  n: 4,
+  pos: ['火（行动/能量）', '水（情感/直觉）', '风（思维/沟通）', '土（物质/根基）']
 }];
+/* REQ-130①：雷诺曼牌阵 spreadType → 后端 vendored key 映射（grid→nine，其余与
+   vendored LENORMAND_SPREADS key 一致：single/three/five/relationship/decision/element；
+   grandTableau 大桌按需求方口径「单独评估另行」不做） */
 /* 后端雷诺曼牌名 → 前端 LENORMAND_DECK 卡面映射（个别译名差异） */
 const LN_NAME_ALIAS = { '骑士': '骑手', '孩子': '小孩', '路': '路口', '男士': '男人', '女士': '女人', '十字架': '十字' };
 const LN_SUIT_COLOR = { hearts: '#b94a4a', diamonds: '#3a6ea5', spades: '#2c2c2c', clubs: '#4a8a5e' };
@@ -17390,6 +17424,154 @@ function lnCardEl(item, idx) {
       React.createElement('div', { className: 'tc-name' }, item.name),
       React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
 }
+/* ================= REQ-130：雷诺曼两段式（取牌段复用塔罗 REQ-129 机制 + 专属读牌段） =================
+   取牌段：TarotShuffleStage / TarotCutStage / TarotPickBoard 均为参数化通用组件
+   （deckLen 可覆盖为 36、无正逆位、雷诺曼卡面自带 img），仅做别名引用、不改动塔罗实现；
+   读牌段：雷诺曼专属（无正逆位 + 数字角标 + 航海桌布 + 点开放大连看），官方阵型坐标见
+   LENORMAND_READ_SPOTS（参照塔罗 TAROT_READ_SPOTS 坐标模型，positions 对齐 vendored
+   LENORMAND_SPREADS，大桌 grandTableau 按需求方口径不做）。 */
+const LenormandShuffleStage = TarotShuffleStage;
+const LenormandCutStage = TarotCutStage;
+const LenormandPickBoard = TarotPickBoard;
+
+let lastLenormandPickStream = null;
+function buildLenormandPickStream(sp, cardsArr) {
+  if (!sp) return null;
+  const posArr = (sp && Array.isArray(sp.pos)) ? sp.pos : [];
+  const list = (cardsArr || []).map(function (c, i) {
+    const n = lnCardOf(c);
+    return {
+      index: i + 1,
+      position: posArr[i] || n.pos || ('第' + (i + 1) + '张'),
+      name: n.name,
+      img: n.img,
+      suit: n.suit,
+      keywords: (n.keywords || []).slice(),
+      theme: n.theme,
+      detail: n.detail
+    };
+  });
+  return { spread: { id: sp.id, name: sp.name, pos: posArr.slice() }, cards: list };
+}
+function getLenormandPickStream() {
+  return lastLenormandPickStream;
+}
+/* 雷诺曼阵型点位（key=牌阵 id，与 LENORMAND_SPREADS 对齐；无正逆位、卡不旋转 rot 全 0；
+   卡高占板 % = w × ratio ÷ 0.619（对齐 .rd-imgwrap aspect-ratio:100/161）） */
+const LENORMAND_READ_SPOTS = {
+  single: { ratio: 1.05, cap: true, cells: [{ x: 50, y: 45, w: 33, rot: 0 }] },
+  three: { ratio: 1.85, cap: true, cells: tarotRowCells(3, 22.5, 43) },
+  five: { ratio: 1.1, cap: true, cells: [{ x: 50, y: 17, w: 16, rot: 0 }, { x: 50, y: 50, w: 17, rot: 0 }, { x: 50, y: 82, w: 16, rot: 0 }, { x: 24, y: 50, w: 16, rot: 0 }, { x: 76, y: 50, w: 16, rot: 0 }] },
+  relationship: { ratio: 1.9, cap: true, cells: tarotRowCells(5, 15, 45.5) },
+  decision: { ratio: 1.2, cap: true, cells: [{ x: 50, y: 14, w: 13, rot: 0 }, { x: 24, y: 42, w: 15, rot: 0 }, { x: 76, y: 42, w: 15, rot: 0 }, { x: 24, y: 76, w: 15, rot: 0 }, { x: 76, y: 76, w: 15, rot: 0 }, { x: 50, y: 58, w: 14, rot: 0 }] },
+  grid: { ratio: 1.0, cap: false, sideCap: true, cells: tarotGridCells([21.5, 50, 78.5], [20, 50, 80], 15.5) },
+  element: { ratio: 1.0, cap: true, cells: tarotGridCells([30, 70], [35, 65], 18) }
+};
+/* 雷诺曼读牌板：按官方阵型全牌一屏摆放（已翻开正面卡；数字角标 + 可点放大；航海桌布） */
+function LenormandReadBoard({ spread, cards, onOpen }) {
+  const n = cards.length;
+  const spot = (spread && LENORMAND_READ_SPOTS[spread.id]) || null;
+  let ratio = 0.9;
+  let cells = null;
+  let sideCap = false;
+  if (spot) {
+    ratio = spot.ratio;
+    cells = spot.cells;
+    sideCap = !!spot.sideCap;
+  } else {
+    // 兜底：未知牌阵按张数行排布（仍一屏摆全、可点放大）
+    if (n <= 1) { ratio = 1.05; cells = [{ x: 50, y: 45, w: 30, rot: 0 }]; }
+    else if (n <= 5) { ratio = 1.9; cells = tarotRowCells(n, n <= 3 ? 22 : 15.5, 46); }
+    else {
+      ratio = 1.25;
+      const rows = Math.ceil(n / 3);
+      const ys = []; for (let r = 0; r < rows; r++) ys.push(rows === 1 ? 50 : 36 + r * (72 / (rows - 1)));
+      const all = [];
+      for (let r = 0; r < rows; r++) for (let cc = 0; cc < 3; cc++) { const k = r * 3 + cc; if (k < n) all.push({ x: [21.5, 50, 78.5][cc], y: ys[r], w: n <= 6 ? 15 : 13, rot: 0 }); }
+      cells = all;
+    }
+  }
+  const capShow = sideCap ? false : (spot ? spot.cap !== false : n <= 5);
+  const capFs = n <= 1 ? 12.5 : (n <= 3 ? 11 : (n <= 5 ? 9.5 : 8.6));
+  const bdgFs = n <= 3 ? 12 : (n <= 5 ? 11 : (n <= 7 ? 10 : 9.5));
+  const kids = cards.map(function (c, i) {
+    const cell = (cells && cells[i]) || { x: 50, y: 50, w: 13, rot: 0 };
+    const wP = cell.w || 13;
+    const rot = cell.rot || 0;
+    const hF = (wP * ratio) / 0.619;
+    const leftP = cell.x - wP / 2;
+    const topP = cell.y - hF / 2;
+    const label = c.position || ('第' + (i + 1) + '位');
+    const imgInner = c.img
+      ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
+      : React.createElement('div', { className: 'rd-ph', style: { background: LN_SUIT_COLOR[c.suit] || '#3E7C6B' } }, c.name);
+    const face = React.createElement('div', { className: 'rd-imgwrap' }, imgInner);
+    const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
+    const cellKids = [inner];
+    cellKids.push(React.createElement('span', { key: 'b', className: 'rd-badge', style: { fontSize: bdgFs } }, (i + 1)));
+    if (sideCap) {
+      cellKids.push(React.createElement('span', { key: 'sc', className: 'rd-sidecap', style: { left: (cell.x + wP / 2 + 1.8) + '%', top: cell.y + '%', width: (96 - (cell.x + wP / 2 + 1.8)) + '%' } }, (i + 1) + '、' + label));
+    } else if (capShow) {
+      cellKids.push(React.createElement('div', { key: 'cap', className: 'rd-cap' }, label));
+    }
+    return React.createElement('div', { key: 'c' + i, className: 'rd-cell', style: { left: leftP + '%', top: topP + '%', width: wP + '%' }, role: 'button', 'aria-label': '第' + (i + 1) + '位·' + label, onClick: function () { if (onOpen) onOpen(i); } }, cellKids);
+  });
+  return React.createElement('div', { className: 'rd-box leno-table', style: { aspectRatio: String(ratio), '--rd-cap-fs': capFs + 'px' } }, kids);
+}
+/* 放大连看浮层（雷诺曼无正逆位；正文=主题/细节段落 + 关键词；约 2.5s 自动收起；上一张/下一张连看） */
+function LenormandReadZoom({ cards, idx, onClose, onGo }) {
+  const card = (cards && cards[idx]) || null;
+  const [closing, setClosing] = useState(false);
+  const closeOnce = useRef(false);
+  const fireClose = function () {
+    if (closeOnce.current) return;
+    closeOnce.current = true;
+    setClosing(true);
+    setTimeout(function () { if (onClose) onClose(); }, 190);
+  };
+  const fireRef = useRef(fireClose);
+  fireRef.current = fireClose;
+  useEffect(function () {
+    if (!card) return undefined;
+    const t = setTimeout(function () { fireRef.current(); }, 2500);
+    return function () { clearTimeout(t); };
+  }, [idx]);
+  if (!card) return null;
+  const n = cards.length;
+  const bodyLines = [];
+  if (card.theme) bodyLines.push(card.theme);
+  if (card.detail) bodyLines.push(card.detail);
+  const kwLine = (card.keywords && card.keywords.length) ? card.keywords.join(' / ') : '';
+  const go = function (e, ni) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (ni < 0 || ni >= n || !onGo) return;
+    onGo(ni);
+  };
+  const title = React.createElement('div', { className: 'rd-ztitle' }, React.createElement('b', null, '第 ' + (card.index || (idx + 1)) + ' 位'), ' · ', card.position || '');
+  const closeBtn = React.createElement('button', { type: 'button', className: 'rd-zclose', 'aria-label': '收起大图', onClick: function (e) { e.stopPropagation(); fireClose(); } }, '✕');
+  const sub = React.createElement('div', { className: 'rd-zsub' }, '约 2.5 秒后自动收起 · 可点「上一张 / 下一张」连看');
+  const imgEl = card.img
+    ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg', src: card.img, alt: card.name })
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || '#3E7C6B' } }, card.name);
+  const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '');
+  const boxKids = [
+    React.createElement('div', { key: 'bar' + idx, className: 'rd-count' }),
+    React.createElement('div', { key: 'top', className: 'rd-ztop' }, title, closeBtn),
+    sub,
+    imgEl,
+    nameRow
+  ];
+  bodyLines.forEach(function (t, k) {
+    boxKids.push(React.createElement('div', { key: 'b' + k, className: 'rd-zbody' }, t));
+  });
+  if (kwLine) boxKids.push(React.createElement('div', { key: 'kw', className: 'rd-zkw' }, '关键词：', kwLine));
+  boxKids.push(React.createElement('div', { key: 'nav', className: 'rd-znav' },
+    React.createElement('button', { type: 'button', className: 'rd-zbtn', disabled: idx <= 0, onClick: function (e) { go(e, idx - 1); } }, '‹ 上一张'),
+    React.createElement('span', { className: 'rd-zcount' }, (idx + 1) + '/' + n),
+    React.createElement('button', { type: 'button', className: 'rd-zbtn', disabled: idx >= n - 1, onClick: function (e) { go(e, idx + 1); } }, '下一张 ›')));
+  const box = React.createElement('div', { className: 'rd-zoom-box', onClick: function (e) { e.stopPropagation(); } }, boxKids);
+  return React.createElement('div', { className: 'rd-zoom' + (closing ? ' closing' : ''), onClick: function () { fireClose(); } }, box);
+}
 function LenormandPage({
   onNavigate
 }) {
@@ -17409,10 +17591,12 @@ function LenormandPage({
   const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // LENORMAND_DECK 条目（含 num）
   const [wasManual, setWasManual] = useState(false);
-  // REQ-061：雷诺曼抽牌动效阶段机（deal=出牌动画 → down=背朝上待翻 → done=全翻开=v2 布局；雷诺曼无正逆位）
+  // REQ-130③：雷诺曼取牌段阶段机（复用塔罗 REQ-129：shuffle=洗牌 → cut=切牌三摞（可跳过） →
+  // fan=扇形自选 → done=收扇交读牌段）；雷诺曼无正逆位；旧「一键全翻 + 背朝上待翻」呈现已被
+  // REQ-130 两段式取代（对应塔罗 REQ-129 C 口径，雷诺曼侧同构）。
   const [dealStage, setDealStage] = useState('done');
-  const [flipped, setFlipped] = useState({});
-  const [bulkFlip, setBulkFlip] = useState(false);
+  // REQ-130②：读牌段「点开放大连看」当前牌索引（null=收起；0-based，对应 readStream.cards）
+  const [zoomIdx, setZoomIdx] = useState(null);
   const lnApiType = function (sp) { return sp && sp.id === 'grid' ? 'nine' : (sp ? (sp.id || 'single') : 'single'); };
   // REQ-043 v2：与塔罗对齐 —— 已删除「预测方向」步骤，流程 = ① 占问问题（选填，REQ-079）→ ② 选择牌阵
   const load = async sp => {
@@ -17429,8 +17613,8 @@ function LenormandPage({
     setInterpErr('');
     setLoading(true);
     setWasManual(false);
-    setFlipped({});
-    setBulkFlip(false);
+    setZoomIdx(null);
+    lastLenormandPickStream = null;
     setDealStage('done');
     try {
       const res = await api('/divinations', {
@@ -17439,8 +17623,8 @@ function LenormandPage({
       });
       const d = (res && res.data) || res;
       setData(d);
-      // REQ-061：取数先行 → 动画开（且⑥图开）进入出牌演出；关=直接以 v2 正面布局出结果
-      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('deal'); else setDealStage('done');
+      // REQ-130：取数先行（结果不变）→ 动画开（且图开）进入「洗牌→切牌→扇形自选」取牌段；关=直接 v2 布局出结果
+      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || '雷诺曼抽牌失败，请重试。');
     } finally {
@@ -17457,8 +17641,8 @@ function LenormandPage({
     setInterpErr('');
     setData(null);
     setWasManual(true);
-    setFlipped({});
-    setBulkFlip(false);
+    setZoomIdx(null);
+    lastLenormandPickStream = null;
     setDealStage('done');
     setStep('pick');
   };
@@ -17496,10 +17680,10 @@ function LenormandPage({
       const d = (res && res.data) || res;
       setData(d);
       setStep('draw');
-      // REQ-061：手动路径不重演抽牌动画（用户已真实抽牌）→ 直接 v2 正面布局
+      // REQ-130：手动路径不重演抽牌演出（用户已真实抽牌）→ 直接读牌段布局
       setDealStage('done');
-      setFlipped({});
-      setBulkFlip(false);
+      setZoomIdx(null);
+      lastLenormandPickStream = null;
     } catch (e) {
       setErrored((e && e.message) || '雷诺曼手动选牌提交失败，请重试。');
     } finally {
@@ -17527,8 +17711,8 @@ function LenormandPage({
     setInterp('');
     setInterpErr('');
     setPicks([]);
-    setFlipped({});
-    setBulkFlip(false);
+    setZoomIdx(null);
+    lastLenormandPickStream = null;
     setDealStage('done');
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
     setMode(tcAskNextDefault(mode));
@@ -17542,8 +17726,8 @@ function LenormandPage({
       setInterp('');
       setInterpErr('');
       setPicks([]);
-      setFlipped({});
-      setBulkFlip(false);
+      setZoomIdx(null);
+      lastLenormandPickStream = null;
       setDealStage('done');
       setStep('pick');
     } else {
@@ -17558,11 +17742,29 @@ function LenormandPage({
   const askQ = (question || '').trim();
   // REQ-043 v2：draw 顶部承接所填占问问题文本
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  // REQ-130②：读牌段数据流 —— 优先消费取牌段 lastLenormandPickStream（getLenormandPickStream()）；
+  // 动画关/手动录入等直出路径在缓存缺失或不匹配当前牌阵时，按当前成牌确定性重建（只读消费，不改抽牌结果/计费/数据流结构）
+  let readStream = getLenormandPickStream();
+  if (readStream && (!spread || !readStream.spread || readStream.spread.id !== spread.id)) readStream = null;
+  if (!readStream && data && spread && cards.length) readStream = buildLenormandPickStream(spread, cards);
+  const readSpread = (readStream && readStream.spread) || null;
+  const readCards = (readStream && Array.isArray(readStream.cards)) ? readStream.cards : [];
+  // REQ-130：扇形抽满 N 张自动收扇 → 落定真实牌序数据流（读牌段经 getLenormandPickStream() 消费，position 即 pos[i]）→ 进入结果段
+  const handlePickAllRevealed = function () {
+    const stream = buildLenormandPickStream(spread, cards);
+    if (stream) lastLenormandPickStream = stream;
+    setDealStage('done');
+  };
   // REQ-043 v2：解释全部归拢到下方段落 —— 自第一张起：卡位 + 牌名 + 主题 + 细节
+  // REQ-130②：收扇后各牌均已翻开 → 条目逐条放行，且可点按放大对应牌（与摆位区点卡同源）
+  const meanTappable = cardImagesOn && readCards.length > 0;
   const meanItems = cards.map(function (c, i) {
     const it = lnCardOf(c);
     const kwLine = (it.keywords && it.keywords.length) ? it.keywords.join(' / ') : '';
-    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' },
+    const itemProps = meanTappable
+      ? { key: 'mean' + i, className: 'mean-item rd-mean-item rd-item-in', style: { animationDelay: (i * 70) + 'ms' }, role: 'button', 'aria-label': '查看第' + (i + 1) + '张牌详解', onClick: function () { setZoomIdx(i); } }
+      : { key: 'mean' + i, className: 'mean-item' };
+    return React.createElement('div', itemProps,
       React.createElement('div', { className: 'mi-head' },
         React.createElement('span', { className: 'mi-pos' }, it.pos || ('第' + (i + 1) + '张')),
         React.createElement('span', { className: 'mi-name' }, it.name)),
@@ -17570,57 +17772,6 @@ function LenormandPage({
       it.detail ? React.createElement('div', { className: 'mi-txt' }, it.detail) : null,
       kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
   });
-  // REQ-061：雷诺曼 3D 翻牌（同构，无正逆位）—— 单张点击翻转 / 「一键全翻」stagger
-  const flipOne = function (i) {
-    if (dealStage !== 'down' || flipped[i]) return;
-    const next = Object.assign({}, flipped);
-    next[i] = true;
-    setFlipped(next);
-    const left = cards.filter(function (c, k) { return !next[k]; }).length;
-    if (!left) setTimeout(function () { setDealStage('done'); }, 780);
-  };
-  const flipAll = function () {
-    if (dealStage !== 'down') return;
-    const left = cards.filter(function (c, i) { return !flipped[i]; }).length;
-    if (!left) { setDealStage('done'); return; }
-    const all = {};
-    cards.forEach(function (c, i) { all[i] = true; });
-    setBulkFlip(true);
-    setFlipped(all);
-    setTimeout(function () { setBulkFlip(false); setDealStage('done'); }, 700 + cards.length * 110);
-  };
-  const flipCardCol = function (c, i, interactive) {
-    const n = lnCardOf(c);
-    const flippedNow = !!flipped[i];
-    const front = React.createElement(ArtCardFront, { img: n.img, name: n.name, suit: n.suit, phColor: (LN_SUIT_COLOR[n.suit] || '#3E7C6B') });
-    const card = React.createElement('div', {
-      className: 'flip-card' + (flippedNow ? ' flipped' : '') + (interactive ? '' : ' lock'),
-      style: { '--fdi': i },
-      onClick: interactive ? function () { flipOne(i); } : undefined
-    }, React.createElement('div', { className: 'fc-inner' }, React.createElement(ArtCardBack, { kind: 'leno' }), front));
-    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' · ') : '';
-    const kids = [];
-    if (n.pos) kids.push(React.createElement('div', { key: 'pos', className: 'tc-pos' }, n.pos));
-    kids.push(card);
-    kids.push(React.createElement('div', { key: 'rv', className: 'fc-reveal' },
-      React.createElement('div', { className: 'fc-name' }, n.name),
-      kwLine ? React.createElement('div', { className: 'fc-kw' }, kwLine) : null));
-    return React.createElement('div', { key: 'fc' + i, className: 'fan-col' + (flippedNow ? ' flipped' : '') }, kids);
-  };
-  const flipMeanItem = function (c, i) {
-    const n = lnCardOf(c);
-    const revealed = !!flipped[i];
-    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
-    const kids = [
-      React.createElement('div', { key: 'head', className: 'mi-head' },
-        React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
-        React.createElement('span', { className: 'mi-name' }, n.name)),
-      React.createElement('div', { key: 'lock', className: 'mi-lock' }, '该牌尚未翻开 · 牌义待揭示')];
-    if (n.theme) kids.push(React.createElement('div', { key: 'th', className: 'mi-theme' }, n.theme));
-    if (n.detail) kids.push(React.createElement('div', { key: 'dt', className: 'mi-txt' }, n.detail));
-    if (kwLine) kids.push(React.createElement('div', { key: 'kw', className: 'mi-kw' }, '关键词：', kwLine));
-    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' + (revealed ? ' revealed' : ' locked') }, kids);
-  };
   let body = null;
   if (loading && step === 'draw') {
     body = React.createElement('div', { className: 'card' },
@@ -17633,49 +17784,68 @@ function LenormandPage({
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
-    const bodyKids = [
-      React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
-      askEcho
-    ];
-    if (cardImagesOn) {
-      if (dealStage === 'deal') {
-        const cols = cards.map(function (c, i) { return flipCardCol(c, i, false); });
-        bodyKids.push(React.createElement(DealFly, { key: 'deal', cols: cols, onDone: function () { setDealStage('down'); } }));
-      } else if (dealStage === 'down') {
-        const cols = cards.map(function (c, i) { return flipCardCol(c, i, true); });
-        const flippedN = Object.keys(flipped).filter(function (k) { return flipped[k]; }).length;
-        const left = cards.length - flippedN;
-        const fan = React.createElement('div', { key: 'fan', className: 'fan-zone' + (bulkFlip ? ' bulk' : '') },
-          React.createElement('div', { className: 'card-fan' }, cols));
-        const ctrl = React.createElement('div', { key: 'ctrl', className: 'flip-ctrl' },
-          React.createElement('span', { className: 'fc-progress' },
-            '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
-            left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
-          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? UI_COPY.buttons.flip_all : UI_COPY.buttons.flip_done));
-        const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
-          React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
-          cards.map(function (c, i) { return flipMeanItem(c, i); }));
-        bodyKids.push(fan, mp, ctrl);
-      } else {
-        bodyKids.push(React.createElement('div', { key: 'fan', className: 'card-fan' }, cards.map(function (c, i) {
-          return lnCardEl(lnCardOf(c), i);
-        })));
+    // ================= REQ-130：取牌段（shuffle/cut/fan）与结果段（done）分流 =================
+    // 取牌段演出仅当 动画开 && 牌面图开 && 牌阵有 pos && 非手动路径 时进入（手动路径直接 done）
+    const animOn = tcShouldPlayAnim();
+    const hasPos = Boolean(spread && spread.pos && spread.pos.length);
+    const pickPlaying = cardImagesOn && animOn && hasPos && (dealStage === 'shuffle' || dealStage === 'cut' || dealStage === 'fan');
+    if (pickPlaying) {
+      const bodyKids = [
+        React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+        askEcho
+      ];
+      if (dealStage === 'shuffle') {
+        bodyKids.push(React.createElement(LenormandShuffleStage, {
+          key: 'pk',
+          onDone: function () { setDealStage('cut'); },
+          onSkip: function () { setDealStage('done'); }
+        }));
+      } else if (dealStage === 'cut') {
+        bodyKids.push(React.createElement(LenormandCutStage, {
+          key: 'pk',
+          onDone: function () { setDealStage('fan'); },
+          onSkip: function () { setDealStage('done'); },
+          onSkipCut: function () { setDealStage('fan'); }
+        }));
+      } else if (dealStage === 'fan') {
+        bodyKids.push(React.createElement(LenormandPickBoard, {
+          key: 'pk' + (data.id || 'draw'),
+          pos: spread.pos,
+          cards: cards.map(function (c) { return lnCardOf(c); }),
+          deckLen: LENORMAND_DECK.length,
+          onAllRevealed: handlePickAllRevealed,
+          onRedo: function () { redo(); },
+          onBackMenu: backMenu
+        }));
+      }
+      body = React.createElement('div', { className: 'card' }, bodyKids);
+    } else {
+      // 结果段（done）：收扇后 / 动画关 / 牌面图关 / 手动录入 —— 读牌段（REQ-130②：官方阵型摆位一屏 + 点开放大连看）；牌面图关走纯文字
+      const bodyKids = [
+        React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+        askEcho
+      ];
+      if (cardImagesOn && readCards.length && readSpread) {
+        // REQ-130② 读牌段：官方真实阵型一屏展示（已翻开正面卡）→ 点卡放大连看
+        bodyKids.push(React.createElement('div', { key: 'rdh', className: 'rd-hint' }, '全牌按「' + readSpread.name + '」官方阵型一屏摆位 · 点任意一张放大读解（约 2.5 秒后自动收起，可「上一张 / 下一张」连看）'));
+        bodyKids.push(React.createElement(LenormandReadBoard, { key: 'rdb', spread: readSpread, cards: readCards, onOpen: function (i) { setZoomIdx(i); } }));
         bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
           React.createElement('div', { className: 'mp-title' }, '各张牌义'),
           meanItems));
+      } else {
+        // REQ-066⑥ 关 / 无牌面数据兜底：纯文字列表模式（无任何卡面/牌背/扇形渲染）
+        bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '抽到的牌' : '抽到的牌（纯文字模式）'),
+          meanItems));
       }
-    } else {
-      bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
-        meanItems));
+      if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
+      bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '深度解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
+      bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+      if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
+        React.createElement('div', { className: 'interp-title' }, '深度解读'),
+        React.createElement('div', { className: 'interp-body' }, interp)));
+      body = React.createElement('div', { className: 'card' }, bodyKids);
     }
-    if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
-    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '深度解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
-    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
-    if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
-      React.createElement('div', { className: 'interp-title' }, '深度解读'),
-      React.createElement('div', { className: 'interp-body' }, interp)));
-    body = React.createElement('div', { className: 'card' }, bodyKids);
   }
   // REQ-043 v2：menu = ① 占问问题（选填，REQ-079）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：牌阵上方提供「自动抽牌 / 手动选牌」并行切换
@@ -17746,15 +17916,29 @@ function LenormandPage({
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.reselect_spread),
       React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== need }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + need + '）')));
   // REQ-043 v2：draw 底部三按钮全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项，保持）
+  // REQ-130：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
+  const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
   const drawFoot = React.createElement(React.Fragment, null,
     body,
-    React.createElement('div', { className: 'back-row fill' },
+    inPickPlay ? null : React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
+  // REQ-130②：放大连看浮层（点牌/点清单条目打开；约 2.5s 自动收起；「上一张/下一张」手动连看）
+  const zoomCard = (zoomIdx !== null && cardImagesOn && readCards[zoomIdx]) ? readCards[zoomIdx] : null;
+  const zoomOverlay = zoomCard
+    ? React.createElement(LenormandReadZoom, {
+        key: 'zoom' + zoomIdx,
+        cards: readCards,
+        idx: zoomIdx,
+        onClose: function () { setZoomIdx(null); },
+        onGo: function (ni) { if (ni >= 0 && ni < readCards.length) setZoomIdx(ni); }
+      })
+    : null;
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'nine', size: 22 }), ' 雷诺曼'),
-    step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot));
+    step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot),
+    zoomOverlay);
 }
 
 /* ---------- 星座（SVG 星盘，纯前端自绘） ---------- */
