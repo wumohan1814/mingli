@@ -66,6 +66,8 @@
       --art-ssgw-stick:url('/art/ssgw/ssgw-stick.webp');
       /* REQ-129⑥：塔罗牌背换用新素材 v2（根绝对路径；旧 card-back-tarot.webp 已下线） */
       --art-card-back-tarot:url('/art/card-back/card-back-tarot-v2.webp');
+      /* REQ-129 E：塔罗牌桌背景（art/tarot-bg/tarot-table.webp，中央 60% 纯净读牌区）→ .rd-box 牌桌容器 */
+      --art-tarot-table:url('/art/tarot-bg/tarot-table.webp');
       --art-card-back-lenormand:url('/art/card-back/card-back-lenormand.webp');
       --art-coin-face:url('/art/liuyao/coin-face.webp');
       --art-coin-back:url('/art/liuyao/coin-back.webp');
@@ -1788,8 +1790,14 @@
        板高以 aspect-ratio 控制，整幅一屏、不横向翻页；点卡放大 → 顶条「第 N 位·牌位名」+ 图下牌义 → 2.5s 自动收起 + 上一张/下一张连看。 */
     .rd-wrap{margin-top:4px}
     .rd-hint{font-size:12px;color:var(--text-3);text-align:center;margin:0 0 8px;line-height:1.7}
-    .rd-box{position:relative;width:100%;margin:4px auto 2px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-    .rd-cell{position:absolute;padding:0;border:0;background:none;text-align:center;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+    .rd-box{position:relative;width:100%;margin:4px auto 2px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
+      /* REQ-129 E：牌桌神秘底纹背景（tarot-table.webp）作牌桌容器底图 cover 全幅；var 未定义回退透明 */
+      background-image:var(--art-tarot-table,none);background-size:cover;background-position:center;
+      border-radius:16px;overflow:hidden;isolation:isolate}
+    /* REQ-129 E：桌布暗角柔化（中心读牌区最透、向四缘渐深）保卡片可读；pointer-events:none 不挡点卡放大 */
+    .rd-box::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+      background:radial-gradient(ellipse at 50% 42%,rgba(10,8,20,.08) 0%,rgba(10,8,20,.36) 70%,rgba(10,8,20,.52) 100%)}
+    .rd-cell{position:absolute;z-index:1;padding:0;border:0;background:none;text-align:center;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
     .rd-cell .rd-rot{position:relative;z-index:1;display:block}
     .rd-cell .rd-rot.layer2{z-index:3}
     .rd-cell:active .rd-imgwrap{transform:scale(.95)}
