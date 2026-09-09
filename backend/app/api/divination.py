@@ -5,8 +5,8 @@
 计费契约：
   - POST /api/divinations 起卦 = 确定性计算，免费：把 {method, ...seed} 转发给常驻
     排盘 Node 服务（paipan-node/server.mjs 的 POST /divination，vendored
-    mingyu-core 六爻/梅花/小六壬/大六壬(liuren)/灵签/雷诺曼(lenormand)），成功后落
-    divinations 表并写 divination_cast 埋点，零 LLM 零扣费。
+    mingyu-core 六爻/梅花/小六壬/大六壬(liuren)/金口诀(jinkoujue)/灵签/雷诺曼(lenormand)），
+    成功后落 divinations 表并写 divination_cast 埋点，零 LLM 零扣费。
   - GET /api/divinations/{id} 读单条 = 只读（零 LLM 零扣费），带 user_id 隔离。
   - POST /api/divinations/{id}/interpret 断卦 = LLM 可选付费：命中
     interpretation_json 缓存直接返回（零 LLM 零扣费）；未命中先 check_balance
@@ -61,7 +61,7 @@ DIVINATION_FOCUS_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" /
 LIUYAO_TEXTS_PATH = Path(__file__).resolve().parents[1] / "data" / "liuyao_yaoci.json"
 
 # Node /divination 当前支持的方法（未知 method 在 pydantic 层提前拦成 400 参数错误）
-DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "liuren", "ssgw", "lenormand")
+DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "ssgw", "lenormand")
 
 # REQ-075 焦点详解六枚举（稳定 key，前端逐项点击透传）
 DIVINATION_FOCUS_KEYS = (
@@ -194,9 +194,9 @@ def _case_chart_summary(db: Session, case_id: Optional[int]) -> Optional[dict]:
 
 # --- 请求模型 ---
 class CastDivinationRequest(BaseModel):
-    method: Literal["liuyao", "meihua", "xiaoliuren", "liuren", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案；liuren=大六壬）")
+    method: Literal["liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案；liuren=大六壬；jinkoujue=金口诀）")
     case_id: Optional[int] = Field(default=None, description="关联国学档案（可空；国学类起卦要求有档案，MVP 允许空由前端拦截；lenormand 不要求）")
-    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）")
+    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）；jinkoujue 的 seed.params 可带 method/branch/number（起课方式四选一，缺省 time）")
 
 
 class InterpretDivinationRequest(BaseModel):
@@ -430,6 +430,8 @@ async def interpret_divination(
     REQ-118：method == liuren 时 body 可带 liuren_template（通用/感情/事业/财富，
     对齐 vendored LIUREN_TEMPLATE_OPTIONS，缺省 general），随 user JSON 注入断课 prompt；
     其余方法忽略 body（向后兼容无 body 调用）。
+    REQ-119：method == jinkoujue（金口诀）走同一通用断课链路——无模板选择，缓存不带
+    模板键，断课 prompt 见 divination.md「金口诀：四位一体断课体系」章节（纯追加）。
     """
     user_id = get_user_id_from_token(authorization)
     div = _get_owned_divination(db, div_id, user_id)
