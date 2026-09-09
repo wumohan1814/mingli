@@ -220,7 +220,12 @@ def submit_case_via_share(
         raise _err(400, "姓名必填")
 
     # ③ 复用 cases 建档逻辑（与 POST /api/cases 同构）：phone/email 落独立列，
-    #    input_json 落出生等其余建档字段（不含 name/phone/email）
+    #    input_json 落出生等其余建档字段（不含 name/phone/email）；
+    #    REQ-113①：代建档案按同一「无默认则首份即默认」规则（发起者尚无默认档案
+    #    时 default=True，已有默认则保持 False）——多用户隔离：判定只查发起者本人
+    has_default = (
+        db.query(Case.id).filter_by(user_id=owner.id, default=True).first() is not None
+    )
     case = Case(
         user_id=owner.id,
         name=name,
@@ -228,6 +233,7 @@ def submit_case_via_share(
         phone=body.phone,
         email=body.email,
         status=CaseStatus.created,
+        default=not has_default,
     )
     db.add(case)
 
