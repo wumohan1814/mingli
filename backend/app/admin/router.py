@@ -58,10 +58,18 @@ from app.models import (
     RechargeCode,
     RefreshToken,
     RouteDecision,
+    SystemConfig,
     User,
 )
 from app.models.feedback import Feedback
-from app.models.ops import AdminAuditLog, AssetSlot, ErrorReport, Event, PromptVersion
+from app.models.ops import (
+    AdminAuditLog,
+    AdminUser,
+    AssetSlot,
+    ErrorReport,
+    Event,
+    PromptVersion,
+)
 from app.profile.archive import build_archive
 
 logger = logging.getLogger(__name__)
@@ -227,6 +235,12 @@ class AssetUpsertRequest(BaseModel):
     key: str | None = Field(default=None, max_length=64)
     opacity: float | None = Field(default=None, ge=0, le=1)
     mask_color: str | None = Field(default=None, max_length=16)
+
+
+class ConfigUpdateRequest(BaseModel):
+    """PUT /admin/config/{key} body（REQ-085）：value 为配置新值（数字或字符串，
+    按键类型白名单校验后以规范化字符串落库 system_configs.value）。"""
+    value: str | int | float
 
 
 # --- 提示词工具 ---
@@ -1528,3 +1542,167 @@ def delete_asset(
     )
     db.commit()
     return {"code": 0, "message": "ok", "data": {"key": key, "deleted": True}}
+
+
+# =========================================================================== #
+# 运营配置（REQ-085，/admin/config/*）
+#
+# system_configs 表（业务库 taichu_analytics，见 models.analytics.SystemConfig：
+# key PK / value / description / updated_by / updated_at）存后台可动态改的运营配置，
+# 种子键（recharge_rate / free_credit_on_register）由 database.ensure_schema 幂等
+# 初始化（首启取 config 默认 / env 覆盖值落库）。运行时读取点每次查表、无启动缓存，
+# PUT 后**立即生效无需重启**（recharge_rate 折算率的金数据充值读取点
+# app.credits.poller 已改为「查 system_configs，无则回退 settings」）。
+#
+# 写安全：PUT 只允许改白名单键（CONFIG_SPEC），按 key 类型校验 value，防任意键
+# 注入 / 脏值；GET 返回全量行。鉴权：viewer 可读、operator+ 可写（对齐提示词 /
+# 素材面板权限模式）。审计：写必记 AdminAuditLog，action=edit_config。
+# =========================================================================== #
+# 白名单键 → {value_type, min, description}；value_type ∈ float（数字 > min）/
+# int（整数 >= min）。description 为中文说明（GET 时 DB 该列为空则回填展示，
+# 与 ensure_schema 种子键一一对应，新增键须同步 database.py 种子）。
+CONFIG_SPEC: dict[str, dict] = {
+    "recharge_rate": {
+        "value_type": "float",
+        "min": 0.0,  # 严格 > 0：折算率不能为 0 / 负
+        "description": "充值折算率：1 元 = N 存储单位（默认 10 = 1 元 = 10 单位 = 1 万 tokens）",
+    },
+    "free_credit_on_register": {
+        "value_type": "int",
+        "min": 0,
+        "description": "新用户注册赠送余额（存储单位；默认 220 = 22 元 = 22 万 tokens）",
+    },
+}
+
+
+def _validate_config_value(key: str, raw: str | int | float) -> str:
+    """按 CONFIG_SPEC 校验并规范化 value → 落库字符串；非法抛 BizError(ERR_PARAM)。
+
+    - 未知键 / 无 spec：直接拒绝（防任意键注入）；
+    - float：数字且 > min，整数值落 "10"、非整落 "12.5"（与 ensure_schema 种子同口径）；
+    - int：整数且 >= min（拒绝 "12.5" / "abc" 等非整数串）。
+    """
+    spec = CONFIG_SPEC.get(key)
+    if spec is None:
+        raise BizError(ERR_PARAM, f"未知配置键: {key}（仅允许修改白名单键）")
+    if isinstance(raw, bool):  # bool 是 int 子类，先排除（"true" 不应被当作 1）
+        raise BizError(ERR_PARAM, f"配置 {key} 的值类型应为 {spec['value_type']}")
+    vtype = spec["value_type"]
+    if vtype == "float":
+        try:
+            num = float(raw)
+        except (TypeError, ValueError):
+            raise BizError(ERR_PARAM, f"配置 {key} 须为数字（当前 {raw!r}）")
+        if not num > spec["min"]:
+            raise BizError(ERR_PARAM, f"配置 {key} 须大于 {spec['min']:g}")
+        return str(int(num)) if num.is_integer() else str(num)
+    if vtype == "int":
+        if isinstance(raw, float):
+            if not raw.is_integer():
+                raise BizError(ERR_PARAM, f"配置 {key} 须为整数（当前 {raw!r}）")
+            num = int(raw)
+        else:
+            try:
+                num = int(str(raw))  # "12" ok；"12.5"/"abc" 抛 ValueError
+            except (TypeError, ValueError):
+                raise BizError(ERR_PARAM, f"配置 {key} 须为整数（当前 {raw!r}）")
+        if num < spec["min"]:
+            raise BizError(ERR_PARAM, f"配置 {key} 须不小于 {spec['min']}")
+        return str(num)
+    raise BizError(ERR_INTERNAL, f"未实现配置类型校验: {vtype}")
+
+
+@router.get("/config")
+def list_config(
+    _admin: dict = Depends(require_role("viewer")),
+    db: Session = Depends(get_analytics_db),
+):
+    """运营配置全量（system_configs，viewer 可读）。
+
+    返回所有行（按 key 排序），每项 {key, value, description, updated_at,
+    updated_by}；description 为 DB 列值，为空时回填 CONFIG_SPEC 中文说明
+    （种子行 description 为 NULL，展示层统一有说明）。
+    """
+    rows = db.query(SystemConfig).order_by(SystemConfig.key).all()
+    items = [
+        {
+            "key": r.key,
+            "value": r.value,
+            "description": r.description
+            or CONFIG_SPEC.get(r.key, {}).get("description"),
+            "updated_at": r.updated_at.isoformat() if r.updated_at else None,
+            "updated_by": r.updated_by,
+        }
+        for r in rows
+    ]
+    return {"code": 0, "message": "ok", "data": {"items": items}}
+
+
+@router.put("/config/{key}")
+def update_config(
+    key: str,
+    req: ConfigUpdateRequest,
+    admin: dict = Depends(require_role("operator")),
+    db: Session = Depends(get_analytics_db),
+    ops_db: Session = Depends(get_ops_db),
+):
+    """更新运营配置（operator+，仅白名单键）：校验 → upsert system_configs 行
+    （业务库）→ 审计 edit_config（运维库）。
+
+    写入即热生效：运行时读取点每次查表（如金数据轮询的 recharge_rate 折算率），
+    无需重启。updated_by 记操作者（优先 admin 用户名，查不到回退 admin_id 字符串）。
+    事务顺序：业务库 commit → 审计库 commit（沿袭 create_user 等既有模式）。
+    """
+    key = (key or "").strip()
+    if key not in CONFIG_SPEC:
+        raise BizError(ERR_PARAM, f"未知配置键: {key}（仅允许修改白名单键）")
+    new_value = _validate_config_value(key, req.value)
+
+    now = datetime.utcnow()
+    row = db.query(SystemConfig).filter_by(key=key).first()
+    old_value = row.value if row is not None else None
+    if row is None:  # 老库缺种子行时兜底插入（白名单键）
+        row = SystemConfig(
+            key=key,
+            value=new_value,
+            description=CONFIG_SPEC[key]["description"],
+            updated_at=now,
+        )
+        db.add(row)
+    else:
+        row.value = new_value
+        row.updated_at = now
+
+    updater = str(admin["admin_id"])
+    try:
+        au = ops_db.query(AdminUser).filter_by(id=admin["admin_id"]).first()
+        if au is not None and au.username:
+            updater = au.username
+    except Exception:
+        logger.warning(
+            "查询 admin 用户名失败，updated_by 回退 admin_id=%s", admin["admin_id"], exc_info=True
+        )
+    row.updated_by = updater
+    db.commit()
+
+    ops_db.add(
+        AdminAuditLog(
+            admin_user_id=admin["admin_id"],
+            action="edit_config",
+            target_type="config",
+            target_id=key,
+            detail=f"更新运营配置 {key}: {old_value!r} → {new_value!r}",
+        )
+    )
+    ops_db.commit()
+    return {
+        "code": 0,
+        "message": "ok",
+        "data": {
+            "key": key,
+            "value": new_value,
+            "description": CONFIG_SPEC[key]["description"],
+            "updated_at": now.isoformat(timespec="seconds"),
+            "updated_by": updater,
+        },
+    }
