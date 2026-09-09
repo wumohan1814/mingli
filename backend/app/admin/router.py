@@ -1284,6 +1284,8 @@ def agent_reset_user_case(
 #                method-astrology / method-tarot / method-lenormand（6 槽）
 #     mbti_type  16 型按类型代码（INTJ…ESFP，16 槽）
 #     card       tarot-<牌名文件 stem>（78 张）+ lenormand-01…36（36 张）
+#                + card-table-tarot / card-back-tarot / card-table-lenormand /
+#                  card-back-lenormand（塔罗/雷诺曼牌桌背景与卡背，各独立槽，REQ-129/130）
 #     agent      agent-1…agent-5（5 槽随机轮换，REQ-059⑥）
 #   REQ-059⑧ 背景蒙版：opacity（0~1，NULL=不启用）+ mask_color（hex）随槽行存，
 #   PUT 时可选携带；GET /admin/assets 与公开 GET /api/assets 均回蒙版字段。

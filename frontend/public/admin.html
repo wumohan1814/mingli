@@ -1673,6 +1673,16 @@ const ASSET_CATALOG = [{
   desc: 'key 为 lenormand-01…36（REQ-059⑤）。',
   slots: ASSET_LENORMAND
 }, {
+  kind: 'card',
+  title: '牌桌背景与卡背（4 槽）',
+  desc: '塔罗 / 雷诺曼各自独立的牌桌背景与卡背，后台分别热更；未配置回退前端静态默认（REQ-129/130）。',
+  slots: [
+    { key: 'card-table-tarot', label: '塔罗牌桌背景' },
+    { key: 'card-back-tarot', label: '塔罗卡背' },
+    { key: 'card-table-lenormand', label: '雷诺曼牌桌背景' },
+    { key: 'card-back-lenormand', label: '雷诺曼卡背' }
+  ]
+}, {
   kind: 'agent',
   title: '太初先生会话背景（5 槽）',
   desc: 'agent-1…agent-5：每次进入会话 / 对话中每 10 分钟从已填充槽随机抽取 1 张；空白槽不参与抽取，全部空白回退默认样式（REQ-059⑥）。',
