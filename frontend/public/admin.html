@@ -190,6 +190,132 @@ const STATUS_TEXT = {
   predict_done: '已解读',
   failed: '失败'
 };
+
+/* ============ REQ-136：英文标识 → 中文映射（仅展示层；不改英文 key 本身） ============ */
+// 报表字段名（/admin/reports/{metric} 返回 items 的列名 → 表头中文）
+const REPORT_FIELD_ZH = {
+  date: '日期',
+  api_requests: 'API 请求数',
+  dau: '日活跃用户（DAU）',
+  auth_registers: '注册数',
+  event_key: '事件 key',
+  event_name: '事件',
+  count: '次数',
+  calls: '调用次数',
+  total_tokens: '消耗 tokens',
+  errors: '错误数',
+  http_5xx: '5xx 错误数'
+};
+// 埋点事件名（对齐后端 EVENT_NAME_ZH；前端兜底映射未收录处，未收录仍原样返回）
+const EVENT_NAME_ZH = {
+  page_view: '页面浏览',
+  auth_register: '注册',
+  auth_login: '登录',
+  case_create: '建档',
+  paipan: '排盘',
+  dqc_start: '断前尘开始',
+  dqc_done: '断前尘完成',
+  calibration_submit: '校准提交',
+  predict_start: '预测开始',
+  predict_done: '预测完成',
+  revise: '追问',
+  archive_view: '查看档案',
+  llm_call: 'LLM 调用',
+  error: '错误',
+  api_request: 'API 请求',
+  credit_consume: '余额消耗',
+  credit_recharge: '余额充值',
+  credit_insufficient: '余额不足',
+  guoxue_hub_view: '国学HUB浏览',
+  xishi_hub_view: '西式HUB浏览',
+  zodiac_fortune: '生肖流年',
+  divination_cast: '起卦',
+  divination_interpret: '断卦解读',
+  divination_focus_interpret: '六爻焦点详解',
+  tarot_draw: '塔罗抽牌',
+  tarot_interpret: '塔罗解读',
+  lenormand_draw: '雷诺曼抽牌',
+  astrology_chart: '星座星盘',
+  astrology_interpret: '星座解读',
+  mbti_score: 'MBTI判型',
+  case_share_fill: '分享帮填',
+  agent_message: '太初先生对话',
+  pair_analysis: '配对解析',
+  zodiac_match: '星座恋爱关系',
+  manual_input: '手动输入',
+  asset_upload: '素材上传'
+};
+// prompt key（对齐 backend PROMPT_FILES 23 个；REQ-048 / REQ-136）
+const PROMPT_KEY_ZH = {
+  'bazi-pattern': '八字格局',
+  'bazi-dayun-liunian': '大运流年',
+  'bazi-shensha-nayin': '神煞纳音',
+  'bazi-hunyin-caiyun': '婚姻财运',
+  ziwei: '紫微斗数',
+  xizhan: '西洋占星',
+  qizheng: '七政四余',
+  'qimen-lifetime': '奇门遁甲',
+  'wuyun-liuqi': '五运六气',
+  revise: '追问',
+  validation: '排盘校验',
+  astrology: '星座解读',
+  divination: '占卜解读',
+  divination_focus: '六爻焦点详解',
+  lenormand: '雷诺曼解读',
+  tarot: '塔罗解读',
+  guoxue: '国学配对',
+  xishi: '西式配对',
+  mbti: 'MBTI 配对',
+  bazi: '八字配对',
+  agent_master: '太初先生',
+  agent_greeting: '开场白话术',
+  namer_master: '起名大师'
+};
+// 方法 key（对齐 backend credits/labels.py METHOD_ZH + 排盘 chart 字段；连字符/下划线双写法）
+const METHOD_KEY_ZH = {
+  'bazi-pattern': '八字格局',
+  'bazi-dayun-liunian': '大运流年',
+  'bazi-shensha-nayin': '神煞纳音',
+  'bazi-hunyin-caiyun': '婚姻财运',
+  ziwei: '紫微',
+  xizhan: '西占',
+  qizheng: '七政',
+  'qimen-lifetime': '奇门',
+  'wuyun-liuqi': '五运六气',
+  western: '西占',
+  qimen_lifetime: '奇门',
+  wuyun_liuqi: '五运六气',
+  bazi: '八字',
+  'bazi-hour': '八字时柱'
+};
+// 方法结果状态（method_results[].status → 中文标签；title 保留英文原值）
+const METHOD_STATUS_ZH = {
+  ok: '完成',
+  done: '完成',
+  success: '成功',
+  failed: '失败',
+  error: '错误',
+  pending: '处理中',
+  processing: '处理中',
+  skipped: '已跳过',
+  degraded: '已降级'
+};
+// 后台角色（backend auth.py ROLE_RANK：viewer / operator / admin）
+const ROLE_ZH = {
+  viewer: '查看员',
+  operator: '运营',
+  admin: '超级管理员'
+};
+// 运营配置键（REQ-085 种子键）
+const CONFIG_KEY_ZH = {
+  recharge_rate: '充值折算率',
+  free_credit_on_register: '注册赠送余额'
+};
+// 通用：key → “中文（key）”；未映射时原样返回 key（保留英文 key 做对照）
+function keyZhText(key, map) {
+  const zh = map && map[key];
+  return zh ? zh + '（' + key + '）' : String(key == null ? '' : key);
+}
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
 }
@@ -429,17 +555,20 @@ function GenericTable({
     className: "admin-table"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, cols.map(function (c) {
     return /*#__PURE__*/React.createElement("th", {
-      key: c
-    }, c);
+      key: c,
+      title: c
+    }, REPORT_FIELD_ZH[c] || c);
   }))), /*#__PURE__*/React.createElement("tbody", null, list.map(function (it, i) {
     return /*#__PURE__*/React.createElement("tr", {
       key: i
     }, cols.map(function (c) {
       const txt = cellText(it[c]);
+      // 事件名列：后端已映射的保持中文；未收录英文事件名前端兜底映射
+      const shown = c === 'event_name' && EVENT_NAME_ZH[txt] ? EVENT_NAME_ZH[txt] : txt;
       return /*#__PURE__*/React.createElement("td", {
         key: c,
-        title: txt
-      }, txt);
+        title: shown
+      }, shown);
     }));
   })));
 }
@@ -601,7 +730,9 @@ function chartSummary(chart) {
   }
   if (src.dayMaster) lines.push('日主：' + src.dayMaster + (src.dayMasterWuxing || ''));
   if (typeof src.lunar === 'string' && src.lunar) lines.push('农历 ' + src.lunar);
-  if (Array.isArray(chart.degraded) && chart.degraded.length) lines.push('已降级方法：' + chart.degraded.join('、'));
+  if (Array.isArray(chart.degraded) && chart.degraded.length) lines.push('已降级方法：' + chart.degraded.map(function (d) {
+    return METHOD_KEY_ZH[d] ? METHOD_KEY_ZH[d] + '（' + d + '）' : d;
+  }).join('、'));
   return lines.join('　');
 }
 function RawJson({
@@ -622,7 +753,10 @@ function RawJson({
 }
 function methodName(m, i) {
   if (!m || typeof m !== 'object') return '方法 ' + (i + 1);
-  return String(m.method || m.name || m.key || m.method_name || '方法 ' + (i + 1));
+  const raw = String(m.method || m.name || m.key || m.method_name || '');
+  if (!raw) return '方法 ' + (i + 1);
+  // REQ-136：方法 key → 中文（key）
+  return METHOD_KEY_ZH[raw] ? METHOD_KEY_ZH[raw] + '（' + raw + '）' : raw;
 }
 function CaseArchive({
   userId,
@@ -674,7 +808,7 @@ function CaseArchive({
     className: "crumb"
   }, /*#__PURE__*/React.createElement("a", {
     onClick: onBack
-  }, "← 返回该用户的 case 列表"), /*#__PURE__*/React.createElement("span", {
+  }, "← 返回该用户的档案列表"), /*#__PURE__*/React.createElement("span", {
     className: "sep"
   }, "/"), /*#__PURE__*/React.createElement("span", null, "档案 ", data ? data.caseId : caseId)), /*#__PURE__*/React.createElement("div", {
     className: "card"
@@ -790,8 +924,9 @@ function CaseArchive({
         color: 'var(--jade-deep)'
       }
     }, nm), st ? /*#__PURE__*/React.createElement("span", {
-      className: 'tag ' + (st === 'ok' || st === 'done' || st === 'success' ? 'ok' : 'gray')
-    }, String(st)) : null), /*#__PURE__*/React.createElement(RawJson, {
+      className: 'tag ' + (st === 'ok' || st === 'done' || st === 'success' ? 'ok' : 'gray'),
+      title: String(st)
+    }, METHOD_STATUS_ZH[st] || String(st)) : null), /*#__PURE__*/React.createElement(RawJson, {
       data: m,
       label: "方法结果原始 JSON"
     }));
@@ -922,7 +1057,7 @@ function UsersSection() {
       const d = pickData(res);
       setCases(Array.isArray(d.items) ? d.items : []);
     } catch (e) {
-      setCasesErr(e.message || '该用户的 case 列表加载失败');
+      setCasesErr(e.message || '该用户的档案列表加载失败');
     } finally {
       setLoadingCases(false);
     }
@@ -964,7 +1099,7 @@ function UsersSection() {
       className: "error-box"
     }, casesErr), /*#__PURE__*/React.createElement("div", {
       className: "row-count"
-    }, "共 ", cases.length, " 个 case · 点击查看档案详情"), loadingCases && /*#__PURE__*/React.createElement("p", {
+    }, "共 ", cases.length, " 个档案 · 点击查看档案详情"), loadingCases && /*#__PURE__*/React.createElement("p", {
       className: "hint"
     }, "正在加载 case 列表…"), !loadingCases && cases.length === 0 && !casesErr && /*#__PURE__*/React.createElement("div", {
       className: "empty-note"
@@ -1274,7 +1409,7 @@ function PromptsSection() {
           content: content
         })
       });
-      setSavedMsg('已保存：' + activeKey);
+      setSavedMsg('已保存：' + keyZhText(activeKey, PROMPT_KEY_ZH));
       toast('保存成功');
       loadList(); // 刷新 mtime
       loadVersions(activeKey); // 本次保存已落一条新快照
@@ -1304,7 +1439,7 @@ function PromptsSection() {
   // 回滚到某版本：POST rollback → toast + 刷新当前内容 + 刷新版本列表
   const rollbackTo = async function (ver) {
     if (!activeKey || !ver || rollbackingId != null) return;
-    if (!window.confirm('确认把 [' + activeKey + '] 回滚到 ' + fmtTime(ver.created_at) + '（v' + ver.id + '）的内容？当前文件将被覆盖，并自动生成一条回滚后的新快照。')) return;
+    if (!window.confirm('确认把 [' + keyZhText(activeKey, PROMPT_KEY_ZH) + '] 回滚到 ' + fmtTime(ver.created_at) + '（v' + ver.id + '）的内容？当前文件将被覆盖，并自动生成一条回滚后的新快照。')) return;
     setRollbackingId(ver.id);
     setContentErr('');
     try {
@@ -1313,7 +1448,7 @@ function PromptsSection() {
       });
       const d = pickData(res);
       const vid = d && d.version_id != null ? d.version_id : ver.id;
-      setSavedMsg('已回滚：' + activeKey + ' → v' + vid);
+      setSavedMsg('已回滚：' + keyZhText(activeKey, PROMPT_KEY_ZH) + ' → v' + vid);
       toast('已回滚到 v' + vid);
       loadList();
       refreshContent();
@@ -1395,7 +1530,16 @@ function PromptsSection() {
           fontWeight: 600,
           color: 'var(--jade-deep)'
         }
-      }, k), /*#__PURE__*/React.createElement("td", null, p.file || '-'), /*#__PURE__*/React.createElement("td", null, fmtTime(p.updated_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
+      }, PROMPT_KEY_ZH[k] || k, PROMPT_KEY_ZH[k] && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 11,
+          fontWeight: 400,
+          color: 'var(--ink-3)',
+          fontFamily: 'Consolas,Menlo,monospace',
+          marginLeft: 6,
+          wordBreak: 'break-all'
+        }
+      }, k)), /*#__PURE__*/React.createElement("td", null, p.file || '-'), /*#__PURE__*/React.createElement("td", null, fmtTime(p.updated_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
         className: "btn btn-outline btn-mini"
       }, "编辑")));
     })))));
@@ -1418,7 +1562,7 @@ function PromptsSection() {
       fontFamily: 'Consolas,Menlo,monospace',
       fontSize: 13
     }
-  }, activeKey)), /*#__PURE__*/React.createElement("button", {
+  }, keyZhText(activeKey, PROMPT_KEY_ZH))), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline btn-mini",
     onClick: closeEditor
   }, "关闭编辑器")), loadingContent && /*#__PURE__*/React.createElement("p", {
@@ -1566,7 +1710,7 @@ function PromptsSection() {
       fontFamily: 'Consolas,Menlo,monospace',
       fontSize: 13
     }
-  }, activeKey), " · v" + viewingVer.id + " · " + fmtTime(viewingVer.created_at)), /*#__PURE__*/React.createElement("button", {
+  }, keyZhText(activeKey, PROMPT_KEY_ZH)), " · v" + viewingVer.id + " · " + fmtTime(viewingVer.created_at)), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline btn-mini",
     onClick: function () {
       setViewingVer(null);
@@ -1608,6 +1752,13 @@ function PromptsSection() {
 //   module(3) / method(6) / mbti_type(16) / card(塔罗 78 + 雷诺曼 36) / agent(5)
 // 卡面 key 约定：tarot-<牌名文件 stem>（对齐 frontend/public/tarot/rider-waite/webp/*）/
 // lenormand-01…36（对齐 frontend/public/lenormand/*）。蒙版字段：opacity(0~1) + mask_color(hex)。
+// REQ-136：MBTI 16 型中文型名（key 仍为类型代码，展示为 中文（INTJ））
+const ASSET_MBTI_ZH = {
+  INTJ: '建筑师', INTP: '逻辑学家', ENTJ: '指挥官', ENTP: '辩论家',
+  INFJ: '提倡者', INFP: '调停者', ENFJ: '主人公', ENFP: '竞选者',
+  ISTJ: '物流师', ISFJ: '守卫者', ESTJ: '总经理', ESFJ: '执政官',
+  ISTP: '鉴赏家', ISFP: '探险家', ESTP: '企业家', ESFP: '表演者'
+};
 const ASSET_MBTI_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
 const ASSET_TAROT = [
   ['00_Fool', '愚者'], ['01_Magician', '魔术师'], ['02_High_Priestess', '女祭司'], ['03_Empress', '皇后'],
@@ -1660,7 +1811,7 @@ const ASSET_CATALOG = [{
   title: 'MBTI 16 型结果背景（16 槽）',
   desc: '按类型代码（INTJ…ESFP），仅 MBTI 结果页 / 人格详情展示，未上传回退默认（REQ-059④）。',
   slots: ASSET_MBTI_TYPES.map(function (t) {
-    return { key: t, label: t };
+    return { key: t, label: ASSET_MBTI_ZH[t] || t };
   })
 }, {
   kind: 'card',
@@ -1690,6 +1841,13 @@ const ASSET_CATALOG = [{
     return { key: 'agent-' + n, label: '会话背景 ' + n };
   })
 }];
+// REQ-136：槽 key → 中文（值取自 ASSET_CATALOG 内既有 label，保证与目录一致）
+const ASSET_KEY_ZH = {};
+ASSET_CATALOG.forEach(function (g) {
+  g.slots.forEach(function (s) {
+    ASSET_KEY_ZH[s.key] = s.label;
+  });
+});
 function AssetsSection() {
   const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
   const [byKey, setByKey] = useState({}); // key → {key,kind,url,opacity,mask_color,updated_at}
@@ -1858,8 +2016,9 @@ function AssetsSection() {
     })), React.createElement("div", {
       className: "asset-title"
     }, React.createElement("span", null, slot.label), React.createElement("span", {
-      className: "asset-key"
-    }, slot.key)), React.createElement("div", {
+      className: "asset-key",
+      title: slot.key
+    }, ASSET_KEY_ZH[slot.key] ? ASSET_KEY_ZH[slot.key] + '（' + slot.key + '）' : slot.key)), React.createElement("div", {
       className: "asset-meta"
     }, url ? React.createElement("span", {
       className: "tag ok"
@@ -2083,8 +2242,9 @@ function ConfigSection() {
     return React.createElement("tr", {
       key: it.key
     }, React.createElement("td", null, React.createElement("span", {
-      className: "config-key"
-    }, it.key)), React.createElement("td", null, React.createElement("span", {
+      className: "config-key",
+      title: it.key
+    }, CONFIG_KEY_ZH[it.key] ? CONFIG_KEY_ZH[it.key] + '（' + it.key + '）' : it.key)), React.createElement("td", null, React.createElement("span", {
       className: "hint"
     }, it.description || '—')), React.createElement("td", null, canWrite ? React.createElement("input", {
       className: "input config-value-input",
@@ -2179,7 +2339,9 @@ function App() {
     className: "top-right"
   }, /*#__PURE__*/React.createElement("span", {
     className: "role-chip"
-  }, "当前角色：", /*#__PURE__*/React.createElement("b", null, role || '—')), /*#__PURE__*/React.createElement("button", {
+  }, "当前角色：", /*#__PURE__*/React.createElement("b", {
+    title: role || ''
+  }, ROLE_ZH[role] || role || '—')), /*#__PURE__*/React.createElement("button", {
     className: "logout-btn",
     onClick: handleLogout
   }, "退出登录"))), /*#__PURE__*/React.createElement("div", {
