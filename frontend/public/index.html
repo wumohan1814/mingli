@@ -8538,31 +8538,25 @@ function NinePickPage({
       onClick: () => onNavigate('cases')
     }, '管理档案')));
   } else {
-    // 档案行：名称 + 九法状态标签（已跑=主题色 / 未跑=灰字）+ 出生 meta + 圆形选中勾
-    pickBody = el('div', {
-      className: 'case-opts'
-    }, list.map(c => {
-      const sel = selId != null && String(selId) === String(c.caseId);
+    // REQ-137：九法合一选档案改下拉（对齐生肖流年下拉样式：档案名/生日展示、选中即用）；
+    // 九法状态短标并入选项文本，选中后操作区展示完整状态与可用动作。
+    pickBody = el('select', {
+      className: 'input',
+      value: selId || '',
+      onChange: e => setSelId(e.target.value),
+      style: {
+        marginBottom: 0
+      }
+    }, el('option', {
+      value: ''
+    }, '请选择档案'), list.map(c => {
       const st = nineRunState(c);
-      const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
       const nm = c.name || '档案 ' + c.caseId;
-      return el('button', {
+      const birth = c.birthYear ? '（' + c.birthYear + ' 年生）' : '';
+      return el('option', {
         key: c.caseId,
-        type: 'button',
-        className: 'case-opt' + (sel ? ' sel' : ''),
-        title: st.view ? '已跑过九法：勾选后可「查看 / 修改结果」' : st.go ? '未跑九法：勾选后可「跑九法合一开始预测」' : '该档案尚未排盘：请先在档案管理执行排盘',
-        onClick: () => setSelId(String(c.caseId))
-      }, el('span', {
-        className: 'co-main'
-      }, el('span', {
-        className: 'co-name'
-      }, nm), el('span', {
-        className: 'co-type' + (st.cls ? ' ' + st.cls : '')
-      }, st.label), el('span', {
-        className: 'co-meta'
-      }, meta)), el('span', {
-        className: 'co-check'
-      }, sel ? '✓' : ''));
+        value: String(c.caseId)
+      }, nm + birth + (st.label ? ' · ' + st.label : ''));
     }));
   }
   // —— 操作区：勾选档案后出现两个动作 ——
@@ -19029,40 +19023,40 @@ function AstrologyPage({
       onClick: () => onNavigate('cases')
     }, '管理档案')));
   } else {
-    // 档案选择卡：档案名 + meta「出生年月日 + 太阳星座(若有)」+ 圆形选中勾
-    // （meta 不再显示性别/出生地；太阳星座仅当该档案已生成过星盘时附上）
-    casePick = el('div', {
-      className: 'case-opts'
-    }, caseList.map(c => {
-      const sel = caseId != null && Number(caseId) === Number(c.caseId);
+    // REQ-137：星座选档案改下拉（对齐生肖流年下拉样式：档案名/生日展示、选中即用）；
+    // 太阳星座（已生成过星盘才附上）并入选项文本。
+    const handlePickCase = c => {
+      // 切换档案：清空上一档案已生成的星盘/解读展示，防止盘面串档（下方引导重新生成/查看）
+      if (data && dataCaseId.current != null && Number(dataCaseId.current) !== Number(c.caseId)) {
+        dataCaseId.current = null;
+        setData(null);
+        setInterp('');
+        setInterpErr('');
+      }
+      setCaseId(c.caseId);
+    };
+    casePick = el('select', {
+      className: 'input',
+      value: caseId != null ? String(caseId) : '',
+      onChange: e => {
+        const id = e.target.value;
+        const c = id ? caseList.find(x => Number(x.caseId) === Number(id)) : null;
+        if (c) handlePickCase(c);
+      },
+      style: {
+        marginBottom: 0
+      }
+    }, el('option', {
+      value: ''
+    }, '请选择档案'), caseList.map(c => {
       const det = detailMap[String(c.caseId)];
       const birthCn = (det && det.birthCn) || (c.birthYear ? c.birthYear + '年' : '');
       const sunTxt = (det && det.hasNatal && det.sunCn) ? '太阳' + det.sunCn : '';
-      const meta = [birthCn, sunTxt].filter(Boolean).join(' · ') || '出生信息未补充';
       const nm = c.name || '档案 ' + c.caseId;
-      return el('button', {
+      return el('option', {
         key: c.caseId,
-        type: 'button',
-        className: 'case-opt' + (sel ? ' sel' : ''),
-        onClick: () => {
-          // 切换档案：清空上一档案已生成的星盘/解读展示，防止盘面串档（下方引导重新生成/查看）
-          if (data && dataCaseId.current != null && Number(dataCaseId.current) !== Number(c.caseId)) {
-            dataCaseId.current = null;
-            setData(null);
-            setInterp('');
-            setInterpErr('');
-          }
-          setCaseId(c.caseId);
-        }
-      }, el('span', {
-        className: 'co-main'
-      }, el('span', {
-        className: 'co-name'
-      }, nm), el('span', {
-        className: 'co-meta'
-      }, meta)), el('span', {
-        className: 'co-check'
-      }, sel ? '✓' : ''));
+        value: String(c.caseId)
+      }, nm + (birthCn ? '（' + birthCn + '）' : '') + (sunTxt ? ' · ' + sunTxt : ''));
     }));
   }
   const formCard = el('div', {
@@ -20008,21 +20002,14 @@ function MbtiPage({
               el('span', {className: 'sh cur'}, '① 选择档案'),
               el('span', {className: 'sh-arr'}, '→'),
               el('span', {className: 'sh'}, '② 开始测试 / 查看已完成结果')),
-            el('div', {className: 'case-opts'},
+            el('select', {className: 'input', value: caseId != null ? String(caseId) : '', onChange: e => { const id = e.target.value; if (!id) return; const c = caseList.find(x => Number(x.caseId) === Number(id)); setStarted(false); setCaseId(c ? c.caseId : id); }, style: {marginBottom: 0}},
+              el('option', {value: ''}, '请选择档案'),
               caseList.map(c => {
-                const sel = caseId != null && Number(caseId) === Number(c.caseId);
-                const meta = [c.birthYear ? c.birthYear + '年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
                 const nm = c.name || '档案 ' + c.caseId;
                 const tval = caseTypeOf(c); // 已测类型 / ''=已确认未测 / null=探测中
-                const typeNode = tval ? el('span', {className: 'co-type'}, '已测 ' + tval)
-                  : (tval === null && typeLoading) ? el('span', {className: 'co-type none'}, '检测中…')
-                  : el('span', {className: 'co-type none'}, '未测试');
-                return el('button', {key: c.caseId, type: 'button', className: 'case-opt' + (sel ? ' sel' : ''), onClick: () => { setStarted(false); setCaseId(c.caseId); }},
-                  el('span', {className: 'co-main'},
-                    el('span', {className: 'co-name'}, nm),
-                    typeNode,
-                    el('span', {className: 'co-meta'}, meta)),
-                  el('span', {className: 'co-check'}, sel ? '✓' : ''));
+                const tTxt = tval ? '已测 ' + tval : (tval === null && typeLoading) ? '检测中…' : '未测试';
+                return el('option', {key: c.caseId, value: String(c.caseId)},
+                  nm + (c.birthYear ? '（' + c.birthYear + ' 年生）' : '') + ' · ' + tTxt);
               }))),
           // —— REQ-056②④ 操作区：勾选档案（caseId 非空）后出现完整操作；「分享测试链接」
           // 仅在此操作区展示（不再顶部常驻），仍复用 shareResult/copyShare/shareUrl/shareErr ——
