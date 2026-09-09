@@ -7,10 +7,10 @@
 
 ## 相关文件（本项目实际路径）
 
-- 最高准则：`docs/agent-to-agent/Retrospective/01-项目准则.md`（跨项目复用工程准则）
-- 协作守则：`docs/agent-to-agent/开发测试协作协议.md`（状态机、commit 约定、分工边界、收尾 checklist；范式见 `docs/agent-to-agent/Retrospective/06-文档范式-协作守则.md`）
-- 需求 / Bug 单一事实源：`docs/需求表.md`、`docs/Bug管理表.md`（模板见 `docs/agent-to-agent/Retrospective/07-文档模板-需求与Bug.md`）
-- 测试经验载体：`docs/agent-to-agent/测试知识库.md`（运行环境、代码约定、已知问题、一键回归、覆盖矩阵）
+- 最高准则：`docs/Retrospective/01-项目准则.md`（跨项目复用工程准则）
+- 协作守则：`docs/开发测试协作协议.md`（状态机、commit 约定、分工边界、收尾 checklist；范式见 `docs/Retrospective/06-文档范式-协作守则.md`）
+- 需求 / Bug 单一事实源：`docs/需求表.md`、`docs/Bug管理表.md`（模板见 `docs/Retrospective/07-文档模板-需求与Bug.md`）
+- 测试经验载体：`docs/测试知识库.md`（运行环境、代码约定、已知问题、一键回归、覆盖矩阵）
 - 架构基线：`docs/架构设计.md`（唯一现行架构）｜`docs/adr/`（决策记录）
 - 强制规范：`docs/standards/`（5 份）｜`docs/README.md`（写作约定与索引）
 - 交接文档：原 `docs/Session交接文档.md`、`docs/测试组交接文档.md` 已于 2026-09-08 归档至 `docs/_archive/`；**现行状态一律以需求表 + Bug 表 + 测试知识库 + `git log` 为真相**。
@@ -49,7 +49,7 @@
 3. **数据库用临时库隔离**：一律经 `orchestration_env` session 级临时三库，**绝不碰 `backend/data/*.db`**。
 4. **单测失败先区分**「测试隔离缺陷」（共享库 + 固定 key 跨用例残留 → 补清理 fixture）与「真实契约不符」（才改实现 / 登记 Bug）。
 5. **登记 Bug 的可执行性**：描述须达「开发可直接开始修复」粒度——复现步骤含环境与前置、现象含报错码 / 文案、期望明确、严重度可判（S0–S3）；缺失先向上报方确认补齐，不得凭推断补全。
-6. **不得臆测**：环境性 / 已知问题不重复上报（见 `docs/agent-to-agent/测试知识库.md` §3）。
+6. **不得臆测**：环境性 / 已知问题不重复上报（见 `docs/测试知识库.md` §3）。
 7. **不改业务代码**：发现缺陷只登记 + 附复现 / 测试；测试代码与测试脚本是本 Session 主维护区。
 8. **S0/S1 单独分流**：收口「全部通过」前先做 S0/S1 扫描，发现即单独登记跟踪 + 提示线上风险，绝不混入常规 🟢 列表。
 9. **能力边界前置声明**：无法真机 UI / 无法连外网时明说并分工（我出清单 + 自动验 API / 逻辑，需求方真机验），不假装通过。
@@ -81,7 +81,7 @@
 - **断言「资源不存在」按业务错误码**（body `code`）判断，不要按 REST 直觉断言 HTTP 状态码（映射见附录 B）。
 - **排查口诀**：某测试单跑绿、混跑红 → 先怀疑模块收集顺序导致配置 / 环境定格。
 
-## 5. 已知问题处理（勿重复上报，详见 `docs/agent-to-agent/测试知识库.md` §3）
+## 5. 已知问题处理（勿重复上报，详见 `docs/测试知识库.md` §3）
 
 - **夹具漂移类失败**（如 `test_paipan.py::test_fixture_snapshot_anchor`，`western.summary.patterns[0]` 中英文案差异）= 非功能 bug，确认输出正确后重生成快照或标注跳过。
 - **环境性偶发失败**（node v24 `RemoteProtocolError` / `WinError 10054`；生产镜像 node v22 无此问题）= 标记跳过或用目标版本复验，不当 Bug 报。
@@ -90,12 +90,12 @@
 
 ## 6. 覆盖矩阵维护
 
-- 新增 / 修改验收用例时，同步更新 `docs/agent-to-agent/测试知识库.md` §5 覆盖矩阵（保持「缺口」一列实时）。
-- 踩过的坑压缩成一条「⚠️」沉淀进 `docs/agent-to-agent/测试知识库.md` §2，下轮直接生效。
+- 新增 / 修改验收用例时，同步更新 `docs/测试知识库.md` §5 覆盖矩阵（保持「缺口」一列实时）。
+- 踩过的坑压缩成一条「⚠️」沉淀进 `docs/测试知识库.md` §2，下轮直接生效。
 
 ## 7. 定期复盘（经验沉淀）
 
-- **频率**：每个里程碑 / 阶段结束后，以及每轮 session 收尾时（只要踩到值得沉淀的坑），做一次复盘，写入**`docs/agent-to-agent/Retrospective/`**（本仓同时存在`docs/agent-to-agent/Retrospective/` 与 `docs/agent-to-agent/Retrospective/`——**复盘工程经验写入`docs/agent-to-agent/Retrospective/`**，`docs/agent-to-agent/Retrospective/` 为跨项目可复用资产包）。
+- **频率**：每个里程碑 / 阶段结束后，以及每轮 session 收尾时（只要踩到值得沉淀的坑），做一次复盘，写入**`docs/Retrospective/`**（本仓同时存在`docs/Retrospective/` 与 `docs/Retrospective/`——**复盘工程经验写入`docs/Retrospective/`**，`docs/Retrospective/` 为跨项目可复用资产包）。
 - **内容边界**：只写**工程经验**，不涉及业务实体——只沉淀「怎么工作 / 怎么协作 / 怎么留痕 / 怎么避坑」，不写产品功能、领域模型、具体第三方实现细节；目标是迁移到下一项目直接复用。
 - **结构固定**：每份复盘文档固定为——**背景、问题/方案、适用场景、可复用结论**；每条经验按「现象 → 根因 → 规则 → 落地检查项」写。
 - **主动抽象**：踩坑、有效方案、协作协议、分配约束都要主动抽象成可迁移结论；一旦出现业务相关内容立即剔除。

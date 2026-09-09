@@ -1,0 +1,26 @@
+{
+  "module": "banner_taichu_mr",
+  "req": "T5 / REQ-097",
+  "category": "C 先占位（待品牌配置后提供，先以短文案占位）",
+  "context": "前端 banner「太初先生」入口文字按钮；语义方向：用户可与太初先生聊心事、请他开解。",
+  "status": "占位（品牌文案未定，以下为候选，待品牌确认后替换并随文案轮次校订）",
+  "copy": {
+    "recommended": {
+      "label": "聊聊心事",
+      "hover": "把心里的困惑，说给太初先生听；他陪你聊聊，开解开解。"
+    },
+    "alternates": [
+      { "label": "找先生聊聊", "hover": "有话想说、有结想解，太初先生随时在。" },
+      { "label": "太初先生在", "hover": "想找人说话时，太初先生一直都在。" },
+      { "label": "说说话吧", "hover": "有些话不便对人说，可以先对太初先生说。" },
+      { "label": "先生请解", "hover": "心事、难事、烦事，太初先生陪你一起理一理。" }
+    ]
+  },
+  "ui_copy_suggestion": {
+    "key": "buttons.taichu_mr",
+    "value": "聊聊心事",
+    "hover_key": "tips.taichu_mr_hover",
+    "hover_value": "把心里的困惑，说给太初先生听；他陪你聊聊，开解开解。"
+  },
+  "compliance_note": "按钮文案为情感陪伴导向，不含任何「预测/改运/疗愈疗效」承诺；配合全站 disclaimer_full / footer_note 使用。"
+}
