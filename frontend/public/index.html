@@ -1505,6 +1505,38 @@
       padding:1px 7px;opacity:0;transition:opacity .2s ease;font-family:var(--font-sans);line-height:1.5}
     .ly-cast-row.reveal.moving .lc-mv{opacity:1;animation:pulse 1.4s ease-in-out infinite}
 
+    /* ---- REQ-131：应用内手动摇卦面板（六爻逐爻 / 梅花三步，浅色纸面适配） ---- */
+    .sh-panel{margin-top:2px}
+    .sh-cap{font-size:12px;color:var(--text-3);margin:2px 0 8px;line-height:1.7}
+    .sh-coins{display:flex;gap:24px;align-items:center;justify-content:center;height:76px;margin-bottom:6px}
+    .sh-coins .coin-empty{font-size:12px;color:var(--text-3);letter-spacing:.14em;font-family:var(--font-sans)}
+    .sh-coins .coin{width:52px;height:52px}
+    .sh-rows{display:flex;flex-direction:column-reverse;gap:7px;margin-top:2px;padding:4px 2px}
+    .sh-row{display:flex;align-items:center;gap:10px;min-height:20px;opacity:.42;transition:opacity .18s ease}
+    .sh-row.reveal{opacity:1}
+    .sh-row .sh-pos{font-size:12px;color:var(--text-3);width:44px;text-align:center;font-family:var(--font-sans);flex:none}
+    .sh-row .sh-bar{height:8px;flex:1;max-width:210px;border-radius:4px}
+    .sh-row .sh-bar.yang{background:#8A6B45}
+    .sh-row .sh-bar.yin{background:linear-gradient(to right,#8A6B45 0 42%,transparent 42% 58%,#8A6B45 58% 100%)}
+    .sh-row .sh-bar.moving-yang{background:#C9A24B;box-shadow:0 0 8px rgba(201,162,75,.6)}
+    .sh-row .sh-bar.moving-yin{background:linear-gradient(to right,#C9A24B 0 42%,transparent 42% 58%,#C9A24B 58% 100%)}
+    .sh-row .sh-name{font-size:11px;color:var(--text-3);font-family:var(--font-sans);min-width:26px}
+    .sh-row .sh-mv{font-size:10px;font-weight:800;color:#fff;background:var(--gold-500);border-radius:999px;padding:1px 7px;font-family:var(--font-sans);line-height:1.5;opacity:0;transition:opacity .2s ease}
+    .sh-row.reveal.moving .sh-mv{opacity:1}
+    .sh-trig{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:74px;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);text-align:center;font-family:var(--font-sans);font-size:11.5px;color:var(--text-3)}
+    .sh-trig b{font-size:16px;color:var(--text-1);font-weight:800;font-family:var(--font-serif)}
+    .sh-trig b.blank{color:var(--text-3);font-weight:600}
+    .sh-actions{display:flex;align-items:center;gap:10px;margin-top:12px}
+    .sh-actions .btn{flex:1;min-width:0}
+    .sh-reset{flex:none;font-size:12px;color:var(--text-3);background:none;border:none;text-decoration:underline;cursor:pointer;padding:5px 2px;font-family:inherit}
+    .sh-note{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.7;opacity:.9;font-family:var(--font-sans)}
+    .mode-switch.seg3 button{font-size:12px;padding:8px 2px}
+    .mh-way-row{display:flex;align-items:center;gap:8px;margin:0 0 10px;flex-wrap:wrap}
+    .mh-way-cap{font-size:12px;color:var(--text-3);font-family:var(--font-sans)}
+    .mh-way-chip{flex:none;padding:6px 14px;font-size:12.5px;font-weight:600;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;white-space:nowrap}
+    .mh-way-chip.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+    .mh-way-note{margin:-4px 0 10px;font-size:11.5px;color:var(--text-3);line-height:1.7;font-family:var(--font-sans)}
+
     /* ---- 梅花：双环能量场 + 三节点汇聚 ---- */
     .mh-arena{position:relative;width:290px;height:250px;flex:none;margin-top:4px}
     .mh-orb,.mh-orb2{position:absolute;border-radius:50%;pointer-events:none}
@@ -12760,6 +12792,195 @@ function MeihuaCastStage(props) {
     skip: onSkip,
     children: [arena, slotsRow, waitLine, banner]
   });
+}
+
+/* ---------------- REQ-131：应用内「手动摇卦」面板 ----------------
+   与 REQ-069「手动录入」严格区分：069=录已发生的真实结果（逐爻点选）；
+   本条=应用内程序随机「摇」出结果（点「摇一次」逐步演出，摇满成卦）。
+   六爻：3 枚铜钱每爻一掷，字面=2、背面=3，三币之和定爻（掷钱法八分法口径）：
+     6=三字 老阴（动）｜7=两字一背 少阳｜8=一字两背 少阴｜9=三背 老阳（动）
+     单币均匀 2/3 → 分布 6:1/8、7:3/8、8:3/8、9:1/8，与传统口径一致；
+   梅花：随机起卦三步（上卦八卦之一 / 下卦八卦之一 / 动爻 1-6），铜钱翻动为演出、
+     数值程序随机预取（1乾 2兑 3离 4震 5巽 6坎 7艮 8坤），与后端 settings.method='random'
+     + replay 确定性重放契约一致（见 REQ-069 手动通道同一契约）。
+   动画开关（REQ-066① tcShouldPlayAnim）关 → 点击直接落定结果，不播翻动动画。 */
+const MH_TRIG_NAMES = ['', '乾', '兑', '离', '震', '巽', '坎', '艮', '坤'];
+const SHAKE_TOSS_MS = 640;   // 铜钱翻动动画时长
+const SHAKE_SETTLE_MS = 960; // 翻动 + 落定总时长
+function LiuyaoShakePanel(props) {
+  const { anim, onComplete } = props;
+  const [yaos, setYaos] = useState([]);     // 已摇出的爻值 6/7/8/9（自初爻起）
+  const [coins, setCoins] = useState(null); // 当前一掷三币（2=字 3=背）
+  const [tossing, setTossing] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const [done, setDone] = useState(false);
+  const busyRef = useRef(false);
+  const timersRef = useRef([]);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  const toss = function () {
+    if (busyRef.current || done) return;
+    busyRef.current = true;
+    const cs = [0, 1, 2].map(function () { return Math.random() < 0.5 ? 2 : 3; });
+    const v = cs[0] + cs[1] + cs[2];
+    const n = yaos.length; // 本次落第 n 爻（0 起）
+    setCoins(cs);
+    setSettled(false);
+    if (!anim) {
+      setYaos(function (prev) { return prev.concat([v]); });
+      setSettled(true);
+      if (n + 1 >= 6) setDone(true);
+      busyRef.current = false;
+      return;
+    }
+    setTossing(true);
+    later(function () { setTossing(false); setSettled(true); }, SHAKE_TOSS_MS);
+    later(function () {
+      setYaos(function (prev) { return prev.concat([v]); });
+      setSettled(true);
+      if (n + 1 >= 6) setDone(true);
+      busyRef.current = false;
+    }, SHAKE_SETTLE_MS);
+  };
+  const reset = function () {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+    busyRef.current = false;
+    setYaos([]); setCoins(null); setTossing(false); setSettled(false); setDone(false);
+  };
+  const finish = function () {
+    if (!done || !yaos || yaos.length !== 6) return;
+    onComplete({ yaos: yaos.slice() });
+  };
+  let coinRow = null;
+  if (coins) {
+    coinRow = React.createElement('div', { key: 'c' + yaos.length, className: 'sh-coins' },
+      coins.map(function (p, ci) {
+        const cls = 'coin' + (settled ? (p === 3 ? ' back' : ' front') : ' toss');
+        return React.createElement('div', { key: ci, className: cls },
+          React.createElement('div', { className: 'c3d' },
+            React.createElement('div', { className: 'side s-a' }),
+            React.createElement('div', { className: 'side s-b' })));
+      }));
+  } else {
+    coinRow = React.createElement('div', { className: 'sh-coins' },
+      React.createElement('span', { className: 'coin-empty' }, '凝神起卦 · 待掷铜钱'));
+  }
+  const rowsEls = yaos.map(function (v, i) {
+    const mv = (v === 6 || v === 9);
+    const yang = (v === 7 || v === 9);
+    const barCls = 'sh-bar ' + (mv ? (yang ? 'moving-yang' : 'moving-yin') : (yang ? 'yang' : 'yin'));
+    const nameTxt = v === 6 ? '老阴' : v === 7 ? '少阳' : v === 8 ? '少阴' : v === 9 ? '老阳' : '';
+    const kids = [
+      React.createElement('span', { key: 'p', className: 'sh-pos' }, YAO_LABEL[i] + '爻'),
+      React.createElement('span', { key: 'b', className: barCls }),
+      React.createElement('span', { key: 'n', className: 'sh-name' }, nameTxt)
+    ];
+    if (mv) kids.push(React.createElement('span', { key: 'm', className: 'sh-mv' }, '动'));
+    return React.createElement('div', { key: i, className: 'sh-row reveal' + (mv ? ' moving' : '') }, kids);
+  });
+  const nextLabel = done ? '' : '摇一次 · ' + YAO_LABEL[yaos.length] + '爻';
+  const actBtn = done
+    ? React.createElement('button', { type: 'button', className: 'btn btn-primary', onClick: finish }, '成卦并查看结果')
+    : React.createElement('button', { type: 'button', className: 'btn btn-primary', disabled: tossing, onClick: toss }, tossing ? '铜钱翻动中…' : nextLabel);
+  const resetLink = (!done && yaos.length > 0)
+    ? React.createElement('button', { type: 'button', className: 'sh-reset', onClick: reset }, '清空重摇')
+    : null;
+  return React.createElement('div', { className: 'sh-panel' },
+    React.createElement('div', { className: 'sh-cap' },
+      done ? '六爻摇满 · 自初爻向上已成卦（' + yaos.map(function (v) { return v; }).join(' / ') + '）' : '三枚铜钱 · 每爻一掷（自初爻起），共摇 6 次成卦：'),
+    coinRow,
+    rowsEls.length ? React.createElement('div', { className: 'sh-rows' }, rowsEls) : null,
+    React.createElement('div', { className: 'sh-actions' }, actBtn, resetLink),
+    React.createElement('div', { className: 'sh-note' }, LIUYAO_DISCLAIMER));
+}
+function MeihuaShakePanel(props) {
+  const { anim, onComplete } = props;
+  const stepNames = ['上卦', '下卦', '动爻'];
+  const [step, setStep] = useState(0); // 0..2 下一步；3=完成
+  const [vals, setVals] = useState([]); // [上卦1-8, 下卦1-8, 动爻1-6]
+  const [coins, setCoins] = useState(null);
+  const [tossing, setTossing] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const [done, setDone] = useState(false);
+  const busyRef = useRef(false);
+  const timersRef = useRef([]);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  const toss = function () {
+    if (busyRef.current || done) return;
+    busyRef.current = true;
+    const max = step === 2 ? 6 : 8;
+    const v = 1 + Math.floor(Math.random() * max);
+    const cs = [0, 1, 2].map(function () { return Math.random() < 0.5 ? 2 : 3; });
+    const n = step;
+    setCoins(cs);
+    setSettled(false);
+    if (!anim) {
+      setVals(function (prev) { return prev.concat([v]); });
+      setSettled(true);
+      if (n + 1 >= 3) setDone(true);
+      busyRef.current = false;
+      return;
+    }
+    setTossing(true);
+    later(function () { setTossing(false); setSettled(true); }, SHAKE_TOSS_MS);
+    later(function () {
+      setVals(function (prev) { return prev.concat([v]); });
+      setSettled(true);
+      if (n + 1 >= 3) setDone(true);
+      busyRef.current = false;
+    }, SHAKE_SETTLE_MS);
+  };
+  const reset = function () {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+    busyRef.current = false;
+    setStep(0); setVals([]); setCoins(null); setTossing(false); setSettled(false); setDone(false);
+  };
+  const finish = function () {
+    if (!done || !vals || vals.length !== 3) return;
+    onComplete({ upper: vals[0], lower: vals[1], mvPos: vals[2] });
+  };
+  let coinRow = null;
+  if (coins) {
+    coinRow = React.createElement('div', { key: 'c' + step, className: 'sh-coins' },
+      coins.map(function (p, ci) {
+        const cls = 'coin' + (settled ? (p === 3 ? ' back' : ' front') : ' toss');
+        return React.createElement('div', { key: ci, className: cls },
+          React.createElement('div', { className: 'c3d' },
+            React.createElement('div', { className: 'side s-a' }),
+            React.createElement('div', { className: 'side s-b' })));
+      }));
+  } else {
+    coinRow = React.createElement('div', { className: 'sh-coins' },
+      React.createElement('span', { className: 'coin-empty' }, '凝神起卦 · 待掷铜钱'));
+  }
+  const trigName = function (idx) { return MH_TRIG_NAMES[idx] || ''; };
+  const chipEls = stepNames.map(function (nm, i) {
+    const has = i < vals.length;
+    const txt = i === 2 ? (has ? ('第 ' + vals[i] + ' 爻') : '') : (has ? trigName(vals[i]) : '');
+    return React.createElement('div', { key: i, className: 'sh-trig' }, nm,
+      React.createElement('b', { className: has ? '' : 'blank' }, has ? txt : '待摇'));
+  });
+  const nextLabel = done ? '' : '摇一次 · ' + stepNames[Math.min(step, 2)];
+  const actBtn = done
+    ? React.createElement('button', { type: 'button', className: 'btn btn-primary', onClick: finish }, '成卦并查看结果')
+    : React.createElement('button', { type: 'button', className: 'btn btn-primary', disabled: tossing, onClick: toss }, tossing ? '铜钱翻动中…' : nextLabel);
+  const resetLink = (!done && vals.length > 0)
+    ? React.createElement('button', { type: 'button', className: 'sh-reset', onClick: reset }, '清空重摇')
+    : null;
+  return React.createElement('div', { className: 'sh-panel' },
+    React.createElement('div', { className: 'sh-cap' },
+      done ? '三步摇齐 · 随机梅花起卦已成' : '随机起卦 · 共三步：先摇上卦、再摇下卦、最后摇动爻（程序随机生成 · 娱乐参考）：'),
+    coinRow,
+    React.createElement('div', { style: { display: 'flex', gap: 12, justifyContent: 'center', marginTop: 4 } }, chipEls),
+    React.createElement('div', { className: 'sh-actions' }, actBtn, resetLink),
+    React.createElement('div', { className: 'sh-note' }, LIUYAO_DISCLAIMER));
 }
 
 /* ---------------- 小六壬起卦演出：掌诀盘走宫（结果先取 → 路径按后端 calculation 逐宫游走，落宫与课式一致） ---------------- */
