@@ -158,9 +158,10 @@ def ensure_schema() -> None:
         if case_cols and "email" not in case_cols:
             conn.execute(text("ALTER TABLE cases ADD COLUMN email VARCHAR(128)"))
         # REQ-113：cases 补 default 列（默认档案标记；老库 ALTER，新库由 create_all 建全。
-        # SQLite ADD COLUMN 带 NOT NULL 必须给非空 DEFAULT，故 DEFAULT 0；布尔按 0/1 存）
+        # SQLite ADD COLUMN 带 NOT NULL 必须给非空 DEFAULT，故 DEFAULT 0；布尔按 0/1 存。
+        # ⚠️ default 是 SQLite 关键字，裸 ALTER 会语法错误，列名必须加双引号 "default"。）
         if case_cols and "default" not in case_cols:
-            conn.execute(text("ALTER TABLE cases ADD COLUMN default BOOLEAN NOT NULL DEFAULT 0"))
+            conn.execute(text('ALTER TABLE cases ADD COLUMN "default" BOOLEAN NOT NULL DEFAULT 0'))
         conv_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(conversations)"))]
         if conv_cols and "topic" not in conv_cols:
             conn.execute(text("ALTER TABLE conversations ADD COLUMN topic VARCHAR(64)"))
