@@ -844,6 +844,47 @@
     .jk-num-in:focus{border-color:var(--skin-accent);box-shadow:0 0 0 2px var(--skin-accent-soft)}
     .jk-note2{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
 
+    /* ===== REQ-120：奇门时家（qimen）结果页 + 起局参数面板 ===== */
+    .qm-meta{font-size:12px;color:var(--text-2);text-align:center;margin:2px 0 8px;line-height:1.7;word-break:break-all}
+    .qm-sec{font-size:13px;font-weight:700;color:var(--skin-accent);margin:14px 0 6px}
+    .qm-note{font-size:11px;color:var(--text-3);margin-top:4px;line-height:1.6}
+    .qm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .qm-cell{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);position:relative;min-height:104px;box-sizing:border-box}
+    .qm-cell .qmc-head{font-size:10px;color:var(--text-3);line-height:1.4;text-align:center}
+    .qm-cell .qmc-main{font-size:14px;font-weight:800;color:var(--text-1);line-height:1.5;text-align:center}
+    .qm-cell .qmc-sub{font-size:11px;color:var(--text-2);line-height:1.5;text-align:center}
+    .qm-cell .qmc-god{font-size:11px;color:var(--skin-accent);line-height:1.5;text-align:center}
+    .qm-cell .qmc-marks{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:2px}
+    .qm-cell .qmc-mark{display:inline-flex;align-items:center;font-size:9px;font-weight:800;line-height:1.5;border-radius:999px;padding:0 5px}
+    .qm-cell .qmc-mark.zhi{color:#fff;background:var(--gold-500)}
+    .qm-cell .qmc-mark.void{color:var(--cinnabar);border:1px solid var(--cinnabar)}
+    .qm-cell .qmc-mark.horse{color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .qm-cell.qmc-sel{box-shadow:0 0 0 1px var(--skin-accent) inset}
+    .qm-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .qm-tag{font-size:11px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 9px;line-height:1.6}
+    .qm-tag.t-good{color:#7a5c1e;background:#fdf3d7;border-color:#e8cf96}
+    .qm-tag.t-bad{color:var(--cinnabar);background:#fdece8;border-color:#f0b9a8}
+    .qm-tag.t-neutral{color:var(--text-2);background:var(--surface);border-color:var(--border)}
+    .qm-tag.t-mixed{color:#5b6b8c;background:#e9edf7;border-color:#c4cde8}
+    .qm-pat{font-size:12px;color:var(--text-2);line-height:1.7;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+    .qm-list{list-style:none;margin:0;padding:0}
+    .qm-list li{font-size:12px;color:var(--text-2);line-height:1.75;padding:3px 0 3px 14px;position:relative;word-break:break-word}
+    .qm-list li::before{content:'·';position:absolute;left:2px;color:var(--skin-accent)}
+    .qm-dir{display:flex;flex-direction:column;gap:6px}
+    .qm-dir-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+    .qm-dir-row .qmd-tag{flex:none;font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;line-height:1.6;margin-top:1px}
+    .qm-dir-row .qmd-tag.good{color:#fff;background:var(--gold-500)}
+    .qm-dir-row .qmd-tag.avoid{color:#fff;background:var(--cinnabar)}
+    .qm-dir-row .qmd-body{flex:1;min-width:0}
+    .qm-dir-row .qmd-t{font-size:12px;font-weight:700;color:var(--text-1)}
+    .qm-dir-row .qmd-d{font-size:11px;color:var(--text-3);line-height:1.6;margin-top:1px;white-space:pre-wrap;word-break:break-word}
+    /* 起局参数面板（起局级别四选 / 转盘飞盘 / 拆补置闰） */
+    .qm-panel .qm-row{display:flex;gap:6px;flex-wrap:wrap}
+    .qm-chip{flex:1 1 auto;font-size:12px;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:5px 10px;cursor:pointer;font-family:inherit;line-height:1.5;transition:.14s;text-align:center}
+    .qm-chip.sel{color:var(--skin-accent-ink);background:var(--skin-accent);border-color:var(--skin-accent)}
+    .qm-chip:disabled{opacity:.45;cursor:not-allowed}
+    .qm-note2{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
+
     /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
     .tarot-card{width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -9651,8 +9692,8 @@ const DIVIN_METHODS = [{
 }, {
   id: 'qimen',
   name: '奇门时家',
-  desc: '敬请期待',
-  todo: true
+  desc: '以转盘/飞盘排九宫四盘，时日月年四家定局，一事一占',
+  todo: false
 }];
 
 const DIVIN_API_METHOD = { sign: 'ssgw' };
@@ -9672,7 +9713,7 @@ const SHICHEN_ARR = [
   { n: '戌', start: 19, range: '19:00–20:59' },
   { n: '亥', start: 21, range: '21:00–22:59' }
 ];
-const TIME_METHODS = { meihua: true, xiaoliuren: true, liuren: true, jinkoujue: true };
+const TIME_METHODS = { meihua: true, xiaoliuren: true, liuren: true, jinkoujue: true, qimen: true };
 /* REQ-118：大六壬断课模板（对齐 vendored mingyu-core LiurenTemplateType：
    general 通用 / ganqing 感情 / shiye 事业 / caifu 财富；仅影响断课侧重点） */
 const LIUREN_TEMPLATES = [
@@ -9689,6 +9730,27 @@ const JINKOUJUE_METHODS = [
   { key: 'number', label: '数字起课' },
   { key: 'random', label: '随机起课' }
 ];
+/* REQ-120：奇门时家起局参数（对齐 vendored mingyu-core QimenScope / QimenMethod / QimenJuMethod）：
+   起局级别四选一（hour 时家默认 / day 日家 / month 月家 / year 年家）；
+   排盘方法二选一（zhuanpan 转盘默认 / feipan 飞盘）；
+   定局方法二选一（chaibu 拆补默认 / zhirun 置闰，仅时家/日家生效，月家/年家固定用月家/年家定局法） */
+const QIMEN_SCOPES = [
+  { key: 'hour', label: '时家', hint: '以时辰定局，精确到时辰' },
+  { key: 'day', label: '日家', hint: '以日干支定局，看一日大势' },
+  { key: 'month', label: '月家', hint: '以月干支定局，看一月运势' },
+  { key: 'year', label: '年家', hint: '以年干支定局，看一年大势' }
+];
+const QIMEN_METHODS = [
+  { key: 'zhuanpan', label: '转盘', hint: '主流口径：九星八门整体旋转' },
+  { key: 'feipan', label: '飞盘', hint: '备选口径：九星沿洛书飞布' }
+];
+const QIMEN_JU_METHODS = [
+  { key: 'chaibu', label: '拆补', hint: '以节气为界，当代主流定局法' },
+  { key: 'zhirun', label: '置闰', hint: '累计超神置闰的定局法' }
+];
+const QIMEN_SCOPE_CN = { hour: '时家', day: '日家', month: '月家', year: '年家' };
+const QIMEN_METHOD_CN = { zhuanpan: '转盘', feipan: '飞盘' };
+const QIMEN_JU_CN = { chaibu: '拆补', zhirun: '置闰' };
 const pad2 = function (x) { return String(x).padStart(2, '0'); };
 const todayStr = function () { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
 /* 当前小时 → 时辰下标（23:00/00:00 均为子时），时辰起始小时即该时辰内任一可解析时刻 */
@@ -10097,6 +10159,177 @@ function DivJinkoujueView(res) {
     });
     items.push(React.createElement('div', { key: 'fc-h', className: 'jk-sec' }, '类神标定（主证/辅证）'),
       React.createElement('div', { key: 'fc', className: 'jk-ev-wrap' }, focusEls));
+  }
+
+  return React.createElement('div', null, items);
+}
+/* REQ-120：奇门时家局盘 —— 九宫四盘（九星/八门/八神/天地盘干）+ 定局信息 + 格局
+   （基础标签/经典格局/复合格局）+ 反证（空亡/特殊时辰/风险宫位/凶格）+ 应期 + 方位
+   （引擎确定性字段，免费展示；与 9 法「奇门终身局」命盘类区分） */
+function DivQimenView(res) {
+  const items = [];
+  const gz = (res && typeof res === 'object' && res.ganzhi) || {};
+  const meta = [];
+  if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
+  meta.push((QIMEN_SCOPE_CN[res.scope] || res.scope || '时家') + '奇门');
+  meta.push((res.isYangDun ? '阳遁' : '阴遁') + (res.juShu != null ? res.juShu + '局' : ''));
+  meta.push((QIMEN_METHOD_CN[res.method] || res.method || '转盘') + '法');
+  meta.push(QIMEN_JU_CN[res.juMethod] || res.juMethod || '拆补');
+  const ti = (res && typeof res === 'object' && res.timeInfo) || {};
+  if (ti.solarTerm) meta.push(ti.solarTerm + (ti.epoch ? ti.epoch : ''));
+  if (res.zhiFu) meta.push('值符' + res.zhiFu);
+  if (res.zhiShi) meta.push('值使' + res.zhiShi);
+  if (Array.isArray(res.voidBranches) && res.voidBranches.length) meta.push('旬空 ' + res.voidBranches.join('、'));
+  if (res.horseStar) meta.push('驿马落' + (res.horseStar.name || res.horseStar.palace));
+  if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'qm-meta' }, meta.join(' · ')));
+
+  // 定局说明（节气/符头/超神接气/置闰说明）
+  const tiBits = [];
+  if (ti.juTerm && ti.juTerm !== ti.solarTerm) tiBits.push('定局用节：' + ti.juTerm);
+  if (ti.fuTou) tiBits.push('符头 ' + ti.fuTou + (ti.fuTouDate ? '（' + ti.fuTouDate + '）' : ''));
+  if (ti.chaoShenOrJieQi) tiBits.push(ti.chaoShenOrJieQi);
+  if (ti.juMethodNote) tiBits.push(ti.juMethodNote);
+  if (tiBits.length) items.push(React.createElement('div', { key: 'ju', className: 'qm-note' }, tiBits.join('；')));
+
+  // 九宫四盘（按洛书布局排列：戴九履一，左三右七，二四为肩，六八为足）
+  const gongs = Array.isArray(res.jiuGongGe) ? res.jiuGongGe : [];
+  if (gongs.length) {
+    const order = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+    const byGong = {};
+    gongs.forEach(function (g) { if (g && g.gong != null) byGong[g.gong] = g; });
+    const voidSet = {};
+    (Array.isArray(res.voidPalaces) ? res.voidPalaces : []).forEach(function (v) { if (v) voidSet[v.palace] = true; });
+    const horseGong = (res.horseStar && res.horseStar.palace != null) ? res.horseStar.palace : null;
+    const cellEls = order.map(function (n) {
+      const g = byGong[n];
+      if (!g) return React.createElement('div', { key: n, className: 'qm-cell' }, '');
+      const marks = [];
+      const tp = g.tianPan || {};
+      if (tp.star && tp.star === res.zhiFu) marks.push(React.createElement('span', { key: 'zf', className: 'qmc-mark zhi' }, '值符'));
+      const rp = g.renPan || {};
+      if (rp.door && rp.door === res.zhiShi) marks.push(React.createElement('span', { key: 'zs', className: 'qmc-mark zhi' }, '值使'));
+      if (voidSet[g.gong]) marks.push(React.createElement('span', { key: 'v', className: 'qmc-mark void' }, '空亡'));
+      if (horseGong != null && horseGong === g.gong) marks.push(React.createElement('span', { key: 'h', className: 'qmc-mark horse' }, '马星'));
+      const dp = g.diPan || {};
+      const sp = g.shenPan || {};
+      const starLine = (tp.star || '') + (tp.stem || '')
+        + (tp.companionStar ? '（随' + tp.companionStar + (tp.companionStem || '') + '）' : '');
+      const diLine = '地' + (dp.stem || '') + (rp.door ? ' · ' + rp.door : '');
+      return React.createElement('div', { key: n, className: 'qm-cell' },
+        React.createElement('div', { className: 'qmc-head' }, (g.name || g.gong + '宫') + (g.direction ? ' · ' + g.direction : '') + (g.element ? ' · ' + g.element : '')),
+        React.createElement('div', { className: 'qmc-main' }, starLine || '—'),
+        React.createElement('div', { className: 'qmc-sub' }, diLine || '—'),
+        React.createElement('div', { className: 'qmc-god' }, sp.god || ''),
+        marks.length ? React.createElement('div', { className: 'qmc-marks' }, marks) : null);
+    });
+    items.push(React.createElement('div', { key: 'grid-h', className: 'qm-sec' }, '九宫四盘（九星 · 八门 · 八神 · 天地盘干）'),
+      React.createElement('div', { key: 'grid', className: 'qm-grid' }, cellEls),
+      React.createElement('div', { key: 'grid-n', className: 'qm-note' }, '每格：宫名·方位·五行 / 天盘星干（随星） / 地盘干·门 / 八神；值符、值使、空亡、马星以角标标出。'));
+  }
+
+  // 格局：基础标签 + 标签白话
+  const tags = Array.isArray(res.patternTags) ? res.patternTags : [];
+  const details = Array.isArray(res.patternDetails) ? res.patternDetails : [];
+  if (tags.length) {
+    items.push(React.createElement('div', { key: 'pt-h', className: 'qm-sec' }, '格局（基础标签）'),
+      React.createElement('div', { key: 'pt', className: 'qm-tags' },
+        tags.map(function (t, i) { return React.createElement('span', { key: i, className: 'qm-tag' }, t); })),
+      details.length ? React.createElement('ul', { key: 'pd', className: 'qm-list' },
+        details.map(function (d, i) { return React.createElement('li', { key: i }, (d.tag || '') + '：' + (d.summary || '')); })) : null);
+  }
+
+  // 经典格局（九遁/三奇/门迫等）
+  const cls = Array.isArray(res.classicPatterns) ? res.classicPatterns : [];
+  if (cls.length) {
+    const clsChips = cls.map(function (c, i) {
+      const clsTone = c.type === 'good' ? 't-good' : c.type === 'bad' ? 't-bad' : 't-neutral';
+      return React.createElement('span', { key: i, className: 'qm-tag ' + clsTone },
+        c.name + (Array.isArray(c.palaces) && c.palaces.length ? '（' + c.palaces.map(function (p) { return p + '宫'; }).join('、') + '）' : ''));
+    });
+    items.push(React.createElement('div', { key: 'cp-h', className: 'qm-sec' }, '经典格局'),
+      React.createElement('div', { key: 'cp', className: 'qm-tags' }, clsChips),
+      React.createElement('ul', { key: 'cp-l', className: 'qm-list' },
+        cls.map(function (c, i) { return React.createElement('li', { key: i }, (c.name || '') + '：' + (c.summary || '')); })),
+      React.createElement('div', { key: 'cp-n', className: 'qm-note' }, '经典格局据《烟波钓叟歌》《御定奇门宝鉴》《奇门遁甲秘籍大全》规则命中；只作盘面组合提示，不直接断现实吉凶。'));
+  }
+
+  // 复合格局（同宫叠加 / 吉凶混杂）
+  const combos = Array.isArray(res.patternCombos) ? res.patternCombos : [];
+  if (combos.length) {
+    const comboEls = combos.map(function (c, i) {
+      const toneCls = c.tone === 'super-good' ? 't-good' : c.tone === 'super-bad' ? 't-bad' : 't-mixed';
+      return React.createElement('li', { key: i },
+        React.createElement('span', { className: 'qm-tag ' + toneCls, style: { marginRight: 6 } }, c.name || ''),
+        (c.summary || ''));
+    });
+    items.push(React.createElement('div', { key: 'cb-h', className: 'qm-sec' }, '复合格局'),
+      React.createElement('ul', { key: 'cb', className: 'qm-list' }, comboEls));
+  }
+
+  // 反证：空亡 / 特殊时辰 / 风险宫位 / 凶性格局
+  const counter = [];
+  const voidPalaces = Array.isArray(res.voidPalaces) ? res.voidPalaces : [];
+  if (voidPalaces.length) {
+    counter.push(React.createElement('li', { key: 'vp' },
+      '旬空：' + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
+      + '（旬空之位信息未实，须待出空/填实后再作主断，不直接判无成）'));
+  }
+  const sc = (res && typeof res === 'object' && res.specialConditions) || {};
+  if (sc.description) counter.push(React.createElement('li', { key: 'sc' }, '特殊时辰：' + sc.description));
+  const risks = Array.isArray(res.palaceInsights) ? res.palaceInsights.filter(function (p) { return p.level === '风险' || p.level === '关注'; }) : [];
+  if (risks.length) {
+    counter.push(React.createElement('li', { key: 'ri' },
+      '风险宫位：' + risks.map(function (p) { return p.name + '（' + p.level + '）' + (p.summary || ''); }).join('；')));
+  }
+  const badCls = cls.filter(function (c) { return c.type === 'bad'; });
+  if (badCls.length) {
+    counter.push(React.createElement('li', { key: 'bc' },
+      '凶性格局：' + badCls.map(function (c) { return c.name; }).join('、') + '（见上方经典格局，构成盘面限制）'));
+  }
+  if (counter.length) {
+    items.push(React.createElement('div', { key: 'ct-h', className: 'qm-sec' }, '反证与限制'),
+      React.createElement('ul', { key: 'ct', className: 'qm-list' }, counter),
+      React.createElement('div', { key: 'ct-n', className: 'qm-note' }, '反证只提示盘面限制与反向条件，不把单项限制写成现实失败或灾祸。'));
+  }
+
+  // 应期
+  const yq = (res && typeof res === 'object' && res.yingQi) || {};
+  if (yq.rhythm || yq.description || yq.triggerConditions) {
+    const yqBits = [];
+    if (yq.rhythm) yqBits.push('盘内节奏：' + yq.rhythm);
+    if (yq.description) yqBits.push(yq.description);
+    const tc = Array.isArray(yq.triggerConditions) ? yq.triggerConditions : [];
+    if (tc.length) yqBits.push('触发条件：' + tc.join('；'));
+    const lm = Array.isArray(yq.limitations) ? yq.limitations : [];
+    if (lm.length) yqBits.push('限制：' + lm.join('；'));
+    items.push(React.createElement('div', { key: 'yq-h', className: 'qm-sec' }, '应期参考'),
+      React.createElement('div', { key: 'yq', className: 'qm-pat' }, yqBits.join('\n')),
+      React.createElement('div', { key: 'yq-n', className: 'qm-note' }, '应期只给相对节奏与触发条件（出空/填实/马星/冲合），不换算固定天数或具体日期。'));
+  }
+
+  // 方位
+  const dir = (res && typeof res === 'object' && res.directions) || {};
+  const goodDirs = Array.isArray(dir.goodDirections) ? dir.goodDirections : [];
+  const avoidDirs = Array.isArray(dir.avoidDirections) ? dir.avoidDirections : [];
+  if (goodDirs.length || avoidDirs.length) {
+    const dirRows = [];
+    goodDirs.forEach(function (d2, i) {
+      dirRows.push(React.createElement('div', { key: 'g' + i, className: 'qm-dir-row' },
+        React.createElement('span', { className: 'qmd-tag good' }, '建议方位'),
+        React.createElement('div', { className: 'qmd-body' },
+          React.createElement('div', { className: 'qmd-t' }, (d2.direction || '') + (d2.name ? '（' + d2.name + '）' : '') + (d2.use ? ' · 宜' + d2.use : '')),
+          React.createElement('div', { className: 'qmd-d' }, (Array.isArray(d2.reasons) ? d2.reasons.join('；') : '') || ''))));
+    });
+    avoidDirs.forEach(function (d2, i) {
+      dirRows.push(React.createElement('div', { key: 'a' + i, className: 'qm-dir-row' },
+        React.createElement('span', { className: 'qmd-tag avoid' }, '避用方位'),
+        React.createElement('div', { className: 'qmd-body' },
+          React.createElement('div', { className: 'qmd-t' }, (d2.direction || '') + (d2.name ? '（' + d2.name + '）' : '') + (d2.use ? ' · 宜' + d2.use : '')),
+          React.createElement('div', { className: 'qmd-d' }, (Array.isArray(d2.reasons) ? d2.reasons.join('；') : '') || ''))));
+    });
+    items.push(React.createElement('div', { key: 'dr-h', className: 'qm-sec' }, '方位参考'),
+      React.createElement('div', { key: 'dr', className: 'qm-dir' }, dirRows),
+      React.createElement('div', { key: 'dr-n', className: 'qm-note' }, '方位为盘面象义参考，采用前须核实现实路线、安全与条件，不构成行动保证。'));
   }
 
   return React.createElement('div', null, items);
@@ -11882,6 +12115,93 @@ function JinkoujueFreeReading(res) {
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，依据《六壬神课金口诀古本》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
+/* REQ-120：奇门时家免费静态断局（确定性，零 LLM）—— 依据引擎已排好的局盘字段组织：
+   定局与值符值使 + 格局主线 + 反证提示 + 应期节奏 + 方位参考，末附免责尾注。 */
+function QimenFreeReading(res) {
+  const blocks = [];
+  // 定局与值符值使（引擎确定性摘要）
+  const ti = (res && typeof res === 'object' && res.timeInfo) || {};
+  const scopeCn = QIMEN_SCOPE_CN[res.scope] || res.scope || '时家';
+  const methodCn = QIMEN_METHOD_CN[res.method] || res.method || '转盘';
+  const juCn = QIMEN_JU_CN[res.juMethod] || res.juMethod || '拆补';
+  const juLine = (res.isYangDun ? '阳遁' : '阴遁') + (res.juShu != null ? res.juShu + '局' : '');
+  const juBits = [scopeCn + '奇门', methodCn + '法', juCn + '定局', juLine,
+    res.zhiFu ? '值符' + res.zhiFu : '', res.zhiShi ? '值使' + res.zhiShi : '',
+    ti.solarTerm ? ti.solarTerm + (ti.epoch ? ti.epoch : '') : ''].filter(Boolean);
+  blocks.push({
+    label: '定局与值符值使',
+    text: juBits.join('，') + '。'
+      + (ti.juMethodNote ? '\n' + ti.juMethodNote : '')
+      + '\n值符为九星之主、值使为八门之主，断局先认值符值使落宫，再看所问用神宫的门星神干组合。',
+    tip: '局盘层级（时/日/月/年家）决定应期量级，不跨级换算。此为传统文化视角的趋势参考，仅供自我觉察。'
+  });
+  // 格局主线：基础标签 + 经典格局
+  const tags = Array.isArray(res.patternTags) ? res.patternTags : [];
+  const cls = Array.isArray(res.classicPatterns) ? res.classicPatterns : [];
+  const goodCls = cls.filter(function (c) { return c.type === 'good'; });
+  const badCls = cls.filter(function (c) { return c.type === 'bad'; });
+  if (tags.length || cls.length) {
+    const patBits = [];
+    if (tags.length) patBits.push('基础标签：' + tags.join('、') + '。');
+    if (goodCls.length) patBits.push('吉性格局：' + goodCls.map(function (c) { return c.name; }).join('、') + '。');
+    if (badCls.length) patBits.push('凶性格局：' + badCls.map(function (c) { return c.name; }).join('、') + '。');
+    blocks.push({
+      label: '格局主线',
+      text: patBits.join('\n') + '\n格局为盘面组合提示：伏吟主迟滞反复、反吟主冲动反复、门迫主该宫受阻、入墓主事迟；吉凶混杂宫须分清主次，不单向取吉。',
+      tip: '格局命中只证明盘面满足规则，不是现实吉凶或结果概率。'
+    });
+  }
+  // 反证提示：空亡 / 风险宫位
+  const counterBits = [];
+  const voidPalaces = Array.isArray(res.voidPalaces) ? res.voidPalaces : [];
+  if (voidPalaces.length) {
+    counterBits.push('旬空：' + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
+      + '（待出空/填实后再作主断）。');
+  }
+  const sc = (res && typeof res === 'object' && res.specialConditions) || {};
+  if (sc.description) counterBits.push('特殊时辰：' + sc.description);
+  const risks = Array.isArray(res.palaceInsights) ? res.palaceInsights.filter(function (p) { return p.level === '风险' || p.level === '关注'; }) : [];
+  if (risks.length) {
+    counterBits.push('风险宫位：' + risks.map(function (p) { return p.name + '（' + p.summary + '）'; }).join('；'));
+  }
+  if (counterBits.length) {
+    blocks.push({
+      label: '反证提示',
+      text: counterBits.join('\n') + '\n反证只提示盘面限制与反向条件，不把单项限制写成现实失败或灾祸。',
+      tip: '先看反证再下判断，避免单向取吉。'
+    });
+  }
+  // 应期节奏
+  const yq = (res && typeof res === 'object' && res.yingQi) || {};
+  if (yq.rhythm || yq.description || yq.triggerConditions) {
+    const tc = Array.isArray(yq.triggerConditions) ? yq.triggerConditions : [];
+    blocks.push({
+      label: '应期参考',
+      text: (yq.description || '') + '\n盘内节奏：' + (yq.rhythm || '—')
+        + (tc.length ? '；触发条件：' + tc.join('；') : '')
+        + '\n应期只按局盘层级给相对节奏与触发条件（出空/填实/马星/冲合），不换算固定天数或具体日期。',
+      tip: '时家看时辰节奏、日家看日内、月家看月内、年家看年内，不跨级硬报日期。'
+    });
+  }
+  // 方位参考
+  const dir = (res && typeof res === 'object' && res.directions) || {};
+  const goodDirs = Array.isArray(dir.goodDirections) ? dir.goodDirections : [];
+  const avoidDirs = Array.isArray(dir.avoidDirections) ? dir.avoidDirections : [];
+  if (goodDirs.length || avoidDirs.length) {
+    const dirBits = [];
+    if (goodDirs.length) dirBits.push('建议方位：' + goodDirs.map(function (d2) { return d2.direction + (d2.use ? '（宜' + d2.use + '）' : ''); }).join('、') + '。');
+    if (avoidDirs.length) dirBits.push('避用方位：' + avoidDirs.map(function (d2) { return d2.direction + (d2.use ? '（宜' + d2.use + '）' : ''); }).join('、') + '。');
+    blocks.push({
+      label: '方位参考',
+      text: dirBits.join('\n') + '\n方位为盘面象义参考，采用前须核实现实路线、安全与条件，不构成行动保证。',
+      tip: '方位提示只作行动参考，不以方位断言成败。'
+    });
+  }
+  return React.createElement(React.Fragment, null,
+    FreeCard('局理解读（免费）', blocks),
+    React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
+      '以上内容由传统局理生成，依据《烟波钓叟歌》《御定奇门宝鉴》《奇门遁甲秘籍大全》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
+}
 /* ---------- REQ-069：手动录入实际结果 —— 共享常量/工具（六爻·梅花共用逐爻器；签号/掌诀/牌库选牌） ---------- */
 /* 六爻手工爻值映射：阳=7(少阳)、阴=8(少阴)、动阳=9(老阳)、动阴=6(老阴) —— 与后端 generateLiuyao options.yaos(6..9) 契约一致 */
 const YAO_VAL_OF = function (yang, moving) { return yang ? (moving ? 9 : 7) : (moving ? 6 : 8); };
@@ -12573,6 +12893,10 @@ function DivinationPage({
   const [jkMethod, setJkMethod] = useState('time');
   const [jkBranch, setJkBranch] = useState('子');
   const [jkNumber, setJkNumber] = useState('');
+  // REQ-120：奇门时家起局参数（起局级别四选一 / 转盘飞盘 / 拆补置闰，默认 时家+转盘+拆补）
+  const [qmScope, setQmScope] = useState('hour');
+  const [qmMethod, setQmMethod] = useState('zhuanpan');
+  const [qmJuMethod, setQmJuMethod] = useState('chaibu');
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
   // REQ-044 v2.1：占问问题可选 —— 有填才随 seed 透传（留空直接起卦，不传空 question）
@@ -12684,6 +13008,12 @@ function DivinationPage({
         seed.customDate = customDate;
       }
     }
+    // REQ-120：奇门时家起局参数（起局级别/转盘飞盘/拆补置闰）随 seed 透传引擎
+    if (method === 'qimen') {
+      seed.scope = qmScope;
+      seed.qimenMethod = qmMethod;
+      seed.qimenJuMethod = qmJuMethod;
+    }
     await doCast(seed, null);
   };
   const interpret = async () => {
@@ -12741,6 +13071,10 @@ function DivinationPage({
     setJkMethod('time');
     setJkBranch('子');
     setJkNumber('');
+    // REQ-120：每次进入奇门时家起局界面重置起局参数（默认 时家+转盘+拆补）
+    setQmScope('hour');
+    setQmMethod('zhuanpan');
+    setQmJuMethod('chaibu');
   };
   const openAsk = x => {
     if (x.todo) {
@@ -12771,8 +13105,8 @@ function DivinationPage({
   const startAsk = () => {
     setLastManual(null);
     setAsking(false);
-    // REQ-118/119：大六壬、金口诀起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
-    if (method === 'liuren' || method === 'jinkoujue') { run(); return; }
+    // REQ-118/119/120：大六壬、金口诀、奇门时家起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
+    if (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') { run(); return; }
     if (!tcShouldPlayAnim()) { run(); return; }
     if (method === 'sign') {
       // 清掉上一次结果，避免签筒等待期残留旧签文
@@ -12914,6 +13248,7 @@ function DivinationPage({
     else if (method === 'xiaoliuren') view = DivXiaoliurenView(result);
     else if (method === 'liuren') view = DivLiurenView(result);
     else if (method === 'jinkoujue') view = DivJinkoujueView(result);
+    else if (method === 'qimen') view = DivQimenView(result);
     else if (method === 'sign' || apiMethod === 'ssgw') view = DivSsgwView(result);
   }
   if (result != null && view == null) {
@@ -12927,6 +13262,7 @@ function DivinationPage({
     else if (method === 'xiaoliuren') freeReading = XiaoliurenFreeReading(result);
     else if (method === 'liuren') freeReading = LiurenFreeReading(result);
     else if (method === 'jinkoujue') freeReading = JinkoujueFreeReading(result);
+    else if (method === 'qimen') freeReading = QimenFreeReading(result);
   }
   // REQ-061：演出层挂载（动效期间数据取数先行/并行，渲染替 loading 骨架；结束或失败即卸载交还结果分支）
   const resResult = (data && data.result) || null;
@@ -13003,8 +13339,8 @@ function DivinationPage({
   const manualLabel = method === 'sign' ? '手动选签' : '手动录入结果';
   const filledYao = yaoPick.filter(function (r) { return r.yang != null; }).length;
   const movingYao = yaoPick.filter(function (r) { return r.mv; }).length;
-  // REQ-118/119：大六壬、金口诀为纯时辰/方式起课（无手动录入通道），强制自动模式且不展示模式切换
-  const effectiveManual = (method === 'liuren' || method === 'jinkoujue') ? false : (askMode === 'manual');
+  // REQ-118/119/120：大六壬、金口诀、奇门时家为纯时辰/方式起局（无手动录入通道），强制自动模式且不展示模式切换
+  const effectiveManual = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? false : (askMode === 'manual');
   let manualPanel = null;
   if (effectiveManual) {
     if (method === 'liuyao' || method === 'meihua') {
@@ -13100,7 +13436,7 @@ function DivinationPage({
   }
   // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
   // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
-  const modeSwitch = (method === 'liuren' || method === 'jinkoujue') ? null : (TC_SETTINGS.default_mode === 'both'
+  const modeSwitch = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? null : (TC_SETTINGS.default_mode === 'both'
     ? React.createElement('div', { className: 'mode-switch' },
         React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
         React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
@@ -13121,7 +13457,8 @@ function DivinationPage({
       : method === 'xiaoliuren' ? '落宫已定 · 速断所问吉凶'
         : method === 'liuren' ? '课式已起 · 四课三传参断'
           : method === 'jinkoujue' ? '课式已起 · 四位一体参断'
-            : '卦象已成 · 心诚则灵';
+            : method === 'qimen' ? '局盘已成 · 九宫四盘参断'
+              : '卦象已成 · 心诚则灵';
   let guaKids = [];
   if (guaResultOn) {
     if (qText) guaKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
@@ -13260,6 +13597,45 @@ function DivinationPage({
             : jkMethod === 'branch' ? '按所测方位或来意指定地分（十二地支之一），其余按所选时间顺排。'
               : jkMethod === 'number' ? '报一个正整数，归一为十二地支取地分，其余按所选时间顺排。'
                 : '随机取地分（十二地支等概率），其余按所选时间顺排；确定性计算零 LLM 免费。')) : null,
+      // REQ-120：奇门时家起局参数面板 —— 起局级别四选（默认时家）+ 转盘/飞盘（默认转盘）
+      // + 拆补/置闰（默认拆补；月家/年家固定用月家/年家定局法，此选项仅对时家/日家生效）
+      method === 'qimen' ? React.createElement('div', { key: 'qm', className: 'qm-panel' },
+        React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '起局级别（四选一）'),
+        React.createElement('div', { className: 'qm-row' }, QIMEN_SCOPES.map(function (s) {
+          return React.createElement('button', {
+            key: s.key,
+            type: 'button',
+            className: 'qm-chip' + (qmScope === s.key ? ' sel' : ''),
+            onClick: function () { setQmScope(s.key); }
+          }, s.label);
+        })),
+        React.createElement('div', { className: 'qm-note2' },
+          (QIMEN_SCOPES.find(function (s) { return s.key === qmScope; }) || {}).hint + '；级别决定应期量级（时家看时辰节奏、日家看日内、月家看月内、年家看年内）。'),
+        React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '排盘方法（二选一）'),
+        React.createElement('div', { className: 'qm-row' }, QIMEN_METHODS.map(function (mt) {
+          return React.createElement('button', {
+            key: mt.key,
+            type: 'button',
+            className: 'qm-chip' + (qmMethod === mt.key ? ' sel' : ''),
+            onClick: function () { setQmMethod(mt.key); }
+          }, mt.label);
+        })),
+        React.createElement('div', { className: 'qm-note2' },
+          (QIMEN_METHODS.find(function (mt) { return mt.key === qmMethod; }) || {}).hint + '。'),
+        React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '定局方法（二选一，默认拆补）'),
+        React.createElement('div', { className: 'qm-row' }, QIMEN_JU_METHODS.map(function (ju) {
+          return React.createElement('button', {
+            key: ju.key,
+            type: 'button',
+            className: 'qm-chip' + (qmJuMethod === ju.key ? ' sel' : ''),
+            disabled: qmScope === 'month' || qmScope === 'year',
+            onClick: function () { setQmJuMethod(ju.key); }
+          }, ju.label);
+        })),
+        React.createElement('div', { className: 'qm-note2' },
+          (QIMEN_JU_METHODS.find(function (ju) { return ju.key === qmJuMethod; }) || {}).hint + '。'
+          + (qmScope === 'month' || qmScope === 'year' ? '月家/年家固定用月家/年家定局法，拆补/置闰仅对时家/日家生效。' : '')
+          + '起局为确定性计算，零 LLM 免费。')) : null,
       manualPanel,
       React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
         React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
@@ -13275,7 +13651,7 @@ function DivinationPage({
       interpErr: interpErr,
       interpLoading: interpLoading,
       payEnough: payEnough,
-      interpretLabel: (method === 'liuren' || method === 'jinkoujue') ? '深度断课（付费）' : undefined,
+      interpretLabel: (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? '深度断课（付费）' : undefined,
       onInterpret: interpret,
       onRedo: function () {
         setData(null);
