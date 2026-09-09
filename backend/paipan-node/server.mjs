@@ -26,7 +26,7 @@
  *       zodiacWuxing 为 B2 本气五行展示文案（如“水（子）”）；贵人三层兜底：
  *       流年命中六合/三合 > B2 贵人（引擎 zodiac/index.js 回填）> tianyiNoble（此处）。
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
- *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"qimen"|"almanac"|"ssgw"|"lenormand",
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"qimen"|"almanac"|"taiyi"|"huangji"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
  *                      settings?:{}, params?:{}}
  *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/大六壬课盘/
@@ -50,6 +50,18 @@
  *                      （完整生辰，最多 30 位）；逐日 宜忌/冲煞/建除十二值/二十八宿/九星/彭祖百忌/
  *                      方位神/逐时时课 + evidenceAnalysis 候选分组（可用/条件/慎用，压缩为
  *                      candidateGroups 投影）；确定性零 LLM。月相背景已剔除控体积）
+ *       - taiyi       → generateTaiyi(input.taiyi)（太乙神数，REQ-124，纯国学大势工具，
+ *                      免档案：年/月/日/时四计七十二局基础盘；scope 四选一 year 年家（默认，
+ *                      须传 year 公历年份 1-9999 整数）/ month 月家 / day 日家 / hour 时家
+ *                      （后三者须传 customDate 东八区 ISO）；输出 阴阳遁局数/太乙/文昌/始击/
+ *                      计神/主客定算/十六神 + evidenceChain 证据链投影（计算链/方法论/限制/
+ *                      主要事实，原始 evidenceAnalysis 体积大已剥离）；确定性零 LLM）
+ *       - huangji     → calculateHuangjiJingshi(input.huangji)（皇极经世，REQ-125，纯国学
+ *                      大势工具，免档案：元会运世周期 + 值年/月经/旬纬/日卦/时经卦；mode 二选一
+ *                      year 值年（元会运世+值年卦+统卦/运卦/十年卦，传 year 公元整数年份，
+ *                      无公元 0 年、不早于公元前 67017 年）/ datetime 年月日时（值年/月经/旬纬/
+ *                      日卦/时经卦五层，传 customDate 东八区 ISO）；输出 position/forecast/
+ *                      eraTrend/dateTimeForecast + evidenceChain 证据链投影；确定性零 LLM）
  *       - ssgw        → drawRandomSign(options)（随机抽签）
  *       - lenormand   → drawLenormandSpread(spreadType||'single', options)
  *                      （雷诺曼 spreadType 由 input.spreadType 提供，非 settings；
@@ -125,6 +137,8 @@ import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dis
 import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
 import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
 import { generateAlmanacSelection } from './vendor/mingyu-core/dist/divination/algorithms/almanac.js';
+import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
+import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -450,6 +464,66 @@ function computeDivination(input) {
       }
       break;
     }
+    case 'taiyi': {
+      // 太乙神数（REQ-124，纯国学大势工具，免档案）：年/月/日/时四计七十二局基础盘 →
+      // generateTaiyi（vendored mingyu-core，太乙/文昌/始击/计神/主客定算/十六神 + evidence
+      // 证据链），确定性零 LLM。参数契约（input.taiyi 整体透传引擎）：
+      //   scope      四选一 year 年家（默认）/ month 月家 / day 日家 / hour 时家
+      //   year       公历年份（1-9999 整数，仅年家必需；引擎年家不接受 date）
+      //   customDate 东八区 ISO（月/日/时家必需；引擎以 Date 排月计/日计/时计，
+      //               缺省回退顶层 input.customDate）
+      const params = (input.taiyi && typeof input.taiyi === 'object' && !Array.isArray(input.taiyi))
+        ? { ...input.taiyi }
+        : {};
+      const scope = (typeof params.scope === 'string' && params.scope.trim()) ? params.scope.trim() : 'year';
+      if (!['year', 'month', 'day', 'hour'].includes(scope)) {
+        throw Object.assign(new Error('太乙计式必须是 year/month/day/hour 之一'), { clientError: true });
+      }
+      if (scope === 'year') {
+        const year = Number(params.year);
+        if (!Number.isInteger(year) || year < 1 || year > 9999) {
+          throw Object.assign(new Error('太乙年家需要提供公历年份（1-9999 整数）'), { clientError: true });
+        }
+        raw = generateTaiyi({ scope: 'year', year });
+      } else {
+        const d = toCustomDate(params.customDate !== undefined ? params.customDate : input.customDate);
+        if (d === undefined) {
+          throw Object.assign(new Error('太乙月/日/时家需要提供日期时间（customDate）'), { clientError: true });
+        }
+        raw = generateTaiyi({ scope, date: d });
+      }
+      break;
+    }
+    case 'huangji': {
+      // 皇极经世（REQ-125，纯国学大势工具，免档案）：元会运世周期 → 值年/月经/旬纬/日卦/
+      // 时经卦 → calculateHuangjiJingshi（vendored mingyu-core，position/forecast/eraTrend/
+      // dateTimeForecast + sources/limitations），确定性零 LLM。参数契约（input.huangji）：
+      //   mode       二选一 year 值年（默认：元会运世+值年卦+统卦/运卦/十年卦，传 year）/
+      //              datetime 年月日时（值年/月经/旬纬/日卦/时经卦五层，传 customDate）
+      //   year       公元整数年份（无公元 0 年、不早于公元前 67017 年；仅 year 模式必需）
+      //   customDate 东八区 ISO（datetime 模式必需；缺省回退顶层 input.customDate）
+      const params = (input.huangji && typeof input.huangji === 'object' && !Array.isArray(input.huangji))
+        ? { ...input.huangji }
+        : {};
+      const mode = (typeof params.mode === 'string' && params.mode.trim()) ? params.mode.trim() : 'year';
+      if (!['year', 'datetime'].includes(mode)) {
+        throw Object.assign(new Error('皇极经世模式必须是 year/datetime 之一'), { clientError: true });
+      }
+      if (mode === 'year') {
+        const year = Number(params.year);
+        if (!Number.isSafeInteger(year) || year === 0 || year < -67017) {
+          throw Object.assign(new Error('皇极经世值年模式需要提供公元整数年份（无公元 0 年、不早于公元前 67017 年）'), { clientError: true });
+        }
+        raw = calculateHuangjiJingshi({ year });
+      } else {
+        const d = toCustomDate(params.customDate !== undefined ? params.customDate : input.customDate);
+        if (d === undefined) {
+          throw Object.assign(new Error('皇极经世年月日时模式需要提供日期时间（customDate）'), { clientError: true });
+        }
+        raw = calculateHuangjiJingshi({ date: d });
+      }
+      break;
+    }
     case 'ssgw': {
       // 灵签随机抽签；options 可带 seed/replay 以确定性重放
       const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
@@ -505,6 +579,46 @@ function computeDivination(input) {
     if (almanacCustomLabel) {
       stripped.customTopicLabel = almanacCustomLabel;
     }
+  } else if (method === 'taiyi') {
+    // REQ-124：提炼 taiyi/evidence.js 的证据链最小投影（计算链/方法论/限制/主要事实/汇总）
+    // 随 result 返回，供前端「证据链·局限」展示与深度解读合规引用（趋势参考不作吉凶保证）。
+    // 原始 evidenceAnalysis 体积大且含逐条 promptText/sources/calculationSteps，stripInternal
+    // 已整体剥离；此处只保留前端展示与 LLM 合规引用所需的最小投影。
+    const ev = raw && raw.evidenceAnalysis;
+    stripped.evidenceChain = null;
+    if (ev && typeof ev === 'object') {
+      stripped.evidenceChain = {
+        calculationChain: Array.isArray(ev.calculationChain) ? ev.calculationChain : [],
+        methodology: Array.isArray(ev.methodology) ? ev.methodology : [],
+        limitations: Array.isArray(ev.limitations) ? ev.limitations : [],
+        primaryFacts: Array.isArray(ev.primaryFacts) ? ev.primaryFacts : [],
+        supportingFacts: Array.isArray(ev.supportingFacts) ? ev.supportingFacts : [],
+        summaryFact: (ev.summaryFact && typeof ev.summaryFact === 'object' && ev.summaryFact.promptText)
+          ? ev.summaryFact.promptText : '',
+      };
+    }
+  } else if (method === 'huangji') {
+    // REQ-125：同样提炼 evidenceChain 投影（元会运世换算链 + 传统依据来源 + 限制）；
+    // top-level 与 dateTimeForecast 内的 calculationChain/sources 被 stripInternal 剥离，
+    // 这里合并回补（limitations 不在剥离清单，本就保留）。
+    const dte = raw && raw.dateTimeForecast;
+    const chain = [].concat(
+      Array.isArray(raw && raw.calculationChain) ? raw.calculationChain : [],
+      (dte && Array.isArray(dte.calculationChain)) ? dte.calculationChain : [],
+    );
+    const srcs = [].concat(
+      Array.isArray(raw && raw.sources) ? raw.sources : [],
+      (dte && Array.isArray(dte.sources)) ? dte.sources : [],
+    );
+    const lims = [].concat(
+      Array.isArray(raw && raw.limitations) ? raw.limitations : [],
+      (dte && Array.isArray(dte.limitations)) ? dte.limitations : [],
+    );
+    stripped.evidenceChain = {
+      calculationChain: chain,
+      sources: srcs,
+      limitations: lims,
+    };
   }
   return stripped;
 }
