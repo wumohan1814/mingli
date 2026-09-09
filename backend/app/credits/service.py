@@ -29,11 +29,37 @@ from app.config import settings
 from app.credits.labels import label_case_map
 from app.database import AnalyticsSession, OpsSession
 from app.errors import ERR_BILLING, ERR_INSUFFICIENT_CREDIT, BizError
-from app.models import CreditAccount, CreditTransaction
+from app.models import CreditAccount, CreditTransaction, SystemConfig
 from app.models.ops import AdminAuditLog
 
 # 入账类流水允许的 type（recharge/manual/free/refund）
 _RECHARGE_TYPES = ("recharge", "manual", "free", "refund")
+
+
+# --------------------------------------------------------------------------- #
+# 系统配置读取（REQ-085：后台 /admin/config 可动态改，运行时读表、无启动缓存）
+# --------------------------------------------------------------------------- #
+def get_recharge_rate() -> float:
+    """充值折算率（1 元 = N 存储单位）：运行时读 system_configs.recharge_rate，
+    后台 PUT /admin/config/recharge_rate 改动**立即生效**（每次调用查表）；
+    无行 / 值非法（非正数）时回退 settings.recharge_rate（env/.env 默认 10）。"""
+    session = AnalyticsSession()
+    try:
+        row = (
+            session.query(SystemConfig)
+            .filter(SystemConfig.key == "recharge_rate")
+            .first()
+        )
+        if row is not None and row.value is not None:
+            try:
+                rate = float(row.value)
+            except (TypeError, ValueError):
+                rate = 0.0
+            if rate > 0:
+                return rate
+        return float(settings.recharge_rate)
+    finally:
+        session.close()
 
 
 # --------------------------------------------------------------------------- #
