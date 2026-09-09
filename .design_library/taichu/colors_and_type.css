@@ -1,0 +1,235 @@
+/* @light-only */
+/* 太初 H5 · colors_and_type.css
+ * Source: structured-spec（tokens.css + 太初H5界面设计方案.md）
+ * 架构：Layer 1 原始 token / Layer 2 语义别名 / Layer 3 皮肤覆盖
+ */
+
+@layer primitive, alias, theme;
+
+/* ============================================================
+   Layer 1：Primitives（原始设计 token，保留 tokens.css 命名）
+   ============================================================ */
+
+@layer primitive {
+  :root {
+    /* —— 午夜绒蓝 / 靛青（主色） —— */
+    /* @primary */
+    /* @group-priority: 100 */
+    --ink-50: #EEF1F8; /* Source: structured-spec */
+    --ink-100: #D6DCEF; /* Source: structured-spec */
+    --ink-200: #AEB9DE; /* Source: structured-spec */
+    --ink-300: #8493CB; /* Source: structured-spec */
+    --ink-400: #5E6FB3; /* Source: structured-spec */
+    --ink-500: #44558F; /* Source: structured-spec */
+    --ink-600: #364573; /* Source: structured-spec */
+    --ink-700: #2C385C; /* Source: structured-spec */
+    --ink-800: #232C49; /* Source: structured-spec */
+    --ink-900: #1A2138; /* Source: structured-spec */
+
+    /* —— 香槟金（金属点缀） —— */
+    /* @group-priority: 90 */
+    --gold-300: #E6CF9A; /* Source: structured-spec */
+    --gold-500: #B8893E; /* Source: structured-spec */
+    --gold-600: #9C6E2E; /* Source: structured-spec */
+    --gold-700: #7E5824; /* Source: structured-spec */
+
+    /* —— 玉青 · 朱砂（国学皮肤标识 / 全站警示） —— */
+    /* @group-priority: 80 */
+    --jade-400: #6FAE9B; /* Source: structured-spec */
+    --jade-500: #3E7C6B; /* Source: structured-spec */
+    --jade-600: #3E7C6B; /* Source: structured-spec */
+    --cinnabar: #B23A3A; /* Source: structured-spec */
+    --cinnabar-600: #973131; /* Source: structured-spec */
+    --error: #C0392B; /* Source: structured-spec */
+
+    /* —— 象牙暖白（中性色 / 全局底） —— */
+    /* @group-priority: 70 */
+    --paper: #F7F4EC; /* Source: structured-spec */
+    --surface: #FFFFFF; /* Source: structured-spec */
+    --surface-warm: #FEFCF8; /* Source: structured-spec */
+    --text-1: #1F1F26; /* Source: structured-spec */
+    --text-2: #5C5C68; /* Source: structured-spec */
+    --text-3: #8A8A94; /* Source: structured-spec */
+    --border: #E5E0D4; /* Source: structured-spec */
+
+    /* —— 字体族 —— */
+    /* @group-priority: 60 */
+    --font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif; /* Source: structured-spec */
+    --font-sans: "Noto Sans SC", "Inter", system-ui, sans-serif; /* Source: structured-spec */
+    --font-latin-serif: "Cormorant Garamond", "Noto Serif SC", serif; /* Source: structured-spec */
+    --font-latin-sans: "Inter", "Noto Sans SC", sans-serif; /* Source: structured-spec */
+
+    /* —— 字号层级（8px 模块） —— */
+    /* @group-priority: 60 */
+    --fs-display: 32px; /* Source: structured-spec */
+    --fs-h1: 28px; /* Source: structured-spec */
+    --fs-h2: 22px; /* Source: structured-spec */
+    --fs-h3: 18px; /* Source: structured-spec */
+    --fs-body-l: 16px; /* Source: structured-spec */
+    --fs-body: 14px; /* Source: structured-spec */
+    --fs-caption: 12px; /* Source: structured-spec */
+    --fs-disclaimer: 11px; /* Source: structured-spec */
+
+    /* —— 字重 —— */
+    /* @group-priority: 60 */
+    --fw-regular: 400; /* Source: structured-spec */
+    --fw-medium: 500; /* Source: structured-spec */
+    --fw-semibold: 600; /* Source: structured-spec */
+    --fw-bold: 700; /* Source: structured-spec */
+
+    /* —— 间距（8px 基线） —— */
+    /* @group-priority: 50 */
+    --sp-1: 8px; /* Source: structured-spec */
+    --sp-2: 16px; /* Source: structured-spec */
+    --sp-3: 24px; /* Source: structured-spec */
+    --sp-4: 32px; /* Source: structured-spec */
+    --sp-6: 48px; /* Source: structured-spec */
+
+    /* —— 圆角 —— */
+    /* @group-priority: 50 */
+    --radius-sm: 8px; /* Source: structured-spec */
+    --radius-md: 12px; /* Source: structured-spec */
+    --radius-lg: 16px; /* Source: structured-spec */
+    --radius-pill: 999px; /* Source: structured-spec */
+
+    /* —— 阴影 —— */
+    /* @group-priority: 50 */
+    --shadow-card: 0 2px 12px rgba(26, 33, 56, 0.10); /* Source: structured-spec */
+
+    /* —— 布局 —— */
+    /* @group-priority: 40 */
+    --content-max: 960px; /* Source: structured-spec */
+    --rail-width: 340px; /* Source: structured-spec */
+
+    /* —— 多文化皮肤签名（默认国学） —— */
+    /* @group-priority: 80 */
+    --skin-accent: #3E7C6B; /* Source: structured-spec */
+    --skin-accent-soft: rgba(62, 124, 107, 0.14); /* Source: structured-spec */
+    --skin-accent-ink: #F7F4EC; /* Source: structured-spec */
+    --skin-banner: #B23A3A; /* Source: structured-spec */
+    --skin-banner-ink: #F7F4EC; /* Source: structured-spec */
+    --skin-tag-bg: rgba(0, 0, 0, 0.16); /* Source: structured-spec */
+    --skin-motif: "star-chart"; /* Source: structured-spec */
+
+    /* —— 动效 —— */
+    /* @group-priority: 30 */
+    --ease: cubic-bezier(0.4, 0, 0.2, 1); /* Source: structured-spec */
+    --dur: 220ms; /* Source: structured-spec */
+  }
+}
+
+/* ============================================================
+   Layer 2：Aliases（语义别名，便于组件 / UI Kit 消费）
+   ============================================================ */
+
+@layer alias {
+  :root {
+    /* —— 颜色别名 —— */
+    --color-primary: var(--ink-900); /* Source: structured-spec */
+    --color-primary-800: var(--ink-800); /* Source: structured-spec */
+    --color-primary-700: var(--ink-700); /* Source: structured-spec */
+    --color-primary-500: var(--ink-500); /* Source: structured-spec */
+    --color-primary-300: var(--ink-300); /* Source: structured-spec */
+    --color-primary-50: var(--ink-50); /* Source: structured-spec */
+
+    --color-accent: var(--gold-500); /* Source: structured-spec */
+    --color-accent-light: var(--gold-300); /* Source: structured-spec */
+    --color-accent-dark: var(--gold-700); /* Source: structured-spec */
+
+    --color-success: var(--jade-500); /* Source: structured-spec */
+    --color-success-soft: var(--jade-400); /* Source: structured-spec */
+    --color-warning: var(--cinnabar); /* Source: structured-spec */
+    --color-warning-dark: var(--cinnabar-600); /* Source: structured-spec */
+    --color-error: var(--error); /* Source: structured-spec */
+
+    --color-text-primary: var(--text-1); /* Source: structured-spec */
+    --color-text-secondary: var(--text-2); /* Source: structured-spec */
+    --color-text-tertiary: var(--text-3); /* Source: structured-spec */
+
+    --color-background: var(--paper); /* Source: structured-spec */
+    --color-surface: var(--surface); /* Source: structured-spec */
+    --color-surface-warm: var(--surface-warm); /* Source: structured-spec */
+    --color-border: var(--border); /* Source: structured-spec */
+
+    --color-skin-accent: var(--skin-accent); /* Source: structured-spec */
+    --color-skin-accent-soft: var(--skin-accent-soft); /* Source: structured-spec */
+    --color-skin-accent-ink: var(--skin-accent-ink); /* Source: structured-spec */
+    --color-skin-banner: var(--skin-banner); /* Source: structured-spec */
+    --color-skin-banner-ink: var(--skin-banner-ink); /* Source: structured-spec */
+
+    /* —— 字体别名 —— */
+    --font-family-serif: var(--font-serif); /* Source: structured-spec */
+    --font-family-sans: var(--font-sans); /* Source: structured-spec */
+    --font-family-latin-serif: var(--font-latin-serif); /* Source: structured-spec */
+    --font-family-latin-sans: var(--font-latin-sans); /* Source: structured-spec */
+
+    /* —— 字号别名 —— */
+    --font-size-display: var(--fs-display); /* Source: structured-spec */
+    --font-size-h1: var(--fs-h1); /* Source: structured-spec */
+    --font-size-h2: var(--fs-h2); /* Source: structured-spec */
+    --font-size-h3: var(--fs-h3); /* Source: structured-spec */
+    --font-size-body-l: var(--fs-body-l); /* Source: structured-spec */
+    --font-size-body: var(--fs-body); /* Source: structured-spec */
+    --font-size-caption: var(--fs-caption); /* Source: structured-spec */
+    --font-size-disclaimer: var(--fs-disclaimer); /* Source: structured-spec */
+
+    /* —— 字重别名 —— */
+    --font-weight-regular: var(--fw-regular); /* Source: structured-spec */
+    --font-weight-medium: var(--fw-medium); /* Source: structured-spec */
+    --font-weight-semibold: var(--fw-semibold); /* Source: structured-spec */
+    --font-weight-bold: var(--fw-bold); /* Source: structured-spec */
+
+    /* —— 间距别名 —— */
+    --space-1: var(--sp-1); /* Source: structured-spec */
+    --space-2: var(--sp-2); /* Source: structured-spec */
+    --space-3: var(--sp-3); /* Source: structured-spec */
+    --space-4: var(--sp-4); /* Source: structured-spec */
+    --space-6: var(--sp-6); /* Source: structured-spec */
+
+    /* —— 圆角别名 —— */
+    --radius-card: var(--radius-lg); /* Source: structured-spec */
+    --radius-button: var(--radius-md); /* Source: structured-spec */
+    --radius-pill: var(--radius-pill); /* Source: structured-spec */
+    --radius-sm: var(--radius-sm); /* Source: structured-spec */
+
+    /* —— 阴影 / 动效别名 —— */
+    --shadow-default: var(--shadow-card); /* Source: structured-spec */
+    --transition-ease: var(--ease); /* Source: structured-spec */
+    --transition-duration: var(--dur); /* Source: structured-spec */
+    --transition-default: var(--dur) var(--ease); /* Source: structured-spec */
+
+    /* —— 布局别名 —— */
+    --content-max-width: var(--content-max); /* Source: structured-spec */
+    --rail-fixed-width: var(--rail-width); /* Source: structured-spec */
+  }
+}
+
+/* ============================================================
+   Layer 3：Theme（多文化皮肤覆盖）
+   ============================================================ */
+
+@layer theme {
+  /* 默认国学已在 Layer 1；此处仅覆盖占星 / 塔罗皮肤变量 */
+
+  /* 西式占星：内部=深空蓝，Banner=月银 */
+  [data-skin="astrology"] {
+    --skin-accent: #2A3A5C; /* Source: structured-spec */
+    --skin-accent-soft: rgba(42, 58, 92, 0.14); /* Source: structured-spec */
+    --skin-accent-ink: #F7F4EC; /* Source: structured-spec */
+    --skin-banner: #C9CBD3; /* Source: structured-spec */
+    --skin-banner-ink: #1F1F26; /* Source: structured-spec */
+    --skin-tag-bg: rgba(255, 255, 255, 0.55); /* Source: structured-spec */
+    --skin-motif: "zodiac"; /* Source: structured-spec */
+  }
+
+  /* 塔罗：内部=琥珀，Banner=紫晶 */
+  [data-skin="tarot"] {
+    --skin-accent: #C9A24B; /* Source: structured-spec */
+    --skin-accent-soft: rgba(201, 162, 75, 0.18); /* Source: structured-spec */
+    --skin-accent-ink: #1F1F26; /* Source: structured-spec */
+    --skin-banner: #5B4B8A; /* Source: structured-spec */
+    --skin-banner-ink: #F7F4EC; /* Source: structured-spec */
+    --skin-tag-bg: rgba(0, 0, 0, 0.16); /* Source: structured-spec */
+    --skin-motif: "orb"; /* Source: structured-spec */
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "太初 · 档案数据流与三库落库",
+    "output": "taichu-dataflow.html",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 880],
+    "views": [
+      { "id": "chart-path", "label": "档案主线", "focus": ["birth", "engine", "chart", "slice", "methods", "mresult", "synth", "api", "report"], "note": "从出生信息到报告呈现，chart.json 为唯一事实源。" },
+      { "id": "llm-cost", "label": "LLM 与成本", "focus": ["methods", "llm", "credits"], "note": "仅解读调 LLM，逐法扣费流水独立落账。" },
+      { "id": "feedback-ops", "label": "质询与运维", "focus": ["report", "feedback", "api", "ops"], "note": "质询进 feedback 库，埋点进 ops 库，均不阻断业务。" }
+    ]
+  },
+  "stages": [
+    { "label": "输入" },
+    { "label": "排盘（确定性计算）" },
+    { "label": "分析（9 法 + LLM）" },
+    { "label": "校验 / 合成 / 消费" }
+  ],
+  "nodes": [
+    { "id": "birth", "type": "frontend", "label": "用户出生信息", "sublabel": "性别 / 生辰 / 出生地", "stage": 0, "row": 0 },
+    { "id": "engine", "type": "backend", "label": "排盘引擎", "sublabel": "确定性计算 · 零 LLM", "stage": 1, "row": 0 },
+    { "id": "chart", "type": "database", "label": "chart.json", "sublabel": "charts 表全量落库", "stage": 1, "row": 1, "tag": "唯一事实源" },
+    { "id": "slice", "type": "backend", "label": "chart 切片器", "sublabel": "slicer 按方法切片", "stage": 2, "row": 0 },
+    { "id": "methods", "type": "backend", "label": "9 法 analyzer", "sublabel": "每 job 3 并发", "stage": 2, "row": 1, "tag": "method-result v2" },
+    { "id": "llm", "type": "cloud", "label": "DeepSeek", "sublabel": "deepseek-v4-flash", "stage": 2, "row": 2 },
+    { "id": "mresult", "type": "database", "label": "method_results", "sublabel": "method-result v2 落库", "stage": 2, "row": 3 },
+    { "id": "valid", "type": "backend", "label": "规则校验器", "sublabel": "仅断前尘阶段", "stage": 3, "row": 0 },
+    { "id": "synth", "type": "backend", "label": "合成器", "sublabel": "合并裁决 + 免责声明", "stage": 3, "row": 1 },
+    { "id": "api", "type": "backend", "label": "REST 网关", "sublabel": "middleware 埋点 · 轮询", "stage": 3, "row": 2 },
+    { "id": "report", "type": "frontend", "label": "H5 报告", "sublabel": "REST 投影 · 分享", "stage": 3, "row": 3 },
+    { "id": "credits", "type": "database", "label": "积分账本", "sublabel": "逐法扣费流水", "stage": 3, "row": 4 },
+    { "id": "feedback", "type": "database", "label": "taichu_feedback.db", "sublabel": "质询收集", "stage": 3, "row": 5 },
+    { "id": "ops", "type": "database", "label": "taichu_ops.db", "sublabel": "埋点 / 事件 / 错误", "stage": 3, "row": 6 }
+  ],
+  "flows": [
+    { "from": "birth", "to": "engine", "label": "出生信息", "variant": "emphasis" },
+    { "from": "engine", "to": "chart", "label": "chart.json 全量落库", "variant": "emphasis" },
+    { "from": "chart", "to": "slice", "label": "按方法切片" },
+    { "from": "slice", "to": "methods", "label": "9 法并发输入" },
+    { "from": "methods", "to": "llm", "label": "analyze prompt", "variant": "emphasis" },
+    { "from": "llm", "to": "methods", "label": "method-result v2" },
+    { "from": "methods", "to": "mresult", "label": "逐法落库", "variant": "emphasis" },
+    { "from": "mresult", "to": "valid", "label": "断前尘规则校验" },
+    { "from": "valid", "to": "synth", "label": "validation.json 通过" },
+    { "from": "mresult", "to": "synth", "label": "method-result 汇总" },
+    { "from": "synth", "to": "api", "label": "报告 JSON" },
+    { "from": "api", "to": "report", "label": "REST 投影 / 轮询" },
+    { "from": "report", "to": "feedback", "label": "用户质询 / 反馈" },
+    { "from": "api", "to": "ops", "label": "请求埋点 / 事件" },
+    { "from": "methods", "to": "credits", "label": "逐法扣费 consume" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "唯一事实源", "items": ["chart.json 全量落库，REST 只做投影裁剪", "method-result v2 为跨模块唯一协商点", "所有查询带 user_id 硬隔离（A 不可见 B）"] },
+    { "dot": "emerald", "title": "成本红线", "items": ["排盘 / 校准打分为确定性计算，零 LLM", "仅解读 / 校验 / 修正对话调 LLM", "逐法扣费 + revise/query 即时扣费"] },
+    { "dot": "amber", "title": "三库分治", "items": ["analytics 业务 · feedback 质询 · ops 运维", "埋点写失败静默，不阻断业务", "校验仅断前尘阶段执行（ADR-0002）"] }
+  ]
+}
