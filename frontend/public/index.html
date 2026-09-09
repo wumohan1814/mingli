@@ -1072,6 +1072,15 @@
 .method-list .method-cell{width:100%;box-sizing:border-box;text-align:left;padding:11px 14px}
 .method-list .method-cell .mn{font-size:15px}
 .method-list .method-cell .md{font-size:12px;color:var(--text-3);margin-top:2px;text-align:left}
+/* REQ-123：塔罗「选择牌阵」分组折叠（点击分组标题展开/收起，默认收起；交互对齐 REQ-107 折叠风格） */
+.spread-groups{display:flex;flex-direction:column;margin-top:2px}
+.spread-group-head{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;
+  text-align:left;background:none;border:none;padding:9px 6px;margin:0;cursor:pointer;font-family:inherit;line-height:1.5}
+.spread-group-head .sg-t{color:var(--skin-accent);font-size:13.5px;font-weight:700;flex:none}
+.spread-group-head .sg-meta{flex:1 1 auto;min-width:0;font-size:11px;color:var(--text-3);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spread-group-head .sg-chev{flex:none;font-size:11px;color:var(--text-3);transition:transform .16s var(--ease)}
+.spread-group-head.open .sg-chev{transform:rotate(90deg)}
+.spread-group .method-list{margin-top:2px}
 /* REQ-042/043 v2：抽卡结果 图/文拆分 —— 下方集中牌义段落（自第一张起逐张） */
 .mean-panel{border-top:1px dashed var(--border);padding-top:12px;margin-top:2px}
 .mean-panel .mp-title{font-size:14px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
@@ -15324,6 +15333,93 @@ const TAROT_SPREADS = [{
   name: '选择',
   desc: '二择一决策 · 比较两条路径并给最佳建议',
   pos: ['现状', '选择A', '选择A结果', '选择B', '选择B结果', '最佳建议']
+}, {
+  id: 'universal',
+  name: '万能',
+  desc: '通用问题全景 · 现状、阻力、资源与趋势',
+  pos: ['当前状况', '主要阻力', '可用资源', '建议行动', '发展趋势']
+}, {
+  id: 'holyTriangle',
+  name: '圣三角',
+  desc: '快速把握主线 · 根源、现状与发展结果',
+  pos: ['问题根源', '当前状况', '发展结果']
+}, {
+  id: 'relationship',
+  name: '关系牌阵',
+  desc: '关系互动 · 双方状态、需求与走向（vendored 6 张）',
+  pos: ['你的状态', '对方的状态', '你的需求', '对方的需求', '关系核心', '关系走向']
+}, {
+  id: 'mindBodySpirit',
+  name: '身心灵',
+  desc: '内在平衡 · 思想、身体与精神三层',
+  pos: ['心灵/思想', '身体/行动', '精神/灵性']
+}, {
+  id: 'wealth',
+  name: '财富',
+  desc: '财务现状 · 收入机会、风险与改善路径',
+  pos: ['当前财务状态', '收入机会', '支出与风险', '可用资源', '改善建议']
+}, {
+  id: 'problemSolving',
+  name: '问题解决',
+  desc: '拆解难题 · 表象、根源、阻力与突破口',
+  pos: ['问题表象', '根本原因', '主要阻力', '突破方向', '行动结果']
+}, {
+  id: 'celtic',
+  name: '凯尔特十字',
+  desc: '深层拆解 · 十张牌层层展开复杂局面（Waite 位次）',
+  pos: ['现状', '交叉影响', '目标与理想', '根基', '近期过去', '临近未来', '你的立场', '环境与他人', '希望与恐惧', '结果']
+}, {
+  id: 'horseshoe',
+  name: '七张马蹄',
+  desc: '全局总览 · 七张马蹄从过去看到结果（Barbara Moore 经典）',
+  pos: ['过去', '现在', '近期未来', '你的态度', '外部影响', '阻碍', '结果']
+}, {
+  id: 'hexagram',
+  name: '六芒星',
+  desc: '双层透视 · 精神与现实双层加核心牌（Star of David）',
+  pos: ['过去', '现在', '未来', '原因', '环境', '策略', '核心/指示牌']
+}, {
+  id: 'fourElements',
+  name: '四元素',
+  desc: '元素平衡 · 行动、情感、思考与现实',
+  pos: ['核心主题', '火元素·行动', '水元素·情感', '风元素·思考', '土元素·现实']
+}, {
+  id: 'chakra',
+  name: '七脉轮',
+  desc: '能量观察 · 七个脉轮看身心状态',
+  pos: ['海底轮(生存)', '脐轮(情感)', '太阳轮(意志)', '心轮(爱)', '喉轮(表达)', '眉心轮(直觉)', '顶轮(灵性)']
+}, {
+  id: 'twelveHouses',
+  name: '十二宫',
+  desc: '全景复盘 · 十二个生活领域逐宫展开',
+  pos: ['自我与外在', '金钱与价值', '学习与沟通', '家庭与根基', '创造与恋爱', '工作与日常', '伴侣与合作', '共享资源与转变', '远行与信念', '事业与名望', '社群与愿景', '潜意识与休整']
+}, {
+  id: 'fourSeasons',
+  name: '四牌四季',
+  desc: '四季运势 · 春夏秋冬四张牌看一年节奏',
+  pos: ['春', '夏', '秋', '冬']
+}, {
+  id: 'year',
+  name: '年运牌阵',
+  desc: '全年展望 · 十二张牌看整年阶段与领域重点（vendored 12 张）',
+  pos: ['整体运势', '1-3月', '4-6月', '7-9月', '10-12月', '爱情', '事业', '财运', '健康', '建议', '挑战', '机遇']
+}];
+/* REQ-123：塔罗「选择牌阵」分组（仅作用于选择牌阵步骤；分组名/归类为可调项，落地回填） */
+const TAROT_SPREAD_GROUPS = [{
+  title: '基础',
+  ids: ['single', 'three', 'universal', 'holyTriangle']
+}, {
+  title: '爱情关系',
+  ids: ['love', 'relationship', 'mindBodySpirit']
+}, {
+  title: '事业财富',
+  ids: ['career', 'wealth', 'problemSolving', 'decision']
+}, {
+  title: '综合深度',
+  ids: ['celtic', 'horseshoe', 'hexagram', 'fourElements', 'chakra', 'twelveHouses']
+}, {
+  title: '时间周期',
+  ids: ['fourSeasons', 'year']
 }];
 /* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
 const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔' };
@@ -15432,6 +15528,33 @@ function TarotCard({
   }, name, rev ? '（逆位）' : ''), item && item.keywords && item.keywords.length ? React.createElement('div', {
     className: 'tc-kw'
   }, item.keywords.join(' · ')) : null, body));
+}
+/* REQ-123：塔罗「选择牌阵」分组折叠 —— 分组标题默认收起，点击展开该组牌阵列表；
+   交互对齐 REQ-107 折叠菜单风格（标题作点击头 + ▸ 箭头旋转）；独立函数组件（自带 useState），
+   避免在父级渲染函数里按条件增减 hooks 破坏钩子顺序；组内保持 REQ-042 v2 单列按钮 + 适用说明。 */
+function TarotSpreadGroup({ title, spreads, mode, onPick }) {
+  const [open, setOpen] = useState(false);
+  const count = (spreads && spreads.length) || 0;
+  const kids = [React.createElement('button', {
+    key: 'h',
+    type: 'button',
+    className: 'spread-group-head' + (open ? ' open' : ''),
+    onClick: function () { setOpen(!open); },
+    'aria-expanded': open ? 'true' : 'false'
+  }, React.createElement('span', { className: 'sg-t' }, title),
+    React.createElement('span', { className: 'sg-meta' }, '共 ' + count + ' 个牌阵'),
+    React.createElement('span', { className: 'sg-chev' }, '▸'))];
+  if (open) {
+    kids.push(React.createElement('div', { key: 'list', className: 'method-list' }, spreads.map(function (s) {
+      return React.createElement('div', {
+        key: s.id,
+        className: 'method-cell',
+        onClick: function () { onPick(s); }
+      }, React.createElement('div', { className: 'mn' }, s.name), s.desc ? React.createElement('div', { className: 'md' }, s.desc) : null,
+        React.createElement('div', { className: 'md', style: { marginTop: 2, color: 'var(--text-3)' } }, mode === 'manual' ? '手动模式：按 ' + s.pos.length + ' 个牌位从牌库逐张选牌并定正/逆位' : '点击即自动抽取 ' + s.pos.length + ' 张'));
+    })));
+  }
+  return React.createElement('div', { className: 'spread-group' }, kids);
 }
 function TarotPage({
   onNavigate
@@ -15757,13 +15880,17 @@ function TarotPage({
           React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick))
       : React.createElement('button', { type: 'button', className: 'mode-switch-link', onClick: function () { setMode(mode === 'auto' ? 'manual' : 'auto'); } },
           mode === 'auto' ? ('改为' + UI_COPY.buttons.manual_pick) : ('返回' + UI_COPY.buttons.auto_pick)),
-    React.createElement('div', { className: 'method-list' }, TAROT_SPREADS.map(function (s) {
-      return React.createElement('div', {
-        key: s.id,
-        className: 'method-cell',
-        onClick: function () { if (mode === 'manual') openManualPick(s); else draw(s); }
-      }, React.createElement('div', { className: 'mn' }, s.name), s.desc ? React.createElement('div', { className: 'md' }, s.desc) : null,
-        React.createElement('div', { className: 'md', style: { marginTop: 2, color: 'var(--text-3)' } }, mode === 'manual' ? '手动模式：按 ' + s.pos.length + ' 个牌位从牌库逐张选牌并定正/逆位' : '点击即自动抽取 ' + s.pos.length + ' 张'));
+    React.createElement('div', { className: 'spread-groups' }, TAROT_SPREAD_GROUPS.map(function (g) {
+      const spreads = g.ids.map(function (id) {
+        return TAROT_SPREADS.find(function (s) { return s.id === id; });
+      }).filter(Boolean);
+      return React.createElement(TarotSpreadGroup, {
+        key: g.title,
+        title: g.title,
+        spreads: spreads,
+        mode: mode,
+        onPick: function (s) { if (mode === 'manual') openManualPick(s); else draw(s); }
+      });
     })));
   // REQ-069：手动选牌面板（真实抽牌结果的牌位录入）
   const posLen = (spread && spread.pos && spread.pos.length) || 0;
