@@ -26,7 +26,7 @@
  *       zodiacWuxing 为 B2 本气五行展示文案（如“水（子）”）；贵人三层兜底：
  *       流年命中六合/三合 > B2 贵人（引擎 zodiac/index.js 回填）> tianyiNoble（此处）。
  *       输入 zodiac 缺失/非法 → 400（客户端错误）。
- *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"qimen"|"ssgw"|"lenormand",
+ *   POST /divination  {method:"liuyao"|"meihua"|"xiaoliuren"|"liuren"|"jinkoujue"|"qimen"|"almanac"|"ssgw"|"lenormand",
  *                      customDate?:"ISO 字符串", spreadType?:"字符串", options?:{},
  *                      settings?:{}, params?:{}}
  *     → 200 application/json，确定性起卦结果（六爻卦盘/梅花卦盘/小六壬课式/大六壬课盘/
@@ -45,6 +45,11 @@
  *                      month 月家 / year 年家；qimenMethod 二选一 zhuanpan 转盘（默认）/ feipan 飞盘；
  *                      qimenJuMethod 二选一 chaibu 拆补（默认）/ zhirun 置闰，仅时家/日家生效；
  *                      九宫四盘（九星/八门/八神/天地盘干）+ 格局 + 反证 + 应期 + 方位；确定性零 LLM）
+ *       - almanac     → generateAlmanacSelection(input.almanac)（黄历择日，REQ-121，免档案：
+ *                      事项 topic 10 选 1 + startDate/endDate 起止（最多 180 天）+ 可选 participants
+ *                      （完整生辰，最多 30 位）；逐日 宜忌/冲煞/建除十二值/二十八宿/九星/彭祖百忌/
+ *                      方位神/逐时时课 + evidenceAnalysis 候选分组（可用/条件/慎用，压缩为
+ *                      candidateGroups 投影）；确定性零 LLM。月相背景已剔除控体积）
  *       - ssgw        → drawRandomSign(options)（随机抽签）
  *       - lenormand   → drawLenormandSpread(spreadType||'single', options)
  *                      （雷诺曼 spreadType 由 input.spreadType 提供，非 settings；
@@ -119,6 +124,7 @@ import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divinat
 import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
 import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
 import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
+import { generateAlmanacSelection } from './vendor/mingyu-core/dist/divination/algorithms/almanac.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
@@ -341,6 +347,7 @@ function computeDivination(input) {
   const method = input.method.trim();
   const customDate = toCustomDate(input.customDate);
   let raw;
+  let almanacCustomLabel = ''; // REQ-121：自定义事项文本（topic=='custom'）随 result.customTopicLabel 返回
   switch (method) {
     case 'liuyao':
       // 时间起卦默认（customDate 省略用当前时间）；options 可带手工爻值/铜钱记录
@@ -402,6 +409,47 @@ function computeDivination(input) {
       raw = generateQimen(customDate, qimenMethod, scope, qimenJuMethod);
       break;
     }
+    case 'almanac': {
+      // 黄历择日（REQ-121，纯国学工具，免档案）：事项 + 日期范围（起止）+ 可选参与人 →
+      // generateAlmanacSelection（vendored mingyu-core，逐日宜忌/冲煞/建除十二值/二十八宿/
+      // 九星/彭祖百忌/方位神/逐时时课 + almanac-evidence.js 候选分组），确定性零 LLM。
+      // 参数契约（input.almanac 整体透传引擎）：
+      //   topic        事项类型 10 选 1：move 搬家入宅 / marriage 订婚结婚 / opening 开业启动 /
+      //                contract 签约合作 / travel 出行赴任 / medical 就医手术 / study 考试学习 /
+      //                burial 安葬修坟 / renovation 修造动土 / custom 自定义事项
+      //   startDate    开始日期 YYYY-MM-DD（与 endDate 合围最多 180 天）
+      //   endDate      结束日期 YYYY-MM-DD
+      //   participants 参与人（可选，最多 30 位）：{id?, name?, gender:男|女, year, month, day,
+      //                timeIndex(0-12 时辰序), dateType:'solar'|'lunar', isLeapMonth?}
+      //                —— 引擎要求参与人完整生辰（生肖/年命须由年支推算），缺生日资料无法核验
+      //                刑冲破害，故前端以完整公历生日收集；仅填生肖/年命不满足引擎契约。
+      const params = (input.almanac && typeof input.almanac === 'object' && !Array.isArray(input.almanac))
+        ? { ...input.almanac }
+        : {};
+      if (typeof params.startDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(params.startDate)
+          || typeof params.endDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(params.endDate)) {
+        throw Object.assign(new Error('黄历择日需要提供开始日期和结束日期（YYYY-MM-DD）'), { clientError: true });
+      }
+      const ALMANAC_TOPICS = ['move', 'marriage', 'opening', 'contract', 'travel', 'medical', 'study', 'burial', 'renovation', 'custom'];
+      if (typeof params.topic !== 'string' || !ALMANAC_TOPICS.includes(params.topic)) {
+        throw Object.assign(new Error('黄历择日事项类型必须是 move/marriage/opening/contract/travel/medical/study/burial/renovation/custom 之一'), { clientError: true });
+      }
+      const startMs = new Date(params.startDate + 'T00:00:00+08:00').getTime();
+      const endMs = new Date(params.endDate + 'T00:00:00+08:00').getTime();
+      if (Number.isNaN(startMs) || Number.isNaN(endMs) || endMs < startMs) {
+        throw Object.assign(new Error('黄历择日起止日期无效：结束日期不得早于开始日期'), { clientError: true });
+      }
+      if (Math.round((endMs - startMs) / 86400000) > 179) {
+        throw Object.assign(new Error('黄历择日一次最多比较 180 天，请缩小日期范围'), { clientError: true });
+      }
+      raw = generateAlmanacSelection(params);
+      // 自定义事项文本（topic=='custom'）随 result.customTopicLabel 透传（仅展示/供深度解读
+      // 引用；引擎只按通用「自定义事项」计算，custom 关键词为空，不参与计算）。
+      if (typeof params.customTopicLabel === 'string' && params.customTopicLabel.trim()) {
+        almanacCustomLabel = params.customTopicLabel.trim();
+      }
+      break;
+    }
     case 'ssgw': {
       // 灵签随机抽签；options 可带 seed/replay 以确定性重放
       const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
@@ -428,7 +476,37 @@ function computeDivination(input) {
     default:
       throw Object.assign(new Error(`Unknown divination method: ${method}`), { clientError: true });
   }
-  return stripInternal(raw);
+  const stripped = stripInternal(raw);
+  if (method === 'almanac') {
+    // REQ-121：提炼 almanac-evidence.js 的候选分组（可用/条件/慎用 + 日期→状态映射 + 硬约束/
+    // 现实约束摘要）随 result 返回供前端展示。原始 evidenceAnalysis 体积大且含内部 promptText/
+    // sources/calculationSteps，stripInternal 已整体剥离；这里只保留前端展示所需的最小投影。
+    const ev = raw && raw.evidenceAnalysis;
+    stripped.candidateGroups = null;
+    if (ev && typeof ev === 'object') {
+      const statusByDate = {};
+      if (Array.isArray(ev.candidates)) {
+        ev.candidates.forEach((c) => { if (c && c.date) statusByDate[c.date] = c.status; });
+      }
+      stripped.candidateGroups = {
+        preferredDates: Array.isArray(ev.preferredDates) ? ev.preferredDates : [],
+        conditionalDates: Array.isArray(ev.conditionalDates) ? ev.conditionalDates : [],
+        cautionDates: Array.isArray(ev.cautionDates) ? ev.cautionDates : [],
+        statusByDate,
+        hardConstraints: Array.isArray(ev.hardConstraints) ? ev.hardConstraints : [],
+        realityConstraints: Array.isArray(ev.realityConstraints) ? ev.realityConstraints : [],
+      };
+    }
+    // 逐日月相为引擎天文背景（REQ-121 结果口径只含 宜忌/冲煞/宿曜/九星/百忌/方位神/逐时时课），
+    // 剔除以防 180 天范围的 payload 与落库体积过大。
+    if (Array.isArray(stripped.days)) {
+      stripped.days.forEach((d) => { if (d && typeof d === 'object') delete d.moonPhaseEvidence; });
+    }
+    if (almanacCustomLabel) {
+      stripped.customTopicLabel = almanacCustomLabel;
+    }
+  }
+  return stripped;
 }
 
 /* ---------- /tarot：塔罗抽牌（vendored mingyu-core divination/tarot.js） ---------- */
