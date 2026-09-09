@@ -487,13 +487,28 @@
     .pair-field{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-1);font-size:14px;font-family:inherit;line-height:1.5;margin:0}
     .pair-field:focus{outline:none;border-color:var(--skin-accent)}
     textarea.pair-field{resize:vertical;min-height:66px}
-    .pair-rel{display:flex;flex-wrap:wrap;gap:8px}
-    .pair-rel .btn{width:auto;flex:none;margin:0;padding:7px 15px;font-size:13px;font-weight:600;border-radius:var(--radius-pill)}
+    /* REQ-110：配对解析「关系类型」按钮 2-2-1 排布 —— 两行两枚 + 末行一枚（第 5 枚「其他」）整行居中；
+       每枚按钮内嵌 I3 图标（pair-love / pair-friend / pair-family / pair-colleague / pair-other） */
+    .pair-rel{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .pair-rel .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:0;padding:9px 12px;font-size:13px;font-weight:600;border-radius:var(--radius-pill)}
     .pair-rel .btn.sel{background:var(--skin-accent);border-color:var(--skin-accent);color:var(--skin-accent-ink)}
+    .pair-rel .btn:last-child{grid-column:1 / -1;justify-self:center;width:auto;min-width:42%;padding-left:20px;padding-right:20px}
     .pair-err{font-size:13px;color:var(--cinnabar);background:rgba(178,58,58,.08);border:1px solid rgba(178,58,58,.28);border-radius:var(--radius-sm);padding:10px 12px;line-height:1.7;margin:0 0 12px;white-space:pre-wrap}
     .pair-busy{font-size:13px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-sm);padding:10px 12px;margin:0 0 12px;line-height:1.7}
     .pair-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
     .pair-foot .btn{width:auto;flex:none;padding:10px 18px;font-size:14px}
+    /* BUG-023：配对解析弹窗底部「关闭 / 开始配对」等宽并排占满底栏（仅 PairModal 主底栏加挂本类，
+       不影响其它复用 .pair-foot 的弹窗：起名 / 生肖 / 星座关系等仍保持原右对齐小按钮） */
+    .pair-foot-eq{display:flex;gap:10px;margin-top:16px}
+    .pair-foot-eq .btn{flex:1 1 0;min-width:0;width:auto;padding:10px 18px;font-size:14px}
+    /* REQ-108 / REQ-109：配对解析横屏大按键（功能标题 + 解释文字，整键可点）。
+       星座（西式）入口位于「生成星盘」下方、本命盘上方；MBTI 入口置于页面底部操作区。
+       国学「配对解析 / 八字配对」入口（九法合一页 .pair-entry）保持原样，不随本样式改动。 */
+    .pair-big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;box-sizing:border-box;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:16px 14px;margin:0 0 14px;cursor:pointer;color:inherit;font-family:inherit;text-align:center;transition:filter .15s ease,box-shadow .15s ease,transform .12s ease}
+    .pair-big:hover{filter:brightness(1.03);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+    .pair-big:active{transform:translateY(1px)}
+    .pair-big .pb-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;color:var(--text-1);line-height:1.4}
+    .pair-big .pb-sub{font-size:12px;color:var(--text-2);line-height:1.7}
 
     /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
     /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
@@ -2669,11 +2684,11 @@ function CreditInsufficientModal({
 // → POST /api/pair/analyze（module 由入口带入）→ 展示 interpretation。
 // 缺数据档案由后端 400 detail 直接展示（提示先生成，不自动生成）；余额不足走既有 5002 → creditInsuffHandler。
 const PAIR_MODULE_META = {
-  guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）' },
-  xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）' },
-  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）' },
+  guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
+  xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
+  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）', guideTxt: '在「MBTI」页选择该档案并完成测试判型（结果会写入档案）' },
   // REQ-093UI④：八字配对 —— 入口在九法合一选档案页底部；module='bazi' 走同一 POST /api/pair/analyze
-  bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）' }
+  bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
 };
 const PAIR_RELATIONS = ['恋爱', '朋友', '家人', '同事', '其他'];
 function PairModal({
@@ -2794,13 +2809,24 @@ function PairModal({
         interpretation: (d && d.interpretation) || '（暂无解读内容）'
       });
     } catch (e) {
-      // 缺数据 400：detail 直接展示（「该档案未排盘/未生成星盘/未测 MBTI，请先生成后再配对解析」）；
       // 余额不足 5002：api() 已自动弹既有 creditInsuffHandler 充值引导，此处同文案展示
       if (e && e.status === 401) {
         onClose();
         return;
       }
-      setErr(e && e.message ? e.message : '配对解析失败，请重试。');
+      // BUG-021：后端 400 缺数据提示只带 case id（如「该档案未生成星盘，请先生成后再配对解析（case 12）」），
+      // 前端解析 case id 映射档案名，明确指出**是哪个档案**缺数据并引导先生成（关联 REQ-072）。
+      const em = e && e.message ? String(e.message) : '';
+      const m = em.match(/（case\s*(\d+)）/);
+      if (m) {
+        const cid = m[1];
+        const nm = caseName(cid) || ('档案 ' + cid);
+        const head = em.indexOf('（case') >= 0 ? em.slice(0, em.indexOf('（case')) : em;
+        const reason = head.replace(/^该档案/, '').trim() || '数据未生成';
+        setErr('档案「' + nm + '」' + reason + '。\n生成指引：' + (meta.guideTxt || '在对应模块为该档案先生成所需数据'));
+      } else {
+        setErr(em || '配对解析失败，请重试。');
+      }
     } finally {
       setBusy(false);
     }
@@ -2916,7 +2942,10 @@ function PairModal({
     type: 'button',
     className: 'btn btn-outline' + (rel === r ? ' sel' : ''),
     onClick: () => pickRel(r)
-  }, r))), rel === '其他' ? el('input', {
+  }, el(PairRelIcon, {
+    name: PAIR_REL_ICONS[r],
+    size: 22
+  }), r))), rel === '其他' ? el('input', {
     className: 'pair-field',
     style: {
       marginTop: 8
@@ -2943,7 +2972,9 @@ function PairModal({
     onChange: e => setQuestion(e.target.value),
     placeholder: '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…'
   }))), el('div', {
-    className: 'pair-foot'
+    // BUG-023：底部「关闭 / 开始配对」两按钮等宽并排、均匀占满底栏（pair-foot-eq）；
+    // 原右对齐（justify-content:flex-end）仅保留给其它复用 .pair-foot 的弹窗
+    className: 'pair-foot pair-foot-eq'
   }, el('button', {
     type: 'button',
     className: 'btn btn-outline',
@@ -8390,6 +8421,34 @@ function RelIcon({
     'aria-hidden': 'true'
   }, React.createElement('use', {
     href: REL_SPRITE + '#' + id
+  }));
+}
+/* REQ-110：配对解析「关系类型」按钮图标 —— 复用 REL_SPRITE（icon-sprite-i1-i4.svg，I3 正式美术）的
+   pair-* 五枚 symbol：pair-love 恋爱 / pair-friend 朋友 / pair-family 家人 / pair-colleague 同事 /
+   pair-other 其他。与 RelIcon 同机制（<use href> 外部引用，只做引用、不改动 SVG 内容）。 */
+const PAIR_REL_ICONS = {
+  '恋爱': 'pair-love',
+  '朋友': 'pair-friend',
+  '家人': 'pair-family',
+  '同事': 'pair-colleague',
+  '其他': 'pair-other'
+};
+function PairRelIcon({
+  name,
+  size = 22
+}) {
+  return React.createElement('svg', {
+    className: 'ic',
+    style: {
+      width: size,
+      height: size,
+      flex: 'none'
+    },
+    viewBox: '0 0 100 100',
+    role: 'img',
+    'aria-hidden': 'true'
+  }, React.createElement('use', {
+    href: REL_SPRITE + '#' + name
   }));
 }
 /* ================= REQ-095：生肖流年「恋爱 / 朋友 / 上下级」三关系匹配 =================
@@ -15320,6 +15379,25 @@ function AstrologyPage({
     }, '在上方选择一份档案，点击「生成星盘」或「查看星盘」（该档案已生成过的星盘会直接展示、不重复计费；生辰自动取自档案），即可免费查看行星落座、四轴、相位与元素格局。');
   }
 
+  // REQ-108：星座（西式）配对解析入口 —— 横跨屏幕大按键（功能标题 + 解释文字，整键可点），
+  // 位置在「生成星盘」（formCard）下方、本命盘（tabsNode + body）上方；原页面顶部
+  // .pair-entry 条移除（覆盖 REQ-082②「西式配对解析保持现状」口径）。
+  const pairBig = el('button', {
+    type: 'button',
+    className: 'pair-big',
+    onClick: () => openPairAnalyze({
+      module: 'xishi'
+    })
+  }, el('span', {
+    className: 'pb-title'
+  }, el(Icon, {
+    name: 'orbit',
+    size: 20,
+    color: 'var(--skin-accent)'
+  }), '配对解析', payBadge(payEnough)), el('span', {
+    className: 'pb-sub'
+  }, '选择两份档案，基于双方星座本命星盘解读两人的关系契合、相处模式与建议（付费 LLM，按实际用量扣余额 ¥）'));
+
   return el(React.Fragment, null, el('div', {
     className: 'container'
   }, el('div', {
@@ -15327,21 +15405,7 @@ function AstrologyPage({
   }, el(Icon, {
     name: 'orbit',
     size: 22
-  }), ' 星座'), el('div', {
-    className: 'pair-entry'
-  }, el('div', {
-    className: 'pe-main'
-  }, el('div', {
-    className: 'pe-title'
-  }, '配对解析'), el('div', {
-    className: 'pe-sub'
-  }, '选择两份档案，基于双方星座本命星盘解读两人的关系契合、相处模式与建议（付费 LLM，按实际用量扣余额 ¥）')), el('button', {
-    className: 'btn btn-outline',
-    type: 'button',
-    onClick: () => openPairAnalyze({
-      module: 'xishi'
-    })
-  }, ['配对解析', payBadge(payEnough)])), formCard, tabsNode, body, el('div', {
+  }), ' 星座'), formCard, pairBig, tabsNode, body, el('div', {
     className: 'back-row'
   }, data ? el('button', {
     className: 'btn btn-outline',
@@ -15865,12 +15929,6 @@ function MbtiPage({
                     el('span', {className: 'co-meta'}, meta)),
                   el('span', {className: 'co-check'}, sel ? '✓' : ''));
               }))),
-          // REQ-082④：MBTI「配对解析」入口置于「档案操作」与「选择档案」之间（选档案阶段随时可发起双档案配对）
-          el('div', {className: 'pair-entry', style: {marginTop: 10, marginBottom: 0}},
-            el('div', {className: 'pe-main'},
-              el('div', {className: 'pe-title'}, '配对解析'),
-              el('div', {className: 'pe-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）')),
-            el('button', {className: 'btn btn-outline', type: 'button', onClick: () => openPairAnalyze({module: 'mbti'})}, ['配对解析', payBadge(payEnough)])),
           // —— REQ-056②④ 操作区：勾选档案（caseId 非空）后出现完整操作；「分享测试链接」
           // 仅在此操作区展示（不再顶部常驻），仍复用 shareResult/copyShare/shareUrl/shareErr ——
           el('div', {className: 'card', style: {marginTop: 10}},
@@ -15884,7 +15942,12 @@ function MbtiPage({
               selTval ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: viewExisting}, '查看已完成 MBTI 类型') : null,
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入'),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, UI_COPY.buttons.create_case),
-              el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'))));
+              el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案')),
+            // REQ-109：MBTI「配对解析」入口移至底部操作区（原 REQ-082④「档案操作」与「选择档案」
+            // 之间的条状入口已移除），样式对齐 REQ-108 星座入口：横跨屏幕大按键（功能标题 + 解释文字）
+            el('button', {type: 'button', className: 'pair-big', style: {marginTop: 12, marginBottom: 0}, onClick: () => openPairAnalyze({module: 'mbti'})},
+              el('span', {className: 'pb-title'}, el(Icon, {name: 'spark', size: 20, color: 'var(--skin-accent)'}), '配对解析', payBadge(payEnough)),
+              el('span', {className: 'pb-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）'))));
       }
       body = gate;
     } else {
