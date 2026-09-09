@@ -6,7 +6,7 @@
   - POST /api/divinations 起卦 = 确定性计算，免费：把 {method, ...seed} 转发给常驻
     排盘 Node 服务（paipan-node/server.mjs 的 POST /divination，vendored
     mingyu-core 六爻/梅花/小六壬/大六壬(liuren)/金口诀(jinkoujue)/奇门时家(qimen)/
-    灵签/雷诺曼(lenormand)），
+    黄历择日(almanac)/灵签/雷诺曼(lenormand)），
     成功后落 divinations 表并写 divination_cast 埋点，零 LLM 零扣费。
   - GET /api/divinations/{id} 读单条 = 只读（零 LLM 零扣费），带 user_id 隔离。
   - POST /api/divinations/{id}/interpret 断卦 = LLM 可选付费：命中
@@ -19,6 +19,11 @@
     REQ-120：method == qimen（奇门时家，一事一占）走同一通用断课链路——无模板选择，
     起局参数（scope/qimenMethod/qimenJuMethod）在起卦 seed 里透传引擎，断课 prompt 见
     divination.md「奇门时家：九宫四盘断课体系」章节（纯追加）。
+    REQ-121：method == almanac（黄历择日，纯国学工具，免档案）走同一通用起算链路——
+    seed.almanac = {topic, startDate, endDate, participants?} 原样透传 Node /divination；
+    case_id 恒为 null（不要求选档案，登录即可用）；起算确定性免费，深度解读走
+    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见 divination.md
+    「黄历择日：候选吉日深度解读」章节（纯追加）。
   - POST /api/divinations/{id}/focus 六爻焦点详解（REQ-075，仅 liuyao）= LLM 可选
     付费：body {focus} 六枚举（非法 400），逐项点击时 LLM 结合该盘 result
     （yaosDetail）+ S08 爻辞原文（user JSON 注入 yao_texts）做「该焦点在本盘意味着
@@ -65,7 +70,7 @@ DIVINATION_FOCUS_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" /
 LIUYAO_TEXTS_PATH = Path(__file__).resolve().parents[1] / "data" / "liuyao_yaoci.json"
 
 # Node /divination 当前支持的方法（未知 method 在 pydantic 层提前拦成 400 参数错误）
-DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "qimen", "ssgw", "lenormand")
+DIVINATION_METHODS = ("liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "qimen", "almanac", "ssgw", "lenormand")
 
 # REQ-075 焦点详解六枚举（稳定 key，前端逐项点击透传）
 DIVINATION_FOCUS_KEYS = (
@@ -198,9 +203,9 @@ def _case_chart_summary(db: Session, case_id: Optional[int]) -> Optional[dict]:
 
 # --- 请求模型 ---
 class CastDivinationRequest(BaseModel):
-    method: Literal["liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "qimen", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案；liuren=大六壬；jinkoujue=金口诀；qimen=奇门时家）")
-    case_id: Optional[int] = Field(default=None, description="关联国学档案（可空；国学类起卦要求有档案，MVP 允许空由前端拦截；lenormand 不要求）")
-    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）；jinkoujue 的 seed.params 可带 method/branch/number（起课方式四选一，缺省 time）；qimen 的 seed 可带 scope（hour/day/month/year 缺省 hour）/qimenMethod（zhuanpan/feipan 缺省 zhuanpan）/qimenJuMethod（chaibu/zhirun 缺省 chaibu）")
+    method: Literal["liuyao", "meihua", "xiaoliuren", "liuren", "jinkoujue", "qimen", "almanac", "ssgw", "lenormand"] = Field(description="起卦方法（lenormand=雷诺曼，可无档案；liuren=大六壬；jinkoujue=金口诀；qimen=奇门时家；almanac=黄历择日，免档案纯国学工具）")
+    case_id: Optional[int] = Field(default=None, description="关联国学档案（可空；国学类起卦要求有档案，MVP 允许空由前端拦截；lenormand/almanac 不要求）")
+    seed: Optional[dict] = Field(default=None, description="报数/时间/摇卦等，原样透传 Node /divination；lenormand 的 seed 可带 spreadType（缺省 single）；jinkoujue 的 seed.params 可带 method/branch/number（起课方式四选一，缺省 time）；qimen 的 seed 可带 scope（hour/day/month/year 缺省 hour）/qimenMethod（zhuanpan/feipan 缺省 zhuanpan）/qimenJuMethod（chaibu/zhirun 缺省 chaibu）；almanac 的 seed.almanac 可带 topic（10 选 1）/startDate/endDate（起止 YYYY-MM-DD，最多 180 天）/participants（可选，完整生辰）")
 
 
 class InterpretDivinationRequest(BaseModel):
@@ -438,6 +443,9 @@ async def interpret_divination(
     模板键，断课 prompt 见 divination.md「金口诀：四位一体断课体系」章节（纯追加）。
     REQ-120：method == qimen（奇门时家）同样走同一通用断课链路——无模板选择，缓存不带
     模板键，断课 prompt 见 divination.md「奇门时家：九宫四盘断课体系」章节（纯追加）。
+    REQ-121：method == almanac（黄历择日）同样走同一通用断课链路——无模板选择，缓存不带
+    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见 divination.md
+    「黄历择日：候选吉日深度解读」章节（纯追加）。
     """
     user_id = get_user_id_from_token(authorization)
     div = _get_owned_divination(db, div_id, user_id)
