@@ -23,7 +23,7 @@ import logging
 from app.config import settings
 from app.credits.codes import mark_used, resolve_code
 from app.credits.jinshuju import fetch_entries
-from app.credits.service import recharge
+from app.credits.service import get_recharge_rate, recharge
 from app.database import AnalyticsSession
 from app.events.service import record_event
 
@@ -104,7 +104,8 @@ def _recharge_one_entry(entry: dict) -> None:
         return
 
     # 4) 充值：delta = int(amount * recharge_rate)（1 元 = 10 存储单位）
-    delta = int(amount * settings.recharge_rate)
+    #    REQ-085：折算率运行时读 system_configs（后台可热改），无则回退 env 默认
+    delta = int(amount * get_recharge_rate())
     recharge(user_id, delta, type="recharge", amount=amount, ref=f"serial:{serial}")
 
     # 5) 标记码已用（防重放，兼作幂等）—— 须在充值成功后才置 used
