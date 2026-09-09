@@ -448,7 +448,7 @@
     .txn-case{font-size:12px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
     /* REQ-065：档案管理 CRM 行式列表 */
-    .case-row{display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0 0 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;flex-wrap:wrap;transition:border-color var(--dur) var(--ease),box-shadow .2s var(--ease)}
+    .case-row{display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0 0 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;flex-wrap:wrap;position:relative;transition:border-color var(--dur) var(--ease),box-shadow .2s var(--ease)}
     .case-row:last-child{margin-bottom:0}
     .case-row:hover{border-color:var(--skin-accent);box-shadow:0 4px 14px rgba(26,33,56,.08)}
     .case-info{flex:1;min-width:200px;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
@@ -458,6 +458,10 @@
     .case-actions{flex:none;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
     .case-actions .btn{width:auto;flex:none;padding:5px 11px;font-size:12.5px;font-weight:500;line-height:1.4;border-radius:var(--radius-pill)}
     .case-actions .btn-del{color:var(--cinnabar);border-color:var(--cinnabar)}
+    /* REQ-113②③：档案管理列表默认档案「右上角打勾」标记（实心=默认；空心可点=切换） */
+    .case-def-badge{position:absolute;top:-7px;right:12px;z-index:3;width:20px;height:20px;border-radius:50%;background:var(--skin-accent);color:var(--skin-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1;box-shadow:0 1px 5px rgba(0,0,0,.22);cursor:default;user-select:none}
+    .case-def-badge.off{background:var(--paper);color:var(--text-3);border:1.5px solid var(--border);box-shadow:none;cursor:pointer}
+    .case-def-badge.off:hover{border-color:var(--skin-accent);color:var(--skin-accent)}
     .modal-mask{position:fixed;inset:0;background:rgba(20,24,38,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
     .modal{background:var(--surface);border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}
     .modal-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text-1)}
@@ -772,6 +776,15 @@
     .mbti-cell{padding:10px 4px;text-align:center;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:700;color:var(--text-1);font-size:14px}
     .mbti-cell.cur{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
     .mbti-cell:hover{transform:translateY(-2px)}
+    /* REQ-112②③：档案内「心理测试」板块 类表格（MBTI 类型 / 人格类型）+ 点击查看详情 */
+    .mbti-tbl{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden}
+    .mbti-tbl-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface)}
+    .mbti-tbl-row + .mbti-tbl-row{border-top:1px solid var(--border)}
+    .mbti-tbl-row .k{flex:none;width:80px;font-size:13px;color:var(--text-2)}
+    .mbti-tbl-row .v{flex:1;font-size:15px;font-weight:700;color:var(--text-1)}
+    .mbti-detail{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:8px 12px;margin-top:8px}
+    /* REQ-114：内联编辑「修改信息」——建档信息 kv 行内文本框占满行宽 */
+    .kv .input{width:100%;box-sizing:border-box}
     .grid16{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
     .grid16 .g{font-size:12px;padding:8px 2px;text-align:center;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer;color:var(--text-1)}
     .grid16 .g.cur{background:var(--skin-accent);color:#fff}
@@ -1315,11 +1328,11 @@ const UI_COPY = {
     guoxue_desc: '以八字、紫微等东方体系，梳理你当下的趋势脉络。',
     western_title: '西式占卜',
     western_desc: '以星盘、塔罗、雷诺曼等视角，照见不同的可能。',
-    mbti_title: 'MBTI 人格',
-    mbti_desc: '以趣味性格测评，认识自己与世界相处的方式。',
+    mbti_title: '心理测试',
+    mbti_desc: '以趣味心理测评，认识自己与世界相处的方式。',
     enter_guoxue: '进入国学预测',
     enter_western: '进入西式占卜',
-    enter_mbti: '开始人格测试'
+    enter_mbti: '进入心理测试'
   },
   buttons: {
     create_case: '新建命理档案',
@@ -2383,7 +2396,7 @@ function LandingPage({
       subtitle: UI_COPY.module_hub.mbti_desc,
       intro: '通过 16 型人格框架，梳理你的能量来源、信息偏好与决策方式。逐题作答，AI 将结合你的选择给出专属类型画像与解读。',
       cta: UI_COPY.module_hub.enter_mbti,
-      to: 'mbti'
+      to: 'mbti-hub'
     }
   };
   const c = MODS[module] || MODS.guoxue;
@@ -2686,7 +2699,7 @@ function CreditInsufficientModal({
 const PAIR_MODULE_META = {
   guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
   xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
-  mbti: { title: 'MBTI · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成 MBTI 测试（未测的档案提交后将提示先生成）', guideTxt: '在「MBTI」页选择该档案并完成测试判型（结果会写入档案）' },
+  mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
   // REQ-093UI④：八字配对 —— 入口在九法合一选档案页底部；module='bazi' 走同一 POST /api/pair/analyze
   bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
 };
@@ -3914,6 +3927,29 @@ function CasesPage({
       alert(e.message || '删除失败，请重试。');
     }
   };
+  // REQ-113③：默认档案「打勾切换」—— 点击非默认档案条目的右上角打勾 → PATCH set_default=true，
+  // 由后端先清该用户全部默认再设本档案（多用户隔离）；成功后重拉列表刷新打勾标记。
+  const setCaseDefault = async c => {
+    if (!c || c.caseId == null) return;
+    if (c.isDefault) {
+      toast('已是默认档案');
+      return;
+    }
+    try {
+      const res = await api('/cases/' + c.caseId, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          set_default: true
+        })
+      });
+      // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
+      if (res && res.code != null && res.code !== 0) throw new Error(res.message || '设置失败');
+      toast('已设为默认档案');
+      load();
+    } catch (e) {
+      toast(e.message || '设置默认档案失败，请重试。');
+    }
+  };
   if (loading) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -4012,7 +4048,7 @@ function CasesPage({
     style: {
       marginTop: -10
     }
-  }, "共 ", caseList.length, " 份档案 · 每条目行尾可查看 / 修改 / 重命名 / 删除"), /*#__PURE__*/React.createElement("div", {
+  }, "共 ", caseList.length, " 份档案 · 每条目行尾可查看 / 修改 / 重命名 / 删除 · 右上角打勾标记默认档案"), /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       marginBottom: 14,
@@ -4048,10 +4084,20 @@ function CasesPage({
     const phoneText = c.phone ? String(c.phone).trim() : '';
     const emailText = c.email ? String(c.email).trim() : '';
     return /*#__PURE__*/React.createElement("div", {
-      className: "case-row",
+      className: 'case-row' + (c.isDefault ? ' has-default' : ''),
       key: c.caseId,
       onClick: openArchive
-    }, /*#__PURE__*/React.createElement("div", {
+    }, /* REQ-113②③：默认档案「每条目右上角打勾」标记（打勾切换）——默认=实心✓，
+        非默认=空心可点，点击即 PATCH set_default 切换默认（stopPropagation 不触发行跳转） */
+    /*#__PURE__*/React.createElement("span", {
+      className: 'case-def-badge' + (c.isDefault ? '' : ' off'),
+      title: c.isDefault ? '默认档案（太初先生会话默认选中）' : '点击设为默认档案',
+      role: "button",
+      onClick: e => {
+        e.stopPropagation();
+        setCaseDefault(c);
+      }
+    }, "✓"), /*#__PURE__*/React.createElement("div", {
       className: "case-info"
     }, /*#__PURE__*/React.createElement("span", {
       className: "case-name"
@@ -6677,14 +6723,16 @@ function ArchivePage({
   // REQ-089 v2：联系方式回填 —— case 表字段可能不在 /archive 聚合包内，由 load() 回查后写入
   const [casePhone, setCasePhone] = useState('');
   const [caseEmail, setCaseEmail] = useState('');
-  // REQ-089 v2：「修改信息」模态框（档案名 + 手机号 + 邮箱）状态
-  const [editOpen, setEditOpen] = useState(false);
+  // REQ-114 + BUG-022：「修改信息」改内联编辑（替代弹窗）——editing=true 时建档信息卡
+  // 的 档案名称/手机号/邮箱 行直接变为可编辑文本框（预填原信息），保存/取消就地完成，
+  // 不再使用弹窗（原弹窗在长页面弹出位置偏下，用户误以为卡死）。
+  const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editBusy, setEditBusy] = useState(false);
-  // REQ-089 v2：MBTI 历史判型行「点开回看四维倾向」当前展开的记录 id
-  const [mbtiExpandId, setMbtiExpandId] = useState(null);
+  // REQ-112③：档案内「心理测试」板块最新一次结果「点击查看详情」的展开态
+  const [mbtiDetailOpen, setMbtiDetailOpen] = useState(false);
   // REQ-054：删除星盘 / MBTI 历史记录成功后 +1，驱动下方 useEffect 重跑 load() 重新拉取档案
   const [reloadTick, setReloadTick] = useState(0);
   // REQ-040：页头取「当前档案的用户命名」。后端 /archive 聚合包可能不带顶层 name、
@@ -6877,17 +6925,22 @@ function ArchivePage({
   // reloadArchive()（reloadTick+1 重跑上方 useEffect 的 load()，astroCard/mbtiCard 由 data
   // 派生自动重渲染；删除主展示记录后其余记录 / 空态亦由派生逻辑判空兜底）。
   const reloadArchive = () => setReloadTick(t => t + 1);
-  // REQ-089 v2「修改信息」：打开 / 关闭 / 提交 —— 提交 PATCH name+phone+email，
-  // 成功后重拉档案（页头档案名 + 建档信息手机号/邮箱随之刷新）。不改动出生等排盘信息。
+  // REQ-114 + BUG-022：「修改信息」内联编辑 —— 打开（预填原信息）/ 取消 / 提交。
+  // 提交 PATCH name+phone+email，成功后重拉档案（页头档案名 + 建档信息手机号/邮箱随之刷新）。
+  // 不改动出生等排盘信息。不再使用弹窗（BUG-022：长页面弹窗错位偏下）。
   const openEditInfo = () => {
     setEditName(caseTitle === '未命名档案' ? '' : caseTitle);
     setEditPhone(casePhone);
     setEditEmail(caseEmail);
     setEditBusy(false);
-    setEditOpen(true);
+    setEditing(true);
   };
   const closeEditInfo = () => {
-    if (!editBusy) setEditOpen(false);
+    if (editBusy) return;
+    setEditing(false);
+    setEditName('');
+    setEditPhone('');
+    setEditEmail('');
   };
   const submitEditInfo = async () => {
     const name = String(editName || '').trim();
@@ -6913,7 +6966,7 @@ function ArchivePage({
       });
       if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '修改失败');
       toast('修改成功');
-      setEditOpen(false);
+      setEditing(false);
       reloadArchive();
     } catch (err) {
       toast(err && err.message || '修改失败，请重试。');
@@ -6944,7 +6997,6 @@ function ArchivePage({
     }
   };
   const removeAstroRecord = (e, rec) => doDeleteRecord(e, rec, 'astro');
-  const removeMbtiResult = (e, rec) => doDeleteRecord(e, rec, 'mbti');
 
   // REQ-089 v2：占星盘板块 —— 只取「最新一条记录」（created_at 倒序，优先选含完整 natal
   // 盘面的记录），且仅展示盘面（星盘图）；不展示行星落座落宫 / 四轴 / 逆行格局 / 文字说明，
@@ -7011,144 +7063,114 @@ function ArchivePage({
     }
   }, "该条星盘数据缺失，无法展示盘面。"));
 
-  // REQ-089 v2：MBTI 人格板块 —— 仅展示「最新一次判型结果」的主类型大字 + 别名 +
-  // 四维倾向条（scores）；16 型长文案（优势/盲点/职场/关系/成长建议等 type_info 段落）不再展示。
-  // 历史判型记录保留（可回看：点历史行展开该次判型的四维倾向条）。
+  // REQ-112②③ + REQ-114：档案内「心理测试」板块 —— 只展示并保存「最新一次」判型结果：
+  // 以类表格形式展示「MBTI 类型」与「人格类型」（alias）；不再保留历史判型记录、不再显示
+  // 「四维倾向（答题计数）」（REQ-114）、不提供单条删除；结果支持点击查看详情（展开该型五栏文案）。
   const R = React.createElement;
   const mbtiType = mbtiInfo && mbtiInfo.mbti_type ? String(mbtiInfo.mbti_type).toUpperCase() : '';
   const mbtiTypeInfo = mbtiInfo && mbtiInfo.type_info && typeof mbtiInfo.type_info === 'object' ? mbtiInfo.type_info : null;
-  // created_at 倒序 → 首位为「最新一次判型」；与 case.mbti_type 一致者作为主展示，其余进历史。
+  // created_at 倒序 → 首位为「最新一次判型」；与 case.mbti_type 一致者优先。
   const mbtiSorted = mbtiRecords.slice().sort((x, y) => String((y && y.created_at) || '').localeCompare(String((x && x.created_at) || '')));
   const mbtiMainRes = (mbtiSorted.find(r => r && r.type && mbtiType && String(r.type).toUpperCase() === mbtiType) || null) || (mbtiSorted.length ? mbtiSorted[0] : null);
-  const mbtiOtherRes = mbtiSorted.filter(r => r && (!mbtiMainRes || mbtiMainRes.id == null || r.id == null || r.id !== mbtiMainRes.id));
   const mbtiShowType = mbtiType || (mbtiMainRes && mbtiMainRes.type ? String(mbtiMainRes.type).toUpperCase() : '');
-  const mbtiBar = (d, rec) => {
-    const src = rec || mbtiMainRes || null;
-    const s = src && src.scores ? src.scores[d.k] || {} : {};
-    const lc = s[d.l] || 0;
-    const rc = s[d.r] || 0;
-    const sum = lc + rc || 1;
-    const lp = Math.round(lc / sum * 100);
-    return R('div', {
-      key: d.k,
-      className: 'mbti-bar'
-    }, R('span', {
-      className: 'bb-label',
-      style: {
-        width: 'auto',
-        minWidth: 44,
-        textAlign: 'left'
-      }
-    }, d.l + ' ' + lc), R('span', {
-      className: 'bb-track'
-    }, R('span', {
-      className: 'bb-fill',
-      style: {
-        left: 0,
-        width: lp + '%',
-        background: 'var(--skin-accent)'
-      }
-    }), R('span', {
-      className: 'bb-fill',
-      style: {
-        right: 0,
-        width: (100 - lp) + '%',
-        background: 'var(--skin-accent-soft)'
-      }
-    })), R('span', {
-      className: 'bb-label',
-      style: {
-        width: 'auto',
-        minWidth: 44,
-        textAlign: 'right'
-      }
-    }, d.r + ' ' + rc));
-  };
+  const mbtiAlias = mbtiTypeInfo && mbtiTypeInfo.alias ? String(mbtiTypeInfo.alias) : '';
+  // 「点击查看详情」展开内容：该型五栏文案（优势/盲点/职场/关系/成长建议，与结果页同口径）
+  const mbtiDetailSections = (() => {
+    const out = [];
+    MBTI_FIELDS.forEach(f => {
+      const v = mbtiTypeInfo && mbtiTypeInfo[f[0]];
+      const lines = [];
+      const push = s => {
+        if (s == null) return;
+        String(s).split('\n').forEach(x => {
+          x = x.trim();
+          if (x) lines.push(x);
+        });
+      };
+      if (Array.isArray(v)) v.forEach(push); else push(v);
+      if (lines.length) out.push({ title: f[1], lines: lines });
+    });
+    return out;
+  })();
   const mbtiCard = mbtiInfo && (mbtiInfo.mbti_type || mbtiRecords.length > 0) && R('div', {
     className: 'card'
   }, R('div', {
+    className: 'section-title',
+    style: {
+      margin: '4px 0 8px'
+    }
+  }, '心理测试'), mbtiShowType ? R('div', null, R('div', {
+    className: 'mbti-tbl',
+    style: {
+      cursor: 'pointer'
+    },
+    title: mbtiDetailSections.length ? '点击查看详情' : '暂无详情',
+    onClick: () => setMbtiDetailOpen(o => !o)
+  }, R('div', {
+    className: 'mbti-tbl-row'
+  }, R('span', {
+    className: 'k'
+  }, 'MBTI 类型'), R('span', {
+    className: 'v'
+  }, mbtiShowType)), R('div', {
+    className: 'mbti-tbl-row'
+  }, R('span', {
+    className: 'k'
+  }, '人格类型'), R('span', {
+    className: 'v'
+  }, mbtiAlias || '—'))), R('div', {
     style: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 10,
-      margin: '4px 0 8px'
-    }
-  }, R('div', {
-    className: 'section-title',
-    style: {
-      margin: 0
-    }
-  }, 'MBTI 人格'), mbtiMainRes && mbtiMainRes.id != null ? R('button', {
-    className: 'btn btn-outline btn-mini',
-    onClick: e => removeMbtiResult(e, mbtiMainRes)
-  }, '删除') : null), mbtiShowType ? R('div', {
-    style: {
-      textAlign: 'center',
-      padding: '2px 0 6px'
+      marginTop: 8
     }
   }, R('span', {
-    className: 'mbti-type-big'
-  }, mbtiShowType), mbtiTypeInfo && mbtiTypeInfo.alias ? R('div', {
-    className: 'mbti-alias'
-  }, mbtiTypeInfo.alias) : null) : null, mbtiMainRes && mbtiMainRes.scores ? R('div', null, R('div', {
-    className: 'sub-title'
-  }, '四维倾向（答题计数）'), MBTI_DIMS.map(d => mbtiBar(d))) : null, mbtiOtherRes.length > 0 ? R('div', {
     style: {
-      marginTop: 10
+      fontSize: 12,
+      color: 'var(--text-3)'
+    }
+  }, mbtiDetailSections.length ? '点击上方结果可查看详情' : ''), mbtiDetailSections.length ? R('button', {
+    className: 'btn btn-outline btn-mini',
+    type: 'button',
+    onClick: e => {
+      e.stopPropagation();
+      setMbtiDetailOpen(o => !o);
+    }
+  }, mbtiDetailOpen ? '收起详情' : '查看详情') : null), mbtiDetailOpen ? R('div', {
+    className: 'mbti-detail'
+  }, mbtiDetailSections.length ? mbtiDetailSections.map(f => R('div', {
+    key: f.title,
+    style: {
+      margin: '6px 0'
     }
   }, R('div', {
-    className: 'sub-title'
-  }, '历史判型记录'), mbtiOtherRes.map((r, i) => {
-    const t = r && r.type ? String(r.type) : '未知';
-    const at = fmtArchiveTime(r && r.created_at);
-    const isLast = i === mbtiOtherRes.length - 1;
-    const rid = r && r.id != null ? r.id : i;
-    const expanded = mbtiExpandId === rid;
-    return R('div', {
-      key: rid,
-      style: {
-        borderBottom: isLast ? 'none' : '1px solid var(--border)'
-      }
-    }, R('div', {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '8px 0',
-        cursor: 'pointer'
-      },
-      title: r && r.scores ? '点击回看该次判型的四维倾向' : '该次判型无答题明细',
-      onClick: () => setMbtiExpandId(expanded ? null : rid)
-    }, R('span', {
-      style: {
-        flex: 'none',
-        fontSize: 15,
-        fontWeight: 700,
-        color: 'var(--text-1)'
-      }
-    }, t), R('span', {
-      style: {
-        flex: 1,
-        fontSize: 12,
-        fontWeight: 400,
-        color: 'var(--text-2)',
-        textAlign: 'right'
-      }
-    }, at || '—'), R('button', {
-      className: 'btn btn-outline btn-mini',
-      onClick: e => removeMbtiResult(e, r)
-    }, '删除')), expanded && r && r.scores ? R('div', {
-      style: {
-        padding: '0 0 10px'
-      }
-    }, R('div', {
-      className: 'sub-title',
-      style: {
-        fontSize: 12
-      }
-    }, '四维倾向（答题计数）'), MBTI_DIMS.map(d => mbtiBar(d, r))) : null);
-  })) : null);
+    className: 'sub-title',
+    style: {
+      fontSize: 12
+    }
+  }, f.title), f.lines.map((x, i) => R('p', {
+    key: i,
+    style: {
+      fontSize: 13,
+      color: 'var(--text-2)',
+      lineHeight: 1.8,
+      margin: '2px 0'
+    }
+  }, '· ' + x)))) : R('p', {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-3)',
+      margin: '2px 0'
+    }
+  }, '暂无详细文案')) : null) : R('p', {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-3)',
+      margin: '4px 0'
+    }
+  }, '尚未完成心理测试。用几分钟，认识另一个角度的自己。'));
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
@@ -7166,7 +7188,57 @@ function ArchivePage({
     }
   }, "档案编号：", caseId, " · 状态：", statusMap[data && data.status] || data && data.status || '-'), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "建档信息"), rows.map((r, i) => /*#__PURE__*/React.createElement("div", {
+  }, "建档信息"), /* REQ-114 + BUG-022：内联编辑态 —— 档案名称/手机号/邮箱 行直接变为可编辑
+      文本框（预填原信息），保存/取消就地完成，不再使用弹窗 */
+  editing ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "kv"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "k"
+  }, "档案名称"), /*#__PURE__*/React.createElement("span", {
+    className: "v"
+  }, /*#__PURE__*/React.createElement("input", {
+    id: "edit-case-name",
+    className: "input",
+    type: "text",
+    maxLength: 30,
+    value: editName,
+    onChange: e => setEditName(e.target.value),
+    placeholder: "请输入档案名称",
+    onKeyDown: e => {
+      if (e.key === 'Enter') submitEditInfo();
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "kv"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "k"
+  }, UI_COPY.caseDetail.phone_label), /*#__PURE__*/React.createElement("span", {
+    className: "v"
+  }, /*#__PURE__*/React.createElement("input", {
+    id: "edit-phone",
+    className: "input",
+    type: "tel",
+    inputMode: "numeric",
+    maxLength: 11,
+    value: editPhone,
+    onChange: e => setEditPhone(e.target.value),
+    placeholder: "请输入 11 位手机号"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "kv"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "k"
+  }, UI_COPY.caseDetail.email_label), /*#__PURE__*/React.createElement("span", {
+    className: "v"
+  }, /*#__PURE__*/React.createElement("input", {
+    id: "edit-email",
+    className: "input",
+    type: "email",
+    value: editEmail,
+    onChange: e => setEditEmail(e.target.value),
+    placeholder: "请输入电子邮箱（需包含 @）",
+    onKeyDown: e => {
+      if (e.key === 'Enter') submitEditInfo();
+    }
+  })))) : rows.map((r, i) => /*#__PURE__*/React.createElement("div", {
     className: "kv",
     key: i
   }, /*#__PURE__*/React.createElement("span", {
@@ -7178,13 +7250,23 @@ function ArchivePage({
     style: {
       marginTop: 8
     }
-  }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), /* REQ-089 v2：第一个色块（建档信息卡）下方的「修改信息」入口 —— 档案名/手机号/邮箱 */
+  }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), /* REQ-114 + BUG-022：建档信息卡下方的「修改信息」入口 —— 内联编辑态就地渲染 保存/取消（无弹窗） */
   /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
       flexWrap: 'wrap'
     }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, editing ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    type: "button",
+    disabled: editBusy,
+    onClick: submitEditInfo
+  }, editBusy ? '保存中…' : '保存'), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline",
+    type: "button",
+    disabled: editBusy,
+    onClick: closeEditInfo
+  }, UI_COPY.buttons.cancel)) : /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
     onClick: openEditInfo
@@ -7277,21 +7359,7 @@ function ArchivePage({
     onClick: () => onNavigate('mbti', {
       caseId
     })
-  }, "MBTI")), /* REQ-089 v2：「修改信息」模态框（档案名 + 手机号 + 邮箱，均可编辑） */
-  editOpen && /*#__PURE__*/React.createElement(CaseContactModal, {
-    title: UI_COPY.caseDetail.edit_title,
-    nameEditable: true,
-    name: caseTitle === '未命名档案' ? '' : caseTitle,
-    nameValue: editName,
-    onName: e => setEditName(e.target.value),
-    phone: editPhone,
-    onPhone: e => setEditPhone(e.target.value),
-    email: editEmail,
-    onEmail: e => setEditEmail(e.target.value),
-    onConfirm: submitEditInfo,
-    onCancel: closeEditInfo,
-    busy: editBusy
-  }));
+  }, "心理测试")));
 }
 
 // ===== 横向扩展：左侧导航栏 + 各模块页面 =====
@@ -7305,7 +7373,7 @@ const MODULE_HUB = {
     skin: 'xishi'
   },
   mbti: {
-    page: 'mbti',
+    page: 'mbti-hub',
     skin: 'mbti'
   }
 };
@@ -7321,7 +7389,7 @@ const RAIL_MODS = [{
   icon: 'orbit'
 }, {
   id: 'mbti',
-  label: 'MBTI',
+  label: '心理测试',
   color: '#4A5BB5',
   icon: 'spark'
 }];
@@ -7394,10 +7462,10 @@ const MOD_NAV_GROUPS = [{
     skin: 'tarot'
   }]
 }, {
-  title: 'MBTI',
+  title: '心理测试',
   color: '#4A5BB5',
   items: [{
-    label: 'MBTI 人格测试',
+    label: '人格测试',
     page: 'mbti',
     module: 'mbti',
     skin: 'mbti'
@@ -8374,6 +8442,54 @@ function XishiHubPage({
     className: "hc-name"
   }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
+  }, c.sub))))));
+}
+
+/* ---------- 心理测试 HUB（REQ-112：与国学预测 / 西式占卜同级的 Hub 页） ---------- */
+// 点击首页「心理测试」进入；Hub 页仅聚合「人格测试」主功能入口（配对解析入口按 REQ-109
+// 保留在人格测试页底部操作区，不聚合于此；文案口径：模块名「心理测试」、类型仍称 MBTI 类型）。
+function MbtiHubPage({
+  onNavigate,
+  applySkin
+}) {
+  const cards = [{
+    name: '人格测试',
+    sub: '16 型人格测评 · 60 题 · 判型结果写入档案',
+    bar: 'var(--skin-accent)',
+    ico: 'spark',
+    to: () => {
+      applySkin('mbti');
+      onNavigate('mbti');
+    }
+  }];
+  return React.createElement('div', {
+    className: 'container'
+  }, React.createElement('div', {
+    className: 'hub-title'
+  }, React.createElement(Icon, {
+    name: 'spark',
+    size: 22
+  }), UI_COPY.module_hub.mbti_title), React.createElement('div', {
+    className: 'hub-grid'
+  }, cards.map((c, i) => React.createElement('div', {
+    key: i,
+    className: 'hub-card',
+    onClick: () => c.to()
+  }, React.createElement('span', {
+    className: 'hc-bar',
+    style: {
+      background: c.bar
+    }
+  }), React.createElement(Icon, {
+    name: c.ico,
+    size: 28,
+    className: 'hc-ico'
+  }), React.createElement('div', {
+    className: 'hc-body'
+  }, React.createElement('div', {
+    className: 'hc-name'
+  }, c.name), React.createElement('div', {
+    className: 'hc-sub'
   }, c.sub))))));
 }
 
@@ -15614,7 +15730,7 @@ function MbtiPage({
       const items = rr && rr.data && rr.data.items || (rr && rr.items) || [];
       const latest = items && items.length ? items[0] : null;
       if (!latest || !latest.type) {
-        toast('该档案还没有已完成的 MBTI 测试，请先开始测试。');
+        toast('该档案还没有已完成的测试，请先开始测试。');
         return;
       }
       // 同步刷新该档案「已测类型」角标（含他人分享填写的最新记录口径）
@@ -15820,7 +15936,7 @@ function MbtiPage({
         el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, '分享测试链接'),
         el('button', {type: 'button', className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: shareResult}, shareLoading ? '生成中…' : '生成分享链接')),
     el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.6, width: '100%'}},
-      '生成该档案专属链接：他人免登录填写后，档案当前 MBTI 结果将更新为最新填写内容，各次填写保留可回看。'));
+      '生成该档案专属链接：他人免登录填写后，档案当前心理测试结果将更新为最新填写内容，各次填写保留可回看。'));
   // —— 结果页主体 ——
   let body;
   if (view === 'grid') {
@@ -15895,7 +16011,7 @@ function MbtiPage({
       } else if (!caseList.length) {
         gate = el('div', {className: 'card', style: {textAlign: 'center', padding: '22px 16px'}},
           el('div', {style: {fontSize: 15, fontWeight: 700, marginBottom: 8}}, '请先在国学预测中建档'),
-          el('p', {style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8, marginBottom: 4}}, 'MBTI 判型结果会写入档案的 mbti_type。你还没有任何档案，请先建立一份出生档案再回来测试。'),
+          el('p', {style: {fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8, marginBottom: 4}}, '测试结果会写入所选档案。你还没有任何档案，请先建立一份出生档案再回来测试。'),
           el('div', {className: 'back-row', style: {justifyContent: 'center'}},
             el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, '去建档'),
             el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案'),
@@ -15907,12 +16023,12 @@ function MbtiPage({
         const selTval = selCase ? caseTypeOf(selCase) : ''; // 已测类型：非空才展示「查看已完成 MBTI 类型」按钮
         gate = el(React.Fragment, null,
           el('div', {className: 'card'},
-            el('div', {className: 'section-title'}, '选择档案 · MBTI 判型'),
-            el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案的 mbti_type。勾选档案后不会自动进入答题或结果页，请从下方操作区选择「开始测试」或「查看已完成 MBTI 类型」（已测档案才显示）。'),
+            el('div', {className: 'section-title'}, '选择档案 · 心理测试'),
+            el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 6}}, '判型结果将写入所选档案。勾选档案后不会自动进入答题或结果页，请从下方操作区选择「开始测试」或「查看已完成测试结果」（已测档案才显示）。'),
             el('div', {className: 'step-hint'},
               el('span', {className: 'sh cur'}, '① 选择档案'),
               el('span', {className: 'sh-arr'}, '→'),
-              el('span', {className: 'sh'}, '② 开始测试 / 查看已完成类型')),
+              el('span', {className: 'sh'}, '② 开始测试 / 查看已完成结果')),
             el('div', {className: 'case-opts'},
               caseList.map(c => {
                 const sel = caseId != null && Number(caseId) === Number(c.caseId);
@@ -15936,10 +16052,10 @@ function MbtiPage({
             selCase ? el(React.Fragment, null,
               el('div', {style: {fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 10}}, '已选档案：' + selNm),
               el('div', {style: {display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%', paddingBottom: 10, marginBottom: 10, borderBottom: '1px dashed var(--border)'}}, shareZone))
-              : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, '请先勾选上方一份档案：勾选后停留本操作区，可点「开始测试」答题；已测档案可再点「查看已完成 MBTI 类型」回看结果（不自动进入）。'),
+              : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, '请先勾选上方一份档案：勾选后停留本操作区，可点「开始测试」答题；已测档案可再点「查看已完成测试结果」回看结果（不自动进入）。'),
             el('div', {className: 'back-row', style: {justifyContent: 'center', margin: 0}},
               el('button', {className: 'btn btn-primary', style: {width: 'auto'}, disabled: !selCase, title: selCase ? '' : '请先勾选档案', onClick: () => setStarted(true)}, UI_COPY.buttons.start_quiz),
-              selTval ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: viewExisting}, '查看已完成 MBTI 类型') : null,
+              selTval ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: viewExisting}, '查看已完成测试结果') : null,
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, '我已知道类型，直接输入'),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('onboarding', {returnTo: 'mbti'})}, UI_COPY.buttons.create_case),
               el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('cases')}, '管理档案')),
@@ -15947,7 +16063,7 @@ function MbtiPage({
             // 之间的条状入口已移除），样式对齐 REQ-108 星座入口：横跨屏幕大按键（功能标题 + 解释文字）
             el('button', {type: 'button', className: 'pair-big', style: {marginTop: 12, marginBottom: 0}, onClick: () => openPairAnalyze({module: 'mbti'})},
               el('span', {className: 'pb-title'}, el(Icon, {name: 'spark', size: 20, color: 'var(--skin-accent)'}), '配对解析', payBadge(payEnough)),
-              el('span', {className: 'pb-sub'}, '选择两份已测 MBTI 档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）'))));
+              el('span', {className: 'pb-sub'}, '选择两份已测心理测试档案，基于双方人格信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）'))));
       }
       body = gate;
     } else {
@@ -15981,7 +16097,7 @@ function MbtiPage({
     }
   }
   return el('div', {className: 'container'},
-    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
+    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' 人格测试'),
     el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, '16 型人格测评 · 60 题 · 判型与文案由后端接口提供'),
     body);
 }
@@ -16507,8 +16623,8 @@ function MbtiSharePage({
   // REQ-066④：品牌条仅在「答题表单视图」出现（loading/失败/结果/无效链接时不渲染）
   const inForm = !!tk && !result && !loading && !errored && total > 0 && !!questions[idx];
   return el('div', {className: 'container'},
-    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' MBTI 人格测试'),
-    caseName && !result ? el('div', {style: {fontSize: 13, color: 'var(--text-2)', marginBottom: 2}}, '为「' + caseName + '」填写 MBTI') : null,
+    el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' 人格测试'),
+    caseName && !result ? el('div', {style: {fontSize: 13, color: 'var(--text-2)', marginBottom: 2}}, '为「' + caseName + '」填写心理测试') : null,
     inForm && shareUiOn ? el('div', {className: 'card', style: {padding: '14px 20px 10px', margin: '12px 0 0'}}, shareBrand) : null,
     body);
 }
@@ -16610,8 +16726,10 @@ function SettingsPage({
 }
 
 // ===== REQ-076：太初先生 Agent 会话页 =====
-// 固定 session 对话（C 端对话大师）：顶部档案下拉（仅本人档案，可随时切换）；
-// 未选档案可闲聊，咨询档案相关内容时前端先温柔提示选档案（后端 master.md 亦引导）。
+// 固定 session 对话（C 端对话大师）：顶部档案下拉（仅本人档案，可随时切换）。
+// REQ-113④：会话不提供不选档案的闲聊 —— 进入默认选中「默认档案」（无默认的存量账号
+// 回退选中最新一份），无档案时提示先建档；下拉切换到非默认档案时弹确认窗口
+// （「设为默认档案」重新定义默认 / 「仅临时使用」，对应 PATCH /api/cases/{id} set_default）。
 // 接口：GET /api/agent/messages（本人历史，id 升序，limit=50）、POST /api/agent/chat
 // （每来回按 LLM 实际 token 扣余额，小额计费；5002 余额不足由 api() 拦截弹 CreditInsufficientModal）。
 // BUG-014：开场白不再取 GET /api/agent/greeting（后端当前返回的是开发说明文件文本，不应作为开场展示）；
@@ -16638,7 +16756,10 @@ function AgentPage({
   // null=加载中；[]=无档案；数组=已就绪（仅本人档案）
   const [caseList, setCaseList] = useState(null);
   const [caseErr, setCaseErr] = useState('');
-  const [caseId, setCaseId] = useState(''); // ''=未选（闲聊）
+  const [caseId, setCaseId] = useState(''); // ''=未选（无档案/加载中；REQ-113④ 不提供无档案闲聊）
+  // REQ-113④：切换非默认档案的确认弹窗 {id, name}；null=关闭
+  const [switchTarget, setSwitchTarget] = useState(null);
+  const [switchBusy, setSwitchBusy] = useState(false);
   // 会话：null=加载中；数组=已就绪 [{role:'user'|'assistant', content, hint?, pending?}]
   const [messages, setMessages] = useState(null);
   const [loadErr, setLoadErr] = useState('');
@@ -16649,7 +16770,9 @@ function AgentPage({
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
 
-  // ① 档案下拉数据源：GET /cases（登录后本人档案列表）
+  // ① 档案下拉数据源：GET /cases（登录后本人档案列表）。
+  //    REQ-113④：进入会话默认选中「默认档案」（列表 isDefault）；无默认档案的存量账号
+  //    （老数据未标默认）回退选中最新一份（仅临时选中，不改默认）；无档案则留空提示先建档。
   useEffect(function () {
     let alive = true;
     (async function () {
@@ -16657,7 +16780,12 @@ function AgentPage({
         const r = await api('/cases', { method: 'GET' });
         if (!alive) return;
         const arr = (r && r.data && r.data.cases) || (r && r.cases) || [];
-        setCaseList(Array.isArray(arr) ? arr : []);
+        const list = Array.isArray(arr) ? arr : [];
+        setCaseList(list);
+        if (list.length) {
+          const def = list.find(function (c) { return c && c.isDefault; }) || list[0];
+          setCaseId(String(def.caseId));
+        }
       } catch (e) {
         if (!alive) return;
         if (e && e.status === 401) return; // 401 由 App 统一跳登录
@@ -16713,23 +16841,26 @@ function AgentPage({
     return nm;
   };
 
-  // ④ 发送：追加 user 气泡 + （可选）前端温柔提示 + 「正在聆听…」占位 → POST chat
+  // ④ 发送：追加 user 气泡 + 「正在聆听…」占位 → POST chat
   //    → 用 reply 替换占位；失败（5002 余额不足已弹充值引导）移除占位并展示错误文本。
+  //    REQ-113④：不提供不选档案的闲聊 —— caseId 为空（无档案）时引导先建档，不发请求。
   const handleSend = async function () {
     const text = input.trim();
     if (!text || sending) return;
+    if (!caseId) {
+      toast('请先建立档案，再与太初先生对话。');
+      return;
+    }
     setSendErr('');
     setInput('');
-    const willHint = !caseId && agentLooksCaseRelated(text);
     const next = [{ role: 'user', content: text }];
-    if (willHint) next.push({ role: 'assistant', content: '可先在上方选择档案，以便结合你的命盘与你细说。', hint: true });
     next.push({ role: 'assistant', content: '正在聆听…', pending: true });
     setMessages(function (prev) { return (prev || []).concat(next); });
     setSending(true);
     try {
       const r = await api('/agent/chat', {
         method: 'POST',
-        body: JSON.stringify({ message: text, case_id: caseId ? Number(caseId) : null })
+        body: JSON.stringify({ message: text, case_id: Number(caseId) })
       });
       const reply = (r && r.data && r.data.reply) ? String(r.data.reply) : '';
       setMessages(function (prev) {
@@ -16757,21 +16888,67 @@ function AgentPage({
   };
 
   const selName = caseId ? caseName(caseId) : '';
+  // REQ-113④：下拉切换档案 —— 目标即默认档案直接选中；目标为非默认档案时弹确认窗口
+  // （「设为默认档案」重新定义默认 / 「仅临时使用」），确认前不改变当前选择。
+  const onPickCase = function (id) {
+    setSendErr('');
+    if (!id || String(id) === String(caseId)) return;
+    const target = (caseList || []).find(function (c) { return String(c.caseId) === String(id); });
+    if (!target) return;
+    const def = (caseList || []).find(function (c) { return c && c.isDefault; });
+    if (def && String(def.caseId) === String(id)) {
+      setCaseId(id);
+      return;
+    }
+    const nm = (target.name && String(target.name).trim()) || '档案 ' + target.caseId;
+    setSwitchTarget({ id: String(target.caseId), name: nm });
+  };
+  const confirmSwitchAsDefault = async function () {
+    if (!switchTarget || switchBusy) return;
+    setSwitchBusy(true);
+    try {
+      const res = await api('/cases/' + switchTarget.id, {
+        method: 'PATCH',
+        body: JSON.stringify({ set_default: true })
+      });
+      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '设置失败');
+      setCaseId(switchTarget.id);
+      setCaseList(function (prev) {
+        return (prev || []).map(function (c) {
+          return Object.assign({}, c, { isDefault: String(c.caseId) === switchTarget.id });
+        });
+      });
+      setSwitchTarget(null);
+      toast('已将该档案设为默认');
+    } catch (e) {
+      toast((e && e.message) || '设置默认档案失败，请重试。');
+    } finally {
+      setSwitchBusy(false);
+    }
+  };
+  const confirmSwitchTemporary = function () {
+    if (!switchTarget) return;
+    setCaseId(switchTarget.id);
+    setSwitchTarget(null);
+    toast('已临时切换档案（不改变默认设置）');
+  };
+  // 档案下拉：无档案时不提供「暂不选（闲聊）」选项（REQ-113④：不提供无档案闲聊）
   const pick = el('div', { className: 'agent-pick' },
     el('select', {
       value: caseId,
-      onChange: function (e) { setCaseId(e.target.value); setSendErr(''); },
-      disabled: sending || caseList === null,
+      onChange: function (e) { onPickCase(e.target.value); },
+      disabled: sending || caseList === null || !(caseList && caseList.length),
       'aria-label': '选择档案（仅本人档案）'
     },
-    el('option', { value: '' }, '暂不选（闲聊）'),
-    (caseList || []).map(function (c) {
+    caseList && caseList.length ? caseList.map(function (c) {
       const id = String(c.caseId);
       const nm = (c.name && String(c.name).trim()) || '档案 ' + c.caseId;
       const label = c.birthYear != null && c.birthYear !== '' ? nm + '（' + String(c.birthYear) + ' 年）' : nm;
       return el('option', { key: id, value: id }, label);
-    })),
-    caseList === null ? el('div', { className: 'agent-pick-hint' }, '档案加载中…') : null);
+    }) : el('option', { value: '' }, '暂无档案')),
+    caseList === null ? el('div', { className: 'agent-pick-hint' }, '档案加载中…')
+      : caseList && caseList.length ? null
+      : el('div', { className: 'agent-pick-hint' }, '暂无档案，请先建立一份'));
 
   // 计费提示（可点击跳转余额明细，复用既有 credits 入口）
   const bill = el('div', { className: 'agent-bill' },
@@ -16791,7 +16968,7 @@ function AgentPage({
       el('div', { className: 'agent-empty' },
         el('div', { className: 'agent-empty-icon' }, '☕'),
         el('div', null, '太初先生在这儿，有什么想聊聊的？'),
-        el('div', null, '也可以在上方选择档案，让我结合你的命盘与你细说。')));
+        el('div', null, caseList && caseList.length ? '已默认选中你的档案，可直接开口。' : '请先建立一份档案，再与太初先生对话。')));
   } else {
     chatBody = el('div', { className: 'agent-chat', ref: chatRef },
       messages.map(function (m, i) {
@@ -16810,16 +16987,33 @@ function AgentPage({
       value: input,
       onChange: function (e) { setInput(e.target.value); },
       onKeyDown: onInputKey,
-      placeholder: selName ? '向太初先生提问（已结合「' + selName + '」）…' : '与太初先生聊聊，或咨询档案相关内容…',
-      disabled: sending,
+      placeholder: selName ? '向太初先生提问（已结合「' + selName + '」）…' : '请先建立档案，再与太初先生对话…',
+      disabled: sending || !caseId,
       maxLength: 500
     }),
     el('button', {
       type: 'button',
       className: 'agent-send',
       onClick: handleSend,
-      disabled: sending || !input.trim()
+      disabled: sending || !input.trim() || !caseId
     }, sending ? '聆听中' : ['发送', payBadge(payEnough)]));
+
+  // REQ-113④：切换非默认档案的确认弹窗 —— 「设为默认档案」重新定义默认 / 「仅临时使用」
+  const switchModal = switchTarget ? el('div', {
+    className: 'modal-mask',
+    onClick: function () { if (!switchBusy) setSwitchTarget(null); }
+  }, el('div', {
+    className: 'modal',
+    onClick: function (e) { e.stopPropagation(); }
+  }, el('div', { className: 'modal-title' }, '切换档案'),
+    el('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, margin: '6px 0 2px' } },
+      '「' + switchTarget.name + '」不是当前默认档案。'),
+    el('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, margin: '0 0 6px' } },
+      '要将它设为默认档案，还是仅本次临时使用？'),
+    el('div', { className: 'flex-row', style: { justifyContent: 'center', gap: 10, marginTop: 16, flexWrap: 'wrap' } },
+      el('button', { type: 'button', className: 'btn btn-primary', disabled: switchBusy, onClick: confirmSwitchAsDefault }, switchBusy ? '设置中…' : '设为默认档案'),
+      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: confirmSwitchTemporary }, '仅临时使用'),
+      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: function () { setSwitchTarget(null); } }, UI_COPY.buttons.cancel)))) : null;
 
   return el('div', { className: 'agent-page' },
     el('div', { className: 'agent-head' },
@@ -16830,12 +17024,14 @@ function AgentPage({
     caseErr && !(caseList && caseList.length) ? el('div', { className: 'agent-err' }, caseErr) : null,
     chatBody,
     sendErr ? el('div', { className: 'agent-err' }, sendErr) : null,
-    inputRow);
+    inputRow,
+    switchModal);
 }
 
 // ===== REQ-080：真实子路径路由（history API · pathname ⇄ 页面 双向映射）=====
 // 映射口径见 docs/模块URL映射表-REQ080.md（2026-09-08 需求方确认）：
-//   /→landing  /guoxue→guoxue-hub  /xishi→xishi-hub  /mbti→mbti  /jiufa→nine-pick
+//   /→landing  /guoxue→guoxue-hub  /xishi→xishi-hub  /mbti→mbti-hub（心理测试 Hub）
+//   /mbti/test→mbti（人格测试） /jiufa→nine-pick
 //   /zodiac→zodiac  /divination→divination  /astrology→astrology  /tarot→tarot
 //   /lenormand→lenormand  /cases→cases  /cases/:id→archive  /agent→agent
 //   /settings→settings  /login|/register→auth  /mbti/share/:token→mbti-share
@@ -16849,7 +17045,8 @@ const REQ080_PAGE_PATH = {
   landing: '/',
   'guoxue-hub': '/guoxue',
   'xishi-hub': '/xishi',
-  mbti: '/mbti',
+  'mbti-hub': '/mbti',
+  mbti: '/mbti/test',
   'nine-pick': '/jiufa',
   zodiac: '/zodiac',
   divination: '/divination',
@@ -16920,6 +17117,10 @@ const REQ080_PAGE_THEME = {
   lenormand: {
     module: 'xishi',
     skin: 'tarot'
+  },
+  'mbti-hub': {
+    module: 'mbti',
+    skin: 'mbti'
   },
   mbti: {
     module: 'mbti',
@@ -17398,6 +17599,10 @@ function App() {
     astrology: /*#__PURE__*/React.createElement(AstrologyPage, {
       onNavigate: navigate,
       initCaseId: params.caseId
+    }),
+    'mbti-hub': /*#__PURE__*/React.createElement(MbtiHubPage, {
+      onNavigate: navigate,
+      applySkin: applySkin
     }),
     mbti: /*#__PURE__*/React.createElement(MbtiPage, {
       onNavigate: navigate,
