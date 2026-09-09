@@ -751,6 +751,51 @@
     .dt-input{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--paper);color:var(--text-1);font-size:14px;font-family:inherit;outline:none}
     .dt-input:focus{border-color:var(--skin-accent);box-shadow:0 0 0 2px var(--skin-accent-soft)}
     .time-note{font-size:11px;color:var(--text-3);margin:2px 0 0;line-height:1.6}
+    /* ===== REQ-118：大六壬（liuren）结果页 ===== */
+    .lr-meta{font-size:12px;color:var(--text-2);text-align:center;margin:2px 0 8px;line-height:1.7;word-break:break-all}
+    .lr-sec{font-size:13px;font-weight:700;color:var(--skin-accent);margin:14px 0 6px}
+    .lr-plate{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .lr-plate-cell{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+    .lr-plate-cell .lpc-god{font-size:10px;color:var(--text-3)}
+    .lr-plate-cell .lpc-tian{font-size:15px;font-weight:800;color:var(--text-1)}
+    .lr-plate-cell .lpc-di{font-size:10px;color:var(--text-3)}
+    .lr-note{font-size:11px;color:var(--text-3);margin-top:4px;line-height:1.6}
+    .lr-lessons{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+    .lr-lesson{border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 9px;background:var(--surface)}
+    .lr-lesson .lrl-name{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:3px}
+    .lr-lesson .lrl-row{display:flex;align-items:baseline;gap:6px;font-size:12px;color:var(--text-1)}
+    .lr-lesson .lrl-cap{flex:none;font-size:10px;color:var(--text-3)}
+    .lr-lesson .lrl-rel{font-size:11px;color:var(--text-3);margin-top:3px}
+    .lr-trans-row{display:flex;gap:6px;align-items:stretch}
+    .lr-trans{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+    .lr-trans .lrt-stage{font-size:10px;color:var(--text-3)}
+    .lr-trans .lrt-main{font-size:14px;font-weight:800;color:var(--text-1)}
+    .lr-trans .lrt-god{font-size:11px;color:var(--skin-accent)}
+    .lr-trans .lrt-sub{font-size:10px;color:var(--text-3);text-align:center;line-height:1.5}
+    .lr-trans .lrt-note{font-size:10px;color:var(--text-3);text-align:center;line-height:1.5}
+    .lr-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:800;color:var(--cinnabar);border:1px solid var(--cinnabar);border-radius:999px;padding:0 5px;line-height:1.6}
+    .lr-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .lr-tag{font-size:11px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 9px;line-height:1.6}
+    .lr-rule{font-size:12px;color:var(--text-2);line-height:1.7;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+    .lr-list{list-style:none;margin:0;padding:0}
+    .lr-list li{font-size:12px;color:var(--text-2);line-height:1.75;padding:3px 0 3px 14px;position:relative;word-break:break-word}
+    .lr-list li::before{content:'·';position:absolute;left:2px;color:var(--skin-accent)}
+    .lr-ev{display:flex;gap:7px;align-items:flex-start;padding:6px 0;border-top:1px dashed var(--border)}
+    .lr-ev:first-child{border-top:none}
+    .lr-ev-wrap{margin-top:2px}
+    .lr-ev .lr-ev-lv{flex:none;font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;line-height:1.6;margin-top:1px}
+    .lr-ev .lr-ev-lv.master{color:#fff;background:var(--gold-500)}
+    .lr-ev .lr-ev-lv.assist{color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .lr-ev .lr-ev-body{flex:1;min-width:0}
+    .lr-ev .lr-ev-t{font-size:12px;font-weight:700;color:var(--text-1)}
+    .lr-ev .lr-ev-d{font-size:11px;color:var(--text-3);line-height:1.6;margin-top:1px;white-space:pre-wrap;word-break:break-word}
+    /* 断课模板选择（liuren 结果区，REQ-118） */
+    .lr-tpl{margin-top:12px;padding:9px 11px;border:1px dashed var(--border);border-radius:var(--radius-md);background:var(--paper)}
+    .lr-tpl .tpl-cap{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+    .lr-tpl .tpl-row{display:flex;gap:6px;flex-wrap:wrap}
+    .lr-tpl .tpl-chip{flex:1 1 auto;font-size:12px;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:5px 12px;cursor:pointer;font-family:inherit;line-height:1.5;transition:.14s;text-align:center}
+    .lr-tpl .tpl-chip.sel{color:var(--skin-accent-ink);background:var(--skin-accent);border-color:var(--skin-accent)}
+    .lr-tpl .tpl-note{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
 
     /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
@@ -9549,8 +9594,8 @@ const DIVIN_METHODS = [{
 }, {
   id: 'liuren',
   name: '大六壬',
-  desc: '敬请期待',
-  todo: true
+  desc: '以月将加时起天地盘，四课三传断吉凶',
+  todo: false
 }, {
   id: 'jinkoujue',
   name: '金口诀',
@@ -9580,7 +9625,15 @@ const SHICHEN_ARR = [
   { n: '戌', start: 19, range: '19:00–20:59' },
   { n: '亥', start: 21, range: '21:00–22:59' }
 ];
-const TIME_METHODS = { meihua: true, xiaoliuren: true };
+const TIME_METHODS = { meihua: true, xiaoliuren: true, liuren: true };
+/* REQ-118：大六壬断课模板（对齐 vendored mingyu-core LiurenTemplateType：
+   general 通用 / ganqing 感情 / shiye 事业 / caifu 财富；仅影响断课侧重点） */
+const LIUREN_TEMPLATES = [
+  { key: 'general', label: '通用' },
+  { key: 'ganqing', label: '感情' },
+  { key: 'shiye', label: '事业' },
+  { key: 'caifu', label: '财富' }
+];
 const pad2 = function (x) { return String(x).padStart(2, '0'); };
 const todayStr = function () { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
 /* 当前小时 → 时辰下标（23:00/00:00 均为子时），时辰起始小时即该时辰内任一可解析时刻 */
@@ -9739,6 +9792,142 @@ function DivXiaoliurenView(res) {
   if (res.lunarMonth) meta.push('农历 ' + res.lunarMonth + '月' + (res.lunarDay != null ? res.lunarDay + '日' : ''));
   if (meta.length) items.push(React.createElement('div', { key: 'meta', style: { textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 2 } }, meta.join(' · ')));
   if (primary.verse) items.push(React.createElement('div', { key: 'verse', style: { marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8 } }, primary.verse));
+  return React.createElement('div', null, items);
+}
+/* REQ-118：大六壬课盘 —— 天地盘（12 位）+ 四课三传 + 课体/类神/天将/神煞/应期（确定性免费展示） */
+function DivLiurenView(res) {
+  const items = [];
+  const gz = (res && typeof res === 'object' && res.ganzhi) || {};
+  const meta = [];
+  if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
+  if (res.monthLeader) meta.push('月将 ' + res.monthLeader);
+  if (res.divinationBranch) meta.push('占时 ' + res.divinationBranch);
+  if (res.dayNight) meta.push(res.dayNight);
+  if (res.xunKong && res.xunKong.length) meta.push('旬空 ' + res.xunKong.join('、'));
+  if (res.noblemanBranch) meta.push('贵人 ' + res.noblemanBranch + (res.noblemanGroundBranch ? '（临' + res.noblemanGroundBranch + '）' : ''));
+  if (res.dayStemResidence) meta.push('日干寄 ' + res.dayStemResidence);
+  if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'lr-meta' }, meta.join(' · ')));
+
+  // 天地盘 12 位（天将 / 天盘支 / 所临地盘支）
+  const plate = Array.isArray(res.heavenlyPlate) ? res.heavenlyPlate : [];
+  if (plate.length) {
+    const plateEls = plate.map(function (p, i) {
+      return React.createElement('div', { key: i, className: 'lr-plate-cell' },
+        React.createElement('span', { className: 'lpc-god' }, p.god || ''),
+        React.createElement('span', { className: 'lpc-tian' }, p.branch || ''),
+        React.createElement('span', { className: 'lpc-di' }, '临' + (p.under || '')));
+    });
+    items.push(React.createElement('div', { key: 'plate-h', className: 'lr-sec' }, '天地盘（12 位）'),
+      React.createElement('div', { key: 'plate', className: 'lr-plate' }, plateEls),
+      React.createElement('div', { key: 'plate-note', className: 'lr-note' }, '每格：天将 / 天盘支 / 所临地盘支（月将加时转动）。'));
+  }
+
+  // 四课
+  const lessons = Array.isArray(res.fourLessons) ? res.fourLessons : [];
+  if (lessons.length) {
+    const lessonEls = lessons.map(function (l) {
+      return React.createElement('div', { key: l.name || 'x', className: 'lr-lesson' },
+        React.createElement('div', { className: 'lrl-name' }, l.name || ''),
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '上神'), React.createElement('b', null, l.upper || '')),
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '下位'), React.createElement('b', null, l.lower || '')),
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '天将'), React.createElement('b', null, l.god || '')),
+        React.createElement('div', { className: 'lrl-rel' }, '关系：' + (l.relation || '')));
+    });
+    items.push(React.createElement('div', { key: 'l4-h', className: 'lr-sec' }, '四课'),
+      React.createElement('div', { key: 'l4', className: 'lr-lessons' }, lessonEls));
+  }
+
+  // 三传（初传 → 中传 → 末传）
+  const trans = Array.isArray(res.threeTransmissions) ? res.threeTransmissions : [];
+  if (trans.length) {
+    const transEls = trans.map(function (t, i) {
+      const kid = [
+        React.createElement('div', { key: 'stage', className: 'lrt-stage' }, t.stage || ''),
+        React.createElement('div', { key: 'main', className: 'lrt-main' }, t.branch || ''),
+        React.createElement('div', { key: 'god', className: 'lrt-god' }, '乘' + (t.god || '')),
+        React.createElement('div', { key: 'sub', className: 'lrt-sub' },
+          [t.wuxing ? t.wuxing : '', t.seasonState ? t.seasonState : '', t.relation ? t.relation : ''].filter(Boolean).join(' · ')),
+        (t.isVoid ? React.createElement('div', { key: 'void', className: 'lrt-note' }, React.createElement('span', { className: 'lr-badge' }, '空亡')) : null)
+      ];
+      if (t.dayRelation) kid.push(React.createElement('div', { key: 'dr', className: 'lrt-note' }, '与日支' + t.dayRelation));
+      return React.createElement('div', { key: t.stage || i, className: 'lr-trans' + (i < trans.length - 1 ? ' with-arrow' : '') }, kid);
+    });
+    const transHead = (res.transmissionRule || '') + ((res.transmissionRule && res.transmissionPattern) ? ' · ' : '') + (res.transmissionPattern || '');
+    items.push(React.createElement('div', { key: 't3-h', className: 'lr-sec' }, '三传' + (transHead ? '（' + transHead + '）' : '')),
+      React.createElement('div', { key: 't3', className: 'lr-trans-row' }, transEls));
+    if (res.transmissionDetail) items.push(React.createElement('div', { key: 't3d', className: 'lr-rule' }, res.transmissionDetail));
+  }
+
+  // 课体（guaTi / patternTags）
+  const guaTi = Array.isArray(res.guaTi) ? res.guaTi : [];
+  const pTags = Array.isArray(res.patternTags) ? res.patternTags : [];
+  if (guaTi.length || pTags.length) {
+    const tags = [].concat(pTags, guaTi).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
+    items.push(React.createElement('div', { key: 'gt-h', className: 'lr-sec' }, '课体'),
+      React.createElement('div', { key: 'gt', className: 'lr-tags' },
+        tags.map(function (t, i) { return React.createElement('span', { key: i, className: 'lr-tag' }, t); })));
+    const rules = Array.isArray(res.classicalRules) ? res.classicalRules : [];
+    if (rules.length) {
+      const ruleEls = rules.map(function (r, i) {
+        return React.createElement('li', { key: i },
+          (r.source ? '【' + r.source + '】' : '') + (r.rule ? r.rule + '：' : '') + (r.summary || ''));
+      });
+      items.push(React.createElement('div', { key: 'rules', className: 'lr-sec' }, '古籍依据'),
+        React.createElement('ul', { key: 'rules-l', className: 'lr-list' }, ruleEls));
+    }
+  }
+
+  // 类神（focusEvidence：主证/辅证）
+  const focus = Array.isArray(res.focusEvidence) ? res.focusEvidence : [];
+  if (focus.length) {
+    const focusEls = focus.map(function (f, i) {
+      const lv = f.level === '主证' ? 'master' : 'assist';
+      const evLines = Array.isArray(f.evidence) ? f.evidence : [];
+      const lim = Array.isArray(f.limitations) ? f.limitations : [];
+      const dParts = [];
+      if (evLines.length) dParts.push(evLines.join('；'));
+      if (lim.length) dParts.push('限制：' + lim.join('；'));
+      return React.createElement('div', { key: i, className: 'lr-ev' },
+        React.createElement('span', { className: 'lr-ev-lv ' + lv }, f.level || ''),
+        React.createElement('div', { className: 'lr-ev-body' },
+          React.createElement('div', { className: 'lr-ev-t' }, (f.target || '') + (f.role ? '（' + f.role + '）' : '')),
+          dParts.length ? React.createElement('div', { className: 'lr-ev-d' }, dParts.join('\n')) : null));
+    });
+    items.push(React.createElement('div', { key: 'fc-h', className: 'lr-sec' }, '类神（主证/辅证）'),
+      React.createElement('div', { key: 'fc', className: 'lr-ev-wrap' }, focusEls));
+  }
+
+  // 天将属性（入传天将）
+  const tjp = (res && typeof res === 'object' && res.tianJiangProps) || {};
+  const tjpKeys = Object.keys(tjp);
+  if (tjpKeys.length) {
+    const tjpEls = tjpKeys.map(function (k) {
+      const v = tjp[k] || {};
+      const line = [v.wuxing ? v.wuxing : '', v.yinYang ? v.yinYang : '', v.category ? v.category : ''].filter(Boolean).join(' · ');
+      return React.createElement('span', { key: k, className: 'lr-tag' },
+        k + (line ? '：' + line : '') + (v.description ? '（' + v.description + '）' : ''));
+    });
+    items.push(React.createElement('div', { key: 'tj-h', className: 'lr-sec' }, '天将'),
+      React.createElement('div', { key: 'tj', className: 'lr-tags' }, tjpEls));
+  }
+
+  // 神煞
+  const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
+  if (ss.length) {
+    items.push(React.createElement('div', { key: 'ss-h', className: 'lr-sec' }, '神煞'),
+      React.createElement('div', { key: 'ss', className: 'lr-tags' },
+        ss.map(function (s, i) { return React.createElement('span', { key: i, className: 'lr-tag' }, s); })),
+      React.createElement('div', { key: 'ss-n', className: 'lr-note' }, '神煞只定位所在干支，须入课/入传或临干支才有象意，不单项定吉凶。'));
+  }
+
+  // 应期参考
+  const timing = Array.isArray(res.timingEvidence) ? res.timingEvidence : [];
+  if (timing.length) {
+    items.push(React.createElement('div', { key: 'tm-h', className: 'lr-sec' }, '应期参考'),
+      React.createElement('ul', { key: 'tm', className: 'lr-list' },
+        timing.map(function (t, i) { return React.createElement('li', { key: i }, t); })));
+  }
+
   return React.createElement('div', null, items);
 }
 function DivSsgwView(res) {
@@ -11390,6 +11579,70 @@ function XiaoliurenFreeReading(res) {
   });
   return FreeCard('免费解读', blocks);
 }
+/* REQ-118：大六壬免费静态断课（确定性，零 LLM）—— 依据引擎已排好的课盘字段组织：
+   发用/三传主线 + 课体 + 类神/神煞 + 应期参考，末附免责尾注。 */
+function LiurenFreeReading(res) {
+  const blocks = [];
+  // 发用与三传主线（引擎已算好的确定性摘要）
+  const rule = res.transmissionRule || '';
+  const pattern = res.transmissionPattern || '';
+  const trans = Array.isArray(res.threeTransmissions) ? res.threeTransmissions : [];
+  const mainLine = res.transmissionSummary
+    || (trans.length
+      ? '三传主线：' + trans.map(function (t) { return t.stage + t.branch; }).join(' → ') + '。'
+      : '');
+  blocks.push({
+    label: '发用与三传',
+    text: (rule ? '本课以「' + rule + '」取初传发用' + (pattern ? '，传态' + pattern : '') + '。' : '')
+      + (mainLine ? '\n' + mainLine : '')
+      + '\n三传分定事之发端、转折与归结：初传看事端起势，中传看中途变化，末传看最终趋向。',
+    tip: '三传为大六壬断事的核心主线；此为传统文化视角的趋势参考，仅供自我觉察。'
+  });
+  // 课体
+  const guaTi = Array.isArray(res.guaTi) ? res.guaTi : [];
+  if (guaTi.length) {
+    blocks.push({
+      label: '课体',
+      text: '本课课体：' + guaTi.join('、') + '。' + (res.transmissionDetail ? '\n' + res.transmissionDetail : ''),
+      tip: '课体为经典取象的概括性名称，提示整课气质；具体吉凶仍须结合四课三传与所问综合体会。'
+    });
+  }
+  // 类神（focusEvidence 主证/辅证，引擎确定性标定）
+  const focus = Array.isArray(res.focusEvidence) ? res.focusEvidence : [];
+  if (focus.length) {
+    const focusLines = focus.map(function (f) {
+      const ev = Array.isArray(f.evidence) ? f.evidence.join('；') : '';
+      return '· ' + (f.level || '') + '「' + (f.target || '') + '」（' + (f.role || '') + '）' + (ev ? '：' + ev : '');
+    });
+    blocks.push({
+      label: '类神落点',
+      text: focusLines.join('\n') + '\n类神依所问主题选取：感情看天后/六合/青龙，事业看贵人/朱雀/青龙，财富看青龙/太常/天空。',
+      tip: '类神是断事的取象抓手；只取与本课发用、三传相关的项，不罗列闲象。'
+    });
+  }
+  // 神煞
+  const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
+  if (ss.length) {
+    blocks.push({
+      label: '神煞',
+      text: ss.join('、') + '\n神煞只定位所在干支，须入课/入传或临干支才有象意；不凭单项神煞定吉凶。',
+      tip: '神煞作辅助取象，须与课传结合方有象意。'
+    });
+  }
+  // 应期参考
+  const timing = Array.isArray(res.timingEvidence) ? res.timingEvidence : [];
+  if (timing.length) {
+    blocks.push({
+      label: '应期参考',
+      text: timing.join('\n') + '\n应期只作先后、快慢与触发条件的趋势提示，不硬报到具体日期。',
+      tip: '以发用→三传→日月条件的先后节奏作参考，不承诺具体时间点。'
+    });
+  }
+  return React.createElement(React.Fragment, null,
+    FreeCard('课理解读（免费）', blocks),
+    React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
+      '以上内容由传统课理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
+}
 /* ---------- REQ-069：手动录入实际结果 —— 共享常量/工具（六爻·梅花共用逐爻器；签号/掌诀/牌库选牌） ---------- */
 /* 六爻手工爻值映射：阳=7(少阳)、阴=8(少阴)、动阳=9(老阳)、动阴=6(老阴) —— 与后端 generateLiuyao options.yaos(6..9) 契约一致 */
 const YAO_VAL_OF = function (yang, moving) { return yang ? (moving ? 9 : 7) : (moving ? 6 : 8); };
@@ -11674,12 +11927,12 @@ function SsgwResultScreen(props) {
    全宽并列大按钮。免费静态解读（REQ-055）+ 深度断卦付费入口 + 免责尾注（LIUYAO_DISCLAIMER
    现有常量）全部保留。 */
 function GuaResultScreen(props) {
-  const { kicker, sub, kids, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack } = props;
+  const { kicker, sub, kids, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack, interpretLabel } = props;
   const cardKids = kids.slice();
   cardKids.push(React.createElement('div', { key: 'pay', className: 'ssgw-res-pay' },
     React.createElement('div', { className: 'pay-hint' }, UI_COPY.divin.sign_pay_hint),
     React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: onInterpret },
-      interpLoading ? UI_COPY.tips.interpreting_liuyao : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
+      interpLoading ? UI_COPY.tips.interpreting_liuyao : [(interpretLabel || UI_COPY.buttons.interpret_pay), payBadge(payEnough)]),
     interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
     interp ? React.createElement(React.Fragment, null,
       React.createElement('div', { className: 'interp-title' }, UI_COPY.divin.sign_interp_title),
@@ -12075,6 +12328,8 @@ function DivinationPage({
   // REQ-061：占卜动效演出阶段机（null=无演出；'ssgw'=签筒 / 'liuyao'=逐爻掷币 / 'meihua'=梅花环聚 / 'xiaoliuren'=掌诀走宫）
   const [animStage, setAnimStage] = useState(null);
   const [castYaos, setCastYaos] = useState(null); // 六爻动画用逐爻值（前端掷币预演 → options.yaos replay 固定）
+  // REQ-118：大六壬断课模板（general/ganqing/shiye/caifu，随 interpret 请求体透传）
+  const [liurenTpl, setLiurenTpl] = useState('general');
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
   // REQ-044 v2.1：占问问题可选 —— 有填才随 seed 透传（留空直接起卦，不传空 question）
@@ -12111,6 +12366,7 @@ function DivinationPage({
     setInterpErr('');
     setFocusMap({});
     setManWarn('');
+    setLiurenTpl('general'); // REQ-118：新起课重置断课模板为通用
     const meta = manual || null;
     if (meta) setManLabel(meta.label);
     try {
@@ -12167,7 +12423,9 @@ function DivinationPage({
     setInterpLoading(true);
     setInterpErr('');
     try {
-      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      // REQ-118：大六壬随请求体带断课模板（其余方法沿用空 body，后端向后兼容）
+      const bodyStr = method === 'liuren' ? JSON.stringify({ liurenTemplate: liurenTpl }) : '{}';
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: bodyStr });
       setInterp((res && res.data && res.data.interpretation) || '（暂无断卦内容）');
     } catch (e) {
       setInterpErr((e && e.message) || '深度断卦失败，请重试。');
@@ -12241,6 +12499,8 @@ function DivinationPage({
   const startAsk = () => {
     setLastManual(null);
     setAsking(false);
+    // REQ-118：大六壬时辰起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
+    if (method === 'liuren') { run(); return; }
     if (!tcShouldPlayAnim()) { run(); return; }
     if (method === 'sign') {
       // 清掉上一次结果，避免签筒等待期残留旧签文
@@ -12380,6 +12640,7 @@ function DivinationPage({
     if (method === 'liuyao') view = DivLiuyaoView(result);
     else if (method === 'meihua') view = DivMeihuaView(result);
     else if (method === 'xiaoliuren') view = DivXiaoliurenView(result);
+    else if (method === 'liuren') view = DivLiurenView(result);
     else if (method === 'sign' || apiMethod === 'ssgw') view = DivSsgwView(result);
   }
   if (result != null && view == null) {
@@ -12391,6 +12652,7 @@ function DivinationPage({
     if (method === 'liuyao') freeReading = LiuyaoFreeReading(result);
     else if (method === 'meihua') freeReading = MeihuaFreeReading(result);
     else if (method === 'xiaoliuren') freeReading = XiaoliurenFreeReading(result);
+    else if (method === 'liuren') freeReading = LiurenFreeReading(result);
   }
   // REQ-061：演出层挂载（动效期间数据取数先行/并行，渲染替 loading 骨架；结束或失败即卸载交还结果分支）
   const resResult = (data && data.result) || null;
@@ -12467,8 +12729,10 @@ function DivinationPage({
   const manualLabel = method === 'sign' ? '手动选签' : '手动录入结果';
   const filledYao = yaoPick.filter(function (r) { return r.yang != null; }).length;
   const movingYao = yaoPick.filter(function (r) { return r.mv; }).length;
+  // REQ-118：大六壬为纯时辰起课（无手动录入通道），强制自动模式且不展示模式切换
+  const effectiveManual = method === 'liuren' ? false : (askMode === 'manual');
   let manualPanel = null;
-  if (askMode === 'manual') {
+  if (effectiveManual) {
     if (method === 'liuyao' || method === 'meihua') {
       const rowEls = yaoPick.map(function (r, i) {
         return React.createElement('div', { key: 'y' + i, className: 'yao-row' },
@@ -12562,12 +12826,12 @@ function DivinationPage({
   }
   // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
   // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
-  const modeSwitch = TC_SETTINGS.default_mode === 'both'
+  const modeSwitch = method === 'liuren' ? null : (TC_SETTINGS.default_mode === 'both'
     ? React.createElement('div', { className: 'mode-switch' },
         React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
         React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
     : React.createElement('button', { type: 'button', className: 'mode-switch-link', onClick: function () { setAskMode(askMode === 'auto' ? 'manual' : 'auto'); } },
-        askMode === 'auto' ? ('改为' + manualLabel) : ('返回' + autoLabel));
+        askMode === 'auto' ? ('改为' + manualLabel) : ('返回' + autoLabel)));
   const manualStartLabel = method === 'liuyao' ? '记录六爻并成卦'
     : method === 'meihua' ? '记录梅花并成卦'
       : method === 'sign' ? '确认该签并展示'
@@ -12581,13 +12845,28 @@ function DivinationPage({
   const guaSub = method === 'liuyao' ? '本卦已成 · 六亲世应参断'
     : method === 'meihua' ? '本卦已成 · 体用生克察应'
       : method === 'xiaoliuren' ? '落宫已定 · 速断所问吉凶'
-        : '卦象已成 · 心诚则灵';
+        : method === 'liuren' ? '课式已起 · 四课三传参断'
+          : '卦象已成 · 心诚则灵';
   let guaKids = [];
   if (guaResultOn) {
     if (qText) guaKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
     if (manLabel) guaKids.push(React.createElement('div', { key: 'm', className: 'ssgw-res-man' }, '录入：', manLabel));
     guaKids.push(React.createElement('div', { key: 'view', className: 'ssgw-gua-view' }, view));
     if (freeReading) guaKids.push(React.createElement('div', { key: 'free', className: 'ssgw-gua-free' }, freeReading));
+    // REQ-118：大六壬断课模板选择（通用/感情/事业/财富，随「深度断课」请求体透传）
+    if (method === 'liuren') {
+      guaKids.push(React.createElement('div', { key: 'tpl', className: 'lr-tpl' },
+        React.createElement('div', { className: 'tpl-cap' }, '断课模板（选填）'),
+        React.createElement('div', { className: 'tpl-row' }, LIUREN_TEMPLATES.map(function (t) {
+          return React.createElement('button', {
+            key: t.key,
+            type: 'button',
+            className: 'tpl-chip' + (liurenTpl === t.key ? ' sel' : ''),
+            onClick: function () { setLiurenTpl(t.key); }
+          }, t.label);
+        })),
+        React.createElement('div', { className: 'tpl-note' }, '模板仅影响「深度断课」的侧重点（类神与问题主轴），不改变课盘本身。')));
+    }
     if (method === 'liuyao' && result && data && data.id) guaKids.push(React.createElement(LiuyaoFocusPanel, {
       key: 'focus',
       res: result,
@@ -12627,7 +12906,7 @@ function DivinationPage({
     // REQ-105：起卦操作界面（原弹窗改内联面板）—— 进入默认不弹输入法/问题框；
     // 占问问题默认折叠，点击拟输入框展开填写（可留空直接起卦）
     asking ? React.createElement('div', { className: 'card divin-cast' },
-      React.createElement('div', { className: 'section-title' }, ((m && m.name) || apiMethod), ' · ' + (askMode === 'manual' ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
+      React.createElement('div', { className: 'section-title' }, ((m && m.name) || apiMethod), ' · ' + (effectiveManual ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
       modeSwitch,
       qOpen
         ? React.createElement('div', { key: 'qo' },
@@ -12669,7 +12948,7 @@ function DivinationPage({
       manualPanel,
       React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
         React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
-        askMode === 'manual'
+        effectiveManual
           ? React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startManual }, manualStartLabel)
           : React.createElement('button', { className: 'btn btn-primary', type: 'button', style: { flex: 1 }, disabled: loading, onClick: startAsk }, UI_COPY.buttons.start_divination))) : null,
     // REQ-104 + BUG-016：六爻/梅花/小六壬 结果 → 全屏独立结果页（含回到选项）
@@ -12681,6 +12960,7 @@ function DivinationPage({
       interpErr: interpErr,
       interpLoading: interpLoading,
       payEnough: payEnough,
+      interpretLabel: method === 'liuren' ? '深度断课（付费）' : undefined,
       onInterpret: interpret,
       onRedo: function () {
         setData(null);
