@@ -514,6 +514,27 @@
     .pair-big .pb-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;color:var(--text-1);line-height:1.4}
     .pair-big .pb-sub{font-size:12px;color:var(--text-2);line-height:1.7}
 
+    /* ===== REQ-115：星座「太阳/月亮/上升」三卡横向堆叠（覆盖 REQ-045 罗列三格呈现口径） =====
+       左右滑动切换当前卡；仅当前卡显示完整信息，其后两张卡 3/4 被当前卡遮挡 + 蒙版模糊；
+       每卡星座名称前加 I1 星座图标（cx-*，引用 icon-sprite-i1-i4.svg，只引用不改动）。 */
+    .triple-stack{position:relative;display:flex;overflow:hidden;margin-top:10px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+    .triple-card{flex:0 0 100%;box-sizing:border-box;position:relative;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;min-height:210px;will-change:transform}
+    .triple-card .tc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .triple-card .tc-title{font-size:13px;font-weight:700;color:var(--skin-accent)}
+    .triple-card .tc-sign{display:inline-flex;align-items:center;gap:6px;font-size:18px;font-weight:800;color:var(--text-1)}
+    .triple-card .tc-txt{font-size:12.5px;line-height:1.75;color:var(--text-2);white-space:pre-line;margin-top:10px}
+    .triple-card.back{filter:blur(2.5px);opacity:.55;cursor:pointer}
+
+    /* ===== REQ-100：国学 HUB「九法配对 / 八字配对 / 档案起名」同一排 3 键 =====
+       与「九法合一 / 生肖流年 / 临时起卦」同层级同样式（hub-card），配 I4 图标
+       （fn-pair / fn-bazi / fn-name，引用 icon-sprite-i1-i4.svg，只引用不改动）。 */
+    .hub-row{display:flex;gap:10px;margin-bottom:8px}
+    .hub-row .hub-card{flex:1 1 0;min-width:0;flex-direction:column;align-items:center;text-align:center;padding:14px 10px;gap:8px}
+    .hub-row .hub-card .hc-bar{display:none}
+    .hub-row .hub-card .hc-body{display:flex;flex-direction:column;align-items:center;gap:3px}
+    .hub-row .hub-card .hc-name{font-size:14.5px;line-height:1.35}
+    .hub-row .hub-card .hc-sub{font-size:10.5px;line-height:1.5}
+
     /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
     /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
     .nav-rail{position:fixed;left:0;top:64px;transform:none;display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:42;padding:6px 0}
@@ -2697,10 +2718,11 @@ function CreditInsufficientModal({
 // → POST /api/pair/analyze（module 由入口带入）→ 展示 interpretation。
 // 缺数据档案由后端 400 detail 直接展示（提示先生成，不自动生成）；余额不足走既有 5002 → creditInsuffHandler。
 const PAIR_MODULE_META = {
-  guoxue: { title: '国学 · 配对解析', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
+  guoxue: { title: '国学 · 九法配对', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
   xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
   mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
-  // REQ-093UI④：八字配对 —— 入口在九法合一选档案页底部；module='bazi' 走同一 POST /api/pair/analyze
+  // REQ-100：八字配对 —— 入口在国学 HUB「九法配对 / 八字配对 / 档案起名」同排 3 键；
+  // module='bazi' 走同一 POST /api/pair/analyze
   bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
 };
 const PAIR_RELATIONS = ['恋爱', '朋友', '家人', '同事', '其他'];
@@ -7785,8 +7807,6 @@ function NinePickPage({
   const [list, setList] = useState(null);
   const [errored, setErrored] = useState('');
   const [selId, setSelId] = useState(caseId != null && String(caseId).trim() ? String(caseId) : '');
-  // REQ-094UI：起名弹窗开合（选单一档案后按钮可用）
-  const [namerOpen, setNamerOpen] = useState(false);
   const load = async () => {
     setErrored('');
     try {
@@ -7910,35 +7930,6 @@ function NinePickPage({
       }, sel ? '✓' : ''));
     }));
   }
-  // REQ-094UI：起名行（选单一档案后可用 → 打开 NamerModal；档案未排盘时提交由后端 400 detail
-  // 「先生成排盘」直接展示于弹窗内，前端不强判排盘态）
-  const namerRow = el('div', {
-    style: {
-      display: 'flex',
-      gap: 10,
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      marginTop: 12,
-      paddingTop: 12,
-      borderTop: '1px dashed var(--border)'
-    }
-  }, el('button', {
-    className: 'btn btn-outline',
-    style: {
-      flex: '1 1 190px'
-    },
-    disabled: !selCase,
-    title: !selCase ? UI_COPY.namer.btnNoCaseTitle : (stSel.go ? '' : UI_COPY.namer.btnNoChartTitle),
-    onClick: () => setNamerOpen(true)
-  }, UI_COPY.namer.btn), el('span', {
-    style: {
-      flex: '1 1 220px',
-      minWidth: 0,
-      fontSize: 11.5,
-      color: 'var(--text-3)',
-      lineHeight: 1.7
-    }
-  }, !selCase ? UI_COPY.namer.noCaseHint : (stSel.go ? '' : UI_COPY.namer.needChartHint)));
   // —— 操作区：勾选档案后出现两个动作 ——
   const actionCard = el('div', {
     className: 'card',
@@ -7968,7 +7959,7 @@ function NinePickPage({
       lineHeight: 1.8,
       margin: '0 0 10px'
     }
-  }, '该档案尚未跑过九法：请点「跑九法合一开始预测」，将完整跑 断前尘（逐法扣费）→ 问卷校准 → 综合预测（异步编排，任务完成后自动进入校准与预测）。「查看 / 修改结果」需先跑预测后可用。') : el('p', {
+  }, '命盘已备，九法待启。先生将以此盘为基，综九家之言，解您所问') : el('p', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
@@ -8015,7 +8006,7 @@ function NinePickPage({
       marginTop: 8,
       lineHeight: 1.7
     }
-  }, '表示九法合一，开始预测会消耗大量余额，因为会同时跑9个方法。'), namerRow);
+  }, '九法合一汇聚九术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议'));
   const listActions = list && list.length > 0 ? el('div', {
     style: {
       display: 'flex',
@@ -8038,36 +8029,6 @@ function NinePickPage({
     },
     onClick: () => onNavigate('cases')
   }, '管理档案')) : null;
-  // REQ-093UI：底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，置于页面最下方
-  // 「返回选项」上方；配对解析=高亮主按钮（guoxue 模块），八字配对=同区次按钮（bazi 模块））
-  const pairEntry = list && list.length > 0 ? el('div', {
-    className: 'pair-entry',
-    style: {
-      marginTop: 10,
-      marginBottom: 0
-    }
-  }, el('div', {
-    className: 'pe-main'
-  }, el('div', {
-    className: 'pe-title'
-  }, UI_COPY.ninePickPair.title), el('div', {
-    className: 'pe-sub'
-  }, UI_COPY.ninePickPair.sub)), el('div', {
-    style: {
-      display: 'flex',
-      gap: 8,
-      flexWrap: 'wrap',
-      alignItems: 'center'
-    }
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-primary',
-    onClick: () => openPairAnalyze({ module: 'guoxue' })
-  }, [UI_COPY.ninePickPair.btnGuoxue, payBadge(payEnough)]), el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: () => openPairAnalyze({ module: 'bazi' })
-  }, [UI_COPY.ninePickPair.btnBazi, payBadge(payEnough)]))) : null;
   return el('div', {
     className: 'container'
   }, el('div', {
@@ -8101,7 +8062,7 @@ function NinePickPage({
       lineHeight: 1.7,
       marginBottom: 4
     }
-  }, '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。'), pickBody, listActions, actionCard), pairEntry, el('div', {
+  }, '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。'), pickBody, listActions, actionCard), el('div', {
     className: 'back-row'
   }, el('button', {
     className: 'btn btn-outline',
@@ -8109,11 +8070,7 @@ function NinePickPage({
   }, UI_COPY.buttons.back_options), el('button', {
     className: 'btn btn-outline',
     onClick: () => onNavigate('landing')
-  }, UI_COPY.buttons.back_home)), namerOpen ? el(NamerModal, {
-    caseId: selId,
-    caseName: selNm,
-    onClose: () => setNamerOpen(false)
-  }) : null);
+  }, UI_COPY.buttons.back_home)));
 }
 
 /* ---------- REQ-094UI：起名弹窗（单档案 → POST /api/namer/name；姓氏必填 ≤2 字 + 方向选填） ----------
@@ -8132,8 +8089,17 @@ function NamerModal({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [res, setRes] = useState(null); // {names:[{name,full,reason,adjusted}], notes, adjusted}
+  // REQ-100：档案起名入口上移国学 HUB（不再由选档案页带入 caseId）——未预选档案（caseId 为空）时
+  // 弹窗内自拉档案列表，默认选中默认档案（无默认则最新一份）；起名主流程（姓氏必填≤2字+方向选填）不变。
+  const [caseList, setCaseList] = useState(null); // null=加载中 / [] = 无档案 / 数组=已就绪
+  const [listErr, setListErr] = useState('');
+  const [pickId, setPickId] = useState(caseId != null && String(caseId).trim() ? String(caseId) : '');
   const submit = async () => {
     if (busy) return;
+    if (!pickId) {
+      toast('请先选择档案');
+      return;
+    }
     const sn = String(surname || '').trim();
     if (!sn) {
       toast(C.surnameRequired);
@@ -8148,7 +8114,7 @@ function NamerModal({
     setRes(null);
     try {
       const body = {
-        case_id: Number(caseId),
+        case_id: Number(pickId),
         surname: sn
       };
       const dd = String(direction || '').trim();
@@ -8166,6 +8132,33 @@ function NamerModal({
       setBusy(false);
     }
   };
+  const loadCases = async () => {
+    setListErr('');
+    setCaseList(null);
+    try {
+      const r = await api('/cases', {
+        method: 'GET'
+      });
+      const arr = r && r.data && r.data.cases || r && r.cases || [];
+      setCaseList(arr);
+      if (!pickId && arr.length) {
+        const def = arr.find(c => c && c.isDefault) || arr[0];
+        if (def) setPickId(String(def.caseId));
+      }
+    } catch (e) {
+      // 未登录/会话过期（401）：App 已跳登录页（onUnauthorized），直接关掉弹窗即可
+      if (e && e.status === 401) {
+        onClose();
+        return;
+      }
+      setListErr(e && e.message ? e.message : '档案列表加载失败，请重试。');
+      setCaseList([]);
+    }
+  };
+  useEffect(() => {
+    if (!caseId) loadCases();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const list = res && Array.isArray(res.names) ? res.names : [];
   const notesTxt = res && typeof res.notes === 'string' && res.notes.trim() ? res.notes.trim() : '';
   const hd = el('div', {
@@ -8182,11 +8175,53 @@ function NamerModal({
     onClick: onClose,
     title: UI_COPY.buttons.close
   }, '✕'));
-  const sub = el('div', {
+  const curCase = (Array.isArray(caseList) ? caseList : []).find(c => String(c.caseId) === String(pickId)) || null;
+  const curName = caseId != null && String(caseId).trim()
+    ? (caseName || '档案 ' + caseId)
+    : (curCase ? ((curCase.name && String(curCase.name).trim()) || '档案 ' + curCase.caseId) : '');
+  const sub = curName ? el('div', {
     className: 'pair-sub'
   }, fmtTpl(C.caseLine, {
-    case: caseName ? caseName : '档案 ' + caseId
-  }));
+    case: curName
+  })) : null;
+  const caseOptions = [el('option', {
+    key: '__ph__',
+    value: ''
+  }, '— 请选择档案 —')].concat((Array.isArray(caseList) ? caseList : []).map(c => el('option', {
+    key: String(c.caseId),
+    value: String(c.caseId)
+  }, (c.name && String(c.name).trim()) || '档案 ' + c.caseId)));
+  // REQ-100：未预选档案时弹窗内自选档案（默认已选中默认档案/最新一份），起名主流程不变
+  const picker = caseId != null && String(caseId).trim() ? null : el('div', {
+    className: 'pair-sec'
+  }, el('div', {
+    className: 'pair-sec-label'
+  }, el('span', {
+    className: 'ps-n'
+  }, '档'), '档案'), caseList === null ? el('div', {
+    className: 'pair-busy'
+  }, '档案列表加载中…') : listErr ? el('div', null, el('div', {
+    className: 'pair-err'
+  }, listErr), el('div', {
+    className: 'pair-foot',
+    style: {
+      marginTop: 0
+    }
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    onClick: loadCases
+  }, '重试档案'))) : Array.isArray(caseList) && caseList.length === 0 ? el('div', {
+    className: 'pair-err'
+  }, '暂无可用档案：请先建立一份出生档案并完成排盘后再来起名。') : el('select', {
+    className: 'pair-field',
+    value: pickId,
+    onChange: e => {
+      setPickId(e.target.value);
+      setErr('');
+      setRes(null);
+    }
+  }, caseOptions));
   const form = el('div', null, el('div', {
     className: 'pair-sec'
   }, el('div', {
@@ -8296,7 +8331,7 @@ function NamerModal({
     onClick: function (e) {
       e.stopPropagation();
     }
-  }, hd, sub, err ? el('div', {
+  }, hd, sub, picker, err ? el('div', {
     className: 'pair-err'
   }, err) : null, busy ? el('div', {
     className: 'pair-busy'
@@ -8312,7 +8347,7 @@ function NamerModal({
   }, UI_COPY.buttons.close), el('button', {
     type: 'button',
     className: 'btn btn-primary',
-    disabled: busy,
+    disabled: busy || (!(caseId != null && String(caseId).trim()) && !pickId),
     onClick: submit
   }, busy ? C.submitting : C.submit))));
 }
@@ -8322,9 +8357,12 @@ function GuoxueHubPage({
   onNavigate,
   applySkin
 }) {
-  // REQ-093UI：国学「配对解析」入口已由本 HUB 迁入「九法合一 · 选择档案」页底部（原 REQ-082① 的
-  // hub-card 移除，改在九法合一页作高亮主按钮，紧邻档案选择便于发起双档案配对）；
-  // 本 HUB 保留 九法合一 / 生肖流年 / 临时起卦 三个功能入口（国学 HUB 属公开页）。
+  // REQ-100：配对解析 / 起名 / 八字配对 三个同级功能上移一级 → 与「九法合一 / 生肖流年 / 临时起卦」
+  // 同层级成为功能按键，同一排 3 键（九法配对 / 八字配对 / 档案起名）横向摆放，UI 同样式 + I4 图标
+  // （fn-pair / fn-bazi / fn-name）；原九法合一选档案页内 .pair-entry 与「起名」行移除（覆盖
+  // REQ-093/094 入口布局口径，功能逻辑不变：九法配对/八字配对 → openPairAnalyze 弹 PairModal；
+  // 档案起名 → 弹 NamerModal，未预选档案时弹窗内选档案）。本 HUB 属公开页。
+  const [namerOpen, setNamerOpen] = useState(false);
   const cards = [{
     name: '九法合一解读',
     sub: '选择档案 · 跑九法或查看/修改解读（八字·紫微·西占·七政·奇门·五运六气等 9 法综合）',
@@ -8343,6 +8381,23 @@ function GuoxueHubPage({
     bar: 'var(--gold-500)',
     ico: 'orbit',
     to: () => onNavigate('divination')
+  }];
+  // REQ-100：同一排 3 键（九法配对 / 八字配对 / 档案起名），与上方三卡同层级同样式。
+  const quickCards = [{
+    name: '九法配对',
+    sub: '双人合盘 · 缘分与相处建议（付费 LLM，按实际用量扣余额）',
+    id: 'fn-pair',
+    onClick: () => openPairAnalyze({ module: 'guoxue' })
+  }, {
+    name: '八字配对',
+    sub: '双方八字排盘判相性（付费 LLM，按实际用量扣余额）',
+    id: 'fn-bazi',
+    onClick: () => openPairAnalyze({ module: 'bazi' })
+  }, {
+    name: '档案起名',
+    sub: '依档案八字五行喜用推荐名字（付费 LLM，按实际用量扣余额）',
+    id: 'fn-name',
+    onClick: () => setNamerOpen(true)
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -8372,7 +8427,28 @@ function GuoxueHubPage({
     className: "hc-name"
   }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
-  }, c.sub))))));
+  }, c.sub))))), /*#__PURE__*/React.createElement("div", {
+    className: "hub-row"
+  }, quickCards.map((q, i) => /*#__PURE__*/React.createElement("div", {
+    key: 'q' + i,
+    className: "hub-card",
+    onClick: q.onClick
+  }, /*#__PURE__*/React.createElement(SpriteIcon, {
+    id: q.id,
+    size: 28
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "hc-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hc-name"
+  }, q.name), /*#__PURE__*/React.createElement("div", {
+    className: "hc-sub"
+  }, q.sub))))), namerOpen ? /*#__PURE__*/React.createElement(NamerModal, {
+    caseId: null,
+    caseName: "",
+    onClose: function () {
+      setNamerOpen(false);
+    }
+  }) : null);
 }
 
 /* ---------- 西式占卜 HUB ---------- */
@@ -8538,6 +8614,42 @@ function RelIcon({
   }, React.createElement('use', {
     href: REL_SPRITE + '#' + id
   }));
+}
+/* REQ-115 / REQ-100：I1 星座 ×12（cx-*）+ I4 三功能 ×3（fn-*）图标 —— 复用 REL_SPRITE
+   （art/icons/icon-sprite-i1-i4.svg）的 symbol，与 RelIcon 同机制（<use href> 外部引用），
+   只做引用、不改动 SVG 内容。SpriteIcon 按 symbol id 通用引用；CxIcon 按中文星座名映射 cx-*。 */
+const SIGN_CX_IDS = {
+  '白羊': 'cx-aries', '金牛': 'cx-taurus', '双子': 'cx-gemini', '巨蟹': 'cx-cancer',
+  '狮子': 'cx-leo', '处女': 'cx-virgo', '天秤': 'cx-libra', '天蝎': 'cx-scorpio',
+  '射手': 'cx-sagittarius', '摩羯': 'cx-capricorn', '水瓶': 'cx-aquarius', '双鱼': 'cx-pisces'
+};
+function SpriteIcon({
+  id,
+  size = 24
+}) {
+  return React.createElement('svg', {
+    className: 'ic',
+    style: {
+      width: size,
+      height: size,
+      flex: 'none'
+    },
+    viewBox: '0 0 100 100',
+    role: 'img',
+    'aria-hidden': 'true'
+  }, React.createElement('use', {
+    href: REL_SPRITE + '#' + id
+  }));
+}
+function CxIcon({
+  cn,
+  size = 22
+}) {
+  const id = SIGN_CX_IDS[cn];
+  return id ? React.createElement(SpriteIcon, {
+    id: id,
+    size: size
+  }) : null;
 }
 /* REQ-110：配对解析「关系类型」按钮图标 —— 复用 REL_SPRITE（icon-sprite-i1-i4.svg，I3 正式美术）的
    pair-* 五枚 symbol：pair-love 恋爱 / pair-friend 朋友 / pair-family 家人 / pair-colleague 同事 /
@@ -15294,50 +15406,84 @@ function AstrologyPage({
     { key: 'moon', title: '月亮', sign: moonSign },
     { key: 'rising', title: '上升', sign: ascSign }
   ];
+  // ---- REQ-115：三卡横向堆叠（覆盖 REQ-045 罗列三格呈现口径）——左右滑动切换当前卡；
+  //      仅当前卡显示完整信息，其后两张卡 3/4 被当前卡遮挡 + 蒙版模糊；每卡星座名称前加
+  //      I1 星座图标（cx-*，引用 icon-sprite-i1-i4.svg）。趋势文案内容（A1 72 篇）不变。 ----
+  const tripleCurMax = trendCells.length - 1;
+  const [tripleCur, setTripleCur] = useState(0);
+  const [tripleDx, setTripleDx] = useState(0); // 拖动中横向位移（px）
+  const [tripleDrag, setTripleDrag] = useState(false);
+  const tripleStart = useRef({ x: 0, cur: 0 });
+  const tripleMoved = useRef(false);
+  const tripleDown = e => {
+    tripleStart.current = { x: e.clientX, cur: tripleCur };
+    tripleMoved.current = false;
+    setTripleDrag(true);
+  };
+  const tripleMove = e => {
+    if (!tripleDrag) return;
+    const d = e.clientX - tripleStart.current.x;
+    if (Math.abs(d) > 8) tripleMoved.current = true;
+    setTripleDx(d);
+  };
+  const tripleEnd = () => {
+    if (!tripleDrag) return;
+    const d = tripleDx;
+    setTripleDrag(false);
+    setTripleDx(0);
+    if (Math.abs(d) > 48) {
+      const dir = d < 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(tripleCurMax, tripleStart.current.cur + dir));
+      if (next !== tripleStart.current.cur) setTripleCur(next);
+    }
+  };
   const tripleCard = el('div', {
     className: 'card'
   }, el('div', {
     className: 'section-title'
   }, '太阳 / 月亮 / 上升 · 整体趋势'), el('div', {
+    className: 'triple-stack',
     style: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-      gap: '10px',
-      marginTop: 10
-    }
-  }, trendCells.map(cell => {
+      cursor: tripleDrag ? 'grabbing' : 'grab'
+    },
+    onPointerDown: tripleDown,
+    onPointerMove: tripleMove,
+    onPointerUp: tripleEnd,
+    onPointerCancel: tripleEnd,
+    onPointerLeave: tripleEnd,
+    role: 'group',
+    'aria-label': '太阳 / 月亮 / 上升 三张趋势卡，可左右滑动切换'
+  }, trendCells.map((cell, i) => {
+    const off = i - tripleCur;
+    const isCur = off === 0;
+    // 后卡偏移 %：右侧后卡约 3/4 被当前卡遮挡（仅露边缘）；更后一张再右移 8%；前卡整体隐藏于左侧
+    const base = isCur ? 0 : (off < 0 ? -100 : off === 1 ? 72 : off === 2 ? 80 : -100);
+    const follow = tripleDrag ? tripleDx * 0.45 : 0;
     const txt = zodiacTrendText(cell.key, cell.sign, trendGender);
     return el('div', {
       key: cell.key,
+      className: 'triple-card' + (isCur ? '' : ' back'),
       style: {
-        border: '1px solid var(--border)',
-        background: 'var(--surface)',
-        borderRadius: 12,
-        padding: '10px 12px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 5
-      }
+        transform: 'translateX(' + base + '%) translateX(' + (isCur ? tripleDx : follow) + 'px)',
+        transition: tripleDrag ? 'none' : 'transform .3s ease',
+        zIndex: isCur ? 3 : (off > 0 ? 3 - off : 1)
+      },
+      onClick: isCur ? null : () => {
+        if (!tripleMoved.current) setTripleCur(i);
+      },
+      'aria-label': (isCur ? '当前卡：' : '后卡：') + cell.title + ' · ' + (cell.sign || '未知')
     }, el('div', {
-      style: {
-        fontSize: 13,
-        fontWeight: 700,
-        color: 'var(--skin-accent)'
-      }
-    }, cell.title), el('div', {
-      style: {
-        fontSize: 18,
-        fontWeight: 800,
-        color: 'var(--text-1)'
-      }
-    }, cell.sign || '——'), el('div', {
-      style: {
-        fontSize: 12.5,
-        lineHeight: 1.75,
-        color: 'var(--text-2)',
-        whiteSpace: 'pre-line'
-      }
-    }, txt));
+      className: 'tc-head'
+    }, el('div', {
+      className: 'tc-title'
+    }, cell.title), el('span', {
+      className: 'tc-sign'
+    }, el(CxIcon, {
+      cn: cell.sign,
+      size: 22
+    }), cell.sign || '——')), isCur ? el('div', {
+      className: 'tc-txt'
+    }, txt) : null);
   })));
   const planetCard = el('div', {
     className: 'card'
@@ -15522,7 +15668,8 @@ function AstrologyPage({
     name: 'orbit',
     size: 22
   }), ' 星座'), formCard, pairBig, tabsNode, body, el('div', {
-    className: 'back-row'
+    // REQ-117：星座页底部操作按键由靠左对齐改为均匀分布 —— 等宽均分占满一行（back-row fill）
+    className: 'back-row fill'
   }, data ? el('button', {
     className: 'btn btn-outline',
     style: {
