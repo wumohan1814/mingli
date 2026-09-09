@@ -258,6 +258,56 @@
     .lm-fx>*{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
     .mascot-sprite{display:block;margin:0 auto;background-repeat:no-repeat;background-position:0 0;pointer-events:none;user-select:none;-webkit-user-drag:none}
     .mascot-sprite.play{animation:var(--sprite-anim,none);will-change:background-position}
+    /* ===== REQ-084：互动元素（FX）路径动画 —— 纯氛围 · 不可点击 · 不遮挡
+       素材：art/taichu-pet/fx-*.webp（透明小图）；各元素从化身中心（= .lm-fx 中心，化身 256px 居中）
+       向周侧偏移做绕飞/落肩/漂浮/闪烁，时长 4~7s 循环；pointer-events:none 不挡点卡与导航按钮；
+       prefers-reduced-motion 下隐藏不打扰。 */
+    .lm-fx img{opacity:0;will-change:transform,opacity}
+    /* 国学：小鸟自右上飞入 → 化身肩侧停留微浮 → 飞走 */
+    .fx-fly-bird{width:46px;height:46px;left:58%;top:34%;animation:fxFlyBird 6.8s ease-in-out infinite}
+    @keyframes fxFlyBird{
+      0%{transform:translate(64px,-52px) rotate(-14deg) scale(.9);opacity:0}
+      14%{transform:translate(10px,4px) rotate(6deg);opacity:1}
+      26%{transform:translate(-4px,2px) rotate(-4deg);opacity:1}
+      40%{transform:translate(4px,6px) rotate(3deg);opacity:1}
+      52%{transform:translate(-2px,0) rotate(-2deg);opacity:1}
+      66%{transform:translate(6px,-4px) rotate(4deg);opacity:1}
+      80%{transform:translate(-4px,2px) rotate(-3deg);opacity:.95}
+      100%{transform:translate(66px,-48px) rotate(-12deg);opacity:0}
+    }
+    /* 国学：蝴蝶绕化身右上-左下环绕飞 */
+    .fx-fly-butterfly{width:36px;height:36px;left:42%;top:30%;animation:fxFlyButterfly 7.4s ease-in-out infinite}
+    @keyframes fxFlyButterfly{
+      0%{transform:translate(-64px,-40px) rotate(14deg) scale(.9);opacity:0}
+      16%{transform:translate(-6px,12px) rotate(-8deg);opacity:1}
+      28%{transform:translate(8px,-4px) rotate(10deg);opacity:1}
+      42%{transform:translate(-4px,-10px) rotate(-6deg);opacity:1}
+      56%{transform:translate(10px,6px) rotate(8deg);opacity:1}
+      70%{transform:translate(-8px,-2px) rotate(-10deg);opacity:1}
+      86%{transform:translate(4px,10px) rotate(6deg);opacity:.95}
+      100%{transform:translate(-60px,-36px) rotate(12deg);opacity:0}
+    }
+    /* 西式 / MBTI：星星漂浮 + 旋转 + 闪烁（两枚用不同时延错开） */
+    .fx-spin-star{width:32px;height:32px;left:38%;top:40%;animation:fxSpinStar 5.2s ease-in-out infinite}
+    @keyframes fxSpinStar{
+      0%,100%{transform:translate(-38px,-32px) rotate(0deg) scale(.75);opacity:0}
+      18%{opacity:.95}
+      40%{transform:translate(-56px,-44px) rotate(150deg) scale(1);opacity:.9}
+      62%{transform:translate(-26px,-52px) rotate(300deg) scale(.9);opacity:.85}
+      82%{transform:translate(-46px,-26px) rotate(360deg) scale(1);opacity:.8}
+    }
+    .fx-sparkle{width:24px;height:24px;left:60%;top:44%;animation-duration:4.4s;animation-delay:1s}
+    /* 西式：星座连线淡入淡出环绕（观星氛围） */
+    .fx-fade-constellation{width:54px;height:54px;left:52%;top:36%;animation:fxFadeConstellation 6.2s ease-in-out infinite}
+    @keyframes fxFadeConstellation{
+      0%,100%{opacity:0;transform:translate(-14px,-8px) scale(.85) rotate(-8deg)}
+      16%,74%{opacity:.9;transform:translate(6px,2px) scale(1) rotate(0deg)}
+      45%{opacity:.75;transform:translate(-2px,-6px) scale(.95) rotate(4deg)}
+    }
+    /* 低耗降级：FX 隐藏不打扰 */
+    @media (prefers-reduced-motion:reduce){
+      .lm-fx img{animation:none!important;opacity:0!important}
+    }
     .feature{border-left:3px solid var(--skin-accent)}
     .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
     .btn:active{transform:translateY(1px)}
@@ -2779,8 +2829,11 @@ function LandingPage({
         cls: 'guoxue',
         src: '/art/module-mascot/guoxue-mascot.webp',
         alt: TC_COPY.ui.landing['mascot-guoxue-alt'],
-        sprite: { ready: false, src: '/art/taichu-pet/mascot-guoxue.placeholder.png', cols: 5, rows: 2, frames: 10, duration: 3.4, width: 256 },
-        interact: []
+        sprite: { ready: true, src: '/art/taichu-pet/mascot-guoxue.webp', cols: 5, rows: 2, frames: 10, duration: 3.4, width: 256 },
+        interact: [
+          { key: 'bird', src: '/art/taichu-pet/fx-bird.webp', cls: 'fx-fly-bird' },
+          { key: 'butterfly', src: '/art/taichu-pet/fx-butterfly.webp', cls: 'fx-fly-butterfly' }
+        ]
       }
     },
     xishi: {
@@ -2796,8 +2849,12 @@ function LandingPage({
         cls: 'xishi',
         src: '/art/module-mascot/xishi-mascot.webp',
         alt: TC_COPY.ui.landing['mascot-xishi-alt'],
-        sprite: { ready: false, src: '', cols: 5, rows: 2, frames: 10, duration: 3.6, width: 256 },
-        interact: []
+        sprite: { ready: true, src: '/art/taichu-pet/mascot-xishi.webp', cols: 5, rows: 2, frames: 10, duration: 3.6, width: 256 },
+        interact: [
+          { key: 'star-five', src: '/art/taichu-pet/fx-star-five.webp', cls: 'fx-spin-star' },
+          { key: 'star-sparkle', src: '/art/taichu-pet/fx-star-sparkle.webp', cls: 'fx-spin-star fx-sparkle' },
+          { key: 'constellation', src: '/art/taichu-pet/fx-constellation.webp', cls: 'fx-fade-constellation' }
+        ]
       }
     },
     mbti: {
@@ -2813,8 +2870,11 @@ function LandingPage({
         cls: 'mbti',
         src: '/art/module-mascot/mbti-mascot.webp',
         alt: TC_COPY.ui.landing['mascot-mbti-alt'],
-        sprite: { ready: false, src: '', cols: 5, rows: 2, frames: 10, duration: 3.2, width: 256 },
-        interact: []
+        sprite: { ready: true, src: '/art/taichu-pet/mascot-mbti.webp', cols: 5, rows: 2, frames: 10, duration: 3.2, width: 256 },
+        interact: [
+          { key: 'star-five', src: '/art/taichu-pet/fx-star-five.webp', cls: 'fx-spin-star' },
+          { key: 'star-sparkle', src: '/art/taichu-pet/fx-star-sparkle.webp', cls: 'fx-spin-star fx-sparkle' }
+        ]
       }
     }
   };
