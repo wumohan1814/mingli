@@ -210,6 +210,29 @@
     /* REQ-064：落地页主按钮下方「档案管理」透明小按钮（字号 13px < 主按钮 16px；仅登录渲染） */
     .landing-cases-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;flex:none;margin:14px auto 0;padding:6px 14px;font-size:13px;font-weight:500;line-height:1.5;background:transparent;border:1px solid transparent;border-radius:var(--radius-pill);color:var(--text-2);cursor:pointer;transition:color .15s,border-color .15s,opacity .15s}
     .landing-cases-btn:hover{color:var(--skin-accent);border-color:var(--border)}
+    /* ===== REQ-084：三大模块落地页 Q 版循环动画（静态单图 + CSS keyframes 合成） =====
+       素材：/art/module-mascot/{guoxue,xishi,mbti}-mascot.webp（美术素材表-第三轮 §0.4）；
+       整块可点击 → 太初先生会话（与右上角「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
+       REQ-116：容器显隐跟随「太初先生」开关 agent_enabled —— JS 侧不渲染（见 LandingPage）；
+       容器位于正常文档流（主按钮上方），不遮挡主按钮与操作区。 */
+    .landing-mascot{display:block;position:relative;width:132px;min-height:132px;height:auto;margin:0 auto 20px;padding:0;border:none;background:transparent;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center}
+    .landing-mascot img{display:block;width:100%;height:auto;margin:0 auto;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .landing-mascot .lm-cap{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--skin-accent);line-height:1.5;pointer-events:none}
+    .landing-mascot:hover img{filter:brightness(1.05)}
+    .landing-mascot:active img{filter:brightness(.95)}
+    /* 国学：打坐呼吸浮沉（上下 2–3px、周期 3–4s，取 3.4s / 3px） */
+    .anim-mascot.guoxue img{animation:mascotGuoxue 3.4s ease-in-out infinite}
+    @keyframes mascotGuoxue{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+    /* 西式：仰望星空微仰（轻微仰角 + 呼吸浮沉，周期 3.6s） */
+    .anim-mascot.xishi img{animation:mascotXishi 3.6s ease-in-out infinite}
+    @keyframes mascotXishi{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(-1.8deg) translateY(-2px)}}
+    /* MBTI：躺摇椅左右小角度摇晃（支点取椅脚底部，周期 3.2s） */
+    .anim-mascot.mbti img{animation:mascotMbti 3.2s ease-in-out infinite;transform-origin:50% 92%}
+    @keyframes mascotMbti{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-2.6deg)}75%{transform:rotate(2.6deg)}}
+    /* REQ-084⑤：低耗降级 —— 偏好减少动态效果时停止循环动画，仅显示静态主图 */
+    @media (prefers-reduced-motion:reduce){
+      .landing-mascot img{animation:none!important}
+    }
     .feature{border-left:3px solid var(--skin-accent)}
     .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
     .btn:active{transform:translateY(1px)}
@@ -2409,7 +2432,8 @@ function SkinSwitcher({
 function LandingPage({
   module,
   onNavigate,
-  loggedIn
+  loggedIn,
+  agentEnabled
 }) {
   // 各模块的「落地宣传页」配置：主标题 / 副标题 / 简介 / 主按钮 → 对应 HUB 或测试页
   const MODS = {
@@ -2419,7 +2443,9 @@ function LandingPage({
       subtitle: UI_COPY.module_hub.guoxue_desc,
       intro: UI_COPY.landing.value_1_desc,
       cta: UI_COPY.module_hub.enter_guoxue,
-      to: 'guoxue-hub'
+      to: 'guoxue-hub',
+      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes） */
+      mascot: { cls: 'guoxue', src: '/art/module-mascot/guoxue-mascot.webp', alt: 'Q 版人物打坐' }
     },
     xishi: {
       icon: 'orbit',
@@ -2427,7 +2453,9 @@ function LandingPage({
       subtitle: UI_COPY.module_hub.western_desc,
       intro: '从本命星盘、行运推演，到塔罗牌阵与雷诺曼小牌——AI 以符号与意象为语，陪你梳理情绪、看清关系与当下的每一个抉择。',
       cta: UI_COPY.module_hub.enter_western,
-      to: 'xishi-hub'
+      to: 'xishi-hub',
+      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes） */
+      mascot: { cls: 'xishi', src: '/art/module-mascot/xishi-mascot.webp', alt: 'Q 版人物仰望星空' }
     },
     mbti: {
       icon: 'spark',
@@ -2435,7 +2463,9 @@ function LandingPage({
       subtitle: UI_COPY.module_hub.mbti_desc,
       intro: '通过 16 型人格框架，梳理你的能量来源、信息偏好与决策方式。逐题作答，AI 将结合你的选择给出专属类型画像与解读。',
       cta: UI_COPY.module_hub.enter_mbti,
-      to: 'mbti-hub'
+      to: 'mbti-hub',
+      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes） */
+      mascot: { cls: 'mbti', src: '/art/module-mascot/mbti-mascot.webp', alt: 'Q 版人物躺摇椅' }
     }
   };
   const c = MODS[module] || MODS.guoxue;
@@ -2470,7 +2500,23 @@ function LandingPage({
       lineHeight: 1.9,
       marginBottom: 26
     }
-  }, c.intro), /*#__PURE__*/React.createElement("button", {
+  }, c.intro), /* REQ-084：模块 Q 版循环动画（静态单图 + CSS keyframes）—— 整块可点击进入
+      太初先生会话（与 banner「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
+      REQ-116：agent_enabled 关 → 不渲染，与「对坐谈心」按钮同一开关源 */
+  agentEnabled && c.mascot && /*#__PURE__*/React.createElement("button", {
+    className: "landing-mascot anim-mascot " + c.mascot.cls,
+    type: "button",
+    title: "找太初先生聊聊",
+    "aria-label": "找太初先生聊聊",
+    onClick: () => onNavigate('agent')
+  }, /*#__PURE__*/React.createElement("img", {
+    src: c.mascot.src,
+    alt: c.mascot.alt,
+    loading: "lazy",
+    decoding: "async"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "lm-cap"
+  }, "对坐谈心")), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate(c.to)
   }, c.cta), /* REQ-064：主按钮正下方「档案管理」透明小按钮（字号小于主按钮；仅登录显示；点击进档案管理列表） */
@@ -17762,6 +17808,8 @@ function App() {
       module: module,
       /* REQ-064：仅登录显示「档案管理」入口 */
       loggedIn: !!token,
+      /* REQ-116：Q 版动画跟随「太初先生」开关（agent_enabled 关 → 不渲染；与 banner「对坐谈心」同一开关源） */
+      agentEnabled: tcSet.agent_enabled !== false,
       onNavigate: navigate
     }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
