@@ -857,6 +857,29 @@
     .ty-scope-hint{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
     .ty-run{display:flex;align-items:center;gap:8px;margin-top:14px}
     .ty-run-note{font-size:11px;color:var(--text-3);line-height:1.6;flex:1}
+    /* REQ-134：三法起算/结果操作区独立分层（按钮与说明分开，说明不再被并排挤压） */
+    .op-run{display:block;margin-top:14px}
+    .op-run .btn{width:100%}
+    .op-run-note{display:block;font-size:11px;color:var(--text-3);line-height:1.7;margin-top:8px;text-align:center}
+    .op-zone{display:block;margin-top:10px}
+    .op-zone .btn{width:100%}
+    .op-zone .pay-hint{margin-top:8px}
+    /* REQ-133②：择日结果顶部独立操作色块（趋势免费解读 + 深度解读按钮），置于起算下方不再贴底 */
+    .alm-op-zone{margin:0 0 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--paper);padding:12px 14px}
+    .alm-op-zone .af-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:6px}
+    .alm-op-zone .af-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word;margin-bottom:8px}
+    /* REQ-133③：择日结果日期折叠菜单（默认折叠，点击展开） */
+    .alm-day-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;background:none;border:none;padding:0;font-family:inherit;cursor:pointer;color:inherit}
+    .alm-day-toggle .alm-day-date{font-size:16px;font-weight:800;color:var(--text-1)}
+    .alm-day-toggle .alm-day-date small{font-weight:600;color:var(--text-2);font-size:12px;margin-left:6px}
+    .alm-day-toggle .alm-status{flex:none}
+    .alm-day-arrow{flex:none;font-size:12px;color:var(--text-3);transition:transform .15s}
+    .alm-day-arrow.open{transform:rotate(180deg)}
+    .alm-day-body{margin-top:10px}
+    /* REQ-133④：择日参与人多选档案面板 */
+    .alm-part-pick{margin-top:8px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .alm-part-pick-hint{font-size:12px;color:var(--text-3);margin-bottom:8px;line-height:1.6}
+    .alm-part-birth{font-size:13px;color:var(--text-1);line-height:1.6}
     .ty-hero{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
     .ty-bureau{flex:none;min-width:96px;text-align:center;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:8px 10px}
     .ty-bureau .tb-name{display:block;font-size:20px;font-weight:800;color:var(--skin-accent);line-height:1.3}
@@ -14555,18 +14578,72 @@ function AlmanacPage({
   const [interpLoading, setInterpLoading] = useState(false);
   const [interpErr, setInterpErr] = useState('');
   const [hoursOpen, setHoursOpen] = useState({}); // date → bool（逐时时课展开态）
-  const addParticipant = function () {
+  // REQ-133③：日期折叠（默认折叠，点击展开）
+  const [dayOpen, setDayOpen] = useState({});
+  // REQ-133④：参与人多选已有档案（null=加载中 / [] =无档案 / 数组=已就绪）
+  const [caseList, setCaseList] = useState(null);
+  const [caseErr, setCaseErr] = useState('');
+  const [pickingCases, setPickingCases] = useState(false);
+  const toggleDay = function (date) {
+    setDayOpen(prev => Object.assign({}, prev, { [date]: !prev[date] }));
+  };
+  const removePart = function (idx) {
+    setParticipants(prev => prev.filter(function (_, i) { return i !== idx; }));
+  };
+  // REQ-133④：小时(0-23) → 时辰档（ALMANAC_SHICHEN i；0=早子时、23=晚子时）
+  const hourToShichen = function (h) {
+    const n = Number(h);
+    if (isNaN(n)) return 6;
+    if (n === 0) return 0;
+    if (n === 23) return 12;
+    return Math.floor((n + 1) / 2);
+  };
+  const loadCases = async function () {
+    if (caseList !== null) return;
+    setCaseErr('');
+    try {
+      const r = await api('/cases', { method: 'GET' });
+      const arr = (r && r.data && r.data.cases) || (r && r.cases) || [];
+      setCaseList(Array.isArray(arr) ? arr : []);
+    } catch (e) {
+      setCaseErr((e && e.message) || '档案列表加载失败，请重试。');
+      setCaseList([]);
+    }
+  };
+  // REQ-133④：档案 → 参与人（拉 archive 取完整生辰；缺失引导补全，不做现场新建临时档案）
+  const addCaseParticipant = async function (c) {
     if (participants.length >= 30) {
       toast(A.part_max_warn);
       return;
     }
-    setParticipants(prev => prev.concat([{ name: '', gender: '男', year: '', month: '', day: '', timeIndex: 6 }]));
-  };
-  const patchPart = function (idx, patch) {
-    setParticipants(prev => prev.map(function (p, i) { return i === idx ? Object.assign({}, p, patch) : p; }));
-  };
-  const removePart = function (idx) {
-    setParticipants(prev => prev.filter(function (_, i) { return i !== idx; }));
+    const cid = String(c.caseId);
+    if (participants.some(function (p) { return p.caseId === cid; })) {
+      toast('该档案已在参与人中');
+      return;
+    }
+    try {
+      const r = await api('/cases/' + cid + '/archive');
+      const d = (r && r.data) || {};
+      const inp = (d && d.input) || {};
+      const y = inp.birth_year != null ? String(inp.birth_year) : '';
+      const m = inp.birth_month != null ? String(inp.birth_month) : '';
+      const dd = inp.birth_day != null ? String(inp.birth_day) : '';
+      if (!y || !m || !dd) {
+        toast('档案「' + ((c.name && String(c.name).trim()) || c.caseId) + '」缺少完整出生日期，请先到档案管理补全');
+        return;
+      }
+      setParticipants(prev => prev.concat([{
+        caseId: cid,
+        name: (c.name && String(c.name).trim()) || '档案 ' + c.caseId,
+        gender: inp.gender === 'female' ? '女' : '男',
+        year: y,
+        month: m,
+        day: dd,
+        timeIndex: hourToShichen(inp.birth_hour)
+      }]));
+    } catch (e) {
+      toast((e && e.message) || '档案信息加载失败，请重试。');
+    }
   };
   const toggleHours = function (date) {
     setHoursOpen(prev => Object.assign({}, prev, { [date]: !prev[date] }));
@@ -14698,6 +14775,7 @@ function AlmanacPage({
   // 逐日卡片
   const dayCard = function (d) {
     const cls = almanacStatusOf(groups, d.date);
+    const dayIsOpen = Boolean(dayOpen[d.date]); // REQ-133③：日期折叠默认收起
     const gz = d.ganzhi || {};
     const gzText = [gz.year, gz.month, gz.day].filter(Boolean).join(' ');
     const star28 = d.twentyEightStarDetail || null;
@@ -14769,11 +14847,12 @@ function AlmanacPage({
         React.createElement('div', { className: 'alm-hour-cap' }, A.hour_cap), A.no_hours));
     }
     return React.createElement('div', { key: d.date, className: 'alm-day-card ' + cls },
-      React.createElement('div', { className: 'alm-day-head' },
+      React.createElement('button', { type: 'button', className: 'alm-day-toggle', 'aria-expanded': dayIsOpen, onClick: function () { toggleDay(d.date); } },
         React.createElement('div', { className: 'alm-day-date' }, d.date,
           React.createElement('small', null, (d.weekday || '') + ' · ' + (d.zodiac ? d.zodiac + '日' : ''))),
-        React.createElement('span', { className: 'alm-status ' + cls }, ALMANAC_STATUS_CN[cls] || '慎用候选')),
-      rows);
+        React.createElement('span', { className: 'alm-status ' + cls }, ALMANAC_STATUS_CN[cls] || '慎用候选'),
+        React.createElement('span', { className: 'alm-day-arrow' + (dayIsOpen ? ' open' : '') }, '▾')),
+      dayIsOpen ? React.createElement('div', { className: 'alm-day-body' }, rows) : null);
   };
   let body = null;
   if (loading) {
@@ -14797,6 +14876,19 @@ function AlmanacPage({
       ? result.participants.map(function (p) { return (p.name || '') + (p.zodiac ? '（' + p.zodiac + '）' : ''); }).join('、')
       : '';
     body = React.createElement('div', null,
+      // REQ-133②：顶部独立操作色块（趋势免费解读 + 深度解读），置于起算下方、不再贴底被压
+      React.createElement('div', { className: 'alm-op-zone' },
+        React.createElement('div', { className: 'af-title' }, A.free_reading_title),
+        React.createElement('div', { className: 'af-txt' }, freeTxt),
+        React.createElement('div', { className: 'pay-hint' }, A.pay_hint),
+        React.createElement('div', { style: { marginTop: 8 } },
+          React.createElement('button', { className: 'btn btn-outline', disabled: interpLoading, onClick: interpret },
+            interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)])),
+        interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
+        interp ? React.createElement(React.Fragment, null,
+          React.createElement('div', { className: 'interp-title' }, A.interp_title),
+          React.createElement('div', { className: 'interp-body' }, interp)) : null),
+      // 结果标题卡（日期统计 + 折叠日期菜单 + 本盘名词 + 说明 + 免责）
       React.createElement('div', { className: 'card' },
         React.createElement('div', { className: 'section-title' }, A.result_title,
           result.customTopicLabel ? React.createElement('span', { style: { fontSize: 12, fontWeight: 600, color: 'var(--text-2)', marginLeft: 8 } }, '· ' + result.customTopicLabel) : null),
@@ -14809,17 +14901,6 @@ function AlmanacPage({
         sortedDays.map(dayCard),
         React.createElement(TCTermRow, { key: 'tc', method: 'almanac', label: '本盘名词', items: almNouns, chipClass: 'alm-tag' }),
         constr.length ? React.createElement('div', { className: 'alm-constr' }, '说明：' + constr.join('\n')) : null,
-        React.createElement('div', { className: 'alm-free' },
-          React.createElement('div', { className: 'af-title' }, A.free_reading_title),
-          React.createElement('div', { className: 'af-txt' }, freeTxt)),
-        React.createElement(TCTermPanel, { key: 'tcpanel', method: 'almanac' }),
-        React.createElement('div', { className: 'pay-hint' }, A.pay_hint),
-        React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret },
-          interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
-        interpErr ? React.createElement('div', { className: 'error', style: { marginTop: 10 } }, interpErr) : null,
-        interp ? React.createElement(React.Fragment, null,
-          React.createElement('div', { className: 'interp-title' }, A.interp_title),
-          React.createElement('div', { className: 'interp-body' }, interp)) : null,
         React.createElement('div', { className: 'alm-disc' }, A.disclaimer)));
   }
   const formCard = React.createElement('div', { className: 'card' },
@@ -14855,39 +14936,38 @@ function AlmanacPage({
     React.createElement('div', { className: 'alm-parts' }, participants.map(function (p, idx) {
       return React.createElement('div', { key: 'p' + idx, className: 'alm-part-item' },
         React.createElement('div', { className: 'alm-part-head' },
-          React.createElement('span', { className: 'alm-part-title' }, '参与人 ' + (idx + 1)),
+          React.createElement('span', { className: 'alm-part-title' }, p.name || ('参与人 ' + (idx + 1))),
           React.createElement('button', { type: 'button', className: 'focus-btn off', onClick: function () { removePart(idx); } }, A.part_remove)),
         React.createElement('div', { className: 'alm-part-grid' },
           React.createElement('div', { className: 'alm-part-field wide' },
-            React.createElement('span', { className: 'alm-part-cap' }, A.part_name_ph),
-            React.createElement('input', { className: 'alm-part-input', type: 'text', maxLength: 20, value: p.name, onChange: function (e) { patchPart(idx, { name: e.target.value }); } })),
-          React.createElement('div', { className: 'alm-part-field' },
-            React.createElement('span', { className: 'alm-part-cap' }, A.part_gender),
-            React.createElement('select', { className: 'alm-part-input', value: p.gender, onChange: function (e) { patchPart(idx, { gender: e.target.value }); } },
-              React.createElement('option', { value: '男' }, '男'),
-              React.createElement('option', { value: '女' }, '女'))),
-          React.createElement('div', { className: 'alm-part-field' },
-            React.createElement('span', { className: 'alm-part-cap' }, '年'),
-            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1900, max: 2100, placeholder: '1990', value: p.year, onChange: function (e) { patchPart(idx, { year: e.target.value }); } })),
-          React.createElement('div', { className: 'alm-part-field' },
-            React.createElement('span', { className: 'alm-part-cap' }, '月'),
-            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1, max: 12, placeholder: '5', value: p.month, onChange: function (e) { patchPart(idx, { month: e.target.value }); } })),
-          React.createElement('div', { className: 'alm-part-field' },
-            React.createElement('span', { className: 'alm-part-cap' }, '日'),
-            React.createElement('input', { className: 'alm-part-input', type: 'number', min: 1, max: 31, placeholder: '12', value: p.day, onChange: function (e) { patchPart(idx, { day: e.target.value }); } })),
+            React.createElement('span', { className: 'alm-part-cap' }, '出生'),
+            React.createElement('span', { className: 'alm-part-birth' }, [p.year, p.month, p.day].filter(Boolean).join('-') + (p.timeIndex != null && ALMANAC_SHICHEN[p.timeIndex] ? ' · ' + ALMANAC_SHICHEN[p.timeIndex].label : ''))),
           React.createElement('div', { className: 'alm-part-field wide' },
-            React.createElement('span', { className: 'alm-part-cap' }, A.part_time),
-            React.createElement('select', { className: 'alm-part-input', value: p.timeIndex, onChange: function (e) { patchPart(idx, { timeIndex: Number(e.target.value) }); } },
-              ALMANAC_SHICHEN.map(function (s) {
-                return React.createElement('option', { key: s.i, value: s.i }, s.label);
-              })))));
+            React.createElement('span', { className: 'alm-part-cap' }, A.part_gender),
+            React.createElement('span', { className: 'alm-part-birth' }, p.gender))));
     })),
-    React.createElement('button', { type: 'button', className: 'alm-part-add', onClick: addParticipant }, '＋ ' + A.part_add),
+    // REQ-133④：参与人改为多选已有档案（不做现场新建临时档案）
+    React.createElement('button', { type: 'button', className: 'alm-part-add', onClick: function () { if (caseList === null) loadCases(); setPickingCases(!pickingCases); } },
+      pickingCases ? '收起档案选择' : '＋ 选择档案作为参与人'),
+    pickingCases ? React.createElement('div', { className: 'alm-part-pick' },
+      caseErr ? React.createElement('div', { className: 'error' }, caseErr) : null,
+      !caseList || !caseList.length ? React.createElement('div', { className: 'alm-part-pick-hint' },
+        caseList === null ? '加载档案中…' : '暂无档案，请先到「档案管理」建立档案后再来择日。') :
+        React.createElement('div', { className: 'case-opts' }, caseList.map(function (c) {
+          const sel = participants.some(function (p) { return p.caseId === String(c.caseId); });
+          const meta = [c.birthYear ? c.birthYear + ' 年' : '', c.gender === 'male' ? '男' : c.gender === 'female' ? '女' : '', c.birthplace || ''].filter(Boolean).join(' · ') || '出生信息未补充';
+          return React.createElement('button', { key: c.caseId, type: 'button', className: 'case-opt' + (sel ? ' sel' : ''), onClick: function () { if (!sel) addCaseParticipant(c); } },
+            React.createElement('div', { className: 'co-main' },
+              React.createElement('span', { className: 'co-name' }, c.name || '档案 ' + c.caseId),
+              React.createElement('span', { className: 'co-meta' }, meta)),
+            React.createElement('span', { className: 'co-check' }, sel ? '✓' : ''));
+        }))) : null,
     React.createElement('div', { className: 'alm-range-note' }, A.part_hint),
-    React.createElement('div', { className: 'alm-run' },
+    // REQ-134：起算按钮与说明独立分层（不再 flex 并排挤压）
+    React.createElement('div', { className: 'op-run' },
       React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
         loading ? A.running : A.run),
-      React.createElement('span', { className: 'alm-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+      React.createElement('span', { className: 'op-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'calendar', size: 22 }), ' ' + A.title),
     !token ? React.createElement('div', { className: 'card' },
@@ -15132,14 +15212,14 @@ function TaiyiPage({
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
     kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'taiyi' }));
-    kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
-    kids.push(React.createElement('button', {
-      key: 'paybtn',
-      className: 'btn btn-outline',
-      style: { marginTop: 8 },
-      disabled: interpLoading,
-      onClick: interpret
-    }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+    // REQ-134：付费操作区独立分层（按钮全宽一行 + 说明独立块，不再并排挤压）
+    kids.push(React.createElement('div', { key: 'payzone', className: 'op-zone' },
+      React.createElement('button', {
+        className: 'btn btn-outline',
+        disabled: interpLoading,
+        onClick: interpret
+      }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)])),
+      React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint)));
     if (interpErr) kids.push(React.createElement('div', { key: 'interr', className: 'error', style: { marginTop: 10 } }, interpErr));
     if (interp) kids.push(React.createElement(React.Fragment, { key: 'interp' },
       React.createElement('div', { className: 'interp-title' }, A.interp_title),
@@ -15193,10 +15273,11 @@ function TaiyiPage({
               }, SHICHEN_ARR.map(function (s, i) {
                 return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
               }))))),
-    React.createElement('div', { className: 'ty-run' },
+    // REQ-134：起算按钮与说明独立分层（不再 flex 并排挤压）
+    React.createElement('div', { className: 'op-run' },
       React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
         loading ? A.running : A.run),
-      React.createElement('span', { className: 'ty-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+      React.createElement('span', { className: 'op-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'taiyi', size: 22 }), ' ' + A.title),
     React.createElement('div', { className: 'hub-sub' }, A.sub),
@@ -15481,14 +15562,14 @@ function HuangjiPage({
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
     kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'huangji' }));
-    kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
-    kids.push(React.createElement('button', {
-      key: 'paybtn',
-      className: 'btn btn-outline',
-      style: { marginTop: 8 },
-      disabled: interpLoading,
-      onClick: interpret
-    }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+    // REQ-134：付费操作区独立分层（按钮全宽一行 + 说明独立块，不再并排挤压）
+    kids.push(React.createElement('div', { key: 'payzone', className: 'op-zone' },
+      React.createElement('button', {
+        className: 'btn btn-outline',
+        disabled: interpLoading,
+        onClick: interpret
+      }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)])),
+      React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint)));
     if (interpErr) kids.push(React.createElement('div', { key: 'interr', className: 'error', style: { marginTop: 10 } }, interpErr));
     if (interp) kids.push(React.createElement(React.Fragment, { key: 'interp' },
       React.createElement('div', { className: 'interp-title' }, A.interp_title),
@@ -15540,10 +15621,11 @@ function HuangjiPage({
               }, SHICHEN_ARR.map(function (s, i) {
                 return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
               }))))),
-    React.createElement('div', { className: 'ty-run' },
+    // REQ-134：起算按钮与说明独立分层（不再 flex 并排挤压）
+    React.createElement('div', { className: 'op-run' },
       React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
         loading ? A.running : A.run),
-      React.createElement('span', { className: 'ty-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+      React.createElement('span', { className: 'op-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'huangji', size: 22 }), ' ' + A.title),
     React.createElement('div', { className: 'hub-sub' }, A.sub),
