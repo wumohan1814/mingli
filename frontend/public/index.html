@@ -64,7 +64,8 @@
          变量未定义/删除时，各消费者 var(--art-XXX, fallback渐变) 自动回退占位渐变；URL 加载失败则露背景色。 */
       --art-ssgw-tube:url('/art/ssgw/ssgw-tube.webp');
       --art-ssgw-stick:url('/art/ssgw/ssgw-stick.webp');
-      --art-card-back-tarot:url('/art/card-back/card-back-tarot.webp');
+      /* REQ-129⑥：塔罗牌背换用新素材 v2（根绝对路径；旧 card-back-tarot.webp 已下线） */
+      --art-card-back-tarot:url('/art/card-back/card-back-tarot-v2.webp');
       --art-card-back-lenormand:url('/art/card-back/card-back-lenormand.webp');
       --art-coin-face:url('/art/liuyao/coin-face.webp');
       --art-coin-back:url('/art/liuyao/coin-back.webp');
@@ -1666,6 +1667,84 @@
       .art-stage .art-fx,.art-stage *,.art-stage *::before,.art-stage *::after,
       .flip-card .fc-inner,.fan-col.deal,.fan-col.deal.fly,.mean-item.revealed .mi-txt{animation:none!important;transition:none!important}
       .fan-col.deal{opacity:1;transform:none}
+    }
+  </style>
+  <style>
+    /* ===== REQ-129：塔罗 B 取牌段（洗牌 / 切牌三摞 / 扇形自选弹入阵位自动翻开 / 抽满收扇） ===== */
+    .tpsh-deck{position:relative;width:170px;height:200px;margin:14px auto 0;animation:tpshRiffle .75s cubic-bezier(.45,.05,.55,.95) 2}
+    .tpsh-deck::after{content:"";position:absolute;left:50%;top:50%;width:150px;height:218px;margin:-109px 0 0 -75px;border-radius:18px;
+      background:radial-gradient(50% 52% at 50% 50%,rgba(232,201,138,.22),transparent 72%);animation:pulse 1.5s ease-in-out infinite;pointer-events:none}
+    @keyframes tpshRiffle{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-17px) rotate(-2.5deg)}75%{transform:translateX(15px) rotate(2deg)}}
+    .tpsh-card{position:absolute;left:50%;top:50%;width:104px;height:168px;margin:-84px 0 0 -52px;border-radius:11px;
+      background-color:#3A2E55;border:2px solid rgba(201,162,75,.6);
+      background-image:var(--art-card-back-tarot);background-size:cover;background-position:center;
+      box-shadow:0 8px 18px rgba(0,0,0,.42)}
+    .tpsh-card:nth-child(1){transform:translate(-24px,-15px) rotate(-10deg)}
+    .tpsh-card:nth-child(2){transform:translate(-16px,-8px) rotate(-6.5deg)}
+    .tpsh-card:nth-child(3){transform:translate(-8px,-3px) rotate(-3deg)}
+    .tpsh-card:nth-child(4){transform:translate(-1px,0) rotate(-.8deg)}
+    .tpsh-card:nth-child(5){transform:translate(7px,2px) rotate(2.6deg)}
+    .tpsh-card:nth-child(6){transform:translate(15px,6px) rotate(6deg)}
+    .tpsh-card:nth-child(7){transform:translate(23px,12px) rotate(9.5deg)}
+    /* ② 切牌：三摞点选收拢（tpc-） */
+    .tpc-stage{position:relative;display:flex;align-items:center;justify-content:center;gap:26px;margin:30px auto 2px;width:100%}
+    .tpc-pile{position:relative;width:96px;height:150px;cursor:pointer;flex:none;opacity:1;transition:transform .16s var(--ease)}
+    .tpc-pile:active{transform:scale(.95)}
+    .tpc-pile.taken{pointer-events:none;animation:tpcSuck .5s var(--ease) forwards}
+    .tpc-stack{position:absolute;inset:0;border-radius:12px;background-color:#3A2E55;border:2px solid rgba(201,162,75,.6);
+      background-image:var(--art-card-back-tarot);background-size:cover;background-position:center;
+      box-shadow:-3px 3px 0 #4A3B74,-6px 6px 0 #3A2E55,-9px 9px 0 #241E36,0 14px 24px rgba(0,0,0,.42)}
+    .tpc-pile:nth-child(1){transform:rotate(-6deg) translateY(10px)}
+    .tpc-pile:nth-child(2){transform:translateY(-6px)}
+    .tpc-pile:nth-child(3){transform:rotate(6deg) translateY(10px)}
+    @keyframes tpcSuck{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx,0px),-10px) scale(.2);opacity:0}}
+    .tpc-cap{position:relative;text-align:center;font-size:13.5px;color:#E8C98A;margin:24px 0 2px;font-family:var(--font-sans);letter-spacing:.04em}
+    .tpc-skipcut{position:relative;display:block;margin:18px auto 0;font-size:12.5px;color:#A99F8C;font-family:var(--font-sans);
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 18px;line-height:1.5}
+    /* ③④⑤ 扇形自选面板（tp-）：上=阵位条（当前格高亮），下=可滑动牌背扇 */
+    .tp-board{margin:4px 0 0}
+    .tp-progress{display:flex;flex-direction:column;gap:6px;margin:2px 0 10px}
+    .tp-progress-t{font-size:13px;color:var(--text-2);line-height:1.6}
+    .tp-progress-t b{color:var(--skin-accent);font-size:15px}
+    .tp-acts{display:flex;gap:14px;flex-wrap:wrap}
+    .tp-act{font-size:12px;color:var(--skin-accent);font-weight:600;padding:1px 0;background:none;border:none;
+      border-bottom:1px dashed rgba(201,162,75,.55);line-height:1.5}
+    .tp-slots{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .tp-slots::-webkit-scrollbar{display:none}
+    .tp-slot{flex:0 0 auto;width:calc(var(--card-w) * .62);display:flex;flex-direction:column;align-items:center;gap:4px}
+    .tp-frame{width:100%;height:calc(var(--card-w) * .62 * 1.615);border-radius:9px;overflow:hidden;position:relative;
+      border:1.5px dashed rgba(140,130,115,.6);background:rgba(120,110,95,.08);box-sizing:border-box}
+    .tp-slot.cur .tp-frame{border-color:var(--skin-accent);animation:tpCurPulse 1.15s ease-in-out infinite}
+    @keyframes tpCurPulse{0%,100%{box-shadow:0 0 0 1px var(--skin-accent-soft)}50%{box-shadow:0 0 0 2px var(--skin-accent-soft),0 0 12px rgba(201,162,75,.55)}}
+    .tp-slot.filled .tp-frame{border-style:solid;border-color:transparent;background:#1D1B20}
+    .tp-empty{position:absolute;inset:0}
+    .tp-front{position:absolute;inset:0;background:#1D1B20;animation:tpReveal .62s var(--ease) both}
+    .tp-front img{width:100%;height:100%;object-fit:cover;display:block}
+    .tp-front.reversed img{transform:rotate(180deg)}
+    .tp-front .tp-ph{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;text-align:center;width:100%;height:100%;font-family:var(--font-serif)}
+    @keyframes tpReveal{0%{transform:scale(.5);opacity:0;filter:brightness(2.3) saturate(1.25)}
+      58%{transform:scale(1.08);opacity:1;filter:brightness(1.18) saturate(1.05)}
+      100%{transform:scale(1);opacity:1;filter:none}}
+    .tp-slot .tp-pos{font-size:10px;color:var(--text-3);text-align:center;line-height:1.35;width:100%;word-break:break-word}
+    .tp-slot.cur .tp-pos{color:var(--skin-accent);font-weight:700}
+    .tp-fan{margin:4px 0 0;border-top:1px dashed var(--border);padding-top:10px}
+    .tp-fan.closing{opacity:0;transition:opacity .5s ease}
+    .tp-fan-cap{font-size:12px;color:var(--text-3);text-align:center;margin-bottom:6px;line-height:1.6}
+    .tp-fanrow{display:flex;overflow-x:auto;padding:10px 6px 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .tp-fanrow::-webkit-scrollbar{display:none}
+    .tp-fanbtn{flex:0 0 auto;position:relative;width:var(--card-w);height:var(--card-h);padding:0;margin:0;border:none;background:none;
+      cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;transform:rotate(var(--rot,0deg));
+      transition:opacity .22s ease,transform .22s ease}
+    .tp-fanrow .tp-fanbtn + .tp-fanbtn{margin-left:calc(var(--card-w) * -.58)}
+    .tp-fanbtn .tp-back{position:absolute;inset:0;border-radius:11px;background-color:#3A2E55;border:2px solid rgba(201,162,75,.6);
+      background-image:var(--art-card-back-tarot);background-size:cover;background-position:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.3)}
+    .tp-fanbtn:hover .tp-back,.tp-fanbtn:active .tp-back{transform:translateY(-3px)}
+    .tp-fanbtn.picked{opacity:0;pointer-events:none;transform:rotate(var(--rot,0deg)) scale(.45)}
+    .tp-fanbtn[disabled]{cursor:default}
+    @media (prefers-reduced-motion:reduce){
+      .tpsh-deck,.tpsh-card,.tpc-pile.taken,.tp-slot.cur .tp-frame,.tp-front,.tp-fanbtn,.tp-fan{animation:none!important;transition:none!important}
+      .tp-front{opacity:1}
     }
   </style>
 </head>
@@ -15777,6 +15856,257 @@ function TarotSpreadGroup({ title, spreads, mode, onPick }) {
   }
   return React.createElement('div', { className: 'spread-group' }, kids);
 }
+/* ================= REQ-129：塔罗 B 取牌段（洗牌 → 切牌 → 扇形自选 → 逐张弹入阵位自动翻开 → 抽满收扇） =================
+   结果不变的取舍：后端 draw 一次性真实成牌（一次请求、计费不变）；扇形 78 张只承担「点选 + 仪式感」，
+   第 i 次点选揭开的是 draw 返回牌序的第 i 张（draw.cards[i-1]），已选即定不可反悔。
+   读牌段数据流：抽满收扇时经 buildTarotPickStream 产出 { spread, cards:[{index,position,name,img,...}] }，
+   写入模块级 lastTarotPickStream —— 读牌段（19 阵摆位渲染，后续任务）经 getTarotPickStream() 消费。 */
+let lastTarotPickStream = null;
+function buildTarotPickStream(sp, cardsArr) {
+  if (!sp) return null;
+  const posArr = (sp && Array.isArray(sp.pos)) ? sp.pos : [];
+  const list = (cardsArr || []).map(function (c, i) {
+    const n = normTarotCard(c);
+    return {
+      index: i + 1,
+      position: posArr[i] || n.pos || ('第' + (i + 1) + '张'),
+      name: n.name,
+      img: n.img,
+      suit: n.suit,
+      reversed: n.reversed,
+      keywords: (n.keywords || []).slice(),
+      upright: n.upright,
+      reversedText: n.reversedText
+    };
+  });
+  return { spread: { id: sp.id, name: sp.name, pos: posArr.slice() }, cards: list };
+}
+function getTarotPickStream() {
+  return lastTarotPickStream;
+}
+/* ① 洗牌动画（全屏舞台，约 2.2s 程序化抖动；「跳过动画」= 直接出结果，不改变全局开关） */
+function TarotShuffleStage(props) {
+  const fired = useRef(false);
+  useEffect(function () {
+    const t = setTimeout(function () {
+      if (fired.current) return;
+      fired.current = true;
+      props.onDone();
+    }, 2200);
+    return function () { clearTimeout(t); };
+  }, []);
+  const fire = function (fn) {
+    return function () {
+      if (fired.current) return;
+      fired.current = true;
+      if (fn) fn();
+    };
+  };
+  const kids = [];
+  for (let i = 0; i < 7; i++) kids.push(React.createElement('i', { key: 'c' + i, className: 'tpsh-card' }));
+  return ArtStageFrame({
+    title: '洗牌',
+    sub: '集中意念 · 请静心默念你的问题',
+    skip: fire(props.onSkip),
+    children: [
+      React.createElement('div', { key: 'd', className: 'tpsh-deck' }, kids),
+      React.createElement('div', { key: 'h', className: 'stage-hint' }, '洗牌中… 心念流转 · 牌灵就位')
+    ]
+  });
+}
+/* ② 切牌（可关）：牌分三摞，点选即收拢；三摞收拢完毕自动进入扇形；「跳过动画」= 直接出结果 */
+function TarotCutStage(props) {
+  const [picked, setPicked] = useState([]);
+  const fired = useRef(false);
+  const done = useRef(false);
+  const timers = useRef([]);
+  const later = function (fn, ms) { timers.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timers.current.forEach(clearTimeout); timers.current = []; };
+  }, []);
+  const tapPile = function (idx, e) {
+    if (done.current || fired.current) return;
+    if (picked.indexOf(idx) !== -1) return;
+    const el = e && e.currentTarget;
+    if (el) {
+      const zone = el.closest('.tpc-stage');
+      const zr = zone ? zone.getBoundingClientRect() : null;
+      const r = el.getBoundingClientRect();
+      if (zr && r) el.style.setProperty('--tx', ((zr.left + zr.width / 2) - (r.left + r.width / 2)).toFixed(1) + 'px');
+      el.classList.add('taken');
+    }
+    const next = picked.concat([idx]);
+    setPicked(next);
+    if (next.length >= 3) {
+      done.current = true;
+      later(function () {
+        if (fired.current) return;
+        fired.current = true;
+        props.onDone();
+      }, 560);
+    }
+  };
+  const piles = [0, 1, 2].map(function (idx) {
+    const taken = picked.indexOf(idx) !== -1;
+    return React.createElement('div', {
+      key: 'p' + idx,
+      className: 'tpc-pile' + (taken ? ' taken' : ''),
+      role: 'button',
+      'aria-label': '收拢第 ' + (idx + 1) + ' 摞',
+      onClick: function (e) { tapPile(idx, e); }
+    }, React.createElement('div', { className: 'tpc-stack' }));
+  });
+  const cap = picked.length >= 3 ? '三摞收拢 · 牌序入定' : ('已收拢 ' + picked.length + ' 摞 / 3 · 依直觉依次点选');
+  return ArtStageFrame({
+    title: '切牌',
+    sub: '牌分三摞 · 依直觉点选收拢',
+    skip: function () {
+      if (fired.current) return;
+      fired.current = true;
+      props.onSkip();
+    },
+    children: [
+      React.createElement('div', { key: 'p', className: 'tpc-stage' }, piles),
+      React.createElement('div', { key: 'c', className: 'tpc-cap' }, cap),
+      React.createElement('button', { key: 's', type: 'button', className: 'tpc-skipcut', onClick: function () {
+        if (fired.current) return;
+        fired.current = true;
+        props.onSkipCut();
+      } }, '跳过切牌，直接进入扇形选牌')
+    ]
+  });
+}
+/* ③④⑤ 扇形自选：78 张牌背叠扇形列于下方、可左右滑动、不标序号/朝向；
+   点某张 → 该牌（牌背幽灵）弹向当前序号位 → 落位自动翻开（微放大揭晓）→ 抽满 N 张自动收扇 → onAllRevealed */
+function TarotPickBoard(props) {
+  const total = (props.pos && props.pos.length) || (props.cards ? props.cards.length : 0);
+  const deckLen = (typeof props.deckLen === 'number' && props.deckLen > 0) ? props.deckLen : 78;
+  const [n, setN] = useState(0);
+  const [removed, setRemoved] = useState([]);
+  const [closing, setClosing] = useState(false);
+  const orderRef = useRef(null);
+  if (!orderRef.current) {
+    const arr = [];
+    for (let i = 0; i < deckLen; i++) arr.push(i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    orderRef.current = arr;
+  }
+  const order = orderRef.current;
+  const busyRef = useRef(false);
+  const firedAll = useRef(false);
+  const slotEls = useRef([]);
+  const ghostRef = useRef(null);
+  const timers = useRef([]);
+  const later = function (fn, ms) { timers.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    // 预载真实牌面：落位翻开的瞬间不白闪
+    (props.cards || []).forEach(function (c) {
+      if (c && c.img) { const im = new Image(); im.src = c.img; }
+    });
+    return function () {
+      timers.current.forEach(clearTimeout);
+      timers.current = [];
+      if (ghostRef.current && ghostRef.current.parentNode) {
+        ghostRef.current.parentNode.removeChild(ghostRef.current);
+        ghostRef.current = null;
+      }
+    };
+  }, []);
+  // 阵位条自动滚动：保证当前待取格在可视区内（长牌阵如十二宫 / 年运也无需手滑）
+  useEffect(function () {
+    const el = slotEls.current[n];
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [n]);
+  const pickCard = function (tok, e) {
+    if (firedAll.current || busyRef.current || n >= total) return;
+    const btn = e && e.currentTarget;
+    const frame = slotEls.current[n];
+    if (!btn || !frame) return;
+    const target = n; // 第 i 次点选 → 翻开 draw 第 i 张（真实牌序不变）
+    busyRef.current = true;
+    const br = btn.getBoundingClientRect();
+    const fr = frame.getBoundingClientRect();
+    // 幽灵牌（牌背）自扇形飞向当前阵位
+    const ghost = btn.cloneNode(true);
+    const gs = ghost.style;
+    gs.cssText = 'position:fixed;left:' + br.left + 'px;top:' + br.top + 'px;width:' + br.width + 'px;height:' + br.height +
+      'px;z-index:240;margin:0;padding:0;border:none;background:none;transform:none;transition:none;opacity:1;pointer-events:none;';
+    document.body.appendChild(ghost);
+    ghostRef.current = ghost;
+    // 原扇卡退场（保留布局占位，扇形不跳动）
+    setRemoved(function (prev) { return prev.concat([tok]); });
+    const dx = (fr.left + fr.width / 2) - (br.left + br.width / 2);
+    const dy = (fr.top + fr.height / 2) - (br.top + br.height / 2);
+    const sc = fr.width / br.width;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        ghost.style.transition = 'transform .44s cubic-bezier(.34,.66,.4,1)';
+        ghost.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
+      });
+    });
+    // 落位 → 该格自动翻开（微放大揭晓，CSS tpReveal）
+    later(function () {
+      if (ghostRef.current) {
+        if (ghostRef.current.parentNode) ghostRef.current.parentNode.removeChild(ghostRef.current);
+        ghostRef.current = null;
+      }
+      setN(target + 1);
+      later(function () { busyRef.current = false; }, 430);
+      if (target + 1 >= total) {
+        // 抽满 N 张 → 收扇 → 交读牌段
+        later(function () { setClosing(true); }, 540);
+        later(function () {
+          if (firedAll.current) return;
+          firedAll.current = true;
+          props.onAllRevealed();
+        }, 540 + 540);
+      }
+    }, 500);
+  };
+  const slotKids = [];
+  for (let i = 0; i < total; i++) {
+    const revealed = i < n;
+    const c = revealed ? ((props.cards && props.cards[i]) || null) : null;
+    const frameInner = c
+      ? React.createElement('div', { className: 'tp-front' + (c.reversed ? ' reversed' : '') },
+          c.img
+            ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
+            : React.createElement('div', { className: 'tp-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || '#5B4B8A') } }, c.name))
+      : React.createElement('div', { className: 'tp-empty' });
+    slotKids.push(React.createElement('div', {
+      key: 's' + i,
+      className: 'tp-slot' + (revealed ? ' filled' : '') + (i === n ? ' cur' : '')
+    },
+      React.createElement('div', { ref: function (el) { slotEls.current[i] = el; }, className: 'tp-frame' }, frameInner),
+      React.createElement('div', { className: 'tp-pos' }, (i + 1) + '、' + ((props.pos && props.pos[i]) || ''))));
+  }
+  const fanBtns = order.map(function (tok) {
+    const isRemoved = removed.indexOf(tok) !== -1;
+    return React.createElement('button', {
+      key: 'fan' + tok,
+      type: 'button',
+      className: 'tp-fanbtn' + (isRemoved ? ' picked' : ''),
+      disabled: isRemoved,
+      'aria-label': '从扇形中取第 ' + Math.min(n + 1, total) + ' 张牌',
+      onClick: function (e) { if (!isRemoved) pickCard(tok, e); }
+    }, React.createElement('i', { className: 'tp-back' }));
+  });
+  return React.createElement('div', { className: 'tp-board' },
+    React.createElement('div', { className: 'tp-progress' },
+      React.createElement('div', { className: 'tp-progress-t' },
+        '已取 ', React.createElement('b', null, n), '/', total, ' 张',
+        n < total ? ' · 点选下方牌背取下一张' : ' · 全部取毕，正在收扇…'),
+      React.createElement('div', { className: 'tp-acts' },
+        React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onBackMenu }, '← 返回重选牌阵'),
+        React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onRedo }, '重新洗牌'))),
+    React.createElement('div', { className: 'tp-slots' }, slotKids),
+    React.createElement('div', { className: 'tp-fan' + (closing ? ' closing' : '') },
+      React.createElement('div', { className: 'tp-fan-cap' }, '牌背朝下 · 左右滑动浏览 · 依直觉点选一张 · 选过即定不可反悔'),
+      React.createElement('div', { className: 'tp-fanrow' }, fanBtns)));
+}
 function TarotPage({
   onNavigate
 }) {
@@ -15798,10 +16128,10 @@ function TarotPage({
   const [pickOri, setPickOri] = useState('up'); // 当前待选牌的正/逆位
   const [dkFilter, setDkFilter] = useState('all');
   const [wasManual, setWasManual] = useState(false); // 当前结果是否由手动录入产生（决定「重新抽卡」去向）
-  // REQ-061：塔罗抽牌动效阶段机（deal=出牌动画 → down=背朝上待翻 → done=全翻开=v2 布局）
+  // REQ-129：塔罗取牌段阶段机（shuffle=洗牌 → cut=切牌三摞（可跳过） → fan=扇形自选 → done=收扇交读牌段）
+  // 与 REQ-061 翻牌演出不同：done 即结果段（动画关/牌面图关/manual 录入/收扇后均直接落此）；一键全翻与
+  // 「背朝上待翻」已停用（REQ-129⑤），揭示改为取牌段内逐张自动翻开；雷诺曼页另有自己的翻牌阶段机。
   const [dealStage, setDealStage] = useState('done');
-  const [flipped, setFlipped] = useState({});
-  const [bulkFlip, setBulkFlip] = useState(false); // 一键全翻的 stagger 模式
   // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（选填，REQ-079）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
@@ -15813,8 +16143,6 @@ function TarotPage({
     setInterpErr('');
     setLoading(true);
     setWasManual(false);
-    setFlipped({});
-    setBulkFlip(false);
     setDealStage('done');
     // REQ-042 v2：问题文本直接透传给后端（方向已删，不再拼接「占问方向：」前缀）
     const askTrim = (question || '').trim();
@@ -15826,8 +16154,8 @@ function TarotPage({
       });
       const d = (res && res.data) || res;
       setData(d);
-      // REQ-061：取数先行 → 动画开（且⑥图开）进入出牌演出；关=直接以 v2 正面布局出结果
-      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('deal'); else setDealStage('done');
+      // REQ-129：取数先行（结果不变）→ 动画开（且图开）进入「洗牌→切牌→扇形自选」取牌段；关=直接 v2 布局出结果
+      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || '塔罗抽牌失败，请重试。');
     } finally {
@@ -15846,8 +16174,6 @@ function TarotPage({
     setInterpErr('');
     setData(null);
     setWasManual(true);
-    setFlipped({});
-    setBulkFlip(false);
     setDealStage('done');
     setStep('pick');
   };
@@ -15890,8 +16216,6 @@ function TarotPage({
       setStep('draw');
       // REQ-061：手动路径不重演抽牌动画（用户已真实抽牌）→ 直接 v2 正面布局
       setDealStage('done');
-      setFlipped({});
-      setBulkFlip(false);
     } catch (e) {
       setErrored((e && e.message) || '塔罗手动选牌提交失败，请重试。');
     } finally {
@@ -15921,9 +16245,8 @@ function TarotPage({
     setPicks([]);
     setPickOri('up');
     setDkFilter('all');
-    setFlipped({});
-    setBulkFlip(false);
     setDealStage('done');
+    lastTarotPickStream = null;
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
     setMode(tcAskNextDefault(mode));
     setWasManual(false);
@@ -15939,8 +16262,6 @@ function TarotPage({
       setPicks([]);
       setPickOri('up');
       setDkFilter('all');
-      setFlipped({});
-      setBulkFlip(false);
       setDealStage('done');
       setStep('pick');
     } else {
@@ -15968,57 +16289,11 @@ function TarotPage({
       meanText ? React.createElement('div', { className: 'mi-txt' }, meanText) : null,
       kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
   });
-  // REQ-061：塔罗 3D 翻牌 —— 单张点击翻转 / 「一键全翻」stagger；正面/逆位沿用 normTarotCard 的 img/reversed
-  const flipOne = function (i) {
-    if (dealStage !== 'down' || flipped[i]) return;
-    const next = Object.assign({}, flipped);
-    next[i] = true;
-    setFlipped(next);
-    const left = cards.filter(function (c, k) { return !next[k]; }).length;
-    if (!left) setTimeout(function () { setDealStage('done'); }, 780); // 全部单翻 → 落回 v2 布局
-  };
-  const flipAll = function () {
-    if (dealStage !== 'down') return;
-    const left = cards.filter(function (c, i) { return !flipped[i]; }).length;
-    if (!left) { setDealStage('done'); return; }
-    const all = {};
-    cards.forEach(function (c, i) { all[i] = true; });
-    setBulkFlip(true);
-    setFlipped(all);
-    setTimeout(function () { setBulkFlip(false); setDealStage('done'); }, 700 + cards.length * 110);
-  };
-  const flipCardCol = function (c, i, interactive) {
-    const n = normTarotCard(c);
-    const flippedNow = !!flipped[i];
-    const front = React.createElement(ArtCardFront, { img: n.img, name: n.name, suit: n.suit, rev: n.reversed, phColor: (TAROT_SUIT_COLOR[n.suit] || '#5B4B8A') });
-    const card = React.createElement('div', {
-      className: 'flip-card' + (flippedNow ? ' flipped' : '') + (interactive ? '' : ' lock'),
-      style: { '--fdi': i },
-      onClick: interactive ? function () { flipOne(i); } : undefined
-    }, React.createElement('div', { className: 'fc-inner' }, React.createElement(ArtCardBack, { kind: 'taro' }), front));
-    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' · ') : '';
-    const kids = [];
-    if (n.pos) kids.push(React.createElement('div', { key: 'pos', className: 'tc-pos' }, n.pos));
-    kids.push(card);
-    kids.push(React.createElement('div', { key: 'rv', className: 'fc-reveal' },
-      React.createElement('div', { className: 'fc-name' }, n.name, n.reversed ? '（逆位）' : ''),
-      kwLine ? React.createElement('div', { className: 'fc-kw' }, kwLine) : null));
-    return React.createElement('div', { key: 'fc' + i, className: 'fan-col' + (flippedNow ? ' flipped' : '') }, kids);
-  };
-  const flipMeanItem = function (c, i) {
-    const n = normTarotCard(c);
-    const revealed = !!flipped[i];
-    const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
-    const meanText = n.reversed ? (n.reversedText || '') : (n.upright || '');
-    const kids = [
-      React.createElement('div', { key: 'head', className: 'mi-head' },
-        React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
-        React.createElement('span', { className: 'mi-name' }, n.name),
-        React.createElement('span', { className: 'mi-orient' + (n.reversed ? ' rev' : ' up') }, n.reversed ? '逆位' : '正位')),
-      React.createElement('div', { key: 'lock', className: 'mi-lock' }, '该牌尚未翻开 · 牌义待揭示')];
-    if (meanText) kids.push(React.createElement('div', { key: 'txt', className: 'mi-txt' }, meanText));
-    if (kwLine) kids.push(React.createElement('div', { key: 'kw', className: 'mi-kw' }, '关键词：', kwLine));
-    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' + (revealed ? ' revealed' : ' locked') }, kids);
+  // REQ-129：扇形抽满 N 张自动收扇 → 落定真实牌序数据流（读牌段经 getTarotPickStream() 消费，position 即 pos[i]）→ 进入结果段
+  const handlePickAllRevealed = function () {
+    const stream = buildTarotPickStream(spread, cards);
+    if (stream) lastTarotPickStream = stream;
+    setDealStage('done');
   };
   let drawBody = null;
   if (loading) {
@@ -16032,53 +16307,68 @@ function TarotPage({
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
-    const bodyKids = [
-      React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
-      askEcho
-    ];
-    if (cardImagesOn) {
-      if (dealStage === 'deal') {
-        // D1 出牌动画：牌堆 → N 张牌背依次飞向牌位（数据已在手，翻牌阶段揭示）
-        const cols = cards.map(function (c, i) { return flipCardCol(c, i, false); });
-        bodyKids.push(React.createElement(DealFly, { key: 'deal', cols: cols, onDone: function () { setDealStage('down'); } }));
-      } else if (dealStage === 'down') {
-        // D2/D3/D4：背朝上待翻 → 点牌背 3D 翻转 → 一键全翻（解析随翻牌逐条放行）
-        const cols = cards.map(function (c, i) { return flipCardCol(c, i, true); });
-        const flippedN = Object.keys(flipped).filter(function (k) { return flipped[k]; }).length;
-        const left = cards.length - flippedN;
-        const fan = React.createElement('div', { key: 'fan', className: 'fan-zone' + (bulkFlip ? ' bulk' : '') },
-          React.createElement('div', { className: 'card-fan' }, cols));
-        const ctrl = React.createElement('div', { key: 'ctrl', className: 'flip-ctrl' },
-          React.createElement('span', { className: 'fc-progress' },
-            '已翻开 ', React.createElement('b', null, flippedN), '/', cards.length,
-            left ? ' 张 · 点击牌背翻牌，或一键全翻' : ' 张 · 已全部翻开'),
-          React.createElement('button', { className: 'btn btn-primary flip-all-btn', disabled: !left, onClick: flipAll }, left ? UI_COPY.buttons.flip_all : UI_COPY.buttons.flip_done));
-        const mp = React.createElement('div', { key: 'mp', className: 'mean-panel' },
-          React.createElement('div', { className: 'mp-title' }, '各张牌义（随翻牌逐张揭示）'),
-          cards.map(function (c, i) { return flipMeanItem(c, i); }));
-        bodyKids.push(fan, mp, ctrl);
-      } else {
-        // done（=v2 布局）：全正面平铺 + 集中牌义段落（与 REQ-042 v2 现状一致）
+    // ================= REQ-129：取牌段（shuffle/cut/fan）与结果段（done）分流 =================
+    // 取牌段演出仅当 动画开 && 牌面图开 && 牌阵有 pos && 非手动路径 时进入（手动路径直接 done）
+    const animOn = tcShouldPlayAnim();
+    const hasPos = Boolean(spread && spread.pos && spread.pos.length);
+    const pickPlaying = cardImagesOn && animOn && hasPos && (dealStage === 'shuffle' || dealStage === 'cut' || dealStage === 'fan');
+    if (pickPlaying) {
+      const bodyKids = [
+        React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+        askEcho
+      ];
+      if (dealStage === 'shuffle') {
+        bodyKids.push(React.createElement(TarotShuffleStage, {
+          key: 'pk',
+          onDone: function () { setDealStage('cut'); },
+          onSkip: function () { setDealStage('done'); }
+        }));
+      } else if (dealStage === 'cut') {
+        bodyKids.push(React.createElement(TarotCutStage, {
+          key: 'pk',
+          onDone: function () { setDealStage('fan'); },
+          onSkip: function () { setDealStage('done'); },
+          onSkipCut: function () { setDealStage('fan'); }
+        }));
+      } else if (dealStage === 'fan') {
+        bodyKids.push(React.createElement(TarotPickBoard, {
+          key: 'pk' + (data.id || 'draw'),
+          pos: spread.pos,
+          cards: cards.map(function (c) { return normTarotCard(c); }),
+          deckLen: TAROT_DECK.length,
+          onAllRevealed: handlePickAllRevealed,
+          onRedo: function () { redo(); },
+          onBackMenu: backMenu
+        }));
+      }
+      drawBody = React.createElement('div', { className: 'card' }, bodyKids);
+    } else {
+      // 结果段（done）：收扇后 / 动画关 / 牌面图关 / 手动录入 —— 读牌段（19 阵摆位渲染）接入前沿沿用 v2 布局占位
+      const bodyKids = [
+        React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
+        askEcho
+      ];
+      if (cardImagesOn) {
         bodyKids.push(React.createElement('div', { key: 'fan', className: 'card-fan' }, cards.map(function (c, i) {
           return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
         })));
         bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
           React.createElement('div', { className: 'mp-title' }, '各张牌义'),
           meanItems));
+      } else {
+        // REQ-066⑥ 关：纯文字列表模式（无任何卡面/牌背/扇形渲染）
+        bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
+          React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
+          meanItems));
       }
-    } else {
-      // REQ-066⑥ 关：纯文字列表模式（无任何卡面/牌背/扇形渲染）
-      bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
-        React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
-        meanItems));
+      if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
+      bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '综合解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
+      bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+      if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
+        React.createElement('div', { className: 'interp-title' }, '综合解读'),
+        React.createElement('div', { className: 'interp-body' }, interp)));
+      drawBody = React.createElement('div', { className: 'card' }, bodyKids);
     }
-    if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
-    bodyKids.push(React.createElement('div', { key: 'ph', className: 'pay-hint' }, '综合解读为付费 LLM，按实际用量扣余额（¥）（点击前将预检余额）'));
-    bodyKids.push(React.createElement('button', { key: 'ib', className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
-    if (interp) bodyKids.push(React.createElement(React.Fragment, { key: 'ir' },
-      React.createElement('div', { className: 'interp-title' }, '综合解读'),
-      React.createElement('div', { className: 'interp-body' }, interp)));
-    drawBody = React.createElement('div', { className: 'card' }, bodyKids);
   }
   // REQ-042 v2：menu 顶部无扇形 —— 直入 ① 占问问题（选填，REQ-079）→ ② 选择牌阵（单列按钮 + 适用说明）
   // REQ-069：选择牌阵上方提供「自动抽牌 / 手动选牌」并行切换（手动=从牌库按牌位录入实际结果）
@@ -16168,9 +16458,11 @@ function TarotPage({
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.reselect_spread),
       React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== posLen || !posLen }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + posLen + '）')));
   // REQ-042 v2：draw 底部三按钮全宽并列大按钮（重新抽卡/重选牌阵/返回，保持）
+  // REQ-129：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
+  const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
   const drawFoot = React.createElement(React.Fragment, null,
     drawBody,
-    React.createElement('div', { className: 'back-row fill' },
+    inPickPlay ? null : React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
