@@ -3,8 +3,8 @@
 数据源约定：
   - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
   - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
-  - 提示词            → 直接读/写 backend/prompts/**/*.md（23 个文件类 prompt：
-                        method-prompts 9 / shared 2 / interpret 5 / pair 4 /
+  - 提示词            → 直接读/写 backend/prompts/**/*.md（33 个文件类 prompt：
+                        method-prompts 9 / shared 3 / interpret 14 / pair 4 /
                         agent 2 / namer 1）；每次写前先落
                         PromptVersion 版本快照到运维库（可查看历史 / 回滚），写必记审计。
 
@@ -79,7 +79,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 23 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 33 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -92,12 +92,25 @@ PROMPT_FILES = {
     "qizheng": "method-prompts/qizheng.md",
     "qimen-lifetime": "method-prompts/qimen-lifetime.md",
     "wuyun-liuqi": "method-prompts/wuyun-liuqi.md",
-    # shared（2）
+    # shared（3）
     "revise": "shared/revise.md",
     "validation": "shared/validation.md",
-    # interpret（5，含 REQ-075 六爻焦点详解）
+    # REQ-135：断卦/解读公共段（合规边界/角色定位/输入说明/语言红线/输出要求通用骨架），
+    # 运行时与 interpret/divination-{method}.md 组合为完整 system prompt
+    "divination_common": "shared/divination-common.md",
+    # interpret（14，含 REQ-075 六爻焦点详解 + REQ-135 断卦 10 法拆分；
+    # 原「divination」key 已停用——旧 interpret/divination.md 拆分后删除）
     "astrology": "interpret/astrology.md",
-    "divination": "interpret/divination.md",
+    "divination_liuyao": "interpret/divination-liuyao.md",
+    "divination_meihua": "interpret/divination-meihua.md",
+    "divination_xiaoliuren": "interpret/divination-xiaoliuren.md",
+    "divination_ssgw": "interpret/divination-ssgw.md",
+    "divination_liuren": "interpret/divination-liuren.md",
+    "divination_jinkoujue": "interpret/divination-jinkoujue.md",
+    "divination_qimen": "interpret/divination-qimen.md",
+    "divination_almanac": "interpret/divination-almanac.md",
+    "divination_taiyi": "interpret/divination-taiyi.md",
+    "divination_huangji": "interpret/divination-huangji.md",
     "divination_focus": "interpret/divination_focus.md",
     "lenormand": "interpret/lenormand.md",
     "tarot": "interpret/tarot.md",
@@ -121,7 +134,9 @@ _CATEGORY_BY_PROMPT_DIR = {
     "agent": "太初先生",
 }
 PROMPT_CATEGORY = {
-    key: _CATEGORY_BY_PROMPT_DIR.get(Path(rel).parent.name, "其他")
+    # divination_common 虽位于 shared/ 目录，但它是断卦解读公共段，后台分类归「解读」
+    key: ("解读" if key == "divination_common"
+          else _CATEGORY_BY_PROMPT_DIR.get(Path(rel).parent.name, "其他"))
     for key, rel in PROMPT_FILES.items()
 }
 # 提示词内容长度上限（防误提交超大内容 / 拖垮读取点）
@@ -550,11 +565,11 @@ def get_user_case_archive(
     return {"code": 0, "message": "ok", "data": build_archive(case, db)}
 
 
-# --- 路由：提示词（23 个文件类 prompt：method-prompts 9 / shared 2 / interpret 5 / pair 4 / agent 2 / namer 1） ---
+# --- 路由：提示词（33 个文件类 prompt：method-prompts 9 / shared 3 / interpret 14 / pair 4 / agent 2 / namer 1） ---
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 23 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 33 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []

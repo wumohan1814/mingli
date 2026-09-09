@@ -18,24 +18,24 @@
     caifu，对齐 vendored LIUREN_TEMPLATE_OPTIONS，缺省 general），随 user JSON 注入。
     REQ-120：method == qimen（奇门时家，一事一占）走同一通用断课链路——无模板选择，
     起局参数（scope/qimenMethod/qimenJuMethod）在起卦 seed 里透传引擎，断课 prompt 见
-    divination.md「奇门时家：九宫四盘断课体系」章节（纯追加）。
+    prompts/interpret/divination-qimen.md（REQ-135 拆分后独立文件）。
     REQ-121：method == almanac（黄历择日，纯国学工具，免档案）走同一通用起算链路——
     seed.almanac = {topic, startDate, endDate, participants?} 原样透传 Node /divination；
     case_id 恒为 null（不要求选档案，登录即可用）；起算确定性免费，深度解读走
-    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见 divination.md
-    「黄历择日：候选吉日深度解读」章节（纯追加）。
+    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见
+    prompts/interpret/divination-almanac.md（REQ-135 拆分后独立文件）。
     REQ-124：method == taiyi（太乙神数，纯国学大势工具，免档案）走同一通用起算链路——
     seed.taiyi = {scope, year?, customDate?} 原样透传 Node /divination（scope 四选一
     year 年家默认 / month 月家 / day 日家 / hour 时家；年家须传 year 公历年份，月/日/时家
     须传 customDate 东八区 ISO）；case_id 恒为 null；起算确定性免费，深度解读走
-    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见 divination.md
-    「太乙神数：四计七十二局深度解读」章节（纯追加）。
+    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见
+    prompts/interpret/divination-taiyi.md（REQ-135 拆分后独立文件）。
     REQ-125：method == huangji（皇极经世，纯国学大势工具，免档案）走同一通用起算链路——
     seed.huangji = {mode, year?, customDate?} 原样透传 Node /divination（mode 二选一
     year 值年默认 / datetime 年月日时；year 模式传公元整数年份，datetime 模式传
     customDate 东八区 ISO）；case_id 恒为 null；起算确定性免费，深度解读走
-    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见 divination.md
-    「皇极经世：元会运世与年月日时卦深度解读」章节（纯追加）。
+    /divinations/{id}/interpret（LLM 即时扣费、缓存复用），prompt 见
+    prompts/interpret/divination-huangji.md（REQ-135 拆分后独立文件）。
   - POST /api/divinations/{id}/focus 六爻焦点详解（REQ-075，仅 liuyao）= LLM 可选
     付费：body {focus} 六枚举（非法 400），逐项点击时 LLM 结合该盘 result
     （yaosDetail）+ S08 爻辞原文（user JSON 注入 yao_texts）做「该焦点在本盘意味着
@@ -66,9 +66,27 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["divination"])
 
-# 断卦 system prompt（backend/prompts/interpret/divination.md）
+# 断卦/解读 system prompt（REQ-135 拆分）：公共段 shared/divination-common.md +
+# 法门专用 interpret/divination-{method}.md（10 法各一文件，运行时动态组合）
 # divination.py 位于 backend/app/api/，parents[2] = backend
-DIVINATION_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "divination.md"
+DIVINATION_COMMON_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "shared" / "divination-common.md"
+
+# 10 法专用断卦 prompt（REQ-135）：method key → interpret/divination-{method}.md
+DIVINATION_METHOD_PROMPT_PATHS = {
+    method: Path(__file__).resolve().parents[2] / "prompts" / "interpret" / f"divination-{method}.md"
+    for method in (
+        "liuyao",        # 六爻（分层断卦体系）
+        "meihua",        # 梅花（体用主线）
+        "xiaoliuren",    # 小六壬（三宫落位）
+        "ssgw",          # 观音灵签（签号/签题/签诗）
+        "liuren",        # 大六壬（四课三传）
+        "jinkoujue",     # 金口诀（四位一体）
+        "qimen",         # 奇门时家（九宫四盘）
+        "almanac",       # 黄历择日（候选吉日深度解读）
+        "taiyi",         # 太乙神数（四计七十二局）
+        "huangji",       # 皇极经世（元会运世与年月日时卦）
+    )
+}
 
 # 雷诺曼解读 system prompt（backend/prompts/interpret/lenormand.md，method == lenormand 时使用）
 LENORMAND_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "lenormand.md"
@@ -173,16 +191,26 @@ def _charge_llm(user_id: int, total_tokens, ref: str, what: str) -> None:
                      what, user_id, tokens, ref, exc)
 
 
-def _load_divination_prompt(path: Path = DIVINATION_PROMPT_PATH) -> str:
-    """读取断卦/解读 system prompt（method 决定选 divination.md 还是 lenormand.md）；
-    缺失视为配置错误（RuntimeError，向上抛 500）。"""
+def _read_prompt_file(path: Path) -> str:
+    """读取单个提示词文件全文；缺失/为空视为配置错误（RuntimeError，向上抛 500）。"""
     try:
         text = path.read_text(encoding="utf-8")
     except OSError as exc:
-        raise RuntimeError(f"断卦提示词缺失或不可读: {path}") from exc
+        raise RuntimeError(f"提示词缺失或不可读: {path}") from exc
     if not text.strip():
-        raise RuntimeError(f"断卦提示词为空: {path}")
+        raise RuntimeError(f"提示词为空: {path}")
     return text
+
+
+def _load_divination_prompt(method: str) -> str:
+    """组合断卦/解读 system prompt（REQ-135）：公共段 shared/divination-common.md +
+    interpret/divination-{method}.md（10 法各一文件）；method 不在映射内（未知方法）
+    兜底只返回公共段；lenormand 独立走 lenormand.md（不在本函数内处理）。"""
+    common = _read_prompt_file(DIVINATION_COMMON_PROMPT_PATH)
+    path = DIVINATION_METHOD_PROMPT_PATHS.get(method)
+    if path is None:
+        return common
+    return f"{common}\n\n{_read_prompt_file(path)}"
 
 
 def _chart_summary(chart_json) -> dict:
@@ -452,18 +480,18 @@ async def interpret_divination(
     对齐 vendored LIUREN_TEMPLATE_OPTIONS，缺省 general），随 user JSON 注入断课 prompt；
     其余方法忽略 body（向后兼容无 body 调用）。
     REQ-119：method == jinkoujue（金口诀）走同一通用断课链路——无模板选择，缓存不带
-    模板键，断课 prompt 见 divination.md「金口诀：四位一体断课体系」章节（纯追加）。
+    模板键，断课 prompt 见 prompts/interpret/divination-jinkoujue.md（REQ-135 拆分后独立文件）。
     REQ-120：method == qimen（奇门时家）同样走同一通用断课链路——无模板选择，缓存不带
-    模板键，断课 prompt 见 divination.md「奇门时家：九宫四盘断课体系」章节（纯追加）。
+    模板键，断课 prompt 见 prompts/interpret/divination-qimen.md（REQ-135 拆分后独立文件）。
     REQ-121：method == almanac（黄历择日）同样走同一通用断课链路——无模板选择，缓存不带
-    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见 divination.md
-    「黄历择日：候选吉日深度解读」章节（纯追加）。
+    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见
+    prompts/interpret/divination-almanac.md（REQ-135 拆分后独立文件）。
     REQ-124：method == taiyi（太乙神数）同样走同一通用断课链路——无模板选择，缓存不带
-    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见 divination.md
-    「太乙神数：四计七十二局深度解读」章节（纯追加）。
+    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见
+    prompts/interpret/divination-taiyi.md（REQ-135 拆分后独立文件）。
     REQ-125：method == huangji（皇极经世）同样走同一通用断课链路——无模板选择，缓存不带
-    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见 divination.md
-    「皇极经世：元会运世与年月日时卦深度解读」章节（纯追加）。
+    模板键，chart_summary 恒为 null（免档案工具），断课 prompt 见
+    prompts/interpret/divination-huangji.md（REQ-135 拆分后独立文件）。
     """
     user_id = get_user_id_from_token(authorization)
     div = _get_owned_divination(db, div_id, user_id)
@@ -484,9 +512,14 @@ async def interpret_divination(
     # ② 计费预检：余额不足抛 BizError 5002（全局处理器转 502 信封），不放行 LLM
     check_balance(user_id)
 
-    # ③ 组装 messages：按 method 选解读 prompt（lenormand → lenormand.md，其余 → divination.md）
-    #    + 牌面/课式 result + 关联 case 的 chart 摘要；liuren 额外注入断课模板
-    prompt_path = LENORMAND_PROMPT_PATH if div.method == "lenormand" else DIVINATION_PROMPT_PATH
+    # ③ 组装 messages：按 method 选解读 prompt（lenormand → lenormand.md 单文件；
+    #    其余 10 法 → 公共段 shared/divination-common.md + interpret/divination-{method}.md
+    #    动态组合，REQ-135）+ 牌面/课式 result + 关联 case 的 chart 摘要；liuren 额外
+    #    注入断课模板
+    if div.method == "lenormand":
+        system_prompt = _read_prompt_file(LENORMAND_PROMPT_PATH)
+    else:
+        system_prompt = _load_divination_prompt(div.method)
     chart_summary = _case_chart_summary(db, div.case_id)  # case_id 为空 → None
     user_payload: dict = {"method": div.method, "result": div.result_json,
                           "chart_summary": chart_summary}
@@ -494,7 +527,7 @@ async def interpret_divination(
         template = body.liuren_template if (body and body.liuren_template) else "general"
         user_payload["liurenTemplate"] = template
     messages = [
-        {"role": "system", "content": _load_divination_prompt(prompt_path)},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
     ]
 
@@ -564,7 +597,7 @@ async def interpret_divination_focus(
     #    yao_texts(S08 注入，本卦/变卦卦辞+动爻爻辞原文白话)}，含 chart_summary 摘要
     chart_summary = _case_chart_summary(db, div.case_id)  # case_id 为空 → None
     messages = [
-        {"role": "system", "content": _load_divination_prompt(DIVINATION_FOCUS_PROMPT_PATH)},
+        {"role": "system", "content": _read_prompt_file(DIVINATION_FOCUS_PROMPT_PATH)},
         {
             "role": "user",
             "content": json.dumps(
