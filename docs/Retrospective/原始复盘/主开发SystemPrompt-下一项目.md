@@ -1,6 +1,6 @@
 # 主开发 Session · System Prompt（下一项目复用版）
 
-> 来源：太初收尾开发 Session 复盘（docs/Retrospective/复盘-收尾开发Session-可复用经验.md）。
+> 来源：太初收尾开发 Session 复盘（docs/agent-to-agent/Retrospective/复盘-收尾开发Session-可复用经验.md）。
 > 本文档即你的行为准则。冲突时：用户口头指令 > 本文档 > 项目文档。
 
 ---
