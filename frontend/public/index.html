@@ -24,6 +24,10 @@
        数据文件 frontend/public/data/pairs.js（文案轮次交付物，更新时只替换该文件；根绝对路径约定）。
        必须在 React 组件主脚本之前引入。 -->
   <script src="/data/pairs.js"></script>
+  <!-- REQ-128 阶段 0：6 套名词白话卡（大六壬/金口诀/奇门时家/黄历择日/太乙/皇极经世）。
+       数据文件 frontend/public/data/term-cards.js（文案组第四轮交付物，后续文案轮次只替换该文件；根绝对路径约定）。
+       必须在 React 组件主脚本之前引入（供 TCTermRow / TCTermPanel 查表）。 -->
+  <script src="/data/term-cards.js"></script>
   <style>
     :root{
       /* 主色 墨蓝 / 靛青 */
@@ -730,6 +734,17 @@
       font-size:12px;font-weight:700;color:var(--ink-600)}
     .free-card .fc-chev,.free-block .fb-chev{flex:none;font-size:11px;color:var(--text-3);transition:transform .16s var(--ease)}
     .free-card .fc-fold-head.open .fc-chev,.free-block .fb-fold-head.open .fb-chev{transform:rotate(90deg)}
+    /* REQ-128 阶段 0：名词白话卡（TCTermRow 内嵌可点标签 / TCTermCard 展开正文；TCTermPanel 兜底复用上面 free-card 折叠样式） */
+    .tc-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px}
+    .tc-row .tc-cap{font-size:11px;color:var(--text-3);margin-right:2px}
+    .tc-chip{position:relative;display:inline-flex;align-items:center;gap:3px}
+    .tc-chip.tc-hit{cursor:pointer;text-decoration:underline;text-decoration-color:var(--skin-accent);text-underline-offset:3px;color:var(--skin-accent)}
+    .tc-chip.tc-hit:hover{filter:brightness(1.08)}
+    .tc-chip .tc-chev{flex:none;font-size:10px;color:var(--text-3);transition:transform .16s var(--ease)}
+    .tc-chip.tc-open .tc-chev{transform:rotate(90deg)}
+    .tc-card-body{margin-top:6px;padding:8px 10px;border:1px dashed var(--border);border-radius:var(--radius-md);background:var(--surface);width:100%}
+    .tc-card-body .tcb-term{font-size:13px;font-weight:700;color:var(--ink-600)}
+    .tc-card-body .tcb-plain{font-size:13px;color:var(--text-2);line-height:1.75;margin-top:3px}
     /* ===== REQ-075：六爻焦点详解（逐项点击 → LLM 结合本盘+爻辞针对性解读，小额余额付费） ===== */
     .focus-card{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
     .focus-card .fc-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:8px}
@@ -10328,8 +10343,7 @@ function DivLiurenView(res) {
   if (guaTi.length || pTags.length) {
     const tags = [].concat(pTags, guaTi).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
     items.push(React.createElement('div', { key: 'gt-h', className: 'lr-sec' }, '课体'),
-      React.createElement('div', { key: 'gt', className: 'lr-tags' },
-        tags.map(function (t, i) { return React.createElement('span', { key: i, className: 'lr-tag' }, t); })));
+      React.createElement(TCTermRow, { key: 'gt', method: 'liuren', items: tags, chipClass: 'lr-tag' }));
     const rules = Array.isArray(res.classicalRules) ? res.classicalRules : [];
     if (rules.length) {
       const ruleEls = rules.map(function (r, i) {
@@ -10365,22 +10379,20 @@ function DivLiurenView(res) {
   const tjp = (res && typeof res === 'object' && res.tianJiangProps) || {};
   const tjpKeys = Object.keys(tjp);
   if (tjpKeys.length) {
-    const tjpEls = tjpKeys.map(function (k) {
+    const tjpText = function (k) {
       const v = tjp[k] || {};
       const line = [v.wuxing ? v.wuxing : '', v.yinYang ? v.yinYang : '', v.category ? v.category : ''].filter(Boolean).join(' · ');
-      return React.createElement('span', { key: k, className: 'lr-tag' },
-        k + (line ? '：' + line : '') + (v.description ? '（' + v.description + '）' : ''));
-    });
+      return k + (line ? '：' + line : '') + (v.description ? '（' + v.description + '）' : '');
+    };
     items.push(React.createElement('div', { key: 'tj-h', className: 'lr-sec' }, '天将'),
-      React.createElement('div', { key: 'tj', className: 'lr-tags' }, tjpEls));
+      React.createElement(TCTermRow, { key: 'tj', method: 'liuren', items: tjpKeys, chipClass: 'lr-tag', matchOf: function (k) { return k; }, textOf: tjpText }));
   }
 
   // 神煞
   const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
   if (ss.length) {
     items.push(React.createElement('div', { key: 'ss-h', className: 'lr-sec' }, '神煞'),
-      React.createElement('div', { key: 'ss', className: 'lr-tags' },
-        ss.map(function (s, i) { return React.createElement('span', { key: i, className: 'lr-tag' }, s); })),
+      React.createElement(TCTermRow, { key: 'ss', method: 'liuren', items: ss, chipClass: 'lr-tag' }),
       React.createElement('div', { key: 'ss-n', className: 'lr-note' }, '神煞只定位所在干支，须入课/入传或临干支才有象意，不单项定吉凶。'));
   }
 
@@ -10429,9 +10441,18 @@ function DivJinkoujueView(res) {
         React.createElement('span', null, subBits.join(' · ')),
         p.isVoid ? React.createElement('span', { className: 'jkf-void' }, '旬空') : null)));
   });
+  // REQ-128：四位一体渲染出的名词（位置名 + 贵神名）供内嵌白话卡标签
+  const jkNounNames = [];
+  posOrder.forEach(function (k) {
+    const p = pos[k];
+    if (!p) return;
+    jkNounNames.push(posName[k]);
+    if (p.god) jkNounNames.push(p.god);
+  });
   if (rows.length) {
     items.push(React.createElement('div', { key: 'four-h', className: 'jk-sec' }, '四位一体（自上而下：人元 / 贵神 / 将神 / 地分）'),
-      React.createElement('div', { key: 'four', className: 'jk-four' }, rows));
+      React.createElement('div', { key: 'four', className: 'jk-four' }, rows),
+      React.createElement(TCTermRow, { key: 'four-tc', method: 'jinkoujue', items: jkNounNames, chipClass: 'jk-tag' }));
   }
 
   // 阴阳发用
@@ -10458,6 +10479,7 @@ function DivJinkoujueView(res) {
     });
     items.push(React.createElement('div', { key: 'mv-h', className: 'jk-sec' }, '五动三动'),
       React.createElement('div', { key: 'mv', className: 'jk-mv-wrap' }, mvEls),
+      React.createElement(TCTermRow, { key: 'mv-tc', method: 'jinkoujue', items: mv.map(function (m2) { return m2.name; }).filter(Boolean), chipClass: 'jk-tag' }),
       React.createElement('div', { key: 'mv-n', className: 'jk-note' }, '动名须结合所问与用位综合体会，不按动名直接定现实结果。'));
   }
 
@@ -10547,6 +10569,17 @@ function DivQimenView(res) {
     const voidSet = {};
     (Array.isArray(res.voidPalaces) ? res.voidPalaces : []).forEach(function (v) { if (v) voidSet[v.palace] = true; });
     const horseGong = (res.horseStar && res.horseStar.palace != null) ? res.horseStar.palace : null;
+    // REQ-128：九宫四盘渲染出的星/门/神名 + 值符值使，供内嵌白话卡标签（去重交给 TCTermRow）
+    const qmNounNames = [];
+    gongs.forEach(function (g) {
+      if (!g) return;
+      const tp0 = g.tianPan || {}, rp0 = g.renPan || {}, sp0 = g.shenPan || {};
+      if (tp0.star) qmNounNames.push(tp0.star);
+      if (rp0.door) qmNounNames.push(rp0.door);
+      if (sp0.god) qmNounNames.push(sp0.god);
+    });
+    if (res.zhiFu) qmNounNames.push(res.zhiFu);
+    if (res.zhiShi) qmNounNames.push(res.zhiShi);
     const cellEls = order.map(function (n) {
       const g = byGong[n];
       if (!g) return React.createElement('div', { key: n, className: 'qm-cell' }, '');
@@ -10571,7 +10604,8 @@ function DivQimenView(res) {
     });
     items.push(React.createElement('div', { key: 'grid-h', className: 'qm-sec' }, '九宫四盘（九星 · 八门 · 八神 · 天地盘干）'),
       React.createElement('div', { key: 'grid', className: 'qm-grid' }, cellEls),
-      React.createElement('div', { key: 'grid-n', className: 'qm-note' }, '每格：宫名·方位·五行 / 天盘星干（随星） / 地盘干·门 / 八神；值符、值使、空亡、马星以角标标出。'));
+      React.createElement('div', { key: 'grid-n', className: 'qm-note' }, '每格：宫名·方位·五行 / 天盘星干（随星） / 地盘干·门 / 八神；值符、值使、空亡、马星以角标标出。'),
+      React.createElement(TCTermRow, { key: 'grid-tc', method: 'qimen', items: qmNounNames, chipClass: 'qm-tag' }));
   }
 
   // 格局：基础标签 + 标签白话
@@ -10579,8 +10613,7 @@ function DivQimenView(res) {
   const details = Array.isArray(res.patternDetails) ? res.patternDetails : [];
   if (tags.length) {
     items.push(React.createElement('div', { key: 'pt-h', className: 'qm-sec' }, '格局（基础标签）'),
-      React.createElement('div', { key: 'pt', className: 'qm-tags' },
-        tags.map(function (t, i) { return React.createElement('span', { key: i, className: 'qm-tag' }, t); })),
+      React.createElement(TCTermRow, { key: 'pt', method: 'qimen', items: tags, chipClass: 'qm-tag' }),
       details.length ? React.createElement('ul', { key: 'pd', className: 'qm-list' },
         details.map(function (d, i) { return React.createElement('li', { key: i }, (d.tag || '') + '：' + (d.summary || '')); })) : null);
   }
@@ -12077,6 +12110,112 @@ function FreeCard(title, blocks, opts) {
   });
   return React.createElement('div', { className: 'free-card' }, kids);
 }
+/* ---------- REQ-128 阶段 0：名词白话卡（6 方法） ----------
+   数据源：frontend/public/data/term-cards.js（window.TC_TERM_CARDS，文案组第四轮交付物，更新只替换该文件）。
+   交互对齐 REQ-073/107 折叠风格：
+   - TCTermRow：把结果页渲染出的名词包成可点击标签（命中卡片的加下划线/高亮提示可点），
+     点击展开该词白话卡（term + plain）；未命中卡片的名词照常渲染（不可点）。
+   - TCTermPanel：「名词释义」兜底折叠面板（复用 FreeCard foldCard），列出本方法全部卡（term → 点击展开 plain）。
+   匹配容错（稳妥口径）：① 文本与 term 精确相等；② term 长度≥2 且文本包含 term；
+   ③ 文本长度≥2 且 term 包含文本（覆盖「天蓬」↔「天蓬星」、干支前缀「甲子·天蓬星」、
+   「青龙」↔「青龙（黄道）」、「三交课」↔「三交」等变体）；单字 term（如 元/会/运/世）只走精确匹配防误命中。
+   均为独立函数组件（自带 useState），避免在父级渲染函数里按条件增减 hooks 破坏钩子顺序（同 REQ-107 约定）。 */
+function tcCardMap(method) {
+  const all = (typeof window !== 'undefined' && window.TC_TERM_CARDS) || {};
+  const list = (all && all[method]) || [];
+  const map = {};
+  list.forEach(function (c) {
+    if (c && c.key && c.term && c.plain && !map[c.key]) map[c.key] = c;
+  });
+  return map;
+}
+function tcFindCard(map, text) {
+  if (!map || text == null) return null;
+  const t = String(text).trim();
+  if (!t) return null;
+  // ① 精确相等优先（如「天乙贵神」不会误命中断言里的「贵神」）
+  for (const k in map) {
+    const c = map[k];
+    if (c.term === t) return c;
+  }
+  // ② term 是文本子串：取命中位置最早者（如「门迫（离九宫景门）」先命中前缀「门迫」而非括号里的「景门」），
+  //    同位置取更长 term（更具体）；term 长度 < 2 不参与（单字只走精确，防误命中）
+  let best = null, bestPos = -1, bestLen = 0;
+  for (const k in map) {
+    const c = map[k];
+    if (c.term.length < 2) continue;
+    const p = t.indexOf(c.term);
+    if (p === -1) continue;
+    if (best === null || p < bestPos || (p === bestPos && c.term.length > bestLen)) {
+      best = c; bestPos = p; bestLen = c.term.length;
+    }
+  }
+  if (best) return best;
+  // ③ 文本是 term 子串（覆盖「天蓬」↔「天蓬星」、干支前缀「甲子·天蓬星」、「青龙」↔「青龙（黄道）」、
+  //    「三交课」↔「三交」等变体）：取最短 term（最贴近词根）
+  let best3 = null, best3Len = 0;
+  for (const k in map) {
+    const c = map[k];
+    if (t.length < 2) continue;
+    if (c.term.indexOf(t) === -1) continue;
+    if (best3 === null || c.term.length < best3Len) { best3 = c; best3Len = c.term.length; }
+  }
+  return best3;
+}
+function TCTermChip({ method, card, text, className, open, onClick }) {
+  const kids = [text];
+  if (card) kids.push(React.createElement('span', { key: 'ch', className: 'tc-chev' }, open ? '▾' : '▸'));
+  return React.createElement('span', {
+    className: (className || 'tc-chip') + (card ? ' tc-hit' : '') + (open ? ' tc-open' : ''),
+    onClick: card ? onClick : undefined,
+    title: card ? '点击查看白话释义' : undefined,
+    role: card ? 'button' : undefined,
+    'aria-expanded': card ? (open ? 'true' : 'false') : undefined
+  }, kids);
+}
+function TCTermRow({ method, label, items, chipClass, matchOf, textOf }) {
+  const [openKey, setOpenKey] = useState(null);
+  const map = tcCardMap(method);
+  const chips = [];
+  const seen = {};
+  (Array.isArray(items) ? items : []).forEach(function (it, i) {
+    const matchText = matchOf ? matchOf(it) : (it == null ? '' : String(it));
+    const txt = textOf ? textOf(it) : (it == null ? '' : String(it));
+    if (!matchText || !txt) return;
+    const card = tcFindCard(map, matchText);
+    const dedupeKey = card ? card.key : matchText;
+    if (seen[dedupeKey]) return; // 同一名词/同一卡片只留一枚标签
+    seen[dedupeKey] = true;
+    chips.push(React.createElement(TCTermChip, {
+      key: i,
+      method: method,
+      card: card,
+      text: txt,
+      className: chipClass,
+      open: card ? openKey === card.key : false,
+      onClick: function () { setOpenKey(openKey === card.key ? null : card.key); }
+    }));
+  });
+  if (!chips.length) return null;
+  let openCard = null;
+  if (openKey) { for (const k in map) { if (map[k].key === openKey) { openCard = map[k]; break; } } }
+  const body = openCard ? React.createElement('div', { key: 'body', className: 'tc-card-body' },
+    React.createElement('div', { className: 'tcb-term' }, openCard.term),
+    React.createElement('div', { className: 'tcb-plain' }, openCard.plain)) : null;
+  return React.createElement('div', { className: 'tc-row' },
+    label ? React.createElement('span', { key: 'cap', className: 'tc-cap' }, label) : null,
+    chips, body);
+}
+function TCTermPanel({ method }) {
+  const map = tcCardMap(method);
+  const keys = Object.keys(map);
+  if (!keys.length) return null;
+  const blocks = keys.map(function (k) {
+    const c = map[k];
+    return { label: c.term, text: c.plain, fold: true };
+  });
+  return FreeCard('名词释义（免费）', blocks, { foldCard: true });
+}
 /* REQ-073：六爻免费解读区 = 卦理解读（本卦/变卦/动爻/互卦/世应五块 + 原文引用小字）+
    卦理词条（S02 六亲 / S03 六神 / S05 术语短释）+ S06 免费区免责 + S07 合规尾注。
    数据均取自 result_json（originalName/changedName/interName/changingYaos/worldAndResponse/yaosDetail 富字段）。 */
@@ -12391,6 +12530,7 @@ function LiurenFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('课理解读（免费）', blocks),
+    React.createElement(TCTermPanel, { method: 'liuren' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -12459,6 +12599,7 @@ function JinkoujueFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('课理解读（免费）', blocks),
+    React.createElement(TCTermPanel, { method: 'jinkoujue' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，依据《六壬神课金口诀古本》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -12546,6 +12687,7 @@ function QimenFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('局理解读（免费）', blocks),
+    React.createElement(TCTermPanel, { method: 'qimen' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统局理生成，依据《烟波钓叟歌》《御定奇门宝鉴》《奇门遁甲秘籍大全》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -14222,6 +14364,21 @@ function AlmanacPage({
   const statCount = function (cls) {
     return sortedDays.filter(function (d) { return almanacStatusOf(groups, d.date) === cls; }).length;
   };
+  // REQ-128：逐日卡片渲染出的名词（建除/十二神/宜忌项/宿曜九星/百忌/冲煞/方位神）供内嵌白话卡标签；
+  // 建除日名引擎值为单字（如「建」），对齐名词卡 term（「建日」）作 +日 归一
+  const almNouns = [];
+  sortedDays.forEach(function (d) {
+    if (!d) return;
+    if (d.dayOfficer) almNouns.push(d.dayOfficer + '日');
+    if (d.twelveStar) almNouns.push(d.twelveStar);
+    (Array.isArray(d.recommends) ? d.recommends : []).forEach(function (r) { if (r) almNouns.push(r); });
+    (Array.isArray(d.avoids) ? d.avoids : []).forEach(function (a) { if (a) almNouns.push(a); });
+    if (d.twentyEightStar) almNouns.push('二十八宿');
+    if (d.nineStar) almNouns.push('九星');
+    if (d.pengZu) almNouns.push('百忌');
+    almNouns.push('冲煞');
+    (Array.isArray(d.annualDirectionGods) ? d.annualDirectionGods : []).forEach(function (g) { if (g && g.god) almNouns.push(g.god); });
+  });
   const topicLabel = (result && result.topicLabel) || (ALMANAC_TOPIC_OPTIONS.find(function (t) { return t.key === topic; }) || {}).label || '自定义事项';
   // 逐日卡片
   const dayCard = function (d) {
@@ -14335,10 +14492,12 @@ function AlmanacPage({
         React.createElement('div', { className: 'alm-constr' }, A.group_summary),
         partLine ? React.createElement('div', { className: 'alm-constr', style: { color: 'var(--text-2)' } }, '参与人：' + partLine) : null,
         sortedDays.map(dayCard),
+        React.createElement(TCTermRow, { key: 'tc', method: 'almanac', label: '本盘名词', items: almNouns, chipClass: 'alm-tag' }),
         constr.length ? React.createElement('div', { className: 'alm-constr' }, '说明：' + constr.join('\n')) : null,
         React.createElement('div', { className: 'alm-free' },
           React.createElement('div', { className: 'af-title' }, A.free_reading_title),
           React.createElement('div', { className: 'af-txt' }, freeTxt)),
+        React.createElement(TCTermPanel, { key: 'tcpanel', method: 'almanac' }),
         React.createElement('div', { className: 'pay-hint' }, A.pay_hint),
         React.createElement('button', { className: 'btn btn-outline', style: { marginTop: 8 }, disabled: interpLoading, onClick: interpret },
           interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]),
@@ -14607,7 +14766,8 @@ function TaiyiPage({
           React.createElement('div', { className: 'tp-role' }, c.role),
           React.createElement('div', { className: 'tp-val' }, c.val),
           c.sub ? React.createElement('div', { className: 'tp-sub' }, c.sub) : null);
-      }))));
+      })),
+      React.createElement(TCTermRow, { key: 'tc-pos', method: 'taiyi', items: [A.pos_taiyi, A.pos_wenchang, A.pos_shiJi, A.pos_jiShen] })));
     kids.push(React.createElement('div', { key: 'count', className: 'card', style: { marginTop: 10 } },
       React.createElement('div', { className: 'section-title' }, A.count_title),
       React.createElement('div', { className: 'ty-count-grid' }, countCells.map(function (c, i) {
@@ -14616,7 +14776,8 @@ function TaiyiPage({
           React.createElement('div', { className: 'tc-num' }, c.num != null ? c.num : '—',
             c.nat ? React.createElement('span', { className: 'tc-nat' }, c.nat) : null),
           React.createElement('div', { className: 'tc-sub' }, c.sub));
-      }))));
+      })),
+      React.createElement(TCTermRow, { key: 'tc-count', method: 'taiyi', items: [A.side_lord, A.side_guest, A.side_set] })));
     if (result.tacticGuidance) {
       kids.push(React.createElement('div', { key: 'tac', className: 'ty-tactic' },
         React.createElement('div', { className: 'tt-cap' }, A.tactic_title),
@@ -14655,6 +14816,7 @@ function TaiyiPage({
     kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
+    kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'taiyi' }));
     kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
     kids.push(React.createElement('button', {
       key: 'paybtn',
@@ -14912,7 +15074,8 @@ function HuangjiPage({
       }
       kids.push(React.createElement('div', { key: 'cycle', className: 'card', style: { marginTop: 10 } },
         React.createElement('div', { className: 'section-title' }, A.cycle_title),
-        React.createElement('div', { className: 'hj-cycle' }, cycleCells)));
+        React.createElement('div', { className: 'hj-cycle' }, cycleCells),
+        React.createElement(TCTermRow, { key: 'tc-cycle', method: 'huangji', items: [A.cycle_yuan, A.cycle_hui, A.cycle_yun, A.cycle_shi, A.layer_annual, A.layer_yun, A.title] })));
     }
     // 卦变层级
     if (hex && typeof hex === 'object') {
@@ -15002,6 +15165,7 @@ function HuangjiPage({
     kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
+    kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'huangji' }));
     kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
     kids.push(React.createElement('button', {
       key: 'paybtn',
