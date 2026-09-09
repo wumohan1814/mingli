@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I1–I4 图标样片 · 方向确认</title>
+<style>
+  :root{
+    --med:#1B2A4A; --gold:#C9A24B; --gold-lt:#E8C77A; --ink:#0d1626; --paper:#f4efe4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#0d1626;color:#E8C77A;font-family:'Songti SC','STSong','SimSun',serif;padding:28px}
+  h1{font-size:20px;letter-spacing:2px;margin:0 0 4px}
+  .sub{font-size:13px;color:#9fb0c8;margin-bottom:22px;line-height:1.7}
+  .grp{margin-bottom:26px}
+  .grp h2{font-size:15px;color:#E8C77A;border-left:3px solid #C9A24B;padding-left:10px;margin:0 0 12px;letter-spacing:1px}
+  .grid{display:flex;flex-wrap:wrap;gap:16px}
+  .cell{width:96px;background:#13203a;border:1px solid #2a3a5c;border-radius:12px;padding:12px 8px;text-align:center}
+  .cell svg{width:64px;height:64px;display:block;margin:0 auto}
+  .cell .lab{font-size:12px;color:#cdd8ea;margin-top:8px;line-height:1.4}
+  .cell .en{font-size:10px;color:#7d8db0;margin-top:2px}
+  .note{font-size:12px;color:#9fb0c8;margin-top:30px;line-height:1.8;border-top:1px dashed #2a3a5c;padding-top:14px}
+</style>
+</head>
+<body>
+  <h1>I1–I4 图标样片</h1>
+  <div class="sub">推荐方向：沿用现有 <code>zodiac-icons.svg</code> 的「徽章」结构（墨青圆底 + 描金双环），内部用描金线描符号。<br>
+  星座 I1 走「星图线描」（星点 + 连线），关系/功能 I2–I4 走概念线描。单色、可随主题色变。</div>
+
+  <!-- ============ 样片 SVG sprite ============ -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <style>
+        .med{fill:#1B2A4A}
+        .ring{fill:none;stroke:#C9A24B;stroke-width:2.2}
+        .ring2{fill:none;stroke:#C9A24B;stroke-width:0.8;opacity:.5}
+        .ico{fill:none;stroke:#E8C77A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+        .dot{fill:#E8C77A}
+      </style>
+    </defs>
+
+    <!-- ===== I1 星座 ×12（样片取 4 个代表形状） ===== -->
+    <symbol id="cx-aries" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M38,42 L48,48 L58,44 L66,52"/>
+      <circle class="dot" cx="38" cy="42" r="2"/><circle class="dot" cx="48" cy="48" r="2"/><circle class="dot" cx="58" cy="44" r="2"/><circle class="dot" cx="66" cy="52" r="2"/>
+    </symbol>
+
+    <symbol id="cx-cancer" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M50,30 L40,46 L34,62 M50,30 L60,46 L66,62"/>
+      <circle class="dot" cx="50" cy="30" r="2"/><circle class="dot" cx="40" cy="46" r="2"/><circle class="dot" cx="34" cy="62" r="2"/><circle class="dot" cx="60" cy="46" r="2"/><circle class="dot" cx="66" cy="62" r="2"/>
+    </symbol>
+
+    <symbol id="cx-libra" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M50,26 L50,46 M34,46 L66,46 M34,46 L34,58 M66,46 L66,58 M30,58 Q34,63 38,58 M62,58 Q66,63 70,58"/>
+      <circle class="dot" cx="50" cy="26" r="2"/><circle class="dot" cx="34" cy="46" r="2"/><circle class="dot" cx="66" cy="46" r="2"/>
+    </symbol>
+
+    <symbol id="cx-pisces" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M32,34 L50,56 L68,34"/>
+      <circle class="ico" cx="28" cy="30" r="6"/><circle class="ico" cx="72" cy="30" r="6"/>
+      <path class="ico" d="M28,30 L22,26 M72,30 L78,26"/>
+      <circle class="dot" cx="32" cy="34" r="2"/><circle class="dot" cx="50" cy="56" r="2"/><circle class="dot" cx="68" cy="34" r="2"/>
+    </symbol>
+
+    <!-- ===== I2 三关系 ×3（样片取 恋爱） ===== -->
+    <symbol id="rel-love" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M50,72 C36,60 28,50 28,42 C28,34 35,30 41,32 C45,33 48,37 50,40 C52,37 55,33 59,32 C65,30 72,34 72,42 C72,50 64,60 50,72 Z"/>
+    </symbol>
+
+    <!-- ===== I3 配对关系 ×5（样片取 家人） ===== -->
+    <symbol id="pair-family" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <path class="ico" d="M30,46 L50,30 L70,46 M34,46 L34,70 L66,70 L66,46 M46,70 L46,56 L54,56 L54,70"/>
+    </symbol>
+
+    <!-- ===== I4 三功能 ×3（样片取 配对 / 起名） ===== -->
+    <symbol id="fn-pair" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <circle class="ico" cx="42" cy="50" r="14"/><circle class="ico" cx="58" cy="50" r="14"/>
+    </symbol>
+
+    <symbol id="fn-name" viewBox="0 0 100 100">
+      <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
+      <rect class="ico" x="34" y="40" width="32" height="22" rx="5"/>
+      <circle class="ico" cx="44" cy="51" r="2.6"/>
+      <path class="ico" d="M60,46 l1.6,3.4 3.6,.4 -2.7,2.5 .8,3.6 -3.3,-1.9 -3.3,1.9 .8,-3.6 -2.7,-2.5 3.6,-.4 Z" fill="#E8C77A" stroke="none"/>
+    </symbol>
+  </svg>
+
+  <!-- ============ 预览 ============ -->
+  <div class="grp">
+    <h2>I1 · 星座 ×12（样片：白羊 / 巨蟹 / 天秤 / 双鱼）</h2>
+    <div class="grid">
+      <div class="cell"><svg><use href="#cx-aries"/></svg><div class="lab">白羊</div><div class="en">Aries</div></div>
+      <div class="cell"><svg><use href="#cx-cancer"/></svg><div class="lab">巨蟹</div><div class="en">Cancer</div></div>
+      <div class="cell"><svg><use href="#cx-libra"/></svg><div class="lab">天秤</div><div class="en">Libra</div></div>
+      <div class="cell"><svg><use href="#cx-pisces"/></svg><div class="lab">双鱼</div><div class="en">Pisces</div></div>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>I2 · 三关系 ×3（样片：恋爱）</h2>
+    <div class="grid">
+      <div class="cell"><svg><use href="#rel-love"/></svg><div class="lab">恋爱</div><div class="en">love</div></div>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>I3 · 配对关系 ×5（样片：家人）</h2>
+    <div class="grid">
+      <div class="cell"><svg><use href="#pair-family"/></svg><div class="lab">家人</div><div class="en">family</div></div>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>I4 · 三功能 ×3（样片：配对 / 起名）</h2>
+    <div class="grid">
+      <div class="cell"><svg><use href="#fn-pair"/></svg><div class="lab">九法/八字配对</div><div class="en">pair</div></div>
+      <div class="cell"><svg><use href="#fn-name"/></svg><div class="lab">档案起名</div><div class="en">name</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    说明：正式交付将产出完整 sprite（<code>icon-sprite-i1-i4.svg</code>），沿用现有 <code>&lt;symbol&gt;</code> + <code>&lt;use&gt;</code> 机制，与 <code>zodiac-icons.svg</code> 一致，开发可直接替换 emoji 占位。<br>
+    共 23 枚：I1 星座 12 + I2 关系 3 + I3 配对关系 5 + I4 功能 3。
+  </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "断前尘异步任务全链路",
+    "output": "taichu-sequence-duanqianchen.html",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1160, 920],
+    "views": [
+      { "id": "accept", "label": "受理", "focus": ["user", "api", "orch"], "note": "POST 立即返回 202 + jobId，请求不阻塞。" },
+      { "id": "work", "label": "后台编排", "focus": ["orch", "methods", "llm", "valid", "credits", "db"], "note": "9 法并发分析、逐法扣费、落库推进度。" },
+      { "id": "observe", "label": "轮询收尾", "focus": ["user", "api", "db"], "note": "前端 setInterval 轮询，纯读库零 LLM。" }
+    ]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "H5 前端", "sublabel": "React 18 · 轮询" },
+    { "id": "api", "type": "backend", "label": "REST API", "sublabel": "/api/cases · /api/jobs" },
+    { "id": "orch", "type": "backend", "label": "任务编排器", "sublabel": "jobs/orchestrator.py" },
+    { "id": "methods", "type": "backend", "label": "9 法方法模块", "sublabel": "analyzer ×9" },
+    { "id": "llm", "type": "cloud", "label": "DeepSeek", "sublabel": "deepseek-v4-flash" },
+    { "id": "valid", "type": "backend", "label": "规则校验器", "sublabel": "validation/validator.py" },
+    { "id": "credits", "type": "backend", "label": "积分计费", "sublabel": "credits/service.py" },
+    { "id": "db", "type": "database", "label": "taichu_analytics.db", "sublabel": "job / method_results" }
+  ],
+  "segments": [
+    { "from": 150, "to": 296, "label": "受理（202 即返回）" },
+    { "from": 306, "to": 692, "label": "后台编排（9 法并发 + 逐法扣费）" },
+    { "from": 700, "to": 900, "label": "轮询收尾（纯读库）" }
+  ],
+  "messages": [
+    { "from": "user", "to": "api", "y": 180, "label": "POST /api/cases/{id}/duan-qian-chen", "variant": "emphasis" },
+    { "from": "api", "to": "orch", "y": 222, "label": "创建 job（pending）+ 启动后台任务", "variant": "emphasis" },
+    { "from": "api", "to": "user", "y": 264, "label": "202 {jobId, total}", "variant": "return" },
+    { "from": "orch", "to": "methods", "y": 330, "label": "9 法并发（每 job 3 并发限流）", "variant": "emphasis" },
+    { "from": "methods", "to": "db", "y": 372, "label": "读取 chart 切片（确定性 · 零 LLM）" },
+    { "from": "methods", "to": "llm", "y": 414, "label": "analyze (json_mode)", "variant": "emphasis" },
+    { "from": "llm", "to": "methods", "y": 456, "label": "method-result v2", "variant": "return" },
+    { "from": "methods", "to": "valid", "y": 498, "label": "规则校验 method-result" },
+    { "from": "valid", "to": "methods", "y": 540, "label": "validation.json", "variant": "return" },
+    { "from": "methods", "to": "credits", "y": 582, "label": "逐法扣费 consume", "variant": "emphasis" },
+    { "from": "methods", "to": "db", "y": 624, "label": "落 method_results + completed 原子自增" },
+    { "from": "orch", "to": "db", "y": 666, "label": "job.status → done" },
+    { "from": "user", "to": "api", "y": 708, "label": "GET /api/jobs/{jobId} 轮询" },
+    { "from": "api", "to": "db", "y": 750, "label": "读 job 状态" },
+    { "from": "db", "to": "api", "y": 792, "label": "{status: done, result}", "variant": "return" },
+    { "from": "api", "to": "user", "y": 834, "label": "200 报告结果", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "api", "from": 174, "to": 272, "type": "backend" },
+    { "participant": "orch", "from": 216, "to": 672, "type": "backend" },
+    { "participant": "methods", "from": 324, "to": 630, "type": "backend" },
+    { "participant": "llm", "from": 408, "to": 462, "type": "cloud" },
+    { "participant": "valid", "from": 492, "to": 546, "type": "backend" },
+    { "participant": "credits", "from": 576, "to": 588, "type": "backend" },
+    { "participant": "db", "from": 366, "to": 800, "type": "database" },
+    { "participant": "api", "from": 702, "to": 840, "type": "backend" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "快速受理", "items": ["POST 立即返回 202 + jobId，不阻塞", "前端 setInterval 轮询，纯读库零 LLM", "job 幂等防重：进行中 / 已完成的任务复用"] },
+    { "dot": "emerald", "title": "后台编排", "items": ["9 法并发，每 job 3 并发 + 全局 100 兜底", "逐法扣费 ref=job:{jobId}:{methodKey}", "单法失败只记 failed_methods，不拖垮整单"] },
+    { "dot": "amber", "title": "可靠性", "items": ["并发协程独立短 Session，completed 原子自增", "服务重启孤儿 job 置 failed，断点由缓存续跑", "校验仅断前尘阶段执行（ADR-0002）"] }
+  ]
+}

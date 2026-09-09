@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "太初 · 多流派 AI 命理 H5 系统架构",
+    "output": "taichu-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/wumohan1814/taichu.git",
+      "revision": "27b214042e91568180e7c35a82641cc56e311758"
+    },
+    "views": [
+      { "id": "request-path", "label": "主请求链路", "focus": ["user", "caddy", "fastapi", "orchestrator", "methods", "llm"], "note": "从浏览器经 Caddy 到 FastAPI，断前尘 / 预测任务在编排器内并发执行。" },
+      { "id": "compute", "label": "排盘与落库", "focus": ["paipan-engine", "paipan-node", "db-analytics", "db-feedback", "db-ops"], "note": "确定性排盘走 Node 常驻服务，三库分别承载业务 / 质询 / 运维。" },
+      { "id": "external", "label": "外部接入", "focus": ["llm", "jinshuju"], "note": "LLM 与金数据支付都是出网调用，key 只走环境变量。" }
+    ]
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "用户浏览器", "sublabel": "React 18 H5", "pos": [60, 420], "size": [150, 66] },
+    { "id": "caddy", "type": "security", "label": "Caddy 反向代理", "sublabel": "mingli.example.com · HTTPS", "pos": [300, 420], "size": [150, 66], "tag": "gzip / zstd" },
+    { "id": "fastapi", "type": "backend", "label": "FastAPI 模块化单体", "sublabel": ":8000 · REST + /admin + 静态", "pos": [540, 420], "size": [190, 70], "tag": "Python 3.13" },
+    { "id": "orchestrator", "type": "backend", "label": "任务编排器", "sublabel": "断前尘 / 预测 · 3 并发", "pos": [820, 300], "size": [190, 62], "tag": "ADR-0005" },
+    { "id": "methods", "type": "backend", "label": "9 法方法模块", "sublabel": "method-result v2 契约", "pos": [820, 470], "size": [190, 62], "tag": "analyzer ×9" },
+    { "id": "paipan-engine", "type": "backend", "label": "排盘引擎", "sublabel": "确定性计算 · 零 LLM", "pos": [1080, 470], "size": [170, 62], "tag": "engine / slicer / scorer" },
+    { "id": "paipan-node", "type": "backend", "label": "Node 22 排盘服务", "sublabel": ":9317 · iztro / mingyu-core", "pos": [1080, 150], "size": [170, 62], "tag": "subprocess 降级" },
+    { "id": "llm", "type": "cloud", "label": "DeepSeek API", "sublabel": "deepseek-v4-flash", "pos": [1290, 470], "size": [140, 62], "tag": "OpenAI 兼容" },
+    { "id": "db-analytics", "type": "database", "label": "taichu_analytics.db", "sublabel": "业务 · 档案 · 积分", "pos": [820, 680], "size": [170, 62] },
+    { "id": "db-feedback", "type": "database", "label": "taichu_feedback.db", "sublabel": "质询收集", "pos": [1080, 680], "size": [170, 62] },
+    { "id": "db-ops", "type": "database", "label": "taichu_ops.db", "sublabel": "埋点 · 后台 · 错误", "pos": [1290, 680], "size": [140, 62] },
+    { "id": "jinshuju", "type": "external", "label": "金数据支付", "sublabel": "小金额商户助手", "pos": [1290, 130], "size": [140, 60], "tag": "充值轮询" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Docker 单镜像容器 web（模块化单体）", "wraps": ["fastapi", "orchestrator", "methods", "paipan-engine", "paipan-node"] },
+    { "kind": "region", "label": "SQLite 持久卷 /app/data", "wraps": ["db-analytics", "db-feedback", "db-ops"] }
+  ],
+  "connections": [
+    { "id": "user-caddy", "from": "user", "to": "caddy", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "caddy-fastapi", "from": "caddy", "to": "fastapi", "label": "反代 /api · /admin · 静态" },
+    { "id": "fastapi-orchestrator", "from": "fastapi", "to": "orchestrator", "label": "后台任务编排" },
+    { "id": "orchestrator-methods", "from": "orchestrator", "to": "methods", "label": "9 法并发分析" },
+    { "id": "methods-paipan", "from": "methods", "to": "paipan-engine", "label": "取 chart 切片" },
+    { "id": "paipan-node", "from": "paipan-engine", "to": "paipan-node", "label": "HTTP :9317 · 降级 subprocess" },
+    { "id": "methods-llm", "from": "methods", "to": "llm", "label": "chat / json_mode", "variant": "emphasis" },
+    { "id": "fastapi-analytics", "from": "fastapi", "to": "db-analytics", "label": "SQL 读写" },
+    { "id": "fastapi-feedback", "from": "fastapi", "to": "db-feedback", "label": "SQL" },
+    { "id": "fastapi-ops", "from": "fastapi", "to": "db-ops", "label": "埋点写库" },
+    { "id": "fastapi-jinshuju", "from": "fastapi", "to": "jinshuju", "label": "充值轮询", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "入口与托管", "items": ["Caddy 自动 HTTPS 证书 + gzip/zstd 压缩", "FastAPI 单端口 8000 同时服务 /api + 前端静态", "SPA 404 回退 index.html（/api /admin 除外）"] },
+    { "dot": "emerald", "title": "排盘与成本红线", "items": ["排盘 / 校准打分 = 确定性计算，零 LLM", "Node 22 常驻服务 :9317，失败自动降级 subprocess", "仅解读 / 校验 / 修正对话调 LLM，逐法扣费"] },
+    { "dot": "violet", "title": "数据与后台", "items": ["SQLite 三库隔离业务 / 质询 / 运维", "档案 chart.json 全量落库为唯一事实源", "后台 /admin 独立 JWT + 角色 + audit"] },
+    { "dot": "rose", "title": "外部与运维", "items": ["金数据充值轮询仅在有 access token 时启动", "OpenClaw 接入点 bb3a.mingli.example.com → Tailscale 隧道", "JWT HS256：访问牌 30min + 刷新牌 7d"] }
+  ]
+}
