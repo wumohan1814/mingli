@@ -1747,6 +1747,68 @@
       .tp-front{opacity:1}
     }
   </style>
+  <style>
+    /* ===== REQ-129 C：读牌段（19 牌阵官方真实摆位 + 一屏原则 + 点开放大连看） =====
+       板内坐标：每阵按 docs/exchange/塔罗阵型摆位示意.md 的 ASCII 点位换算为 %（卡心定位）；
+       板高以 aspect-ratio 控制，整幅一屏、不横向翻页；点卡放大 → 顶条「第 N 位·牌位名」+ 图下牌义 → 2.5s 自动收起 + 上一张/下一张连看。 */
+    .rd-wrap{margin-top:4px}
+    .rd-hint{font-size:12px;color:var(--text-3);text-align:center;margin:0 0 8px;line-height:1.7}
+    .rd-box{position:relative;width:100%;margin:4px auto 2px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+    .rd-cell{position:absolute;padding:0;border:0;background:none;text-align:center;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+    .rd-cell .rd-rot{position:relative;z-index:1;display:block}
+    .rd-cell .rd-rot.layer2{z-index:3}
+    .rd-cell:active .rd-imgwrap{transform:scale(.95)}
+    .rd-imgwrap{position:relative;width:100%;aspect-ratio:100/161;border-radius:8px;overflow:hidden;background:#1D1B20;
+      box-shadow:0 4px 12px rgba(0,0,0,.34);border:1.5px solid rgba(232,201,138,.28);box-sizing:border-box;transition:transform .15s ease}
+    .rd-imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .rd-imgwrap.reversed img{transform:rotate(180deg)}
+    .rd-imgwrap .rd-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;text-align:center;padding:4px;font-family:var(--font-serif)}
+    .rd-badge{position:absolute;left:3px;top:3px;z-index:4;min-width:16px;height:16px;padding:0 3px;box-sizing:border-box;border-radius:999px;
+      background:rgba(15,12,26,.7);border:1px solid rgba(232,201,138,.55);color:#E8C98A;font-weight:700;font-family:var(--font-sans);
+      line-height:1;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .rd-cap{width:100%;margin-top:3px;font-size:var(--rd-cap-fs,10px);color:var(--text-2);font-weight:600;line-height:1.3;text-align:center;word-break:break-word;pointer-events:none}
+    .rd-sidecap{position:absolute;font-size:10.5px;color:var(--text-2);font-weight:600;line-height:1.4;text-align:left;word-break:break-word;pointer-events:none;transform:translateY(-50%)}
+    /* 放大连看浮层 */
+    .rd-zoom{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;
+      background:rgba(10,8,20,.78);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);transition:opacity .18s ease}
+    .rd-zoom.closing{opacity:0}
+    .rd-zoom-box{position:relative;width:min(90vw,360px);max-height:94vh;overflow-y:auto;overscroll-behavior:contain;
+      background:var(--surface,#171228);border:1px solid rgba(232,201,138,.28);border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+      animation:rdZoomIn .28s var(--ease);padding:12px 14px 14px;box-sizing:border-box}
+    .rd-zoom.closing .rd-zoom-box{animation:rdZoomOut .18s var(--ease) both}
+    @keyframes rdZoomIn{from{opacity:0;transform:scale(.86) translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes rdZoomOut{to{opacity:0;transform:scale(.9) translateY(6px)}}
+    .rd-count{position:absolute;left:0;top:0;height:2.5px;width:100%;background:var(--skin-accent,#E8C98A);transform-origin:left;animation:rdSlim 2.5s linear forwards;pointer-events:none;z-index:2}
+    @keyframes rdSlim{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+    .rd-ztop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 4px}
+    .rd-ztitle{font-size:14.5px;font-weight:800;color:var(--text-1);line-height:1.4;min-width:0}
+    .rd-ztitle b{color:var(--skin-accent,#E8C98A);font-weight:800}
+    .rd-zclose{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--text-1);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+    .rd-zsub{font-size:11px;color:var(--text-3);text-align:center;margin-bottom:8px;line-height:1.5}
+    .rd-zimg{display:block;margin:0 auto;width:min(44vw,150px);border-radius:10px;box-shadow:0 10px 26px rgba(0,0,0,.5);object-fit:cover;border:1.5px solid rgba(232,201,138,.3)}
+    .rd-zimg.reversed{transform:rotate(180deg)}
+    .rd-zph{display:flex;align-items:center;justify-content:center;background:#5B4B8A;color:#fff;font-weight:800;font-size:15px;text-align:center;padding:10px;box-sizing:border-box;font-family:var(--font-serif)}
+    .rd-zname{text-align:center;margin:8px 0 4px;font-size:15px;font-weight:800;color:var(--text-1);line-height:1.5}
+    .rd-zori{display:inline-block;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;font-family:var(--font-sans);vertical-align:2px;margin-left:6px}
+    .rd-zori.up{background:rgba(62,124,107,.16);color:#3E7C6B}
+    .rd-zori.rev{background:rgba(178,58,58,.14);color:var(--cinnabar,#C8442E)}
+    .rd-zbody{margin-top:4px;font-size:13px;color:var(--text-2);line-height:1.85;text-align:left;max-height:22vh;overflow-y:auto;overscroll-behavior:contain;padding:0 2px}
+    .rd-zkw{margin-top:6px;font-size:11px;color:var(--text-3);text-align:center;line-height:1.6}
+    .rd-znav{display:flex;align-items:center;gap:8px;margin-top:10px}
+    .rd-zbtn{flex:1;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:var(--text-1);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 6px}
+    .rd-zbtn:disabled{opacity:.4;cursor:default}
+    .rd-zcount{flex:none;font-size:12px;color:var(--text-3);min-width:38px;text-align:center}
+    /* 下方牌义清单：读牌段全量放行（收扇后各牌均已翻开）+ 逐条入场 + 条目可点放大 */
+    .rd-mean-item{cursor:pointer;padding:8px 6px;margin:0 -6px;border-radius:10px;transition:background .18s ease}
+    .rd-mean-item:active{background:rgba(232,201,138,.08)}
+    .rd-item-in{opacity:0;animation:rdItemIn .32s var(--ease) both}
+    @keyframes rdItemIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){
+      .rd-zoom,.rd-zoom-box,.rd-count,.rd-imgwrap,.rd-item-in{animation:none!important;transition:none!important}
+      .rd-count{display:none}
+      .rd-item-in{opacity:1}
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -16107,6 +16169,183 @@ function TarotPickBoard(props) {
       React.createElement('div', { className: 'tp-fan-cap' }, '牌背朝下 · 左右滑动浏览 · 依直觉点选一张 · 选过即定不可反悔'),
       React.createElement('div', { className: 'tp-fanrow' }, fanBtns)));
 }
+/* ================= REQ-129 C：读牌段（19 牌阵官方真实阵型摆位 + 一屏原则 + 点开放大连看） =================
+   消费取牌段 lastTarotPickStream（getTarotPickStream()，动画关/手动录入等直出路径按当前成牌确定性重建）：
+   { spread:{id,name,pos[]}, cards:[{index(1-based),position=pos[i],name,img,suit,reversed,keywords,upright,reversedText}] }
+   摆位实现：每阵坐标按 docs/exchange/塔罗阵型摆位示意.md（2026-09-09 需求方确认）的 ASCII 点位换算为
+   板内百分位卡心坐标（x/y/w 占板 %），板高以 aspect-ratio=ratio 收口（全牌一屏摆全、不横向翻页）；
+   卡宽按张数分级（1~3 大 / 4~5 中大 / 6~7 中 / 10 中小 / 12 小，见各阵 w）。 */
+const TAROT_READ_CN = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫'];
+/* 行式坐标：均匀留边/留缝排 n 张卡（yArc 可给两端微弧的逐卡 y） */
+function tarotRowCells(n, w, y, yArc) {
+  const g = (100 - n * w) / (n + 1);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    out.push({ x: +(g + w / 2 + i * (w + g)).toFixed(2), y: (yArc && yArc[i]) ? yArc[i] : y, w: w, rot: 0 });
+  }
+  return out;
+}
+/* 宫格坐标：ys 行 × xs 列逐行填充（抽牌位次先行后列） */
+function tarotGridCells(xs, ys, w) {
+  const out = [];
+  ys.forEach(function (yy) { xs.forEach(function (xx) { out.push({ x: xx, y: yy, w: w, rot: 0 }); }); });
+  return out;
+}
+/* 圆环坐标：① 在顶部、顺时针 1→N（需求方默认）；ratio 参与把同一半径换算为板高 % */
+function tarotRingCells(n, cx, cy, rx, ratio, w) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const th = ((-90 + i * (360 / n)) * Math.PI) / 180;
+    out.push({ x: +(cx + rx * Math.cos(th)).toFixed(2), y: +(cy + rx * ratio * Math.sin(th)).toFixed(2), w: w, rot: 0 });
+  }
+  return out;
+}
+/* 5 张小扇（万能/问题解决）：ASCII ① 上中、②⑤ 中排、③④ 底排，左右扇张微旋 */
+const TAROT_FAN5_CELLS = [
+  { x: 50, y: 17, w: 16, rot: 0 }, { x: 28, y: 40, w: 15.5, rot: -6 },
+  { x: 11.5, y: 72, w: 15, rot: -12 }, { x: 88.5, y: 72, w: 15, rot: 12 }, { x: 72, y: 40, w: 15.5, rot: 6 }
+];
+const TAROT_GRID6_XS = [21.5, 50, 78.5];
+/* 19 阵点位表（key=牌阵 id，与 TAROT_SPREADS 对齐）：
+   卡高占板 % = w × ratio ÷ 0.619（对应 .rd-imgwrap aspect-ratio:100/161）。
+   ratio（板宽:板高）| 阵名 | 实现：
+   single 1.05           居中大卡（示意：正中偏上）
+   three/mindBodySpirit 1.85  一行 3 张大卡（横排居中）
+   holyTriangle 1.06     三角：上 1（根源）下 2（等腰）
+   love/wealth/fourElements 2.0 一行 5 张（爱情两端微弧，love 用 yArc）
+   universal/problemSolving 1.12 小扇 5 张（扇状放射 + 边张微旋）
+   career/decision/relationship 1.25 对排 6 = 两排三列（ASCII 简化口径）
+   horseshoe 1.0         马蹄 7 = 倒 U 弧（ASCII 点位；示意图自注弧向待确认，见交付报告）
+   hexagram 0.86         六芒星 7 = 上正三角 + 下倒三角 + 中心（①②③ 与 ④⑤⑥ 分列上下两三角顶点、⑦ 中心）
+   chakra 0.55           七脉轮竖列：按脉轮语义上 ⑦顶轮 → 下 ①海底轮（示意图仅列竖列，方向按确认默认）
+   fourSeasons 1.35      四牌四季 2×2 宫格
+   celtic 0.86           凯尔特十字：中心 ①②(横压) + 四臂 ③上 ④下 ⑤左 ⑥右 + 右旁柱 ⑦⑧⑨⑩ 自上而下（⑩ 顶部=结果）
+   year/twelveHouses 0.93 12 宫圆环：① 顶部顺时针 */
+const TAROT_READ_SPOTS = {
+  single: { ratio: 1.05, cap: true, cells: [{ x: 50, y: 45, w: 33, rot: 0 }] },
+  three: { ratio: 1.85, cap: true, cells: tarotRowCells(3, 22.5, 43) },
+  mindBodySpirit: { ratio: 1.85, cap: true, cells: tarotRowCells(3, 22.5, 43) },
+  holyTriangle: { ratio: 1.06, cap: true, cells: [{ x: 50, y: 22, w: 23, rot: 0 }, { x: 26, y: 75, w: 23, rot: 0 }, { x: 74, y: 75, w: 23, rot: 0 }] },
+  love: { ratio: 2.0, cap: true, cells: tarotRowCells(5, 16.5, 45.5, [43.6, 45.1, 46, 45.1, 43.6]) },
+  wealth: { ratio: 2.0, cap: true, cells: tarotRowCells(5, 16.5, 45.5) },
+  fourElements: { ratio: 2.0, cap: true, cells: tarotRowCells(5, 16.5, 45.5) },
+  universal: { ratio: 1.12, cap: true, cells: TAROT_FAN5_CELLS },
+  problemSolving: { ratio: 1.12, cap: true, cells: TAROT_FAN5_CELLS },
+  career: { ratio: 1.25, cap: true, cells: tarotGridCells(TAROT_GRID6_XS, [36, 72], 14) },
+  decision: { ratio: 1.25, cap: true, cells: tarotGridCells(TAROT_GRID6_XS, [36, 72], 14) },
+  relationship: { ratio: 1.25, cap: true, cells: tarotGridCells(TAROT_GRID6_XS, [36, 72], 14) },
+  horseshoe: { ratio: 1.0, cap: false, cells: [{ x: 21, y: 20, w: 13.5, rot: 0 }, { x: 50, y: 17, w: 13.5, rot: 0 }, { x: 79, y: 20, w: 13.5, rot: 0 }, { x: 68, y: 51, w: 13.5, rot: 0 }, { x: 63, y: 79, w: 13.5, rot: 0 }, { x: 37, y: 79, w: 13.5, rot: 0 }, { x: 32, y: 51, w: 13.5, rot: 0 }] },
+  hexagram: { ratio: 0.86, cap: false, cells: [{ x: 50, y: 12, w: 12.5, rot: 0 }, { x: 16, y: 31, w: 12.5, rot: 0 }, { x: 84, y: 31, w: 12.5, rot: 0 }, { x: 50, y: 52, w: 12.5, rot: 0 }, { x: 16, y: 71, w: 12.5, rot: 0 }, { x: 84, y: 71, w: 12.5, rot: 0 }, { x: 50, y: 88, w: 12.5, rot: 0 }] },
+  chakra: { ratio: 0.55, cap: false, sideCap: true, cells: (function () { const out = []; for (let k = 0; k < 7; k++) out.push({ x: 36, y: +(9.5 + (6 - k) * 13.5).toFixed(2), w: 13.5, rot: 0 }); return out; })() },
+  fourSeasons: { ratio: 1.35, cap: true, cells: tarotGridCells([30, 70], [34, 73], 17) },
+  celtic: { ratio: 0.86, cap: false, cells: [{ x: 30, y: 50, w: 12, rot: 0 }, { x: 30, y: 50, w: 12, rot: 90 }, { x: 30, y: 26, w: 12, rot: 0 }, { x: 30, y: 74, w: 12, rot: 0 }, { x: 16, y: 50, w: 12, rot: 0 }, { x: 44, y: 50, w: 12, rot: 0 }, { x: 85, y: 76, w: 10.5, rot: 0 }, { x: 85, y: 55, w: 10.5, rot: 0 }, { x: 85, y: 34, w: 10.5, rot: 0 }, { x: 85, y: 12, w: 10.5, rot: 0 }] },
+  year: { ratio: 0.93, cap: false, cells: tarotRingCells(12, 50, 50, 38, 0.93, 11.5) },
+  twelveHouses: { ratio: 0.93, cap: false, cells: tarotRingCells(12, 50, 50, 38, 0.93, 11.5) }
+};
+/* 读牌板：按阵型点位全牌一屏摆放（已翻开正面卡；序号角标 + 可点放大） */
+function TarotReadBoard({ spread, cards, onOpen }) {
+  const n = cards.length;
+  const spot = (spread && TAROT_READ_SPOTS[spread.id]) || null;
+  let ratio = 0.9;
+  let cells = null;
+  let sideCap = false;
+  if (spot) {
+    ratio = spot.ratio;
+    cells = spot.cells;
+    sideCap = !!spot.sideCap;
+  } else {
+    // 兜底：未知牌阵按张数行排布（仍一屏摆全、可点放大）
+    if (n <= 1) { ratio = 1.05; cells = [{ x: 50, y: 45, w: 30, rot: 0 }]; }
+    else if (n <= 5) { ratio = 1.9; cells = tarotRowCells(n, n <= 3 ? 22 : 15.5, 46); }
+    else {
+      ratio = 1.25;
+      const rows = Math.ceil(n / 3);
+      const ys = []; for (let r = 0; r < rows; r++) ys.push(rows === 1 ? 50 : 36 + r * (72 / (rows - 1)));
+      const all = [];
+      for (let r = 0; r < rows; r++) for (let cc = 0; cc < 3; cc++) { const k = r * 3 + cc; if (k < n) all.push({ x: TAROT_GRID6_XS[cc], y: ys[r], w: n <= 6 ? 15 : 13, rot: 0 }); }
+      cells = all;
+    }
+  }
+  const capShow = sideCap ? false : (spot ? spot.cap !== false : n <= 5);
+  const capFs = n <= 1 ? 12.5 : (n <= 3 ? 11 : (n <= 5 ? 9.5 : 8.6));
+  const bdgFs = n <= 3 ? 12 : (n <= 5 ? 11 : (n <= 7 ? 10 : 9.5));
+  const kids = cards.map(function (c, i) {
+    const cell = (cells && cells[i]) || { x: 50, y: 50, w: 13, rot: 0 };
+    const wP = cell.w || 13;
+    const rot = cell.rot || 0;
+    const hF = (wP * ratio) / 0.619; // 卡高占板 %
+    const leftP = cell.x - wP / 2;
+    const topP = cell.y - hF / 2;
+    const label = c.position || ('第' + (i + 1) + '位');
+    const imgInner = c.img
+      ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
+      : React.createElement('div', { className: 'rd-ph', style: { background: TAROT_SUIT_COLOR[c.suit] || '#5B4B8A' } }, c.name);
+    const face = React.createElement('div', { className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : '') }, imgInner);
+    const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
+    const cellKids = [inner];
+    cellKids.push(React.createElement('span', { key: 'b', className: 'rd-badge', style: { fontSize: bdgFs } }, (i + 1)));
+    if (sideCap) {
+      cellKids.push(React.createElement('span', { key: 'sc', className: 'rd-sidecap', style: { left: (cell.x + wP / 2 + 1.8) + '%', top: cell.y + '%', width: (96 - (cell.x + wP / 2 + 1.8)) + '%' } }, TAROT_READ_CN[i] + ' ' + label));
+    } else if (capShow) {
+      cellKids.push(React.createElement('div', { key: 'cap', className: 'rd-cap' }, label));
+    }
+    return React.createElement('div', { key: 'c' + i, className: 'rd-cell', style: { left: leftP + '%', top: topP + '%', width: wP + '%' }, role: 'button', 'aria-label': '第' + (i + 1) + '位·' + label, onClick: function () { if (onOpen) onOpen(i); } }, cellKids);
+  });
+  return React.createElement('div', { className: 'rd-box', style: { aspectRatio: String(ratio), '--rd-cap-fs': capFs + 'px' } }, kids);
+}
+/* 放大连看浮层：点卡/清单条目打开 → 约 2.5s 自动收起；「上一张/下一张」手动连看可重温 */
+function TarotReadZoom({ cards, idx, onClose, onGo }) {
+  const card = (cards && cards[idx]) || null;
+  const [closing, setClosing] = useState(false);
+  const closeOnce = useRef(false);
+  const fireClose = function () {
+    if (closeOnce.current) return;
+    closeOnce.current = true;
+    setClosing(true);
+    setTimeout(function () { if (onClose) onClose(); }, 190);
+  };
+  const fireRef = useRef(fireClose);
+  fireRef.current = fireClose;
+  useEffect(function () {
+    if (!card) return undefined;
+    const t = setTimeout(function () { fireRef.current(); }, 2500);
+    return function () { clearTimeout(t); };
+  }, [idx]);
+  if (!card) return null;
+  const n = cards.length;
+  const rev = !!card.reversed;
+  const bodyText = rev ? (card.reversedText || '') : (card.upright || '');
+  const kwLine = (card.keywords && card.keywords.length) ? card.keywords.join(' / ') : '';
+  const go = function (e, ni) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (ni < 0 || ni >= n || !onGo) return;
+    onGo(ni);
+  };
+  const title = React.createElement('div', { className: 'rd-ztitle' }, React.createElement('b', null, '第 ' + (card.index || (idx + 1)) + ' 位'), ' · ', card.position || '');
+  const closeBtn = React.createElement('button', { type: 'button', className: 'rd-zclose', 'aria-label': '收起大图', onClick: function (e) { e.stopPropagation(); fireClose(); } }, '✕');
+  const sub = React.createElement('div', { className: 'rd-zsub' }, '约 2.5 秒后自动收起 · 可点「上一张 / 下一张」连看');
+  const imgEl = card.img
+    ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg' + (rev ? ' reversed' : ''), src: card.img, alt: card.name })
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || '#5B4B8A' } }, card.name);
+  const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '', React.createElement('span', { className: 'rd-zori ' + (rev ? 'rev' : 'up') }, rev ? '逆位' : '正位'));
+  const bodyEl = bodyText ? React.createElement('div', { className: 'rd-zbody' }, bodyText) : null;
+  const kwEl = kwLine ? React.createElement('div', { className: 'rd-zkw' }, '关键词：', kwLine) : null;
+  const boxKids = [
+    React.createElement('div', { key: 'bar' + idx, className: 'rd-count' }),
+    React.createElement('div', { key: 'top', className: 'rd-ztop' }, title, closeBtn),
+    sub,
+    imgEl,
+    nameRow
+  ];
+  if (bodyEl) boxKids.push(bodyEl);
+  if (kwEl) boxKids.push(kwEl);
+  boxKids.push(React.createElement('div', { key: 'nav', className: 'rd-znav' },
+    React.createElement('button', { type: 'button', className: 'rd-zbtn', disabled: idx <= 0, onClick: function (e) { go(e, idx - 1); } }, '‹ 上一张'),
+    React.createElement('span', { className: 'rd-zcount' }, (idx + 1) + '/' + n),
+    React.createElement('button', { type: 'button', className: 'rd-zbtn', disabled: idx >= n - 1, onClick: function (e) { go(e, idx + 1); } }, '下一张 ›')));
+  const box = React.createElement('div', { className: 'rd-zoom-box', onClick: function (e) { e.stopPropagation(); } }, boxKids);
+  return React.createElement('div', { className: 'rd-zoom' + (closing ? ' closing' : ''), onClick: function () { fireClose(); } }, box);
+}
 function TarotPage({
   onNavigate
 }) {
@@ -16132,6 +16371,8 @@ function TarotPage({
   // 与 REQ-061 翻牌演出不同：done 即结果段（动画关/牌面图关/manual 录入/收扇后均直接落此）；一键全翻与
   // 「背朝上待翻」已停用（REQ-129⑤），揭示改为取牌段内逐张自动翻开；雷诺曼页另有自己的翻牌阶段机。
   const [dealStage, setDealStage] = useState('done');
+  // REQ-129 C：读牌段「点开放大连看」当前牌索引（null=收起；0-based，对应 readStream.cards）
+  const [zoomIdx, setZoomIdx] = useState(null);
   // REQ-042 v2：已删除「预测方向」步骤与入口扇形 —— 流程 = ① 占问问题（选填，REQ-079）→ ② 选择牌阵
   const draw = async sp => {
     if (loading || !sp) return;
@@ -16144,6 +16385,8 @@ function TarotPage({
     setLoading(true);
     setWasManual(false);
     setDealStage('done');
+    setZoomIdx(null);
+    lastTarotPickStream = null;
     // REQ-042 v2：问题文本直接透传给后端（方向已删，不再拼接「占问方向：」前缀）
     const askTrim = (question || '').trim();
     const askBodyQ = askTrim ? askTrim : null;
@@ -16175,6 +16418,7 @@ function TarotPage({
     setData(null);
     setWasManual(true);
     setDealStage('done');
+    setZoomIdx(null);
     setStep('pick');
   };
   // 点牌库卡片 → 写入当前牌位并推进
@@ -16216,6 +16460,8 @@ function TarotPage({
       setStep('draw');
       // REQ-061：手动路径不重演抽牌动画（用户已真实抽牌）→ 直接 v2 正面布局
       setDealStage('done');
+      setZoomIdx(null);
+      lastTarotPickStream = null;
     } catch (e) {
       setErrored((e && e.message) || '塔罗手动选牌提交失败，请重试。');
     } finally {
@@ -16246,6 +16492,7 @@ function TarotPage({
     setPickOri('up');
     setDkFilter('all');
     setDealStage('done');
+    setZoomIdx(null);
     lastTarotPickStream = null;
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
     setMode(tcAskNextDefault(mode));
@@ -16263,6 +16510,7 @@ function TarotPage({
       setPickOri('up');
       setDkFilter('all');
       setDealStage('done');
+      setZoomIdx(null);
       setStep('pick');
     } else {
       draw(spread);
@@ -16276,12 +16524,25 @@ function TarotPage({
   const askQ = (question || '').trim();
   // REQ-042 v2：draw 顶部承接所填占问问题文本（保留）
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  // REQ-129 C：读牌段数据流 —— 优先消费取牌段 lastTarotPickStream（getTarotPickStream()）；
+  // 动画关/手动录入等直出路径在缓存缺失或不匹配当前牌阵时，按当前成牌确定性重建（只读消费，不改抽牌结果/计费/数据流结构）
+  let readStream = getTarotPickStream();
+  if (readStream && (!spread || !readStream.spread || readStream.spread.id !== spread.id)) readStream = null;
+  if (!readStream && data && spread && cards.length) readStream = buildTarotPickStream(spread, cards);
+  const readSpread = (readStream && readStream.spread) || null;
+  const readCards = (readStream && Array.isArray(readStream.cards)) ? readStream.cards : [];
   // REQ-042 v2：下方集中牌义段落 —— 自第一张起逐张：卡位 + 牌名 + 正/逆位标签 + 含义正文 + 关键词
+  // REQ-129 C：读牌段保持该清单展示（收扇后各牌均已翻开 → 逐条全量放行，对齐「随翻牌逐条放行」语义）；
+  // 条目可点按放大对应牌（与摆位区点卡同源）
+  const meanTappable = cardImagesOn && readCards.length > 0;
   const meanItems = cards.map(function (c, i) {
     const n = normTarotCard(c);
     const kwLine = (n.keywords && n.keywords.length) ? n.keywords.join(' / ') : '';
     const meanText = n.reversed ? (n.reversedText || '') : (n.upright || '');
-    return React.createElement('div', { key: 'mean' + i, className: 'mean-item' },
+    const itemProps = meanTappable
+      ? { key: 'mean' + i, className: 'mean-item rd-mean-item rd-item-in', style: { animationDelay: (i * 70) + 'ms' }, role: 'button', 'aria-label': '查看第' + (i + 1) + '张牌详解', onClick: function () { setZoomIdx(i); } }
+      : { key: 'mean' + i, className: 'mean-item' };
+    return React.createElement('div', itemProps,
       React.createElement('div', { className: 'mi-head' },
         React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
         React.createElement('span', { className: 'mi-name' }, n.name),
@@ -16343,22 +16604,22 @@ function TarotPage({
       }
       drawBody = React.createElement('div', { className: 'card' }, bodyKids);
     } else {
-      // 结果段（done）：收扇后 / 动画关 / 牌面图关 / 手动录入 —— 读牌段（19 阵摆位渲染）接入前沿沿用 v2 布局占位
+      // 结果段（done）：收扇后 / 动画关 / 牌面图关 / 手动录入 —— 读牌段（REQ-129 C：19 阵摆位一屏 + 点开放大连看）；牌面图关走纯文字
       const bodyKids = [
         React.createElement('div', { key: 't', className: 'section-title' }, spreadName),
         askEcho
       ];
-      if (cardImagesOn) {
-        bodyKids.push(React.createElement('div', { key: 'fan', className: 'card-fan' }, cards.map(function (c, i) {
-          return React.createElement(TarotCard, { key: i, item: normTarotCard(c), showMeaning: false });
-        })));
+      if (cardImagesOn && readCards.length && readSpread) {
+        // REQ-129 C 读牌段：19 牌阵官方真实摆位一屏展示（已翻开正面卡）→ 点卡放大连看
+        bodyKids.push(React.createElement('div', { key: 'rdh', className: 'rd-hint' }, '全牌按「' + readSpread.name + '」官方阵型一屏摆位 · 点任意一张放大读解（约 2.5 秒后自动收起，可「上一张 / 下一张」连看）'));
+        bodyKids.push(React.createElement(TarotReadBoard, { key: 'rdb', spread: readSpread, cards: readCards, onOpen: function (i) { setZoomIdx(i); } }));
         bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
           React.createElement('div', { className: 'mp-title' }, '各张牌义'),
           meanItems));
       } else {
-        // REQ-066⑥ 关：纯文字列表模式（无任何卡面/牌背/扇形渲染）
+        // REQ-066⑥ 关 / 无牌面数据兜底：纯文字列表模式（无任何卡面/牌背/扇形渲染）
         bodyKids.push(React.createElement('div', { key: 'mp', className: 'mean-panel' },
-          React.createElement('div', { className: 'mp-title' }, '抽到的牌（纯文字模式）'),
+          React.createElement('div', { className: 'mp-title' }, cardImagesOn ? '抽到的牌' : '抽到的牌（纯文字模式）'),
           meanItems));
       }
       if (interpErr) bodyKids.push(React.createElement('div', { key: 'e', className: 'error', style: { marginTop: 10 } }, interpErr));
@@ -16466,9 +16727,21 @@ function TarotPage({
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
+  // REQ-129 C：放大连看浮层（点牌/点清单条目打开；约 2.5s 自动收起；「上一张/下一张」手动连看）
+  const zoomCard = (zoomIdx !== null && cardImagesOn && readCards[zoomIdx]) ? readCards[zoomIdx] : null;
+  const zoomOverlay = zoomCard
+    ? React.createElement(TarotReadZoom, {
+        key: 'zoom' + zoomIdx,
+        cards: readCards,
+        idx: zoomIdx,
+        onClose: function () { setZoomIdx(null); },
+        onGo: function (ni) { if (ni >= 0 && ni < readCards.length) setZoomIdx(ni); }
+      })
+    : null;
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
     step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot),
+    zoomOverlay,
     // REQ-042：公版署名以页脚小字展示（保持）
     React.createElement('div', { className: 'deck-credit' }, 'Rider-Waite-Smith 1909 公版'));
 }
