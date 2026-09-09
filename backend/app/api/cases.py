@@ -32,6 +32,7 @@ from app.models import (
 )
 from app.auth.router import get_user_id_from_token
 from app.compliance.guardrails import append_disclaimer, check_output
+from app.credits.labels import METHOD_ZH
 from app.credits.service import check_balance, consume
 from app.llm import LLMError, chat
 from app.llm.client import get_usage, reset_usage
@@ -736,6 +737,86 @@ async def archive(
     data = build_archive(case, db)
 
     return {"code": 0, "message": "ok", "data": data}
+
+
+# --- 九法逐法解读（REQ-126）---
+def _aggregate_method_readings(rows: list[MethodResult]) -> tuple[list[dict], list[str]]:
+    """把某 case 的 method_results 行按 method_key 聚合为逐法解读（纯读库，零 LLM）。
+
+    - 顺序按 METHOD_KEYS 注册表；同一 method_key 多行（重复 job）取最新（id 大者）。
+    - phase 取该法「已有非空结果的最高级阶段」：prediction 优先，否则 duan-qian-chen；
+      conclusions 只来自 prediction（断前尘阶段 v2 强制 conclusions=[]）。
+    - past_propositions 优先取断前尘（前端 tab 结论为空时回退展示断前尘命题），
+      仅预测结果时取 prediction 自身 past_propositions。
+    - 两阶段均无非空 result_json（未产出/降级）的 method_key 进 degraded。
+    """
+    latest_pred: dict[str, MethodResult] = {}
+    latest_dqc: dict[str, MethodResult] = {}
+    for row in rows:
+        if row.phase == Phase.prediction:
+            latest_pred[row.method_key] = row
+        elif row.phase == Phase.duan_qian_chen:
+            latest_dqc[row.method_key] = row
+
+    methods: list[dict] = []
+    degraded: list[str] = []
+    for key in METHOD_KEYS:
+        pred = latest_pred.get(key)
+        dqc = latest_dqc.get(key)
+        pred_ok = pred is not None and bool(pred.result_json)
+        dqc_ok = dqc is not None and bool(dqc.result_json)
+        if not pred_ok and not dqc_ok:
+            degraded.append(key)
+            continue
+        primary = pred if pred_ok else dqc
+        primary_rj = primary.result_json if isinstance(primary.result_json, dict) else {}
+        past_propositions: list = []
+        if dqc_ok and isinstance(dqc.result_json, dict):
+            past_propositions = dqc.result_json.get("past_propositions", [])
+        else:
+            past_propositions = primary_rj.get("past_propositions", [])
+        methods.append({
+            "method_key": key,
+            "name": METHOD_ZH.get(key, key),
+            "phase": "prediction" if pred_ok else "duan-qian-chen",
+            "conclusions": primary_rj.get("conclusions", []) if pred_ok else [],
+            "past_propositions": past_propositions,
+            "cached": bool(primary.cached),
+        })
+    return methods, degraded
+
+
+@router.get("/{case_id}/readings")
+async def get_case_readings(
+    case_id: int,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """九法逐法解读聚合（REQ-126，纯读库零 LLM）：返回该 case 全部 method_results
+    按 method_key 聚合的逐法解读，供 9 法内部 tab 展示。
+
+    契约（data）：
+      methods[]：每法一条（顺序 = METHOD_KEYS 注册表）
+        { method_key, name(中文), phase, conclusions[], past_propositions[], cached }
+        - phase = 该法已有非空结果的最高级阶段（"prediction" 优先，否则
+          "duan-qian-chen"）；前端 tab 默认展示 prediction conclusions，
+          若空则回退断前尘 past_propositions。
+        - cached = 该法最新结果行的缓存命中标记。
+      degraded[]：两阶段均无非空 result_json（未产出/降级）的 method_key 列表。
+    中文名来源：app/credits/labels.METHOD_ZH（REQ-063 余额流水中文标签的权威映射）。
+    """
+    user_id = get_user_id_from_token(authorization)
+    case = _get_owned_case(db, case_id, user_id)  # 多用户隔离：非本人/不存在 404
+
+    rows = (
+        db.query(MethodResult)
+        .filter_by(case_id=case.id, user_id=user_id)
+        .order_by(MethodResult.id.asc())
+        .all()
+    )
+    methods, degraded = _aggregate_method_readings(rows)
+
+    return {"code": 0, "message": "ok", "data": {"methods": methods, "degraded": degraded}}
 
 
 # --- 档案增强 ---
