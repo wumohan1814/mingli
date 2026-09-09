@@ -583,6 +583,7 @@
 
     /* ===== HUB 入口卡（REQ-038：竖向单列 + 横向卡片） ===== */
     .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
+    .hub-sub{font-size:13px;color:var(--text-2);line-height:1.7;margin:-8px 0 12px}
     .hub-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
     .hub-card{position:relative;display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;box-sizing:border-box;padding:16px 18px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);cursor:pointer;overflow:hidden;transition:transform .14s,box-shadow .2s}
     .hub-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(26,33,56,.18)}
@@ -802,6 +803,70 @@
     .alm-free .af-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin-bottom:6px}
     .alm-free .af-txt{font-size:13px;color:var(--text-2);line-height:1.75;white-space:pre-wrap;word-break:break-word}
     .alm-disc{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:10px;white-space:pre-wrap;word-break:break-word}
+
+    /* ===== REQ-124/125：太乙神数 + 皇极经世（免档案纯国学大势工具，免费确定性 + 可选付费解读） ===== */
+    .ty-scopes,.hj-modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+    .ty-scope-chip,.hj-mode-chip{padding:9px 14px;text-align:center;border-radius:var(--radius-pill);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:.14s;font-size:13px;color:var(--text-1);font-family:inherit;line-height:1.4}
+    .ty-scope-chip:hover,.hj-mode-chip:hover{filter:brightness(1.04)}
+    .ty-scope-chip.sel,.hj-mode-chip.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);font-weight:700}
+    .ty-scope-hint{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
+    .ty-run{display:flex;align-items:center;gap:8px;margin-top:14px}
+    .ty-run-note{font-size:11px;color:var(--text-3);line-height:1.6;flex:1}
+    .ty-hero{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .ty-bureau{flex:none;min-width:96px;text-align:center;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:8px 10px}
+    .ty-bureau .tb-name{display:block;font-size:20px;font-weight:800;color:var(--skin-accent);line-height:1.3}
+    .ty-bureau .tb-sub{display:block;font-size:11px;color:var(--text-2);margin-top:2px}
+    .ty-hero-meta{flex:1;min-width:180px;font-size:12px;color:var(--text-2);line-height:1.9}
+    .ty-hero-meta b{color:var(--ink-600);font-weight:700;margin-right:2px}
+    .ty-pos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+    .ty-pos-cell{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:10px 12px}
+    .ty-pos-cell .tp-role{font-size:11px;color:var(--text-3)}
+    .ty-pos-cell .tp-val{font-size:17px;font-weight:800;color:var(--text-1);margin-top:3px}
+    .ty-pos-cell .tp-val small{font-weight:600;color:var(--text-2);font-size:12px;margin-left:4px}
+    .ty-pos-cell .tp-sub{font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.5}
+    .ty-count-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+    .ty-count-cell{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:10px 12px;position:relative}
+    .ty-count-cell.lord{border-color:var(--skin-accent)}
+    .ty-count-cell .tc-side{font-size:11px;font-weight:800;color:var(--skin-accent)}
+    .ty-count-cell.guest .tc-side{color:var(--gold-500)}
+    .ty-count-cell.set .tc-side{color:var(--text-2)}
+    .ty-count-cell .tc-num{font-size:22px;font-weight:800;color:var(--text-1);margin-top:2px}
+    .ty-count-cell .tc-nat{display:inline-block;font-size:11px;color:var(--text-2);background:var(--skin-accent-soft);border-radius:var(--radius-pill);padding:1px 8px;margin-left:6px}
+    .ty-count-cell .tc-sub{font-size:11px;color:var(--text-2);margin-top:4px;line-height:1.6}
+    .ty-tactic{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .ty-tactic .tt-cap{font-size:12px;font-weight:700;color:var(--skin-accent);margin-bottom:4px}
+    .ty-tactic .tt-txt{font-size:13px;color:var(--text-1);line-height:1.75}
+    .ty-judge{font-size:12px;color:var(--text-2);line-height:1.75;margin-top:6px}
+    .ty-judge::before{content:'· ';color:var(--skin-accent);font-weight:800}
+    .ty-gods{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+    .ty-god{font-size:11px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:2px 9px;line-height:1.5}
+    .ty-god b{color:var(--text-1);font-weight:700}
+    .ty-chain{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .ty-chain .tc-cap{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:4px}
+    .ty-chain .tc-line{font-size:11px;color:var(--text-3);line-height:1.75;margin-top:2px}
+    .ty-chain .tc-line::before{content:'· '}
+    .hj-hero{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:12px 14px;margin-top:10px}
+    .hj-hero .hh-cap{font-size:12px;color:var(--text-3)}
+    .hj-hero .hh-txt{font-size:14px;font-weight:700;color:var(--text-1);margin-top:3px;line-height:1.6}
+    .hj-hero .hh-txt small{font-weight:600;color:var(--text-2);font-size:12px;margin-left:6px}
+    .hj-cycle{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
+    .hj-cycle-cell{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:9px 11px}
+    .hj-cycle-cell .hc-name{font-size:11px;font-weight:800;color:var(--skin-accent)}
+    .hj-cycle-cell .hc-range{font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.5}
+    .hj-cycle-cell .hc-idx{font-size:10px;color:var(--text-3);margin-top:2px}
+    .hj-gua-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;margin-top:10px}
+    .hj-gua-card{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);padding:10px 12px}
+    .hj-gua-card.annual{border-color:var(--skin-accent);box-shadow:0 0 0 1px var(--skin-accent) inset}
+    .hj-gua-card .hg-layer{font-size:11px;font-weight:800;color:var(--text-3)}
+    .hj-gua-card.annual .hg-layer{color:var(--skin-accent)}
+    .hj-gua-card .hg-name{font-size:16px;font-weight:800;color:var(--text-1);margin-top:2px}
+    .hj-gua-card .hg-sym{font-size:20px;color:var(--skin-accent);margin-top:3px;letter-spacing:2px}
+    .hj-gua-card .hg-judge{font-size:12px;color:var(--text-2);line-height:1.6;margin-top:5px}
+    .hj-gua-card .hg-derive{font-size:10px;color:var(--text-3);line-height:1.5;margin-top:5px}
+    .hj-era{margin-top:10px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--paper)}
+    .hj-era .he-cap{font-size:12px;font-weight:700;color:var(--skin-accent);margin-bottom:4px}
+    .hj-era .he-txt{font-size:13px;color:var(--text-1);line-height:1.75}
+    .hj-chain{font-size:11px;color:var(--text-3);line-height:1.75;margin-top:8px;white-space:pre-wrap;word-break:break-word}
     .focus-note.err{color:var(--cinnabar)}
     .focus-panel{width:100%;margin-top:2px}
     .focus-disclaim{font-size:11px;color:var(--text-3);line-height:1.7;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border)}
@@ -1697,6 +1762,105 @@ const UI_COPY = {
     hour_more: '展开 12 时辰',
     hour_less: '收起时辰',
     no_hours: '（无时辰资料）'
+  },
+  // REQ-124：太乙神数（纯国学大势工具，免档案）—— 免费确定性起算 + 可选付费深度解读
+  taiyi: {
+    title: '太乙神数',
+    sub: '年/月/日/时四计七十二局 · 太乙/文昌/始击/计神/主客定算（确定性计算免费）',
+    scope_label: '计式（四选一）',
+    year_label: '公历年份（年家）',
+    year_ph: '如 2026',
+    scope_year: '年家',
+    scope_year_hint: '以公历年份定年计积年，看一年大势（默认）',
+    scope_month: '月家',
+    scope_month_hint: '以日期定月计积月，看一月大势',
+    scope_day: '日家',
+    scope_day_hint: '以日期定日计积日，看一日大势',
+    scope_hour: '时家',
+    scope_hour_hint: '以日期+时辰定时计积时，看一时辰大势',
+    time_label: '日期与时辰（月/日/时家）',
+    date_label: '日期',
+    shichen_label: '时辰',
+    run: '免费起算',
+    running: '正在起算…',
+    login_hint: '太乙神数需登录后使用（免费确定性起算，登录即可用，无需选档案）。',
+    login_btn: '去登录',
+    result_title: '太乙四计七十二局',
+    bureau_sub: '局',
+    hero_meta: '{yinYang} {bureau}局 · {ganZhi} · {dateTime}',
+    hero_meta2: '积{accumulatedLabel}{accumulatedValue} · 360 周期余数 {entryYears}',
+    pos_title: '核心定位（四计立成）',
+    pos_taiyi: '太乙',
+    pos_wenchang: '文昌（主目）',
+    pos_shiJi: '始击（客目）',
+    pos_jiShen: '计神',
+    count_title: '主客定算',
+    side_lord: '主算',
+    side_guest: '客算',
+    side_set: '定算',
+    tactic_title: '大局攻守（策数博弈定性）',
+    judge_title: '盘面条件',
+    gods_title: '十六神（基础盘辅助索引）',
+    chain_title: '证据链 · 局限（合规参考）',
+    chain_more: '展开证据链',
+    chain_less: '收起证据链',
+    free_reading_title: '趋势参考（免费）',
+    free_reading: '本次按「{scopeLabel}」起太乙{scopeLabel}：{bureau}局（{ganZhi}），太乙在{taiyi}。盘面为确定性计算（积数→七十二局立成→主客定算），零 LLM 免费。局数、宫位、算数、掩囚与十六神只作盘面结构与传统规则描述，不换算为吉凶总分、成功率或唯一应期；主客算多寡与攻守倾向仅供参考，个人事项请结合现实背景判断。',
+    pay_hint: '深度解读为付费 LLM 解读（结合本盘太乙四计盘面），按实际用量扣余额（¥）（点击前将预检余额）',
+    interp_title: '深度解读',
+    disclaimer: '以上内容由传统太乙术数规则（《太乙金镜式经》等）生成，属趋势参考与娱乐范畴，不构成医疗、投资、司法或任何具有约束力的决策建议；请理性看待，重大决策请依据现实信息。',
+    empty: '请选择计式并填写时间参数后起算'
+  },
+  // REQ-125：皇极经世（纯国学大势工具，免档案）—— 免费确定性起算 + 可选付费深度解读
+  huangji: {
+    title: '皇极经世',
+    sub: '元会运世 · 值年/月经/旬纬/日卦/时经卦（确定性计算免费）',
+    mode_label: '起算模式（二选一）',
+    mode_year: '值年卦 · 元会运世',
+    mode_year_hint: '以公元年份排元会运世周期与值年卦（统卦/运卦/十年卦）',
+    mode_datetime: '年月日时卦',
+    mode_datetime_hint: '以日期+时辰排值年/月经/旬纬/日卦/时经卦五层',
+    year_label: '公元年份（无公元 0 年）',
+    year_ph: '如 2026',
+    time_label: '日期与时辰（年月日时模式）',
+    date_label: '日期',
+    shichen_label: '时辰',
+    run: '免费起算',
+    running: '正在起算…',
+    login_hint: '皇极经世需登录后使用（免费确定性起算，登录即可用，无需选档案）。',
+    login_btn: '去登录',
+    result_year_title: '元会运世 · 值年卦',
+    result_dt_title: '值年 / 月经 / 旬纬 / 日卦 / 时经卦',
+    cycle_title: '元会运世周期定位',
+    cycle_yuan: '元',
+    cycle_hui: '会',
+    cycle_yun: '运',
+    cycle_shi: '世',
+    cycle_year: '年坐标',
+    gua_title: '卦变层级（先天圆图值年卦通行排法）',
+    layer_annual: '值年卦',
+    layer_governing: '统卦',
+    layer_yun: '运卦',
+    layer_sixty: '六十年统卦',
+    layer_decade: '十年卦',
+    layer_month: '月经',
+    layer_xun: '旬纬',
+    layer_daily: '日卦',
+    layer_hour: '时经卦',
+    layer_related: '互卦 / 错卦 / 综卦',
+    era_title: '世运消息',
+    reading_title: '值年卦读法（引擎已算好）',
+    cal_title: '皇极历法定位',
+    chain_title: '推演链 · 传统依据',
+    chain_more: '展开推演链',
+    chain_less: '收起推演链',
+    free_reading_title: '趋势参考（免费）',
+    free_reading_year: '本次按公元 {year} 年排皇极经世：{annual}（{ganzhi}），处于{hui}会、{yun}运、{shi}世。盘面为确定性计算（元会运世换算→值年卦与统卦/运卦/十年卦），零 LLM 免费。值年卦描述年度公共时势取象，不表示个人现实吉凶或成功率；阳息阴消阶段与卦辞仅供参考，个人事项请结合现实背景判断。',
+    free_reading_dt: '本次按 {dateTime} 排皇极经世年月日时卦：值年{annual} · 月经{monthJing} · 旬纬{xunWei} · 日卦{daily} · 时经卦{hourJing}。盘面为确定性计算（黄畿「一六为经、六六为纬」分形推衍），零 LLM 免费。各层卦象用于具体时点取象，长期背景仍以元会运世与统卦/运卦/值年卦为准；不表示现实吉凶或成功率，仅供参考，个人事项请结合现实背景判断。',
+    pay_hint: '深度解读为付费 LLM 解读（结合本盘元会运世与卦变层级），按实际用量扣余额（¥）（点击前将预检余额）',
+    interp_title: '深度解读',
+    disclaimer: '以上内容由传统皇极经世规则（《皇极经世》《皇极经世指要》等）生成，属趋势参考与娱乐范畴，不构成医疗、投资、司法或任何具有约束力的决策建议；请理性看待，重大决策请依据现实信息。',
+    empty: '请选择模式并填写时间参数后起算'
   },
   // REQ-070 / BUG-012：「分享帮填」—— 生成一次性链接给朋友免登录代填档案（POST /api/case/share，幂等复用未用链接）
   shareFill: {
@@ -2639,6 +2803,34 @@ function Icon({
         d: "M16 2.5v4"
       }), /*#__PURE__*/React.createElement("path", {
         d: "m9.2 15.2 2 2 3.8-4"
+      }));
+    case 'taiyi':
+      /* REQ-124：太乙神数（九宫格 + 中宫太乙星） */
+      return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("path", {
+        d: "M3.5 8h17"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3.5 16h17"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M8 3.5v17"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M16 3.5v17"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "m12 6.6 1.1 3.3 3.3 1.1-3.3 1.1-1.1 3.3-1.1-3.3-3.3-1.1 3.3-1.1z"
+      }));
+    case 'huangji':
+      /* REQ-125：皇极经世（圆天 + 卦爻层级） */
+      return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("circle", {
+        cx: "12",
+        cy: "12",
+        r: "8.6"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M6.4 8.2h11.2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M6.4 12h5.2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M12.4 12h5.2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M6.4 15.8h11.2"
       }));
     default:
       return null;
@@ -7789,6 +7981,18 @@ const MOD_NAV_GROUPS = [{
     page: 'almanac',
     module: 'guoxue',
     skin: 'guoxue'
+  }, {
+    // REQ-124：太乙神数（免档案纯国学大势工具，顶栏下拉与 HUB 入口对齐）
+    label: '太乙神数',
+    page: 'taiyi',
+    module: 'guoxue',
+    skin: 'guoxue'
+  }, {
+    // REQ-125：皇极经世（免档案纯国学大势工具，顶栏下拉与 HUB 入口对齐）
+    label: '皇极经世',
+    page: 'huangji',
+    module: 'guoxue',
+    skin: 'guoxue'
   }]
 }, {
   title: '西式占卜',
@@ -8711,6 +8915,20 @@ function GuoxueHubPage({
     bar: 'var(--skin-accent)',
     ico: 'calendar',
     to: () => onNavigate('almanac')
+  }, {
+    // REQ-124：太乙神数 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学大势工具，不混入起卦列表）
+    name: '太乙神数',
+    sub: '年/月/日/时四计七十二局 · 主客定算（免费确定性）',
+    bar: 'var(--gold-500)',
+    ico: 'taiyi',
+    to: () => onNavigate('taiyi')
+  }, {
+    // REQ-125：皇极经世 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学大势工具，不混入起卦列表）
+    name: '皇极经世',
+    sub: '元会运世 · 值年/月经/旬纬/日卦/时经卦（免费确定性）',
+    bar: 'var(--skin-accent)',
+    ico: 'huangji',
+    to: () => onNavigate('huangji')
   }];
   // REQ-100：同一排 3 键（九法配对 / 八字配对 / 档案起名），与上方三卡同层级同样式。
   const quickCards = [{
@@ -14207,6 +14425,658 @@ function AlmanacPage({
         React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options))));
 }
 
+/* ---------- REQ-124：太乙神数（免档案纯国学大势工具：免费确定性起算 + 可选付费深度解读） ---------- */
+// 计式 4 选 1（key 对齐 vendored mingyu-core TaiyiScope：year 年家 / month 月家 / day 日家 / hour 时家；
+// 年家须传公历年份，月/日/时家须传 日期+时辰 组装的东八区 ISO customDate，引擎契约见 server.mjs）
+const TAIYI_SCOPES = [{
+  key: 'year',
+  label: '年家',
+  hint: '以公历年份定年计积年，看一年大势（默认）'
+}, {
+  key: 'month',
+  label: '月家',
+  hint: '以日期定月计积月，看一月大势'
+}, {
+  key: 'day',
+  label: '日家',
+  hint: '以日期定日计积日，看一日大势'
+}, {
+  key: 'hour',
+  label: '时家',
+  hint: '以日期+时辰定时计积时，看一时辰大势'
+}];
+const TAIYI_SCOPE_CN = { year: '年家', month: '月家', day: '日家', hour: '时家' };
+function TaiyiPage({
+  onNavigate
+}) {
+  const payEnough = usePaySufficient();
+  const A = UI_COPY.taiyi;
+  const [scope, setScope] = useState('year');
+  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const [timeDate, setTimeDate] = useState(todayStr());
+  const [shichen, setShichen] = useState(nowShichen());
+  const [data, setData] = useState(null); // {id, method, result}
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const [chainOpen, setChainOpen] = useState(false); // 证据链折叠态
+  const scopeValid = function () {
+    if (scope === 'year') {
+      const y = Number(year);
+      if (!/^\d{1,4}$/.test(String(year).trim()) || !Number.isInteger(y) || y < 1 || y > 9999) {
+        toast('年家需填写 1-9999 的公历年份（整数）');
+        return false;
+      }
+    } else {
+      if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
+        toast('请先选择日期（必填）');
+        return false;
+      }
+      if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
+        toast('请选择时辰（必填）');
+        return false;
+      }
+    }
+    return true;
+  };
+  const run = async function () {
+    if (loading) return;
+    if (!token) {
+      toast(A.login_hint);
+      onNavigate('auth');
+      return;
+    }
+    if (!scopeValid()) return;
+    const seed = { taiyi: { scope: scope } };
+    if (scope === 'year') {
+      seed.taiyi.year = Number(year);
+    } else {
+      const startH = (SHICHEN_ARR[shichen] || SHICHEN_ARR[0]).start;
+      seed.taiyi.customDate = timeDate + 'T' + pad2(startH) + ':00:00+08:00';
+    }
+    setLoading(true);
+    setErrored('');
+    setData(null);
+    setInterp('');
+    setInterpErr('');
+    setChainOpen(false);
+    try {
+      const res = await api('/divinations', {
+        method: 'POST',
+        body: JSON.stringify({ method: 'taiyi', case_id: null, seed: seed })
+      });
+      const d = (res && res.data) || res;
+      setData(d);
+      track('taiyi_cast', { scope: scope });
+    } catch (e) {
+      setErrored((e && e.message) || '起算失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const interpret = async function () {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无深度解读内容）');
+      track('taiyi_interpret', {});
+    } catch (e) {
+      setInterpErr((e && e.message) || '深度解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
+    }
+  };
+  const result = (data && data.result) || null;
+  const chain = (result && result.evidenceChain) || null;
+  const scopeLabel = TAIYI_SCOPE_CN[(result && result.scope) || scope] || '年家';
+  let body = null;
+  if (loading) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    body = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '起算失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: run }, UI_COPY.buttons.retry));
+  } else if (result && typeof result === 'object') {
+    const posCells = [{
+      role: A.pos_taiyi,
+      val: result.taiyiPosition || '—',
+      sub: (result.taiyiPalace != null ? '宫' + result.taiyiPalace : '') + [result.taiyiGua, result.taiyiDir].filter(Boolean).join(' '),
+      cls: ''
+    }, {
+      role: A.pos_wenchang,
+      val: result.wenChangPosition || '—',
+      sub: result.wenChangPalace != null ? '宫' + result.wenChangPalace : '',
+      cls: ''
+    }, {
+      role: A.pos_shiJi,
+      val: result.shiJiPosition || '—',
+      sub: result.shiJiPalace != null ? '宫' + result.shiJiPalace : '',
+      cls: ''
+    }, {
+      role: A.pos_jiShen,
+      val: result.jiShenPosition || '—',
+      sub: result.jiShenPalace != null ? '宫' + result.jiShenPalace : '',
+      cls: ''
+    }];
+    const natures = (result.countNatures && typeof result.countNatures === 'object') ? result.countNatures : {};
+    const countCells = [{
+      side: A.side_lord,
+      num: result.lordCount,
+      nat: natures.lord || '',
+      sub: '大将' + (result.lordGeneral != null ? result.lordGeneral + '宫' : '—') + ' · 参将' + (result.lordAssistant != null ? result.lordAssistant + '宫' : '—'),
+      cls: 'lord'
+    }, {
+      side: A.side_guest,
+      num: result.guestCount,
+      nat: natures.guest || '',
+      sub: '大将' + (result.guestGeneral != null ? result.guestGeneral + '宫' : '—') + ' · 参将' + (result.guestAssistant != null ? result.guestAssistant + '宫' : '—'),
+      cls: 'guest'
+    }, {
+      side: A.side_set,
+      num: result.setCount,
+      nat: natures.set || '',
+      sub: '大将' + (result.setGeneral != null ? result.setGeneral + '宫' : '—') + ' · 参将' + (result.setAssistant != null ? result.setAssistant + '宫' : '—'),
+      cls: 'set'
+    }];
+    const freeTxt = A.free_reading
+      .split('{scopeLabel}').join(scopeLabel)
+      .replace('{bureau}', result.bureau != null ? result.bureau : '—')
+      .replace('{ganZhi}', result.ganZhi || '—')
+      .replace('{taiyi}', ((result.taiyiPosition || '') + (result.taiyiPalace != null ? result.taiyiPalace : '') + (result.taiyiDir || '')).trim() || '—');
+    const kids = [];
+    kids.push(React.createElement('div', { key: 'hero', className: 'ty-hero' },
+      React.createElement('div', { className: 'ty-bureau' },
+        React.createElement('span', { className: 'tb-name' }, result.bureau != null ? result.bureau + '局' : '—'),
+        React.createElement('span', { className: 'tb-sub' }, result.yinYang || '')),
+      React.createElement('div', { className: 'ty-hero-meta' },
+        React.createElement('b', null, '干支'), result.ganZhi || '—', ' · ',
+        React.createElement('b', null, '起算'), result.dateTime || '—', React.createElement('br', null),
+        React.createElement('b', null, '积数'), '积' + (result.accumulatedLabel || '') + (result.accumulatedValue != null ? result.accumulatedValue : '—'),
+        '（360 周期余数 ' + (result.entryYears != null ? result.entryYears : '—') + '）')));
+    kids.push(React.createElement('div', { key: 'pos', className: 'card', style: { marginTop: 10 } },
+      React.createElement('div', { className: 'section-title' }, A.pos_title),
+      React.createElement('div', { className: 'ty-pos-grid' }, posCells.map(function (c, i) {
+        return React.createElement('div', { key: i, className: 'ty-pos-cell' },
+          React.createElement('div', { className: 'tp-role' }, c.role),
+          React.createElement('div', { className: 'tp-val' }, c.val),
+          c.sub ? React.createElement('div', { className: 'tp-sub' }, c.sub) : null);
+      }))));
+    kids.push(React.createElement('div', { key: 'count', className: 'card', style: { marginTop: 10 } },
+      React.createElement('div', { className: 'section-title' }, A.count_title),
+      React.createElement('div', { className: 'ty-count-grid' }, countCells.map(function (c, i) {
+        return React.createElement('div', { key: i, className: 'ty-count-cell ' + c.cls },
+          React.createElement('div', { className: 'tc-side' }, c.side),
+          React.createElement('div', { className: 'tc-num' }, c.num != null ? c.num : '—',
+            c.nat ? React.createElement('span', { className: 'tc-nat' }, c.nat) : null),
+          React.createElement('div', { className: 'tc-sub' }, c.sub));
+      }))));
+    if (result.tacticGuidance) {
+      kids.push(React.createElement('div', { key: 'tac', className: 'ty-tactic' },
+        React.createElement('div', { className: 'tt-cap' }, A.tactic_title),
+        React.createElement('div', { className: 'tt-txt' }, result.tacticGuidance)));
+    }
+    if (Array.isArray(result.judgments) && result.judgments.length) {
+      kids.push(React.createElement('div', { key: 'judge', className: 'card', style: { marginTop: 10 } },
+        React.createElement('div', { className: 'section-title' }, A.judge_title),
+        result.judgments.map(function (j, i) {
+          return React.createElement('div', { key: i, className: 'ty-judge' }, j);
+        })));
+    }
+    if (Array.isArray(result.sixteenGods) && result.sixteenGods.length) {
+      kids.push(React.createElement('div', { key: 'gods', className: 'card', style: { marginTop: 10 } },
+        React.createElement('div', { className: 'section-title' }, A.gods_title),
+        React.createElement('div', { className: 'ty-gods' }, result.sixteenGods.map(function (g, i) {
+          return React.createElement('span', { key: i, className: 'ty-god' },
+            React.createElement('b', null, g.god || '—'), '（' + (g.branch || '—') + '）');
+        }))));
+    }
+    if (chain) {
+      const chainLines = [].concat(
+        Array.isArray(chain.calculationChain) ? chain.calculationChain : [],
+        Array.isArray(chain.primaryFacts) ? chain.primaryFacts : [],
+        Array.isArray(chain.supportingFacts) ? chain.supportingFacts : [],
+        Array.isArray(chain.limitations) ? chain.limitations : [],
+        chain.summaryFact ? [chain.summaryFact] : []
+      );
+      kids.push(React.createElement('div', { key: 'chain', className: 'ty-chain' },
+        React.createElement('button', { type: 'button', className: 'focus-btn', onClick: function () { setChainOpen(!chainOpen); } },
+          chainOpen ? A.chain_less : A.chain_more),
+        chainOpen ? chainLines.map(function (ln, i) {
+          return React.createElement('div', { key: i, className: 'tc-line' }, ln);
+        }) : null));
+    }
+    kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
+      React.createElement('div', { className: 'af-title' }, A.free_reading_title),
+      React.createElement('div', { className: 'af-txt' }, freeTxt)));
+    kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
+    kids.push(React.createElement('button', {
+      key: 'paybtn',
+      className: 'btn btn-outline',
+      style: { marginTop: 8 },
+      disabled: interpLoading,
+      onClick: interpret
+    }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+    if (interpErr) kids.push(React.createElement('div', { key: 'interr', className: 'error', style: { marginTop: 10 } }, interpErr));
+    if (interp) kids.push(React.createElement(React.Fragment, { key: 'interp' },
+      React.createElement('div', { className: 'interp-title' }, A.interp_title),
+      React.createElement('div', { className: 'interp-body' }, interp)));
+    kids.push(React.createElement('div', { key: 'disc', className: 'alm-disc' }, A.disclaimer));
+    body = React.createElement('div', null, kids);
+  }
+  const formCard = React.createElement('div', { className: 'card' },
+    React.createElement('div', { className: 'section-title' }, '太乙信息'),
+    React.createElement('div', { className: 'ask-cap' }, A.scope_label, React.createElement('em', null, '*')),
+    React.createElement('div', { className: 'ty-scopes' }, TAIYI_SCOPES.map(function (s) {
+      return React.createElement('button', {
+        key: s.key,
+        type: 'button',
+        className: 'ty-scope-chip' + (scope === s.key ? ' sel' : ''),
+        onClick: function () { setScope(s.key); }
+      }, s.label);
+    })),
+    React.createElement('div', { className: 'ty-scope-hint' }, (TAIYI_SCOPES.find(function (s) { return s.key === scope; }) || {}).hint || ''),
+    scope === 'year'
+      ? React.createElement('div', { key: 'yr', style: { marginTop: 12 } },
+          React.createElement('div', { className: 'ask-cap' }, A.year_label, React.createElement('em', null, '*')),
+          React.createElement('input', {
+            className: 'dt-input',
+            type: 'number',
+            min: 1,
+            max: 9999,
+            step: 1,
+            inputMode: 'numeric',
+            placeholder: A.year_ph,
+            value: year,
+            onChange: function (e) { setYear(e.target.value); }
+          }))
+      : React.createElement('div', { key: 'dt', style: { marginTop: 12 } },
+          React.createElement('div', { className: 'ask-cap' }, A.time_label, React.createElement('em', null, '*')),
+          React.createElement('div', { className: 'dt-row' },
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, A.date_label, React.createElement('em', null, '*')),
+              React.createElement('input', {
+                type: 'date',
+                className: 'dt-input',
+                value: timeDate,
+                onChange: function (e) { setTimeDate(e.target.value); }
+              })),
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, A.shichen_label, React.createElement('em', null, '*')),
+              React.createElement('select', {
+                className: 'dt-input',
+                value: shichen,
+                onChange: function (e) { setShichen(Number(e.target.value)); }
+              }, SHICHEN_ARR.map(function (s, i) {
+                return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
+              }))))),
+    React.createElement('div', { className: 'ty-run' },
+      React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
+        loading ? A.running : A.run),
+      React.createElement('span', { className: 'ty-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'taiyi', size: 22 }), ' ' + A.title),
+    React.createElement('div', { className: 'hub-sub' }, A.sub),
+    !token ? React.createElement('div', { className: 'card' },
+      React.createElement('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 10 } }, A.login_hint),
+      React.createElement('button', { className: 'btn btn-primary', onClick: function () { onNavigate('auth'); } }, A.login_btn)) : React.createElement(React.Fragment, null,
+      formCard,
+      body,
+      React.createElement('div', { className: 'back-row fill' },
+        React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options))));
+}
+
+/* ---------- REQ-125：皇极经世（免档案纯国学大势工具：免费确定性起算 + 可选付费深度解读） ---------- */
+// 模式 2 选 1（对齐 vendored mingyu-core HuangjiJingshiInput：year 值年模式传公元年份；
+// datetime 年月日时模式传 日期+时辰 组装的东八区 ISO customDate，引擎契约见 server.mjs）
+const HUANGJI_MODES = [{
+  key: 'year',
+  label: '值年卦 · 元会运世',
+  hint: '以公元年份排元会运世周期与值年卦（统卦/运卦/十年卦）'
+}, {
+  key: 'datetime',
+  label: '年月日时卦',
+  hint: '以日期+时辰排值年/月经/旬纬/日卦/时经卦五层'
+}];
+const HUANGJI_CYCLE_LAYERS = [{ key: 'yuan', label: '元' }, { key: 'hui', label: '会' }, { key: 'yun', label: '运' }, { key: 'shi', label: '世' }];
+function hjGuaCard(layerLabel, g, extraCls) {
+  // 皇极经世卦卡：层名 + 卦名 + 卦符 + 上下卦 + 卦辞 + 变卦来源/年份区间
+  if (!g || typeof g !== 'object') {
+    return React.createElement('div', { key: layerLabel, className: 'hj-gua-card' },
+      React.createElement('div', { className: 'hg-layer' }, layerLabel), '—');
+  }
+  const derive = [];
+  if (g.derivedFrom) {
+    if (g.changedLine != null) derive.push('由' + g.derivedFrom + '第' + g.changedLine + '爻变');
+    else if (g.sequenceOffset != null) derive.push('由' + g.derivedFrom + '顺行' + g.sequenceOffset + '位');
+    else derive.push('承' + g.derivedFrom);
+  }
+  if (g.startYear != null && g.endYear != null) derive.push(g.startYear + '–' + g.endYear + '（' + (g.durationYears != null ? g.durationYears + '年' : '') + '）');
+  if (g.changedLineText) derive.push('变爻辞：' + g.changedLineText);
+  if (g.year != null && g.ganzhi) derive.push(g.year + '年 ' + g.ganzhi);
+  const upperLower = [g.upper, g.lower].filter(Boolean).join(' · ');
+  const guaDesc = upperLower + (g.judgment ? (upperLower ? '｜' : '') + g.judgment : '');
+  return React.createElement('div', { className: 'hj-gua-card' + (extraCls ? ' ' + extraCls : '') },
+    React.createElement('div', { className: 'hg-layer' }, layerLabel),
+    React.createElement('div', { className: 'hg-name' }, g.name || g.shortName || '—'),
+    g.symbol ? React.createElement('div', { className: 'hg-sym' }, g.symbol) : null,
+    guaDesc ? React.createElement('div', { className: 'hg-judge' }, guaDesc) : null,
+    derive.length ? React.createElement('div', { className: 'hg-derive' }, derive.join('；')) : null);
+}
+function HuangjiPage({
+  onNavigate
+}) {
+  const payEnough = usePaySufficient();
+  const A = UI_COPY.huangji;
+  const [mode, setMode] = useState('year');
+  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const [timeDate, setTimeDate] = useState(todayStr());
+  const [shichen, setShichen] = useState(nowShichen());
+  const [data, setData] = useState(null); // {id, method, result}
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState('');
+  const [interp, setInterp] = useState('');
+  const [interpLoading, setInterpLoading] = useState(false);
+  const [interpErr, setInterpErr] = useState('');
+  const [chainOpen, setChainOpen] = useState(false); // 推演链折叠态
+  const modeValid = function () {
+    if (mode === 'year') {
+      const y = Number(year);
+      if (!/^-?\d{1,6}$/.test(String(year).trim()) || !Number.isInteger(y) || y === 0 || y < -67017 || y > 9999) {
+        toast('值年模式需填写公元整数年份（无公元 0 年，不早于公元前 67017 年）');
+        return false;
+      }
+    } else {
+      if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
+        toast('请先选择日期（必填）');
+        return false;
+      }
+      if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
+        toast('请选择时辰（必填）');
+        return false;
+      }
+    }
+    return true;
+  };
+  const run = async function () {
+    if (loading) return;
+    if (!token) {
+      toast(A.login_hint);
+      onNavigate('auth');
+      return;
+    }
+    if (!modeValid()) return;
+    const seed = { huangji: { mode: mode } };
+    if (mode === 'year') {
+      seed.huangji.year = Number(year);
+    } else {
+      const startH = (SHICHEN_ARR[shichen] || SHICHEN_ARR[0]).start;
+      seed.huangji.customDate = timeDate + 'T' + pad2(startH) + ':00:00+08:00';
+    }
+    setLoading(true);
+    setErrored('');
+    setData(null);
+    setInterp('');
+    setInterpErr('');
+    setChainOpen(false);
+    try {
+      const res = await api('/divinations', {
+        method: 'POST',
+        body: JSON.stringify({ method: 'huangji', case_id: null, seed: seed })
+      });
+      const d = (res && res.data) || res;
+      setData(d);
+      track('huangji_cast', { mode: mode });
+    } catch (e) {
+      setErrored((e && e.message) || '起算失败，请重试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const interpret = async function () {
+    if (!data || !data.id || interpLoading) return;
+    setInterpLoading(true);
+    setInterpErr('');
+    try {
+      const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
+      setInterp((res && res.data && res.data.interpretation) || '（暂无深度解读内容）');
+      track('huangji_interpret', {});
+    } catch (e) {
+      setInterpErr((e && e.message) || '深度解读失败，请重试。');
+    } finally {
+      setInterpLoading(false);
+    }
+  };
+  const result = (data && data.result) || null;
+  const chain = (result && result.evidenceChain) || null;
+  let body = null;
+  if (loading) {
+    body = React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'skeleton sk-line' }),
+      React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
+  } else if (errored) {
+    body = React.createElement('div', { className: 'card failed-box' },
+      React.createElement('div', { className: 'section-title' }, '起算失败'),
+      React.createElement('div', { className: 'error' }, errored),
+      React.createElement('button', { className: 'btn btn-primary', onClick: run }, UI_COPY.buttons.retry));
+  } else if (result && typeof result === 'object') {
+    const kids = [];
+    const dtf = (result.dateTimeForecast && typeof result.dateTimeForecast === 'object') ? result.dateTimeForecast : null;
+    const hex = dtf ? dtf.hexagrams : ((result.forecast && result.forecast.hexagrams) || null);
+    const annual = (hex && (hex.annual || hex.hexagram)) || null;
+    // 顶部 hero：值年卦 / 民用时间
+    if (dtf) {
+      const civ = dtf.civilTime || {};
+      const cal = dtf.calendar || {};
+      kids.push(React.createElement('div', { key: 'hero', className: 'hj-hero' },
+        React.createElement('div', { className: 'hh-cap' }, '年月日时起盘 · ' + (civ.dateTime || '—')),
+        React.createElement('div', { className: 'hh-txt' },
+          '值年卦 ' + ((annual && annual.name) || '—'),
+          React.createElement('small', null, (annual && annual.ganzhi) ? (annual.year + ' ' + annual.ganzhi) : ''))));
+      kids.push(React.createElement('div', { key: 'cal', className: 'card', style: { marginTop: 10 } },
+        React.createElement('div', { className: 'section-title' }, A.cal_title),
+        React.createElement('div', { className: 'alm-day-meta' },
+          React.createElement('b', null, '节气'), (cal.activeSolarTerm || '—') + ' 后第 ' + (cal.actualDayInSolarTerm != null ? cal.actualDayInSolarTerm : '—') + ' 日', ' · ',
+          React.createElement('b', null, '皇极月'), '第 ' + (cal.monthIndex != null ? cal.monthIndex : '—') + ' 月（' + (cal.monthBranch || '—') + '月）', ' · ',
+          React.createElement('b', null, '日序'), '月内第 ' + (cal.dayOfMonth != null ? cal.dayOfMonth : '—') + ' 日 / 年内第 ' + (cal.dayOfYear != null ? cal.dayOfYear : '—') + ' 日', ' · ',
+          React.createElement('b', null, '时段'), (cal.hourRange || '—') + '（第 ' + (cal.hourSegment != null ? cal.hourSegment : '—') + ' 段）')));
+    } else {
+      const f = result.forecast || {};
+      kids.push(React.createElement('div', { key: 'hero', className: 'hj-hero' },
+        React.createElement('div', { className: 'hh-cap' }, '值年卦 · ' + ((result.input && result.input.calendar) || '通行公元年')),
+        React.createElement('div', { className: 'hh-txt' },
+          (annual && annual.name) || '—',
+          React.createElement('small', null, (result.input && result.input.year != null) ? ((result.input.year > 0 ? '公元 ' : '公元前 ') + Math.abs(result.input.year)) + ' 年' : ''))));
+    }
+    // 元会运世周期定位（两种模式都有）
+    const pos = (result.position && typeof result.position === 'object') ? result.position : null;
+    if (pos) {
+      const cycleCells = HUANGJI_CYCLE_LAYERS.map(function (ly) {
+        const r = pos[ly.key];
+        return React.createElement('div', { key: ly.key, className: 'hj-cycle-cell' },
+          React.createElement('div', { className: 'hc-name' }, ly.label),
+          React.createElement('div', { className: 'hc-range' }, (r && r.startYear != null && r.endYear != null) ? (r.startYear + ' – ' + r.endYear) : '—'),
+          React.createElement('div', { className: 'hc-idx' }, (r && r.indexInYuan != null) ? ('本元第 ' + r.indexInYuan + (ly.key === 'hui' && r.branch ? '（' + r.branch + '会）' : '') + ' · ' + (ly.key === 'yun' && r.indexInHui != null ? '会内第 ' + r.indexInHui : '') + (ly.key === 'shi' && r.indexInYun != null ? '运内第 ' + r.indexInYun : '')) : ''));
+      });
+      if (pos.year && typeof pos.year === 'object') {
+        cycleCells.push(React.createElement('div', { key: 'yr', className: 'hj-cycle-cell' },
+          React.createElement('div', { className: 'hc-name' }, A.cycle_year),
+          React.createElement('div', { className: 'hc-range' }, pos.year.coordinate != null ? pos.year.coordinate : '—'),
+          React.createElement('div', { className: 'hc-idx' }, (pos.year.indexInShi != null ? '本世第 ' + pos.year.indexInShi + ' 年' : '') + (pos.year.indexInYuan != null ? ' · 本元第 ' + pos.year.indexInYuan + ' 年' : ''))));
+      }
+      kids.push(React.createElement('div', { key: 'cycle', className: 'card', style: { marginTop: 10 } },
+        React.createElement('div', { className: 'section-title' }, A.cycle_title),
+        React.createElement('div', { className: 'hj-cycle' }, cycleCells)));
+    }
+    // 卦变层级
+    if (hex && typeof hex === 'object') {
+      const guaKids = [];
+      if (dtf) {
+        const layers = [
+          { label: A.layer_annual, g: hex.annual, cls: 'annual' },
+          { label: A.layer_month, g: hex.monthJing, cls: '' },
+          { label: A.layer_xun, g: hex.xunWei, cls: '' },
+          { label: A.layer_daily, g: hex.daily, cls: '' },
+          { label: A.layer_hour, g: hex.hourJing, cls: '' }
+        ];
+        layers.forEach(function (l) { guaKids.push(hjGuaCard(l.label, l.g, l.cls)); });
+      } else {
+        const layers = [
+          { label: A.layer_governing, g: hex.governing && hex.governing.hexagram, cls: '' },
+          { label: A.layer_yun, g: hex.yun && hex.yun.hexagram, cls: '' },
+          { label: A.layer_sixty, g: hex.sixtyYear && hex.sixtyYear.hexagram, cls: '' },
+          { label: A.layer_decade, g: hex.decade && hex.decade.hexagram, cls: '' },
+          { label: A.layer_annual, g: hex.annual, cls: 'annual' }
+        ];
+        layers.forEach(function (l) { guaKids.push(hjGuaCard(l.label, l.g, l.cls)); });
+        const rel = (result.forecast && result.forecast.relatedHexagrams) || null;
+        if (rel && typeof rel === 'object') {
+          guaKids.push(hjGuaCard(A.layer_related.split(' / ')[0], rel.mutual, ''));
+          guaKids.push(hjGuaCard(A.layer_related.split(' / ')[1], rel.opposite, ''));
+          guaKids.push(hjGuaCard(A.layer_related.split(' / ')[2], rel.reversed, ''));
+        }
+      }
+      kids.push(React.createElement('div', { key: 'gua', className: 'card', style: { marginTop: 10 } },
+        React.createElement('div', { className: 'section-title' }, A.gua_title),
+        React.createElement('div', { className: 'hj-gua-grid' }, guaKids)));
+    }
+    // 世运消息（year 模式）
+    if (result.eraTrend && typeof result.eraTrend === 'object') {
+      kids.push(React.createElement('div', { key: 'era', className: 'hj-era' },
+        React.createElement('div', { className: 'he-cap' }, A.era_title + ' · ' + (result.eraTrend.phase || '')),
+        React.createElement('div', { className: 'he-txt' }, result.eraTrend.summary || result.eraTrend.trendNature || '')));
+    }
+    // 值年卦读法（year 模式，引擎已算好）
+    const rd = (result.forecast && result.forecast.reading) || null;
+    if (rd && typeof rd === 'object') {
+      const rdLines = [rd.headline, rd.cycleContext, rd.annualFocus].filter(Boolean);
+      if (Array.isArray(rd.interpretationOrder)) rdLines.push('解读顺序：' + rd.interpretationOrder.join(' → '));
+      kids.push(React.createElement('div', { key: 'reading', className: 'ty-chain' },
+        React.createElement('div', { className: 'tc-cap' }, A.reading_title),
+        rdLines.map(function (ln, i) {
+          return React.createElement('div', { key: i, className: 'tc-line' }, ln);
+        })));
+    }
+    // 推演链
+    if (chain) {
+      const chainLines = [].concat(
+        Array.isArray(chain.calculationChain) ? chain.calculationChain : [],
+        Array.isArray(chain.limitations) ? chain.limitations : []
+      );
+      kids.push(React.createElement('div', { key: 'chain', className: 'ty-chain' },
+        React.createElement('button', { type: 'button', className: 'focus-btn', onClick: function () { setChainOpen(!chainOpen); } },
+          chainOpen ? A.chain_less : A.chain_more),
+        chainOpen ? chainLines.map(function (ln, i) {
+          return React.createElement('div', { key: i, className: 'tc-line' }, ln);
+        }) : null));
+    }
+    // 趋势参考（免费）
+    let freeTxt;
+    if (dtf) {
+      freeTxt = A.free_reading_dt
+        .replace('{dateTime}', (dtf.civilTime && dtf.civilTime.dateTime) || '—')
+        .replace('{annual}', ((dtf.hexagrams.annual && dtf.hexagrams.annual.shortName) || '—'))
+        .replace('{monthJing}', ((dtf.hexagrams.monthJing && dtf.hexagrams.monthJing.shortName) || '—'))
+        .replace('{xunWei}', ((dtf.hexagrams.xunWei && dtf.hexagrams.xunWei.shortName) || '—'))
+        .replace('{daily}', ((dtf.hexagrams.daily && dtf.hexagrams.daily.shortName) || '—'))
+        .replace('{hourJing}', ((dtf.hexagrams.hourJing && dtf.hexagrams.hourJing.shortName) || '—'));
+    } else {
+      const y = (result.input && result.input.year != null) ? result.input.year : '';
+      const posH = (result.position && result.position.hui) || {};
+      const posY2 = (result.position && result.position.yun) || {};
+      const posS = (result.position && result.position.shi) || {};
+      freeTxt = A.free_reading_year
+        .replace('{year}', y)
+        .replace('{annual}', ((result.forecast && result.forecast.hexagrams && result.forecast.hexagrams.annual && result.forecast.hexagrams.annual.shortName) || '—'))
+        .replace('{ganzhi}', ((result.forecast && result.forecast.hexagrams && result.forecast.hexagrams.annual && result.forecast.hexagrams.annual.ganzhi) || '—'))
+        .replace('{hui}', posH.branch || (posH.indexInYuan != null ? posH.indexInYuan : '—'))
+        .replace('{yun}', posY2.indexInYuan != null ? posY2.indexInYuan : '—')
+        .replace('{shi}', posS.indexInYun != null ? posS.indexInYun : '—');
+    }
+    kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
+      React.createElement('div', { className: 'af-title' }, A.free_reading_title),
+      React.createElement('div', { className: 'af-txt' }, freeTxt)));
+    kids.push(React.createElement('div', { key: 'payhint', className: 'pay-hint' }, A.pay_hint));
+    kids.push(React.createElement('button', {
+      key: 'paybtn',
+      className: 'btn btn-outline',
+      style: { marginTop: 8 },
+      disabled: interpLoading,
+      onClick: interpret
+    }, interpLoading ? UI_COPY.tips.interpreting : [UI_COPY.buttons.interpret_pay, payBadge(payEnough)]));
+    if (interpErr) kids.push(React.createElement('div', { key: 'interr', className: 'error', style: { marginTop: 10 } }, interpErr));
+    if (interp) kids.push(React.createElement(React.Fragment, { key: 'interp' },
+      React.createElement('div', { className: 'interp-title' }, A.interp_title),
+      React.createElement('div', { className: 'interp-body' }, interp)));
+    kids.push(React.createElement('div', { key: 'disc', className: 'alm-disc' }, A.disclaimer));
+    body = React.createElement('div', null, kids);
+  }
+  const formCard = React.createElement('div', { className: 'card' },
+    React.createElement('div', { className: 'section-title' }, '皇极信息'),
+    React.createElement('div', { className: 'ask-cap' }, A.mode_label, React.createElement('em', null, '*')),
+    React.createElement('div', { className: 'hj-modes' }, HUANGJI_MODES.map(function (m) {
+      return React.createElement('button', {
+        key: m.key,
+        type: 'button',
+        className: 'hj-mode-chip' + (mode === m.key ? ' sel' : ''),
+        onClick: function () { setMode(m.key); }
+      }, m.label);
+    })),
+    React.createElement('div', { className: 'ty-scope-hint' }, (HUANGJI_MODES.find(function (m) { return m.key === mode; }) || {}).hint || ''),
+    mode === 'year'
+      ? React.createElement('div', { key: 'yr', style: { marginTop: 12 } },
+          React.createElement('div', { className: 'ask-cap' }, A.year_label, React.createElement('em', null, '*')),
+          React.createElement('input', {
+            className: 'dt-input',
+            type: 'number',
+            step: 1,
+            inputMode: 'numeric',
+            placeholder: A.year_ph,
+            value: year,
+            onChange: function (e) { setYear(e.target.value); }
+          }))
+      : React.createElement('div', { key: 'dt', style: { marginTop: 12 } },
+          React.createElement('div', { className: 'ask-cap' }, A.time_label, React.createElement('em', null, '*')),
+          React.createElement('div', { className: 'dt-row' },
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, A.date_label, React.createElement('em', null, '*')),
+              React.createElement('input', {
+                type: 'date',
+                className: 'dt-input',
+                value: timeDate,
+                onChange: function (e) { setTimeDate(e.target.value); }
+              })),
+            React.createElement('label', { className: 'dt-field' },
+              React.createElement('span', { className: 'dt-cap' }, A.shichen_label, React.createElement('em', null, '*')),
+              React.createElement('select', {
+                className: 'dt-input',
+                value: shichen,
+                onChange: function (e) { setShichen(Number(e.target.value)); }
+              }, SHICHEN_ARR.map(function (s, i) {
+                return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
+              }))))),
+    React.createElement('div', { className: 'ty-run' },
+      React.createElement('button', { className: 'btn btn-primary', type: 'button', disabled: loading, onClick: run },
+        loading ? A.running : A.run),
+      React.createElement('span', { className: 'ty-run-note' }, '确定性计算、零 LLM、免费；深度解读为可选付费（按实际用量扣余额）。')));
+  return React.createElement('div', { className: 'container' },
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'huangji', size: 22 }), ' ' + A.title),
+    React.createElement('div', { className: 'hub-sub' }, A.sub),
+    !token ? React.createElement('div', { className: 'card' },
+      React.createElement('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 10 } }, A.login_hint),
+      React.createElement('button', { className: 'btn btn-primary', onClick: function () { onNavigate('auth'); } }, A.login_btn)) : React.createElement(React.Fragment, null,
+      formCard,
+      body,
+      React.createElement('div', { className: 'back-row fill' },
+        React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options))));
+}
+
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
 const TAROT_DECK = [{
   name: '愚者',
@@ -18826,6 +19696,8 @@ const REQ080_PAGE_PATH = {
   zodiac: '/zodiac',
   divination: '/divination',
   almanac: '/almanac',
+  taiyi: '/taiyi',
+  huangji: '/huangji',
   astrology: '/astrology',
   tarot: '/tarot',
   lenormand: '/lenormand',
@@ -18883,6 +19755,14 @@ const REQ080_PAGE_THEME = {
     skin: 'guoxue'
   },
   almanac: {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  taiyi: {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  huangji: {
     module: 'guoxue',
     skin: 'guoxue'
   },
@@ -19373,6 +20253,12 @@ function App() {
       onNavigate: navigate
     }),
     almanac: /*#__PURE__*/React.createElement(AlmanacPage, {
+      onNavigate: navigate
+    }),
+    taiyi: /*#__PURE__*/React.createElement(TaiyiPage, {
+      onNavigate: navigate
+    }),
+    huangji: /*#__PURE__*/React.createElement(HuangjiPage, {
       onNavigate: navigate
     }),
     tarot: /*#__PURE__*/React.createElement(TarotPage, {
