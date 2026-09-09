@@ -214,10 +214,13 @@ class ReviseRequest(BaseModel):
 class RenameCaseRequest(CaseContactFields):
     """档案命名/联系方式修改：PATCH /api/cases/{case_id} body
 
-    name 必填（保留重命名语义）；phone/email 选填（REQ-065「修改」入口可编辑，
-    格式校验同上：11 位数字手机号 / 含 @ 邮箱，非法抛 400）。
+    name 选填（显式提供才更新，保留重命名语义）；phone/email 选填（REQ-065
+    「修改」入口可编辑，格式校验同上：11 位数字手机号 / 含 @ 邮箱，非法抛 400）。
+    set_default 选填（REQ-113③：手动切换默认档案——true=将该档案设为该用户
+    唯一默认，其余同用户档案取消默认；false=取消该档案默认）。
     """
-    name: str
+    name: Optional[str] = None
+    set_default: Optional[bool] = None
 
 
 # --- 路由 ---
@@ -230,6 +233,13 @@ async def create_case(
     """建档"""
     user_id = get_user_id_from_token(authorization)
 
+    # REQ-113①：该用户尚无任何默认档案 → 新档案即默认（首份即默认；已有默认后的
+    # 新建档案不设默认，切换默认走 PATCH /api/cases/{id} set_default，多用户隔离：
+    # 判定/落位一律带 user_id）
+    has_default = (
+        db.query(Case.id).filter_by(user_id=user_id, default=True).first() is not None
+    )
+
     # REQ-065：phone/email 写入独立列（列表/详情可直接查询，不再只塞 input_json）；
     # input_json 仅落建档表单的出生/性别/主问等原字段
     case = Case(
@@ -238,6 +248,7 @@ async def create_case(
         phone=req.phone,
         email=req.email,
         status=CaseStatus.created,
+        default=not has_default,
     )
     db.add(case)
     db.commit()
@@ -299,6 +310,7 @@ async def list_cases(
                 "name": case.name,
                 "phone": case.phone,
                 "email": case.email,
+                "isDefault": bool(case.default),
                 "birthYear": inp.get("birth_year"),
                 "gender": inp.get("gender"),
                 "birthplace": inp.get("birthplace"),
@@ -758,19 +770,32 @@ async def rename_case(
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """档案命名/联系方式修改：更新 case.name 与选填 phone/email（多用户隔离，非本人 404）
+    """档案命名/联系方式修改 + 默认档案切换：更新 case.name 与选填 phone/email
+    （REQ-065，多用户隔离，非本人 404），并支持 REQ-113③ set_default 手动切换默认。
 
-    REQ-065：phone/email 仅在请求显式提供时更新（model_fields_set 判定），
-    避免纯重命名（只发 name）误把联系方式清空；发送 "" 可清空为 None。
+    - name/phone/email 仅在请求显式提供时更新（model_fields_set 判定），
+      避免纯切换默认（只发 set_default）误清档案名/联系方式；发送 "" 可清空为 None。
+    - set_default=true：先清该用户全部档案的 default（同一事务 bulk UPDATE），
+      再将该档案置为唯一默认；false：取消该档案默认。仅影响本人档案（user_id 过滤）。
     """
     user_id = get_user_id_from_token(authorization)
     case = _get_owned_case(db, case_id, user_id)
 
-    case.name = req.name
+    if "name" in req.model_fields_set:
+        case.name = req.name
     if "phone" in req.model_fields_set:
         case.phone = req.phone
     if "email" in req.model_fields_set:
         case.email = req.email
+    # REQ-113③：手动切换默认档案（先清后设，同一事务；同步 session 内的 case 对象）
+    if "set_default" in req.model_fields_set:
+        if req.set_default:
+            db.query(Case).filter_by(user_id=user_id).update(
+                {"default": False}, synchronize_session=False
+            )
+            case.default = True
+        else:
+            case.default = False
     db.commit()
     db.refresh(case)
 
@@ -782,6 +807,7 @@ async def rename_case(
             "name": case.name,
             "phone": case.phone,
             "email": case.email,
+            "isDefault": bool(case.default),
         },
     }
 
