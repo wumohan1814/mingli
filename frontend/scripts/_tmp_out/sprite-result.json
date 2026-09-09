@@ -1,0 +1,5 @@
+{
+  "scenario": "sprite",
+  "ts": "2026-09-09T21:52:33",
+  "error": "KeyError: 'result'\nTraceback (most recent call last):\n  File \"C:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\frontend\\scripts\\_tmp-cdp-verify.py\", line 259, in main\n    page = next(t for t in r[\"result\"][\"targetInfos\"] if t[\"type\"] == \"page\")\n                           ~^^^^^^^^^^\nKeyError: 'result'\n"
+}
