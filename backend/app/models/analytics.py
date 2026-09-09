@@ -82,6 +82,9 @@ class Case(Base):
     mbti_type = Column(String(8), nullable=True)   # 该档案主人的 MBTI 类型（如 INTJ；POST /api/mbti/score 回写）
     phone = Column(String(32), nullable=True)      # 手机号（REQ-065：非必填，CRM 列表/档案详情展示）
     email = Column(String(128), nullable=True)     # 电子邮箱（REQ-065：非必填，CRM 列表/档案详情展示）
+    # REQ-113：默认档案标记（同一用户至多一份 default=True；新建时若该用户尚无默认则首份即默认，
+    # 已有默认后的新建档案不设默认，切换走 PATCH /api/cases/{id} 的 set_default）
+    default = Column(Boolean, nullable=False, default=False)
     input_json = Column(JSON, nullable=True)
     current_stage = Column(Integer, default=0)
     status = Column(SAEnum(CaseStatus), default=CaseStatus.created)
