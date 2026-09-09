@@ -797,6 +797,53 @@
     .lr-tpl .tpl-chip.sel{color:var(--skin-accent-ink);background:var(--skin-accent);border-color:var(--skin-accent)}
     .lr-tpl .tpl-note{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
 
+    /* ===== REQ-119：金口诀（jinkoujue）结果页 ===== */
+    .jk-meta{font-size:12px;color:var(--text-2);text-align:center;margin:2px 0 8px;line-height:1.7;word-break:break-all}
+    .jk-sec{font-size:13px;font-weight:700;color:var(--skin-accent);margin:14px 0 6px}
+    .jk-four{display:flex;flex-direction:column;gap:6px}
+    .jk-four-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+    .jk-four-row .jkf-name{flex:none;width:42px;font-size:12px;font-weight:700;color:var(--text-2)}
+    .jk-four-row .jkf-main{font-size:16px;font-weight:800;color:var(--text-1)}
+    .jk-four-row .jkf-god{font-size:12px;color:var(--skin-accent)}
+    .jk-four-row .jkf-sub{flex:1;min-width:0;font-size:11px;color:var(--text-3);text-align:right;line-height:1.55}
+    .jk-four-row .jkf-sub .jkf-void{color:var(--cinnabar);font-weight:700}
+    .jk-note{font-size:11px;color:var(--text-3);margin-top:4px;line-height:1.6}
+    .jk-rule{font-size:12px;color:var(--text-2);line-height:1.7;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+    .jk-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .jk-tag{font-size:11px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 9px;line-height:1.6}
+    .jk-list{list-style:none;margin:0;padding:0}
+    .jk-list li{font-size:12px;color:var(--text-2);line-height:1.75;padding:3px 0 3px 14px;position:relative;word-break:break-word}
+    .jk-list li::before{content:'·';position:absolute;left:2px;color:var(--skin-accent)}
+    .jk-mv{display:flex;gap:7px;align-items:flex-start;padding:6px 0;border-top:1px dashed var(--border)}
+    .jk-mv:first-child{border-top:none}
+    .jk-mv-wrap{margin-top:2px}
+    .jk-mv .jkm-cat{flex:none;font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;line-height:1.6;margin-top:1px}
+    .jk-mv .jkm-cat.wu{color:#fff;background:var(--gold-500)}
+    .jk-mv .jkm-cat.san{color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .jk-mv .jkm-body{flex:1;min-width:0}
+    .jk-mv .jkm-t{font-size:12px;font-weight:700;color:var(--text-1)}
+    .jk-mv .jkm-d{font-size:11px;color:var(--text-3);line-height:1.6;margin-top:1px;word-break:break-word}
+    .jk-ev{display:flex;gap:7px;align-items:flex-start;padding:6px 0;border-top:1px dashed var(--border)}
+    .jk-ev:first-child{border-top:none}
+    .jk-ev-wrap{margin-top:2px}
+    .jk-ev .jke-lv{flex:none;font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px;line-height:1.6;margin-top:1px}
+    .jk-ev .jke-lv.master{color:#fff;background:var(--gold-500)}
+    .jk-ev .jke-lv.assist{color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .jk-ev .jke-body{flex:1;min-width:0}
+    .jk-ev .jke-t{font-size:12px;font-weight:700;color:var(--text-1)}
+    .jk-ev .jke-d{font-size:11px;color:var(--text-3);line-height:1.6;margin-top:1px;white-space:pre-wrap;word-break:break-word}
+    /* REQ-119：金口诀起课方式面板（时间/指定地分/数字/随机 四选一） */
+    .jk-methods{display:flex;gap:6px;flex-wrap:wrap}
+    .jk-method-chip{flex:1 1 auto;font-size:12px;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:5px 10px;cursor:pointer;font-family:inherit;line-height:1.5;transition:.14s;text-align:center}
+    .jk-method-chip.sel{color:var(--skin-accent-ink);background:var(--skin-accent);border-color:var(--skin-accent)}
+    .jk-branch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px}
+    .jk-branch-chip{font-size:13px;font-weight:700;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 0;cursor:pointer;font-family:inherit;line-height:1.4;text-align:center;transition:.14s}
+    .jk-branch-chip.sel{color:var(--skin-accent-ink);background:var(--skin-accent);border-color:var(--skin-accent)}
+    .jk-num-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .jk-num-in{flex:1 1 140px;box-sizing:border-box;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--paper);color:var(--text-1);font-size:14px;font-family:inherit;outline:none}
+    .jk-num-in:focus{border-color:var(--skin-accent);box-shadow:0 0 0 2px var(--skin-accent-soft)}
+    .jk-note2{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.6}
+
     /* ===== 塔罗 / 雷诺曼 占位卡 ===== */
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
     .tarot-card{width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -9599,8 +9646,8 @@ const DIVIN_METHODS = [{
 }, {
   id: 'jinkoujue',
   name: '金口诀',
-  desc: '敬请期待',
-  todo: true
+  desc: '以地分起课，四位一体（人元/贵神/将神/地分）断吉凶',
+  todo: false
 }, {
   id: 'qimen',
   name: '奇门时家',
@@ -9625,7 +9672,7 @@ const SHICHEN_ARR = [
   { n: '戌', start: 19, range: '19:00–20:59' },
   { n: '亥', start: 21, range: '21:00–22:59' }
 ];
-const TIME_METHODS = { meihua: true, xiaoliuren: true, liuren: true };
+const TIME_METHODS = { meihua: true, xiaoliuren: true, liuren: true, jinkoujue: true };
 /* REQ-118：大六壬断课模板（对齐 vendored mingyu-core LiurenTemplateType：
    general 通用 / ganqing 感情 / shiye 事业 / caifu 财富；仅影响断课侧重点） */
 const LIUREN_TEMPLATES = [
@@ -9633,6 +9680,14 @@ const LIUREN_TEMPLATES = [
   { key: 'ganqing', label: '感情' },
   { key: 'shiye', label: '事业' },
   { key: 'caifu', label: '财富' }
+];
+/* REQ-119：金口诀起课方式（对齐 vendored mingyu-core JINKOUJUE_METHOD_OPTIONS：
+   time 时间起课 / branch 指定地分 / number 数字起课 / random 随机起课） */
+const JINKOUJUE_METHODS = [
+  { key: 'time', label: '时间起课' },
+  { key: 'branch', label: '指定地分' },
+  { key: 'number', label: '数字起课' },
+  { key: 'random', label: '随机起课' }
 ];
 const pad2 = function (x) { return String(x).padStart(2, '0'); };
 const todayStr = function () { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
@@ -9926,6 +9981,122 @@ function DivLiurenView(res) {
     items.push(React.createElement('div', { key: 'tm-h', className: 'lr-sec' }, '应期参考'),
       React.createElement('ul', { key: 'tm', className: 'lr-list' },
         timing.map(function (t, i) { return React.createElement('li', { key: i }, t); })));
+  }
+
+  return React.createElement('div', null, items);
+}
+/* REQ-119：金口诀课盘 —— 四位一体（人元/贵神/将神/地分）+ 阴阳发用 + 五动三动
+   + 四位生克 + 比合歌诀 + 古籍依据（calculation/focusEvidence，确定性免费展示） */
+function DivJinkoujueView(res) {
+  const items = [];
+  const gz = (res && typeof res === 'object' && res.ganzhi) || {};
+  const meta = [];
+  if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
+  if (res.methodLabel) meta.push(res.methodLabel);
+  if (res.monthLeader) meta.push('月将 ' + res.monthLeader);
+  if (res.divinationBranch) meta.push('占时 ' + res.divinationBranch);
+  if (res.dayNight) meta.push(res.dayNight);
+  if (res.noblemanBranch) meta.push('贵人 ' + res.noblemanBranch);
+  if (res.xunKong && res.xunKong.length) meta.push('旬空 ' + res.xunKong.join('、'));
+  if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'jk-meta' }, meta.join(' · ')));
+
+  // 四位一体（自上而下：人元 → 贵神 → 将神 → 地分）
+  const pos = (res && typeof res === 'object' && res.positions) || {};
+  const posOrder = ['renYuan', 'guiShen', 'jiangShen', 'diFen'];
+  const posName = { renYuan: '人元', guiShen: '贵神', jiangShen: '将神', diFen: '地分' };
+  const rows = [];
+  posOrder.forEach(function (k) {
+    const p = pos[k];
+    if (!p) return;
+    const subBits = [];
+    if (p.elementBasis) subBits.push(p.elementBasis);
+    if (p.element) subBits.push(p.element + (p.yinYang || ''));
+    if (p.seasonState) subBits.push('月令' + p.seasonState);
+    rows.push(React.createElement('div', { key: k, className: 'jk-four-row' },
+      React.createElement('span', { className: 'jkf-name' }, posName[k]),
+      React.createElement('span', { className: 'jkf-main' }, (p.stem || '') + (p.branch || '')),
+      p.god ? React.createElement('span', { className: 'jkf-god' }, '乘' + p.god) : null,
+      React.createElement('span', { className: 'jkf-sub' },
+        React.createElement('span', null, subBits.join(' · ')),
+        p.isVoid ? React.createElement('span', { className: 'jkf-void' }, '旬空') : null)));
+  });
+  if (rows.length) {
+    items.push(React.createElement('div', { key: 'four-h', className: 'jk-sec' }, '四位一体（自上而下：人元 / 贵神 / 将神 / 地分）'),
+      React.createElement('div', { key: 'four', className: 'jk-four' }, rows));
+  }
+
+  // 阴阳发用
+  const yy = (res && typeof res === 'object' && res.yinYangUse) || {};
+  if (yy.pattern) {
+    const yyBits = [yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + '阳' + (yy.yinCount != null ? yy.yinCount : '') + '阴）'];
+    if (yy.rule) yyBits.push(yy.rule);
+    if (yy.usePosition) yyBits.push('取「' + yy.usePosition + '」为用');
+    if (yy.isVoid) yyBits.push('发用旬空');
+    items.push(React.createElement('div', { key: 'yy-h', className: 'jk-sec' }, '阴阳发用'),
+      React.createElement('div', { key: 'yy', className: 'jk-rule' }, yyBits.join('；')),
+      React.createElement('div', { key: 'yy-n', className: 'jk-note' }, '发用位为断事主轴：三阴一阳取唯一阴位、三阳一阴取唯一阳位、二阴二阳以旺相者取用、纯阴/纯阳按次第取用。'));
+  }
+
+  // 五动三动
+  const mv = Array.isArray(res.movements) ? res.movements : [];
+  if (mv.length) {
+    const mvEls = mv.map(function (m2, i) {
+      return React.createElement('div', { key: i, className: 'jk-mv' },
+        React.createElement('span', { className: 'jkm-cat ' + (m2.category === '五动' ? 'wu' : 'san') }, m2.category || ''),
+        React.createElement('div', { className: 'jkm-body' },
+          React.createElement('div', { className: 'jkm-t' }, (m2.name || '') + (m2.from && m2.to ? '（' + m2.from + '→' + m2.to + '）' : '')),
+          React.createElement('div', { className: 'jkm-d' }, [m2.trigger, m2.relation ? '关系' + m2.relation : '', m2.source].filter(Boolean).join(' · '))));
+    });
+    items.push(React.createElement('div', { key: 'mv-h', className: 'jk-sec' }, '五动三动'),
+      React.createElement('div', { key: 'mv', className: 'jk-mv-wrap' }, mvEls),
+      React.createElement('div', { key: 'mv-n', className: 'jk-note' }, '动名须结合所问与用位综合体会，不按动名直接定现实结果。'));
+  }
+
+  // 四位生克
+  const rel = (res && typeof res === 'object' && res.relations) || {};
+  const relKeys = [['guiToJiang', '贵神→将神'], ['guiToRen', '贵神→人元'], ['jiangToDi', '将神→地分'], ['renToDi', '人元→地分'], ['guiToDi', '贵神→地分']];
+  const relBits = relKeys.filter(function (rk) { return rel[rk[0]]; }).map(function (rk) { return rk[1] + rel[rk[0]]; });
+  if (relBits.length) {
+    items.push(React.createElement('div', { key: 'rel-h', className: 'jk-sec' }, '四位生克'),
+      React.createElement('div', { key: 'rel', className: 'jk-tags' }, relBits.map(function (b, i) { return React.createElement('span', { key: i, className: 'jk-tag' }, b); })),
+      React.createElement('div', { key: 'rel-n', className: 'jk-note' }, '生克只表盘内作用方向，不直接写成现实顺利/受阻。'));
+  }
+
+  // 比合歌诀（二木为爻 / 二火为灾 / 二土为滞 / 二金为刑 / 二水为盗）
+  if (res.bihePoem) {
+    items.push(React.createElement('div', { key: 'bh-h', className: 'jk-sec' }, '比合歌诀'),
+      React.createElement('div', { key: 'bh', className: 'jk-rule' }, res.bihePoem),
+      React.createElement('div', { key: 'bh-n', className: 'jk-note' }, '歌诀为四位五行比合气质的概括性提示（二木为爻、二火为灾、二土为滞、二金为刑、二水为盗），只作辅助取象。'));
+  }
+
+  // 古籍依据：起课计算规则（《六壬神课金口诀古本》）
+  const calc = (res && typeof res === 'object' && res.calculation) || {};
+  const calcBits = [calc.diFenNote, calc.monthLeaderRule, calc.yuanDunRule, calc.dayNightRule, calc.noblemanRule, calc.guiShenRule].filter(Boolean);
+  if (calcBits.length) {
+    items.push(React.createElement('div', { key: 'calc-h', className: 'jk-sec' }, '起课依据'),
+      React.createElement('ul', { key: 'calc', className: 'jk-list' },
+        calcBits.map(function (b, i) { return React.createElement('li', { key: i }, b); })),
+      React.createElement('div', { key: 'calc-n', className: 'jk-note' }, '依据《六壬神课金口诀古本》（入式歌解 / 贵神起例 / 五子元遁起例 / 阴阳次第五用）。'));
+  }
+
+  // 类神标定（focusEvidence 主证/辅证）
+  const focus = Array.isArray(res.focusEvidence) ? res.focusEvidence : [];
+  if (focus.length) {
+    const focusEls = focus.map(function (f, i) {
+      const lv = f.level === '主证' ? 'master' : 'assist';
+      const evLines = Array.isArray(f.evidence) ? f.evidence : [];
+      const lim = Array.isArray(f.limitations) ? f.limitations : [];
+      const dParts = [];
+      if (evLines.length) dParts.push(evLines.join('；'));
+      if (lim.length) dParts.push('限制：' + lim.join('；'));
+      return React.createElement('div', { key: i, className: 'jk-ev' },
+        React.createElement('span', { className: 'jke-lv ' + lv }, f.level || ''),
+        React.createElement('div', { className: 'jke-body' },
+          React.createElement('div', { className: 'jke-t' }, (f.target || '') + (f.role ? '（' + f.role + '）' : '')),
+          dParts.length ? React.createElement('div', { className: 'jke-d' }, dParts.join('\n')) : null));
+    });
+    items.push(React.createElement('div', { key: 'fc-h', className: 'jk-sec' }, '类神标定（主证/辅证）'),
+      React.createElement('div', { key: 'fc', className: 'jk-ev-wrap' }, focusEls));
   }
 
   return React.createElement('div', null, items);
@@ -11643,6 +11814,74 @@ function LiurenFreeReading(res) {
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
+/* REQ-119：金口诀免费静态断课（确定性，零 LLM）—— 依据引擎已排好的课盘字段组织：
+   起课来由 + 阴阳发用 + 五动三动 + 四位生克/比合 + 空亡提示，末附免责尾注。 */
+function JinkoujueFreeReading(res) {
+  const blocks = [];
+  // 起课来由与四位（引擎确定性摘要）
+  const calc = (res && typeof res === 'object' && res.calculation) || {};
+  const methodLine = (res.methodLabel || '') + (calc.diFenNote ? '：' + calc.diFenNote : '');
+  const pos = (res && typeof res === 'object' && res.positions) || {};
+  const fourLine = '人元' + (pos.renYuan ? (pos.renYuan.stem || '') + (pos.renYuan.branch || '') : '')
+    + '、贵神' + (pos.guiShen ? (pos.guiShen.stem || '') + (pos.guiShen.branch || '') + '乘' + (pos.guiShen.god || '') : '')
+    + '、将神' + (pos.jiangShen ? (pos.jiangShen.stem || '') + (pos.jiangShen.branch || '') : '')
+    + '、地分' + (res.diFenBranch || '') + '。';
+  blocks.push({
+    label: '起课与四位',
+    text: (methodLine ? methodLine + '。' : '') + '\n四位一体：' + fourLine
+      + '\n人元为客/天/外位，贵神为主/官禄位，将神为己身/妻财位，地分为田宅/子孙位——按所问定向取位。',
+    tip: '四位一体为金口诀断事的骨架；此为传统文化视角的趋势参考，仅供自我觉察。'
+  });
+  // 阴阳发用
+  const yy = (res && typeof res === 'object' && res.yinYangUse) || {};
+  if (yy.pattern) {
+    blocks.push({
+      label: '阴阳发用',
+      text: '本课' + yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + '阳' + (yy.yinCount != null ? yy.yinCount : '') + '阴）：'
+        + (yy.rule || '') + '，取「' + (yy.usePosition || '') + '」为用'
+        + (yy.isVoid ? '；发用旬空，须待出空/填实后再作主断' : '') + '。\n发用位为断事主轴：三阴一阳取唯一阴位、三阳一阴取唯一阳位、二阴二阳以旺相者取用、纯阴/纯阳按次第取用。',
+      tip: '发用位是整课的断事落点，先认发用再谈吉凶趋势。'
+    });
+  }
+  // 五动三动
+  const mv = Array.isArray(res.movements) ? res.movements : [];
+  if (mv.length) {
+    blocks.push({
+      label: '五动三动',
+      text: mv.map(function (m2) {
+        return '· ' + (m2.category || '') + '「' + (m2.name || '') + '」：' + (m2.trigger || '') + '（' + (m2.source || '') + '）';
+      }).join('\n')
+        + '\n动名主象：财动主财利往来、官动主官非升迁、鬼动主灾讼忧疑、父母动主文书长辈、子孙动主解脱晚辈、兄弟动主竞争同伴。',
+      tip: '动名须结合所问与用位综合体会，不按动名直接定现实结果。'
+    });
+  }
+  // 四位生克 + 比合
+  const rel = (res && typeof res === 'object' && res.relations) || {};
+  const relKeys = [['guiToJiang', '贵神→将神'], ['guiToRen', '贵神→人元'], ['jiangToDi', '将神→地分'], ['renToDi', '人元→地分'], ['guiToDi', '贵神→地分']];
+  const relBits = relKeys.filter(function (rk) { return rel[rk[0]]; }).map(function (rk) { return rk[1] + rel[rk[0]]; });
+  if (relBits.length || res.bihePoem) {
+    blocks.push({
+      label: '生克与比合',
+      text: (relBits.length ? '四位生克：' + relBits.join('、') + '。\n' : '')
+        + (res.bihePoem ? '比合歌诀：' + res.bihePoem + '（二木为爻、二火为灾、二土为滞、二金为刑、二水为盗）。' : '')
+        + '\n生克只表盘内作用方向，比合提示四位气质，都不直接判现实成败。',
+      tip: '生克与比合作辅助取象，须与发用、动象结合。'
+    });
+  }
+  // 空亡提示（旬空）
+  const xk = Array.isArray(res.xunKong) ? res.xunKong : [];
+  if (xk.length) {
+    blocks.push({
+      label: '旬空提示',
+      text: '日旬空亡：' + xk.join('、') + '。空亡之位信息未实，须待出空/填实后再作主断，不直接判无成。',
+      tip: '空亡只表示该位信息暂虚，不构成现实吉凶定论。'
+    });
+  }
+  return React.createElement(React.Fragment, null,
+    FreeCard('课理解读（免费）', blocks),
+    React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
+      '以上内容由传统课理生成，依据《六壬神课金口诀古本》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
+}
 /* ---------- REQ-069：手动录入实际结果 —— 共享常量/工具（六爻·梅花共用逐爻器；签号/掌诀/牌库选牌） ---------- */
 /* 六爻手工爻值映射：阳=7(少阳)、阴=8(少阴)、动阳=9(老阳)、动阴=6(老阴) —— 与后端 generateLiuyao options.yaos(6..9) 契约一致 */
 const YAO_VAL_OF = function (yang, moving) { return yang ? (moving ? 9 : 7) : (moving ? 6 : 8); };
@@ -12330,6 +12569,10 @@ function DivinationPage({
   const [castYaos, setCastYaos] = useState(null); // 六爻动画用逐爻值（前端掷币预演 → options.yaos replay 固定）
   // REQ-118：大六壬断课模板（general/ganqing/shiye/caifu，随 interpret 请求体透传）
   const [liurenTpl, setLiurenTpl] = useState('general');
+  // REQ-119：金口诀起课方式四选一（time 时间 / branch 指定地分 / number 数字 / random 随机）
+  const [jkMethod, setJkMethod] = useState('time');
+  const [jkBranch, setJkBranch] = useState('子');
+  const [jkNumber, setJkNumber] = useState('');
   const apiMethod = DIVIN_API_METHOD[method] || method;
   const qText = (question || '').trim();
   // REQ-044 v2.1：占问问题可选 —— 有填才随 seed 透传（留空直接起卦，不传空 question）
@@ -12402,19 +12645,44 @@ function DivinationPage({
       setLoading(false);
     }
   };
+  // REQ-119：金口诀起课参数校验（指定地分须为十二地支之一；数字起课须为正整数）
+  const jkValid = function () {
+    if (jkMethod === 'branch' && !SHICHEN_ARR.some(function (s) { return s.n === jkBranch; })) {
+      toast('请选择地分（十二地支之一）');
+      return false;
+    }
+    if (jkMethod === 'number') {
+      const n = Number(jkNumber);
+      if (!Number.isInteger(n) || n < 1) {
+        toast('请输入不小于 1 的整数作为起课数字');
+        return false;
+      }
+    }
+    return true;
+  };
   // REQ-044 v2/v2.1 自动起卦（沿用既有链路：确定性随机/时间起卦，免费；占问问题可选，留空直接起卦）
   const run = async () => {
     if (loading) return;
-    // 梅花/小六壬：日期与时辰必填（输入框默认已带值，用户清空日期时拦截）
+    // 梅花/小六壬/大六壬/金口诀：日期与时辰必填（输入框默认已带值，用户清空日期时拦截）
     if (isTimeMethod && !timeValid()) return;
+    if (method === 'jinkoujue' && !jkValid()) return;
     // 时间类方法把所选 日期+时辰 组装为东八区 ISO 传给 Node 起卦服务
-    // （meihua 读顶层 customDate；xiaoliuren 走 params.customDate；seed 键原样透传）
+    // （meihua 读顶层 customDate；xiaoliuren/jinkoujue 走 params.customDate；seed 键原样透传）
     const seed = {};
     if (qText) seed.question = qText;
     if (isTimeMethod) {
       const customDate = timeSeedFor();
-      if (method === 'xiaoliuren') seed.params = { customDate: customDate };
-      else seed.customDate = customDate;
+      if (method === 'xiaoliuren') {
+        seed.params = { customDate: customDate };
+      } else if (method === 'jinkoujue') {
+        // REQ-119：金口诀起课方式四选一 → params 原样透传引擎（time/branch/number/random）
+        const p = { method: jkMethod, customDate: customDate };
+        if (jkMethod === 'branch') p.branch = jkBranch;
+        else if (jkMethod === 'number') p.number = Number(jkNumber);
+        seed.params = p;
+      } else {
+        seed.customDate = customDate;
+      }
     }
     await doCast(seed, null);
   };
@@ -12469,6 +12737,10 @@ function DivinationPage({
     setManLabel('');
     setManWarn('');
     setLastManual(null);
+    // REQ-119：每次进入金口诀起课界面重置起课方式（默认时间起课）
+    setJkMethod('time');
+    setJkBranch('子');
+    setJkNumber('');
   };
   const openAsk = x => {
     if (x.todo) {
@@ -12499,8 +12771,8 @@ function DivinationPage({
   const startAsk = () => {
     setLastManual(null);
     setAsking(false);
-    // REQ-118：大六壬时辰起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
-    if (method === 'liuren') { run(); return; }
+    // REQ-118/119：大六壬、金口诀起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
+    if (method === 'liuren' || method === 'jinkoujue') { run(); return; }
     if (!tcShouldPlayAnim()) { run(); return; }
     if (method === 'sign') {
       // 清掉上一次结果，避免签筒等待期残留旧签文
@@ -12641,6 +12913,7 @@ function DivinationPage({
     else if (method === 'meihua') view = DivMeihuaView(result);
     else if (method === 'xiaoliuren') view = DivXiaoliurenView(result);
     else if (method === 'liuren') view = DivLiurenView(result);
+    else if (method === 'jinkoujue') view = DivJinkoujueView(result);
     else if (method === 'sign' || apiMethod === 'ssgw') view = DivSsgwView(result);
   }
   if (result != null && view == null) {
@@ -12653,6 +12926,7 @@ function DivinationPage({
     else if (method === 'meihua') freeReading = MeihuaFreeReading(result);
     else if (method === 'xiaoliuren') freeReading = XiaoliurenFreeReading(result);
     else if (method === 'liuren') freeReading = LiurenFreeReading(result);
+    else if (method === 'jinkoujue') freeReading = JinkoujueFreeReading(result);
   }
   // REQ-061：演出层挂载（动效期间数据取数先行/并行，渲染替 loading 骨架；结束或失败即卸载交还结果分支）
   const resResult = (data && data.result) || null;
@@ -12729,8 +13003,8 @@ function DivinationPage({
   const manualLabel = method === 'sign' ? '手动选签' : '手动录入结果';
   const filledYao = yaoPick.filter(function (r) { return r.yang != null; }).length;
   const movingYao = yaoPick.filter(function (r) { return r.mv; }).length;
-  // REQ-118：大六壬为纯时辰起课（无手动录入通道），强制自动模式且不展示模式切换
-  const effectiveManual = method === 'liuren' ? false : (askMode === 'manual');
+  // REQ-118/119：大六壬、金口诀为纯时辰/方式起课（无手动录入通道），强制自动模式且不展示模式切换
+  const effectiveManual = (method === 'liuren' || method === 'jinkoujue') ? false : (askMode === 'manual');
   let manualPanel = null;
   if (effectiveManual) {
     if (method === 'liuyao' || method === 'meihua') {
@@ -12826,7 +13100,7 @@ function DivinationPage({
   }
   // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
   // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
-  const modeSwitch = method === 'liuren' ? null : (TC_SETTINGS.default_mode === 'both'
+  const modeSwitch = (method === 'liuren' || method === 'jinkoujue') ? null : (TC_SETTINGS.default_mode === 'both'
     ? React.createElement('div', { className: 'mode-switch' },
         React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
         React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
@@ -12846,7 +13120,8 @@ function DivinationPage({
     : method === 'meihua' ? '本卦已成 · 体用生克察应'
       : method === 'xiaoliuren' ? '落宫已定 · 速断所问吉凶'
         : method === 'liuren' ? '课式已起 · 四课三传参断'
-          : '卦象已成 · 心诚则灵';
+          : method === 'jinkoujue' ? '课式已起 · 四位一体参断'
+            : '卦象已成 · 心诚则灵';
   let guaKids = [];
   if (guaResultOn) {
     if (qText) guaKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
@@ -12945,6 +13220,46 @@ function DivinationPage({
                 return React.createElement('option', { key: i, value: i }, s.n + '时（' + s.range + '）');
               })))),
           React.createElement('div', { className: 'time-note' }, '默认今天 + 当前时辰，可按实际起卦/掐指时刻调整。')) : null,
+      // REQ-119：金口诀起课方式四选一（时间/指定地分/数字/随机；时间对四种方式均必填，随 params 透传引擎）
+      method === 'jinkoujue' ? React.createElement('div', { key: 'jk', className: 'jk-panel' },
+        React.createElement('div', { className: 'ask-cap', style: { marginTop: 12 } }, '起课方式（四选一）'),
+        React.createElement('div', { className: 'jk-methods' }, JINKOUJUE_METHODS.map(function (jm) {
+          return React.createElement('button', {
+            key: jm.key,
+            type: 'button',
+            className: 'jk-method-chip' + (jkMethod === jm.key ? ' sel' : ''),
+            onClick: function () { setJkMethod(jm.key); }
+          }, jm.label);
+        })),
+        jkMethod === 'branch'
+          ? React.createElement('div', { key: 'jkb', className: 'jk-branch-grid' },
+              SHICHEN_ARR.map(function (s) {
+                return React.createElement('button', {
+                  key: s.n,
+                  type: 'button',
+                  className: 'jk-branch-chip' + (jkBranch === s.n ? ' sel' : ''),
+                  onClick: function () { setJkBranch(s.n); }
+                }, s.n);
+              }))
+          : null,
+        jkMethod === 'number'
+          ? React.createElement('div', { key: 'jkn', className: 'jk-num-row' },
+              React.createElement('input', {
+                className: 'jk-num-in',
+                type: 'number',
+                min: 1,
+                step: 1,
+                inputMode: 'numeric',
+                placeholder: '输入不小于 1 的整数',
+                value: jkNumber,
+                onChange: function (e) { setJkNumber(e.target.value); }
+              }))
+          : null,
+        React.createElement('div', { className: 'jk-note2' },
+          jkMethod === 'time' ? '以所选日期/时辰起课：占时辰为地分，顺排四位。'
+            : jkMethod === 'branch' ? '按所测方位或来意指定地分（十二地支之一），其余按所选时间顺排。'
+              : jkMethod === 'number' ? '报一个正整数，归一为十二地支取地分，其余按所选时间顺排。'
+                : '随机取地分（十二地支等概率），其余按所选时间顺排；确定性计算零 LLM 免费。')) : null,
       manualPanel,
       React.createElement('div', { style: { display: 'flex', gap: 10, marginTop: 16 } },
         React.createElement('button', { className: 'btn btn-outline', type: 'button', style: { flex: 1 }, onClick: closeAsk }, UI_COPY.buttons.cancel),
@@ -12960,7 +13275,7 @@ function DivinationPage({
       interpErr: interpErr,
       interpLoading: interpLoading,
       payEnough: payEnough,
-      interpretLabel: method === 'liuren' ? '深度断课（付费）' : undefined,
+      interpretLabel: (method === 'liuren' || method === 'jinkoujue') ? '深度断课（付费）' : undefined,
       onInterpret: interpret,
       onRedo: function () {
         setData(null);
