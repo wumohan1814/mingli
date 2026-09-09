@@ -1084,6 +1084,30 @@
 .method-list .method-cell{width:100%;box-sizing:border-box;text-align:left;padding:11px 14px}
 .method-list .method-cell .mn{font-size:15px}
 .method-list .method-cell .md{font-size:12px;color:var(--text-3);margin-top:2px;text-align:left}
+/* REQ-126：起卦列表 3 分区（摇卦报数 / 时辰起局 / 速断抽签） */
+.divin-group{margin-bottom:6px}
+.divin-group:last-child{margin-bottom:0}
+.divin-group-title{font-size:13px;font-weight:700;color:var(--skin-accent);margin:10px 0 6px}
+/* REQ-126：择吉与时势 新页 功能卡内动作按钮（双人配对 / 时势推演 各 2 枚子按钮） */
+.tools-actions{display:flex;gap:8px;margin-top:10px}
+.tools-actions .tools-act{flex:1 1 0;min-width:0;padding:9px 6px;font-size:13px;white-space:nowrap}
+/* REQ-126：PredictPage 9 法解读 tab（综合 / 九法解读）与逐法解读卡 */
+.readings-tabs{display:flex;gap:8px;margin:0 0 12px}
+.readings-tabs .rt-tab{flex:1 1 0;padding:10px 6px;font-size:14px;font-weight:600;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:.14s}
+.readings-tabs .rt-tab.on{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+.rd-method{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:10px}
+.rd-method .rd-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.rd-method .rd-name{font-size:15px;font-weight:700;color:var(--text-1)}
+.rd-method .rd-badge{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--skin-accent-soft);color:var(--skin-accent)}
+.rd-method .rd-badge.dqc{background:rgba(218,135,32,.12);color:#c47b1f}
+.rd-method .rd-item{font-size:13px;color:var(--text-2);line-height:1.7;margin:4px 0}
+.rd-method .rd-item .rd-dir{display:inline-block;font-weight:700;padding:0 7px;border-radius:6px;margin-right:6px;font-size:12px}
+.rd-method .rd-item .rd-dir.ji{background:rgba(34,128,102,.12);color:#228066}
+.rd-method .rd-item .rd-dir.xiong{background:rgba(211,47,47,.1);color:#b3261e}
+.rd-method .rd-item .rd-dir.ping{background:rgba(95,125,139,.12);color:#4a6a78}
+.rd-method .rd-empty{font-size:12px;color:var(--text-3);margin:4px 0}
+.rd-method .rd-degraded{font-size:12px;color:var(--text-3);margin:4px 0}
+.rd-method .rd-degraded .dg-tag{display:inline-block;padding:0 6px;border-radius:6px;background:rgba(128,128,128,.1);color:var(--text-3);margin-right:6px}
 /* REQ-123：塔罗「选择牌阵」分组折叠（点击分组标题展开/收起，默认收起；交互对齐 REQ-107 折叠风格） */
 .spread-groups{display:flex;flex-direction:column;margin-top:2px}
 .spread-group-head{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;
@@ -1840,7 +1864,7 @@ const API = '/api';
 let token = '';
 let refreshToken = '';
 // BUG-002: 需登录才能访问的页面白名单（landing/auth/guoxue-hub/xishi-hub 保持公开）
-const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick','agent'];
+const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick','agent','guoxue-tools'];
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
 let onUnauthorized = null;
@@ -5638,6 +5662,18 @@ function CalibrationPage({
     size: 15
   }), "修正")))));
 }
+// REQ-126：9 法 method_key → 中文名（degraded 法仅有 key，无后端 name；映射对齐 backend/app/credits/labels.py METHOD_ZH）
+const REQ126_METHOD_KEY_ZH = {
+  'bazi-pattern': '八字格局',
+  'bazi-dayun-liunian': '大运流年',
+  'bazi-shensha-nayin': '神煞纳音',
+  'bazi-hunyin-caiyun': '婚姻财运',
+  ziwei: '紫微',
+  xizhan: '西占',
+  qizheng: '七政',
+  'qimen-lifetime': '奇门',
+  'wuyun-liuqi': '五运六气'
+};
 function PredictPage({
   caseId,
   onNavigate
@@ -5648,6 +5684,11 @@ function PredictPage({
   const [history, setHistory] = useState([]);
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
+  // REQ-126：9 法内部 tab（综合 / 九法解读，逐法数据源 GET /api/cases/{id}/readings，纯读库零 LLM）
+  const [tab, setTab] = useState('all');
+  const [readings, setReadings] = useState(null);
+  const [readingsLoading, setReadingsLoading] = useState(false);
+  const [readingsErr, setReadingsErr] = useState('');
   const ref = useRef({
     timer: null,
     timeout: null,
@@ -5755,6 +5796,175 @@ function PredictPage({
       alive = false;
     };
   }, [caseId]);
+  // REQ-126：九法解读 tab —— 懒加载 readings（切到该 tab 才请求；纯读库零 LLM）
+  const loadReadings = async () => {
+    if (readings || readingsLoading) return;
+    setReadingsLoading(true);
+    setReadingsErr('');
+    try {
+      const rr = await api('/cases/' + caseId + '/readings');
+      const d = (rr && rr.data) || rr || {};
+      setReadings(d);
+    } catch (e) {
+      setReadingsErr((e && e.message) || TC_COPY.ui.hub['readings-load-fail']);
+    } finally {
+      setReadingsLoading(false);
+    }
+  };
+  const switchTab = t => {
+    setTab(t);
+    if (t === 'methods') loadReadings();
+  };
+  const CONF_ZH = {
+    high: '高',
+    medium: '中',
+    low: '低',
+    speculative: '推测'
+  };
+  // 逐法解读卡流：prediction conclusions 优先，空则回退断前尘 past_propositions；degraded 显示「未生成」
+  const readingsView = () => {
+    const rows = readings && Array.isArray(readings.methods) ? readings.methods : null;
+    const degraded = readings && Array.isArray(readings.degraded) ? readings.degraded : [];
+    let body;
+    if (readingsLoading && !rows) {
+      body = /*#__PURE__*/React.createElement("div", {
+        className: "sk-card"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "skeleton sk-line",
+        style: {
+          width: '90%'
+        }
+      }), /*#__PURE__*/React.createElement("div", {
+        className: "skeleton sk-line",
+        style: {
+          width: '70%'
+        }
+      }), /*#__PURE__*/React.createElement("div", {
+        className: "skeleton sk-line",
+        style: {
+          width: '85%'
+        }
+      }));
+    } else if (readingsErr && !rows) {
+      body = /*#__PURE__*/React.createElement("div", {
+        className: "card failed-box"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "error"
+      }, readingsErr), /*#__PURE__*/React.createElement("button", {
+        className: "btn btn-outline",
+        onClick: loadReadings
+      }, UI_COPY.buttons.retry));
+    } else if (!rows || !rows.length) {
+      body = /*#__PURE__*/React.createElement("div", {
+        className: "card"
+      }, TC_COPY.ui.hub['readings-empty']);
+    } else {
+      const cards = rows.map(r => {
+        const conclusions = Array.isArray(r.conclusions) ? r.conclusions : [];
+        const props = Array.isArray(r.past_propositions) ? r.past_propositions : [];
+        const degradedThis = degraded.indexOf(r.method_key) >= 0;
+        const badge = /*#__PURE__*/React.createElement("span", {
+          className: "rd-badge" + (r.phase === 'duan-qian-chen' ? ' dqc' : '')
+        }, r.phase === 'prediction' ? TC_COPY.ui.hub['readings-phase-prediction'] : TC_COPY.ui.hub['readings-phase-dqc']);
+        const items = [];
+        if (degradedThis) {
+          items.push(/*#__PURE__*/React.createElement("div", {
+            key: 'dg',
+            className: "rd-degraded"
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "dg-tag"
+          }, TC_COPY.ui.hub['readings-degraded']), '该法尚未生成解读'));
+        } else if (conclusions.length) {
+          conclusions.forEach((c, i) => {
+            const dir = c.direction === '吉' ? 'ji' : c.direction === '凶' ? 'xiong' : 'ping';
+            items.push(/*#__PURE__*/React.createElement("div", {
+              key: 'c' + i,
+              className: "rd-item"
+            }, /*#__PURE__*/React.createElement("span", {
+              className: "rd-dir " + dir
+            }, c.direction || '平'), c.domain ? /*#__PURE__*/React.createElement("span", {
+              style: {
+                fontWeight: 600,
+                marginRight: 6
+              }
+            }, c.domain) : null, c.claim || ''));
+          });
+        } else if (props.length) {
+          props.forEach((p, i) => {
+            const conf = CONF_ZH[p.confidence_level] || '';
+            items.push(/*#__PURE__*/React.createElement("div", {
+              key: 'p' + i,
+              className: "rd-item"
+            }, /*#__PURE__*/React.createElement("span", {
+              style: {
+                fontWeight: 600,
+                marginRight: 6,
+                color: 'var(--text-1)'
+              }
+            }, [p.year_range, p.domain].filter(Boolean).join(' · ') || ''), p.claim || '', conf ? /*#__PURE__*/React.createElement("span", {
+              style: {
+                color: 'var(--text-3)',
+                marginLeft: 6
+              }
+            }, '（置信 ' + conf + '）') : null));
+          });
+        } else {
+          items.push(/*#__PURE__*/React.createElement("div", {
+            key: 'e',
+            className: "rd-empty"
+          }, TC_COPY.ui.hub['readings-empty']));
+        }
+        return /*#__PURE__*/React.createElement("div", {
+          key: r.method_key,
+          className: "rd-method"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "rd-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "rd-name"
+        }, r.name), badge), items);
+      });
+      // degraded：后端仅列 key（无 name），用前端映射补中文名（对齐后端 METHOD_ZH），显示「未生成」
+      degraded.forEach(k => {
+        const nm = REQ126_METHOD_KEY_ZH[k] || k;
+        cards.push(/*#__PURE__*/React.createElement("div", {
+          key: 'dg-' + k,
+          className: "rd-method"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "rd-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "rd-name"
+        }, nm), /*#__PURE__*/React.createElement("span", {
+          className: "rd-badge dqc"
+        }, TC_COPY.ui.hub['readings-degraded'])), /*#__PURE__*/React.createElement("div", {
+          className: "rd-degraded"
+        }, '该法尚未生成解读')));
+      });
+      body = cards;
+    }
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "section-title"
+    }, TC_COPY.ui.hub['readings-title']), body);
+  };
+  const tabBar = /*#__PURE__*/React.createElement("div", {
+    className: "readings-tabs",
+    role: "tablist"
+  }, /*#__PURE__*/React.createElement("button", {
+    key: "all",
+    type: "button",
+    className: "rt-tab" + (tab === 'all' ? ' on' : ''),
+    onClick: function () {
+      switchTab('all');
+    }
+  }, TC_COPY.ui.hub['readings-tab-all']), /*#__PURE__*/React.createElement("button", {
+    key: "methods",
+    type: "button",
+    className: "rt-tab" + (tab === 'methods' ? ' on' : ''),
+    onClick: function () {
+      switchTab('methods');
+    }
+  }, TC_COPY.ui.hub['readings-tab-methods']));
   if (errored) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -5835,7 +6045,7 @@ function PredictPage({
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, tabBar, tab === 'methods' ? readingsView() : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
@@ -5966,7 +6176,7 @@ function PredictPage({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     onClick: logout
-  }, UI_COPY.buttons.logout)));
+  }, UI_COPY.buttons.logout))));
 }
 function RevisePage({
   caseId,
@@ -7826,14 +8036,10 @@ function NavRail({
 const MOD_NAV_GROUPS = [{
   title: TC_COPY.ui.nav.guoxue,
   color: '#3E7C6B',
+  // REQ-126：国学组按 4 张场景大卡同步（① 命盘·九法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
   items: [{
     label: TC_COPY.ui.nav['item-nine-pick'],
     page: 'nine-pick',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }, {
-    label: TC_COPY.ui.nav['item-zodiac'],
-    page: 'zodiac',
     module: 'guoxue',
     skin: 'guoxue'
   }, {
@@ -7842,21 +8048,13 @@ const MOD_NAV_GROUPS = [{
     module: 'guoxue',
     skin: 'guoxue'
   }, {
-    // REQ-121：黄历择日（免档案纯国学工具，顶栏下拉与 HUB 入口对齐）
-    label: TC_COPY.ui.nav['item-almanac'],
-    page: 'almanac',
+    label: TC_COPY.ui.nav['item-tools'],
+    page: 'guoxue-tools',
     module: 'guoxue',
     skin: 'guoxue'
   }, {
-    // REQ-124：太乙神数（免档案纯国学大势工具，顶栏下拉与 HUB 入口对齐）
-    label: TC_COPY.ui.nav['item-taiyi'],
-    page: 'taiyi',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }, {
-    // REQ-125：皇极经世（免档案纯国学大势工具，顶栏下拉与 HUB 入口对齐）
-    label: TC_COPY.ui.nav['item-huangji'],
-    page: 'huangji',
+    label: TC_COPY.ui.nav['item-zodiac'],
+    page: 'zodiac',
     module: 'guoxue',
     skin: 'guoxue'
   }]
@@ -8750,68 +8948,33 @@ function GuoxueHubPage({
   onNavigate,
   applySkin
 }) {
-  // REQ-100：配对解析 / 起名 / 八字配对 三个同级功能上移一级 → 与「九法合一 / 生肖流年 / 临时起卦」
-  // 同层级成为功能按键，同一排 3 键（九法配对 / 八字配对 / 档案起名）横向摆放，UI 同样式 + I4 图标
-  // （fn-pair / fn-bazi / fn-name）；原九法合一选档案页内 .pair-entry 与「起名」行移除（覆盖
-  // REQ-093/094 入口布局口径，功能逻辑不变：九法配对/八字配对 → openPairAnalyze 弹 PairModal；
-  // 档案起名 → 弹 NamerModal，未预选档案时弹窗内选档案）。本 HUB 属公开页。
-  const [namerOpen, setNamerOpen] = useState(false);
+  // REQ-126：国学 HUB 改 4 张场景大卡（① 命盘·九法合一 / ② 问事·即时起卦 / ③ 择吉与时势 /
+  // ④ 生肖流年）。原 6 方法卡（黄历择日/太乙/皇极）与 REQ-100 同排 3 键（九法配对/八字配对/
+  // 档案起名）收归 ③「择吉与时势」新页 GuoxueToolsPage（/guoxue/tools，需登录）。本 HUB 保持公开页。
   const cards = [{
-    name: TC_COPY.ui.hub['guoxue-nine-name'],
-    sub: TC_COPY.ui.hub['guoxue-nine-sub'],
+    name: TC_COPY.ui.hub['guoxue-card-nine-name'],
+    sub: TC_COPY.ui.hub['guoxue-card-nine-sub'],
     bar: 'var(--skin-accent)',
     ico: 'nine',
     to: () => onNavigate('nine-pick')
+  }, {
+    name: TC_COPY.ui.hub['guoxue-card-divination-name'],
+    sub: TC_COPY.ui.hub['guoxue-card-divination-sub'],
+    bar: 'var(--gold-500)',
+    ico: 'orbit',
+    to: () => onNavigate('divination')
+  }, {
+    name: TC_COPY.ui.hub['guoxue-card-tools-name'],
+    sub: TC_COPY.ui.hub['guoxue-card-tools-sub'],
+    bar: 'var(--cinnabar)',
+    ico: 'calendar',
+    to: () => onNavigate('guoxue-tools')
   }, {
     name: TC_COPY.ui.hub['guoxue-zodiac-name'],
     sub: TC_COPY.ui.hub['guoxue-zodiac-sub'],
     bar: 'var(--cinnabar)',
     ico: 'spark',
     to: () => onNavigate('zodiac')
-  }, {
-    name: TC_COPY.ui.hub['guoxue-divination-name'],
-    sub: TC_COPY.ui.hub['guoxue-divination-sub'],
-    bar: 'var(--gold-500)',
-    ico: 'orbit',
-    to: () => onNavigate('divination')
-  }, {
-    // REQ-121：黄历择日 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学工具，不混入起卦列表）
-    name: TC_COPY.ui.hub['guoxue-almanac-name'],
-    sub: TC_COPY.ui.hub['guoxue-almanac-sub'],
-    bar: 'var(--skin-accent)',
-    ico: 'calendar',
-    to: () => onNavigate('almanac')
-  }, {
-    // REQ-124：太乙神数 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学大势工具，不混入起卦列表）
-    name: TC_COPY.ui.hub['guoxue-taiyi-name'],
-    sub: TC_COPY.ui.hub['guoxue-taiyi-sub'],
-    bar: 'var(--gold-500)',
-    ico: 'taiyi',
-    to: () => onNavigate('taiyi')
-  }, {
-    // REQ-125：皇极经世 —— 与九法合一/生肖流年/临时起卦同层级独立入口（纯国学大势工具，不混入起卦列表）
-    name: TC_COPY.ui.hub['guoxue-huangji-name'],
-    sub: TC_COPY.ui.hub['guoxue-huangji-sub'],
-    bar: 'var(--skin-accent)',
-    ico: 'huangji',
-    to: () => onNavigate('huangji')
-  }];
-  // REQ-100：同一排 3 键（九法配对 / 八字配对 / 档案起名），与上方三卡同层级同样式。
-  const quickCards = [{
-    name: TC_COPY.ui.hub['guoxue-pair-name'],
-    sub: TC_COPY.ui.hub['guoxue-pair-sub'],
-    id: 'fn-pair',
-    onClick: () => openPairAnalyze({ module: 'guoxue' })
-  }, {
-    name: TC_COPY.ui.hub['guoxue-bazi-name'],
-    sub: TC_COPY.ui.hub['guoxue-bazi-sub'],
-    id: 'fn-bazi',
-    onClick: () => openPairAnalyze({ module: 'bazi' })
-  }, {
-    name: TC_COPY.ui.hub['guoxue-namer-name'],
-    sub: TC_COPY.ui.hub['guoxue-namer-sub'],
-    id: 'fn-name',
-    onClick: () => setNamerOpen(true)
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -8841,24 +9004,91 @@ function GuoxueHubPage({
     className: "hc-name"
   }, c.name), /*#__PURE__*/React.createElement("div", {
     className: "hc-sub"
-  }, c.sub))))), /*#__PURE__*/React.createElement("div", {
-    className: "hub-row"
-  }, quickCards.map((q, i) => /*#__PURE__*/React.createElement("div", {
-    key: 'q' + i,
-    className: "hub-card",
-    onClick: q.onClick
-  }, /*#__PURE__*/React.createElement(SpriteIcon, {
-    id: q.id,
-    size: 28
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "hc-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hc-name"
-  }, q.name), /*#__PURE__*/React.createElement("div", {
-    className: "hc-sub"
-  }, q.sub))))), namerOpen ? /*#__PURE__*/React.createElement(NamerModal, {
+  }, c.sub))))));
+}
+
+/* ---------- REQ-126：③ 择吉与时势 新页（/guoxue/tools，需登录） ----------
+   4 功能卡：黄历择日（→almanac，免档案）/ 八字起名（复用 NamerModal）/
+   双人配对（九法配对 + 八字配对 → openPairAnalyze）/ 时势推演（皇极经世 + 太乙神数，均已实现）。
+   「黄历免档案」仅指已登录下无需选档案；整页需登录（AUTH_REQUIRED_PAGES 含 guoxue-tools）。 */
+function GuoxueToolsPage({
+  onNavigate,
+  applySkin
+}) {
+  const el = React.createElement;
+  const [namerOpen, setNamerOpen] = useState(false);
+  const actBtn = (label, onClick) => el('button', {
+    type: 'button',
+    className: 'btn btn-outline tools-act',
+    onClick: onClick
+  }, label);
+  const cards = [{
+    name: TC_COPY.ui.hub['tools-almanac-name'],
+    sub: TC_COPY.ui.hub['tools-almanac-sub'],
+    bar: 'var(--skin-accent)',
+    ico: 'calendar',
+    to: () => onNavigate('almanac')
+  }, {
+    name: TC_COPY.ui.hub['tools-namer-name'],
+    sub: TC_COPY.ui.hub['tools-namer-sub'],
+    bar: 'var(--gold-500)',
+    ico: 'nine',
+    to: () => setNamerOpen(true)
+  }, {
+    name: TC_COPY.ui.hub['tools-pair-name'],
+    sub: TC_COPY.ui.hub['tools-pair-sub'],
+    bar: 'var(--cinnabar)',
+    ico: 'orbit',
+    actions: [
+      actBtn(TC_COPY.ui.hub['tools-pair-guoxue'], function () { return openPairAnalyze({ module: 'guoxue' }); }),
+      actBtn(TC_COPY.ui.hub['tools-pair-bazi'], function () { return openPairAnalyze({ module: 'bazi' }); })
+    ]
+  }, {
+    name: TC_COPY.ui.hub['tools-shishi-name'],
+    sub: TC_COPY.ui.hub['tools-shishi-sub'],
+    bar: 'var(--cinnabar)',
+    ico: 'huangji',
+    actions: [
+      actBtn(TC_COPY.ui.hub['tools-shishi-huangji'], function () { return onNavigate('huangji'); }),
+      actBtn(TC_COPY.ui.hub['tools-shishi-taiyi'], function () { return onNavigate('taiyi'); })
+    ]
+  }];
+  return el('div', {
+    className: 'container'
+  }, el('div', {
+    className: 'hub-title'
+  }, el(Icon, {
+    name: 'calendar',
+    size: 22
+  }), TC_COPY.ui.hub['guoxue-card-tools-name']), el('div', {
+    className: 'hub-grid'
+  }, cards.map((c, i) => el('div', {
+    key: i,
+    className: 'hub-card',
+    onClick: c.to || undefined
+  }, el('span', {
+    className: 'hc-bar',
+    style: {
+      background: c.bar
+    }
+  }), el(Icon, {
+    name: c.ico,
+    size: 28,
+    className: 'hc-ico'
+  }), el('div', {
+    className: 'hc-body'
+  }, el('div', {
+    className: 'hc-name'
+  }, c.name), el('div', {
+    className: 'hc-sub'
+  }, c.sub), c.actions ? el('div', {
+    className: 'tools-actions',
+    onClick: function (e) {
+      e.stopPropagation();
+    }
+  }, c.actions) : null)))), namerOpen ? el(NamerModal, {
     caseId: null,
-    caseName: "",
+    caseName: '',
     onClose: function () {
       setNamerOpen(false);
     }
@@ -9876,37 +10106,56 @@ const DIVIN_METHODS = [{
   id: 'liuyao',
   name: '六爻',
   desc: '以铜钱摇卦成卦，依六亲、世应、动爻断吉凶',
+  group: 'yao',
   todo: false
 }, {
   id: 'meihua',
   name: '梅花易数',
   desc: '以时间或数字起卦，凭体用生克察事应',
+  group: 'yao',
   todo: false
 }, {
   id: 'xiaoliuren',
   name: '小六壬',
   desc: '按月日时三数顺数落宫，速断所问吉凶',
+  group: 'su',
   todo: false
 }, {
   id: 'sign',
   name: '观音灵签',
   desc: '诚心默问后抽签，依签诗断语解疑',
+  group: 'su',
   todo: false
 }, {
   id: 'liuren',
   name: '大六壬',
   desc: '以月将加时起天地盘，四课三传断吉凶',
+  group: 'shi',
   todo: false
 }, {
   id: 'jinkoujue',
   name: '金口诀',
   desc: '以地分起课，四位一体（人元/贵神/将神/地分）断吉凶',
+  group: 'shi',
   todo: false
 }, {
   id: 'qimen',
   name: '奇门时家',
   desc: '以转盘/飞盘排九宫四盘，时日月年四家定局，一事一占',
+  group: 'shi',
   todo: false
+}];
+
+// REQ-126：起卦列表按起课类型 3 分区（摇卦报数 / 时辰起局 / 速断抽签），顺序与分组为已拍板口径
+const DIVIN_GROUP_META = [{
+  key: 'yao',
+  title: TC_COPY.ui.hub['divin-group-yao']
+}, {
+  key: 'shi',
+  title: TC_COPY.ui.hub['divin-group-shi']
+}, {
+  key: 'su',
+  title: TC_COPY.ui.hub['divin-group-su']
 }];
 
 const DIVIN_API_METHOD = { sign: 'ssgw' };
@@ -14034,12 +14283,17 @@ function DivinationPage({
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
     React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'section-title' }, '选择起卦方式'),
-      React.createElement('div', { className: 'method-list' }, DIVIN_METHODS.map(function (x) {
-        return React.createElement('div', {
-          key: x.id,
-          className: 'method-cell' + (asking && method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
-          onClick: function () { openAsk(x); }
-        }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
+      React.createElement('div', { className: 'method-list divin-groups' }, DIVIN_GROUP_META.map(function (g) {
+        const items = DIVIN_METHODS.filter(function (x) { return x.group === g.key; });
+        return React.createElement('div', { key: g.key, className: 'divin-group' },
+          React.createElement('div', { className: 'divin-group-title' }, g.title),
+          items.map(function (x) {
+            return React.createElement('div', {
+              key: x.id,
+              className: 'method-cell' + (asking && method === x.id ? ' sel' : '') + (x.todo ? ' todo' : ''),
+              onClick: function () { openAsk(x); }
+            }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
+          }));
       }))),
     body,
     React.createElement('div', { className: 'back-row fill' },
@@ -20435,6 +20689,7 @@ function AgentPage({
 const REQ080_PAGE_PATH = {
   landing: '/',
   'guoxue-hub': '/guoxue',
+  'guoxue-tools': '/guoxue/tools',
   'xishi-hub': '/xishi',
   'mbti-hub': '/mbti',
   mbti: '/mbti/test',
@@ -20481,6 +20736,10 @@ const REQ080_DYNAMIC = [{
 // landing/auth/cases/settings/agent/archive 等中立页不在表内（保持当前模块与皮肤）。
 const REQ080_PAGE_THEME = {
   'guoxue-hub': {
+    module: 'guoxue',
+    skin: 'guoxue'
+  },
+  'guoxue-tools': {
     module: 'guoxue',
     skin: 'guoxue'
   },
@@ -20981,6 +21240,10 @@ function App() {
       onNavigate: navigate
     }),
     'guoxue-hub': /*#__PURE__*/React.createElement(GuoxueHubPage, {
+      onNavigate: navigate,
+      applySkin: applySkin
+    }),
+    'guoxue-tools': /*#__PURE__*/React.createElement(GuoxueToolsPage, {
       onNavigate: navigate,
       applySkin: applySkin
     }),
