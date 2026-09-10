@@ -370,16 +370,18 @@ def _metric_funnel(db: Session, days: int, now: datetime) -> list[dict]:
 
 
 def _metric_llm_cost(db: Session, days: int, now: datetime) -> list[dict]:
-    """llm_cost：llm_call 每日 total_tokens 求和 + 调用次数。"""
+    """llm_cost：llm_call 每日 total_tokens 求和 + 调用次数 + 缓存命中/未命中。"""
     start = _window_start(days, now)
     buckets = {
-        d: {"date": d, "calls": 0, "total_tokens": 0}
+        d: {"date": d, "calls": 0, "total_tokens": 0, "cache_hit_tokens": 0, "cache_miss_tokens": 0}
         for d in _day_labels(start, days)
     }
     sql = """
         SELECT substr(created_at, 1, 10) AS day,
                COUNT(*) AS calls,
-               COALESCE(SUM(CAST(json_extract(props, '$.total_tokens') AS INTEGER)), 0) AS total_tokens
+               COALESCE(SUM(CAST(json_extract(props, '$.total_tokens') AS INTEGER)), 0) AS total_tokens,
+               COALESCE(SUM(CAST(json_extract(props, '$.prompt_cache_hit_tokens') AS INTEGER)), 0) AS cache_hit_tokens,
+               COALESCE(SUM(CAST(json_extract(props, '$.prompt_tokens') AS INTEGER)), 0) AS cache_miss_tokens
         FROM events
         WHERE event_name = 'llm_call' AND created_at >= :start
         GROUP BY substr(created_at, 1, 10)
@@ -390,9 +392,13 @@ def _metric_llm_cost(db: Session, days: int, now: datetime) -> list[dict]:
             if bucket is not None:
                 bucket["calls"] = int(row[1] or 0)
                 bucket["total_tokens"] = int(row[2] or 0)
+                bucket["cache_hit_tokens"] = int(row[3] or 0)
+                bucket["cache_miss_tokens"] = int(row[4] or 0)
     except OperationalError:
         # SQLite 无 JSON1 的兜底：Python 侧按 props 聚合（ORM 读取已反序列化 props）
-        per_day: dict[str, dict] = defaultdict(lambda: {"calls": 0, "total_tokens": 0})
+        per_day: dict[str, dict] = defaultdict(lambda: {
+            "calls": 0, "total_tokens": 0, "cache_hit_tokens": 0, "cache_miss_tokens": 0
+        })
         for created, props in (
             db.query(Event.created_at, Event.props)
             .filter(Event.event_name == "llm_call", Event.created_at >= start)
@@ -404,6 +410,12 @@ def _metric_llm_cost(db: Session, days: int, now: datetime) -> list[dict]:
                 tok = props.get("total_tokens")
                 if isinstance(tok, (int, float)):
                     per_day[key]["total_tokens"] += int(tok)
+                hit = props.get("prompt_cache_hit_tokens")
+                if isinstance(hit, (int, float)):
+                    per_day[key]["cache_hit_tokens"] += int(hit)
+                miss = props.get("prompt_tokens")
+                if isinstance(miss, (int, float)):
+                    per_day[key]["cache_miss_tokens"] += int(miss)
         for day, agg in per_day.items():
             if day in buckets:
                 buckets[day].update(agg)
