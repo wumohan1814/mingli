@@ -1,0 +1,68 @@
+
+    :root{
+      /* 主色 墨蓝 / 靛青 */
+      --ink-300:#3A4570; --ink-400:#5E6FB3; --ink-500:#44558F; --ink-600:#364573; --ink-700:#2C385C; --ink-900:#1A2138;
+      /* 金 / 玉 / 朱砂 */
+      --gold-300:#E6CF9A; --gold-500:#B8893E; --gold-600:#9C6E2E;
+      --jade-500:#3E7C6B; --cinnabar:#B23A3A; --error:#C0392B;
+      /* 中性 宣纸暖灰 */
+      --paper:#F7F4EC; --surface:#FFFFFF; --text-1:#1F1F26; --text-2:#5C5C68; --text-3:#8A8A94; --border:#E5E0D4;
+      /* 字体 */
+      --font-serif:"Songti SC","STSong","SimSun","Noto Serif CJK SC",serif;
+      --font-sans:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Hiragino Sans GB",sans-serif;
+      --font-latin-serif:Georgia,"Times New Roman",serif;
+      /* 圆角 / 阴影 */
+      --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+      --shadow-card:0 2px 12px rgba(26,33,56,.10);
+      --dur:.22s; --ease:cubic-bezier(.4,0,.2,1);
+
+      /* ===== 多文化皮肤（v1.2.7 最终）：内部标识色=玉青（按钮/吉），顶部 Banner + 底部胶囊=朱砂红 ===== */
+      --skin-accent:#3E7C6B;
+      --skin-accent-soft:rgba(62,124,107,.14);
+      --skin-accent-ink:#F7F4EC;
+      --skin-banner:#B23A3A;
+      --skin-banner-ink:#F7F4EC;
+      --skin-tag-bg:rgba(0,0,0,.16);
+
+      /* REQ-061⑤：美术素材（frontend/public/art/…，运行期仅用 WebP α；PNG 为母版随仓库保留）。
+         url 用根绝对路径（BUG-009：页面经 pushState 无 URL 切换，深层分享路由下相对路径会 404）。
+         变量未定义/删除时，各消费者 var(--art-XXX, fallback渐变) 自动回退占位渐变；URL 加载失败则露背景色。 */
+      --art-ssgw-tube:url('/art/ssgw/ssgw-tube.webp');
+      --art-ssgw-stick:url('/art/ssgw/ssgw-stick.webp');
+      /* REQ-129⑥：塔罗牌背换用新素材 v2（根绝对路径；旧 card-back-tarot.webp 已下线） */
+      --art-card-back-tarot:url('/art/card-back/card-back-tarot-v2.webp');
+      /* REQ-129 E：塔罗牌桌背景（art/tarot-bg/tarot-table.webp，中央 60% 纯净读牌区）→ .rd-box 牌桌容器 */
+      --art-tarot-table:url('/art/tarot-bg/tarot-table.webp');
+      --art-card-back-lenormand:url('/art/card-back/card-back-lenormand-v2.webp');
+      /* REQ-130⑤：雷诺曼牌桌背景（art/lenormand-bg/lenormand-table.webp，中央读牌区暗化）→ .rd-box.leno-table 牌桌容器 */
+      --art-table-lenormand:url('/art/lenormand-bg/lenormand-table.webp');
+      --art-coin-face:url('/art/liuyao/coin-face.webp');
+      --art-coin-back:url('/art/liuyao/coin-back.webp');
+      --art-xlr-palm:url('/art/xiaoliuren/xiaoliuren-palm.webp'); /* REQ-106：小六壬掌诀底图 → .xlr-ring */
+    }
+    /* 西式占星：内部=深空蓝；顶部 Banner=月银 */
+    [data-skin="astrology"]{
+      --skin-accent:#2A3A5C; --skin-accent-soft:rgba(42,58,92,.14); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9CBD3; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(255,255,255,.55);
+    }
+    /* 塔罗：内部=琥珀；顶部 Banner=紫晶 */
+    [data-skin="tarot"]{
+      --skin-accent:#C9A24B; --skin-accent-soft:rgba(201,162,75,.18); --skin-accent-ink:#1F1F26;
+      --skin-banner:#5B4B8A; --skin-banner-ink:#F7F4EC; --skin-tag-bg:rgba(0,0,0,.16);
+    }
+    /* 西式占卜 HUB：内部=紫晶；顶部 Banner=琥珀（与塔罗互置） */
+    [data-skin="xishi"]{
+      --skin-accent:#5B4B8A; --skin-accent-soft:rgba(91,75,138,.18); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9A24B; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(0,0,0,.14);
+    }
+    /* 星座（=原占星）：内部=深空蓝；顶部 Banner=月银 */
+    [data-skin="xingzuo"]{
+      --skin-accent:#2A3A5C; --skin-accent-soft:rgba(42,58,92,.14); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#C9CBD3; --skin-banner-ink:#1F1F26; --skin-tag-bg:rgba(255,255,255,.55);
+    }
+    /* MBTI：内部=靛蓝；顶部 Banner=薄荷 */
+    [data-skin="mbti"]{
+      --skin-accent:#4A5BB5; --skin-accent-soft:rgba(74,91,181,.16); --skin-accent-ink:#F7F4EC;
+      --skin-banner:#7ED3C6; --skin-banner-ink:#16302C; --skin-tag-bg:rgba(0,0,0,.12);
+    }
+
