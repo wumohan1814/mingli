@@ -32,6 +32,7 @@ Thumbs.db
 
 # 参考项目（不参与构建，含嵌套 git）/ 临时产物 / 工具目录
 reference/
+reference-not in project/
 temp/
 .workbuddy/
 
