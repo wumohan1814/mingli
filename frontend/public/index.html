@@ -21517,6 +21517,10 @@ function App() {
     return () => setPairAnalyzeOpener(null);
   }, []);
   const navigate = (p, p2 = {}) => {
+    // 统一回顶：任何视图切换都回到页面顶部（根治"SPA 切换保留上一页滚动位置"——覆盖 REQ-099 建档页局部修复与校准/排盘结果页落地错位）
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     // BUG-011 + REQ-070：离开分享落地页（页面跳转）→ 先恢复本地会话（若有本地 token 的同浏览器
     // 本人），再走 BUG-002 受限页判断；无本地 token 的访客维持未登录，受限操作仍会被
     // 下方拦截引导去登录页。
