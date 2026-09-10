@@ -1955,6 +1955,9 @@ const {
 // Banner/菜单/页脚/通用）已直引 TC_COPY.ui.* 规范路径。
 const UI_COPY = TC_COPY.ui;
 const API = '/api';
+// REQ-增强：全局请求超时配置（毫秒）。可通过 api(path, { timeout: N }) 单接口覆盖；
+// 设 0 或 false 禁用超时（与旧行为一致）。默认 15s 平衡用户体验与后端长任务容忍度。
+const API_DEFAULT_TIMEOUT = 15000;
 let token = '';
 let refreshToken = '';
 // BUG-002: 需登录才能访问的页面白名单（landing/auth/guoxue-hub/xishi-hub 保持公开）
@@ -2399,23 +2402,59 @@ async function api(path, options = {}) {
     if (token && !options.noAuth) headers['Authorization'] = 'Bearer ' + token;
     return headers;
   };
-  const parseError = e => {
+  const parseErrorDetail = function (e) {
     // FastAPI 的 422 detail 是数组 [{loc,msg,type}]，转成可读字符串，避免 [object Object]
     let msg = TC_COPY.ui.error['request-failed'];
     const d = e && e.detail;
-    if (typeof d === 'string' && d) msg = d;else if (Array.isArray(d) && d.length) msg = d.map(x => x && x.msg || JSON.stringify(x)).join('；');else if (d) msg = JSON.stringify(d);
+    if (typeof d === 'string' && d) msg = d;else if (Array.isArray(d) && d.length) msg = d.map(function (x) { return x && x.msg || JSON.stringify(x); }).join('；');else if (d) msg = JSON.stringify(d);
     return msg;
   };
-  let r = await fetch(API + path, {
-    ...options,
-    headers: buildHeaders()
+
+  // 超时控制：AbortController + timeout（options.timeout 单接口覆盖，0/false 禁用）
+  // 保持向后兼容：旧代码不传 timeout 时使用 API_DEFAULT_TIMEOUT（15s）；
+  // 长任务接口（轮询 job 等）可显式传 timeout: 0 保持无限等待。
+  var timeoutMs = options.timeout !== undefined ? options.timeout : API_DEFAULT_TIMEOUT;
+  var ctrl = options.signal ? null : (timeoutMs ? new AbortController() : null);
+  var timeoutId = null;
+  if (ctrl && timeoutMs) {
+    timeoutId = setTimeout(function () { ctrl.abort(); }, timeoutMs);
+  }
+  var fetchOpts = Object.assign({}, options, {
+    headers: buildHeaders(),
+    signal: options.signal || (ctrl ? ctrl.signal : undefined)
   });
+  // 清理自定义字段，避免 fetch 收到未知参数
+  delete fetchOpts.noAuth;
+  delete fetchOpts.skip401;
+  delete fetchOpts.timeout;
+
+  var r;
+  try {
+    r = await fetch(API + path, fetchOpts);
+  } catch (e) {
+    if (timeoutId) clearTimeout(timeoutId);
+    // 区分超时与网络错误
+    if (e && e.name === 'AbortError') {
+      var timeoutErr = new Error(TC_COPY.ui.error['request-timeout'] || '请求超时，请检查网络后重试');
+      timeoutErr.status = 0;
+      timeoutErr.code = 'TIMEOUT';
+      timeoutErr.timeout = timeoutMs;
+      throw timeoutErr;
+    }
+    // 网络错误（离线 / DNS 失败 / CORS 等）
+    var netErr = new Error(TC_COPY.ui.error['network-error'] || '网络连接失败，请检查网络设置');
+    netErr.status = 0;
+    netErr.code = 'NETWORK_ERROR';
+    netErr.cause = e;
+    throw netErr;
+  }
+  if (timeoutId) clearTimeout(timeoutId);
 
   // access token 过期 → 用 refresh_token 自动续期并重试原请求（避免长任务中途被踢出）
   // REQ-049：skip401 调用（登录/注册）不参与续期重试，401 即视为业务失败，交下方通用解析透传后端 message
   if (r.status === 401 && refreshToken && !options.skip401) {
     try {
-      const rr = await fetch(API + '/auth/refresh', {
+      var rr = await fetch(API + '/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -2425,9 +2464,9 @@ async function api(path, options = {}) {
         })
       });
       if (rr.ok) {
-        const rd = await rr.json();
-        const newToken = rd.access_token || rd.data && rd.data.access_token;
-        const newRefresh = rd.refresh_token || rd.data && rd.data.refresh_token;
+        var rd = await rr.json();
+        var newToken = rd.access_token || rd.data && rd.data.access_token;
+        var newRefresh = rd.refresh_token || rd.data && rd.data.refresh_token;
         if (newToken) {
           token = newToken;
           localStorage.setItem('taichu_token', token);
@@ -2435,10 +2474,20 @@ async function api(path, options = {}) {
             refreshToken = newRefresh;
             localStorage.setItem('taichu_refresh_token', refreshToken);
           }
-          r = await fetch(API + path, {
-            ...options,
-            headers: buildHeaders()
-          });
+          // 续期后重试原请求（重建超时控制器）
+          var retryCtrl = options.signal ? null : (timeoutMs ? new AbortController() : null);
+          var retryTimeoutId = null;
+          if (retryCtrl && timeoutMs) {
+            retryTimeoutId = setTimeout(function () { retryCtrl.abort(); }, timeoutMs);
+          }
+          try {
+            r = await fetch(API + path, Object.assign({}, options, {
+              headers: buildHeaders(),
+              signal: options.signal || (retryCtrl ? retryCtrl.signal : undefined)
+            }));
+          } finally {
+            if (retryTimeoutId) clearTimeout(retryTimeoutId);
+          }
         }
       }
     } catch (e) {/* 刷新失败则走下方踢出 */}
@@ -2454,14 +2503,14 @@ async function api(path, options = {}) {
     throw new Error(TC_COPY.ui.error['login-expired']);
   }
   if (r.ok) return r.json();
-  let errBody = null;
+  var errBody = null;
   try {
     errBody = await r.json();
   } catch (_) {/* 响应体非 JSON（如 502 网关错误） */}
-  const rawDetail = errBody && errBody.detail;
-  let errMsg;
-  if (Array.isArray(rawDetail)) errMsg = rawDetail.map(x => x && x.msg || JSON.stringify(x)).join('；');else if (typeof rawDetail === 'string' && rawDetail) errMsg = rawDetail;else if (errBody && typeof errBody.message === 'string' && errBody.message) errMsg = errBody.message;else errMsg = fmtTpl(TC_COPY.ui.error['http-status'], { status: r.status });
-  const err = new Error(errMsg);
+  var rawDetail = errBody && errBody.detail;
+  var errMsg;
+  if (Array.isArray(rawDetail)) errMsg = rawDetail.map(function (x) { return x && x.msg || JSON.stringify(x); }).join('；');else if (typeof rawDetail === 'string' && rawDetail) errMsg = rawDetail;else if (errBody && typeof errBody.message === 'string' && errBody.message) errMsg = errBody.message;else errMsg = fmtTpl(TC_COPY.ui.error['http-status'], { status: r.status });
+  var err = new Error(errMsg);
   err.code = errBody && typeof errBody.code === 'number' ? errBody.code : null;
   err.status = r.status;
   err.payload = errBody;
@@ -2749,6 +2798,117 @@ function Icon({
     default:
       return null;
   }
+}
+
+// ===== 通用 Modal 基座（ModalBase）=====
+// 抽取 10 个业务 Modal 的共同结构：遮罩 + 卡片 + 标题 + 内容 + 底部按钮
+// 设计原则：
+//   1) 完全向后兼容 —— 不修改任何现有 Modal 的调用方式
+//   2) 渐进式迁移 —— 新 Modal 直接用基座，旧 Modal 可按需逐步迁移
+//   3) 零额外依赖 —— 纯 React + CSS，不引入第三方
+//
+// Props:
+//   visible      boolean       是否显示（不传则默认显示，由父级控制渲染）
+//   title        string|node   弹窗标题
+//   children     node          弹窗内容
+//   footer       node          自定义底部按钮区（不传则不显示）
+//   onClose      function      点击遮罩/关闭按钮的回调
+//   closable     boolean       是否显示右上角关闭按钮（默认 false，保持旧行为）
+//   maskClosable boolean       点击遮罩是否关闭（默认 true）
+//   className    string        附加到 .modal 的自定义类名（如 ask-modal, pair-modal）
+//   width        number|string 最大宽度（默认 340px）
+//   bodyClassName string       内容区附加类名
+//   align        'center'|'left'  内容对齐方式（默认 'center'，与旧行为一致）
+//   scrollable   boolean       内容过高时是否可滚动（默认 false，长内容建议 true）
+//
+// 用法：
+//   <ModalBase title="标题" onClose={handleClose} footer={
+//     <><button onClick={handleClose}>取消</button><button onClick={handleOk}>确定</button></>
+//   }>
+//     内容
+//   </ModalBase>
+function ModalBase(_ref) {
+  var title = _ref.title;
+  var children = _ref.children;
+  var footer = _ref.footer;
+  var onClose = _ref.onClose;
+  var closable = _ref.closable;
+  var maskClosable = _ref.maskClosable === undefined ? true : _ref.maskClosable;
+  var className = _ref.className;
+  var width = _ref.width;
+  var bodyClassName = _ref.bodyClassName;
+  var align = _ref.align || 'center';
+  var scrollable = _ref.scrollable;
+  var el = React.createElement;
+
+  // ESC 键关闭
+  React.useEffect(function () {
+    if (!onClose) return;
+    function onKey(e) { if (e.key === 'Escape') onClose(); }
+    document.addEventListener('keydown', onKey);
+    return function () { document.removeEventListener('keydown', onKey); };
+  }, [onClose]);
+
+  // 打开时禁止背景滚动
+  React.useEffect(function () {
+    var prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return function () { document.body.style.overflow = prev; };
+  }, []);
+
+  var modalStyle = {};
+  if (width) modalStyle.maxWidth = typeof width === 'number' ? width + 'px' : width;
+  if (align === 'left') modalStyle.textAlign = 'left';
+  if (scrollable) {
+    modalStyle.maxHeight = '88vh';
+    modalStyle.display = 'flex';
+    modalStyle.flexDirection = 'column';
+  }
+
+  var bodyStyle = {};
+  if (scrollable) {
+    bodyStyle.overflowY = 'auto';
+    bodyStyle.flex = '1 1 auto';
+    bodyStyle.minHeight = 0;
+  }
+
+  return el('div', {
+    className: 'modal-mask',
+    onClick: maskClosable && onClose ? onClose : undefined
+  }, el('div', {
+    className: 'modal' + (className ? ' ' + className : ''),
+    style: modalStyle,
+    onClick: function onClick(e) { return e.stopPropagation(); }
+  },
+  // 标题栏（有标题或有关闭按钮时显示）
+  (title || closable) ? el('div', {
+    className: 'modal-title',
+    style: { position: 'relative' }
+  }, title, closable ? el('button', {
+    className: 'modal-close-btn',
+    'aria-label': '关闭',
+    onClick: onClose,
+    style: {
+      position: 'absolute', top: -4, right: -8, width: 28, height: 28,
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontSize: 20, color: 'var(--text-3)', lineHeight: 1
+    }
+  }, '×') : null) : null,
+  // 内容区
+  el('div', {
+    className: 'modal-body' + (bodyClassName ? ' ' + bodyClassName : ''),
+    style: bodyStyle
+  }, children),
+  // 底部按钮区
+  footer ? el('div', {
+    className: 'modal-footer',
+    style: {
+      marginTop: 16,
+      display: 'flex',
+      gap: 10,
+      justifyContent: align === 'left' ? 'flex-start' : 'center'
+    }
+  }, footer) : null));
 }
 
 // 皮肤切换胶囊（MVP 仅国学可切，占星/塔罗置灰）
@@ -3186,30 +3346,24 @@ function CreditInsufficientModal({
   info,
   onClose
 }) {
+  const el = React.createElement;
   const detail = info && (info.detail || info.message) || '';
   const nums = (String(detail).match(/\d+/g) || []).map(Number);
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
   // 充值入口暂时隐藏：中性提示，不引导充值
   const body = need != null && have != null ? '本次推演约需 ¥' + (Number(need) / CREDIT_YUAN_RATE).toFixed(2) + '，当前余额 ¥' + (Number(have) / CREDIT_YUAN_RATE).toFixed(2) + '。' : UI_COPY.error.points_insufficient;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-mask",
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal",
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-title"
-  }, UI_COPY.error.points_insufficient), /*#__PURE__*/React.createElement("div", {
-    className: "modal-body"
-  }, body), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: onClose,
-    style: {
-      marginTop: 8
-    }
-  }, "知道了")));
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  return el(ModalBase, {
+    title: UI_COPY.error.points_insufficient,
+    onClose: onClose,
+    footer: el('button', {
+      className: 'btn btn-outline',
+      type: 'button',
+      onClick: onClose,
+      style: { marginTop: 8 }
+    }, '知道了')
+  }, body);
 }
 
 // ===== REQ-072：配对解析弹窗（国学 / 西式 / MBTI 三大模块共用，module 参数不同） =====
@@ -3375,150 +3529,113 @@ function PairModal({
     key: String(c.caseId),
     value: String(c.caseId)
   }, optLabel(c))) : []);
-  return el('div', {
-    className: 'modal-mask',
-    onClick: busy ? null : onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    onClick: e => e.stopPropagation()
-  }, el('div', {
-    className: 'pair-hd'
-  }, el('div', {
-    className: 'pair-hd-title'
-  }, el(Icon, {
-    name: cfg && cfg.module === 'xishi' ? 'orbit' : cfg && cfg.module === 'mbti' ? 'spark' : 'nine',
-    size: 20,
-    color: 'var(--skin-accent)'
-  }), meta.title), el('button', {
-    type: 'button',
-    className: 'pair-x',
-    onClick: onClose,
-    title: UI_COPY.buttons.close
-  }, '✕')), el('div', {
-    className: 'pair-sub'
-  }, '选择两份档案，基于' + meta.dataTxt + '，让 AI 解析两人的关系契合、相处模式与建议。'), el('div', {
-    className: 'pair-pay'
-  }, '配对解析为付费 LLM 解读：按实际用量扣余额（¥），解读成功后即时扣费（余额不足将自动提示）。'), err ? el('div', {
-    className: 'pair-err'
-  }, err) : null, busy ? el('div', {
-    className: 'pair-busy'
-  }, '配对解析生成中（LLM 撰写约需 10–40 秒），请勿重复提交…') : null, res ? el('div', null, el('div', {
-    className: 'interp-title'
-  }, '配对解析结果'), el('div', {
-    style: {
-      fontSize: 12,
-      color: 'var(--text-3)',
-      margin: '8px 0 2px',
-      lineHeight: 1.7
-    }
-  }, '「' + caseName(aId) + ' × ' + caseName(bId) + '」 · ' + res.relation), el('div', {
-    className: 'interp-body',
-    style: {
-      marginBottom: 12
-    }
-  }, res.interpretation)) : null, listLoading ? el('div', {
-    className: 'pair-busy'
-  }, '档案列表加载中…') : listErr ? el('div', null, el('div', {
-    className: 'pair-err'
-  }, listErr), el('div', {
-    className: 'pair-foot',
-    style: {
-      marginTop: 0
-    }
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: load
-  }, '重试档案'))) : listEmpty ? el('div', {
-    className: 'pair-err'
-  }, '暂无可用档案：' + meta.prepTxt + '。') : el(React.Fragment, null, el('div', {
-    className: 'pair-sec'
-  }, el('div', {
-    className: 'pair-sec-label'
-  }, el('span', {
-    className: 'ps-n'
-  }, 'A'), '档案一'), el('select', {
-    className: 'pair-field',
-    value: aId,
-    onChange: pick('a')
-  }, caseOptions)), el('div', {
-    className: 'pair-sec'
-  }, el('div', {
-    className: 'pair-sec-label'
-  }, el('span', {
-    className: 'ps-n'
-  }, 'B'), '档案二', el('span', {
-    style: {
-      fontWeight: 400,
-      color: 'var(--text-3)',
-      fontSize: 11.5
-    }
-  }, '（需与档案一不同）'), bId && aId ? el('span', {
-    style: {
-      fontWeight: 400,
-      color: 'var(--skin-accent)',
-      fontSize: 11.5
-    }
-  }, '已选：' + caseName(bId)) : null), el('select', {
-    className: 'pair-field',
-    value: bId,
-    onChange: pick('b')
-  }, caseOptions)), el('div', {
-    className: 'pair-sec'
-  }, el('div', {
-    className: 'pair-sec-label'
-  }, el('span', {
-    className: 'ps-n'
-  }, '①'), '关系类型'), el('div', {
-    className: 'pair-rel'
-  }, PAIR_RELATIONS.map(r => el('button', {
-    key: r,
-    type: 'button',
-    className: 'btn btn-outline' + (rel === r ? ' sel' : ''),
-    onClick: () => pickRel(r)
-  }, el(PairRelIcon, {
-    name: PAIR_REL_ICONS[r],
-    size: 22
-  }), r))), rel === '其他' ? el('input', {
-    className: 'pair-field',
-    style: {
-      marginTop: 8
-    },
-    value: relOther,
-    onChange: e => setRelOther(e.target.value),
-    placeholder: '自定义关系类型（如：合伙人 / 师徒 / 暧昧）',
-    maxLength: 20
-  }) : null), el('div', {
-    className: 'pair-sec'
-  }, el('div', {
-    className: 'pair-sec-label'
-  }, el('span', {
-    className: 'ps-n'
-  }, '②'), '自由关注点', el('span', {
-    style: {
-      fontWeight: 400,
-      color: 'var(--text-3)',
-      fontSize: 11.5
-    }
-  }, '（选填）')), el('textarea', {
-    className: 'pair-field',
-    value: question,
-    onChange: e => setQuestion(e.target.value),
-    placeholder: '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…'
-  }))), el('div', {
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 风格：自定义 pair-hd 头部 + pair-foot 底部 + 复杂多步内容
+  const hd = el('div', { className: 'pair-hd' },
+    el('div', { className: 'pair-hd-title' },
+      el(Icon, {
+        name: cfg && cfg.module === 'xishi' ? 'orbit' : cfg && cfg.module === 'mbti' ? 'spark' : 'nine',
+        size: 20,
+        color: 'var(--skin-accent)'
+      }), meta.title
+    ),
+    el('button', {
+      type: 'button',
+      className: 'pair-x',
+      onClick: onClose,
+      title: UI_COPY.buttons.close
+    }, '✕')
+  );
+  const content = [
+    el('div', { key: 'sub', className: 'pair-sub' }, '选择两份档案，基于' + meta.dataTxt + '，让 AI 解析两人的关系契合、相处模式与建议。'),
+    el('div', { key: 'pay', className: 'pair-pay' }, '配对解析为付费 LLM 解读：按实际用量扣余额（¥），解读成功后即时扣费（余额不足将自动提示）。'),
+    err ? el('div', { key: 'err', className: 'pair-err' }, err) : null,
+    busy ? el('div', { key: 'busy', className: 'pair-busy' }, '配对解析生成中（LLM 撰写约需 10–40 秒），请勿重复提交…') : null,
+    res ? el('div', { key: 'res' },
+      el('div', { className: 'interp-title' }, '配对解析结果'),
+      el('div', { style: { fontSize: 12, color: 'var(--text-3)', margin: '8px 0 2px', lineHeight: 1.7 } }, '「' + caseName(aId) + ' × ' + caseName(bId) + '」 · ' + res.relation),
+      el('div', { className: 'interp-body', style: { marginBottom: 12 } }, res.interpretation)
+    ) : null,
+    listLoading
+      ? el('div', { key: 'loading', className: 'pair-busy' }, '档案列表加载中…')
+      : listErr
+        ? el('div', { key: 'listerr' },
+            el('div', { className: 'pair-err' }, listErr),
+            el('div', { className: 'pair-foot', style: { marginTop: 0 } },
+              el('button', { type: 'button', className: 'btn btn-outline', onClick: load }, '重试档案')
+            )
+          )
+        : listEmpty
+          ? el('div', { key: 'empty', className: 'pair-err' }, '暂无可用档案：' + meta.prepTxt + '。')
+          : el(React.Fragment, { key: 'form' },
+              el('div', { className: 'pair-sec' },
+                el('div', { className: 'pair-sec-label' },
+                  el('span', { className: 'ps-n' }, 'A'), '档案一'
+                ),
+                el('select', { className: 'pair-field', value: aId, onChange: pick('a') }, caseOptions)
+              ),
+              el('div', { className: 'pair-sec' },
+                el('div', { className: 'pair-sec-label' },
+                  el('span', { className: 'ps-n' }, 'B'), '档案二',
+                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, '（需与档案一不同）'),
+                  bId && aId ? el('span', { style: { fontWeight: 400, color: 'var(--skin-accent)', fontSize: 11.5 } }, '已选：' + caseName(bId)) : null
+                ),
+                el('select', { className: 'pair-field', value: bId, onChange: pick('b') }, caseOptions)
+              ),
+              el('div', { className: 'pair-sec' },
+                el('div', { className: 'pair-sec-label' },
+                  el('span', { className: 'ps-n' }, '①'), '关系类型'
+                ),
+                el('div', { className: 'pair-rel' },
+                  PAIR_RELATIONS.map(r => el('button', {
+                    key: r, type: 'button',
+                    className: 'btn btn-outline' + (rel === r ? ' sel' : ''),
+                    onClick: () => pickRel(r)
+                  }, el(PairRelIcon, { name: PAIR_REL_ICONS[r], size: 22 }), r))
+                ),
+                rel === '其他' ? el('input', {
+                  className: 'pair-field',
+                  style: { marginTop: 8 },
+                  value: relOther,
+                  onChange: e => setRelOther(e.target.value),
+                  placeholder: '自定义关系类型（如：合伙人 / 师徒 / 暧昧）',
+                  maxLength: 20
+                }) : null
+              ),
+              el('div', { className: 'pair-sec' },
+                el('div', { className: 'pair-sec-label' },
+                  el('span', { className: 'ps-n' }, '②'), '自由关注点',
+                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, '（选填）')
+                ),
+                el('textarea', {
+                  className: 'pair-field',
+                  value: question,
+                  onChange: e => setQuestion(e.target.value),
+                  placeholder: '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…'
+                })
+              )
+            )
+  ];
+  const footer = !listLoading && !listErr && !listEmpty && !res ? el('div', {
     // BUG-023：底部「关闭 / 开始配对」两按钮等宽并排、均匀占满底栏（pair-foot-eq）；
-    // 原右对齐（justify-content:flex-end）仅保留给其它复用 .pair-foot 的弹窗
     className: 'pair-foot pair-foot-eq'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose
-  }, UI_COPY.buttons.close), el('button', {
-    type: 'button',
-    className: 'btn btn-primary',
-    disabled: busy || listLoading || listEmpty,
-    onClick: submit
-  }, busy ? '配对解析中…' : ['开始配对解析', payBadge(payEnough)]))));
+  },
+    el('button', { type: 'button', className: 'btn btn-outline', onClick: onClose }, UI_COPY.buttons.close),
+    el('button', {
+      type: 'button',
+      className: 'btn btn-primary',
+      disabled: busy || listLoading || listEmpty,
+      onClick: submit
+    }, busy ? '配对解析中…' : ['开始配对解析', payBadge(payEnough)])
+  ) : null;
+
+  return el(ModalBase, {
+    onClose: busy ? null : onClose,
+    className: 'pair-modal',
+    scrollable: true,
+    align: 'left',
+    footer: footer
+  }, hd, ...content.filter(Boolean));
 }
 
 // 余额明细页
@@ -4028,41 +4145,37 @@ function RenameModal({
   onCancel,
   busy
 }) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-mask",
-    onClick: onCancel
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal",
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-title"
-  }, "给这份档案起个名字"), /*#__PURE__*/React.createElement("input", {
-    className: "input",
+  const el = React.createElement;
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  return el(ModalBase, {
+    title: '给这份档案起个名字',
+    onClose: onCancel,
+    footer: el(React.Fragment, null,
+      el('button', {
+        className: 'btn btn-outline',
+        type: 'button',
+        onClick: onCancel,
+        disabled: busy
+      }, UI_COPY.buttons.cancel),
+      el('button', {
+        className: 'btn btn-primary',
+        type: 'button',
+        onClick: onConfirm,
+        disabled: busy
+      }, '确定')
+    )
+  },
+  el('input', {
+    className: 'input',
     value: value,
     onChange: onChange,
-    placeholder: "请输入档案名称",
+    placeholder: '请输入档案名称',
     autoFocus: true,
-    onKeyDown: e => {
+    onKeyDown: function onKeyDown(e) {
       if (e.key === 'Enter') onConfirm();
     }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      marginTop: 16,
-      justifyContent: 'center',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: onCancel,
-    disabled: busy
-  }, UI_COPY.buttons.cancel), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    type: "button",
-    onClick: onConfirm,
-    disabled: busy
-  }, "确定"))));
+  })
+  );
 }
 
 // REQ-065「修改联系方式」模态框：可编辑 手机号/邮箱（均选填，空串=清空），格式校验在提交侧
@@ -4083,80 +4196,74 @@ function CaseContactModal({
   onCancel,
   busy
 }) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-mask",
-    onClick: onCancel
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal",
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-title"
-  }, title || "修改联系方式"), nameEditable ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", {
-    className: "label",
-    htmlFor: "edit-case-name"
-  }, "档案名称"), /*#__PURE__*/React.createElement("input", {
-    id: "edit-case-name",
-    className: "input",
-    type: "text",
-    maxLength: 30,
-    value: nameValue || '',
-    onChange: onName,
-    placeholder: "请输入档案名称",
-    onKeyDown: e => {
-      if (e.key === 'Enter') onConfirm();
-    }
-  })) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: 'var(--text-3)',
-      marginBottom: 2,
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }
-  }, "档案：", name, "（改名称请用「重命名」）"), /*#__PURE__*/React.createElement("label", {
-    className: "label",
-    htmlFor: "edit-phone"
-  }, "手机号（选填）"), /*#__PURE__*/React.createElement("input", {
-    id: "edit-phone",
-    className: "input",
-    type: "tel",
-    inputMode: "numeric",
+  const el = React.createElement;
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  return el(ModalBase, {
+    title: title || '修改联系方式',
+    onClose: onCancel,
+    align: 'left',
+    scrollable: true,
+    footer: el(React.Fragment, null,
+      el('button', {
+        className: 'btn btn-outline',
+        type: 'button',
+        onClick: onCancel,
+        disabled: busy
+      }, UI_COPY.buttons.cancel),
+      el('button', {
+        className: 'btn btn-primary',
+        type: 'button',
+        onClick: onConfirm,
+        disabled: busy
+      }, busy ? '保存中...' : '保存')
+    )
+  },
+  nameEditable
+    ? el(React.Fragment, null,
+        el('label', { className: 'label', htmlFor: 'edit-case-name' }, '档案名称'),
+        el('input', {
+          id: 'edit-case-name',
+          className: 'input',
+          type: 'text',
+          maxLength: 30,
+          value: nameValue || '',
+          onChange: onName,
+          placeholder: '请输入档案名称',
+          onKeyDown: function onKeyDown(e) { if (e.key === 'Enter') onConfirm(); }
+        })
+      )
+    : el('div', {
+        style: {
+          fontSize: 12,
+          color: 'var(--text-3)',
+          marginBottom: 2,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
+        }
+      }, '档案：', name, '（改名称请用「重命名」）'),
+  el('label', { className: 'label', htmlFor: 'edit-phone' }, '手机号（选填）'),
+  el('input', {
+    id: 'edit-phone',
+    className: 'input',
+    type: 'tel',
+    inputMode: 'numeric',
     maxLength: 11,
     value: phone,
     onChange: onPhone,
-    placeholder: "请输入 11 位手机号"
-  }), /*#__PURE__*/React.createElement("label", {
-    className: "label",
-    htmlFor: "edit-email"
-  }, "电子邮箱（选填）"), /*#__PURE__*/React.createElement("input", {
-    id: "edit-email",
-    className: "input",
-    type: "email",
+    placeholder: '请输入 11 位手机号'
+  }),
+  el('label', { className: 'label', htmlFor: 'edit-email' }, '电子邮箱（选填）'),
+  el('input', {
+    id: 'edit-email',
+    className: 'input',
+    type: 'email',
     value: email,
     onChange: onEmail,
-    placeholder: "请输入电子邮箱（需包含 @）",
-    onKeyDown: e => {
-      if (e.key === 'Enter') onConfirm();
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      marginTop: 16,
-      justifyContent: 'center',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: onCancel,
-    disabled: busy
-  }, UI_COPY.buttons.cancel), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    type: "button",
-    onClick: onConfirm,
-    disabled: busy
-  }, busy ? '保存中...' : '保存'))));
+    placeholder: '请输入电子邮箱（需包含 @）',
+    onKeyDown: function onKeyDown(e) { if (e.key === 'Enter') onConfirm(); }
+  })
+  );
 }
 
 // REQ-070 / BUG-012：档案「分享帮填」模态框 —— 展示一次性帮填链接（完整 URL = location.origin + data.url），
@@ -4169,80 +4276,52 @@ function ShareFillModal({
   onRetry,
   onClose
 }) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-mask",
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal",
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-title"
-  }, UI_COPY.shareFill.title), url ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: 'var(--text-2)',
-      margin: '0 0 10px',
-      lineHeight: 1.6,
-      textAlign: 'left'
-    }
-  }, UI_COPY.shareFill.desc), /*#__PURE__*/React.createElement("input", {
-    className: "input",
-    readOnly: true,
-    value: url,
-    title: url,
-    onFocus: e => e.target.select(),
-    style: {
-      textAlign: 'left'
-    }
-  }), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 12,
-      color: 'var(--cinnabar)',
-      margin: '8px 0 0',
-      lineHeight: 1.6
-    }
-  }, UI_COPY.shareFill.hint), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      marginTop: 16,
-      justifyContent: 'center',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: onClose
-  }, UI_COPY.buttons.close), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    type: "button",
-    onClick: onCopy
-  }, UI_COPY.buttons.copy_link))) : busy ? /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: 'var(--text-2)',
-      margin: '6px 0 2px'
-    }
-  }, UI_COPY.shareFill.generating) : err ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "error",
-    style: {
-      marginBottom: 10
-    }
-  }, err), /*#__PURE__*/React.createElement("div", {
-    className: "flex-row",
-    style: {
-      marginTop: 6,
-      justifyContent: 'center',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    type: "button",
-    onClick: onClose
-  }, UI_COPY.buttons.close), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    type: "button",
-    onClick: onRetry
-  }, UI_COPY.buttons.retry))) : null));
+  const el = React.createElement;
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // 三态内容：有url（成功）→ 复制链接；busy（生成中）→ 加载文案；err（失败）→ 重试
+  let body = null;
+  let footer = null;
+
+  if (url) {
+    body = el(React.Fragment, null,
+      el('p', {
+        style: { fontSize: 13, color: 'var(--text-2)', margin: '0 0 10px', lineHeight: 1.6, textAlign: 'left' }
+      }, UI_COPY.shareFill.desc),
+      el('input', {
+        className: 'input',
+        readOnly: true,
+        value: url,
+        title: url,
+        onFocus: function onFocus(e) { e.target.select(); },
+        style: { textAlign: 'left' }
+      }),
+      el('p', {
+        style: { fontSize: 12, color: 'var(--cinnabar)', margin: '8px 0 0', lineHeight: 1.6 }
+      }, UI_COPY.shareFill.hint)
+    );
+    footer = el(React.Fragment, null,
+      el('button', { className: 'btn btn-outline', type: 'button', onClick: onClose }, UI_COPY.buttons.close),
+      el('button', { className: 'btn btn-primary', type: 'button', onClick: onCopy }, UI_COPY.buttons.copy_link)
+    );
+  } else if (busy) {
+    body = el('p', {
+      style: { fontSize: 13, color: 'var(--text-2)', margin: '6px 0 2px' }
+    }, UI_COPY.shareFill.generating);
+  } else if (err) {
+    body = el(React.Fragment, null,
+      el('div', { className: 'error', style: { marginBottom: 10 } }, err)
+    );
+    footer = el(React.Fragment, null,
+      el('button', { className: 'btn btn-outline', type: 'button', onClick: onClose }, UI_COPY.buttons.close),
+      el('button', { className: 'btn btn-primary', type: 'button', onClick: onRetry }, UI_COPY.buttons.retry)
+    );
+  }
+
+  return el(ModalBase, {
+    title: UI_COPY.shareFill.title,
+    onClose: onClose,
+    footer: footer
+  }, body);
 }
 // REQ-070 / BUG-012：分享帮填状态与动作 —— openShareFill 点击即 POST /case/share（幂等：同发起者重复点击
 // 复用同一条未用链接），成功后弹窗展示完整链接；复制优先 Clipboard API，失败回退 window.prompt 并 toast 手动复制。
@@ -9012,33 +9091,33 @@ function NamerModal({
       lineHeight: 1.7
     }
   }, notesTxt) : null) : null;
-  return el('div', {
-    className: 'modal-mask',
-    onClick: busy ? null : onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    onClick: function (e) {
-      e.stopPropagation();
-    }
-  }, hd, sub, picker, err ? el('div', {
-    className: 'pair-err'
-  }, err) : null, busy ? el('div', {
-    className: 'pair-busy'
-  }, C.submitting) : null, form, result, el('div', {
-    className: 'pair-pay'
-  }, C.notes), el('div', {
-    className: 'pair-foot'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose,
-    disabled: busy
-  }, UI_COPY.buttons.close), el('button', {
-    type: 'button',
-    className: 'btn btn-primary',
-    disabled: busy || (!(caseId != null && String(caseId).trim()) && !pickId),
-    onClick: submit
-  }, busy ? C.submitting : C.submit))));
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 风格：自定义标题栏 + 底部按钮
+  return el(ModalBase, {
+    onClose: busy ? null : onClose,
+    className: 'pair-modal',
+    scrollable: true,
+    align: 'left',
+    footer: el('div', { className: 'pair-foot' },
+      el('button', {
+        type: 'button',
+        className: 'btn btn-outline',
+        onClick: onClose,
+        disabled: busy
+      }, UI_COPY.buttons.close),
+      el('button', {
+        type: 'button',
+        className: 'btn btn-primary',
+        disabled: busy || (!(caseId != null && String(caseId).trim()) && !pickId),
+        onClick: submit
+      }, busy ? C.submitting : C.submit)
+    )
+  }, hd, sub, picker,
+    err ? el('div', { className: 'pair-err' }, err) : null,
+    busy ? el('div', { className: 'pair-busy' }, C.submitting) : null,
+    form, result,
+    el('div', { className: 'pair-pay' }, C.notes)
+  );
 }
 
 /* ---------- 国学预测 HUB ---------- */
@@ -9668,24 +9747,19 @@ function ZodiacRelModal({
   const disclaimer = el('div', {
     className: 'pair-pay'
   }, meta.modalFoot);
-  return el('div', {
-    className: 'modal-mask',
-    onClick: onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    style: {
-      maxWidth: 620
-    },
-    onClick: function (e) {
-      e.stopPropagation();
-    }
-  }, hd, sub, inner, disclaimer, hasMe ? el('div', {
-    className: 'pair-foot'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose
-  }, UI_COPY.buttons.close)) : null));
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 有自定义标题栏（pair-hd）和底部（pair-foot），通过 children 自定义
+  return el(ModalBase, {
+    onClose: onClose,
+    className: 'pair-modal',
+    width: 620,
+    align: 'left',
+    scrollable: true,
+    bodyClassName: 'pair-body',
+    footer: hasMe ? el('div', { className: 'pair-foot' },
+      el('button', { type: 'button', className: 'btn btn-outline', onClick: onClose }, UI_COPY.buttons.close)
+    ) : null
+  }, hd, sub, inner, disclaimer);
 }
 /* REQ-103：生肖流年「风险关系 / 五行关系」名词解释弹窗 —— 结果页下方原直接展示的解释文案改为
    超链接「查看解析」+ 弹出窗口；正文复用 UI_COPY.zodiacGuide 既有解释内容（不新增文案）。
@@ -9698,31 +9772,15 @@ function ZodiacGuideModal({
   const k = kind === 'risk' ? 'risk' : 'element';
   const title = k === 'risk' ? '风险关系 · 名词解释' : '五行关系 · 名词解释';
   const body = k === 'risk' ? UI_COPY.zodiacGuide.riskRelation : UI_COPY.zodiacGuide.elementRelation;
-  return el('div', {
-    className: 'modal-mask',
-    onClick: onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    style: {
-      maxWidth: 560
-    },
-    onClick: function (e) {
-      e.stopPropagation();
-    }
-  }, el('div', {
-    className: 'pair-hd'
-  }, el('div', {
-    className: 'pair-hd-title'
-  }, el(Icon, {
-    name: 'spark',
-    size: 18,
-    color: 'var(--skin-accent)'
-  }), title), el('button', {
-    type: 'button',
-    className: 'pair-x',
-    onClick: onClose,
-    title: UI_COPY.buttons.close
-  }, '✕')), el('div', {
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 自定义标题栏
+  const hd = el('div', { className: 'pair-hd' },
+    el('div', { className: 'pair-hd-title' },
+      el(Icon, { name: 'spark', size: 18, color: 'var(--skin-accent)' }), title
+    ),
+    el('button', { type: 'button', className: 'pair-x', onClick: onClose, title: UI_COPY.buttons.close }, '✕')
+  );
+  const content = el('div', {
     style: {
       fontSize: 13,
       color: 'var(--text-2)',
@@ -9733,13 +9791,15 @@ function ZodiacGuideModal({
       overflowY: 'auto',
       padding: '2px 2px 4px'
     }
-  }, body), el('div', {
-    className: 'pair-foot'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose
-  }, UI_COPY.buttons.close))));
+  }, body);
+  return el(ModalBase, {
+    onClose: onClose,
+    className: 'pair-modal',
+    width: 560,
+    footer: el('div', { className: 'pair-foot' },
+      el('button', { type: 'button', className: 'btn btn-outline', onClick: onClose }, UI_COPY.buttons.close)
+    )
+  }, hd, content);
 }
 function ZodiacPage({
   onNavigate
@@ -18401,24 +18461,18 @@ function SunLoveModal({
   const disclaimer = el('div', {
     className: 'pair-pay'
   }, '说明：太阳星座匹配仅为性格层面的娱乐参考（5 星制分值 + 趋势参考说明，仅供娱乐与启发），不构成婚恋或其他现实建议；如需基于双方完整星盘的深度合盘，请使用上方「配对解析」。');
-  return el('div', {
-    className: 'modal-mask',
-    onClick: onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    style: {
-      maxWidth: 620
-    },
-    onClick: function (e) {
-      e.stopPropagation();
-    }
-  }, hd, sub, inner, disclaimer, hasSun ? el('div', {
-    className: 'pair-foot'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose
-  }, UI_COPY.buttons.close)) : null));
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 风格
+  return el(ModalBase, {
+    onClose: onClose,
+    className: 'pair-modal',
+    width: 620,
+    scrollable: true,
+    align: 'left',
+    footer: hasSun ? el('div', { className: 'pair-foot' },
+      el('button', { type: 'button', className: 'btn btn-outline', onClick: onClose }, UI_COPY.buttons.close)
+    ) : null
+  }, hd, sub, inner, disclaimer);
 }
 
 /* REQ-083：朋友 / 上下级关系弹窗 —— 与 SunLoveModal 同款容器（PairModal 同款样式）：
@@ -18594,24 +18648,18 @@ function SunRelationModal({
   const disclaimer = el('div', {
     className: 'pair-pay'
   }, UI_COPY.sunRel.modalFoot);
-  return el('div', {
-    className: 'modal-mask',
-    onClick: onClose
-  }, el('div', {
-    className: 'modal pair-modal',
-    style: {
-      maxWidth: 620
-    },
-    onClick: function (e) {
-      e.stopPropagation();
-    }
-  }, hd, sub, inner, disclaimer, hasSun ? el('div', {
-    className: 'pair-foot'
-  }, el('button', {
-    type: 'button',
-    className: 'btn btn-outline',
-    onClick: onClose
-  }, UI_COPY.buttons.close)) : null));
+  // 已迁移至 ModalBase 通用基座（2026-09-10）
+  // pair-modal 风格
+  return el(ModalBase, {
+    onClose: onClose,
+    className: 'pair-modal',
+    width: 620,
+    scrollable: true,
+    align: 'left',
+    footer: hasSun ? el('div', { className: 'pair-foot' },
+      el('button', { type: 'button', className: 'btn btn-outline', onClick: onClose }, UI_COPY.buttons.close)
+    ) : null
+  }, hd, sub, inner, disclaimer);
 }
 
 /* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
@@ -21025,21 +21073,22 @@ function AgentPage({
     }, sending ? '聆听中' : ['发送', payBadge(payEnough)]));
 
   // REQ-113④：切换非默认档案的确认弹窗 —— 「设为默认档案」重新定义默认 / 「仅临时使用」
-  const switchModal = switchTarget ? el('div', {
-    className: 'modal-mask',
-    onClick: function () { if (!switchBusy) setSwitchTarget(null); }
-  }, el('div', {
-    className: 'modal',
-    onClick: function (e) { e.stopPropagation(); }
-  }, el('div', { className: 'modal-title' }, '切换档案'),
+  // REQ-113④：切换非默认档案的确认弹窗 —— 已迁移至 ModalBase（2026-09-10）
+  const switchModal = switchTarget ? el(ModalBase, {
+    title: '切换档案',
+    onClose: function () { if (!switchBusy) setSwitchTarget(null); },
+    maskClosable: !switchBusy,
+    footer: el(React.Fragment, null,
+      el('button', { type: 'button', className: 'btn btn-primary', disabled: switchBusy, onClick: confirmSwitchAsDefault }, switchBusy ? '设置中…' : '设为默认档案'),
+      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: confirmSwitchTemporary }, '仅临时使用'),
+      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: function () { setSwitchTarget(null); } }, UI_COPY.buttons.cancel)
+    )
+  },
     el('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, margin: '6px 0 2px' } },
       '「' + switchTarget.name + '」不是当前默认档案。'),
     el('p', { style: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, margin: '0 0 6px' } },
-      '要将它设为默认档案，还是仅本次临时使用？'),
-    el('div', { className: 'flex-row', style: { justifyContent: 'center', gap: 10, marginTop: 16, flexWrap: 'wrap' } },
-      el('button', { type: 'button', className: 'btn btn-primary', disabled: switchBusy, onClick: confirmSwitchAsDefault }, switchBusy ? '设置中…' : '设为默认档案'),
-      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: confirmSwitchTemporary }, '仅临时使用'),
-      el('button', { type: 'button', className: 'btn btn-outline', disabled: switchBusy, onClick: function () { setSwitchTarget(null); } }, UI_COPY.buttons.cancel)))) : null;
+      '要将它设为默认档案，还是仅本次临时使用？')
+  ) : null;
 
   return el('div', { className: 'agent-page' },
     el('div', { className: 'agent-head' },
