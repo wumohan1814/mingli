@@ -179,6 +179,7 @@ def _record_llm_event(model: str, usage: dict | None, *, success: bool, error: s
         if usage:
             props.update({
                 "prompt_tokens": usage.get("prompt_tokens"),
+                "prompt_cache_hit_tokens": usage.get("prompt_cache_hit_tokens"),
                 "completion_tokens": usage.get("completion_tokens"),
                 "total_tokens": usage.get("total_tokens"),
             })
