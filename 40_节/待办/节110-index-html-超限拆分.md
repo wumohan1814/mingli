@@ -1,111 +1,103 @@
-# 节 110 · index.html 超限拆分 —— 执行方案书（渐进切片）
+# 节 110 · index.html 拆分（解耦）—— 执行方案书 v2（对齐破竹 v0.24）
 
-状态：🟡 待办（方案书已就绪，待用户拍板后分节执行）｜ 强度：大改（单向门）｜ 日期：2026-09-10
+状态：🟡 待办（方案书 v2 已就绪，待执行方按阶段执行）｜ 强度：大改（单向门）｜ 日期：2026-09-10
 
 ## 用户原话
-（审计发现）`frontend/public/index.html` 实测 21841 行，超过 `00_根/复用.md` §五红线「单文件超过 2 万行必须拆」。用户拍板：按**方案② 渐进切片**执行，并纳入旧 Vite+TS 参考源码的处理。
+（审计 + 用户追加）①`frontend/public/index.html` 21841 行，超「单文件 2 万行」红线需拆。②按破竹最新协议（v0.24）复审本方案并更新。③执行方任务 = **只做解耦（4 阶段）**；同时**审查全部代码 + 把系统优化点记录到单独文件**，优化在解耦完成后另行执行。
 
 ## 我的复述
-把 21841 行的单文件前端，在**保持免构建架构不变**的前提下，分阶段拆成「入口壳 + 多个 .css/.js」，每阶段 git 留底、用户亲验、逐个模块推进；同时归档那套废弃的 `frontend/src/`（Vite+TS）参考源码。
+把 21841 行的单文件前端，在保持免构建架构不变的前提下，**按职责**分阶段拆成「入口壳 + 多个 .css/.js」——本质是 v0.18 的**检索成本治理**（不是"为拆而拆"）；归档废弃的 `frontend/src/`；并在解耦过程中顺手产出《系统优化方向》记录（本次只记录、不执行）。
 
 ## 期望形态（验收标准 · 用户可观察）
-- 最终：`index.html` 降到 **< 2000 行**（只留 HTML 骨架 + vendor 引入 + 加载顺序 + 全局状态/路由/api）
-- 页面行为、路由、样式与拆前**完全一致**（用户逐屏亲验）
-- 免构建架构不变（无 Vite / 无 npm 构建；`node frontend/scripts/precompile.js` 门禁全绿）
-- `frontend/src/`（旧 Vite 参考）已归档，全项目只剩**一套**前端真相源
+- **检索成本下降**：拆分后"改同类功能所需读取量"下降（v0.18 判据 3 验证）
+- 页面行为 / 路由 / 样式与拆前**完全一致**（用户逐屏亲验）
+- 免构建不变；`node frontend/scripts/precompile.js` 门禁全绿
+- `frontend/src/` 已归档，全项目只剩**一套**前端真相源
+- 产出《系统优化方向》文件 `40_节/待办/节111-系统优化方向记录.md`（本次不执行）
+
+## 覆盖声明（v0.21 硬要求）
+- 本方案证明：拆分判据 / 阶段 / 牵连表 / 优化记录格式是明确的
+- 未证明：拆分后各模块的真实依赖关系（需阶段 0 只读统计落地后才可知）
 
 ## 0. 现状坐标（执行者必读）
-- `frontend/public/index.html` = 21841 行权威入口；`frontend/public/admin.html` = 2374 行（后台，**独立文件，不在本拆分主目标**）
-- 免构建管线：`frontend/scripts/precompile.js` 只处理 `public/index.html` + `public/admin.html` **两个**文件（代码里 `FILES = [...]`），把 `<script type="text/babel">` JSX 编译成普通 JS，产物引用全局 React/ReactDOM
+- `frontend/public/index.html` = 21841 行权威入口；`frontend/public/admin.html` = 2374 行（后台，独立文件，不在本拆分主目标）
+- 免构建管线：`frontend/scripts/precompile.js` 只处理 `public/index.html` + `public/admin.html` **两个**文件（`FILES=[...]`），把 `<script type="text/babel">` JSX 编译成普通 JS，产物引用全局 React/ReactDOM
 - 全部是**全局作用域的普通 JS**（预编译后），组件/函数跨区块互相引用（拆分后**加载顺序**是关键风险）
-- 已知大块：CSS 设计令牌 `:root` ≈37 行 + 大量组件/页面样式；`ModalBase` ≈2830 行；皮肤系统 `--skin-*`（guoxue/astrology/tarot/xishi/xingzuo/mbti）；9 法 / 西式 / MBTI / 档案 / 设置 / 后台 / 太初先生会话 各视图
-- ⚠️ **执行第一步先做只读统计**（见阶段 0）：量出 CSS 段 vs JS 段各行数、列出最大的 20 个视图/组件，决定"第一刀切哪最划算"，不要盲拆
+- 已知大块：CSS 设计令牌 `:root` ≈37 行 + 大量组件/页面样式；`ModalBase` ≈2830 行；皮肤系统 `--skin-*`（guoxue/astrology/tarot/xishi/xingzuo/mbti）；9 法 / 西式 / MBTI / 档案 / 设置 / 后台 / 太初先生 各视图
+- ⚠️ **执行第一步先做只读统计**：量 CSS 段 vs JS 段各行数、列最大 20 个视图/组件，决定"第一刀切哪"，不盲拆
 
-## 1. 拆分原则（硬约束，每阶段遵守）
-1. **免构建**：不引入 Vite/构建链；用 `<link rel="stylesheet">` 引 .css、`<script src>` 引 .js（顺序加载）
-2. **预编译守住**：拆出的 .js 只放"已预编译的普通 JS"；JSX 仅允许留在 index.html 骨架（或扩展 precompile 扫描新文件，见 §5）
-3. **绝对路径**：新 .css/.js 内资源仍用根绝对路径 `/vendor/*`、`/art/*`（BUG-009 教训，禁止相对路径回归）
-4. **单一事实源**：权威入口仍是 `frontend/public/index.html`；破坏这一条 = 返工
-5. **一节一模块、可回退**：git 留底 → 拆 → 用户亲验 → 说"可以" → 下一个模块；不凑合、不跨模块拆
+## 1. 拆分判据（v0.18：按职责拆，不按行数）
+| 判据 | 怎么判断 |
+|---|---|
+| ① 文件里有两类东西？ | "改 A 时**完全不需要看 B** 吗？" → 是 → 拆 |
+| ② grep 一个功能名命中多个不相关区域？ | **≥2 处不相关 → 拆**（机械化可判定） |
+| ③ 能一句话概括职责吗？ | 不能（要"以及"）→ 拆 |
 
-## 2. 分阶段执行（方案② 渐进切片）
+**防错**：⚠️ 行数是信号不是判据（500 行纯配置 ≠ 500 行混合逻辑，别机械按行切）；⚠️ 不为拆而拆（拆成碎片抬高跳转成本，判据②正是防这个）。
 
-### 阶段 0 · 建体系（1 个 session，起手必做）
-1. **只读统计**：量 CSS/JS 行数分布 + 列最大 20 个视图/组件，抄进本节
-2. **定拆分规范并落库**（写进 `00_根/复用.md` §五 + `00_根/导航.md`）：
-   - 目标文件树（`css/`、`js/` 挂在 `frontend/public/` 下）
-   - **加载顺序表**（`vendor → tokens.css → components.css → pages.css → components.js → 基础视图 → 各域视图 → 骨架挂载`）
-   - 命名：`tokens.css` / `components.css` / `pages-*.css` / `components.js` / `views-<域>.js`
-   - precompile 适配规则（见 §5）
-3. **处理旧前端源码** `frontend/src/`（见 §6，独立归档，不与本拆分混做）
+## 2. 设计取向（v0.17 乐高原则，大改必过、结论写进每阶段收尾）
+- **轻量**：拆出的模块不加冗余包装，保持免构建直接加载
+- **接缝**（不是空接口）：按职责隔离成**可替换模块**；不留 YAGNI 空功能 / 死代码
+- **埋点** ⭐：拆分不破坏 `backend/app/events` 埋点调用点（对照 `00_根/复用.md` 已有件）
+- **开关**：皮肤系统 / agent_enabled 等既有开关保持，不新增开关
 
-### 阶段 1 · 拆 CSS（1 个 session，第一刀最划算）
-- 动作：把 `<style>` 内的设计令牌 / 组件样式 / 页面样式抽出为 `css/tokens.css`、`css/components.css`、`css/pages-*.css`，index.html 用 `<link>` 引
-- 验收：页面样式与拆前逐屏一致（用户亲验首页 + 各皮肤切换），precompile 全绿
-- 回退：git 留底，删 `<link>` 还原 `<style>`（一整阶段可回退）
+## 3. 拆分原则（硬约束，每阶段遵守）
+1. **免构建**：不引入 Vite/构建链；`<link>` 引 .css、`<script src>` 引 .js（顺序加载）
+2. **预编译守住**：拆出的 .js 只放"已预编译的普通 JS"；JSX 仅留在 index.html 骨架（或扩展 precompile 扫描新文件）
+3. **绝对路径**：新 .css/.js 内资源仍用根绝对路径 `/vendor/*`、`/art/*`（BUG-009 教训）
+4. **单一事实源**：权威入口仍是 `frontend/public/index.html`
+5. **一节一模块、可回退**：git 留底 → 拆 → 用户亲验 → 说"可以" → 下一个模块
 
-### 阶段 2 · 拆通用件（1 个 session）
-- 动作：`ModalBase` / `Toast` / `Skeleton` / 皮肤系统 / 共享工具 抽为 `js/components.js`
-- 验收：弹窗、提示、骨架屏、皮肤切换照跑
-- 强调：`components.js` 必须在任何使用它的视图**之前**加载（定义先于使用）
+## 4. 分阶段执行（方案②渐进切片，每阶段按 §1 判据切）
+- **阶段 0 · 建体系**（1 session）：只读统计 → 定拆分规范/加载顺序/命名/precompile 适配（落 `复用.md`+`导航.md`）→ **建牵连表（§5）** → 归档 `frontend/src/`（§7）
+- **阶段 1 · 拆 CSS**（1 session）：设计令牌/组件/页面样式 → `css/*.css`；验收逐屏样式一致
+- **阶段 2 · 拆通用件**（1 session）：ModalBase/Toast/Skeleton/皮肤/共享工具 → `js/components.js`（必须在 views 之前加载）
+- **阶段 3 · 拆视图**（多 session，按域逐节）：`views-guoxue.js`/`views-xishi.js`/`views-mbti.js`/`views-cases.js`/`views-agent.js`/`views-onboarding.js`… 每节 git 留底 + 用户亲验该域
+- **阶段 4 · 收敛达标**（1 session）：index.html 只剩骨架+vendor+加载顺序+全局状态+api；`复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」；precompile 多文件定稿
 
-### 阶段 3 · 拆视图（多 session，按域逐节）
-- 每节拆一个域：`views-guoxue.js`（九法/起卦/择吉/生肖）/ `views-xishi.js`（星座/塔罗/雷诺曼/配对）/ `views-mbti.js` / `views-cases.js`（档案/帮填）/ `views-agent.js`（太初先生）/ `views-onboarding.js`（建档/waiting/calibration/predict/revise/topic）…
-- 每节：git 留底 → 抽该域 → 用户亲验该域 → 说"可以" → 下一个
-- 顺序：`components.js` → 依赖它的基础视图 → 自带域的视图
+## 5. 牵连表（v0.19：阶段 0 必建，写进 `00_根/导航.md`）
+- 拆分会让"同一份信息散多处"风险上升，必须建牵连表，至少含：**加载顺序**（vendor → components.js → views-* → 骨架挂载）、**全局依赖**（token/page/params/navigate/api 被哪些视图引用）、**皮肤系统**（--skin-* 引用点）、**静态资源绝对路径**（/vendor/* /art/* 引用点）
+- 规则：改动命中牵连表"被引用方" → 先把"必须同时检查"项全部读到
+- 它是**补救不是首选**；首选是拆分时用「单点」（同一信息只放一处，v0.19 判据 5："是职责就拆，是信息就合"）
 
-### 阶段 4 · 收敛达标（1 个 session）
-- index.html 只剩：HTML 骨架 + vendor 引入 + 加载顺序 + 全局状态（token/page/params/navigate）+ api 封装
-- 达标：index.html **< 2000 行**；`00_根/复用.md` §五红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」
-- precompile 门禁多文件适配，本轮定稿
+## 6. precompile 门禁适配
+- 现有 precompile.js 只扫 `public/index.html` + `public/admin.html`；拆出的 .js 若含 JSX → 扩展 FILES 列表读目录，或规定「拆出的 .js 是编译后普通 JS、禁止再写 JSX」
+- 红线不变：禁止浏览器端 `<script type="text/babel">` 实时转译
 
-## 3. 加载顺序（最高风险，先画依赖地图）
-- 现状：同一 `<script>` 内函数/组件靠全局作用域**互相引用**；拆分后必须「定义文件先于使用文件」
-- ⚠️ 最容易翻车的错：某视图引用了「后面才加载」的组件 → 白屏。**每拆一步先画该域的依赖**（"它引用了谁、谁引用了它"），画进 `导航.md`
+## 7. 旧 Vite+TS 参考源码处理（frontend/src/，用户点名）
+- `frontend/src/` 是废弃的 Vite5+TS 脚手架（react-router/antd-mobile/axios，与免构建栈完全不同），构成**第二套前端真相源**（违反铁律 2）
+- **归档（不删）**：`git mv frontend/src` → `docs/_archive/前端-vite-ts-参考实现/`；同批处理 `frontend/package.json`、`vite.config.ts`、`tsconfig.json`、`package-lock.json`、`taichu-h5-prototype.html`；重写 `frontend/README.md`（现还写 Vite 栈）；更新 `导航.md`+`复用.md` 改述"已归档"
+- 不删理由：FE-001 ADR 保留"未来迁 Vite"追溯；破竹"归档>删除"
 
-## 4. precompile 门禁适配
-- 现有 precompile.js 只扫 `public/index.html` + `public/admin.html` 两个文件
-- 拆出的 .js 若含 JSX → **扩展 precompile 的 FILES 列表**（读目录收集 *.js）；或规定「拆出的 .js 是编译后的普通 JS、禁止再写 JSX」
-- 红线不变：**禁止浏览器端 `<script type="text/babel">` 实时转译**
+## 8. 禁碰清单
+- 不碰 `backend/`（app/paipan-node/data）、`ops/`、`Dockerfile`、`Caddyfile`、`.env`
+- 不碰 `admin.html`（后台拆分另立，最多阶段 4 顺带评估）
+- 不改接口契约（method-result v2 / chart.json）；不引入构建链/npm 运行时新依赖；不动 `frontend/public/vendor/`
 
-## 5. 旧 Vite+TS 参考源码处理（frontend/src/）—— 用户点名要求
-**现状**：`frontend/src/` 是 Vite5 + React18 + TS5 脚手架（react-router / antd-mobile / axios / react-query / zustand），与运行中的免构建 CDN React 是**两套不同技术栈**；是早期废弃方向（`frontend/README.md` 还停在「待补：工程初始化」）。它和 `public/index.html` 构成**第二套前端真相源**，违反破竹铁律 2（单一事实源）。
-
-**推荐：归档（不删）**：
-1. `git mv frontend/src` → `docs/_archive/前端-vite-ts-参考实现/`，加 README 横幅「历史参考、不参与运行、技术栈不同、勿以之为准」
-2. 同批处理 Vite 构建链文件：`frontend/package.json`、`vite.config.ts`、`tsconfig.json`、`package-lock.json`（运行层不依赖，归档或删除均可）
-3. `frontend/taichu-h5-prototype.html`（78KB 早期原型）一并归档
-4. 重写 `frontend/README.md`（现还在写 Vite 栈，会误导）→ 改为「权威入口 = public/index.html（免构建）；src/ 已归档」
-5. 更新 `00_根/导航.md` + `00_根/复用.md`：「frontend/src/ 为旧 Vite 参考」改述为「已归档」
-
-- **为什么不删**：FE-001 ADR 明确「超 30k 行或团队 ≥3 人时评估迁 Vite 工程化（Phase2）」——src/ 是未来迁回的参考起点；破竹原则「归档 > 删除」。
-- **后果一句话**：不处理，下个 agent 打开项目会看到两套前端源码，极易拿 src/ 当真相去改，产生「改了不生效」的返工。
-
-## 6. 禁碰清单
-- 不碰 `backend/`（app / paipan-node / data）、`ops/`、`Dockerfile`、`Caddyfile`、`.env`
-- 不碰 `admin.html`（后台拆分另立，非本范围，最多阶段 4 顺带评估）
-- 不改任何接口契约（`method-result v2` / `chart.json`）
-- 不引入构建链 / npm 运行时新依赖
-- 不动 `frontend/public/vendor/`（本地化 React 已是编译后产物）
-
-## 7. 控制点
-- 回归：每阶段跑 `node frontend/scripts/precompile.js` + 关键路径冒烟（首页 / 登录 / 建档 / 一个解读页 / 档案）
+## 9. 控制点（v0.16 四项逐项回应，未触发写"不适用"）
+- 回归：每阶段跑 precompile + 关键路径冒烟（首页/登录/建档/一个解读页/档案）
 - 安全/数据：不适用（纯前端静态重构，无鉴权/数据改动）
-- 缓存：拆分上线首次给 .css/.js 加版本（文件名 hash 或 `?v=`），并提示用户强刷（Ctrl+F5）
+- 性能：拆分不引入新性能退化（拆分前后首屏/加载对比，性能的凭是数字）
+- 结构：每阶段收尾写一句结构反思（§11）
+- 缓存：拆分上线首次给 .css/.js 加版本（hash 或 `?v=`），提示用户强刷
 
-## 8. 每阶段验收协议（破竹 v0.11 三拍）
-- (a) Agent 拉起环境交地址 → (b) 用户亲自点各页面 → (c) 用户说「可以」→ 文字留痕（节文件）+ git 留底
-- 前端用户亲验；**不用截图**（截图仅用户明确要求时做一次）
+## 10. 性能/资源审查 → 产出《系统优化方向》（v0.15，本次只记录、不执行）
+执行方在解耦过程中**审查全部代码**（index.html + admin.html + backend），按 v0.15 排查四步，把系统级优化点记入 `40_节/待办/节111-系统优化方向记录.md`：
+- **排查四步**：定性（哪里慢/重）→ 取数（改前数字）→ 只读命中段定位 → 复测对比
+- **性能的凭是数字**：每条写"改前 X → 预期改后 Y"（无数字不落）
+- **主动提代价选项**：发现"8MB 图 / 全表查询 / 高频轮询 / 内存热点"等用户不知情的代价 → 记入（附代价说明）
+- **范围（用户点名）**：服务器压力 / 性能 / 渲染效果与速度（镜像体积、前端资源体积与加载、渲染循环、接口查询、内存、构建体积等）
+- **本次只记录、不执行**：优化在解耦 4 阶段完成后另开一节按记录逐条执行（逐条带改前/改后数字验收）
 
-## 9. 结构反思（每阶段收尾，破竹 §8）
-- 拆到某处发现「某组件和某视图耦合过深、拆不动」→ 写一句结构反思（哪里难 / 怎么改 / 下次会怎样），**不要硬拆**
+## 11. 每阶段验收（v0.24 三拍）+ 结构反思
+- 验收三拍：(a) 拉起环境交地址等用户 (b) 用户亲自操作 (c) 说「可以」→ 文字留痕 + git 留底；前端用户亲验，不用截图
+- 结构反思（v0.8）：拆到某处"组件与视图耦合过深拆不动" → 写一句反思（哪里难/怎么改/下次会怎样），不硬拆
 
-## 10. 与并行工作的协调（重要）
-- ⚠️ index.html 当前有**他人未提交的改动**（首页吉祥物「侧边定位模式」）。执行阶段 0 之前**必须先与那份工作对齐 / 合并**，否则拆分基础就含未提交内容（会污染 git 历史）。
+## 12. 与并行工作的协调
+- ⚠️ index.html 曾有人未提交改动（吉祥物侧边定位），现已合入提交历史；执行阶段 0 前先 `git pull` 对齐最新 HEAD，再核对工作区干净
 
-## 11. 待用户拍板 / 交付物
-- 方案书（本文件）＝ 交付物，供另一 session 按阶段执行
-- 执行者每完成一个阶段，在本文件标注阶段状态（🟡→🔵→🟠→🟢），并在 `00_根/入口.md` 同步「下一步」
+## 本节指标（v0.21，执行方收尾填写）
+- 模型 + provider：{{执行方填}}
 
 ## 用户结论
 待验收
