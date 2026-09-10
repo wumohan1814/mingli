@@ -1,133 +1,73 @@
 # 太初 · 命理 H5
 
-> 多流派 AI 命理综合 H5（MVP V0）
-> 主钩子：事业运势趋势参考
+> 多流派 AI 命理解读 H5：录入生辰 → 排盘 → 9 法解读（八字×4 / 紫微 / 西占 / 七政 / 奇门 / 五运六气）→ 断前尘校验 → 多流派 AI 综合解读，支持校准、追问、档案沉淀；另有西式占卜（星座/塔罗/雷诺曼）、MBTI、生肖流年等玩法；积分付费。
 
-录入生辰完成排盘 → 断前尘回溯校验 → 多流派 AI 综合解读与趋势预测，支持校准修正、反馈质疑与档案沉淀，最终聚焦输出「事业运势趋势」参考。
+## 你怎么用（你只需要做两件事）
 
-## 实际技术栈（以源码为准）
+1. **说需求**——一句话（例：「破竹：{{你的需求}}」）；一堆想法就全倒出来，我来拆。
+2. **看产物拍板**——我给你真实页面 / 截图 / 地址，你说"可以"或"不对"。
 
-| 层 | 技术 | 说明 |
-|---|---|---|
-| 后端 | Python 3.13 + FastAPI | 单进程单端口 **8000**，同时服务 `/api` 与前端静态文件 |
-| 前端 | **免构建** CDN React 18 + Babel Standalone | 权威入口 `frontend/public/index.html`（React / ReactDOM / Babel 已本地化到 `frontend/public/vendor/`）。**不需要 npm install、不需要 Vite 构建或启动前端**（沙箱环境阻断 Vite/esbuild，故走免构建路线；页面内 Google Fonts 等少量外部资源仍需联网加载） |
-| 数据库 | SQLite（双库） | 分析库 + 反馈库，位于 `data/*.db`（git 忽略） |
-| 排盘 | lunar-python / iztro / mingyu-core | Python 侧 lunar-python；紫微等由 Node 子进程引擎产出（`backend/paipan-node/` 的 `node_modules` 与 `vendor/` 已就位，**无需 npm install**；Node 22 仅作排盘引擎子进程） |
-| LLM | DeepSeek 官方 API（`deepseek-v4-flash`） | OpenAI 兼容；key 配置在 `backend/.env` |
+你不需要懂代码、看文件、判断技术方案；需求说清、产物拍板，剩下的交给 Agent 团队。
 
-## 目录要点
+沟通也简单：讲「改了什么 → 对你有什么影响 → 需要你定什么」，每项待定都带默认建议。
 
-| 路径 | 说明 |
+### 一轮「破竹」长这样
+
+1. 你说需求（一句话或一堆想法都行）。
+2. Agent 开工前先读规则（`../Ratoon-破竹/00_协议.md`）与状态入口（`00_根/入口.md`），拆任务、干活。
+3. 你看到真实产物（页面 / 截图 / 地址），说"可以"或"不对"。
+4. 不对就改；对了就留痕归档，进入下一轮。
+5. 每轮收尾留痕：决策进 `99_状态/`、迭代进 `40_节/`、凭进 `50_痕/`。
+
+### 产物 = 凭（证据）
+
+- 我说"完成了"不算数；给你看的截图 / 录屏 / 可点开的地址 / 真实命令输出才算凭。
+- 凭统一放 `50_痕/`，每条附一句"证明了什么 / 没证明什么"，脱敏后入库。
+- 命名与脱敏规则见 `50_痕/README.md`。
+
+## 项目规则（Agent 读）
+
+- 本项目的规则在 `../Ratoon-破竹/00_协议.md`（每轮开工先读）；项目状态入口 `00_根/入口.md`（每轮必读）。
+- 产品全貌：`00_根/全貌.md`；代码结构 / 契约 / 红线 / 启动：`00_根/导航.md`；已有件 / 设计值：`00_根/复用.md`；决策 / 已知问题：`99_状态/`；迭代历史：`40_节/`。
+- 运行层代码（backend / frontend / data / ops）只读不写；治理层文件（00_根 / 40_节 / 99_状态 / 50_痕）按协议维护。
+
+> 本 README 只回答「这是什么、怎么跑、怎么合作」；代码契约 / 红线 / 启动细节以 `00_根/导航.md` 为准。
+
+## 快速启动（详细见 00_根/导航.md）
+
+- 后端：`pip install -e "backend[dev]"` → 配置 `backend/.env`（`TAICHU_LLM_API_KEY`）→ `cd backend && python -m uvicorn app.main:app --port 8000`
+- 前端：无需构建（免构建 CDN React，FastAPI 在 8000 直接托管 `frontend/public/`）
+- Node 排盘：`backend/paipan-node/`（:9317，自动降级）
+- 访问：http://localhost:8000（H5）· /docs（Swagger）
+- 测试：`cd backend && python -m pytest -q`（danger-full-access 沙箱下）
+
+### 环境前提
+
+| 项 | 要求 |
 |---|---|
-| `frontend/public/index.html` | **实际生效的前端**：FastAPI `app.mount("/", StaticFiles(.../frontend/public))` 直接托管 |
-| `frontend/public/vendor/` | 本地化的 React 18 / ReactDOM / Babel Standalone |
-| `frontend/src/` | 旧 Vite + TS 参考源码，**不参与运行**（详见 docs/前端改造交接说明.md） |
-| `backend/app/` | FastAPI 模块化单体后端（9 个方法模块、异步任务、档案 / 反馈 / 合规等） |
-| `backend/paipan-node/` | Node 排盘引擎依赖与脚本（已就位） |
-| `.env.example` | 环境变量**模板**（LLM key 占位符 `sk-your-key-here`）；真实 key 只放 `backend/.env` |
-| `docs/` | 架构、交接与安全文档（总索引见 `docs/README.md`，重点见下「关键文档」） |
+| Python | 3.13（`backend/pyproject.toml` 要求 >=3.11） |
+| Node.js | 22+（仅排盘引擎子进程需要；全程无需 npm install） |
+| LLM key | 只放 `backend/.env` 的 `TAICHU_LLM_API_KEY`，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
 
-## 快速启动
-
-### 前提条件
-- Python 3.13（`pyproject.toml` 要求 >=3.11）
-- Node.js 22+（仅排盘引擎子进程需要；**全程无需 npm install**）
-- （可选）ngrok 用于内网穿透分享
-
-### 1. 安装后端依赖（首次）
-
-后端依赖已由 `backend/pyproject.toml` 声明（FastAPI、SQLAlchemy、lunar-python 等）。在**仓库根目录**执行以下任一命令：
-
-```bash
-pip install -e backend             # 安装运行依赖
-# 或一次装齐（含 pytest 等开发依赖）：
-pip install -e "backend[dev]"
-```
-
-> 说明：`[dev]` 对应 `pyproject.toml` 的 `[project.optional-dependencies]`，需在仓库根目录执行；若已 `cd backend`，等效写法为 `pip install -e ".[dev]"`。仓库自带的隔离环境 `backend/.venv`（如存在）请先激活再安装。
->
-> **前端无需 npm install**：前端为免构建 CDN React + Babel Standalone（已本地化到 `frontend/public/vendor/`）；Node 22 排盘引擎依赖（`backend/paipan-node/` 的 `node_modules` 与 `vendor/`）也已就位，均不需要任何 npm 安装步骤。
-
-### 2. 配置环境变量（首次，后端 `.env`）
-
-真实 key 不放代码 / 模板，先把根目录模板复制为 `backend/.env` 再填入：
-
-```bash
-cd backend
-cp ../.env.example .env     # macOS / Linux
-# 或 Windows: copy ..\.env.example .env
-```
-
-然后编辑 `backend/.env`，至少填入：
-
-```dotenv
-TAICHU_LLM_API_KEY=sk-你的真实key
-```
-
-> 安全约定：key 只允许出现在本地 `backend/.env`（已被 `.gitignore` 忽略，不进版本库）；严禁硬编码进源码 / README / `.env.example`。详见 `docs/API-Key安全与LLM接入说明.md`。
-
-### 3. 启动（单端口 8000）
-
-**Windows：**
-
-```bat
-start.bat
-```
-
-**macOS / Linux：**
-
-```bash
-./start.sh
-```
-
-或手动启动（两者等价）：
-
-```bash
-cd backend
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-前端由 FastAPI 在 8000 端口直接托管 `frontend/public/`，**无需另起 Vite / 5173**。
-
-### 4. 访问
-
-| 服务 | 地址 |
-|---|---|
-| 前端 H5（入口即整站） | http://localhost:8000 |
-| API 文档（Swagger） | http://localhost:8000/docs |
-
-### 5. 内网穿透（分享给朋友测试）
-
-```bash
-ngrok http 8000
-```
-
-### 6. 运行测试
-
-```bash
-cd backend
-python -m pytest -q
-```
+> 架构一句话：Python 3.13 + FastAPI 模块化单体，单端口 8000 同时服务 `/api` 与前端静态；SQLite 三库（分析 / 反馈 / 运维，`data/*.db`，git 忽略）。
 
 ## 已验证能力
 
-- **排盘**：多流派确定性排盘（盘面数值零 LLM，只由代码产出）
-- **断前尘**：历史回溯校验，降低预测幻觉
-- **校准**：结果校验 / 校准链路
-- **预测**：9 个方法模块 LLM 综合分析 + 综合解读
-- **修正**：跨用户质疑反馈收集与后台归纳
-- **档案**：用户分析档案落库与缓存复用
-- **异步**：长任务 jobId + 轮询（ADR-0005）
-
-## 关键文档
-
-| 文档 | 内容 |
+| 能力 | 说明 |
 |---|---|
-| `docs/README.md` | docs 总索引（standards / adr / runbooks 结构与写作约定） |
-| `docs/人工注意点清单.md` | 需人工实测 / 判断 / 决策的事项清单（MVP 收尾必读） |
-| `docs/开发日志.md` | 各阶段开发日志与决策记录 |
-| `docs/前端改造交接说明.md` | 免构建前端的真实状态、两套前端结论与运行契约 |
-| `docs/API-Key安全与LLM接入说明.md` | DeepSeek 接入与 key 安全约定 |
-| `docs/Session交接文档.md` | 会话与交接说明 |
-| `docs/standards/03-接口与数据字典.md` | 对外 REST API 契约与数据字典（跨模块唯一协商点） |
-| `docs/standards/02-技术栈清单.md` | 技术栈清单与选型 |
+| 排盘确定性 | 多流派排盘为确定性计算、零 LLM（lunar-python + Node 引擎） |
+| 断前尘 | 历史回溯校验，降低预测幻觉 |
+| 校准 | 结果校验 / 校准链路 |
+| 9 法预测 | 八字×4 / 紫微 / 西占 / 七政 / 奇门 / 五运六气 AI 综合解读 |
+| 修正反馈 | 跨用户质疑反馈收集与后台归纳 |
+| 档案 | 用户分析档案落库与缓存复用 |
+| 异步 | 长任务 jobId + 轮询 |
+| 免构建前端 | CDN React 直接托管，无 npm install / Vite 构建 |
+| 扩展玩法 | 星座 / 塔罗 / 雷诺曼 / MBTI / 生肖流年（积分付费） |
+
+## 历史档案（已冻结）
+
+- `docs/需求表.md`、`docs/Bug管理表.md` 已冻结为历史快照（2026-09-10），不再更新；实时状态见 `00_根/入口.md` 与 `40_节/`。
+- 旧工程文档（架构设计、Code-Wiki、测试知识库、standards、adr 等）仍可按需查阅，见 `docs/README.md` 索引；`docs/API-Key安全与LLM接入说明.md`、`docs/standards/02-技术栈清单.md`、`docs/standards/03-接口与数据字典.md` 仍有效。
+
+> 本 README 于 2026-09-10 随「破竹」框架重构重写；此后不再作为工程细节的真相源（见上）。
