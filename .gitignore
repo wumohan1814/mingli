@@ -45,3 +45,7 @@ backend/uploads/
 .pytest_tmp/
 backend/.pytest_cache/
 backend/.pytest_tmp/
+
+# Syncthing 同步工具元数据（不入库）
+.stfolder/
+.stignore
