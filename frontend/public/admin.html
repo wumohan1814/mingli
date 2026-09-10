@@ -203,6 +203,8 @@ const REPORT_FIELD_ZH = {
   count: '次数',
   calls: '调用次数',
   total_tokens: '消耗 tokens',
+  cache_hit_tokens: '缓存命中 tokens',
+  cache_miss_tokens: '未缓存命中 tokens',
   errors: '错误数',
   http_5xx: '5xx 错误数'
 };
@@ -258,8 +260,18 @@ const PROMPT_KEY_ZH = {
   'wuyun-liuqi': '五运六气',
   revise: '追问',
   validation: '排盘校验',
+  divination_common: '断卦公共框架',
   astrology: '星座解读',
-  divination: '占卜解读',
+  divination_liuyao: '六爻断卦',
+  divination_meihua: '梅花易数',
+  divination_xiaoliuren: '小六壬',
+  divination_ssgw: '观音灵签',
+  divination_liuren: '大六壬',
+  divination_jinkoujue: '金口诀',
+  divination_qimen: '奇门解读',
+  divination_almanac: '黄历择吉',
+  divination_taiyi: '太乙神数',
+  divination_huangji: '皇极经世',
   divination_focus: '六爻焦点详解',
   lenormand: '雷诺曼解读',
   tarot: '塔罗解读',
@@ -956,6 +968,8 @@ function UsersSection() {
   const [savingUser, setSavingUser] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [adjustingId, setAdjustingId] = useState(null);
+  const [resettingPwdId, setResettingPwdId] = useState(null);
+  const [resettingCaseId, setResettingCaseId] = useState(null);
   const [newUser, setNewUser] = useState({ username: '', password: '', nickname: '' });
   const canWrite = (localStorage.getItem(ROLE_KEY) || '') === 'admin' || (localStorage.getItem(ROLE_KEY) || '') === 'operator';
   const search = async function (keyword) {
@@ -1011,6 +1025,47 @@ function UsersSection() {
     } finally {
       setDeletingId(null);
       search(q); // 成功/失败都刷新（失败如 1002 说明已被他人删除）
+    }
+  };
+  // 重置用户密码（operator+ 才有此按钮；POST /admin/ops/users/{id}/reset-password）
+  const resetPassword = async function (u) {
+    const newPwd = window.prompt('为「' + u.username + '」（id: ' + u.id + '）设置新密码：\n（至少 6 位，临时密码请线下交付）', '');
+    if (newPwd === null) return; // 用户取消
+    const pwd = String(newPwd).trim();
+    if (pwd.length < 6) {
+      alert('密码至少 6 位，未提交');
+      return;
+    }
+    if (!window.confirm('确认将用户「' + u.username + '」的密码重置为新密码？\n此操作会写入审计记录。')) return;
+    setResettingPwdId(u.id);
+    try {
+      await api('/admin/ops/users/' + encodeURIComponent(u.id) + '/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ new_password: pwd })
+      });
+      toast('密码重置成功：' + u.username);
+    } catch (err) {
+      alert(err.message || '密码重置失败');
+    } finally {
+      setResettingPwdId(null);
+    }
+  };
+  // 重置档案（operator+ 才有此按钮；POST /admin/ops/users/{id}/reset-case，删结果保留档案）
+  const resetCase = async function (u, c) {
+    if (!window.confirm('确认重置档案「' + (c.name || '未命名档案') + '」（case id: ' + (c.id != null ? c.id : c.caseId) + '）？\n将删除该档案的排盘/解读/校准/会话等全部结果，档案本身保留为「未开始」状态，且不可恢复！')) return;
+    const caseId = c.id != null ? c.id : c.caseId;
+    setResettingCaseId(caseId);
+    try {
+      await api('/admin/ops/users/' + encodeURIComponent(u.id) + '/reset-case', {
+        method: 'POST',
+        body: JSON.stringify({ case_id: caseId })
+      });
+      toast('档案已重置：' + (c.name || '未命名档案'));
+      openUser(u); // 重新拉取档案列表（状态会变）
+    } catch (err) {
+      alert(err.message || '档案重置失败');
+    } finally {
+      setResettingCaseId(null);
     }
   };
   // 余额充值 / 余额调整（operator+ 才有此按钮；POST /admin/credits/manual，
@@ -1125,7 +1180,15 @@ function UsersSection() {
         }
       }, /*#__PURE__*/React.createElement("td", null, c.id != null ? c.id : c.caseId), /*#__PURE__*/React.createElement("td", null, c.name || '未命名档案'), /*#__PURE__*/React.createElement("td", null, statusTag(c.status)), /*#__PURE__*/React.createElement("td", null, fmtTime(c.created_at)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
         className: "btn btn-outline btn-mini"
-      }, "查看档案")));
+      }, "查看档案"), canWrite && /*#__PURE__*/React.createElement("button", {
+        className: "btn btn-outline btn-mini",
+        style: { marginLeft: 6 },
+        disabled: resettingCaseId === (c.id != null ? c.id : c.caseId),
+        onClick: function (e) {
+          e.stopPropagation();
+          resetCase(casesUser, c);
+        }
+      }, resettingCaseId === (c.id != null ? c.id : c.caseId) ? '重置中…' : '重置档案')));
     }))))));
   }
 
@@ -1297,6 +1360,13 @@ function UsersSection() {
         adjustBalance(u);
       }
     }, adjustingId === u.id ? '调整中…' : '余额充值/调整'), canWrite && /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-outline btn-mini",
+      disabled: resettingPwdId === u.id,
+      onClick: function (e) {
+        e.stopPropagation();
+        resetPassword(u);
+      }
+    }, resettingPwdId === u.id ? '重置中…' : '重置密码'), canWrite && /*#__PURE__*/React.createElement("button", {
       className: "btn btn-danger btn-mini",
       disabled: deletingId === u.id,
       onClick: function (e) {
@@ -1308,7 +1378,7 @@ function UsersSection() {
 }
 
 /* ============ 提示词管理 ============ */
-const PROMPT_CATEGORY_ORDER = ['方法', '校验/追问', '解读'];
+const PROMPT_CATEGORY_ORDER = ['方法', '校验/追问', '解读', '配对', '太初先生', '起名'];
 function PromptsSection() {
   const [items, setItems] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -1482,7 +1552,7 @@ function PromptsSection() {
     className: "page-title"
   }, "提示词"), /*#__PURE__*/React.createElement("p", {
     className: "page-desc"
-  }, "查看与编辑系统提示词（方法 9 / 校验·追问 2 / 解读 4，共 15 个）。保存后立即生效于新请求；每次保存自动生成版本快照，可查看历史并回滚。"), errored && /*#__PURE__*/React.createElement("div", {
+  }, "查看与编辑系统提示词（方法 9 / 校验·追问 3 / 解读 14 / 配对 4 / 太初先生 2 / 起名 1，共 33 个）。保存后立即生效于新请求；每次保存自动生成版本快照，可查看历史并回滚。"), errored && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
   }, errored), loadingList && /*#__PURE__*/React.createElement("p", {
     className: "hint"
