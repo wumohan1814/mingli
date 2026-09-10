@@ -38,3 +38,10 @@ temp/
 
 # 素材上传运行时目录（REQ-059；admin 上传落盘，不入库）
 backend/uploads/
+
+# 测试噪声（pytest 临时产物 / 缓存；含无读权限目录）
+.tmp_pytest/
+.pytest_cache/
+.pytest_tmp/
+backend/.pytest_cache/
+backend/.pytest_tmp/
