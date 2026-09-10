@@ -14,6 +14,7 @@ from typing import Optional
 
 from app.database import get_analytics_db
 from app.models import (
+    AgentMessage,
     AstrologyReading,
     Calibration,
     Case,
@@ -900,8 +901,10 @@ async def delete_case(
     db: Session = Depends(get_analytics_db),
 ):
     """删除档案：先删子表（charts/method_results/calibrations/conversations/jobs/
-    route_decisions/divinations/astrology_readings/mbti_results/mbti_share_links
-    按 case_id 删，外键顺序子表在前），最后删 case 行。"""
+    route_decisions/divinations/astrology_readings/mbti_results/mbti_share_links/
+    agent_messages 按 case_id 删，外键顺序子表在前），最后删 case 行。
+    注意：agent_messages.case_id 有 cases 外键（SQLite PRAGMA foreign_keys=ON），
+    漏删会导致 FOREIGN KEY constraint failed（节100⑤：删档案 500 崩溃根因）。"""
     user_id = get_user_id_from_token(authorization)
     case = _get_owned_case(db, case_id, user_id)  # 归属校验（非本人 404）
 
@@ -917,9 +920,22 @@ async def delete_case(
         AstrologyReading,
         MbtiResult,
         MbtiShareLink,
+        AgentMessage,
     ):
         db.query(model).filter_by(case_id=case.id).delete(synchronize_session=False)
+
+    # REQ-113 补全：删除的是默认档案，且还有其他档案 → 把最新一条设为新默认
+    was_default = bool(case.default)
     db.delete(case)
+    if was_default:
+        next_case = (
+            db.query(Case)
+            .filter_by(user_id=user_id)
+            .order_by(Case.id.desc())
+            .first()
+        )
+        if next_case is not None:
+            next_case.default = True
     db.commit()
 
-    return {"code": 0, "message": "ok", "data": {"deleted": True}}
+    return {"code": 0, "message": "ok", "data": {"deleted": True, "wasDefault": was_default}}
