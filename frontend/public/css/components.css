@@ -1,0 +1,422 @@
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{font-family:var(--font-sans);color:var(--text-1);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+    .serif{font-family:var(--font-serif)}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    input,select,textarea{font-family:inherit}
+
+    /* 星点背景（星象式沉浸感，低透明度不影响阅读） */
+    .starfield{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.55;
+      background:
+        radial-gradient(1px 1px at 18% 28%, rgba(230,207,154,.8), transparent),
+        radial-gradient(1px 1px at 76% 18%, rgba(230,207,154,.55), transparent),
+        radial-gradient(1.6px 1.6px at 52% 62%, rgba(255,255,255,.55), transparent),
+        radial-gradient(1px 1px at 86% 74%, rgba(230,207,154,.65), transparent),
+        radial-gradient(1.2px 1.2px at 12% 82%, rgba(255,255,255,.45), transparent),
+        radial-gradient(1.4px 1.4px at 33% 12%, rgba(230,207,154,.5), transparent);
+      background-repeat:no-repeat;animation:twinkle 6s ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.35}50%{opacity:.7}}
+
+    /* REQ-060：全局页脚贴底 —— .app-shell 改为 flex 纵列：页面内容 .view-enter flex:1 吸收余高，
+       内容不足一屏时把页脚（免责声明等）推贴视口底；内容超一屏时随文档流自然落页尾（不悬浮、不遮挡）。
+       100dvh 兜底移动端动态视口；env(safe-area-inset-bottom) 避开 iOS 底部指示条。无 JS 监听。 */
+    .app-shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;padding-top:58px;padding-bottom:env(safe-area-inset-bottom)}
+    .app-shell>.view-enter{flex:1 0 auto}
+    .container{max-width:480px;margin:0 auto;padding:24px 20px}
+
+    /* 顶部固定 Banner（随主题换色） */
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+      padding:12px 20px;background:var(--skin-banner);color:var(--skin-banner-ink);
+      box-shadow:0 1px 0 var(--gold-500),0 6px 18px rgba(26,33,56,.18);transition:background var(--dur) var(--ease)}
+    .brand{font-family:var(--font-serif);font-weight:700;font-size:18px;letter-spacing:.04em}
+    .brand .dot{color:var(--gold-300);margin:0 2px}
+    .topbar .tagline{font-size:12px;opacity:.85}
+    .topbar-side{display:flex;align-items:baseline;gap:12px;min-width:0}
+
+    /* 右上角菜单区：登录按钮 + 汉堡下拉 */
+    .topbar-menu{position:relative;display:flex;align-items:center;flex:none}
+    .topbar-menu .menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
+      background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
+    .topbar-menu .menu-btn:hover{background:rgba(128,128,150,.32)}
+    .topbar-menu .menu-btn .bars{display:flex;flex-direction:column;gap:4px;width:16px;pointer-events:none}
+    .topbar-menu .menu-btn .bars .bar{height:2px;border-radius:2px;background:currentColor}
+    .menu-login-btn{display:flex;align-items:center;gap:6px;padding:7px 15px;border-radius:999px;font-size:13px;font-weight:600;
+      color:var(--skin-banner-ink);background:transparent;border:1px solid var(--skin-banner-ink);line-height:1.4;white-space:nowrap;
+      transition:background .18s ease,color .18s ease}
+    .menu-login-btn:hover{background:var(--skin-banner-ink);color:var(--skin-banner)}
+
+    /* REQ-051/REQ-087：右上角菜单面板顶部余额（仅登录、点开菜单即见；余额 ÷ 汇率 → ¥，汇率动态读 system_configs.recharge_rate，读不到按 10） */
+    .topbar-balance{display:inline-flex;align-items:center;gap:6px;margin-right:10px;padding:6px 12px;border-radius:999px;background:rgba(128,128,150,.2);color:var(--skin-banner-ink);font-size:12.5px;font-weight:600;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums;cursor:pointer;transition:background .18s ease}
+    .topbar-balance:hover{background:rgba(128,128,150,.34)}
+    .topbar-balance.static{cursor:default}
+    .topbar-balance.static:hover{background:rgba(128,128,150,.2)}
+    .topbar-balance .tb-k{font-weight:400;opacity:.8}
+    .topbar-balance .tb-sym{opacity:.92}
+    .menu-drop{position:absolute;right:0;top:calc(100% + 10px);z-index:60;min-width:184px;padding:6px;
+      background:var(--surface);color:var(--text-1);border:1px solid var(--border);border-radius:14px;
+      box-shadow:0 14px 34px rgba(26,33,56,.24);display:flex;flex-direction:column;gap:2px}
+    .menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:9px;text-align:left;
+      font-size:14px;color:var(--text-1);background:none;transition:background .14s ease,color .14s ease;white-space:nowrap}
+    .menu-item:hover{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    .menu-item .mi-dot{width:8px;height:8px;border-radius:50%;flex:none}
+    .menu-sep{height:1px;background:var(--border);margin:4px 8px}
+    .menu-item.logout{color:var(--cinnabar)}
+    .menu-item.logout:hover{background:rgba(178,58,58,.1);color:var(--cinnabar)}
+    /* PWA：右上角菜单「安装到桌面」常驻项（可安装态突出 + 状态角标；按钮不随安装态消失） */
+    .menu-item .mi-dot.install-dot{background:#7C8BB5}
+    .menu-item.install-ready{background:var(--skin-accent-soft);color:var(--skin-accent);font-weight:600}
+    .menu-item.install-ready .mi-dot.install-dot{background:var(--skin-accent)}
+    .menu-item.install-done{opacity:.72}
+    .menu-item.install-done .mi-dot.install-dot{background:#9FAA7F}
+    .menu-item .mi-tag{margin-left:auto;font-size:11px;line-height:1;padding:3px 7px;border-radius:8px;background:var(--skin-accent);color:var(--surface);flex:none}
+    .menu-item.install-ready .mi-tag{animation:tc-pwa-pulse 1.6s ease-in-out infinite}
+    @keyframes tc-pwa-pulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+    /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
+       受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
+       两侧留白相等 → 不遮挡左侧「太初」与右上角菜单/汉堡。 */
+    .topbar-modnav{position:relative;display:flex;align-items:center;flex:none}
+    .topbar-modnav .modnav-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
+      font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;color:var(--skin-banner-ink);
+      background:rgba(128,128,150,.18);transition:background .18s ease}
+    .topbar-modnav .modnav-btn:hover{background:rgba(128,128,150,.32)}
+    .topbar-modnav .modnav-btn .caret{width:0;height:0;margin-top:2px;
+      border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor}
+    .topbar-modnav .modnav-drop{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%);z-index:60;
+      width:200px;max-width:calc(100vw - 24px);padding:8px;background:var(--surface);color:var(--text-1);
+      border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 34px rgba(26,33,56,.24);
+      display:flex;flex-direction:column}
+    .topbar-modnav .modnav-group{display:flex;flex-direction:column}
+    .topbar-modnav .modnav-group + .modnav-group{border-top:1px solid var(--border);margin-top:6px;padding-top:6px}
+    .topbar-modnav .modnav-group-title{font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.08em;
+      padding:2px 12px 3px;display:flex;align-items:center;gap:6px}
+    .topbar-modnav .modnav-group-title .mg-dot{width:7px;height:7px;border-radius:50%;flex:none}
+    .topbar-modnav .modnav-item{display:flex;align-items:center;gap:8px;width:100%;padding:7px 12px;border-radius:9px;
+      text-align:left;font-size:13.5px;color:var(--text-1);background:none;white-space:nowrap;
+      transition:background .14s ease,color .14s ease}
+    .topbar-modnav .modnav-item:hover{background:var(--skin-accent-soft);color:var(--skin-accent)}
+    /* REQ-071③：小屏适配 —— ≤520px 隐藏 Banner 标题语并微缩按钮/面板，
+       为正中「模块」下拉让出水平空间，避免与两侧挤压重叠 */
+    @media (max-width:520px){
+      .topbar .tagline{display:none}
+      .topbar-modnav .modnav-btn{padding:7px 10px}
+      .topbar-modnav .modnav-drop{width:188px}
+    }
+
+    /* 底部皮肤切换胶囊（随主题换色） */
+    .skin-switch{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:20;display:flex;gap:4px;
+      padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);
+      box-shadow:0 6px 18px rgba(26,33,56,.14)}
+    .skin-switch button{padding:4px 12px;border-radius:var(--radius-pill);font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;transition:background var(--dur) var(--ease)}
+    .skin-switch button.active{background:var(--skin-banner);color:var(--skin-banner-ink)}
+    .skin-switch button:disabled{opacity:.5;cursor:not-allowed}
+    /* 线上隐藏胶囊：组件与样式保留，日后恢复只需删除下面这条覆盖 */
+    .skin-switch{display:none}
+
+    /* 卡片 / 按钮 / 表单 */
+    .card{background:var(--surface);border-radius:var(--radius-lg);padding:24px;margin:12px 0;box-shadow:var(--shadow-card);border:1px solid rgba(26,33,56,.04)}
+    /* REQ-062：落地页宣传色块（国学/西式/MBTI 三模块共用 .landing-hero .card）白底 70% 半透明；
+       只改背景不设整体 opacity，色块内文字/图标保持 100% 不透明 */
+    .landing-hero .card{background:rgba(255,255,255,.7)}
+    /* REQ-064：落地页主按钮下方「档案管理」透明小按钮（字号 13px < 主按钮 16px；仅登录渲染） */
+    .landing-cases-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;flex:none;margin:14px auto 0;padding:6px 14px;font-size:13px;font-weight:500;line-height:1.5;background:transparent;border:1px solid transparent;border-radius:var(--radius-pill);color:var(--text-2);cursor:pointer;transition:color .15s,border-color .15s,opacity .15s}
+    .landing-cases-btn:hover{color:var(--skin-accent);border-color:var(--border)}
+    /* ===== REQ-084：三大模块落地页 Q 版循环动画（静态单图 + CSS keyframes 合成） =====
+       素材：/art/module-mascot/{guoxue,xishi,mbti}-mascot.webp（美术素材表-第三轮 §0.4）；
+       整块可点击 → 太初先生会话（与右上角「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
+       REQ-116：容器显隐跟随「太初先生」开关 agent_enabled —— JS 侧不渲染（见 LandingPage）；
+       容器位于正常文档流（主按钮上方），不遮挡主按钮与操作区。
+       2026-09-10：新增侧边定位模式 .landing-mascot--side（fixed 在左侧 nav-rail 底部），
+       三模块同步；sprite 尺寸按侧栏宽度等比缩小，保证不超出左侧区域。 */
+    .landing-mascot{display:block;position:relative;width:132px;min-height:132px;height:auto;margin:0 auto 20px;padding:0;border:none;background:transparent;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center}
+    /* 侧边定位：fixed 在左侧导航下方，与 nav-rail 左对齐，底部留出安全距离 */
+    .landing-mascot--side{position:fixed;left:0;bottom:24px;width:96px;height:96px;margin:0;z-index:43}
+    .landing-mascot--side .mascot-sprite{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.375);transform-origin:center center;width:256px!important;height:256px!important;margin:0!important}
+    .landing-mascot--side img{display:none}
+    .landing-mascot--side .lm-cap{display:none!important}
+    .landing-mascot--side .lm-fx{display:none}
+    .landing-mascot img{display:block;width:100%;height:auto;margin:0 auto;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .landing-mascot .lm-cap{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--skin-accent);line-height:1.5;pointer-events:none}
+    .landing-mascot:hover img{filter:brightness(1.05)}
+    .landing-mascot:active img{filter:brightness(.95)}
+    /* 国学：打坐呼吸浮沉（上下 2–3px、周期 3–4s，取 3.4s / 3px） */
+    .anim-mascot.guoxue img{animation:mascotGuoxue 3.4s ease-in-out infinite}
+    @keyframes mascotGuoxue{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+    /* 西式：仰望星空微仰（轻微仰角 + 呼吸浮沉，周期 3.6s） */
+    .anim-mascot.xishi img{animation:mascotXishi 3.6s ease-in-out infinite}
+    @keyframes mascotXishi{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(-1.8deg) translateY(-2px)}}
+    /* MBTI：躺摇椅左右小角度摇晃（支点取椅脚底部，周期 3.2s） */
+    .anim-mascot.mbti img{animation:mascotMbti 3.2s ease-in-out infinite;transform-origin:50% 92%}
+    @keyframes mascotMbti{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-2.6deg)}75%{transform:rotate(2.6deg)}}
+    /* REQ-084⑤：低耗降级 —— 偏好减少动态效果时停止循环动画，仅显示静态主图 */
+    @media (prefers-reduced-motion:reduce){
+      .landing-mascot img{animation:none!important}
+      /* REQ-084：sprite 序列帧停帧显示第一帧（background-position 保持 0 0，不循环播放） */
+      .mascot-sprite.play{animation:none!important;background-position:0 0!important}
+    }
+    /* ===== REQ-084：序列帧 sprite sheet 播放器（sprite.ready=true 时启用；素材未回传本段不生效） =====
+       与上方 .anim-mascot 旧动画共存不冲突：sprite 模式下不渲染 <img>，旧 keyframes 只命中 img，
+       天然互斥；.mascot-sprite 为宽=高=sprite.width 的方形容器，background-size=width*cols ×
+       width*rows（每格恰好一帧），逐帧 keyframes 由 JS ensureSpriteKeyframes 按配置生成，
+       animation 经 --sprite-anim（含动画名/时长/steps(1) 逐帧跳变/infinite）注入，will-change 提示预优化 */
+    .lm-fx{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none}
+    .lm-fx>*{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .mascot-sprite{display:block;margin:0 auto;background-repeat:no-repeat;background-position:0 0;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .mascot-sprite.play{animation:var(--sprite-anim,none);will-change:background-position}
+    /* ===== REQ-084：互动元素（FX）路径动画 —— 纯氛围 · 不可点击 · 不遮挡
+       素材：art/taichu-pet/fx-*.webp（透明小图）；各元素从化身中心（= .lm-fx 中心，化身 256px 居中）
+       向周侧偏移做绕飞/落肩/漂浮/闪烁，时长 4~7s 循环；pointer-events:none 不挡点卡与导航按钮；
+       prefers-reduced-motion 下隐藏不打扰。 */
+    .lm-fx img{opacity:0;will-change:transform,opacity}
+    /* 国学：小鸟自右上飞入 → 化身肩侧停留微浮 → 飞走 */
+    .fx-fly-bird{width:46px;height:46px;left:58%;top:34%;animation:fxFlyBird 6.8s ease-in-out infinite}
+    @keyframes fxFlyBird{
+      0%{transform:translate(64px,-52px) rotate(-14deg) scale(.9);opacity:0}
+      14%{transform:translate(10px,4px) rotate(6deg);opacity:1}
+      26%{transform:translate(-4px,2px) rotate(-4deg);opacity:1}
+      40%{transform:translate(4px,6px) rotate(3deg);opacity:1}
+      52%{transform:translate(-2px,0) rotate(-2deg);opacity:1}
+      66%{transform:translate(6px,-4px) rotate(4deg);opacity:1}
+      80%{transform:translate(-4px,2px) rotate(-3deg);opacity:.95}
+      100%{transform:translate(66px,-48px) rotate(-12deg);opacity:0}
+    }
+    /* 国学：蝴蝶绕化身右上-左下环绕飞 */
+    .fx-fly-butterfly{width:36px;height:36px;left:42%;top:30%;animation:fxFlyButterfly 7.4s ease-in-out infinite}
+    @keyframes fxFlyButterfly{
+      0%{transform:translate(-64px,-40px) rotate(14deg) scale(.9);opacity:0}
+      16%{transform:translate(-6px,12px) rotate(-8deg);opacity:1}
+      28%{transform:translate(8px,-4px) rotate(10deg);opacity:1}
+      42%{transform:translate(-4px,-10px) rotate(-6deg);opacity:1}
+      56%{transform:translate(10px,6px) rotate(8deg);opacity:1}
+      70%{transform:translate(-8px,-2px) rotate(-10deg);opacity:1}
+      86%{transform:translate(4px,10px) rotate(6deg);opacity:.95}
+      100%{transform:translate(-60px,-36px) rotate(12deg);opacity:0}
+    }
+    /* 西式 / MBTI：星星漂浮 + 旋转 + 闪烁（两枚用不同时延错开） */
+    .fx-spin-star{width:32px;height:32px;left:38%;top:40%;animation:fxSpinStar 5.2s ease-in-out infinite}
+    @keyframes fxSpinStar{
+      0%,100%{transform:translate(-38px,-32px) rotate(0deg) scale(.75);opacity:0}
+      18%{opacity:.95}
+      40%{transform:translate(-56px,-44px) rotate(150deg) scale(1);opacity:.9}
+      62%{transform:translate(-26px,-52px) rotate(300deg) scale(.9);opacity:.85}
+      82%{transform:translate(-46px,-26px) rotate(360deg) scale(1);opacity:.8}
+    }
+    .fx-sparkle{width:24px;height:24px;left:60%;top:44%;animation-duration:4.4s;animation-delay:1s}
+    /* 西式：星座连线淡入淡出环绕（观星氛围） */
+    .fx-fade-constellation{width:54px;height:54px;left:52%;top:36%;animation:fxFadeConstellation 6.2s ease-in-out infinite}
+    @keyframes fxFadeConstellation{
+      0%,100%{opacity:0;transform:translate(-14px,-8px) scale(.85) rotate(-8deg)}
+      16%,74%{opacity:.9;transform:translate(6px,2px) scale(1) rotate(0deg)}
+      45%{opacity:.75;transform:translate(-2px,-6px) scale(.95) rotate(4deg)}
+    }
+    /* 低耗降级：FX 隐藏不打扰 */
+    @media (prefers-reduced-motion:reduce){
+      .lm-fx img{animation:none!important;opacity:0!important}
+    }
+    .feature{border-left:3px solid var(--skin-accent)}
+    .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--skin-accent);color:var(--skin-accent-ink);box-shadow:0 4px 16px rgba(26,33,56,.18)}
+    .btn-gold{background:var(--gold-500);color:#fff}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-1)}
+    /* REQ-102：三关系按键图标（引用 art/icons/icon-sprite-i1-i4.svg 的 symbol；只做引用不改内容） */
+    .ic{flex:0 0 auto;display:block;vertical-align:middle}
+    .btn-mini{width:auto;flex:none;padding:4px 12px;font-size:12px;line-height:1.5;border-radius:var(--radius-pill)}
+    .input{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:16px;margin:8px 0;background:var(--surface);color:var(--text-1)}
+    .input:focus{outline:none;border-color:var(--skin-accent)}
+    .label{font-size:13px;color:var(--text-2);margin-top:12px;display:block}
+
+    /* 注册协议勾选（仅注册页显示） */
+    .agree-row{display:flex;align-items:flex-start;gap:8px;margin:14px 0 2px;text-align:left}
+    .agree-row input{flex-shrink:0;margin-top:3px;width:auto;accent-color:var(--skin-accent);cursor:pointer}
+    .agree-label{font-size:13px;color:var(--text-2);line-height:1.6;cursor:pointer}
+    .agree-label a{color:var(--ink-500);text-decoration:none;border-bottom:1px solid rgba(68,85,143,.35);margin:0 1px}
+    .agree-label a:hover{color:var(--skin-accent);border-bottom-color:currentColor}
+    .title{font-family:var(--font-serif);font-size:24px;color:var(--ink-700);text-align:center;margin:8px 0 16px;font-weight:600}
+    .subtitle{font-size:14px;color:var(--text-2);text-align:center;margin-bottom:24px}
+    .error{background:#FFF0F0;color:var(--cinnabar);padding:12px;border-radius:var(--radius-sm);font-size:13px}
+    .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius-pill);background:var(--skin-tag-bg);color:var(--skin-banner-ink);margin-right:4px}
+
+    /* 免责星印（跨皮肤合规标记，硬编码朱砂） */
+    .disclaimer{font-size:11px;color:var(--cinnabar);text-align:center;margin:0 auto;padding:18px 20px;max-width:480px;line-height:1.6}
+    .disclaimer .star{margin-right:4px}
+    /* 协议链接行（低调小字，随免责色） */
+    .disclaimer .legal-links{margin-top:8px;font-size:10px;letter-spacing:.02em}
+    .disclaimer .legal-links a{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(178,58,58,.4);padding-bottom:1px;margin:0 3px;opacity:.85}
+    .disclaimer .legal-links a:hover{opacity:1;border-bottom-color:rgba(178,58,58,.9)}
+    .disclaimer .legal-sep{opacity:.5}
+
+    .progress{height:6px;background:var(--border);border-radius:3px;margin:16px 0;overflow:hidden}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--skin-accent),var(--gold-500));border-radius:3px;transition:width .5s var(--ease)}
+    .trend-ji{border-left:3px solid var(--skin-accent)}
+    .trend-xiong{border-left:3px solid var(--cinnabar)}
+    .trend-ping{border-left:3px solid var(--ink-400)}
+
+    .flex-row{display:flex;gap:8px}
+    .flex-row > *{flex:1}
+
+    /* 开关 / 提示 / 修正输入 / 失败态 / 登出 / 双列 */
+    .switch-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+    .switch{position:relative;width:44px;height:24px;flex:none}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:999px;transition:.2s}
+    .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+    .switch input:checked + .slider{background:var(--skin-accent)}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+    .coord-hint{font-size:11px;color:var(--skin-accent);margin:2px 0 0}
+    .note-input{width:100%;min-height:64px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;margin-top:8px;resize:vertical;font-family:inherit}
+    .failed-box{text-align:center}
+    .failed-box .error{margin-bottom:12px;text-align:left}
+    .logout-bar{display:flex;justify-content:flex-end;gap:16px;margin-top:8px}
+    .logout-link{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;padding:4px}
+    .field-row{display:flex;gap:8px}
+    .field-row > div{flex:1}
+    .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .kv:last-child{border-bottom:none}
+    .kv .k{color:var(--text-2)}
+    .kv .v{color:var(--text-1);font-weight:600}
+    .section-title{font-size:15px;color:var(--ink-700);margin:4px 0 8px;font-weight:600}
+
+    /* 断前尘星象轨道动画（C1） */
+    .dqc-stage{margin:8px auto 0;max-width:520px;padding:32px 20px 28px;border-radius:var(--radius-lg);
+      background:radial-gradient(120% 90% at 50% 25%, #232C49 0%, var(--ink-900) 80%);box-shadow:var(--shadow-card)}
+    .dqc-plate{width:240px;height:240px;margin:0 auto;display:block}
+    .dqc-rings{transform-box:fill-box;transform-origin:center;animation:spin 70s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .gold{fill:var(--gold-500)}
+    .gold-stroke{stroke:var(--gold-500)}
+    .ring-stroke{stroke:#3A4470}
+    .s-pending{fill:var(--ink-700);opacity:.55}
+    .s-active{fill:var(--gold-500);animation:pulse 1.2s ease-in-out infinite}
+    .s-done{fill:var(--gold-300)}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+    .dqc-progress{text-align:center;margin-top:16px;font-family:var(--font-serif);font-size:20px;color:var(--gold-300);letter-spacing:.05em}
+    .dqc-method{text-align:center;margin-top:6px;font-size:14px;color:#C9C6DA}
+    .dqc-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.12);margin:14px auto 0;max-width:360px;overflow:hidden}
+    .dqc-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-600),var(--gold-300));transition:width .5s var(--ease)}
+    .dqc-status{text-align:center;margin-top:10px;font-size:12px;color:#8E8AA6;font-family:var(--font-latin-serif);letter-spacing:.04em}
+    .dqc-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px auto 0;max-width:420px}
+    .dqc-list span{font-size:12px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(255,255,255,.06);color:#9FA3BC}
+    .dqc-list span.done{background:var(--skin-accent-soft);color:#fff}
+    .dqc-list span.active{background:var(--gold-600);color:#fff}
+
+    /* 轻提示 */
+    .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(10px);background:var(--ink-900);color:#fff;
+      padding:10px 18px;border-radius:var(--radius-pill);font-size:13px;opacity:0;pointer-events:none;transition:.25s var(--ease);z-index:40}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* 骨架屏（shimmer 加载占位） */
+    .skeleton{position:relative;overflow:hidden;background:var(--border);border-radius:6px}
+    .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);animation:shimmer 1.3s infinite}
+    @keyframes shimmer{100%{transform:translateX(100%)}}
+    .sk-line{height:12px;margin:10px 0}
+    .sk-title{height:22px;width:55%;margin:6px 0 16px}
+    .sk-card{background:var(--surface);border-radius:var(--radius-lg);padding:22px;margin:12px 0;box-shadow:var(--shadow-card);border:1px solid rgba(26,33,56,.04);overflow:hidden}
+
+    /* 页面切换过渡（key=page 重挂载触发） */
+    .view-enter{animation:viewEnter .34s var(--ease) both}
+    @keyframes viewEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+    /* 图标 / 卡片 hover 微交互 */
+    .icon{display:inline-flex;vertical-align:middle}
+    .card{transition:box-shadow .25s var(--ease),transform .25s var(--ease)}
+    .card:hover{box-shadow:0 6px 22px rgba(26,33,56,.14)}
+    .btn-primary:hover{box-shadow:0 6px 20px rgba(26,33,56,.26)}
+
+    /* 解读页「历史追问 / 矫正」列表 */
+    .hist-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .hist-item{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);
+      background:var(--paper);font-size:13px;color:var(--text-1);line-height:1.55;cursor:pointer;word-break:break-word;
+      transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+    .hist-item:hover{border-color:var(--skin-accent);background:#f0ece0}
+
+    /* ===== 完整盘面（八字/紫微/占星/七政/奇门/五运六气） ===== */
+    .chart-view{margin-top:14px}
+    .chart-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
+    .chart-tab{padding:7px 13px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-pill);font-size:13px;cursor:pointer;color:var(--text-2);transition:.18s}
+    .chart-tab:hover{border-color:var(--skin-accent)}
+    .chart-tab.active{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent);font-weight:600}
+    .sub-title{font-size:13px;font-weight:600;color:var(--skin-accent);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+    .sub-title::before{content:"";width:3px;height:13px;background:var(--skin-accent);border-radius:2px;display:inline-block}
+    .daymaster{display:flex;align-items:baseline;gap:8px;margin:2px 0 4px}
+    .daymaster .dm{font-size:21px;font-weight:700;color:var(--skin-accent)}
+    .daymaster .dm-wx{font-size:13px;color:var(--text-2)}
+    .aux-line{font-size:12px;color:var(--text-3);margin:6px 0;line-height:1.75}
+    .aux-line b{color:var(--text-2);font-weight:600}
+
+    /* 四柱表 */
+    .four-pillars{display:grid;grid-template-columns:74px repeat(4,1fr);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface)}
+    .fp-cell{padding:9px 6px;text-align:center;font-size:13px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:0;word-break:break-word}
+    .fp-cell:last-child{border-right:none}
+    .fp-cell.fp-rowhead{background:#f4f0e7;font-weight:600;color:var(--text-2);text-align:left;padding-left:10px}
+    .fp-cell.fp-head{background:var(--skin-accent);color:var(--skin-accent-ink);font-weight:600}
+    .fp-cell.fp-day{background:var(--skin-accent-soft);font-weight:600;color:var(--skin-accent)}
+    .fp-cell.fp-head.fp-day{background:var(--skin-accent);color:var(--skin-accent-ink)}
+
+    /* 神煞标签 */
+    .shensha-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .shensha-tag{font-size:12px;padding:3px 9px;border-radius:var(--radius-pill);border:1px solid transparent;line-height:1.4}
+    .shensha-tag.green{background:rgba(62,124,107,.14);color:#2f6b5b;border-color:rgba(62,124,107,.3)}
+    .shensha-tag.red{background:rgba(178,58,58,.12);color:var(--cinnabar);border-color:rgba(178,58,58,.3)}
+    .shensha-tag.gold{background:rgba(191,161,90,.16);color:#9a7d34;border-color:rgba(191,161,90,.35)}
+
+    /* 通用小表格 */
+    .mini-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+    .mini-table th,.mini-table td{border:1px solid var(--border);padding:6px 8px;text-align:center}
+    .mini-table th{background:#f4f0e7;color:var(--text-2);font-weight:600}
+    .mini-table td{color:var(--text-1)}
+
+    /* 流年时间轴 */
+    .timeline{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-top:4px}
+    .tl-item{flex:0 0 auto;width:128px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px}
+    .tl-year{font-weight:700;font-size:14px;color:var(--skin-accent)}
+    .tl-age{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px}
+    .tl-ganzhi{font-size:13px;margin:3px 0}
+    .tl-dy{display:block;font-size:11px;color:var(--text-3)}
+    .tl-events{display:flex;flex-direction:column;gap:3px}
+    .tl-ev{font-size:11px;color:var(--cinnabar);background:rgba(178,58,58,.07);border-radius:6px;padding:2px 5px;line-height:1.35}
+
+    /* 紫微十二宫 */
+    .ziwei-wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+    .ziwei-wheel{flex:0 0 auto;width:240px;height:240px;max-width:100%}
+    .zw-ring{fill:none;stroke:var(--skin-accent);stroke-width:1.5;opacity:.5}
+    .zw-ring-inner{fill:none;stroke:var(--skin-accent);stroke-width:1;opacity:.3}
+    .zw-label{font-size:12px;fill:var(--text-2)}
+    .zw-center{font-size:13px;font-weight:700;fill:var(--skin-accent)}
+    .zw-center2{font-size:11px;fill:var(--text-3)}
+    .palace-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:8px;flex:1;min-width:260px}
+    .palace-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;background:var(--surface)}
+    .palace-card.body{border-color:var(--skin-accent);background:var(--skin-accent-soft)}
+    .pc-name{font-weight:700;font-size:13px;color:var(--text-1);display:flex;align-items:center;gap:5px}
+    .pc-badge{font-size:10px;background:var(--skin-accent);color:var(--skin-accent-ink);border-radius:6px;padding:1px 5px}
+    .pc-stem{font-size:12px;color:var(--text-3);margin:2px 0}
+    .pc-stars{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+    .pc-major{font-size:12px;background:var(--skin-accent);color:var(--skin-accent-ink);border-radius:6px;padding:1px 6px}
+    .pc-stars.sm{font-size:11px;color:var(--text-2)}
+    .pc-stars.adj{font-size:11px;color:var(--text-3)}
+    .pc-sihua{font-size:11px;color:var(--cinnabar);margin-top:3px}
+
+    /* 占星 / 七政 表格 */
+    .planet-table,.star-table,.aspect-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+    .planet-table th,.star-table th,.aspect-table th,.planet-table td,.star-table td,.aspect-table td{border:1px solid var(--border);padding:6px 8px}
+    .planet-table th,.star-table th,.aspect-table th{background:#f4f0e7;color:var(--text-2);font-weight:600;text-align:left}
+    .planet-table td,.star-table td,.aspect-table td{color:var(--text-1)}
+    .retro{color:var(--cinnabar);font-size:11px}
+
+    /* 奇门九宫 */
+    .qimen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:420px;margin-top:4px}
+    .qimen-cell{border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 8px;background:var(--surface);min-height:78px}
+    .qc-name{font-weight:700;font-size:13px;color:var(--skin-accent)}
+    .qc-meta{font-size:11px;color:var(--text-3)}
+    .qc-lines{font-size:11.5px;color:var(--text-1);margin-top:3px;line-height:1.5}
+
+    /* 五运六气对比 */
+    .wuyun-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+    .wuyun-col{border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--surface)}
+    .wuyun-col h4{margin:0 0 8px;font-size:13px;color:var(--skin-accent)}
+    .wuyun-col .kv{font-size:12.5px}
+
+    .empty-note{font-size:13px;color:var(--text-3);background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
+    .deg-banner{font-size:12px;color:var(--cinnabar);background:rgba(178,58,58,.08);border-radius:var(--radius-md);padding:8px 10px;margin-bottom:6px;line-height:1.6}
+
