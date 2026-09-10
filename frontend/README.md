@@ -1,31 +1,21 @@
-# frontend/ — H5 前端
+# frontend/ — 免构建 H5 前端
 
-技术栈：**React 18 + Vite 5 + TypeScript 5**（移动端 H5，不做 APP / 小程序）。
+技术栈：**免构建 CDN React 18（全局 React/ReactDOM）+ 原生 ES**。无 Vite、无打包器、无 npm 运行时依赖。
+
+权威入口：`public/index.html`（+ `public/admin.html` 后台），由后端静态服务（SPA fallback）。
 
 ## 目录
 
 | 路径 | 内容 |
 |---|---|
-| `public/` | 静态资源（favicon、CDN 直传文件） |
-| `src/pages/` | 页面：落地页、建档、盘面、断前尘问卷、报告、追问修正、命理档案、登录注册 |
-| `src/components/` | 组件：基础组件、业务组件、盘面渲染 |
-| `src/layouts/` | 布局：移动端框架、导航、安全区适配 |
-| `src/hooks/` | 自定义 Hook（长任务轮询、鉴权态、表单） |
-| `src/services/` | REST 客户端与接口封装 |
-| `src/stores/` | 客户端状态 |
-| `src/styles/` | 设计令牌、主题、全局样式、移动端适配 |
-| `src/assets/` | 设计资源：图标、字体、插图 |
-| `src/types/` | TypeScript 类型，与 `docs/standards/03-接口与数据字典.md` 对齐 |
-| `src/utils/` | 工具函数 |
+| `public/` | 运行期静态根：入口 `index.html` + 后台 `admin.html` + `sw.js` / `manifest.webmanifest`（PWA）+ `vendor/`（react/react-dom/regions）+ `data/`（pairs/term-cards/ui-copy）+ `art/` / `tarot/` / `lenormand/`（美术素材） |
+| `scripts/precompile.js` | JSX 预编译门禁：把 `public/index.html` / `admin.html` 内 `<script type="text/babel">` JSX 编译成普通 JS。**改 JSX 后必跑：`node scripts/precompile.js`** |
+| `scripts/smoke-check.js` | 语法冒烟检查 |
 
 ## 关键约束
 
-1. **前端不暴露单方法入口**（技术框架方案 R6④）：MVP 仅暴露"全盘 / 事业运势"主路径。
-2. 类型定义必须与接口字典**同源**；改契约先改 `docs/standards/03`，再改 `src/types/`。
-3. 断前尘为长任务（可达数分钟），UI 必须有明确的等待与进度反馈（方案待决 ADR-04）。
-4. 所有解读内容渲染时**必须保留末行免责**，不得因组件裁剪丢失。
-
-## 待补
-
-- [ ] 工程初始化（Vite 脚手架 + TS 配置 + ESLint / Prettier）
-- [ ] 移动端组件库、状态管理、请求层三件套选型（技术栈清单 T2）
+1. **免构建**：不引 Vite/打包器；`<link rel="stylesheet">` 引 `.css`、`<script src>` 引 `.js`（顺序加载，见 `../00_根/导航.md` §7 牵连表）。
+2. **权威入口唯一**：只有 `public/index.html`（+ `admin.html`）。旧 Vite+TS 参考源码已归档至 `docs/_archive/前端-vite-ts-参考实现/`（节110）。
+3. **静态资源根绝对路径**：`/vendor/*` `/art/*` `/data/*`（BUG-009 教训）。
+4. **改 JSX 必跑门禁**：`node scripts/precompile.js`；禁止浏览器端 `<script type="text/babel">` 实时转译。
+5. **拆分约定（节110）**：入口壳逐步拆为 `css/*.css` + `js/*.js`；拆出的 `.js` 是编译后普通 JS、禁止再写 JSX。详见 `../00_根/复用.md` §六。
