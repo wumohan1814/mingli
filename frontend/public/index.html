@@ -228,8 +228,16 @@
        素材：/art/module-mascot/{guoxue,xishi,mbti}-mascot.webp（美术素材表-第三轮 §0.4）；
        整块可点击 → 太初先生会话（与右上角「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
        REQ-116：容器显隐跟随「太初先生」开关 agent_enabled —— JS 侧不渲染（见 LandingPage）；
-       容器位于正常文档流（主按钮上方），不遮挡主按钮与操作区。 */
+       容器位于正常文档流（主按钮上方），不遮挡主按钮与操作区。
+       2026-09-10：新增侧边定位模式 .landing-mascot--side（fixed 在左侧 nav-rail 底部），
+       三模块同步；sprite 尺寸按侧栏宽度等比缩小，保证不超出左侧区域。 */
     .landing-mascot{display:block;position:relative;width:132px;min-height:132px;height:auto;margin:0 auto 20px;padding:0;border:none;background:transparent;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center}
+    /* 侧边定位：fixed 在左侧导航下方，与 nav-rail 左对齐，底部留出安全距离 */
+    .landing-mascot--side{position:fixed;left:0;bottom:24px;width:96px;height:96px;margin:0;z-index:43}
+    .landing-mascot--side .mascot-sprite{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.375);transform-origin:center center;width:256px!important;height:256px!important;margin:0!important}
+    .landing-mascot--side img{display:none}
+    .landing-mascot--side .lm-cap{display:none!important}
+    .landing-mascot--side .lm-fx{display:none}
     .landing-mascot img{display:block;width:100%;height:auto;margin:0 auto;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
     .landing-mascot .lm-cap{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--skin-accent);line-height:1.5;pointer-events:none}
     .landing-mascot:hover img{filter:brightness(1.05)}
@@ -613,19 +621,28 @@
     .pair-big .pb-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;color:var(--text-1);line-height:1.4}
     .pair-big .pb-sub{font-size:12px;color:var(--text-2);line-height:1.7}
 
-    /* ===== REQ-132：星座「太阳/月亮/上升」三卡环形无限循环 + 横向露边堆叠（覆盖 REQ-115 呈现口径）
-       环形：5 槽位虚拟 track（前克隆 + 3 原 + 后克隆）平移取模无跳变；露边：当前卡居中完整（宽 78%、
-       left 11%），左右各露一张侧边（相邻中心距 78%）；侧卡降透明度可点（点左=上一张/点右=下一张）；
-       底部小圆点指示器 + 左右箭头；星座图标 CxIcon（cx-*）与 A1 趋势文案内容不变。 */
-    .triple-stack{position:relative;width:100%;margin-top:10px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;min-height:236px}
-    .triple-track{position:absolute;inset:0;will-change:transform}
-    .triple-card{position:absolute;left:11%;top:0;bottom:0;width:78%;box-sizing:border-box;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;overflow:hidden;will-change:transform}
+    /* ===== 节100③：本命星盘「太阳/月亮/上升」三卡牌堆式堆叠（取代 REQ-132 左右露边轮播口径）
+       三张牌全部绝对定位、容器高度由顶卡实测撑开（文字完整不裁切）；顶卡（当前）居左完整展示，
+       下两张向右错开各 30px、右边沿圆形位露出星座 logo 提示「底下还有两张」；左右滑 / 点按露边 /
+       箭头 / 圆点切换，3 张环形无限循环（前进 = 旧顶卡向左飞出、绕回最底；后退 = 底牌自右滑上）。 */
+    .triple-stack{position:relative;width:100%;margin-top:10px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+      transition:height .34s cubic-bezier(.4,0,.2,1)}
+    .triple-card{position:absolute;left:0;top:0;width:100%;box-sizing:border-box;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;overflow:hidden;
+      transition:transform .34s cubic-bezier(.4,0,.2,1),left .34s cubic-bezier(.4,0,.2,1),right .34s cubic-bezier(.4,0,.2,1),top .34s cubic-bezier(.4,0,.2,1),width .34s cubic-bezier(.4,0,.2,1),opacity .3s ease;will-change:transform,right,left,width,opacity}
+    .triple-card.cur{left:0;width:calc(100% - 60px);z-index:3}
+    .triple-card.side{z-index:1;height:100%;cursor:pointer}
+    .triple-card.exit{left:0;width:calc(100% - 60px);z-index:4;opacity:0;transform:translateX(-110%)}
     .triple-card .tc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
     .triple-card .tc-title{font-size:13px;font-weight:700;color:var(--skin-accent)}
     .triple-card .tc-sign{display:inline-flex;align-items:center;gap:6px;font-size:18px;font-weight:800;color:var(--text-1)}
     .triple-card .tc-txt{font-size:12.5px;line-height:1.75;color:var(--text-2);white-space:pre-line;margin-top:10px}
-    .triple-card.side{opacity:.78;cursor:pointer}
-    .triple-card.side .tc-txt{display:none}
+    .triple-card.side .tc-head,.triple-card.side .tc-txt{display:none}
+    .triple-card .tc-peek{display:none}
+    .triple-card.side .tc-peek{display:flex;align-items:center;justify-content:center;position:absolute;right:2px;top:50%;transform:translateY(-50%);
+      width:26px;height:26px;border-radius:50%;background:var(--skin-accent-soft);color:var(--skin-accent)}
+    @media (prefers-reduced-motion:reduce){
+      .triple-stack,.triple-card{transition:none!important}
+    }
     .triple-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px}
     .triple-dots{display:flex;gap:8px;align-items:center}
     .triple-dots button{width:8px;height:8px;border-radius:50%;border:none;padding:0;background:var(--border);cursor:pointer;transition:background .2s,transform .2s}
@@ -739,7 +756,7 @@
     .zodiac-year-arrow:hover:not(:disabled){border-color:var(--skin-accent);color:var(--skin-accent);background:var(--skin-accent-soft)}
     .zodiac-year-arrow:disabled{opacity:.4;cursor:not-allowed}
     /* 五行关系合并卡：色块标题区（五行关系 + classification + C1 一句话解读） */
-    .wx-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px;letter-spacing:.12em;opacity:.85;font-weight:700}
+    .wx-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:15px;letter-spacing:.02em;font-weight:600;color:inherit}
     .wx-hd .wx-cls{font-size:16px;font-weight:800;letter-spacing:.02em;opacity:1}
     .wx-s{font-size:12.5px;font-weight:500;line-height:1.85;margin-top:7px;opacity:.95;word-break:break-word}
     .zrel-box{margin-top:12px}
@@ -1822,50 +1839,50 @@
     .tpc-cap{position:relative;text-align:center;font-size:13.5px;color:#E8C98A;margin:24px 0 2px;font-family:var(--font-sans);letter-spacing:.04em}
     .tpc-skipcut{position:relative;display:block;margin:18px auto 0;font-size:12.5px;color:#A99F8C;font-family:var(--font-sans);
       background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 18px;line-height:1.5}
-    /* ③④⑤ 扇形自选面板（tp-）：上=阵位条（当前格高亮），下=可滑动牌背扇 */
+    /* ③④⑤ 扇形自选面板（tp-，节100③ 重构）：上=真实阵型槽位板（复用读牌板 .rd-box 坐标/桌布，
+       抽满即与读牌板同位无缝衔接），下=沿屏幕底部摊开的圆弧扇形牌背（中间直立、两边渐低渐斜，
+       横滑浏览整副、轻点抽牌；JS 按距中心位次实时写 transform）。 */
     .tp-board{margin:4px 0 0}
     .tp-progress{display:flex;flex-direction:column;gap:6px;margin:2px 0 10px}
     .tp-progress-t{font-size:13px;color:var(--text-2);line-height:1.6}
     .tp-progress-t b{color:var(--skin-accent);font-size:15px}
     .tp-acts{display:flex;gap:14px;flex-wrap:wrap}
     .tp-act{font-size:12px;color:var(--skin-accent);font-weight:600;padding:1px 0;background:none;border:none;
-      border-bottom:1px dashed rgba(201,162,75,.55);line-height:1.5}
-    .tp-slots{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    .tp-slots::-webkit-scrollbar{display:none}
-    .tp-slot{flex:0 0 auto;width:calc(var(--card-w) * .62);display:flex;flex-direction:column;align-items:center;gap:4px}
-    .tp-frame{width:100%;height:calc(var(--card-w) * .62 * 1.615);border-radius:9px;overflow:hidden;position:relative;
-      border:1.5px dashed rgba(140,130,115,.6);background:rgba(120,110,95,.08);box-sizing:border-box}
-    .tp-slot.cur .tp-frame{border-color:var(--skin-accent);animation:tpCurPulse 1.15s ease-in-out infinite}
+      border-bottom:1px dashed rgba(201,162,75,.55);line-height:1.5;cursor:pointer}
+    /* 阵型槽位板：与读牌板同坐标同桌布；未取=虚线牌位（当前格脉冲），已取=rd 真实牌面 */
+    .tp-table{margin:2px 0 8px}
+    .tp-cell{position:absolute;z-index:1}
+    .tp-cell .tp-dash{width:100%;aspect-ratio:100/161;border-radius:8px;border:1.5px dashed rgba(140,130,115,.65);
+      background:rgba(120,110,95,.10);box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+      color:var(--text-3);font-family:var(--font-serif);font-weight:700;font-size:15px;pointer-events:none}
+    .tp-cell.cur{z-index:2}
+    .tp-cell.cur .tp-dash{border-color:var(--skin-accent);color:var(--skin-accent);animation:tpCurPulse 1.15s ease-in-out infinite}
+    .tp-cell.filled .tp-dash{display:none}
+    .tp-cell.filled .rd-imgwrap{animation:tpReveal .62s var(--ease) both}
     @keyframes tpCurPulse{0%,100%{box-shadow:0 0 0 1px var(--skin-accent-soft)}50%{box-shadow:0 0 0 2px var(--skin-accent-soft),0 0 12px rgba(201,162,75,.55)}}
-    .tp-slot.filled .tp-frame{border-style:solid;border-color:transparent;background:#1D1B20}
-    .tp-empty{position:absolute;inset:0}
-    .tp-front{position:absolute;inset:0;background:#1D1B20;animation:tpReveal .62s var(--ease) both}
-    .tp-front img{width:100%;height:100%;object-fit:cover;display:block}
-    .tp-front.reversed img{transform:rotate(180deg)}
-    .tp-front .tp-ph{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;text-align:center;width:100%;height:100%;font-family:var(--font-serif)}
     @keyframes tpReveal{0%{transform:scale(.5);opacity:0;filter:brightness(2.3) saturate(1.25)}
       58%{transform:scale(1.08);opacity:1;filter:brightness(1.18) saturate(1.05)}
       100%{transform:scale(1);opacity:1;filter:none}}
-    .tp-slot .tp-pos{font-size:10px;color:var(--text-3);text-align:center;line-height:1.35;width:100%;word-break:break-word}
-    .tp-slot.cur .tp-pos{color:var(--skin-accent);font-weight:700}
+    /* 圆弧扇形：横滑视口（竖向裁掉两缘下沉部分），宽内条由 JS 摆位 */
     .tp-fan{margin:4px 0 0;border-top:1px dashed var(--border);padding-top:10px}
     .tp-fan.closing{opacity:0;transition:opacity .5s ease}
     .tp-fan-cap{font-size:12px;color:var(--text-3);text-align:center;margin-bottom:6px;line-height:1.6}
-    .tp-fanrow{display:flex;overflow-x:auto;padding:10px 6px 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .tp-fanrow{position:relative;display:block;overflow-x:auto;overflow-y:hidden;height:calc(var(--card-h) + 12px);
+      padding:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x}
     .tp-fanrow::-webkit-scrollbar{display:none}
-    .tp-fanbtn{flex:0 0 auto;position:relative;width:var(--card-w);height:var(--card-h);padding:0;margin:0;border:none;background:none;
-      cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;transform:rotate(var(--rot,0deg));
-      transition:opacity .22s ease,transform .22s ease}
-    .tp-fanrow .tp-fanbtn + .tp-fanbtn{margin-left:calc(var(--card-w) * -.58)}
+    .tp-fanstrip{position:relative;display:block}
+    .tp-fanbtn{position:absolute;top:0;left:0;width:var(--card-w);height:var(--card-h);padding:0;margin:0;border:none;background:none;
+      cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;will-change:transform,opacity;
+      transition:opacity .22s ease}
     .tp-fanbtn .tp-back{position:absolute;inset:0;border-radius:11px;background-color:#3A2E55;border:2px solid rgba(201,162,75,.6);
       background-image:var(--art-card-back-tarot);background-size:cover;background-position:center;
       box-shadow:0 4px 10px rgba(0,0,0,.3)}
+    .tp-fanbtn .tp-back.leno{background-color:#1F3A46;border-color:rgba(126,179,170,.6);background-image:var(--art-card-back-lenormand)}
     .tp-fanbtn:hover .tp-back,.tp-fanbtn:active .tp-back{transform:translateY(-3px)}
-    .tp-fanbtn.picked{opacity:0;pointer-events:none;transform:rotate(var(--rot,0deg)) scale(.45)}
+    .tp-fanbtn.picked{pointer-events:none}
     .tp-fanbtn[disabled]{cursor:default}
     @media (prefers-reduced-motion:reduce){
-      .tpsh-deck,.tpsh-card,.tpc-pile.taken,.tp-slot.cur .tp-frame,.tp-front,.tp-fanbtn,.tp-fan{animation:none!important;transition:none!important}
-      .tp-front{opacity:1}
+      .tpsh-deck,.tpsh-card,.tpc-pile.taken,.tp-cell.cur .tp-dash,.tp-cell.filled .rd-imgwrap,.tp-fan{animation:none!important;transition:none!important}
     }
   </style>
   <style>
@@ -1945,7 +1962,8 @@
 const {
   useState,
   useEffect,
-  useRef
+  useRef,
+  useLayoutEffect
 } = React;
 // ===== B1 全站 UI 文案常量（REQ-037）→ REQ-128 阶段1：全站界面文案总表 TC_COPY =====
 // 文案总表已迁至独立数据文件 frontend/public/data/ui-copy.js（window.TC_COPY，key 规范见
@@ -2872,7 +2890,8 @@ function ModalBase(_ref) {
     bodyStyle.minHeight = 0;
   }
 
-  return el('div', {
+  // Portal 渲染到 body 末尾，避免父级 transform/filter 等导致 position: fixed 失效
+  var modalNode = el('div', {
     className: 'modal-mask',
     onClick: maskClosable && onClose ? onClose : undefined
   }, el('div', {
@@ -2909,6 +2928,11 @@ function ModalBase(_ref) {
       justifyContent: align === 'left' ? 'flex-start' : 'center'
     }
   }, footer) : null));
+  // 用 Portal 渲染到 body：确保 position: fixed 相对于视口，不受父级 transform 影响
+  if (typeof ReactDOM !== 'undefined' && ReactDOM.createPortal && document.body) {
+    return ReactDOM.createPortal(modalNode, document.body);
+  }
+  return modalNode;
 }
 
 // 皮肤切换胶囊（MVP 仅国学可切，占星/塔罗置灰）
@@ -2989,7 +3013,7 @@ function LandingPage({
         cls: 'guoxue',
         src: '/art/module-mascot/guoxue-mascot.webp',
         alt: TC_COPY.ui.landing['mascot-guoxue-alt'],
-        sprite: { ready: true, src: '/art/taichu-pet/mascot-guoxue.webp', cols: 5, rows: 2, frames: 10, duration: 3.4, width: 256 },
+        sprite: { ready: true, src: '/art/taichu-pet/mascot-guoxue.webp', cols: 5, rows: 2, frames: 10, duration: 2.0, width: 256 },
         interact: [
           { key: 'bird', src: '/art/taichu-pet/fx-bird.webp', cls: 'fx-fly-bird' },
           { key: 'butterfly', src: '/art/taichu-pet/fx-butterfly.webp', cls: 'fx-fly-butterfly' }
@@ -3076,7 +3100,7 @@ function LandingPage({
       两种状态整块均可点击进入太初先生会话（与 banner「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
       REQ-116：agent_enabled 关 → 不渲染，与「对坐谈心」按钮同一开关源 */
   agentEnabled && c.mascot && /*#__PURE__*/React.createElement("button", {
-    className: "landing-mascot anim-mascot " + c.mascot.cls,
+    className: "landing-mascot landing-mascot--side anim-mascot " + c.mascot.cls,
     type: "button",
     title: TC_COPY.ui.agent['chat-title'],
     "aria-label": TC_COPY.ui.agent['chat-title'],
@@ -4506,6 +4530,7 @@ function CasesPage({
     }
   };
   // 删除：confirm 确认 → DELETE /cases/{caseId} → 从列表移除
+  // REQ-113 补全：删的是默认档案且还有剩余 → 列表最新一条（id 最大）自动成为新默认
   const handleDelete = async c => {
     if (!confirm('确定删除该档案？相关解读也将一并删除')) return;
     try {
@@ -4514,8 +4539,20 @@ function CasesPage({
       });
       // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
       if (res && res.code != null && res.code !== 0) throw new Error(res.message || '删除失败');
-      setCaseList(list => list.filter(x => x.caseId !== c.caseId));
-      toast('档案已删除');
+      const wasDefault = !!(res && res.data && res.data.wasDefault) || !!c.isDefault;
+      setCaseList(list => {
+        const next = list.filter(x => x.caseId !== c.caseId);
+        if (wasDefault && next.length > 0) {
+          // 后端已把最新一条设为默认；本地同步：找 id 最大的那条标 isDefault
+          let maxIdx = 0;
+          for (let i = 1; i < next.length; i++) {
+            if ((next[i].caseId || 0) > (next[maxIdx].caseId || 0)) maxIdx = i;
+          }
+          return next.map((x, i) => i === maxIdx ? Object.assign({}, x, { isDefault: true }) : Object.assign({}, x, { isDefault: false }));
+        }
+        return next;
+      });
+      toast(wasDefault && caseList.length > 1 ? '档案已删除，最新档案已设为默认' : '档案已删除');
       // REQ-092：删光全部档案（当前列表只剩被删这一条）→ 重校验触发强制建档门禁：
       // 0 档 → 立即强制进入新建档案（与「新注册/无档案存量账号」同一口径）
       if (caseList.length === 1) {
@@ -14032,6 +14069,8 @@ function DivinationPage({
     }
     resetManualState();
     setAsking(true);
+    // 进入起卦详情页：滚动到顶部，模拟独立页面跳转体验
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const closeAsk = () => setAsking(false);
   // REQ-044 v2.1：弹窗「开始起卦」—— 占问问题可选（留空直接起卦，填写则随 seed 带入断卦上下文），
@@ -14437,9 +14476,31 @@ function DivinationPage({
     setManLabel('');
     setManWarn('');
   };
+  // 回到方法列表：重置起卦状态与结果，回到列表视图
+  const backToList = function () {
+    backToOptions();
+    setAsking(false);
+    setMethod('liuyao');
+    setQOpen(false);
+  };
+  // 是否在详情视图（已进入具体起卦方法）
+  const inDetail = asking || !!data;
   return React.createElement('div', { className: 'container' },
-    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
-    React.createElement('div', { className: 'card' },
+    React.createElement('div', { className: 'hub-title' },
+      inDetail ? React.createElement('button', {
+        className: 'back-to-list-btn',
+        onClick: backToList,
+        style: {
+          marginRight: 8, padding: '4px 10px', fontSize: 13,
+          background: 'transparent', border: '1px solid var(--border)',
+          borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer',
+          display: 'inline-flex', alignItems: 'center', gap: 4,
+          fontFamily: 'inherit'
+        }
+      }, '← 返回选择') : null,
+      React.createElement(Icon, { name: 'orbit', size: 22 }), ' 临时起卦'),
+    // 方法列表：仅列表视图显示
+    !inDetail ? React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'section-title' }, '选择起卦方式'),
       React.createElement('div', { className: 'method-list divin-groups' }, DIVIN_GROUP_META.map(function (g) {
         const items = DIVIN_METHODS.filter(function (x) { return x.group === g.key; });
@@ -14452,7 +14513,7 @@ function DivinationPage({
               onClick: function () { openAsk(x); }
             }, React.createElement('div', { className: 'mn' }, x.name), React.createElement('div', { className: 'md' }, x.desc));
           }));
-      }))),
+      }))) : null,
     body,
     React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('guoxue-hub'); } }, UI_COPY.buttons.back_options)),
@@ -16595,6 +16656,7 @@ function TarotCutStage(props) {
 function TarotPickBoard(props) {
   const total = (props.pos && props.pos.length) || (props.cards ? props.cards.length : 0);
   const deckLen = (typeof props.deckLen === 'number' && props.deckLen > 0) ? props.deckLen : 78;
+  const isLeno = props.kind === 'leno';
   const [n, setN] = useState(0);
   const [removed, setRemoved] = useState([]);
   const [closing, setClosing] = useState(false);
@@ -16629,11 +16691,124 @@ function TarotPickBoard(props) {
       }
     };
   }, []);
-  // 阵位条自动滚动：保证当前待取格在可视区内（长牌阵如十二宫 / 年运也无需手滑）
+  // 节100③：槽位板复用读牌板真实阵型坐标（spots 由调用方传入；未知阵兜底行式），
+  // 摆位数学与 TarotReadBoard 完全一致 —— 抽满后切读牌板同位无缝衔接。
+  let ratio = 0.9;
+  let cells = null;
+  let sideCap = false;
+  const spot = props.spots || null;
+  if (spot) {
+    ratio = spot.ratio;
+    cells = spot.cells;
+    sideCap = !!spot.sideCap;
+  } else if (total <= 1) {
+    ratio = 1.05; cells = [{ x: 50, y: 45, w: 30, rot: 0 }];
+  } else if (total <= 5) {
+    ratio = 1.9; cells = tarotRowCells(total, total <= 3 ? 22 : 15.5, 46);
+  } else {
+    ratio = 1.25;
+    const rows = Math.ceil(total / 3);
+    const ys = []; for (let r = 0; r < rows; r++) ys.push(rows === 1 ? 50 : 36 + r * (72 / (rows - 1)));
+    const all = [];
+    for (let r = 0; r < rows; r++) for (let cc = 0; cc < 3; cc++) {
+      const k = r * 3 + cc;
+      if (k < total) all.push({ x: TAROT_GRID6_XS[cc], y: ys[r], w: total <= 6 ? 15 : 13, rot: 0 });
+    }
+    cells = all;
+  }
+  const capShow = sideCap ? false : (spot ? spot.cap !== false : total <= 5);
+  const capFs = total <= 1 ? 12.5 : (total <= 3 ? 11 : (total <= 5 ? 9.5 : 8.6));
+  const bdgFs = total <= 3 ? 12 : (total <= 5 ? 11 : (total <= 7 ? 10 : 9.5));
+  // 阵位自动滚动：保证当前待取格在可视区内（长牌阵如十二宫 / 年运也无需手滑）
   useEffect(function () {
     const el = slotEls.current[n];
     if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [n]);
+  // ---- 节100③：底部圆弧扇形（横滑浏览 + 轻点抽牌）。原生横向滚动 + rAF，
+  //      每张牌按「距滚动中心位次 d」实时写 transform：横移 x、下沉 d²·k、倾斜 d·4.6°，
+  //      中直立、两边渐低渐斜；|d|>3.6 渐隐，>5.4 不渲染点击。取走的牌留位不塌（扇形不跳）。
+  //      牌距 = 卡宽 22%（密集扇形）；触摸端走原生横滑（touch-action:pan-x），
+  //      桌面端鼠标滚轮在扇形上自动转为横向滚动（方便无触屏环境验证滑动）。 ----
+  const rowRef = useRef(null);
+  const stripRef = useRef(null);
+  const btnEls = useRef([]);
+  const fanG = useRef({ cardW: 88, step: 26, pad: 120 });
+  const fanInit = useRef(false);
+  const rafRef = useRef(0);
+  const removedSet = useRef({});
+  removedSet.current = {};
+  removed.forEach(function (tok) { removedSet.current[tok] = true; });
+  const applyFan = function () {
+    const row = rowRef.current;
+    if (!row) return;
+    const g = fanG.current;
+    const ci = (row.scrollLeft + row.clientWidth / 2 - g.pad - g.cardW / 2) / g.step;
+    for (let i = 0; i < btnEls.current.length; i++) {
+      const btn = btnEls.current[i];
+      if (!btn) continue;
+      const d = i - ci;
+      const ad = Math.abs(d);
+      const ang = Math.max(-26, Math.min(26, d * 4.6));
+      const dip = d * d * g.cardW * 0.075;
+      const x = g.pad + i * g.step;
+      let op = 1;
+      if (ad > 3.6 && !removedSet.current[order[i]]) op = Math.max(0, Math.min(1, (4.8 - ad) / 1.2));
+      if (removedSet.current[order[i]]) op = 0;
+      btn.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + (dip + 12).toFixed(1) + 'px,0) rotate(' + ang.toFixed(2) + 'deg)';
+      btn.style.transformOrigin = '50% 100%';
+      btn.style.opacity = String(op);
+      btn.style.zIndex = String(70 - Math.min(70, Math.round(ad * 2)));
+      btn.style.visibility = ad > 5.4 ? 'hidden' : 'visible';
+    }
+  };
+  const layoutFan = function () {
+    const row = rowRef.current, strip = stripRef.current;
+    if (!row || !strip) return;
+    const first = btnEls.current[0];
+    const cardW = first ? first.offsetWidth : 88;
+    const step = cardW * 0.22;
+    const pad = row.clientWidth / 2 - cardW / 2;
+    fanG.current = { cardW: cardW, step: step, pad: pad };
+    strip.style.width = (pad * 2 + (deckLen - 1) * step + cardW) + 'px';
+    strip.style.height = (first ? first.offsetHeight : 142) + 'px';
+    applyFan();
+  };
+  useEffect(function () {
+    layoutFan();
+    if (!fanInit.current && rowRef.current) {
+      fanInit.current = true;
+      const m = Math.floor(deckLen / 2);
+      rowRef.current.scrollLeft = fanG.current.pad + m * fanG.current.step + fanG.current.cardW / 2 - rowRef.current.clientWidth / 2;
+    }
+    const onScroll = function () {
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(function () { rafRef.current = 0; applyFan(); });
+    };
+    // 桌面端：鼠标滚轮（竖向 deltaY）在扇形上转为横向滚动；触控板横向 deltaX 直通
+    const onWheel = function (e) {
+      const rowEl2 = rowRef.current;
+      if (!rowEl2) return;
+      const atStart = rowEl2.scrollLeft <= 0;
+      const atEnd = rowEl2.scrollLeft + rowEl2.clientWidth >= rowEl2.scrollWidth - 1;
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      if (!delta) return;
+      // 已到扇形两端时放行页面竖向滚动，避免把页面滚动弹死
+      if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
+      e.preventDefault();
+      rowEl2.scrollLeft += delta;
+    };
+    const rowEl = rowRef.current;
+    rowEl.addEventListener('scroll', onScroll, { passive: true });
+    rowEl.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('resize', layoutFan);
+    return function () {
+      rowEl.removeEventListener('scroll', onScroll);
+      rowEl.removeEventListener('wheel', onWheel);
+      window.removeEventListener('resize', layoutFan);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [deckLen]);
+  useEffect(function () { applyFan(); }, [removed]);
   const pickCard = function (tok, e) {
     if (firedAll.current || busyRef.current || n >= total) return;
     const btn = e && e.currentTarget;
@@ -16643,14 +16818,14 @@ function TarotPickBoard(props) {
     busyRef.current = true;
     const br = btn.getBoundingClientRect();
     const fr = frame.getBoundingClientRect();
-    // 幽灵牌（牌背）自扇形飞向当前阵位
+    // 幽灵牌（牌背）自扇形飞向当前真实阵位
     const ghost = btn.cloneNode(true);
     const gs = ghost.style;
     gs.cssText = 'position:fixed;left:' + br.left + 'px;top:' + br.top + 'px;width:' + br.width + 'px;height:' + br.height +
       'px;z-index:240;margin:0;padding:0;border:none;background:none;transform:none;transition:none;opacity:1;pointer-events:none;';
     document.body.appendChild(ghost);
     ghostRef.current = ghost;
-    // 原扇卡退场（保留布局占位，扇形不跳动）
+    // 原扇卡退场（保留扇形位次，不塌不跳）
     setRemoved(function (prev) { return prev.concat([tok]); });
     const dx = (fr.left + fr.width / 2) - (br.left + br.width / 2);
     const dy = (fr.top + fr.height / 2) - (br.top + br.height / 2);
@@ -16682,44 +16857,78 @@ function TarotPickBoard(props) {
   };
   const slotKids = [];
   for (let i = 0; i < total; i++) {
+    const cell = cells[i] || { x: 50, y: 50, w: 13, rot: 0 };
+    const wP = cell.w || 13;
+    const rot = cell.rot || 0;
+    const hF = (wP * ratio) / 0.619; // 卡高占板 %（同读牌板）
+    const leftP = cell.x - wP / 2;
+    const topP = cell.y - hF / 2;
     const revealed = i < n;
     const c = revealed ? ((props.cards && props.cards[i]) || null) : null;
-    const frameInner = c
-      ? React.createElement('div', { className: 'tp-front' + (c.reversed ? ' reversed' : '') },
-          c.img
-            ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-            : React.createElement('div', { className: 'tp-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || '#5B4B8A') } }, c.name))
-      : React.createElement('div', { className: 'tp-empty' });
+    const label = (props.pos && props.pos[i]) || ('第' + (i + 1) + '位');
+    const cardKids = [];
+    if (c) {
+      const imgInner = c.img
+        ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
+        : React.createElement('div', { className: 'rd-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || '#5B4B8A') } }, c.name);
+      const face = React.createElement('div', {
+        className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : ''),
+        ref: function (el) { slotEls.current[i] = el; }
+      }, imgInner);
+      cardKids.push(rot
+        ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face)
+        : face);
+      cardKids.push(React.createElement('span', { key: 'b', className: 'rd-badge', style: { fontSize: bdgFs } }, i + 1));
+    } else {
+      cardKids.push(React.createElement('div', {
+        key: 'd',
+        className: 'tp-dash',
+        ref: function (el) { slotEls.current[i] = el; }
+      }, React.createElement('span', { className: 'tp-dnum' }, i + 1)));
+    }
+    if (sideCap) {
+      cardKids.push(React.createElement('span', {
+        key: 'sc',
+        className: 'rd-sidecap',
+        style: { left: (cell.x + wP / 2 + 1.8) + '%', top: cell.y + '%', width: (96 - (cell.x + wP / 2 + 1.8)) + '%' }
+      }, (TAROT_READ_CN[i] || (i + 1)) + ' ' + label));
+    } else if (capShow) {
+      cardKids.push(React.createElement('div', { key: 'cap', className: 'rd-cap' }, label));
+    }
     slotKids.push(React.createElement('div', {
       key: 's' + i,
-      className: 'tp-slot' + (revealed ? ' filled' : '') + (i === n ? ' cur' : '')
-    },
-      React.createElement('div', { ref: function (el) { slotEls.current[i] = el; }, className: 'tp-frame' }, frameInner),
-      React.createElement('div', { className: 'tp-pos' }, (i + 1) + '、' + ((props.pos && props.pos[i]) || ''))));
+      className: 'tp-cell' + (revealed ? ' filled' : '') + (i === n ? ' cur' : ''),
+      style: { left: leftP + '%', top: topP + '%', width: wP + '%' }
+    }, cardKids));
   }
-  const fanBtns = order.map(function (tok) {
+  const fanBtns = order.map(function (tok, idx) {
     const isRemoved = removed.indexOf(tok) !== -1;
     return React.createElement('button', {
       key: 'fan' + tok,
       type: 'button',
+      ref: function (el) { btnEls.current[idx] = el; },
       className: 'tp-fanbtn' + (isRemoved ? ' picked' : ''),
       disabled: isRemoved,
       'aria-label': '从扇形中取第 ' + Math.min(n + 1, total) + ' 张牌',
       onClick: function (e) { if (!isRemoved) pickCard(tok, e); }
-    }, React.createElement('i', { className: 'tp-back' }));
+    }, React.createElement('i', { className: 'tp-back' + (isLeno ? ' leno' : '') }));
   });
   return React.createElement('div', { className: 'tp-board' },
     React.createElement('div', { className: 'tp-progress' },
       React.createElement('div', { className: 'tp-progress-t' },
         '已取 ', React.createElement('b', null, n), '/', total, ' 张',
-        n < total ? ' · 点选下方牌背取下一张' : ' · 全部取毕，正在收扇…'),
+        n < total ? ' · 轻点下方扇形牌背取下一张' : ' · 全部取毕，正在收扇…'),
       React.createElement('div', { className: 'tp-acts' },
         React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onBackMenu }, '← 返回重选牌阵'),
         React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onRedo }, '重新洗牌'))),
-    React.createElement('div', { className: 'tp-slots' }, slotKids),
+    React.createElement('div', {
+      className: 'rd-box tp-table' + (isLeno ? ' leno-table' : ''),
+      style: { aspectRatio: String(ratio), '--rd-cap-fs': capFs + 'px' }
+    }, slotKids),
     React.createElement('div', { className: 'tp-fan' + (closing ? ' closing' : '') },
-      React.createElement('div', { className: 'tp-fan-cap' }, '牌背朝下 · 左右滑动浏览 · 依直觉点选一张 · 选过即定不可反悔'),
-      React.createElement('div', { className: 'tp-fanrow' }, fanBtns)));
+      React.createElement('div', { className: 'tp-fan-cap' }, '牌背朝下 · 沿底部左右滑动浏览整副牌 · 依直觉轻点一张 · 选过即定不可反悔'),
+      React.createElement('div', { className: 'tp-fanrow', ref: rowRef },
+        React.createElement('div', { className: 'tp-fanstrip', ref: stripRef }, fanBtns))));
 }
 /* ================= REQ-129 C：读牌段（19 牌阵官方真实阵型摆位 + 一屏原则 + 点开放大连看） =================
    消费取牌段 lastTarotPickStream（getTarotPickStream()，动画关/手动录入等直出路径按当前成牌确定性重建）：
@@ -17149,6 +17358,8 @@ function TarotPage({
           pos: spread.pos,
           cards: cards.map(function (c) { return normTarotCard(c); }),
           deckLen: TAROT_DECK.length,
+          spots: (spread && TAROT_READ_SPOTS[spread.id]) || null,
+          kind: 'taro',
           onAllRevealed: handlePickAllRevealed,
           onRedo: function () { redo(); },
           onBackMenu: backMenu
@@ -17273,9 +17484,13 @@ function TarotPage({
   // REQ-042 v2：draw 底部三按钮全宽并列大按钮（重新抽卡/重选牌阵/返回，保持）
   // REQ-129：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
   const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
+  // 节100③：取牌演出段（洗牌/切牌/扇形）底栏统一为标准「返回选项 / 回到首页」（同星座页底部）
+  const hubHomeRow = React.createElement('div', { className: 'back-row fill' },
+    React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options),
+    React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('landing'); } }, UI_COPY.buttons.back_home));
   const drawFoot = React.createElement(React.Fragment, null,
     drawBody,
-    inPickPlay ? null : React.createElement('div', { className: 'back-row fill' },
+    inPickPlay ? hubHomeRow : React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
@@ -17290,9 +17505,10 @@ function TarotPage({
         onGo: function (ni) { if (ni >= 0 && ni < readCards.length) setZoomIdx(ni); }
       })
     : null;
+  // 节100③：menu 阶段底栏统一为标准「返回选项 / 回到首页」（同星座页底部，取代虚线链接）
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 塔罗牌'),
-    step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot),
+    step === 'menu' ? React.createElement(React.Fragment, null, menuBody, hubHomeRow) : (step === 'pick' ? pickBody : drawFoot),
     zoomOverlay,
     // REQ-042：公版署名以页脚小字展示（保持）
     React.createElement('div', { className: 'deck-credit' }, 'Rider-Waite-Smith 1909 公版'));
@@ -18018,6 +18234,8 @@ function LenormandPage({
           pos: spread.pos,
           cards: cards.map(function (c) { return lnCardOf(c); }),
           deckLen: LENORMAND_DECK.length,
+          spots: (spread && LENORMAND_READ_SPOTS[spread.id]) || null,
+          kind: 'leno',
           onAllRevealed: handlePickAllRevealed,
           onRedo: function () { redo(); },
           onBackMenu: backMenu
@@ -18123,9 +18341,13 @@ function LenormandPage({
   // REQ-043 v2：draw 底部三按钮全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项，保持）
   // REQ-130：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
   const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
+  // 节100③：取牌演出段（洗牌/切牌/扇形）底栏统一为标准「返回选项 / 回到首页」（同星座页底部）
+  const hubHomeRow = React.createElement('div', { className: 'back-row fill' },
+    React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options),
+    React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('landing'); } }, UI_COPY.buttons.back_home));
   const drawFoot = React.createElement(React.Fragment, null,
     body,
-    inPickPlay ? null : React.createElement('div', { className: 'back-row fill' },
+    inPickPlay ? hubHomeRow : React.createElement('div', { className: 'back-row fill' },
       React.createElement('button', { className: 'btn btn-outline', onClick: redo }, UI_COPY.buttons.redo),
       React.createElement('button', { className: 'btn btn-outline', onClick: backMenu }, UI_COPY.buttons.rechoose),
       React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options)));
@@ -18140,9 +18362,10 @@ function LenormandPage({
         onGo: function (ni) { if (ni >= 0 && ni < readCards.length) setZoomIdx(ni); }
       })
     : null;
+  // 节100③：menu 阶段底栏统一为标准「返回选项 / 回到首页」（同星座页底部，取代虚线链接）
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'nine', size: 22 }), ' 雷诺曼'),
-    step === 'menu' ? menuBody : (step === 'pick' ? pickBody : drawFoot),
+    step === 'menu' ? React.createElement(React.Fragment, null, menuBody, hubHomeRow) : (step === 'pick' ? pickBody : drawFoot),
     zoomOverlay);
 }
 
@@ -19289,62 +19512,41 @@ function AstrologyPage({
     { key: 'moon', title: '月亮', sign: moonSign },
     { key: 'rising', title: '上升', sign: ascSign }
   ];
-  // ---- REQ-132：三卡环形无限循环 + 横向露边堆叠（覆盖 REQ-115 呈现口径）——5 槽位虚拟 track
-  //      （前克隆 + 3 原 + 后克隆）平移取模无跳变；当前卡居中完整（宽 78%）、左右各露一张侧边；
-  //      小圆点指示器随循环同步 + 左右箭头；星座图标 CxIcon 与 A1 趋势文案内容不变。 ----
+  // ---- 节100③：三卡牌堆式堆叠（取代 REQ-132 五槽位虚拟 track）——
+  //      三张牌全部绝对定位，容器高度由顶卡实测撑开（趋势全文完整不裁切）；
+  //      顶卡居左完整展示，底两张向右错开各 30px、右缘圆形位露星座 logo；
+  //      左右滑 / 点按露边 / 箭头 / 圆点切换，3 张环形无限循环：
+  //      前进 = 旧顶卡加 .exit 向左飞出、380ms 后绕回最底张；后退 = 底牌自右滑上。 ----
   const TRIPLE_N = trendCells.length;
-  const TRIPLE_STEP = 78;
-  const TRIPLE_REDUCED = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const tripleReal = s => ((s - 1) % TRIPLE_N + TRIPLE_N) % TRIPLE_N;
   const [tripleCur, setTripleCur] = useState(0);
-  const [tripleSlot, setTripleSlot] = useState(1);
-  const [tripleDrag, setTripleDrag] = useState(0);
-  const [tripleDragging, setTripleDragging] = useState(false);
-  const [tripleAnim, setTripleAnim] = useState(!TRIPLE_REDUCED);
-  const tripleStart = useRef({ x: 0 });
+  const [tripleExit, setTripleExit] = useState(null);
+  const [tripleH, setTripleH] = useState(null);
+  const tripleStart = useRef(0);
   const tripleMoved = useRef(false);
   const tripleTimer = useRef(null);
-  const tripleReset = () => {
-    setTripleAnim(false);
-    setTripleSlot(1 + tripleCur);
-    requestAnimationFrame(() => requestAnimationFrame(() => setTripleAnim(!TRIPLE_REDUCED)));
-  };
+  const tripleCurEl = useRef(null);
+  useLayoutEffect(() => {
+    const node = tripleCurEl.current;
+    if (node) setTripleH(node.offsetHeight);
+  });
   const tripleGo = dir => {
     clearTimeout(tripleTimer.current);
-    const next = (tripleCur + dir + TRIPLE_N) % TRIPLE_N;
-    if (dir > 0 && tripleCur === TRIPLE_N - 1) {
-      setTripleSlot(1 + TRIPLE_N);
-      tripleTimer.current = setTimeout(() => {
-        setTripleCur(0);
-        tripleReset();
-      }, 330);
-    } else if (dir < 0 && tripleCur === 0) {
-      setTripleSlot(0);
-      tripleTimer.current = setTimeout(() => {
-        setTripleCur(TRIPLE_N - 1);
-        tripleReset();
-      }, 330);
+    if (dir > 0) {
+      setTripleExit(tripleCur);
+      setTripleCur((tripleCur + 1) % TRIPLE_N);
+      tripleTimer.current = setTimeout(() => setTripleExit(null), 380);
     } else {
-      setTripleCur(next);
-      setTripleSlot(1 + next);
+      setTripleExit(null);
+      setTripleCur((tripleCur + TRIPLE_N - 1) % TRIPLE_N);
     }
   };
   const tripleDown = e => {
-    tripleStart.current = { x: e.clientX };
+    tripleStart.current = e.clientX;
     tripleMoved.current = false;
-    setTripleDragging(true);
   };
-  const tripleMove = e => {
-    if (!tripleDragging) return;
-    const d = e.clientX - tripleStart.current.x;
-    if (Math.abs(d) > 8) tripleMoved.current = true;
-    setTripleDrag(d);
-  };
-  const tripleEnd = () => {
-    if (!tripleDragging) return;
-    const d = tripleDrag;
-    setTripleDragging(false);
-    setTripleDrag(0);
+  const tripleEnd = e => {
+    if (e && e.type === 'pointercancel') return;
+    const d = e.clientX - tripleStart.current;
     if (Math.abs(d) > 48) tripleGo(d < 0 ? 1 : -1);
   };
   const tripleCard = el('div', {
@@ -19353,35 +19555,28 @@ function AstrologyPage({
     className: 'section-title'
   }, '太阳 / 月亮 / 上升 · 整体趋势'), el('div', {
     className: 'triple-stack',
-    style: {
-      cursor: tripleDragging ? 'grabbing' : 'grab'
-    },
+    style: tripleH ? { height: tripleH + 'px' } : undefined,
     onPointerDown: tripleDown,
-    onPointerMove: tripleMove,
     onPointerUp: tripleEnd,
     onPointerCancel: tripleEnd,
-    onPointerLeave: tripleEnd,
     role: 'group',
     'aria-label': '太阳 / 月亮 / 上升 三张趋势卡，可左右环形滑动切换'
-  }, el('div', {
-    className: 'triple-track',
-    style: {
-      transform: 'translateX(' + (-(tripleSlot * TRIPLE_STEP) + (tripleDragging ? tripleDrag * 0.6 : 0)) + '%)',
-      transition: tripleAnim && !tripleDragging ? 'transform .32s ease' : 'none'
-    }
-  }, [0, 1, 2, 3, 4].map(slot => {
-    const realIdx = tripleReal(slot);
-    const cell = trendCells[realIdx];
-    const isCur = slot === tripleSlot;
+  }, trendCells.map((cell, i) => {
+    const isExit = i === tripleExit;
+    const depth = (i - tripleCur + TRIPLE_N) % TRIPLE_N;
+    const isCur = !isExit && depth === 0;
+    const isSide = !isExit && depth !== 0;
     const txt = zodiacTrendText(cell.key, cell.sign, trendGender);
+    const cardStyle = isSide
+      ? (depth === 1 ? { right: '30px', left: 'auto', top: '5px', zIndex: 2 } : { right: '0px', left: 'auto', top: '10px', zIndex: 1 })
+      : undefined;
     return el('div', {
-      key: 'ts' + slot,
-      className: 'triple-card' + (isCur ? '' : ' side'),
-      style: {
-        transform: 'translateX(' + (slot * TRIPLE_STEP) + '%)'
-      },
-      onClick: isCur || tripleMoved.current ? null : () => tripleGo(slot < tripleSlot ? -1 : 1),
-      'aria-label': (isCur ? '当前卡：' : '后卡：') + cell.title + ' · ' + (cell.sign || '未知')
+      key: 'ts' + i,
+      ref: isCur ? tripleCurEl : undefined,
+      className: 'triple-card' + (isExit ? ' exit' : isCur ? ' cur' : ' side'),
+      style: cardStyle,
+      onClick: isSide && !tripleMoved.current ? () => tripleGo(1) : undefined,
+      'aria-label': (isCur ? '当前卡：' : isExit ? '切出：' : '牌堆下一张：') + cell.title + ' · ' + (cell.sign || '未知')
     }, el('div', {
       className: 'tc-head'
     }, el('div', {
@@ -19391,10 +19586,15 @@ function AstrologyPage({
     }, el(CxIcon, {
       cn: cell.sign,
       size: 22
-    }), cell.sign || '——')), isCur ? el('div', {
+    }), cell.sign || '——')), isSide ? el('div', {
+      className: 'tc-peek'
+    }, el(CxIcon, {
+      cn: cell.sign,
+      size: 15
+    })) : el('div', {
       className: 'tc-txt'
-    }, txt) : null);
-  }))), el('div', {
+    }, txt));
+  })), el('div', {
     className: 'triple-nav'
   }, el('button', {
     type: 'button',
@@ -19409,9 +19609,9 @@ function AstrologyPage({
     className: 'triple-dot' + (i === tripleCur ? ' on' : ''),
     'aria-label': '第 ' + (i + 1) + ' 张：' + cell.title,
     onClick: () => {
-      clearTimeout(tripleTimer.current);
-      setTripleCur(i);
-      setTripleSlot(1 + i);
+      const diff = (i - tripleCur + TRIPLE_N) % TRIPLE_N;
+      if (diff === 1) tripleGo(1);
+      else if (diff === 2) tripleGo(-1);
     }
   }))), el('button', {
     type: 'button',
