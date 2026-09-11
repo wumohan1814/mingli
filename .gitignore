@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 backend/dist/
+backend/packages/
 build/
 .venv/
 venv/
