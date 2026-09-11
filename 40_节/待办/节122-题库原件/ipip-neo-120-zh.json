@@ -4,57 +4,1288 @@
   "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm",
   "fetched_at": "2026-09-11",
   "declared_item_count": 120,
-  "captured_item_count": 33,
-  "capture_status": "PARTIAL — 33 of 120 items captured",
-  "capture_limitation": "The official page is a single long HTML table and the available web_fetch tool truncates it at a fixed size. Two independent fetch attempts returned byte-identical truncation, stopping right after item 33. Items 34-120 could NOT be captured with this tool. They are NOT omitted for any other reason. To complete this file, fetch the same URL with a tool that can read the whole page (e.g. a browser, curl to local file, or a fetch service without truncation).",
+  "captured_item_count": 120,
+  "capture_status": "COMPLETE - 120 of 120 items captured",
+  "capture_limitation": "RESOLVED 2026-09-11. The earlier 33/120 truncation was a web_fetch tool size limit, not a page limit. The full page (175,394 bytes) was downloaded directly to _raw-mandarin-120.htm; all 120 items are now parsed from that file. Original raw page is retained for re-verification.",
   "related_official_pages": [
     "https://ipip.ori.org/ChineseIPIP-120reliability.htm (reliability & validity of the translation)",
     "https://ipip.ori.org/ChineseIPIP-120norms.htm (Chinese norms)"
   ],
   "field_completeness": {
-    "text_en": "partial (33/120, verbatim English column of the Mandarin page)",
-    "text_zh": "partial (33/120, verbatim Mandarin column — this is the official translation)",
-    "dimension": "NOT AVAILABLE on this page (the Mandarin page does not print domain or facet for each item)",
-    "facet": "NOT AVAILABLE on this page",
-    "keying": "NOT AVAILABLE on this page"
+    "text_en": "COMPLETE (120/120, verbatim English column of the Mandarin page)",
+    "text_zh": "COMPLETE (120/120, verbatim Mandarin column - this is the official translation)",
+    "dimension": "NOT AVAILABLE on this page (page does not print domain per item) - left null deliberately",
+    "facet": "NOT AVAILABLE on this page - left null deliberately",
+    "keying": "NOT AVAILABLE on this page - left null deliberately"
   },
   "instructions_zh_verbatim": "接下来的题目是用来描述人们行为的语句。请你使用1-5分的打分（1分为「非常不准确」，5分为「非常准确」），来表明这些语句是否能准确描述你。请按照你当前的实际情况描述自己，而不是你希望自己未来能成为的样子。你应当诚实地描绘自己，可以把和自己年龄大致相访、性别相同的人为参照物。你的回答将被绝对保密。\n\n本测试共有120题，请不要遗漏题目，否则将无法生成有效的测试结果。一般而言，本测试需要15-20分钟来完成。",
-  "response_options_zh_verbatim": ["非常不准确", "不太不准确", "适中", "比较准确", "非常准确"],
+  "response_options_zh_verbatim": [
+    "非常不准确",
+    "不太不准确",
+    "适中",
+    "比较准确",
+    "非常准确"
+  ],
   "transcriber_note_on_instructions": "The instruction sentence '请按照你当前的实际情况描述自己，而不是你希望自己未来能成为的样子' is transcribed as-is from the page. In the fetched text one character read '相访' where '相同' would be expected ('把和自己年龄大致相访…'), which reads like a typo on the official page or a fetch artifact — recorded here verbatim with this note rather than silently corrected.",
-  "IMPORTANT_discrepancy_to_check": "The English column of this Mandarin page is NOT identical to the Johnson-120 SCORING KEY page (30FacetNEO-PI-RItems.htm). Example: this page item 28 = 'View myself as predominantly liberal politically.', but the Johnson-120 scoring key lists O6 items as 'Tend to vote for liberal political candidates.' / 'Believe that there is no absolute right and wrong.' / 'Tend to vote for conservative political candidates.' / 'Believe that we should be tough on crime.'. So this page appears to translate the ADMINISTERED questionnaire wording, which differs from the scoring-key listing. CONSEQUENCE: mapping these Chinese items to facets/dimensions requires care and should not be assumed — the parent should treat item-to-facet mapping as unverified until the full page (which may contain the mapping) is read.",
+  "IMPORTANT_discrepancy_to_check": "The English column of this Mandarin page is NOT identical to the Johnson-120 SCORING KEY page (30FacetNEO-PI-RItems.htm). Example: this page item 28 = 'View myself as predominantly liberal politically.', but the Johnson-120 scoring key lists O6 items as 'Tend to vote for liberal political candidates.' / 'Believe that there is no absolute right and wrong.' / 'Tend to vote for conservative political candidates.' / 'Believe that we should be tough on crime.'. So this page appears to translate the ADMINISTERED questionnaire wording, which differs from the scoring-key listing. CONSEQUENCE: mapping these Chinese items to facets/dimensions requires care and should not be assumed — the parent should treat item-to-facet mapping as unverified until the full page (which may contain the mapping) is read. RESOLVED 2026-09-11 (quantified): the full page was downloaded and all 120 items parsed. The two documents are the SAME 120-item instrument, but in COMPLETELY DIFFERENT item order (position-wise identical: only 2/120; ipip-neo-120.json is grouped by facet, the Mandarin page is in administration order). By exact text identity, 117/120 Chinese items map unambiguously to a Johnson-120 scoring-key entry. The remaining 3 (zh items 28, 58, 88) are worded differently on the two pages and correspond to key entries 69, 70, 71 - all facet O6 (Openness: Values). See crosscheck_vs_ipip-neo-120 for the full numbers.",
   "items": [
-    {"instrument": "ipip-neo-120-zh", "item_no": 1, "text_en": "Worry about things.", "text_zh": "为很多事情感到担心", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 2, "text_en": "Make friends easily.", "text_zh": "很容易交到朋友", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 3, "text_en": "Have a vivid imagination.", "text_zh": "有丰富的想象力", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 4, "text_en": "Trust others.", "text_zh": "信任其他人", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 5, "text_en": "Complete tasks successfully.", "text_zh": "能成功完成任务", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 6, "text_en": "Get angry easily.", "text_zh": "很容易生气", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 7, "text_en": "Love large parties.", "text_zh": "喜欢参加大型聚会", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 8, "text_en": "Believe in the importance of art.", "text_zh": "认为艺术是很重要的", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 9, "text_en": "Use others for my own ends.", "text_zh": "会利用他人来达成自己的目的", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 10, "text_en": "Like to tidy up.", "text_zh": "喜欢整洁", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 11, "text_en": "Often feel blue.", "text_zh": "时常感到忧郁", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 12, "text_en": "Take charge.", "text_zh": "承担责任", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 13, "text_en": "Experience my emotions intensely.", "text_zh": "能强烈感受到自己的情绪", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 14, "text_en": "Love to help others.", "text_zh": "乐于帮助他人", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 15, "text_en": "Keep my promises.", "text_zh": "信守承诺", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 16, "text_en": "Find it difficult to approach others.", "text_zh": "感觉自己很难接近别人", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 17, "text_en": "Am always busy.", "text_zh": "总是很忙碌", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 18, "text_en": "Prefer variety to routine.", "text_zh": "相比墨守成规，我更喜欢有变化。", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 19, "text_en": "Love a good fight.", "text_zh": "喜欢和别人比试", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 20, "text_en": "Work hard.", "text_zh": "工作努力", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 21, "text_en": "Go on binges.", "text_zh": "大吃大喝寻欢作乐", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 22, "text_en": "Love excitement.", "text_zh": "喜欢追求刺激", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 23, "text_en": "Love to read challenging material.", "text_zh": "喜欢阅读有挑战性的材料", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 24, "text_en": "Believe that I am better than others.", "text_zh": "相信自己比别人更好", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 25, "text_en": "Am always prepared.", "text_zh": "我总是有所准备", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 26, "text_en": "Panic easily.", "text_zh": "容易慌张", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 27, "text_en": "Radiate joy.", "text_zh": "我的快乐会感染周围的人", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 28, "text_en": "View myself as predominantly liberal politically.", "text_zh": "认为自己在政治方面非常自由开放", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 29, "text_en": "Sympathize with the homeless.", "text_zh": "同情流浪汉", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 30, "text_en": "Jump into things without thinking.", "text_zh": "会不经过思考就开始行动", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 31, "text_en": "Fear for the worst.", "text_zh": "担心会发生最糟糕的情况", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 32, "text_en": "Feel comfortable around people.", "text_zh": "和其他人待在一起时，我觉得很自在", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"},
-    {"instrument": "ipip-neo-120-zh", "item_no": 33, "text_en": "Enjoy wild flights of fantasy.", "text_zh": "喜欢天马行空地幻想", "dimension": null, "facet": null, "keying": null, "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"}
-  ]
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 1,
+      "text_en": "Worry about things.",
+      "text_zh": "为很多事情感到担心",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 2,
+      "text_en": "Make friends easily.",
+      "text_zh": "很容易交到朋友",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 3,
+      "text_en": "Have a vivid imagination.",
+      "text_zh": "有丰富的想象力",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 4,
+      "text_en": "Trust others.",
+      "text_zh": "信任其他人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 5,
+      "text_en": "Complete tasks successfully.",
+      "text_zh": "能成功完成任务",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 6,
+      "text_en": "Get angry easily.",
+      "text_zh": "很容易生气",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 7,
+      "text_en": "Love large parties.",
+      "text_zh": "喜欢参加大型聚会",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 8,
+      "text_en": "Believe in the importance of art.",
+      "text_zh": "认为艺术是很重要的",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 9,
+      "text_en": "Use others for my own ends.",
+      "text_zh": "会利用他人来达成自己的目的",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 10,
+      "text_en": "Like to tidy up.",
+      "text_zh": "喜欢整洁",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 11,
+      "text_en": "Often feel blue.",
+      "text_zh": "时常感到忧郁",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 12,
+      "text_en": "Take charge.",
+      "text_zh": "承担责任",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 13,
+      "text_en": "Experience my emotions intensely.",
+      "text_zh": "能强烈感受到自己的情绪",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 14,
+      "text_en": "Love to help others.",
+      "text_zh": "乐于帮助他人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 15,
+      "text_en": "Keep my promises.",
+      "text_zh": "信守承诺",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 16,
+      "text_en": "Find it difficult to approach others.",
+      "text_zh": "感觉自己很难接近别人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 17,
+      "text_en": "Am always busy.",
+      "text_zh": "总是很忙碌",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 18,
+      "text_en": "Prefer variety to routine.",
+      "text_zh": "相比墨守成规，我更喜欢有变化。",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 19,
+      "text_en": "Love a good fight.",
+      "text_zh": "喜欢和别人比试",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 20,
+      "text_en": "Work hard.",
+      "text_zh": "工作努力",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 21,
+      "text_en": "Go on binges.",
+      "text_zh": "大吃大喝寻欢作乐",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 22,
+      "text_en": "Love excitement.",
+      "text_zh": "喜欢追求刺激",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 23,
+      "text_en": "Love to read challenging material.",
+      "text_zh": "喜欢阅读有挑战性的材料",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 24,
+      "text_en": "Believe that I am better than others.",
+      "text_zh": "相信自己比别人更好",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 25,
+      "text_en": "Am always prepared.",
+      "text_zh": "我总是有所准备",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 26,
+      "text_en": "Panic easily.",
+      "text_zh": "容易慌张",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 27,
+      "text_en": "Radiate joy.",
+      "text_zh": "我的快乐会感染周围的人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 28,
+      "text_en": "View myself as predominantly liberal politically.",
+      "text_zh": "认为自己在政治方面非常自由开放",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 29,
+      "text_en": "Sympathize with the homeless.",
+      "text_zh": "同情流浪汉",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 30,
+      "text_en": "Jump into things without thinking.",
+      "text_zh": "会不经过思考就开始行动",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 31,
+      "text_en": "Fear for the worst.",
+      "text_zh": "担心会发生最糟糕的情况",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 32,
+      "text_en": "Feel comfortable around people.",
+      "text_zh": "和其他人待在一起时，我觉得很自在",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 33,
+      "text_en": "Enjoy wild flights of fantasy.",
+      "text_zh": "喜欢天马行空地幻想",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 34,
+      "text_en": "Believe that others have good intentions.",
+      "text_zh": "相信他人的出发点是好的",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 35,
+      "text_en": "Excel in what I do.",
+      "text_zh": "在自己所从事的领域出类拔萃",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 36,
+      "text_en": "Get irritated easily.",
+      "text_zh": "容易被激怒",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 37,
+      "text_en": "Talk to a lot of different people at parties.",
+      "text_zh": "在聚会上，我会和很多不同的人交谈",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 38,
+      "text_en": "See beauty in things that others might not notice.",
+      "text_zh": "我能发现别人看不到的美",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 39,
+      "text_en": "Cheat to get ahead.",
+      "text_zh": "为了领先别人，我会采用作弊的方式",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 40,
+      "text_en": "Often forget to put things back in their proper place.",
+      "text_zh": "经常忘记把东西放回原处",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 41,
+      "text_en": "Dislike myself.",
+      "text_zh": "不喜欢自己",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 42,
+      "text_en": "Try to lead others.",
+      "text_zh": "我会尝试去领导他人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 43,
+      "text_en": "Feel others' emotions.",
+      "text_zh": "能感受到他人的情绪",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 44,
+      "text_en": "Am concerned about others.",
+      "text_zh": "关心他人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 45,
+      "text_en": "Tell the truth.",
+      "text_zh": "我会实话实说",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 46,
+      "text_en": "Am afraid to draw attention to myself.",
+      "text_zh": "害怕引起他人的注意",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 47,
+      "text_en": "Am always on the go.",
+      "text_zh": "总是在奔波",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 48,
+      "text_en": "Prefer to stick with things that I know.",
+      "text_zh": "我更喜欢做自己熟悉的事情",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 49,
+      "text_en": "Yell at people.",
+      "text_zh": "会冲人大喊大叫",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 50,
+      "text_en": "Do more than what's expected of me.",
+      "text_zh": "我会超出预期地完成任务或工作",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 51,
+      "text_en": "Rarely overindulge.",
+      "text_zh": "很少过度放纵自己",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 52,
+      "text_en": "Seek adventure.",
+      "text_zh": "喜欢冒险",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 53,
+      "text_en": "Avoid philosophical discussions.",
+      "text_zh": "会避免参与关于哲学的讨论",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 54,
+      "text_en": "Think highly of myself.",
+      "text_zh": "觉得自己很了不起",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 55,
+      "text_en": "Carry out my plans.",
+      "text_zh": "能执行自己制定的计划",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 56,
+      "text_en": "Become overwhelmed by events.",
+      "text_zh": "感到被各种事情压得喘不过气来",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 57,
+      "text_en": "Have a lot of fun.",
+      "text_zh": "我的生活很快乐",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 58,
+      "text_en": "Believe that there is no absolute right or wrong.",
+      "text_zh": "相信没有绝对的对错之分",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 59,
+      "text_en": "Feel sympathy for those who are worse off than myself .",
+      "text_zh": "我同情那些处境不如自己的人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 60,
+      "text_en": "Make rash decisions.",
+      "text_zh": "会做出草率的决定",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 61,
+      "text_en": "Am afraid of many things.",
+      "text_zh": "对很多事情感到害怕",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 62,
+      "text_en": "Avoid contacts with others.",
+      "text_zh": "避免和他人接触",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 63,
+      "text_en": "Love to daydream.",
+      "text_zh": "喜欢做白日梦",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 64,
+      "text_en": "Trust what people say.",
+      "text_zh": "相信他人说的话",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 65,
+      "text_en": "Handle tasks smoothly.",
+      "text_zh": "能轻松完成任务",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 66,
+      "text_en": "Lose my temper.",
+      "text_zh": "发脾气",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 67,
+      "text_en": "Prefer to be alone.",
+      "text_zh": "更喜欢一个人独处",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 68,
+      "text_en": "Do not like poetry.",
+      "text_zh": "不喜欢诗歌",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 69,
+      "text_en": "Take advantage of others.",
+      "text_zh": "占别人的便宜",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 70,
+      "text_en": "Leave a mess in my room.",
+      "text_zh": "我的房间很乱",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 71,
+      "text_en": "Am often down in the dumps.",
+      "text_zh": "经常情绪低落",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 72,
+      "text_en": "Take control of things.",
+      "text_zh": "掌控局面",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 73,
+      "text_en": "Rarely notice my emotional reactions.",
+      "text_zh": "很少察觉到自己的情绪反应",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 74,
+      "text_en": "Am indifferent to the feelings of others.",
+      "text_zh": "对他人的感受漠不关心",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 75,
+      "text_en": "Break rules.",
+      "text_zh": "破坏规则",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 76,
+      "text_en": "Only feel comfortable with friends.",
+      "text_zh": "只有和朋友在一起的时候我才会感到自在",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 77,
+      "text_en": "Do a lot in my spare time.",
+      "text_zh": "我的闲暇时间非常充实",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 78,
+      "text_en": "Dislike changes.",
+      "text_zh": "不喜欢改变",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 79,
+      "text_en": "Insult people.",
+      "text_zh": "侮辱他人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 80,
+      "text_en": "Do just enough work to get by.",
+      "text_zh": "在工作或学习上，我不会多做，过得去就行",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 81,
+      "text_en": "Easily resist temptations.",
+      "text_zh": "能轻松抵御诱惑",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 82,
+      "text_en": "Enjoy being reckless.",
+      "text_zh": "喜欢不计后果地行事",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 83,
+      "text_en": "Have difficulty understanding abstract ideas.",
+      "text_zh": "理解抽象概念对我来说有些困难",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 84,
+      "text_en": "Have a high opinion of myself.",
+      "text_zh": "对自己的评价很高",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 85,
+      "text_en": "Waste my time.",
+      "text_zh": "浪费时间",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 86,
+      "text_en": "Feel that I'm unable to deal with things.",
+      "text_zh": "感觉自己处理事情力不从心",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 87,
+      "text_en": "Love life.",
+      "text_zh": "热爱生活",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 88,
+      "text_en": "View myself as predominantly conservative politically.",
+      "text_zh": "我在政治上比较保守",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 89,
+      "text_en": "Am not interested in other people's problems.",
+      "text_zh": "对别人遇到的麻烦事不感兴趣",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 90,
+      "text_en": "Rush into things.",
+      "text_zh": "仓促行事",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 91,
+      "text_en": "Get stressed out easily.",
+      "text_zh": "我很容易觉得压力大",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 92,
+      "text_en": "Keep others at a distance.",
+      "text_zh": "和他人保持距离",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 93,
+      "text_en": "Like to get lost in thought.",
+      "text_zh": "喜欢陷入沉思",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 94,
+      "text_en": "Distrust people.",
+      "text_zh": "不相信别人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 95,
+      "text_en": "Know how to get things done.",
+      "text_zh": "知道如何完成任务",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 96,
+      "text_en": "Am not easily annoyed.",
+      "text_zh": "不会轻易被惹恼",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 97,
+      "text_en": "Avoid crowds.",
+      "text_zh": "避开人多的地方",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 98,
+      "text_en": "Do not enjoy going to art museums.",
+      "text_zh": "不喜欢去美术馆",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 99,
+      "text_en": "Obstruct others' plans.",
+      "text_zh": "给别人使坏",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 100,
+      "text_en": "Leave my belongings around.",
+      "text_zh": "我的东西放得到处都是",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 101,
+      "text_en": "Feel comfortable with myself .",
+      "text_zh": "对自己感到满意",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 102,
+      "text_en": "Wait for others to lead the way.",
+      "text_zh": "等着别人来带头",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 103,
+      "text_en": "Don't understand people who get emotional.",
+      "text_zh": "不理解那些情绪化的人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 104,
+      "text_en": "Take no time for others.",
+      "text_zh": "不愿为他人花费时间",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 105,
+      "text_en": "Break my promises.",
+      "text_zh": "违背自己的承诺",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 106,
+      "text_en": "Am not bothered by difficult social situations.",
+      "text_zh": "不会被复杂的社交情境所困扰",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 107,
+      "text_en": "Like to take it easy.",
+      "text_zh": "喜欢慢慢来",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 108,
+      "text_en": "Am attached to conventional ways.",
+      "text_zh": "我喜欢传统的方式",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 109,
+      "text_en": "Get back at others.",
+      "text_zh": "报复别人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 110,
+      "text_en": "Put little time and effort into my work.",
+      "text_zh": "对工作或学业不怎么投入时间和精力",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 111,
+      "text_en": "Am able to control my cravings.",
+      "text_zh": "可以控制自己的欲望",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 112,
+      "text_en": "Act wild and crazy.",
+      "text_zh": "我的行为狂放不羁",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 113,
+      "text_en": "Am not interested in theoretical discussions.",
+      "text_zh": "对理论性的讨论不感兴趣",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 114,
+      "text_en": "Boast about my virtues.",
+      "text_zh": "吹嘘自己的美德",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 115,
+      "text_en": "Have difficulty starting tasks.",
+      "text_zh": "拖很久才开始做一件事",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 116,
+      "text_en": "Remain calm under pressure.",
+      "text_zh": "在压力下能保持冷静",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 117,
+      "text_en": "Look at the bright side of life.",
+      "text_zh": "看到生活中好的一面",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 118,
+      "text_en": "Believe that we should be tough on crime.",
+      "text_zh": "认为我们应该严惩犯罪",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 119,
+      "text_en": "Try not to think about the needy.",
+      "text_zh": "我尽量不去想那些需要帮助的人",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    },
+    {
+      "instrument": "ipip-neo-120-zh",
+      "item_no": 120,
+      "text_en": "Act without thinking.",
+      "text_zh": "做事不经过思考",
+      "dimension": null,
+      "facet": null,
+      "keying": null,
+      "source_url": "https://ipip.ori.org/Mandarin%20translation%20of%20IPIP-NEO-120.htm"
+    }
+  ],
+  "capture_method": "Direct download of the official page to _raw-mandarin-120.htm (175,394 bytes, 3,551 lines). Structure verified by counting markup: 121 table-row elements (= 1 header row + 120 item rows) and 242 table-cell elements (= 2 per row). Parsed with Python regex plus html.unescape for the numeric character references; no manual transcription was involved.",
+  "typo_residue_note_item_120": "The English cell of item 120 carried a stray Word/HTML artifact: a run of four numeric character references which decode to 窗体底端 ('bottom of form'). It was removed from text_en; text_zh was unaffected. Every English cell was scanned; item 120 was the only one affected. (This note deliberately spells the artifact out in words instead of repeating the raw character references, so that the file contains no numeric-entity syntax at all and simple automated scans for leftover entities stay clean.)",
+  "formatting_artifact_note": "Items 59 and 101 have a stray space before the final period in the English column ('...than myself .', 'Feel comfortable with myself .'). Kept VERBATIM (not silently corrected); the cross-check below normalises it.",
+  "crosscheck_vs_ipip-neo-120": {
+    "tool": "programmatic, item-by-item, both position-wise and set-based, 2026-09-11",
+    "position_wise_identical": "2/120",
+    "position_wise_verdict": "The two pages use COMPLETELY DIFFERENT item order. ipip-neo-120.json is grouped by facet; this Mandarin page is in administration (interleaved) order. Therefore 'align by item_no' is INVALID for this pair.",
+    "multiset_common": "117/120",
+    "only_on_mandarin_page": 3,
+    "only_in_key_page": 3,
+    "unique_text_mapping": "117/120",
+    "exceptions_zh_item_nos": [
+      28,
+      58,
+      88
+    ],
+    "exception_detail": [
+      {
+        "zh_item_no": 28,
+        "zh_text_en": "View myself as predominantly liberal politically."
+      },
+      {
+        "zh_item_no": 58,
+        "zh_text_en": "Believe that there is no absolute right or wrong."
+      },
+      {
+        "zh_item_no": 88,
+        "zh_text_en": "View myself as predominantly conservative politically."
+      }
+    ],
+    "only_in_key_page_detail": [
+      {
+        "text_en": "Tend to vote for liberal political candidates.",
+        "key_item_no": [
+          69
+        ],
+        "facet": "O6",
+        "dimension": "O"
+      },
+      {
+        "text_en": "Believe that there is no absolute right and wrong.",
+        "key_item_no": [
+          70
+        ],
+        "facet": "O6",
+        "dimension": "O"
+      },
+      {
+        "text_en": "Tend to vote for conservative political candidates.",
+        "key_item_no": [
+          71
+        ],
+        "facet": "O6",
+        "dimension": "O"
+      }
+    ],
+    "consequence": "A facet/dimension/keying mapping from the Chinese items to the Johnson-120 scoring key is DERIVABLE for 117/120 items by exact text identity, but NOT for the 3 exceptions (all values/politics-worded items). dimension/facet/keying above are therefore left null on purpose; deciding how to resolve the exceptions is an upper-layer decision, not this script's call."
+  }
 }
