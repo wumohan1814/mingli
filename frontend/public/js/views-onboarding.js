@@ -443,22 +443,22 @@ function OnboardingPage({
       d = +form.birth_day,
       h = +form.birth_hour;
     if (!y || y < 1900 || y > 2100) {
-      setError('出生年需在 1900–2100 之间');
+      setError(UI_COPY.onboarding['year-err']);
       setLoading(false);
       return;
     }
     if (!m || m < 1 || m > 12) {
-      setError('出生月需在 1–12 之间');
+      setError(UI_COPY.onboarding['month-err']);
       setLoading(false);
       return;
     }
     if (!d || d < 1 || d > 31) {
-      setError('出生日需在 1–31 之间');
+      setError(UI_COPY.onboarding['day-err']);
       setLoading(false);
       return;
     }
     if (h < 0 || h > 23 || isNaN(h)) {
-      setError('出生时辰需在 0–23 之间');
+      setError(UI_COPY.onboarding['hour-err']);
       setLoading(false);
       return;
     }
@@ -466,12 +466,12 @@ function OnboardingPage({
     const phoneRaw = String(form.phone || '').trim();
     const emailRaw = String(form.email || '').trim();
     if (phoneRaw && !/^\d{11}$/.test(phoneRaw)) {
-      toast('手机号须为 11 位数字');
+      toast(UI_COPY.onboarding['phone-err']);
       setLoading(false);
       return;
     }
     if (emailRaw && !/^[^\s@]+@[^\s@]+$/.test(emailRaw)) {
-      toast('邮箱格式不正确（需包含 @）');
+      toast(UI_COPY.onboarding['email-err']);
       setLoading(false);
       return;
     }
@@ -495,7 +495,7 @@ function OnboardingPage({
           true_solar_time: !!form.true_solar_time,
           phone: phoneRaw || null,
           email: emailRaw || null,
-          question: '事业运势'
+          question: UI_COPY.onboarding['default-question']
         })
       });
       // 注意：cases 接口返回 {code,data:{caseId}} 信封
@@ -513,7 +513,7 @@ function OnboardingPage({
           });
         } catch (e) {
           // 命名失败不阻断建档：档案仍可用（展示「未命名档案」），提示稍后可到档案管理重命名
-          warn = '档案已保存，但命名失败，可稍后到档案管理重命名。';
+          warn = UI_COPY.onboarding['name-fail-warn'];
         }
       }
       // 仅排盘：确定性非 LLM 计算产出盘面（后端幂等 upsert charts 表，不进入断前尘/预测扣费通道）
@@ -527,7 +527,7 @@ function OnboardingPage({
         // 「新建下一个档案」：保存当前并继续建下一个 —— 清空表单留在建档页
         setForm(blankForm());
         setCoordTouched(false);
-        toast(warn || '已保存，可继续新建');
+        toast(warn || UI_COPY.onboarding['save-ok-toast']);
       } else {
         // REQ-067③：模块直达由各模块自行衔接（REQ-046② 保留）：模块页进入建档成功后回跳该模块
         // 主流程页（携带 caseId）；其余默认进档案查看盘面 —— 不再自动进 waiting/断前尘
@@ -545,7 +545,7 @@ function OnboardingPage({
             caseId
           });
         } else {
-          toast(warn || '盘面已生成，可入档案查看');
+          toast(warn || UI_COPY.onboarding['chart-ok-toast']);
           onNavigate('archive', {
             caseId
           });
@@ -577,7 +577,7 @@ function OnboardingPage({
     className: "card"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "title"
-  }, "建档 · 输入生辰信息"), forced && /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.onboarding.title), forced && /*#__PURE__*/React.createElement("div", {
     role: "alert",
     style: {
       background: 'rgba(184,137,62,.12)',
@@ -599,18 +599,18 @@ function OnboardingPage({
   }, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_name"
-  }, "档案名（选填）"), /*#__PURE__*/React.createElement("input", {
+  }, UI_COPY.onboarding['case-name-label']), /*#__PURE__*/React.createElement("input", {
     id: "f_name",
     className: "input",
     type: "text",
     maxLength: 40,
     value: form.name,
     onChange: update('name'),
-    placeholder: "给档案起个名字，如：我的事业盘（留空则显示「未命名档案」，可稍后重命名）"
+    placeholder: UI_COPY.onboarding['case-name-ph']
   }), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_year"
-  }, "出生年"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['year-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_year",
     className: "input",
     ref: yearRef,
@@ -620,13 +620,13 @@ function OnboardingPage({
     required: true
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), YEARS.map(v => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), YEARS.map(v => /*#__PURE__*/React.createElement("option", {
     key: v,
     value: v
   }, v))), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_month"
-  }, "出生月"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['month-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_month",
     className: "input",
     value: form.birth_month,
@@ -634,13 +634,13 @@ function OnboardingPage({
     required: true
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), MONTHS.map(v => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), MONTHS.map(v => /*#__PURE__*/React.createElement("option", {
     key: v,
     value: v
   }, v))), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_day"
-  }, "出生日"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['day-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_day",
     className: "input",
     value: form.birth_day,
@@ -648,13 +648,13 @@ function OnboardingPage({
     required: true
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), DAYS.map(v => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), DAYS.map(v => /*#__PURE__*/React.createElement("option", {
     key: v,
     value: v
   }, v))), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_hour"
-  }, "出生时辰（0-23）"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['hour-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_hour",
     className: "input",
     value: form.birth_hour,
@@ -665,36 +665,36 @@ function OnboardingPage({
   }, v))), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_gender"
-  }, "性别"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['gender-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_gender",
     className: "input",
     value: form.gender,
     onChange: update('gender')
   }, /*#__PURE__*/React.createElement("option", {
     value: "male"
-  }, "男"), /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['gender-male']), /*#__PURE__*/React.createElement("option", {
     value: "female"
-  }, "女")), /*#__PURE__*/React.createElement("label", {
+  }, UI_COPY.onboarding['gender-female'])), /*#__PURE__*/React.createElement("label", {
     className: "label"
-  }, "出生地（选到区/县后自动填入经纬度）"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.onboarding['birth-place-label']), /*#__PURE__*/React.createElement("div", {
     className: "field-row"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_province"
-  }, "省"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['province-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_province",
     className: "input",
     value: form.birth_province,
     onChange: updateProvince
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), Object.keys(reg).map(p => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), Object.keys(reg).map(p => /*#__PURE__*/React.createElement("option", {
     key: p,
     value: p
   }, p)))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_city"
-  }, "市"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['city-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_city",
     className: "input",
     value: form.birth_city,
@@ -702,13 +702,13 @@ function OnboardingPage({
     disabled: !form.birth_province
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), cityNames.map(c => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), cityNames.map(c => /*#__PURE__*/React.createElement("option", {
     key: c,
     value: c
   }, c)))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_district"
-  }, "区/县"), /*#__PURE__*/React.createElement("select", {
+  }, UI_COPY.onboarding['district-label']), /*#__PURE__*/React.createElement("select", {
     id: "f_district",
     className: "input",
     value: form.birth_district,
@@ -716,7 +716,7 @@ function OnboardingPage({
     disabled: !form.birth_city
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "请选择"), districtNames.map(x => /*#__PURE__*/React.createElement("option", {
+  }, UI_COPY.onboarding['select-ph']), districtNames.map(x => /*#__PURE__*/React.createElement("option", {
     key: x,
     value: x
   }, x))))), /*#__PURE__*/React.createElement("div", {
@@ -724,28 +724,28 @@ function OnboardingPage({
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_lng"
-  }, "经度（可选）"), /*#__PURE__*/React.createElement("input", {
+  }, UI_COPY.onboarding['lng-label']), /*#__PURE__*/React.createElement("input", {
     id: "f_lng",
     className: "input",
     type: "number",
     step: "0.0001",
     value: form.longitude,
     onChange: updateCoord('longitude'),
-    placeholder: "如 116.41"
+    placeholder: UI_COPY.onboarding['lng-ph']
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_lat"
-  }, "纬度（可选）"), /*#__PURE__*/React.createElement("input", {
+  }, UI_COPY.onboarding['lat-label']), /*#__PURE__*/React.createElement("input", {
     id: "f_lat",
     className: "input",
     type: "number",
     step: "0.0001",
     value: form.latitude,
     onChange: updateCoord('latitude'),
-    placeholder: "如 39.90"
+    placeholder: UI_COPY.onboarding['lat-ph']
   }))), !coordTouched && form.longitude && form.latitude && /*#__PURE__*/React.createElement("p", {
     className: "coord-hint"
-  }, "已根据出生地自动填入经纬度，可手动修改（留空则占星/七政/奇门/五运六气将降级）。"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.onboarding['coord-auto-note']), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 14
     }
@@ -754,7 +754,7 @@ function OnboardingPage({
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_phone"
-  }, "手机号（选填）"), /*#__PURE__*/React.createElement("input", {
+  }, UI_COPY.onboarding['phone-label']), /*#__PURE__*/React.createElement("input", {
     id: "f_phone",
     className: "input",
     type: "tel",
@@ -762,17 +762,17 @@ function OnboardingPage({
     maxLength: 11,
     value: form.phone,
     onChange: update('phone'),
-    placeholder: "11 位手机号"
+    placeholder: UI_COPY.onboarding['phone-ph']
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "f_email"
-  }, "电子邮箱（选填）"), /*#__PURE__*/React.createElement("input", {
+  }, UI_COPY.onboarding['email-label']), /*#__PURE__*/React.createElement("input", {
     id: "f_email",
     className: "input",
     type: "email",
     value: form.email,
     onChange: update('email'),
-    placeholder: "需包含 @"
+    placeholder: UI_COPY.onboarding['email-ph']
   }))), /*#__PURE__*/React.createElement("div", {
     className: "field-row"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
@@ -782,7 +782,7 @@ function OnboardingPage({
       margin: '2px 0 0',
       lineHeight: 1.5
     }
-  }, "联系方式仅用于后续联络，不参与排盘计算。")))), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.onboarding['contact-note'])))), /*#__PURE__*/React.createElement("div", {
     className: "switch-row"
   }, /*#__PURE__*/React.createElement("label", {
     className: "switch"
@@ -799,7 +799,7 @@ function OnboardingPage({
       fontSize: 13,
       color: 'var(--text-2)'
     }
-  }, "使用真太阳时（按经度修正时差，更精准）")), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.onboarding['solar-label'])), /*#__PURE__*/React.createElement("div", {
     className: "field-row",
     style: {
       marginTop: 14,
@@ -812,7 +812,7 @@ function OnboardingPage({
     style: {
       flex: '1 1 160px'
     }
-  }, loading ? '排盘中…' : '开始排盘'), /*#__PURE__*/React.createElement("button", {
+  }, loading ? UI_COPY.onboarding['loading-btn'] : UI_COPY.onboarding['submit-btn']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
     disabled: loading,
@@ -820,7 +820,7 @@ function OnboardingPage({
     style: {
       flex: '1 1 160px'
     }
-  }, "新建下一个档案"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.onboarding['next-btn']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
     disabled: loading,
@@ -835,5 +835,5 @@ function OnboardingPage({
       margin: '10px 0 0',
       lineHeight: 1.7
     }
-  }, "「开始排盘」仅作确定性计算生成盘面（免费、零 LLM，不进入断前尘/预测扣费链路）；盘面生成后可入档案查看，九法合一等深度解读请另行选择档案后启动。"))));
+  }, UI_COPY.onboarding['free-note']))));
 }
