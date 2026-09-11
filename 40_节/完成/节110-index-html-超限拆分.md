@@ -1,6 +1,6 @@
 # 节 110 · index.html 拆分（解耦）—— 执行方案书 v2（对齐破竹 v0.24）
 
-状态：🔵 阶段 4 收敛中（阶段 0/1/2/3 全部完成，index.html 1,381 行 <2000 达标；剩复用.md 红线更新 + 用户逐屏验收）｜ 强度：大改（单向门）｜ 日期：2026-09-10
+状态：🟢 已完成 ｜ 强度：大改（单向门）｜ 日期：2026-09-10
 
 ## 用户原话
 （审计 + 用户追加）①`frontend/public/index.html` 21841 行，超「单文件 2 万行」红线需拆。②按破竹最新协议（v0.24）复审本方案并更新。③执行方任务 = **只做解耦（4 阶段）**；同时**审查全部代码 + 把系统优化点记录到单独文件**，优化在解耦完成后另行执行。
@@ -53,7 +53,7 @@
 - ✅ **阶段 1 · 拆 CSS**：设计令牌/组件/页面样式 → `css/tokens.css|components.css|pages.css`；验收逐屏样式一致
 - ✅ **阶段 2 · 拆通用件**：ModalBase/Toast/Skeleton/皮肤/共享工具 → `js/components.js`（必须在 views 之前加载）
 - ✅ **阶段 3 · 拆视图**：按域逐节；已拆 11 个 JS（guoxue/xishi/mbti/zodiac/cases/divination/onboarding/home/guoxue-tools/agent，明细见「交接点」）
-- 🔵 **阶段 4 · 收敛达标**：index.html 只剩骨架+vendor+全局状态+api+App 路由（已 1,381 行 <2000 达标）；`复用.md` 红线更新 + precompile 定稿 + 用户逐屏验收
+- ✅ **阶段 4 · 收敛达标**：index.html 只剩骨架+vendor+全局状态+api+App 路由（1,381 行 <2000 达标）；`复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」；precompile 定稿
 
 ## 5. 牵连表（v0.19：阶段 0 必建，写进 `00_根/导航.md`）
 - 拆分会让"同一份信息散多处"风险上升，必须建牵连表，至少含：**加载顺序**（vendor → components.js → views-* → 骨架挂载）、**全局依赖**（token/page/params/navigate/api 被哪些视图引用）、**皮肤系统**（--skin-* 引用点）、**静态资源绝对路径**（/vendor/* /art/* 引用点）
@@ -118,8 +118,18 @@
 - **门禁/验证**：每步拆后跑 `node frontend/scripts/precompile.js`（必须全绿，0 编译块）；后端 :8000 冒烟（index.html + 各 js 均 200）。拆出的 .js 只放已预编译普通 JS、禁止 JSX。
 - **git 留底**：阶段 3 每域一 commit（`b1593f3` 起至 `9932a10`），可回退。
 
+## 14. 收尾检查 + 结构反思（§3.5 第2步，2026-09-11）
+
+- **功能回归**：每步拆后 `node frontend/scripts/precompile.js` 全绿（0 编译块）；后端 :8000 冒烟 11 个 JS + index.html 全部 200；字节搬移零逻辑改动，用户逐屏验收为准。
+- **安全 / 数据**：不适用（纯前端静态重构，无鉴权 / 数据 / method-result v2 / chart.json 契约改动）。
+- **性能 / 资源**：不适用（字节搬移，无新增依赖 / 渲染 / 查询 / 循环；拆分不引入性能退化）。
+- **结构反思**（触发：定位 ≥3 次 grep + 同区域多次修改）：
+  - 哪里难：`index.html` 22,046 行单文件，改任一功能都要在 2 万行里 grep 定位；视图与全局状态（api/token/TC_SETTINGS/usePaySufficient）交织，拆视图时须逐块核对「顶层语句是否引用主脚本全局（加载顺序风险）」。
+  - 结构上怎么改：按域拆 11 个 `views-*.js` + `components.js` + 3 个 `css`；全局状态/api/App 路由留入口壳；`导航.md` §7 牵连表固化加载顺序与共享依赖（PairRelIcon/usePaySufficient 等跨域复用件保持全局可见）。
+  - 下次会怎样：改同类功能只需读对应 `views-<域>.js`（检索量从 2 万行降到 <5k 行）；新增视图照 `复用.md` §六 落对应域文件，不再塞回 index.html。
+
 ## 本节指标（v0.21，执行方收尾填写）
-- 模型 + provider：{{执行方填}}
+- 模型 + provider：deepseek-v4-pro / DeepSeek Harness
 
 ## 用户结论
-待验收
+✅ 完成（2026-09-11 用户「收尾节110」拍板）
