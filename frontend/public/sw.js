@@ -255,12 +255,12 @@ async function refreshInBackground(req, urlHref) {
 }
 
 /* =====================================================================
- * SW 与 Caddy / 静态缓存头互不冲突的原因
+ * SW 与 Caddy / 静态缓存头互不冲突的原因（节113 更新：Caddy 直服静态）
  * ---------------------------------------------------------------------
- * · Caddyfile 只做反向代理（taichu.xyz → web:8000），静态资源由后端
- *   SPAStaticFiles(../frontend/public) 提供，二者都没有给图片/HTML 设
- *   强缓存头；SW 处于最前端（同源 fetch 先过 SW），因此不存在「HTTP 缓存
- *   头 vs SW」的优先级打架。
+ * · 节113 起，静态资源（/js/ /css/ /data/ /vendor/ /art/ /tarot/ /lenormand/）
+ *   改由 Caddy file_server 直出，并加 Cache-Control: public, max-age=3600；
+ *   HTML（index/admin/sw.js/manifest）仍由后端 SPAStaticFiles 提供，无长缓存。
+ *   SW 处于最前端（同源 fetch 先过 SW），因此不存在「HTTP 缓存头 vs SW」打架。
  * · SW 只认 /art/ /vendor/ /tarot/ /lenormand/ 下的同源图片 GET：这些是
  *   仓库内静态素材（塔罗/雷诺曼卡面、thumb、卡背/六爻/ssgw 背景、生肖
  *   sprite、PWA 图标等），内容发布后不变或极少变，cache-first 安全。
@@ -268,7 +268,7 @@ async function refreshInBackground(req, urlHref) {
  *   SPA fallback、html=True 目录索引照旧工作，SW 不覆盖任何 HTML 语义。
  * · /api/ 从不进 SW —— 鉴权、计费、数据请求永远直连服务端；SW 缓存失效
  *   不会造成任何接口「脏数据」。
- * · 未来若给静态资源加 Caddy 缓存头（如 immutable 长缓存），对图片仍与
- *   SW 兼容：SW 命中时不再发请求；未命中时浏览器 HTTP 缓存先兜底再回源，
- *   两者同一份内容，互不冲突。切记 HTML 永不设长缓存，否则发版不生效。
+ * · Caddy 的 max-age=3600 对图片与 SW 兼容：SW 命中时不再发请求；未命中时
+ *   浏览器 HTTP 缓存先兜底再回源，两者同一份内容，互不冲突。切记 HTML/SW
+ *   永不设长缓存（否则发版不生效）。
  * ===================================================================== */
