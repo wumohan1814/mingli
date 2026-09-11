@@ -1894,7 +1894,7 @@ function WaitingPage({
     lastCompleted: 0
   });
   const stop = () => {
-    clearInterval(ref.current.timer);
+    clearTimeout(ref.current.timer);
     clearTimeout(ref.current.timeout);
   };
 
@@ -1935,7 +1935,9 @@ function WaitingPage({
       });
       const jobId = res.data && res.data.jobId || res.jobId;
       resetTimeout();
-      ref.current.timer = setInterval(async () => {
+      let pollDelay = 2000;
+      const pollJob = async () => {
+        let advanced = false;
         try {
           const job = await api('/jobs/' + jobId);
           const data = job.data || job;
@@ -1947,6 +1949,7 @@ function WaitingPage({
             ref.current.lastCompleted = data.completed;
             resetTimeout();
             setPollMsg(POLL_MESSAGES[Math.floor(Math.random() * POLL_MESSAGES.length)]);
+            advanced = true;
           }
           if (data.status === 'succeeded') {
             ref.current.done = true;
@@ -1954,17 +1957,24 @@ function WaitingPage({
             setTimeout(() => onNavigate('calibration', {
               caseId
             }), 500);
+            return;
           } else if (data.status === 'failed') {
             ref.current.done = true;
             stop();
             setErrored('推演任务失败，请点击重试。');
+            return;
           }
         } catch (e) {
           ref.current.done = true;
           stop();
           setErrored(e.message || '网络异常，请重试。');
+          return;
         }
-      }, 2000);
+        // 有进展回到 2s，无进展指数退避到 30s 上限
+        pollDelay = advanced ? 2000 : Math.min(pollDelay * 2, 30000);
+        if (!ref.current.done) ref.current.timer = setTimeout(pollJob, pollDelay);
+      };
+      ref.current.timer = setTimeout(pollJob, 2000);
     } catch (e) {
       ref.current.done = true;
       stop();
@@ -2076,7 +2086,7 @@ function CalibrationPage({
     done: false
   });
   const stop = () => {
-    clearInterval(ref.current.timer);
+    clearTimeout(ref.current.timer);
     clearTimeout(ref.current.timeout);
     clearTimeout(ref.current.navTimer);
   };
@@ -2100,7 +2110,8 @@ function CalibrationPage({
         method: 'POST'
       });
       const jobId = res.data && res.data.jobId || res.jobId;
-      ref.current.timer = setInterval(async () => {
+      let pollDelay = 2000;
+      const pollJob = async () => {
         try {
           const job = await api('/jobs/' + jobId);
           const data = job.data || job;
@@ -2113,19 +2124,26 @@ function CalibrationPage({
               setPropositions(props);
               setLoadState('ready');
             }
+            return;
           } else if (data.status === 'failed') {
             ref.current.done = true;
             stop();
             setLoadState('error');
             setLoadError('问卷推演任务失败，请点击重试。');
+            return;
           }
         } catch (e) {
           ref.current.done = true;
           stop();
           setLoadState('error');
           setLoadError(e.message || '网络异常，请重试。');
+          return;
         }
-      }, 2000);
+        // 问卷就绪即结束、无进度概念 → 纯指数退避到 30s 上限
+        pollDelay = Math.min(pollDelay * 2, 30000);
+        if (!ref.current.done) ref.current.timer = setTimeout(pollJob, pollDelay);
+      };
+      ref.current.timer = setTimeout(pollJob, 2000);
       // 硬超时：断前尘 10 分钟（§5.1）
       ref.current.timeout = setTimeout(() => {
         if (!ref.current.done) {
@@ -2455,7 +2473,7 @@ function PredictPage({
     lastCompleted: 0
   });
   const stop = () => {
-    clearInterval(ref.current.timer);
+    clearTimeout(ref.current.timer);
     clearTimeout(ref.current.timeout);
   };
   const start = async () => {
@@ -2493,13 +2511,16 @@ function PredictPage({
       });
       const jobId = res.data && res.data.jobId || res.jobId;
       resetTimeout();
-      ref.current.timer = setInterval(async () => {
+      let pollDelay = 2000;
+      const pollJob = async () => {
+        let advanced = false;
         try {
           const job = await api('/jobs/' + jobId);
           const data = job.data || job;
           if ((data.completed || 0) > (ref.current.lastCompleted || 0)) {
             ref.current.lastCompleted = data.completed;
             resetTimeout();
+            advanced = true;
           }
           if (data.status === 'succeeded') {
             ref.current.done = true;
@@ -2512,19 +2533,26 @@ function PredictPage({
               setErrored('预测任务已完成但报告数据缺失，请点击重试。');
             }
             setLoading(false);
+            return;
           } else if (data.status === 'failed') {
             ref.current.done = true;
             stop();
             setErrored('预测任务失败，请点击重试。');
             setLoading(false);
+            return;
           }
         } catch (e) {
           ref.current.done = true;
           stop();
           setErrored(e.message || '网络异常，请重试。');
           setLoading(false);
+          return;
         }
-      }, 2000);
+        // 有进展回到 2s，无进展指数退避到 30s 上限
+        pollDelay = advanced ? 2000 : Math.min(pollDelay * 2, 30000);
+        if (!ref.current.done) ref.current.timer = setTimeout(pollJob, pollDelay);
+      };
+      ref.current.timer = setTimeout(pollJob, 2000);
     } catch (e) {
       ref.current.done = true;
       stop();

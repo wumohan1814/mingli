@@ -50,3 +50,12 @@ backend/.pytest_tmp/
 # Syncthing 同步工具元数据（不入库）
 .stfolder/
 .stignore
+
+# 节111 系统优化：排除 node 缓存与探针死件
+frontend/.npm-cache/
+frontend/scripts/_tmp_*
+frontend/scripts/_baseline-index.html
+frontend/scripts/_pristine-index.html
+frontend/scripts/_check1.js
+frontend/scripts/_check2.js
+frontend/scripts/_gen-mascot-placeholder.cjs

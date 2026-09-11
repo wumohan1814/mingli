@@ -22,8 +22,8 @@
   <script src="/vendor/regions.js"></script>
   <!-- T1–T4 文案接入（REQ-083 / REQ-095 正式文案）：星座 / 生肖三关系匹配 792 对「分值 + 说明」数据。
        数据文件 frontend/public/data/pairs.js（文案轮次交付物，更新时只替换该文件；根绝对路径约定）。
-       必须在 React 组件主脚本之前引入。 -->
-  <script src="/data/pairs.js"></script>
+       defer 延迟加载（节111：配对视图内懒访问 window.TC_PAIRS，首屏不再被它阻塞）。 -->
+  <script src="/data/pairs.js" defer></script>
   <!-- REQ-128 阶段 0：6 套名词白话卡（大六壬/金口诀/奇门时家/黄历择日/太乙/皇极经世）。
        数据文件 frontend/public/data/term-cards.js（文案组第四轮交付物，后续文案轮次只替换该文件；根绝对路径约定）。
        必须在 React 组件主脚本之前引入（供 TCTermRow / TCTermPanel 查表）。 -->
