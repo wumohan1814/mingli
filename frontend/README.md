@@ -9,7 +9,7 @@
 | 路径 | 内容 |
 |---|---|
 | `public/` | 运行期静态根：入口 `index.html` + 后台 `admin.html` + `sw.js` / `manifest.webmanifest`（PWA）+ `vendor/`（react/react-dom/regions）+ `data/`（pairs/term-cards/ui-copy）+ `art/` / `tarot/` / `lenormand/`（美术素材） |
-| `scripts/precompile.js` | JSX 预编译门禁：把 `public/index.html` / `admin.html` 内 `<script type="text/babel">` JSX 编译成普通 JS。**改 JSX 后必跑：`node scripts/precompile.js`** |
+| `scripts/precompile.js` | JSX 预编译门禁：把 `public/index.html` / `admin.html` 内 `<script type="text/babel">` JSX 编译成普通 JS；**并守护 `public/js/*.js` 不得含 JSX**（含则直接失败退出，不改写 HTML）。**改 JSX 后必跑：`node scripts/precompile.js`** |
 | `scripts/smoke-check.js` | 语法冒烟检查 |
 
 ## 关键约束
@@ -18,4 +18,4 @@
 2. **权威入口唯一**：只有 `public/index.html`（+ `admin.html`）。旧 Vite+TS 参考源码已归档至 `_archive/前端-vite-ts-参考实现/`（节110；`_archive/` 在**项目根**，2026-09-11 按破竹协议从 `docs/_archive/` 迁出）。
 3. **静态资源根绝对路径**：`/vendor/*` `/art/*` `/data/*`（BUG-009 教训）。
 4. **改 JSX 必跑门禁**：`node scripts/precompile.js`；禁止浏览器端 `<script type="text/babel">` 实时转译。
-5. **拆分约定（节110）**：入口壳逐步拆为 `css/*.css` + `js/*.js`；拆出的 `.js` 是编译后普通 JS、禁止再写 JSX。详见 `../00_根/复用.md` §六。
+5. **拆分约定（节110）**：入口壳逐步拆为 `css/*.css` + `js/*.js`；拆出的 `.js` 是编译后普通 JS、禁止再写 JSX。详见 `../00_根/复用.md` §六。**门禁已守卫**：`precompile.js` 会扫描 `public/js/*.js`，任一文件含 JSX 或语法错误即失败（不会静默失效）。
