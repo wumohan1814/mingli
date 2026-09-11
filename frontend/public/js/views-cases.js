@@ -1,4 +1,4 @@
-// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）
+// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
 // 加载于 views-zodiac.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 // ===== 完整盘面组件（直接消费 archive 的 data.chart.data，零 LLM） =====
@@ -3341,4 +3341,331 @@ function TopicPage({
       caseId
     })
   }, "我的档案"))));
+}
+
+/* ---------- REQ-070：档案「分享帮填」落地页（/case/share/{token} 免登录代建档案，归发起者） ---------- */
+// 访客打开发起者分享的一次性链接：GET /api/case/share/{token}（免登录；noAuth 强制不带
+// Authorization）→ 展示「为 {owner_name} 填写档案」+ 与统一建档组件（OnboardingPage）同构的表单：
+// 姓名（必填，即代建档案名）+ 出生年/月/日/时辰 + 性别 + 出生地（省市区级联，选到区县自动带经纬度）
+// + 真太阳时 + 选填手机号/邮箱。POST /api/case/share/{token}/submit 代建档案（一次性，成功后后端
+// 原子置 used 失效），成功 toast「已提交，档案归发起者」并停在成功态（不跳发起者档案列表）。
+// 访客隔离：本页为独立表单页——全程 noAuth + App 访客会话置空，不展示/不可访问发起者任何既有档案
+// 数据；链接不存在/已使用/已过期（404）统一渲染「分享链接不存在或已失效」。
+function CaseSharePage({
+  token,
+  onNavigate
+}) {
+  const el = React.createElement;
+  const C = UI_COPY.caseShareLanding;
+  const reg = typeof window !== 'undefined' && window.REGIONS || {};
+  const curYear = new Date().getFullYear();
+  const defaultYear = String(Math.max(1940, curYear - 35));
+  const YEARS = [];
+  for (let y = curYear - 18; y >= 1940; y--) YEARS.push(String(y));
+  const MONTHS = [];
+  for (let m = 1; m <= 12; m++) MONTHS.push(String(m));
+  const DAYS = [];
+  for (let d = 1; d <= 31; d++) DAYS.push(String(d));
+  const HOURS = [];
+  for (let h = 0; h <= 23; h++) HOURS.push(String(h));
+  // BUG-009 加固：token 判空/去空白 —— 直接访问 /case/share 无 token、或 token 在路由/传参环节
+  // 丢失时，立即按「缺少链接参数」渲染（见下方 !tk 分支），绝不发起 /case/share/undefined 之类请求。
+  const tk = token && String(token).trim() ? String(token).trim() : '';
+  const base = tk ? '/case/share/' + encodeURIComponent(tk) : null;
+  // 表单默认值镜像统一建档组件：年份预置默认年，月/日留空由访客选择，时辰/性别带后端同款默认值
+  const blankForm = () => ({
+    name: '',
+    birth_year: defaultYear,
+    birth_month: '',
+    birth_day: '',
+    birth_hour: '0',
+    gender: 'male',
+    birth_province: '',
+    birth_city: '',
+    birth_district: '',
+    longitude: '',
+    latitude: '',
+    true_solar_time: false,
+    phone: '',
+    email: ''
+  });
+  const [meta, setMeta] = useState(null); // GET 返回 {owner_name, fields}（仅发起者昵称，无档案数据）
+  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState('');
+  const [form, setForm] = useState(blankForm);
+  const [coordTouched, setCoordTouched] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false); // 提交成功 → 停在成功态，不回跳发起者档案列表
+  const [err, setErr] = useState('');
+  // —— 拉取落地页信息（GET /api/case/share/{token}，免登录；noAuth 强制不带 Authorization）——
+  useEffect(() => {
+    let alive = true;
+    if (!tk) {
+      setLoading(false);
+      setErrored(C.invalid_no_token);
+      return () => {
+        alive = false;
+      };
+    }
+    (async () => {
+      setLoading(true);
+      setErrored('');
+      try {
+        const res = await api(base, { noAuth: true });
+        const d = res && res.data || res || {};
+        if (!d || !d.owner_name) throw new Error(C.invalid_link);
+        if (alive) setMeta({
+          owner_name: d.owner_name
+        });
+      } catch (e) {
+        // 404（不存在/已用/过期，后端不区分细节）→ 统一按「链接不存在或已失效」提示
+        if (alive) setErrored(e && e.status === 404 ? C.invalid_link : (e && e.message ? e.message : C.load_fail));
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [tk]);
+  // —— 表单联动（与 OnboardingPage 建档组件同构：原生 select 点击即填；出生地级联自动带经纬度）——
+  const update = k => e => setForm(Object.assign({}, form, {
+    [k]: e.target.value
+  }));
+  const updateProvince = e => {
+    const p = e.target.value;
+    const cs = p && reg[p] ? Object.keys(reg[p]) : [];
+    const next = Object.assign({}, form, {
+      birth_province: p,
+      birth_city: '',
+      birth_district: ''
+    });
+    if (cs.length === 1) next.birth_city = cs[0]; // 直辖市等单「市/市辖区」结构：市自动带出
+    if (!coordTouched) {
+      next.longitude = '';
+      next.latitude = '';
+    }
+    setForm(next);
+  };
+  const updateCity = e => {
+    const c = e.target.value;
+    const next = Object.assign({}, form, {
+      birth_city: c,
+      birth_district: ''
+    });
+    if (!coordTouched) {
+      next.longitude = '';
+      next.latitude = '';
+    }
+    setForm(next);
+  };
+  const updateDistrict = e => {
+    const d = e.target.value;
+    const next = Object.assign({}, form, {
+      birth_district: d
+    });
+    if (!coordTouched && d) {
+      const coord = reg[form.birth_province] && reg[form.birth_province][form.birth_city] && reg[form.birth_province][form.birth_city][d];
+      if (coord) {
+        next.longitude = String(coord[0]);
+        next.latitude = String(coord[1]);
+      }
+    }
+    setForm(next);
+  };
+  const updateCoord = k => e => {
+    setCoordTouched(true);
+    setForm(Object.assign({}, form, {
+      [k]: e.target.value
+    }));
+  };
+  const toggleSolar = e => setForm(Object.assign({}, form, {
+    true_solar_time: e.target.checked
+  }));
+  // —— 提交代建（POST /api/case/share/{token}/submit，免登录；字段名与后端 CaseShareSubmitRequest 精确对齐）——
+  const submitCase = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setErr('');
+    const y = +form.birth_year,
+      m = +form.birth_month,
+      d = +form.birth_day,
+      h = +form.birth_hour;
+    const nameRaw = String(form.name || '').trim();
+    const phoneRaw = String(form.phone || '').trim();
+    const emailRaw = String(form.email || '').trim();
+    // 姓名必填（strip 后非空，与后端口径一致）
+    if (!nameRaw) {
+      setErr(C.name_required);
+      setSubmitting(false);
+      return;
+    }
+    if (!y || y < 1900 || y > 2100) {
+      setErr(C.year_err);
+      setSubmitting(false);
+      return;
+    }
+    if (!m || m < 1 || m > 12) {
+      setErr(C.month_err);
+      setSubmitting(false);
+      return;
+    }
+    if (!d || d < 1 || d > 31) {
+      setErr(C.day_err);
+      setSubmitting(false);
+      return;
+    }
+    if (h < 0 || h > 23 || isNaN(h)) {
+      setErr(C.hour_err);
+      setSubmitting(false);
+      return;
+    }
+    // 选填联系方式格式校验（与 REQ-065 / 建档同口径）
+    if (phoneRaw && !/^\d{11}$/.test(phoneRaw)) {
+      toast(C.phone_err);
+      setSubmitting(false);
+      return;
+    }
+    if (emailRaw && !/^[^\s@]+@[^\s@]+$/.test(emailRaw)) {
+      toast(C.email_err);
+      setSubmitting(false);
+      return;
+    }
+    const birthplace = [form.birth_province, form.birth_city, form.birth_district].filter(Boolean).join('/');
+    try {
+      const res = await api(base + '/submit', {
+        method: 'POST',
+        noAuth: true,
+        body: JSON.stringify({
+          name: nameRaw,
+          birth_year: y,
+          birth_month: m,
+          birth_day: d,
+          birth_hour: h,
+          gender: form.gender,
+          birthplace: birthplace,
+          longitude: form.longitude ? +form.longitude : null,
+          latitude: form.latitude ? +form.latitude : null,
+          true_solar_time: !!form.true_solar_time,
+          phone: phoneRaw || null,
+          email: emailRaw || null
+        })
+      });
+      const rd = res && res.data || res || {};
+      if (!rd || !rd.caseId) throw new Error(C.submit_fail);
+      toast(C.ok_toast); // 已提交，档案归发起者
+      setDone(true); // 停在成功态（一次性链接后端已置 used，本页不再跳转发起者档案列表）
+    } catch (e) {
+      // 404：链接已被并发消费/过期 → 按「链接不存在或已失效」提示；其余透传后端/通用文案
+      if (e && e.status === 404) toast(C.submit_link_dead); else toast(e && e.message ? e.message : C.submit_fail);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const handleSubmit = e => {
+    e.preventDefault();
+    submitCase();
+  };
+  let body;
+  if (done) {
+    // —— 成功态：提交后停留本页（不跳发起者档案列表）——
+    body = el('div', { className: 'card', style: { textAlign: 'center', padding: '28px 18px' } },
+      el('div', { className: 'section-title' }, C.ok_title),
+      el('div', { style: { fontSize: 17, fontWeight: 700, color: 'var(--text-1)', margin: '10px 0 6px' } }, C.ok_toast),
+      el('div', { style: { fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.7, margin: '0 0 16px' } }, C.ok_note),
+      el('div', { className: 'back-row', style: { justifyContent: 'center' } },
+        el('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => onNavigate('landing') }, C.done_btn)));
+  } else if (!tk) {
+    // BUG-009 加固（渲染兜底）：token 为空/缺失 → 不等 effect、不闪 loading，直接渲染「无法打开分享」
+    body = el('div', { className: 'card failed-box' },
+      el('div', { className: 'section-title' }, C.invalid_title),
+      el('div', { className: 'error' }, C.invalid_no_token),
+      el('div', { className: 'back-row', style: { justifyContent: 'center' } },
+        el('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => onNavigate('landing') }, UI_COPY.buttons.back_home)));
+  } else if (loading) {
+    body = el('div', { className: 'card', style: { textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px' } }, C.loading);
+  } else if (errored) {
+    // 404（不存在/已用/过期）→ 统一失败态
+    body = el('div', { className: 'card failed-box' },
+      el('div', { className: 'section-title' }, C.invalid_title),
+      el('div', { className: 'error' }, errored),
+      el('div', { className: 'back-row', style: { justifyContent: 'center' } },
+        el('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => onNavigate('landing') }, UI_COPY.buttons.back_home)));
+  } else {
+    // —— 免登录代填表单视图 ——
+    const ownerName = meta && meta.owner_name ? meta.owner_name : '';
+    const cityNames = form.birth_province && reg[form.birth_province] ? Object.keys(reg[form.birth_province]) : [];
+    const districtNames = form.birth_province && form.birth_city && reg[form.birth_province] && reg[form.birth_province][form.birth_city] ? Object.keys(reg[form.birth_province][form.birth_city]) : [];
+    body = el('div', { className: 'card' },
+      el('h2', { className: 'title' }, C.fill_for.replace('{owner}', ownerName)),
+      el('p', { style: { fontSize: 12.5, color: 'var(--text-2)', margin: '2px 0 12px', lineHeight: 1.7 } }, C.intro),
+      err ? el('div', { className: 'error', style: { marginBottom: 12 } }, err) : null,
+      el('form', { onSubmit: handleSubmit },
+        el('label', { className: 'label', htmlFor: 'cs_name' }, C.name_label),
+        el('input', { id: 'cs_name', className: 'input', type: 'text', maxLength: 128, value: form.name, onChange: update('name'), placeholder: C.name_ph, required: true }),
+        el('label', { className: 'label', htmlFor: 'cs_year' }, C.year_label),
+        el('select', { id: 'cs_year', className: 'input', value: form.birth_year, onChange: update('birth_year'), required: true },
+          el('option', { value: '' }, C.select_ph),
+          YEARS.map(v => el('option', { key: v, value: v }, v))),
+        el('label', { className: 'label', htmlFor: 'cs_month' }, C.month_label),
+        el('select', { id: 'cs_month', className: 'input', value: form.birth_month, onChange: update('birth_month'), required: true },
+          el('option', { value: '' }, C.select_ph),
+          MONTHS.map(v => el('option', { key: v, value: v }, v))),
+        el('label', { className: 'label', htmlFor: 'cs_day' }, C.day_label),
+        el('select', { id: 'cs_day', className: 'input', value: form.birth_day, onChange: update('birth_day'), required: true },
+          el('option', { value: '' }, C.select_ph),
+          DAYS.map(v => el('option', { key: v, value: v }, v))),
+        el('label', { className: 'label', htmlFor: 'cs_hour' }, C.hour_label),
+        el('select', { id: 'cs_hour', className: 'input', value: form.birth_hour, onChange: update('birth_hour') },
+          HOURS.map(v => el('option', { key: v, value: v }, v))),
+        el('label', { className: 'label', htmlFor: 'cs_gender' }, C.gender_label),
+        el('select', { id: 'cs_gender', className: 'input', value: form.gender, onChange: update('gender') },
+          el('option', { value: 'male' }, C.gender_male),
+          el('option', { value: 'female' }, C.gender_female)),
+        el('label', { className: 'label' }, C.birth_place_label),
+        el('div', { className: 'field-row' },
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_province' }, C.province_label),
+            el('select', { id: 'cs_province', className: 'input', value: form.birth_province, onChange: updateProvince },
+              el('option', { value: '' }, C.select_ph),
+              Object.keys(reg).map(p => el('option', { key: p, value: p }, p)))),
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_city' }, C.city_label),
+            el('select', { id: 'cs_city', className: 'input', value: form.birth_city, onChange: updateCity, disabled: !form.birth_province },
+              el('option', { value: '' }, C.select_ph),
+              cityNames.map(c => el('option', { key: c, value: c }, c)))),
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_district' }, C.district_label),
+            el('select', { id: 'cs_district', className: 'input', value: form.birth_district, onChange: updateDistrict, disabled: !form.birth_city },
+              el('option', { value: '' }, C.select_ph),
+              districtNames.map(x => el('option', { key: x, value: x }, x))))),
+        el('div', { className: 'field-row' },
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_lng' }, C.lng_label),
+            el('input', { id: 'cs_lng', className: 'input', type: 'number', step: '0.0001', value: form.longitude, onChange: updateCoord('longitude'), placeholder: C.lng_ph })),
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_lat' }, C.lat_label),
+            el('input', { id: 'cs_lat', className: 'input', type: 'number', step: '0.0001', value: form.latitude, onChange: updateCoord('latitude'), placeholder: C.lat_ph }))),
+        !coordTouched && form.longitude && form.latitude ? el('p', { className: 'coord-hint' }, C.coord_auto_note) : null,
+        el('div', { className: 'field-row', style: { marginTop: 12 } },
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_phone' }, C.phone_label),
+            el('input', { id: 'cs_phone', className: 'input', type: 'tel', inputMode: 'numeric', maxLength: 11, value: form.phone, onChange: update('phone'), placeholder: C.phone_ph })),
+          el('div', null,
+            el('label', { className: 'label', htmlFor: 'cs_email' }, C.email_label),
+            el('input', { id: 'cs_email', className: 'input', type: 'email', value: form.email, onChange: update('email'), placeholder: C.email_ph }))),
+        el('p', { style: { fontSize: 12, color: 'var(--text-3)', margin: '2px 0 0', lineHeight: 1.5 } }, C.contact_note),
+        el('div', { className: 'switch-row' },
+          el('label', { className: 'switch' },
+            el('input', { type: 'checkbox', id: 'cs_solar', checked: form.true_solar_time, onChange: toggleSolar }),
+            el('span', { className: 'slider' })),
+          el('label', { htmlFor: 'cs_solar', style: { fontSize: 13, color: 'var(--text-2)' } }, C.solar_label)),
+        el('div', { className: 'field-row', style: { marginTop: 14 } },
+          el('button', { className: 'btn btn-primary', type: 'submit', disabled: submitting, style: { flex: '1 1 auto' } }, submitting ? C.submitting : C.submit)),
+        el('p', { style: { fontSize: 11.5, color: 'var(--text-3)', margin: '12px 0 0', lineHeight: 1.7 } }, C.privacy_note),
+        el('p', { style: { fontSize: 11.5, color: 'var(--text-3)', margin: '6px 0 0', lineHeight: 1.7 } }, UI_COPY.landing.disclaimer_short)));
+  }
+  return el('div', { className: 'container' },
+    el('div', { className: 'hub-title' }, el(Icon, { name: 'spark', size: 22 }), ' ' + C.hub_title),
+    body);
 }
