@@ -34,7 +34,7 @@
     .topbar-side{display:flex;align-items:baseline;gap:12px;min-width:0}
 
     /* 右上角菜单区：登录按钮 + 汉堡下拉 */
-    .topbar-menu{position:relative;display:flex;align-items:center;flex:none}
+    .topbar-menu{position:relative;display:flex;align-items:center;gap:8px;flex:none}
     .topbar-menu .menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;
       background:rgba(128,128,150,.18);color:var(--skin-banner-ink);transition:background .18s ease}
     .topbar-menu .menu-btn:hover{background:rgba(128,128,150,.32)}
@@ -101,6 +101,16 @@
       .topbar .tagline{display:none}
       .topbar-modnav .modnav-btn{padding:7px 10px}
       .topbar-modnav .modnav-drop{width:188px}
+    }
+    /* BUG-025：小屏下「对坐谈心」与菜单按钮避免重合 —— ≤420px 时收紧按钮 padding，
+       ≤380px 时进一步缩小字号，确保两按钮间距清晰 */
+    @media (max-width:420px){
+      .agent-top-text{padding:7px 10px;font-size:12.5px}
+      .topbar-menu{gap:6px}
+    }
+    @media (max-width:380px){
+      .agent-top-text{padding:6px 9px;font-size:12px}
+      .topbar-menu .menu-btn{width:34px;height:34px}
     }
 
     /* 底部皮肤切换胶囊（随主题换色） */
