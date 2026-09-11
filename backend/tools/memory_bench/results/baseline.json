@@ -1,0 +1,5729 @@
+{
+ "meta": {
+  "tool": "memory_bench/run.py",
+  "label": "baseline",
+  "created_at": "2026-09-11T10:13:15+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.50.4",
+  "cwd": "C:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\backend",
+  "git_rev": "bfdcfdff6eb4",
+  "mode": "question",
+  "k_arg": null,
+  "repeat": 5,
+  "corpus_path": "C:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\backend\\tools\\memory_bench\\corpus.json",
+  "corpus_meta": {
+   "generator": "corpus_build.py",
+   "n_users": 30,
+   "n_facts": 585,
+   "n_questions": 70,
+   "min_facts_per_user": 10,
+   "max_facts_per_user": 30,
+   "max_age_days": 180,
+   "fact_pool_size": 70,
+   "n_topics": 14,
+   "content_sha1": "a5fad7553662cf5d48cc8456cdb1b540a4888ebb"
+  },
+  "schema_check": {
+   "required_ok": true,
+   "analytics_table_count": 26,
+   "ops_table_count": 6
+  },
+  "seeded_facts": 585,
+  "seeded_fts_rows": 585,
+  "db_env": {
+   "TAICHU_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_a63bdad0_analytics.db",
+   "TAICHU_FEEDBACK_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_a63bdad0_feedback.db",
+   "TAICHU_OPS_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_a63bdad0_ops.db"
+  },
+  "db_dir": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e",
+  "note": "离线基准：不联网、不调 LLM、不碰生产库；recall 走真实 recall_memories()"
+ },
+ "metrics": {
+  "n_questions": 70,
+  "recall_at_k": 0.3143,
+  "recall_hits": 22,
+  "recall_ci95_low": 0.2176,
+  "recall_ci95_high": 0.4303,
+  "random_floor_mean": 0.2957,
+  "lift_vs_random": 0.0186,
+  "lift_ci95_low": -0.0801,
+  "lift_ci95_high": 0.1173,
+  "lift_significant": false,
+  "precision_strict_mean": 0.0881,
+  "precision_topic_mean": 0.0929,
+  "empty_recall_count": 0,
+  "avg_injected": 3.6,
+  "min_injected": 3,
+  "max_injected": 6,
+  "avg_block_chars": 136.8857,
+  "latency_ms_p50": 10.374,
+  "latency_ms_p95": 24.02,
+  "latency_ms_p99": 26.759,
+  "latency_ms_mean": 14.3451,
+  "latency_ms_max": 29.175,
+  "latency_samples": 350,
+  "sql_per_recall_mean": 3.8,
+  "sql_per_recall_p50": 4.0,
+  "sql_per_recall_max": 4,
+  "unstable_questions": 0
+ },
+ "buckets": {
+  "short": {
+   "n_questions": 14,
+   "recall_at_k": 0.5,
+   "recall_hits": 7,
+   "recall_ci95_low": 0.268,
+   "recall_ci95_high": 0.732,
+   "random_floor_mean": 0.4114,
+   "lift_vs_random": 0.0886,
+   "lift_ci95_low": -0.1879,
+   "lift_ci95_high": 0.3651,
+   "lift_significant": false,
+   "precision_strict_mean": 0.0833,
+   "precision_topic_mean": 0.0833,
+   "empty_recall_count": 0,
+   "avg_injected": 6.0,
+   "min_injected": 6,
+   "max_injected": 6,
+   "avg_block_chars": 196.0714
+  },
+  "medium": {
+   "n_questions": 28,
+   "recall_at_k": 0.25,
+   "recall_hits": 7,
+   "recall_ci95_low": 0.1268,
+   "recall_ci95_high": 0.4336,
+   "random_floor_mean": 0.276,
+   "lift_vs_random": -0.026,
+   "lift_ci95_low": -0.1728,
+   "lift_ci95_high": 0.1207,
+   "lift_significant": false,
+   "precision_strict_mean": 0.0833,
+   "precision_topic_mean": 0.0833,
+   "empty_recall_count": 0,
+   "avg_injected": 3.0,
+   "min_injected": 3,
+   "max_injected": 3,
+   "avg_block_chars": 121.3929
+  },
+  "long": {
+   "n_questions": 28,
+   "recall_at_k": 0.2857,
+   "recall_hits": 8,
+   "recall_ci95_low": 0.1525,
+   "recall_ci95_high": 0.4706,
+   "random_floor_mean": 0.2575,
+   "lift_vs_random": 0.0283,
+   "lift_ci95_low": -0.1189,
+   "lift_ci95_high": 0.1755,
+   "lift_significant": false,
+   "precision_strict_mean": 0.0952,
+   "precision_topic_mean": 0.1071,
+   "empty_recall_count": 0,
+   "avg_injected": 3.0,
+   "min_injected": 3,
+   "max_injected": 3,
+   "avg_block_chars": 122.7857
+  }
+ },
+ "channels": {
+  "recency": 70
+ },
+ "memory": {
+  "tracemalloc_current_mb": 0.677,
+  "tracemalloc_peak_mb": 0.735,
+  "tracemalloc_used": true,
+  "ru_maxrss": null,
+  "ru_maxrss_unit": null
+ },
+ "per_question": [
+  {
+   "question_id": "q001",
+   "topic": "事业",
+   "bucket": "short",
+   "question": "事业",
+   "qlen": 2,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f05"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25,
+    26,
+    24,
+    27
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    27
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.5454545454545454,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 197,
+   "ms_mean": 7.7908,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 9.097,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 11,
+     "k": 6,
+     "elapsed_ms": 3.6,
+     "chars": 197
+    },
+    {
+     "ms": 6.812,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 11,
+     "k": 6,
+     "elapsed_ms": 3.1,
+     "chars": 197
+    },
+    {
+     "ms": 6.909,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 11,
+     "k": 6,
+     "elapsed_ms": 3.0,
+     "chars": 197
+    },
+    {
+     "ms": 6.359,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 11,
+     "k": 6,
+     "elapsed_ms": 2.9,
+     "chars": 197
+    },
+    {
+     "ms": 9.777,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 11,
+     "k": 6,
+     "elapsed_ms": 5.2,
+     "chars": 197
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q002",
+   "topic": "事业",
+   "bucket": "medium",
+   "question": "我的事业运势",
+   "qlen": 6,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f19"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 7.9736,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.378,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 7.645,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 123
+    },
+    {
+     "ms": 7.584,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.0,
+     "chars": 123
+    },
+    {
+     "ms": 7.567,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 3.8,
+     "chars": 123
+    },
+    {
+     "ms": 7.694,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q003",
+   "topic": "事业",
+   "bucket": "long",
+   "question": "我的事业在未来三年会如何发展",
+   "qlen": 14,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f02",
+    "bench_user_04_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    57
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.4545454545454546,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 7.716,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 7.502,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.6,
+     "chars": 127
+    },
+    {
+     "ms": 7.437,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.6,
+     "chars": 127
+    },
+    {
+     "ms": 7.178,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.6,
+     "chars": 127
+    },
+    {
+     "ms": 7.508,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.3,
+     "chars": 127
+    },
+    {
+     "ms": 8.955,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.5,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q004",
+   "topic": "事业",
+   "bucket": "medium",
+   "question": "事业能顺利吗",
+   "qlen": 6,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f02",
+    "bench_user_04_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    57
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.4545454545454546,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 7.791,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 7.677,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.7,
+     "chars": 127
+    },
+    {
+     "ms": 8.037,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 127
+    },
+    {
+     "ms": 7.627,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 127
+    },
+    {
+     "ms": 8.239,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 127
+    },
+    {
+     "ms": 7.375,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.6,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q005",
+   "topic": "事业",
+   "bucket": "long",
+   "question": "我该往哪个方向发展比较好",
+   "qlen": 12,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f01"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13043478260869568,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 8.972,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.097,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 120
+    },
+    {
+     "ms": 7.712,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 120
+    },
+    {
+     "ms": 10.715,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 6.0,
+     "chars": 120
+    },
+    {
+     "ms": 8.205,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 3.8,
+     "chars": 120
+    },
+    {
+     "ms": 10.131,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q006",
+   "topic": "财运",
+   "bucket": "short",
+   "question": "财运",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f07",
+    "bench_user_01_f15"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 9.0344,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 8.754,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.8,
+     "chars": 196
+    },
+    {
+     "ms": 8.655,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.4,
+     "chars": 196
+    },
+    {
+     "ms": 8.921,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 5.3,
+     "chars": 196
+    },
+    {
+     "ms": 10.218,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.3,
+     "chars": 196
+    },
+    {
+     "ms": 8.624,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.8,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q007",
+   "topic": "财运",
+   "bucket": "medium",
+   "question": "我的财运怎么样",
+   "qlen": 7,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f07",
+    "bench_user_01_f15"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 9.1156,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.915,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 116
+    },
+    {
+     "ms": 10.07,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 5.5,
+     "chars": 116
+    },
+    {
+     "ms": 9.36,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 116
+    },
+    {
+     "ms": 8.689,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 116
+    },
+    {
+     "ms": 8.544,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q008",
+   "topic": "财运",
+   "bucket": "long",
+   "question": "我今年财运到底怎么样啊",
+   "qlen": 11,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 8.5578,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.266,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 123
+    },
+    {
+     "ms": 8.209,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 123
+    },
+    {
+     "ms": 8.896,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 8.254,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 123
+    },
+    {
+     "ms": 9.164,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q009",
+   "topic": "财运",
+   "bucket": "medium",
+   "question": "今年能存下钱吗",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 8.4192,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 7.988,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 123
+    },
+    {
+     "ms": 7.446,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 123
+    },
+    {
+     "ms": 7.899,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    },
+    {
+     "ms": 9.97,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 6.3,
+     "chars": 123
+    },
+    {
+     "ms": 8.793,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q010",
+   "topic": "财运",
+   "bucket": "long",
+   "question": "我今年能不能攒下钱来",
+   "qlen": 10,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 9.5034,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.007,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    },
+    {
+     "ms": 9.366,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 8.837,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 123
+    },
+    {
+     "ms": 9.669,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 123
+    },
+    {
+     "ms": 9.638,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q011",
+   "topic": "婚姻",
+   "bucket": "short",
+   "question": "婚姻",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f00"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    1
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 8.1382,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 8.021,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.0,
+     "chars": 196
+    },
+    {
+     "ms": 7.949,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.9,
+     "chars": 196
+    },
+    {
+     "ms": 8.451,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.5,
+     "chars": 196
+    },
+    {
+     "ms": 7.688,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.9,
+     "chars": 196
+    },
+    {
+     "ms": 8.582,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.4,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q012",
+   "topic": "婚姻",
+   "bucket": "medium",
+   "question": "什么时候结婚",
+   "qlen": 6,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f06"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 11.1266,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 13.809,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 9.6,
+     "chars": 122
+    },
+    {
+     "ms": 9.733,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 122
+    },
+    {
+     "ms": 11.464,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 122
+    },
+    {
+     "ms": 11.251,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 5.2,
+     "chars": 122
+    },
+    {
+     "ms": 9.376,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q013",
+   "topic": "婚姻",
+   "bucket": "long",
+   "question": "我什么时候能够结婚生子呢",
+   "qlen": 12,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f05"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 11.3378,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.687,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 123
+    },
+    {
+     "ms": 11.979,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 7.2,
+     "chars": 123
+    },
+    {
+     "ms": 11.882,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 6.1,
+     "chars": 123
+    },
+    {
+     "ms": 9.772,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 123
+    },
+    {
+     "ms": 12.369,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 7.7,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q014",
+   "topic": "婚姻",
+   "bucket": "medium",
+   "question": "感情运势如何",
+   "qlen": 6,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f11"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.25,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 10.1192,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.224,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 127
+    },
+    {
+     "ms": 10.079,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 127
+    },
+    {
+     "ms": 9.537,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 127
+    },
+    {
+     "ms": 9.553,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 127
+    },
+    {
+     "ms": 12.203,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 5.6,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q015",
+   "topic": "婚姻",
+   "bucket": "long",
+   "question": "我的感情运势今年会怎么走",
+   "qlen": 12,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f02"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13043478260869568,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 10.6218,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 11.576,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 120
+    },
+    {
+     "ms": 10.279,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 120
+    },
+    {
+     "ms": 11.917,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 6.3,
+     "chars": 120
+    },
+    {
+     "ms": 9.745,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 120
+    },
+    {
+     "ms": 9.592,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q016",
+   "topic": "健康",
+   "bucket": "short",
+   "question": "健康",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f08",
+    "bench_user_01_f16"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    17
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 9.985,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 11.674,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 6.9,
+     "chars": 196
+    },
+    {
+     "ms": 8.841,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.6,
+     "chars": 196
+    },
+    {
+     "ms": 9.885,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.0,
+     "chars": 196
+    },
+    {
+     "ms": 10.069,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.6,
+     "chars": 196
+    },
+    {
+     "ms": 9.456,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.8,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q017",
+   "topic": "健康",
+   "bucket": "medium",
+   "question": "我的健康状况",
+   "qlen": 6,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f08",
+    "bench_user_01_f16"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    17
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 9.8086,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.544,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 5.2,
+     "chars": 116
+    },
+    {
+     "ms": 12.061,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 116
+    },
+    {
+     "ms": 9.171,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 116
+    },
+    {
+     "ms": 8.797,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 116
+    },
+    {
+     "ms": 8.47,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q018",
+   "topic": "健康",
+   "bucket": "long",
+   "question": "请问我今年的健康状况怎么样",
+   "qlen": 13,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f07"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 8.6378,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 7.832,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 122
+    },
+    {
+     "ms": 8.687,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.5,
+     "chars": 122
+    },
+    {
+     "ms": 9.215,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 122
+    },
+    {
+     "ms": 9.26,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 122
+    },
+    {
+     "ms": 8.195,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q019",
+   "topic": "健康",
+   "bucket": "medium",
+   "question": "身体要注意什么",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f13",
+    "bench_user_03_f21"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 10.134,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 14.152,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 9.0,
+     "chars": 123
+    },
+    {
+     "ms": 9.543,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 123
+    },
+    {
+     "ms": 8.257,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 123
+    },
+    {
+     "ms": 9.337,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 123
+    },
+    {
+     "ms": 9.381,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q020",
+   "topic": "健康",
+   "bucket": "long",
+   "question": "我平时应该注意哪些身体问题",
+   "qlen": 13,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f13",
+    "bench_user_03_f21"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 9.6664,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.549,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 123
+    },
+    {
+     "ms": 10.724,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.5,
+     "chars": 123
+    },
+    {
+     "ms": 8.734,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    },
+    {
+     "ms": 9.567,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.3,
+     "chars": 123
+    },
+    {
+     "ms": 9.758,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q021",
+   "topic": "学业",
+   "bucket": "short",
+   "question": "学业",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f01",
+    "bench_user_01_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 8.914,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 8.865,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.1,
+     "chars": 196
+    },
+    {
+     "ms": 9.494,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.6,
+     "chars": 196
+    },
+    {
+     "ms": 8.795,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.9,
+     "chars": 196
+    },
+    {
+     "ms": 8.648,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.4,
+     "chars": 196
+    },
+    {
+     "ms": 8.768,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.2,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q022",
+   "topic": "学业",
+   "bucket": "medium",
+   "question": "要不要考研",
+   "qlen": 5,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f01",
+    "bench_user_01_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 11.5488,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.118,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 116
+    },
+    {
+     "ms": 16.776,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 9.2,
+     "chars": 116
+    },
+    {
+     "ms": 12.276,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 7.5,
+     "chars": 116
+    },
+    {
+     "ms": 10.559,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 5.3,
+     "chars": 116
+    },
+    {
+     "ms": 9.015,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q023",
+   "topic": "学业",
+   "bucket": "long",
+   "question": "我想知道我能不能考上公务员",
+   "qlen": 13,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f06"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 10.3454,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.4,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 10.567,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 123
+    },
+    {
+     "ms": 10.226,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 6.0,
+     "chars": 123
+    },
+    {
+     "ms": 11.646,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 123
+    },
+    {
+     "ms": 9.888,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q024",
+   "topic": "学业",
+   "bucket": "medium",
+   "question": "学业能进步吗",
+   "qlen": 6,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f03",
+    "bench_user_05_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2490118577075099,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 10.066,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.195,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 120
+    },
+    {
+     "ms": 10.659,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 120
+    },
+    {
+     "ms": 9.964,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 120
+    },
+    {
+     "ms": 9.734,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 120
+    },
+    {
+     "ms": 9.778,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.3,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q025",
+   "topic": "学业",
+   "bucket": "long",
+   "question": "我继续读书深造合适吗",
+   "qlen": 10,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f03",
+    "bench_user_05_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2490118577075099,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 9.819,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.351,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.5,
+     "chars": 120
+    },
+    {
+     "ms": 9.786,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 120
+    },
+    {
+     "ms": 8.751,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.5,
+     "chars": 120
+    },
+    {
+     "ms": 8.726,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 120
+    },
+    {
+     "ms": 11.481,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 5.2,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q026",
+   "topic": "迁移",
+   "bucket": "short",
+   "question": "搬家",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f17"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    18
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 8.9756,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 11.209,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.7,
+     "chars": 196
+    },
+    {
+     "ms": 8.516,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.0,
+     "chars": 196
+    },
+    {
+     "ms": 8.085,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.6,
+     "chars": 196
+    },
+    {
+     "ms": 8.655,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.5,
+     "chars": 196
+    },
+    {
+     "ms": 8.413,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.2,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q027",
+   "topic": "迁移",
+   "bucket": "medium",
+   "question": "要不要换城市",
+   "qlen": 6,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f00",
+    "bench_user_02_f08"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    22
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.49090909090909096,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 9.0982,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.758,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 5.2,
+     "chars": 122
+    },
+    {
+     "ms": 8.534,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 122
+    },
+    {
+     "ms": 9.465,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 122
+    },
+    {
+     "ms": 8.109,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.0,
+     "chars": 122
+    },
+    {
+     "ms": 9.625,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q028",
+   "topic": "迁移",
+   "bucket": "long",
+   "question": "我搬到深圳之后事业会变好吗",
+   "qlen": 13,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f00",
+    "bench_user_02_f08"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    22
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.49090909090909096,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 9.291,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.01,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 122
+    },
+    {
+     "ms": 8.815,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 122
+    },
+    {
+     "ms": 10.296,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 122
+    },
+    {
+     "ms": 8.189,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.0,
+     "chars": 122
+    },
+    {
+     "ms": 9.145,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q029",
+   "topic": "迁移",
+   "bucket": "medium",
+   "question": "适合长期定居吗",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f14"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 9.9458,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 10.247,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.2,
+     "chars": 123
+    },
+    {
+     "ms": 9.179,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 123
+    },
+    {
+     "ms": 10.397,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 123
+    },
+    {
+     "ms": 9.114,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 123
+    },
+    {
+     "ms": 10.792,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q030",
+   "topic": "迁移",
+   "bucket": "long",
+   "question": "我应该留在现在的城市还是回老家",
+   "qlen": 15,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f05"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.25,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 9.1546,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.619,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 127
+    },
+    {
+     "ms": 9.042,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 127
+    },
+    {
+     "ms": 10.637,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 6.3,
+     "chars": 127
+    },
+    {
+     "ms": 7.991,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 127
+    },
+    {
+     "ms": 8.484,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q031",
+   "topic": "性格",
+   "bucket": "short",
+   "question": "性格",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f02",
+    "bench_user_01_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    3
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 8.0346,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 7.812,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.5,
+     "chars": 196
+    },
+    {
+     "ms": 8.828,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.2,
+     "chars": 196
+    },
+    {
+     "ms": 7.801,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.6,
+     "chars": 196
+    },
+    {
+     "ms": 8.118,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.1,
+     "chars": 196
+    },
+    {
+     "ms": 7.614,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.7,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q032",
+   "topic": "性格",
+   "bucket": "medium",
+   "question": "我适合做什么工作",
+   "qlen": 8,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f02",
+    "bench_user_01_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 8.7316,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.281,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 116
+    },
+    {
+     "ms": 9.004,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 116
+    },
+    {
+     "ms": 8.621,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 116
+    },
+    {
+     "ms": 8.769,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 116
+    },
+    {
+     "ms": 8.983,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q033",
+   "topic": "性格",
+   "bucket": "long",
+   "question": "我这种性格适合做什么样的工作",
+   "qlen": 14,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f07",
+    "bench_user_03_f15"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 9.7276,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.332,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    },
+    {
+     "ms": 11.296,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 123
+    },
+    {
+     "ms": 9.165,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 123
+    },
+    {
+     "ms": 10.483,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.1,
+     "chars": 123
+    },
+    {
+     "ms": 9.362,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q034",
+   "topic": "性格",
+   "bucket": "medium",
+   "question": "我的性格怎么样",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f07",
+    "bench_user_03_f15"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 8.9774,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.506,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    },
+    {
+     "ms": 8.73,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.5,
+     "chars": 123
+    },
+    {
+     "ms": 9.765,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 9.516,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 123
+    },
+    {
+     "ms": 8.37,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q035",
+   "topic": "性格",
+   "bucket": "long",
+   "question": "我该怎么发挥自己性格上的优势",
+   "qlen": 14,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f04",
+    "bench_user_05_f12"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2490118577075099,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 9.9972,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.664,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.7,
+     "chars": 120
+    },
+    {
+     "ms": 9.695,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 120
+    },
+    {
+     "ms": 9.994,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 120
+    },
+    {
+     "ms": 9.866,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 120
+    },
+    {
+     "ms": 11.767,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 4.9,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q036",
+   "topic": "创业",
+   "bucket": "short",
+   "question": "创业",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f18"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    19
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 9.3658,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 11.133,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 5.4,
+     "chars": 196
+    },
+    {
+     "ms": 8.267,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.8,
+     "chars": 196
+    },
+    {
+     "ms": 8.755,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.4,
+     "chars": 196
+    },
+    {
+     "ms": 8.833,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.6,
+     "chars": 196
+    },
+    {
+     "ms": 9.841,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 5.3,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q037",
+   "topic": "创业",
+   "bucket": "medium",
+   "question": "适合创业吗",
+   "qlen": 5,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f01",
+    "bench_user_02_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    23
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.49090909090909096,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 9.0324,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.428,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 122
+    },
+    {
+     "ms": 9.411,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 122
+    },
+    {
+     "ms": 8.979,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.4,
+     "chars": 122
+    },
+    {
+     "ms": 8.835,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 122
+    },
+    {
+     "ms": 9.509,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q038",
+   "topic": "创业",
+   "bucket": "long",
+   "question": "我适不适合在本地创业做生意",
+   "qlen": 13,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f01",
+    "bench_user_02_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    23
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.49090909090909096,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 9.988,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.269,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 122
+    },
+    {
+     "ms": 11.893,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 6.6,
+     "chars": 122
+    },
+    {
+     "ms": 9.519,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 122
+    },
+    {
+     "ms": 8.839,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 122
+    },
+    {
+     "ms": 11.42,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 5.8,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q039",
+   "topic": "创业",
+   "bucket": "medium",
+   "question": "开店能赚钱吗",
+   "qlen": 6,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f00"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    33
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 9.1728,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 9.544,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 123
+    },
+    {
+     "ms": 9.442,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 123
+    },
+    {
+     "ms": 9.284,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 5.0,
+     "chars": 123
+    },
+    {
+     "ms": 8.236,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 123
+    },
+    {
+     "ms": 9.358,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q040",
+   "topic": "创业",
+   "bucket": "long",
+   "question": "我现在开店做生意能赚钱吗",
+   "qlen": 12,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f06"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.25,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 9.1182,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.691,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 3.9,
+     "chars": 127
+    },
+    {
+     "ms": 9.27,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.5,
+     "chars": 127
+    },
+    {
+     "ms": 9.067,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.8,
+     "chars": 127
+    },
+    {
+     "ms": 9.946,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 5.4,
+     "chars": 127
+    },
+    {
+     "ms": 8.617,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q041",
+   "topic": "出行",
+   "bucket": "short",
+   "question": "出行",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [
+    4
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.16666666666666666,
+   "precision_topic": 0.16666666666666666,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 9.1862,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 9.301,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.1,
+     "chars": 196
+    },
+    {
+     "ms": 8.983,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.6,
+     "chars": 196
+    },
+    {
+     "ms": 10.755,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 5.6,
+     "chars": 196
+    },
+    {
+     "ms": 8.375,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 4.0,
+     "chars": 196
+    },
+    {
+     "ms": 8.517,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 3.8,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q042",
+   "topic": "出行",
+   "bucket": "medium",
+   "question": "我适合出国吗",
+   "qlen": 6,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 10.1904,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 8.997,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.6,
+     "chars": 116
+    },
+    {
+     "ms": 8.013,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.2,
+     "chars": 116
+    },
+    {
+     "ms": 8.358,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.1,
+     "chars": 116
+    },
+    {
+     "ms": 8.592,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 4.3,
+     "chars": 116
+    },
+    {
+     "ms": 16.992,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 8.8,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q043",
+   "topic": "出行",
+   "bucket": "long",
+   "question": "我今年适合安排一次长途旅行吗",
+   "qlen": 14,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 24.8676,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 23.425,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.9,
+     "chars": 116
+    },
+    {
+     "ms": 27.004,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 13.8,
+     "chars": 116
+    },
+    {
+     "ms": 27.5,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 14.2,
+     "chars": 116
+    },
+    {
+     "ms": 23.898,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.2,
+     "chars": 116
+    },
+    {
+     "ms": 22.511,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 11.4,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q044",
+   "topic": "出行",
+   "bucket": "medium",
+   "question": "今年能出去玩吗",
+   "qlen": 7,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f02"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 20.9148,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.758,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.0,
+     "chars": 122
+    },
+    {
+     "ms": 20.369,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 9.8,
+     "chars": 122
+    },
+    {
+     "ms": 21.574,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.0,
+     "chars": 122
+    },
+    {
+     "ms": 19.596,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.8,
+     "chars": 122
+    },
+    {
+     "ms": 21.277,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.3,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q045",
+   "topic": "出行",
+   "bucket": "long",
+   "question": "我想带家人出去玩什么时候合适",
+   "qlen": 14,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f08",
+    "bench_user_03_f16"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    49
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 22.5408,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 23.333,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.9,
+     "chars": 123
+    },
+    {
+     "ms": 22.888,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.9,
+     "chars": 123
+    },
+    {
+     "ms": 22.68,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.8,
+     "chars": 123
+    },
+    {
+     "ms": 23.6,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 123
+    },
+    {
+     "ms": 20.203,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 9.4,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q046",
+   "topic": "子女",
+   "bucket": "short",
+   "question": "孩子",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f04"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 20.1036,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 13.221,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 6.4,
+     "chars": 196
+    },
+    {
+     "ms": 21.589,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.8,
+     "chars": 196
+    },
+    {
+     "ms": 21.404,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.1,
+     "chars": 196
+    },
+    {
+     "ms": 22.456,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.5,
+     "chars": 196
+    },
+    {
+     "ms": 21.848,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 12.2,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q047",
+   "topic": "子女",
+   "bucket": "medium",
+   "question": "孩子学业问题",
+   "qlen": 6,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f10"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 20.3956,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.587,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.8,
+     "chars": 122
+    },
+    {
+     "ms": 21.575,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.5,
+     "chars": 122
+    },
+    {
+     "ms": 21.034,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.5,
+     "chars": 122
+    },
+    {
+     "ms": 19.301,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 8.4,
+     "chars": 122
+    },
+    {
+     "ms": 18.481,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 8.1,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q048",
+   "topic": "子女",
+   "bucket": "long",
+   "question": "我家孩子以后的学业应该注意什么",
+   "qlen": 15,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f01"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 21.776,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 18.25,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 9.9,
+     "chars": 123
+    },
+    {
+     "ms": 23.924,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.0,
+     "chars": 123
+    },
+    {
+     "ms": 21.868,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.3,
+     "chars": 123
+    },
+    {
+     "ms": 22.413,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.4,
+     "chars": 123
+    },
+    {
+     "ms": 22.425,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q049",
+   "topic": "子女",
+   "bucket": "medium",
+   "question": "孩子性格怎么样",
+   "qlen": 7,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f07"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.25,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 20.972,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 19.687,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 9.5,
+     "chars": 127
+    },
+    {
+     "ms": 20.484,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.3,
+     "chars": 127
+    },
+    {
+     "ms": 21.782,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 10.5,
+     "chars": 127
+    },
+    {
+     "ms": 21.78,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 10.2,
+     "chars": 127
+    },
+    {
+     "ms": 21.127,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q050",
+   "topic": "子女",
+   "bucket": "long",
+   "question": "我该怎样培养孩子的性格和习惯",
+   "qlen": 14,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f06"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13043478260869568,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 22.698,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 20.578,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 9.7,
+     "chars": 120
+    },
+    {
+     "ms": 24.098,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 13.1,
+     "chars": 120
+    },
+    {
+     "ms": 23.12,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.8,
+     "chars": 120
+    },
+    {
+     "ms": 21.241,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 9.7,
+     "chars": 120
+    },
+    {
+     "ms": 24.453,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 13.5,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q051",
+   "topic": "房产",
+   "bucket": "short",
+   "question": "买房",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f12",
+    "bench_user_01_f20"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 20.7846,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 23.01,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.6,
+     "chars": 196
+    },
+    {
+     "ms": 20.514,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 9.7,
+     "chars": 196
+    },
+    {
+     "ms": 23.468,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 12.3,
+     "chars": 196
+    },
+    {
+     "ms": 22.992,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.5,
+     "chars": 196
+    },
+    {
+     "ms": 13.939,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 6.2,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q052",
+   "topic": "房产",
+   "bucket": "medium",
+   "question": "买房时机合适吗",
+   "qlen": 7,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f12",
+    "bench_user_01_f20"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 22.888,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.825,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.6,
+     "chars": 116
+    },
+    {
+     "ms": 22.904,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 116
+    },
+    {
+     "ms": 22.225,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.8,
+     "chars": 116
+    },
+    {
+     "ms": 23.717,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.2,
+     "chars": 116
+    },
+    {
+     "ms": 23.769,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 13.3,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q053",
+   "topic": "房产",
+   "bucket": "long",
+   "question": "我这两年在哪个城市买房比较合适",
+   "qlen": 15,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f03"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    25
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 20.6618,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 18.629,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 8.9,
+     "chars": 122
+    },
+    {
+     "ms": 19.52,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 9.1,
+     "chars": 122
+    },
+    {
+     "ms": 20.299,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 9.5,
+     "chars": 122
+    },
+    {
+     "ms": 23.122,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.4,
+     "chars": 122
+    },
+    {
+     "ms": 21.739,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.0,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q054",
+   "topic": "房产",
+   "bucket": "medium",
+   "question": "今年适合买房吗",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f09",
+    "bench_user_03_f17"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    50
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 22.2196,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.293,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 123
+    },
+    {
+     "ms": 24.572,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.1,
+     "chars": 123
+    },
+    {
+     "ms": 22.411,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 123
+    },
+    {
+     "ms": 20.988,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.1,
+     "chars": 123
+    },
+    {
+     "ms": 21.834,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q055",
+   "topic": "房产",
+   "bucket": "long",
+   "question": "我现在出手买房会不会有压力",
+   "qlen": 13,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f09",
+    "bench_user_03_f17"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    50
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 20.7752,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 25.745,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 14.3,
+     "chars": 123
+    },
+    {
+     "ms": 22.281,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.0,
+     "chars": 123
+    },
+    {
+     "ms": 13.722,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 7.1,
+     "chars": 123
+    },
+    {
+     "ms": 19.655,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.6,
+     "chars": 123
+    },
+    {
+     "ms": 22.473,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.8,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q056",
+   "topic": "人际",
+   "bucket": "short",
+   "question": "人际",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f05"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 21.2252,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 20.362,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.2,
+     "chars": 196
+    },
+    {
+     "ms": 20.007,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.0,
+     "chars": 196
+    },
+    {
+     "ms": 20.784,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.0,
+     "chars": 196
+    },
+    {
+     "ms": 21.874,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.8,
+     "chars": 196
+    },
+    {
+     "ms": 23.099,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.4,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q057",
+   "topic": "人际",
+   "bucket": "medium",
+   "question": "我的人缘怎么样",
+   "qlen": 7,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f02",
+    "bench_user_03_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 23.9374,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 19.921,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.3,
+     "chars": 123
+    },
+    {
+     "ms": 23.507,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.4,
+     "chars": 123
+    },
+    {
+     "ms": 24.769,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 123
+    },
+    {
+     "ms": 29.175,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 15.9,
+     "chars": 123
+    },
+    {
+     "ms": 22.315,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.8,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q058",
+   "topic": "人际",
+   "bucket": "long",
+   "question": "我在职场里的人际关系会顺利吗",
+   "qlen": 14,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f02",
+    "bench_user_03_f10"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 22.109,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 20.808,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.5,
+     "chars": 123
+    },
+    {
+     "ms": 20.296,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.1,
+     "chars": 123
+    },
+    {
+     "ms": 21.835,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.9,
+     "chars": 123
+    },
+    {
+     "ms": 22.551,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 11.7,
+     "chars": 123
+    },
+    {
+     "ms": 25.055,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.5,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q059",
+   "topic": "人际",
+   "bucket": "medium",
+   "question": "和同事关系如何",
+   "qlen": 7,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f07"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13043478260869568,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 23.5026,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 23.547,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 13.0,
+     "chars": 120
+    },
+    {
+     "ms": 25.483,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 13.6,
+     "chars": 120
+    },
+    {
+     "ms": 22.085,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.4,
+     "chars": 120
+    },
+    {
+     "ms": 23.794,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 13.1,
+     "chars": 120
+    },
+    {
+     "ms": 22.604,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 12.9,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q060",
+   "topic": "人际",
+   "bucket": "long",
+   "question": "我该怎样处理和领导之间的沟通",
+   "qlen": 14,
+   "user_no": 7,
+   "expected_fact_ids": [
+    "bench_user_07_f04",
+    "bench_user_07_f12"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 24,
+   "recalled_ids": [
+    117,
+    118,
+    119
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.23913043478260865,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 24,
+   "block_chars": 130,
+   "ms_mean": 22.7146,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 16.908,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 24,
+     "k": 3,
+     "elapsed_ms": 9.8,
+     "chars": 130
+    },
+    {
+     "ms": 26.097,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 24,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 130
+    },
+    {
+     "ms": 26.504,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 24,
+     "k": 3,
+     "elapsed_ms": 13.1,
+     "chars": 130
+    },
+    {
+     "ms": 21.94,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 24,
+     "k": 3,
+     "elapsed_ms": 12.6,
+     "chars": 130
+    },
+    {
+     "ms": 22.124,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 24,
+     "k": 3,
+     "elapsed_ms": 12.0,
+     "chars": 130
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q061",
+   "topic": "心态",
+   "bucket": "short",
+   "question": "心态",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f13"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2857142857142857,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 21.1606,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 20.766,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.4,
+     "chars": 196
+    },
+    {
+     "ms": 20.951,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.3,
+     "chars": 196
+    },
+    {
+     "ms": 22.29,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.2,
+     "chars": 196
+    },
+    {
+     "ms": 20.943,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.5,
+     "chars": 196
+    },
+    {
+     "ms": 20.853,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 11.5,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q062",
+   "topic": "心态",
+   "bucket": "medium",
+   "question": "我最近状态如何",
+   "qlen": 7,
+   "user_no": 2,
+   "expected_fact_ids": [
+    "bench_user_02_f04"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 11,
+   "recalled_ids": [
+    22,
+    23,
+    25
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2727272727272727,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 11,
+   "block_chars": 122,
+   "ms_mean": 20.3438,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 15.314,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 7.2,
+     "chars": 122
+    },
+    {
+     "ms": 19.434,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.2,
+     "chars": 122
+    },
+    {
+     "ms": 20.927,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 10.1,
+     "chars": 122
+    },
+    {
+     "ms": 23.43,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 122
+    },
+    {
+     "ms": 22.614,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 11,
+     "k": 3,
+     "elapsed_ms": 11.4,
+     "chars": 122
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q063",
+   "topic": "心态",
+   "bucket": "long",
+   "question": "我最近的心态和状态需要注意什么",
+   "qlen": 15,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f18"
+   ],
+   "n_expected": 1,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.13636363636363635,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 22.9824,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 22.78,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.4,
+     "chars": 123
+    },
+    {
+     "ms": 23.73,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 123
+    },
+    {
+     "ms": 23.358,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.8,
+     "chars": 123
+    },
+    {
+     "ms": 23.65,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.0,
+     "chars": 123
+    },
+    {
+     "ms": 21.394,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.2,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q064",
+   "topic": "心态",
+   "bucket": "medium",
+   "question": "压力大怎么办",
+   "qlen": 6,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f01",
+    "bench_user_04_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    56
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.4545454545454546,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 24.4728,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.814,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 127
+    },
+    {
+     "ms": 23.245,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 127
+    },
+    {
+     "ms": 24.669,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 12.0,
+     "chars": 127
+    },
+    {
+     "ms": 27.151,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 13.9,
+     "chars": 127
+    },
+    {
+     "ms": 25.485,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 13.8,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q065",
+   "topic": "心态",
+   "bucket": "long",
+   "question": "我该怎么调整最近焦虑的状态",
+   "qlen": 13,
+   "user_no": 4,
+   "expected_fact_ids": [
+    "bench_user_04_f01",
+    "bench_user_04_f09"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 12,
+   "recalled_ids": [
+    55,
+    56,
+    57
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    56
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.3333333333333333,
+   "random_floor": 0.4545454545454546,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 12,
+   "block_chars": 127,
+   "ms_mean": 21.8172,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 23.407,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.4,
+     "chars": 127
+    },
+    {
+     "ms": 20.439,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 10.2,
+     "chars": 127
+    },
+    {
+     "ms": 21.842,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 127
+    },
+    {
+     "ms": 22.545,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.2,
+     "chars": 127
+    },
+    {
+     "ms": 20.853,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 12,
+     "k": 3,
+     "elapsed_ms": 11.1,
+     "chars": 127
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q066",
+   "topic": "兴趣",
+   "bucket": "short",
+   "question": "爱好",
+   "qlen": 2,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f06",
+    "bench_user_01_f14"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18,
+    3,
+    19,
+    4
+   ],
+   "n_recalled": 6,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.5,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 196,
+   "ms_mean": 20.5858,
+   "sql_mean": 3.0,
+   "samples": [
+    {
+     "ms": 20.998,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.4,
+     "chars": 196
+    },
+    {
+     "ms": 22.671,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 12.3,
+     "chars": 196
+    },
+    {
+     "ms": 19.991,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.0,
+     "chars": 196
+    },
+    {
+     "ms": 21.641,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 10.3,
+     "chars": 196
+    },
+    {
+     "ms": 17.628,
+     "sql": 3,
+     "channel": "recency",
+     "hits": 21,
+     "k": 6,
+     "elapsed_ms": 8.4,
+     "chars": 196
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q067",
+   "topic": "兴趣",
+   "bucket": "medium",
+   "question": "我适合学什么",
+   "qlen": 6,
+   "user_no": 1,
+   "expected_fact_ids": [
+    "bench_user_01_f06",
+    "bench_user_01_f14"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 21,
+   "recalled_ids": [
+    17,
+    1,
+    18
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.27142857142857146,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 21,
+   "block_chars": 116,
+   "ms_mean": 21.869,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 24.124,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.5,
+     "chars": 116
+    },
+    {
+     "ms": 23.741,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 13.3,
+     "chars": 116
+    },
+    {
+     "ms": 22.327,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 116
+    },
+    {
+     "ms": 22.222,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 116
+    },
+    {
+     "ms": 16.931,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 21,
+     "k": 3,
+     "elapsed_ms": 9.4,
+     "chars": 116
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q068",
+   "topic": "兴趣",
+   "bucket": "long",
+   "question": "我适合培养一门什么样的兴趣爱好",
+   "qlen": 15,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f03",
+    "bench_user_03_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 21.9846,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 12.735,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 6.2,
+     "chars": 123
+    },
+    {
+     "ms": 25.902,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 14.3,
+     "chars": 123
+    },
+    {
+     "ms": 23.761,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 13.1,
+     "chars": 123
+    },
+    {
+     "ms": 25.407,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 14.4,
+     "chars": 123
+    },
+    {
+     "ms": 22.118,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.9,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q069",
+   "topic": "兴趣",
+   "bucket": "medium",
+   "question": "有什么爱好适合我",
+   "qlen": 8,
+   "user_no": 3,
+   "expected_fact_ids": [
+    "bench_user_03_f03",
+    "bench_user_03_f11"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 22,
+   "recalled_ids": [
+    49,
+    33,
+    50
+   ],
+   "n_recalled": 3,
+   "hit_ids": [],
+   "recall_hit": false,
+   "precision_strict": 0.0,
+   "precision_topic": 0.0,
+   "random_floor": 0.2597402597402597,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 22,
+   "block_chars": 123,
+   "ms_mean": 19.5106,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 21.309,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.1,
+     "chars": 123
+    },
+    {
+     "ms": 16.946,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 8.4,
+     "chars": 123
+    },
+    {
+     "ms": 16.687,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 10.3,
+     "chars": 123
+    },
+    {
+     "ms": 22.63,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 12.7,
+     "chars": 123
+    },
+    {
+     "ms": 19.981,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 22,
+     "k": 3,
+     "elapsed_ms": 9.7,
+     "chars": 123
+    }
+   ],
+   "repeat_stable": true
+  },
+  {
+   "question_id": "q070",
+   "topic": "兴趣",
+   "bucket": "long",
+   "question": "我在业余时间适合做点什么好",
+   "qlen": 13,
+   "user_no": 5,
+   "expected_fact_ids": [
+    "bench_user_05_f00",
+    "bench_user_05_f08"
+   ],
+   "n_expected": 2,
+   "n_facts_of_user": 23,
+   "recalled_ids": [
+    82,
+    67,
+    83
+   ],
+   "n_recalled": 3,
+   "hit_ids": [
+    67
+   ],
+   "recall_hit": true,
+   "precision_strict": 0.3333333333333333,
+   "precision_topic": 0.6666666666666666,
+   "random_floor": 0.2490118577075099,
+   "empty_recall": false,
+   "channel": "recency",
+   "event_hits": 23,
+   "block_chars": 120,
+   "ms_mean": 21.2166,
+   "sql_mean": 4.0,
+   "samples": [
+    {
+     "ms": 20.569,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.9,
+     "chars": 120
+    },
+    {
+     "ms": 20.396,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.6,
+     "chars": 120
+    },
+    {
+     "ms": 21.673,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.0,
+     "chars": 120
+    },
+    {
+     "ms": 21.905,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 11.9,
+     "chars": 120
+    },
+    {
+     "ms": 21.54,
+     "sql": 4,
+     "channel": "recency",
+     "hits": 23,
+     "k": 3,
+     "elapsed_ms": 12.9,
+     "chars": 120
+    }
+   ],
+   "repeat_stable": true
+  }
+ ]
+}

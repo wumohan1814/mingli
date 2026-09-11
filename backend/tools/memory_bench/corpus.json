@@ -1,0 +1,8615 @@
+{
+ "meta": {
+  "generator": "corpus_build.py",
+  "n_users": 30,
+  "n_facts": 585,
+  "n_questions": 70,
+  "min_facts_per_user": 10,
+  "max_facts_per_user": 30,
+  "max_age_days": 180,
+  "fact_pool_size": 70,
+  "n_topics": 14,
+  "content_sha1": "a5fad7553662cf5d48cc8456cdb1b540a4888ebb"
+ },
+ "users": [
+  {
+   "user_no": 1,
+   "username": "bench_user_01",
+   "facts": [
+    {
+     "id": "bench_user_01_f00",
+     "topic": "婚姻",
+     "content": "用户比较介意异地恋",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 5,
+     "tags": [
+      "婚姻",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_01_f01",
+     "topic": "学业",
+     "content": "用户本科读的是会计专业",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 16,
+     "tags": [
+      "学业",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_01_f02",
+     "topic": "性格",
+     "content": "用户做决定的时候比较容易犹豫",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 27,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_01_f03",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 38,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_01_f04",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 49,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_01_f05",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 60,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_01_f06",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 71,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f07",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 82,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_01_f08",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 93,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_01_f09",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 104,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_01_f10",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 115,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f11",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 126,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f12",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 137,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_01_f13",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 148,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_01_f14",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 159,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f15",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 170,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f16",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 1,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_01_f17",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 12,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_01_f18",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 23,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_01_f19",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 34,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_01_f20",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 45,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 2,
+   "username": "bench_user_02",
+   "facts": [
+    {
+     "id": "bench_user_02_f00",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_02_f01",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_02_f02",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_02_f03",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_02_f04",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_02_f05",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 65,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_02_f06",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 76,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_02_f07",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 87,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_02_f08",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 98,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_02_f09",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 109,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_02_f10",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 120,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 3,
+   "username": "bench_user_03",
+   "facts": [
+    {
+     "id": "bench_user_03_f00",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 15,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f01",
+     "topic": "子女",
+     "content": "用户想给孩子报兴趣班",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 26,
+     "tags": [
+      "子女",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f02",
+     "topic": "人际",
+     "content": "用户有两三个从小到大的好朋友",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 37,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f03",
+     "topic": "兴趣",
+     "content": "用户想学一门乐器",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 48,
+     "tags": [
+      "兴趣",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f04",
+     "topic": "财运",
+     "content": "用户希望今年能存下十万元",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 59,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f05",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 70,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f06",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 81,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f07",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 92,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f08",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 103,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_03_f09",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 114,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f10",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 125,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f11",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 136,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_03_f12",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 147,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f13",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 158,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_03_f14",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 169,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_03_f15",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 0,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_03_f16",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 11,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f17",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 22,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f18",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 33,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_03_f19",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 44,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f20",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 55,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_03_f21",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 66,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 4,
+   "username": "bench_user_04",
+   "facts": [
+    {
+     "id": "bench_user_04_f00",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 20,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_04_f01",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 31,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_04_f02",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 42,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_04_f03",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 53,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_04_f04",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 64,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_04_f05",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 75,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_04_f06",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 86,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_04_f07",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 97,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_04_f08",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 108,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_04_f09",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 119,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_04_f10",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 130,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_04_f11",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 141,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 5,
+   "username": "bench_user_05",
+   "facts": [
+    {
+     "id": "bench_user_05_f00",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 25,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_05_f01",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 36,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_05_f02",
+     "topic": "婚姻",
+     "content": "用户比较介意异地恋",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 47,
+     "tags": [
+      "婚姻",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_05_f03",
+     "topic": "学业",
+     "content": "用户本科读的是会计专业",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 58,
+     "tags": [
+      "学业",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_05_f04",
+     "topic": "性格",
+     "content": "用户做决定的时候比较容易犹豫",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 69,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_05_f05",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 80,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_05_f06",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 91,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_05_f07",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 102,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_05_f08",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 113,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f09",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 124,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_05_f10",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 135,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_05_f11",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 146,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_05_f12",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 157,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f13",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 168,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f14",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 179,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_05_f15",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_05_f16",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f17",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f18",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_05_f19",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_05_f20",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 65,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_05_f21",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 76,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_05_f22",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 87,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 6,
+   "username": "bench_user_06",
+   "facts": [
+    {
+     "id": "bench_user_06_f00",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 30,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_06_f01",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 41,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_06_f02",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 52,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_06_f03",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 63,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_06_f04",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 74,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_06_f05",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 85,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_06_f06",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 96,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_06_f07",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 107,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_06_f08",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 118,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_06_f09",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 129,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_06_f10",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 140,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_06_f11",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 151,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_06_f12",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 162,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 7,
+   "username": "bench_user_07",
+   "facts": [
+    {
+     "id": "bench_user_07_f00",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 35,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f01",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 46,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_07_f02",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 57,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f03",
+     "topic": "子女",
+     "content": "用户想给孩子报兴趣班",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 68,
+     "tags": [
+      "子女",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f04",
+     "topic": "人际",
+     "content": "用户有两三个从小到大的好朋友",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 79,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f05",
+     "topic": "兴趣",
+     "content": "用户想学一门乐器",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 90,
+     "tags": [
+      "兴趣",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f06",
+     "topic": "财运",
+     "content": "用户希望今年能存下十万元",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 101,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f07",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 112,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f08",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 123,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f09",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 134,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f10",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 145,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_07_f11",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 156,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f12",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 167,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f13",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 178,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_07_f14",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 9,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f15",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 20,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_07_f16",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 31,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_07_f17",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 42,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_07_f18",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 53,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f19",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 64,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f20",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 75,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_07_f21",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 86,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f22",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 97,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_07_f23",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 108,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 8,
+   "username": "bench_user_08",
+   "facts": [
+    {
+     "id": "bench_user_08_f00",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 40,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f01",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 51,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_08_f02",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 62,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_08_f03",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 73,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f04",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 84,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_08_f05",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 95,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_08_f06",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 106,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f07",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 117,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f08",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 128,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_08_f09",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 139,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f10",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 150,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_08_f11",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 161,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_08_f12",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 172,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_08_f13",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 3,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 9,
+   "username": "bench_user_09",
+   "facts": [
+    {
+     "id": "bench_user_09_f00",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 45,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f01",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 56,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f02",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 67,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_09_f03",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 78,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f04",
+     "topic": "婚姻",
+     "content": "用户比较介意异地恋",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 89,
+     "tags": [
+      "婚姻",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_09_f05",
+     "topic": "学业",
+     "content": "用户本科读的是会计专业",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 100,
+     "tags": [
+      "学业",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_09_f06",
+     "topic": "性格",
+     "content": "用户做决定的时候比较容易犹豫",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 111,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_09_f07",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 122,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_09_f08",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 133,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f09",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 144,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_09_f10",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 155,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f11",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 166,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_09_f12",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 177,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_09_f13",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 8,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_09_f14",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 19,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f15",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 30,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f16",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 41,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f17",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 52,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f18",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 63,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f19",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 74,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f20",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 85,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_09_f21",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 96,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_09_f22",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 107,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_09_f23",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 118,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_09_f24",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 129,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 10,
+   "username": "bench_user_10",
+   "facts": [
+    {
+     "id": "bench_user_10_f00",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 50,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_10_f01",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 61,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_10_f02",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 72,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_10_f03",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 83,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_10_f04",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 94,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_10_f05",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 105,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_10_f06",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 116,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_10_f07",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 127,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_10_f08",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 138,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_10_f09",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 149,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_10_f10",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 160,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_10_f11",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 171,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_10_f12",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 2,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_10_f13",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 13,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_10_f14",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 24,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 11,
+   "username": "bench_user_11",
+   "facts": [
+    {
+     "id": "bench_user_11_f00",
+     "topic": "事业",
+     "content": "用户对现在的工作内容比较满意",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 55,
+     "tags": [
+      "事业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_11_f01",
+     "topic": "婚姻",
+     "content": "用户计划明年结婚",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 66,
+     "tags": [
+      "婚姻",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f02",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 77,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f03",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 88,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_11_f04",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 99,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f05",
+     "topic": "子女",
+     "content": "用户想给孩子报兴趣班",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 110,
+     "tags": [
+      "子女",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f06",
+     "topic": "人际",
+     "content": "用户有两三个从小到大的好朋友",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 121,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f07",
+     "topic": "兴趣",
+     "content": "用户想学一门乐器",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 132,
+     "tags": [
+      "兴趣",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f08",
+     "topic": "财运",
+     "content": "用户希望今年能存下十万元",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 143,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f09",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 154,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f10",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 165,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f11",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 176,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f12",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 7,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_11_f13",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 18,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f14",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 29,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f15",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 40,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_11_f16",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 51,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f17",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 62,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_11_f18",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 73,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_11_f19",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 84,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_11_f20",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 95,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f21",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 106,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f22",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 117,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_11_f23",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 128,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f24",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 139,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_11_f25",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 150,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 12,
+   "username": "bench_user_12",
+   "facts": [
+    {
+     "id": "bench_user_12_f00",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 60,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_12_f01",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 71,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_12_f02",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 82,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f03",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 93,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_12_f04",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 104,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_12_f05",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 115,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f06",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 126,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_12_f07",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 137,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_12_f08",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 148,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f09",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 159,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f10",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 170,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_12_f11",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 1,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f12",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 12,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_12_f13",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 23,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_12_f14",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 34,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_12_f15",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 45,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 13,
+   "username": "bench_user_13",
+   "facts": [
+    {
+     "id": "bench_user_13_f00",
+     "topic": "迁移",
+     "content": "用户不喜欢频繁搬家",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 65,
+     "tags": [
+      "迁移",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_13_f01",
+     "topic": "创业",
+     "content": "用户希望三年内自己当老板",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 76,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_13_f02",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 87,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f03",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 98,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f04",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 109,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_13_f05",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 120,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f06",
+     "topic": "婚姻",
+     "content": "用户比较介意异地恋",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 131,
+     "tags": [
+      "婚姻",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_13_f07",
+     "topic": "学业",
+     "content": "用户本科读的是会计专业",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 142,
+     "tags": [
+      "学业",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_13_f08",
+     "topic": "性格",
+     "content": "用户做决定的时候比较容易犹豫",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 153,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_13_f09",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 164,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_13_f10",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 175,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f11",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 6,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_13_f12",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 17,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f13",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 28,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_13_f14",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 39,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_13_f15",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 50,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_13_f16",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 61,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f17",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 72,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f18",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 83,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f19",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 94,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f20",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 105,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f21",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 116,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f22",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 127,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_13_f23",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 138,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_13_f24",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 149,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_13_f25",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 160,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_13_f26",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 171,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 14,
+   "username": "bench_user_14",
+   "facts": [
+    {
+     "id": "bench_user_14_f00",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 70,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_14_f01",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 81,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_14_f02",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 92,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_14_f03",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 103,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_14_f04",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 114,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_14_f05",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 125,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_14_f06",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 136,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_14_f07",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 147,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_14_f08",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 158,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_14_f09",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 169,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_14_f10",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 0,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_14_f11",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 11,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_14_f12",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 22,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_14_f13",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 33,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_14_f14",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 44,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_14_f15",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 55,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_14_f16",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 66,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 15,
+   "username": "bench_user_15",
+   "facts": [
+    {
+     "id": "bench_user_15_f00",
+     "topic": "人际",
+     "content": "用户在公司的人际关系比较融洽",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 75,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f01",
+     "topic": "心态",
+     "content": "用户最近情绪比较低落",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 86,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f02",
+     "topic": "事业",
+     "content": "用户对现在的工作内容比较满意",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 97,
+     "tags": [
+      "事业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_15_f03",
+     "topic": "婚姻",
+     "content": "用户计划明年结婚",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 108,
+     "tags": [
+      "婚姻",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f04",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 119,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f05",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 130,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_15_f06",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 141,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f07",
+     "topic": "子女",
+     "content": "用户想给孩子报兴趣班",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 152,
+     "tags": [
+      "子女",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f08",
+     "topic": "人际",
+     "content": "用户有两三个从小到大的好朋友",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 163,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f09",
+     "topic": "兴趣",
+     "content": "用户想学一门乐器",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 174,
+     "tags": [
+      "兴趣",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f10",
+     "topic": "财运",
+     "content": "用户希望今年能存下十万元",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 5,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f11",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 16,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f12",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 27,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f13",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 38,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f14",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 49,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_15_f15",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 60,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f16",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 71,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f17",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 82,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_15_f18",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 93,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f19",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 104,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_15_f20",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 115,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_15_f21",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 126,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_15_f22",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 137,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f23",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 148,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f24",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 159,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_15_f25",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 170,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f26",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 1,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_15_f27",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 12,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 16,
+   "username": "bench_user_16",
+   "facts": [
+    {
+     "id": "bench_user_16_f00",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 80,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_16_f01",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 91,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_16_f02",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 102,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_16_f03",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 113,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_16_f04",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 124,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f05",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 135,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_16_f06",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 146,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_16_f07",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 157,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f08",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 168,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_16_f09",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 179,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_16_f10",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f11",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f12",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_16_f13",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f14",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_16_f15",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 65,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_16_f16",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 76,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_16_f17",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 87,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 17,
+   "username": "bench_user_17",
+   "facts": [
+    {
+     "id": "bench_user_17_f00",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 85,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f01",
+     "topic": "学业",
+     "content": "用户准备考公务员",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 96,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_17_f02",
+     "topic": "迁移",
+     "content": "用户不喜欢频繁搬家",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 107,
+     "tags": [
+      "迁移",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_17_f03",
+     "topic": "创业",
+     "content": "用户希望三年内自己当老板",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 118,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_17_f04",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 129,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f05",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 140,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f06",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 151,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_17_f07",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 162,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f08",
+     "topic": "婚姻",
+     "content": "用户比较介意异地恋",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 173,
+     "tags": [
+      "婚姻",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_17_f09",
+     "topic": "学业",
+     "content": "用户本科读的是会计专业",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 4,
+     "tags": [
+      "学业",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_17_f10",
+     "topic": "性格",
+     "content": "用户做决定的时候比较容易犹豫",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 15,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_17_f11",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 26,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_17_f12",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 37,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f13",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 48,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_17_f14",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 59,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f15",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 70,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_17_f16",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 81,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_17_f17",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 92,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_17_f18",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 103,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f19",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 114,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f20",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 125,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f21",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 136,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f22",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 147,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f23",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 158,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f24",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 169,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_17_f25",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 0,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_17_f26",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 11,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_17_f27",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 22,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_17_f28",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 33,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 18,
+   "username": "bench_user_18",
+   "facts": [
+    {
+     "id": "bench_user_18_f00",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 90,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_18_f01",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 101,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f02",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 112,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f03",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 123,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_18_f04",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 134,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_18_f05",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 145,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f06",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 156,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f07",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 167,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f08",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 178,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_18_f09",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 9,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_18_f10",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 20,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_18_f11",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 31,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_18_f12",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 42,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_18_f13",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 53,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_18_f14",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 64,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_18_f15",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 75,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_18_f16",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 86,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_18_f17",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 97,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_18_f18",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 108,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 19,
+   "username": "bench_user_19",
+   "facts": [
+    {
+     "id": "bench_user_19_f00",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 95,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_19_f01",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 106,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_19_f02",
+     "topic": "人际",
+     "content": "用户在公司的人际关系比较融洽",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 117,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f03",
+     "topic": "心态",
+     "content": "用户最近情绪比较低落",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 128,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f04",
+     "topic": "事业",
+     "content": "用户对现在的工作内容比较满意",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 139,
+     "tags": [
+      "事业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_19_f05",
+     "topic": "婚姻",
+     "content": "用户计划明年结婚",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 150,
+     "tags": [
+      "婚姻",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f06",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 161,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f07",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 172,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_19_f08",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 3,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f09",
+     "topic": "子女",
+     "content": "用户想给孩子报兴趣班",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 14,
+     "tags": [
+      "子女",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f10",
+     "topic": "人际",
+     "content": "用户有两三个从小到大的好朋友",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 25,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f11",
+     "topic": "兴趣",
+     "content": "用户想学一门乐器",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 36,
+     "tags": [
+      "兴趣",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f12",
+     "topic": "财运",
+     "content": "用户希望今年能存下十万元",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 47,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f13",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 58,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f14",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 69,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f15",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 80,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f16",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 91,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_19_f17",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 102,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f18",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 113,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f19",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 124,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_19_f20",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 135,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f21",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 146,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_19_f22",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 157,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_19_f23",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 168,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_19_f24",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 179,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f25",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f26",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_19_f27",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f28",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_19_f29",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 20,
+   "username": "bench_user_20",
+   "facts": [
+    {
+     "id": "bench_user_20_f00",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 100,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_20_f01",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 111,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_20_f02",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 122,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_20_f03",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 133,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_20_f04",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 144,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_20_f05",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 155,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_20_f06",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 166,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f07",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 177,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_20_f08",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 8,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_20_f09",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 19,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f10",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 30,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_20_f11",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 41,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_20_f12",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 52,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f13",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 63,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f14",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 74,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_20_f15",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 85,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f16",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 96,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_20_f17",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 107,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_20_f18",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 118,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_20_f19",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 129,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 21,
+   "username": "bench_user_21",
+   "facts": [
+    {
+     "id": "bench_user_21_f00",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 105,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_21_f01",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 116,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_21_f02",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 127,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_21_f03",
+     "topic": "学业",
+     "content": "用户准备考公务员",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 138,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_21_f04",
+     "topic": "迁移",
+     "content": "用户不喜欢频繁搬家",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 149,
+     "tags": [
+      "迁移",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_21_f05",
+     "topic": "创业",
+     "content": "用户希望三年内自己当老板",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 160,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_21_f06",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 171,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_21_f07",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 2,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_21_f08",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 13,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_21_f09",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 24,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 22,
+   "username": "bench_user_22",
+   "facts": [
+    {
+     "id": "bench_user_22_f00",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 110,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_22_f01",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 121,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_22_f02",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 132,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_22_f03",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 143,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f04",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 154,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f05",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 165,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_22_f06",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 176,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_22_f07",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 7,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f08",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 18,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f09",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 29,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f10",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 40,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_22_f11",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 51,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_22_f12",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 62,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_22_f13",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 73,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_22_f14",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 84,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_22_f15",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 95,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_22_f16",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 106,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_22_f17",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 117,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_22_f18",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 128,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_22_f19",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 139,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_22_f20",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 150,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 23,
+   "username": "bench_user_23",
+   "facts": [
+    {
+     "id": "bench_user_23_f00",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 115,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_23_f01",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 126,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_23_f02",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 137,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_23_f03",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 148,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_23_f04",
+     "topic": "人际",
+     "content": "用户在公司的人际关系比较融洽",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 159,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_23_f05",
+     "topic": "心态",
+     "content": "用户最近情绪比较低落",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 170,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_23_f06",
+     "topic": "事业",
+     "content": "用户对现在的工作内容比较满意",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 1,
+     "tags": [
+      "事业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_23_f07",
+     "topic": "婚姻",
+     "content": "用户计划明年结婚",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 12,
+     "tags": [
+      "婚姻",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_23_f08",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 23,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_23_f09",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 34,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_23_f10",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 45,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 24,
+   "username": "bench_user_24",
+   "facts": [
+    {
+     "id": "bench_user_24_f00",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 120,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f01",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 131,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_24_f02",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 142,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_24_f03",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 153,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f04",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 164,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_24_f05",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 175,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f06",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 6,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_24_f07",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 17,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f08",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 28,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f09",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 39,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_24_f10",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 50,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_24_f11",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 61,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f12",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 72,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_24_f13",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 83,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_24_f14",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 94,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f15",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 105,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f16",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 116,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f17",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 127,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f18",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 138,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_24_f19",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 149,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_24_f20",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 160,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_24_f21",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 171,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 25,
+   "username": "bench_user_25",
+   "facts": [
+    {
+     "id": "bench_user_25_f00",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 125,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_25_f01",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 136,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_25_f02",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 147,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_25_f03",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 158,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_25_f04",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 169,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_25_f05",
+     "topic": "学业",
+     "content": "用户准备考公务员",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 0,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_25_f06",
+     "topic": "迁移",
+     "content": "用户不喜欢频繁搬家",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 11,
+     "tags": [
+      "迁移",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_25_f07",
+     "topic": "创业",
+     "content": "用户希望三年内自己当老板",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 22,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_25_f08",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 33,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_25_f09",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 44,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_25_f10",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 55,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_25_f11",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 66,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 26,
+   "username": "bench_user_26",
+   "facts": [
+    {
+     "id": "bench_user_26_f00",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 130,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_26_f01",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 141,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f02",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 152,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_26_f03",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 163,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_26_f04",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 174,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_26_f05",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 5,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f06",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 16,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f07",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 27,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_26_f08",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 38,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_26_f09",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 49,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f10",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 60,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f11",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 71,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f12",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 82,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_26_f13",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 93,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_26_f14",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 104,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_26_f15",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 115,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_26_f16",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 126,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_26_f17",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 137,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_26_f18",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 148,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_26_f19",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 159,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_26_f20",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 170,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_26_f21",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 1,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_26_f22",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 12,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 27,
+   "username": "bench_user_27",
+   "facts": [
+    {
+     "id": "bench_user_27_f00",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 135,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_27_f01",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 146,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_27_f02",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 157,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_27_f03",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 168,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_27_f04",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 179,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_27_f05",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_27_f06",
+     "topic": "人际",
+     "content": "用户在公司的人际关系比较融洽",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_27_f07",
+     "topic": "心态",
+     "content": "用户最近情绪比较低落",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_27_f08",
+     "topic": "事业",
+     "content": "用户对现在的工作内容比较满意",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "事业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_27_f09",
+     "topic": "婚姻",
+     "content": "用户计划明年结婚",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "婚姻",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_27_f10",
+     "topic": "学业",
+     "content": "用户正在准备考研",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 65,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_27_f11",
+     "topic": "性格",
+     "content": "用户性格偏内向，不喜欢应酬",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 76,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_27_f12",
+     "topic": "创业",
+     "content": "用户担心创业的资金压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 87,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 28,
+   "username": "bench_user_28",
+   "facts": [
+    {
+     "id": "bench_user_28_f00",
+     "topic": "婚姻",
+     "content": "用户的父母一直在催婚",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 140,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f01",
+     "topic": "学业",
+     "content": "用户的英语基础比较薄弱",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 151,
+     "tags": [
+      "学业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f02",
+     "topic": "性格",
+     "content": "用户在人多场合会紧张",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 162,
+     "tags": [
+      "性格",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f03",
+     "topic": "出行",
+     "content": "用户不喜欢坐飞机",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 173,
+     "tags": [
+      "出行",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_28_f04",
+     "topic": "房产",
+     "content": "用户正在考虑买首套房",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 4,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_28_f05",
+     "topic": "人际",
+     "content": "用户最近和同事有过一次争执",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 15,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f06",
+     "topic": "兴趣",
+     "content": "用户对摄影很感兴趣",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 26,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_28_f07",
+     "topic": "财运",
+     "content": "用户有一笔三年期的定期存款",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 37,
+     "tags": [
+      "财运",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f08",
+     "topic": "健康",
+     "content": "用户长期熬夜到凌晨两点",
+     "fact_type": "habit",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 48,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_28_f09",
+     "topic": "迁移",
+     "content": "用户 2024 年从杭州搬到了深圳",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 59,
+     "tags": [
+      "迁移",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f10",
+     "topic": "性格",
+     "content": "用户对细节比较敏感",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 70,
+     "tags": [
+      "性格",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f11",
+     "topic": "出行",
+     "content": "用户想带父母一起旅游",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 81,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_28_f12",
+     "topic": "房产",
+     "content": "用户希望在工作城市买房定居",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 92,
+     "tags": [
+      "房产",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_28_f13",
+     "topic": "心态",
+     "content": "用户容易焦虑未来",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 103,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f14",
+     "topic": "事业",
+     "content": "用户目前在一家互联网公司做产品经理",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 114,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_28_f15",
+     "topic": "财运",
+     "content": "用户想学习基金定投",
+     "fact_type": "goal",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 125,
+     "tags": [
+      "财运",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_28_f16",
+     "topic": "健康",
+     "content": "用户对花粉过敏",
+     "fact_type": "identity",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 136,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f17",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 147,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f18",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 158,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f19",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 169,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f20",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 0,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_28_f21",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 11,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_28_f22",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 22,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_28_f23",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 33,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 29,
+   "username": "bench_user_29",
+   "facts": [
+    {
+     "id": "bench_user_29_f00",
+     "topic": "迁移",
+     "content": "用户现在在北京租房住",
+     "fact_type": "identity",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 145,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_29_f01",
+     "topic": "创业",
+     "content": "用户和朋友合伙做过小生意",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 156,
+     "tags": [
+      "创业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_29_f02",
+     "topic": "子女",
+     "content": "用户已婚并有一个三岁的孩子",
+     "fact_type": "identity",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 167,
+     "tags": [
+      "子女",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_29_f03",
+     "topic": "房产",
+     "content": "用户觉得现在房价还比较高",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 178,
+     "tags": [
+      "房产",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_29_f04",
+     "topic": "心态",
+     "content": "用户对自己的要求比较高",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 9,
+     "tags": [
+      "心态",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_29_f05",
+     "topic": "事业",
+     "content": "用户在现在的公司已经工作了三年",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 20,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_29_f06",
+     "topic": "婚姻",
+     "content": "用户有一个交往了两年的对象",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 31,
+     "tags": [
+      "婚姻",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_29_f07",
+     "topic": "学业",
+     "content": "用户准备考公务员",
+     "fact_type": "goal",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 42,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_29_f08",
+     "topic": "迁移",
+     "content": "用户不喜欢频繁搬家",
+     "fact_type": "preference",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 53,
+     "tags": [
+      "迁移",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_29_f09",
+     "topic": "创业",
+     "content": "用户希望三年内自己当老板",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 64,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_29_f10",
+     "topic": "子女",
+     "content": "用户的孩子明年要上小学",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 75,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_29_f11",
+     "topic": "人际",
+     "content": "用户不太擅长和领导沟通",
+     "fact_type": "event",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 86,
+     "tags": [
+      "人际",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_29_f12",
+     "topic": "兴趣",
+     "content": "用户喜欢看悬疑小说",
+     "fact_type": "preference",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 97,
+     "tags": [
+      "兴趣",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_29_f13",
+     "topic": "事业",
+     "content": "用户担心所在行业的裁员风险",
+     "fact_type": "event",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 108,
+     "tags": [
+      "事业",
+      "event"
+     ]
+    }
+   ]
+  },
+  {
+   "user_no": 30,
+   "username": "bench_user_30",
+   "facts": [
+    {
+     "id": "bench_user_30_f00",
+     "topic": "出行",
+     "content": "用户今年计划去日本旅行",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 150,
+     "tags": [
+      "出行",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_30_f01",
+     "topic": "子女",
+     "content": "用户担心孩子的性格太内向",
+     "fact_type": "event",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 161,
+     "tags": [
+      "子女",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f02",
+     "topic": "人际",
+     "content": "用户不喜欢参加团建活动",
+     "fact_type": "preference",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 172,
+     "tags": [
+      "人际",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_30_f03",
+     "topic": "兴趣",
+     "content": "用户周末喜欢去爬山",
+     "fact_type": "habit",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 3,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f04",
+     "topic": "财运",
+     "content": "用户对高风险投资比较保守",
+     "fact_type": "preference",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 14,
+     "tags": [
+      "财运",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_30_f05",
+     "topic": "健康",
+     "content": "用户有慢性胃炎，吃不了辣",
+     "fact_type": "identity",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 25,
+     "tags": [
+      "健康",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_30_f06",
+     "topic": "学业",
+     "content": "用户想考注册会计师证书",
+     "fact_type": "goal",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 36,
+     "tags": [
+      "学业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_30_f07",
+     "topic": "性格",
+     "content": "用户喜欢独自思考问题",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 47,
+     "tags": [
+      "性格",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f08",
+     "topic": "出行",
+     "content": "用户每年至少出远门一次",
+     "fact_type": "habit",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 58,
+     "tags": [
+      "出行",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f09",
+     "topic": "房产",
+     "content": "用户目前没有房贷压力",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 69,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f10",
+     "topic": "心态",
+     "content": "用户最近的压力比较大",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 80,
+     "tags": [
+      "心态",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f11",
+     "topic": "兴趣",
+     "content": "用户会做饭，并且享受做饭",
+     "fact_type": "habit",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 91,
+     "tags": [
+      "兴趣",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f12",
+     "topic": "财运",
+     "content": "用户每个月都会固定记账",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 102,
+     "tags": [
+      "财运",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f13",
+     "topic": "健康",
+     "content": "用户每周跑步三次",
+     "fact_type": "habit",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 113,
+     "tags": [
+      "健康",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f14",
+     "topic": "迁移",
+     "content": "用户的老家在四川成都",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 124,
+     "tags": [
+      "迁移",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_30_f15",
+     "topic": "创业",
+     "content": "用户打算开一家咖啡店",
+     "fact_type": "goal",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 135,
+     "tags": [
+      "创业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_30_f16",
+     "topic": "出行",
+     "content": "用户去过云南三次",
+     "fact_type": "event",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 146,
+     "tags": [
+      "出行",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f17",
+     "topic": "房产",
+     "content": "用户的家庭能提供一部分首付",
+     "fact_type": "event",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 157,
+     "tags": [
+      "房产",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f18",
+     "topic": "心态",
+     "content": "用户会通过冥想来放松",
+     "fact_type": "habit",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 168,
+     "tags": [
+      "心态",
+      "habit"
+     ]
+    },
+    {
+     "id": "bench_user_30_f19",
+     "topic": "事业",
+     "content": "用户想从技术岗转到管理岗",
+     "fact_type": "goal",
+     "importance": 0.9,
+     "trust": 0.7,
+     "age_days": 179,
+     "tags": [
+      "事业",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_30_f20",
+     "topic": "婚姻",
+     "content": "用户目前单身",
+     "fact_type": "identity",
+     "importance": 0.8,
+     "trust": 0.75,
+     "age_days": 10,
+     "tags": [
+      "婚姻",
+      "identity"
+     ]
+    },
+    {
+     "id": "bench_user_30_f21",
+     "topic": "健康",
+     "content": "用户最近的睡眠质量不太好",
+     "fact_type": "event",
+     "importance": 0.7,
+     "trust": 0.7,
+     "age_days": 21,
+     "tags": [
+      "健康",
+      "event"
+     ]
+    },
+    {
+     "id": "bench_user_30_f22",
+     "topic": "迁移",
+     "content": "用户想在一线城市长期定居",
+     "fact_type": "goal",
+     "importance": 0.6,
+     "trust": 0.75,
+     "age_days": 32,
+     "tags": [
+      "迁移",
+      "goal"
+     ]
+    },
+    {
+     "id": "bench_user_30_f23",
+     "topic": "创业",
+     "content": "用户对餐饮行业比较感兴趣",
+     "fact_type": "preference",
+     "importance": 0.5,
+     "trust": 0.7,
+     "age_days": 43,
+     "tags": [
+      "创业",
+      "preference"
+     ]
+    },
+    {
+     "id": "bench_user_30_f24",
+     "topic": "子女",
+     "content": "用户很在意孩子的教育",
+     "fact_type": "preference",
+     "importance": 0.3,
+     "trust": 0.75,
+     "age_days": 54,
+     "tags": [
+      "子女",
+      "preference"
+     ]
+    }
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "q001",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "事业",
+   "bucket": "short",
+   "question": "事业",
+   "expected_fact_ids": [
+    "bench_user_02_f05"
+   ]
+  },
+  {
+   "id": "q002",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "事业",
+   "bucket": "medium",
+   "question": "我的事业运势",
+   "expected_fact_ids": [
+    "bench_user_03_f19"
+   ]
+  },
+  {
+   "id": "q003",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "事业",
+   "bucket": "long",
+   "question": "我的事业在未来三年会如何发展",
+   "expected_fact_ids": [
+    "bench_user_04_f02",
+    "bench_user_04_f10"
+   ]
+  },
+  {
+   "id": "q004",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "事业",
+   "bucket": "medium",
+   "question": "事业能顺利吗",
+   "expected_fact_ids": [
+    "bench_user_04_f02",
+    "bench_user_04_f10"
+   ]
+  },
+  {
+   "id": "q005",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "事业",
+   "bucket": "long",
+   "question": "我该往哪个方向发展比较好",
+   "expected_fact_ids": [
+    "bench_user_05_f01"
+   ]
+  },
+  {
+   "id": "q006",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "财运",
+   "bucket": "short",
+   "question": "财运",
+   "expected_fact_ids": [
+    "bench_user_01_f07",
+    "bench_user_01_f15"
+   ]
+  },
+  {
+   "id": "q007",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "财运",
+   "bucket": "medium",
+   "question": "我的财运怎么样",
+   "expected_fact_ids": [
+    "bench_user_01_f07",
+    "bench_user_01_f15"
+   ]
+  },
+  {
+   "id": "q008",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "财运",
+   "bucket": "long",
+   "question": "我今年财运到底怎么样啊",
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ]
+  },
+  {
+   "id": "q009",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "财运",
+   "bucket": "medium",
+   "question": "今年能存下钱吗",
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ]
+  },
+  {
+   "id": "q010",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "财运",
+   "bucket": "long",
+   "question": "我今年能不能攒下钱来",
+   "expected_fact_ids": [
+    "bench_user_03_f04",
+    "bench_user_03_f12"
+   ]
+  },
+  {
+   "id": "q011",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "婚姻",
+   "bucket": "short",
+   "question": "婚姻",
+   "expected_fact_ids": [
+    "bench_user_01_f00"
+   ]
+  },
+  {
+   "id": "q012",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "婚姻",
+   "bucket": "medium",
+   "question": "什么时候结婚",
+   "expected_fact_ids": [
+    "bench_user_02_f06"
+   ]
+  },
+  {
+   "id": "q013",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "婚姻",
+   "bucket": "long",
+   "question": "我什么时候能够结婚生子呢",
+   "expected_fact_ids": [
+    "bench_user_03_f05"
+   ]
+  },
+  {
+   "id": "q014",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "婚姻",
+   "bucket": "medium",
+   "question": "感情运势如何",
+   "expected_fact_ids": [
+    "bench_user_04_f11"
+   ]
+  },
+  {
+   "id": "q015",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "婚姻",
+   "bucket": "long",
+   "question": "我的感情运势今年会怎么走",
+   "expected_fact_ids": [
+    "bench_user_05_f02"
+   ]
+  },
+  {
+   "id": "q016",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "健康",
+   "bucket": "short",
+   "question": "健康",
+   "expected_fact_ids": [
+    "bench_user_01_f08",
+    "bench_user_01_f16"
+   ]
+  },
+  {
+   "id": "q017",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "健康",
+   "bucket": "medium",
+   "question": "我的健康状况",
+   "expected_fact_ids": [
+    "bench_user_01_f08",
+    "bench_user_01_f16"
+   ]
+  },
+  {
+   "id": "q018",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "健康",
+   "bucket": "long",
+   "question": "请问我今年的健康状况怎么样",
+   "expected_fact_ids": [
+    "bench_user_02_f07"
+   ]
+  },
+  {
+   "id": "q019",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "健康",
+   "bucket": "medium",
+   "question": "身体要注意什么",
+   "expected_fact_ids": [
+    "bench_user_03_f13",
+    "bench_user_03_f21"
+   ]
+  },
+  {
+   "id": "q020",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "健康",
+   "bucket": "long",
+   "question": "我平时应该注意哪些身体问题",
+   "expected_fact_ids": [
+    "bench_user_03_f13",
+    "bench_user_03_f21"
+   ]
+  },
+  {
+   "id": "q021",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "学业",
+   "bucket": "short",
+   "question": "学业",
+   "expected_fact_ids": [
+    "bench_user_01_f01",
+    "bench_user_01_f09"
+   ]
+  },
+  {
+   "id": "q022",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "学业",
+   "bucket": "medium",
+   "question": "要不要考研",
+   "expected_fact_ids": [
+    "bench_user_01_f01",
+    "bench_user_01_f09"
+   ]
+  },
+  {
+   "id": "q023",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "学业",
+   "bucket": "long",
+   "question": "我想知道我能不能考上公务员",
+   "expected_fact_ids": [
+    "bench_user_03_f06"
+   ]
+  },
+  {
+   "id": "q024",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "学业",
+   "bucket": "medium",
+   "question": "学业能进步吗",
+   "expected_fact_ids": [
+    "bench_user_05_f03",
+    "bench_user_05_f11"
+   ]
+  },
+  {
+   "id": "q025",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "学业",
+   "bucket": "long",
+   "question": "我继续读书深造合适吗",
+   "expected_fact_ids": [
+    "bench_user_05_f03",
+    "bench_user_05_f11"
+   ]
+  },
+  {
+   "id": "q026",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "迁移",
+   "bucket": "short",
+   "question": "搬家",
+   "expected_fact_ids": [
+    "bench_user_01_f17"
+   ]
+  },
+  {
+   "id": "q027",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "迁移",
+   "bucket": "medium",
+   "question": "要不要换城市",
+   "expected_fact_ids": [
+    "bench_user_02_f00",
+    "bench_user_02_f08"
+   ]
+  },
+  {
+   "id": "q028",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "迁移",
+   "bucket": "long",
+   "question": "我搬到深圳之后事业会变好吗",
+   "expected_fact_ids": [
+    "bench_user_02_f00",
+    "bench_user_02_f08"
+   ]
+  },
+  {
+   "id": "q029",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "迁移",
+   "bucket": "medium",
+   "question": "适合长期定居吗",
+   "expected_fact_ids": [
+    "bench_user_03_f14"
+   ]
+  },
+  {
+   "id": "q030",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "迁移",
+   "bucket": "long",
+   "question": "我应该留在现在的城市还是回老家",
+   "expected_fact_ids": [
+    "bench_user_04_f05"
+   ]
+  },
+  {
+   "id": "q031",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "性格",
+   "bucket": "short",
+   "question": "性格",
+   "expected_fact_ids": [
+    "bench_user_01_f02",
+    "bench_user_01_f10"
+   ]
+  },
+  {
+   "id": "q032",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "性格",
+   "bucket": "medium",
+   "question": "我适合做什么工作",
+   "expected_fact_ids": [
+    "bench_user_01_f02",
+    "bench_user_01_f10"
+   ]
+  },
+  {
+   "id": "q033",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "性格",
+   "bucket": "long",
+   "question": "我这种性格适合做什么样的工作",
+   "expected_fact_ids": [
+    "bench_user_03_f07",
+    "bench_user_03_f15"
+   ]
+  },
+  {
+   "id": "q034",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "性格",
+   "bucket": "medium",
+   "question": "我的性格怎么样",
+   "expected_fact_ids": [
+    "bench_user_03_f07",
+    "bench_user_03_f15"
+   ]
+  },
+  {
+   "id": "q035",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "性格",
+   "bucket": "long",
+   "question": "我该怎么发挥自己性格上的优势",
+   "expected_fact_ids": [
+    "bench_user_05_f04",
+    "bench_user_05_f12"
+   ]
+  },
+  {
+   "id": "q036",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "创业",
+   "bucket": "short",
+   "question": "创业",
+   "expected_fact_ids": [
+    "bench_user_01_f18"
+   ]
+  },
+  {
+   "id": "q037",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "创业",
+   "bucket": "medium",
+   "question": "适合创业吗",
+   "expected_fact_ids": [
+    "bench_user_02_f01",
+    "bench_user_02_f09"
+   ]
+  },
+  {
+   "id": "q038",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "创业",
+   "bucket": "long",
+   "question": "我适不适合在本地创业做生意",
+   "expected_fact_ids": [
+    "bench_user_02_f01",
+    "bench_user_02_f09"
+   ]
+  },
+  {
+   "id": "q039",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "创业",
+   "bucket": "medium",
+   "question": "开店能赚钱吗",
+   "expected_fact_ids": [
+    "bench_user_03_f00"
+   ]
+  },
+  {
+   "id": "q040",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "创业",
+   "bucket": "long",
+   "question": "我现在开店做生意能赚钱吗",
+   "expected_fact_ids": [
+    "bench_user_04_f06"
+   ]
+  },
+  {
+   "id": "q041",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "出行",
+   "bucket": "short",
+   "question": "出行",
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ]
+  },
+  {
+   "id": "q042",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "出行",
+   "bucket": "medium",
+   "question": "我适合出国吗",
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ]
+  },
+  {
+   "id": "q043",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "出行",
+   "bucket": "long",
+   "question": "我今年适合安排一次长途旅行吗",
+   "expected_fact_ids": [
+    "bench_user_01_f03",
+    "bench_user_01_f11"
+   ]
+  },
+  {
+   "id": "q044",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "出行",
+   "bucket": "medium",
+   "question": "今年能出去玩吗",
+   "expected_fact_ids": [
+    "bench_user_02_f02"
+   ]
+  },
+  {
+   "id": "q045",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "出行",
+   "bucket": "long",
+   "question": "我想带家人出去玩什么时候合适",
+   "expected_fact_ids": [
+    "bench_user_03_f08",
+    "bench_user_03_f16"
+   ]
+  },
+  {
+   "id": "q046",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "子女",
+   "bucket": "short",
+   "question": "孩子",
+   "expected_fact_ids": [
+    "bench_user_01_f04"
+   ]
+  },
+  {
+   "id": "q047",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "子女",
+   "bucket": "medium",
+   "question": "孩子学业问题",
+   "expected_fact_ids": [
+    "bench_user_02_f10"
+   ]
+  },
+  {
+   "id": "q048",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "子女",
+   "bucket": "long",
+   "question": "我家孩子以后的学业应该注意什么",
+   "expected_fact_ids": [
+    "bench_user_03_f01"
+   ]
+  },
+  {
+   "id": "q049",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "子女",
+   "bucket": "medium",
+   "question": "孩子性格怎么样",
+   "expected_fact_ids": [
+    "bench_user_04_f07"
+   ]
+  },
+  {
+   "id": "q050",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "子女",
+   "bucket": "long",
+   "question": "我该怎样培养孩子的性格和习惯",
+   "expected_fact_ids": [
+    "bench_user_05_f06"
+   ]
+  },
+  {
+   "id": "q051",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "房产",
+   "bucket": "short",
+   "question": "买房",
+   "expected_fact_ids": [
+    "bench_user_01_f12",
+    "bench_user_01_f20"
+   ]
+  },
+  {
+   "id": "q052",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "房产",
+   "bucket": "medium",
+   "question": "买房时机合适吗",
+   "expected_fact_ids": [
+    "bench_user_01_f12",
+    "bench_user_01_f20"
+   ]
+  },
+  {
+   "id": "q053",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "房产",
+   "bucket": "long",
+   "question": "我这两年在哪个城市买房比较合适",
+   "expected_fact_ids": [
+    "bench_user_02_f03"
+   ]
+  },
+  {
+   "id": "q054",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "房产",
+   "bucket": "medium",
+   "question": "今年适合买房吗",
+   "expected_fact_ids": [
+    "bench_user_03_f09",
+    "bench_user_03_f17"
+   ]
+  },
+  {
+   "id": "q055",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "房产",
+   "bucket": "long",
+   "question": "我现在出手买房会不会有压力",
+   "expected_fact_ids": [
+    "bench_user_03_f09",
+    "bench_user_03_f17"
+   ]
+  },
+  {
+   "id": "q056",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "人际",
+   "bucket": "short",
+   "question": "人际",
+   "expected_fact_ids": [
+    "bench_user_01_f05"
+   ]
+  },
+  {
+   "id": "q057",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "人际",
+   "bucket": "medium",
+   "question": "我的人缘怎么样",
+   "expected_fact_ids": [
+    "bench_user_03_f02",
+    "bench_user_03_f10"
+   ]
+  },
+  {
+   "id": "q058",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "人际",
+   "bucket": "long",
+   "question": "我在职场里的人际关系会顺利吗",
+   "expected_fact_ids": [
+    "bench_user_03_f02",
+    "bench_user_03_f10"
+   ]
+  },
+  {
+   "id": "q059",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "人际",
+   "bucket": "medium",
+   "question": "和同事关系如何",
+   "expected_fact_ids": [
+    "bench_user_05_f07"
+   ]
+  },
+  {
+   "id": "q060",
+   "user_no": 7,
+   "username": "bench_user_07",
+   "topic": "人际",
+   "bucket": "long",
+   "question": "我该怎样处理和领导之间的沟通",
+   "expected_fact_ids": [
+    "bench_user_07_f04",
+    "bench_user_07_f12"
+   ]
+  },
+  {
+   "id": "q061",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "心态",
+   "bucket": "short",
+   "question": "心态",
+   "expected_fact_ids": [
+    "bench_user_01_f13"
+   ]
+  },
+  {
+   "id": "q062",
+   "user_no": 2,
+   "username": "bench_user_02",
+   "topic": "心态",
+   "bucket": "medium",
+   "question": "我最近状态如何",
+   "expected_fact_ids": [
+    "bench_user_02_f04"
+   ]
+  },
+  {
+   "id": "q063",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "心态",
+   "bucket": "long",
+   "question": "我最近的心态和状态需要注意什么",
+   "expected_fact_ids": [
+    "bench_user_03_f18"
+   ]
+  },
+  {
+   "id": "q064",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "心态",
+   "bucket": "medium",
+   "question": "压力大怎么办",
+   "expected_fact_ids": [
+    "bench_user_04_f01",
+    "bench_user_04_f09"
+   ]
+  },
+  {
+   "id": "q065",
+   "user_no": 4,
+   "username": "bench_user_04",
+   "topic": "心态",
+   "bucket": "long",
+   "question": "我该怎么调整最近焦虑的状态",
+   "expected_fact_ids": [
+    "bench_user_04_f01",
+    "bench_user_04_f09"
+   ]
+  },
+  {
+   "id": "q066",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "兴趣",
+   "bucket": "short",
+   "question": "爱好",
+   "expected_fact_ids": [
+    "bench_user_01_f06",
+    "bench_user_01_f14"
+   ]
+  },
+  {
+   "id": "q067",
+   "user_no": 1,
+   "username": "bench_user_01",
+   "topic": "兴趣",
+   "bucket": "medium",
+   "question": "我适合学什么",
+   "expected_fact_ids": [
+    "bench_user_01_f06",
+    "bench_user_01_f14"
+   ]
+  },
+  {
+   "id": "q068",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "兴趣",
+   "bucket": "long",
+   "question": "我适合培养一门什么样的兴趣爱好",
+   "expected_fact_ids": [
+    "bench_user_03_f03",
+    "bench_user_03_f11"
+   ]
+  },
+  {
+   "id": "q069",
+   "user_no": 3,
+   "username": "bench_user_03",
+   "topic": "兴趣",
+   "bucket": "medium",
+   "question": "有什么爱好适合我",
+   "expected_fact_ids": [
+    "bench_user_03_f03",
+    "bench_user_03_f11"
+   ]
+  },
+  {
+   "id": "q070",
+   "user_no": 5,
+   "username": "bench_user_05",
+   "topic": "兴趣",
+   "bucket": "long",
+   "question": "我在业余时间适合做点什么好",
+   "expected_fact_ids": [
+    "bench_user_05_f00",
+    "bench_user_05_f08"
+   ]
+  }
+ ]
+}
