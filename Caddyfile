@@ -1,7 +1,23 @@
 # Caddy 反向代理：自动申请/续期 Let's Encrypt HTTPS 证书
+#
+# 节113：静态资源（js/css/data/vendor/art/tarot/lenormand）改由 Caddy 用 file_server 直出，
+#       不再经 Python web 进程（此前实测约 79% 请求是静态）；其余（/api、/admin、/、index.html 等）
+#       仍反代到 web:8000。
 taichu.xyz {
     encode gzip zstd
-    reverse_proxy web:8000
+
+    # 静态资源直服：文件名尚无内容 hash → 用 1h max-age + ETag 复验（不上 immutable）。
+    # 根 /srv/static 来自 docker-compose 挂载的 frontend/public（只读）。
+    @static path /js/* /css/* /data/* /vendor/* /art/* /tarot/* /lenormand/*
+    handle @static {
+        root * /srv/static
+        file_server
+        header Cache-Control "public, max-age=3600"
+    }
+
+    handle {
+        reverse_proxy web:8000
+    }
 }
 
 # OpenClaw 接入点：公网可访问（随机子域 + 配对 token 保护），回程走 Tailscale 隧道
