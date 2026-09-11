@@ -14,7 +14,7 @@ function EmptyNote({
 }) {
   return /*#__PURE__*/React.createElement("div", {
     className: "empty-note"
-  }, name, "：", deg ? '该盘未排，相关数据缺失。' : '暂无数据。');
+  }, name, UI_COPY.chartLabels.colon, deg ? UI_COPY.chartLabels['not-ranked'] : UI_COPY.chartLabels['no-data']);
 }
 
 // —— 八字盘（最核心）——
@@ -23,34 +23,34 @@ function FourPillars({
 }) {
   if (!pillars) return /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, "四柱数据缺失");
-  const cols = [['年柱', pillars.year], ['月柱', pillars.month], ['日柱', pillars.day], ['时柱', pillars.hour]];
+  }, UI_COPY.chartLabels['bazi-missing']);
+  const cols = [[UI_COPY.chartLabels['pillar-year'], pillars.year], [UI_COPY.chartLabels['pillar-month'], pillars.month], [UI_COPY.chartLabels['pillar-day'], pillars.day], [UI_COPY.chartLabels['pillar-hour'], pillars.hour]];
   const rowDefs = [{
-    label: '天干',
+    label: UI_COPY.chartLabels['heaven-stem'],
     get: p => p && p.gan
   }, {
-    label: '地支',
+    label: UI_COPY.chartLabels['earth-branch'],
     get: p => p && p.zhi
   }, {
-    label: '干五行',
+    label: UI_COPY.chartLabels['stem-wuxing'],
     get: p => p && p.gan_wuxing
   }, {
-    label: '支五行',
+    label: UI_COPY.chartLabels['branch-wuxing'],
     get: p => p && p.zhi_wuxing
   }, {
-    label: '十神(干)',
+    label: UI_COPY.chartLabels['ten-god-stem'],
     get: p => p && p.shishen_gan
   }, {
-    label: '十神(支)',
+    label: UI_COPY.chartLabels['ten-god-branch'],
     get: p => joinArr(p && p.shishen_zhi)
   }, {
-    label: '藏干',
+    label: UI_COPY.chartLabels['hidden-stem'],
     get: p => joinArr(p && p.hide_gan && p.hide_gan.map(h => h.gan + '(' + h.shishen + ')'))
   }, {
-    label: '纳音',
+    label: UI_COPY.chartLabels.nayin,
     get: p => p && p.nayin
   }, {
-    label: '十二长生',
+    label: UI_COPY.chartLabels['twelve-longevity'],
     get: p => p && p.dish
   }];
   return /*#__PURE__*/React.createElement("div", {
@@ -87,7 +87,7 @@ function ShenshaTags({
     return /*#__PURE__*/React.createElement("span", {
       key: i,
       className: 'shensha-tag ' + cls(s),
-      title: (s.note || '') + (pillars ? ' 落:' + pillars : '')
+      title: (s.note || '') + (pillars ? UI_COPY.chartLabels['luo-prefix'] + pillars : '')
     }, s.name, pillars ? '·' + pillars : '');
   }));
 }
@@ -100,11 +100,11 @@ function DaYun({
   const q = qiYun || {};
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, "起运：", /*#__PURE__*/React.createElement("b", null, q.forward ? '顺行' : '逆行'), " · ", val(q.start, '-'), " · ", /*#__PURE__*/React.createElement("b", null, val(q.start_age, '?')), "岁起运"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['qi-yun'], /*#__PURE__*/React.createElement("b", null, q.forward ? UI_COPY.chartLabels.forward : UI_COPY.chartLabels.backward), " · ", val(q.start, UI_COPY.chartLabels.dash), " · ", /*#__PURE__*/React.createElement("b", null, val(q.start_age, '?')), UI_COPY.chartLabels['age-suffix'] + "起运"), /*#__PURE__*/React.createElement("table", {
     className: "mini-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "步"), /*#__PURE__*/React.createElement("th", null, "干支"), /*#__PURE__*/React.createElement("th", null, "起止年"), /*#__PURE__*/React.createElement("th", null, "起止岁"))), /*#__PURE__*/React.createElement("tbody", null, list.map(dy => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['dayun-step']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['dayun-ganzhi']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['dayun-year-range']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['dayun-age-range']))), /*#__PURE__*/React.createElement("tbody", null, list.map(dy => /*#__PURE__*/React.createElement("tr", {
     key: dy.index
-  }, /*#__PURE__*/React.createElement("td", null, dy.index), /*#__PURE__*/React.createElement("td", null, dy.ganzhi), /*#__PURE__*/React.createElement("td", null, dy.start_year, "–", dy.end_year), /*#__PURE__*/React.createElement("td", null, dy.age_start, "–", dy.age_end, "岁"))))));
+  }, /*#__PURE__*/React.createElement("td", null, dy.index), /*#__PURE__*/React.createElement("td", null, dy.ganzhi), /*#__PURE__*/React.createElement("td", null, dy.start_year, "–", dy.end_year), /*#__PURE__*/React.createElement("td", null, dy.age_start, "–", dy.age_end + UI_COPY.chartLabels['age-suffix']))))));
 }
 function Timeline({
   timeline
@@ -118,13 +118,13 @@ function Timeline({
     key: i
   }, /*#__PURE__*/React.createElement("div", {
     className: "tl-year"
-  }, t.year, "年", /*#__PURE__*/React.createElement("span", {
+  }, t.year + UI_COPY.chartLabels['year-suffix'], /*#__PURE__*/React.createElement("span", {
     className: "tl-age"
-  }, t.age, "岁")), /*#__PURE__*/React.createElement("div", {
+  }, t.age + UI_COPY.chartLabels['age-suffix'])), /*#__PURE__*/React.createElement("div", {
     className: "tl-ganzhi"
   }, t.liu_nian_ganzhi, /*#__PURE__*/React.createElement("span", {
     className: "tl-dy"
-  }, "大运 ", t.da_yun_ganzhi)), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['dayun-prefix'] + t.da_yun_ganzhi)), /*#__PURE__*/React.createElement("div", {
     className: "tl-events"
   }, arr(t.events).map((e, j) => /*#__PURE__*/React.createElement("span", {
     className: "tl-ev",
@@ -140,7 +140,7 @@ function BaziPlate({
     className: "daymaster"
   }, /*#__PURE__*/React.createElement("span", {
     className: "dm"
-  }, "日主：", val(bazi.day_master, '-')), /*#__PURE__*/React.createElement("span", {
+  }, UI_COPY.chartLabels['day-master'] + val(bazi.day_master, UI_COPY.chartLabels.dash)), /*#__PURE__*/React.createElement("span", {
     className: "dm-wx"
   }, val(bazi.day_master_wuxing, '')), cal.lunar && /*#__PURE__*/React.createElement("span", {
     className: "dm-wx"
@@ -151,18 +151,18 @@ function BaziPlate({
     style: {
       marginTop: 10
     }
-  }, "命宫 ", val(bazi.ming_gong), " · 身宫 ", val(bazi.shen_gong), " · 胎元 ", val(bazi.tai_yuan), " · 旬空 ", joinArr(bazi.xun_kong)), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['ming-gong'] + " " + val(bazi.ming_gong), " · " + UI_COPY.chartLabels['shen-gong'] + " " + val(bazi.shen_gong), " · " + UI_COPY.chartLabels['tai-yuan'] + " " + val(bazi.tai_yuan), " · " + UI_COPY.chartLabels['xun-kong'] + " " + joinArr(bazi.xun_kong)), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "神煞"), /*#__PURE__*/React.createElement(ShenshaTags, {
+  }, UI_COPY.chartLabels.shensha), /*#__PURE__*/React.createElement(ShenshaTags, {
     list: bazi.shensha
   }), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "大运"), /*#__PURE__*/React.createElement(DaYun, {
+  }, UI_COPY.chartLabels['da-yun']), /*#__PURE__*/React.createElement(DaYun, {
     qiYun: bazi.qi_yun,
     daYun: bazi.da_yun
   }), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "流年（近 20 年）"), /*#__PURE__*/React.createElement(Timeline, {
+  }, UI_COPY.chartLabels['liu-nian']), /*#__PURE__*/React.createElement(Timeline, {
     timeline: d.timeline_20y
   }));
 }
@@ -207,7 +207,7 @@ function ZiweiWheel({
     y: cy - 8,
     textAnchor: "middle",
     className: "zw-center"
-  }, "命宫 ", val(soulPalace)), /*#__PURE__*/React.createElement("text", {
+  }, UI_COPY.chartLabels['ming-gong'] + " " + val(soulPalace)), /*#__PURE__*/React.createElement("text", {
     x: cx,
     y: cy + 12,
     textAnchor: "middle",
@@ -221,11 +221,11 @@ function ZiweiPlate({
   const z = d.ziwei || {};
   if (!z.palaces) return /*#__PURE__*/React.createElement(EmptyNote, {
     deg: deg,
-    name: "紫微盘"
+    name: UI_COPY.chartLabels['ziwei-name']
   });
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, "五行局 ", /*#__PURE__*/React.createElement("b", null, val(z.five_elements_class)), " · 农历 ", val(z.lunar_date), " · 命宫 ", /*#__PURE__*/React.createElement("b", null, val(z.soul_palace)), " / 身宫 ", /*#__PURE__*/React.createElement("b", null, val(z.body_palace)), " · 命主 ", val(z.soul), " / 身主 ", val(z.body)), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['five-elements-bureau'] + " ", /*#__PURE__*/React.createElement("b", null, val(z.five_elements_class)), UI_COPY.chartLabels['lunar-prefix'] + val(z.lunar_date), " · " + UI_COPY.chartLabels['ming-gong'] + " ", /*#__PURE__*/React.createElement("b", null, val(z.soul_palace)), " / " + UI_COPY.chartLabels['shen-gong'] + " ", /*#__PURE__*/React.createElement("b", null, val(z.body_palace)), " · 命主 ", val(z.soul), " / 身主 ", val(z.body)), /*#__PURE__*/React.createElement("div", {
     className: "ziwei-wrap"
   }, /*#__PURE__*/React.createElement(ZiweiWheel, {
     palaces: z.palaces,
@@ -240,7 +240,7 @@ function ZiweiPlate({
     className: "pc-name"
   }, p.name, p.is_body_palace && /*#__PURE__*/React.createElement("span", {
     className: "pc-badge"
-  }, "身宫")), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['shen-gong'])), /*#__PURE__*/React.createElement("div", {
     className: "pc-stem"
   }, val(p.heavenly_stem), val(p.earthly_branch)), /*#__PURE__*/React.createElement("div", {
     className: "pc-stars"
@@ -255,9 +255,9 @@ function ZiweiPlate({
     className: "pc-sihua"
   }, joinArr(p.sihua)))))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "四化表"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['four-hua-table']), /*#__PURE__*/React.createElement("table", {
     className: "mini-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "星曜"), /*#__PURE__*/React.createElement("th", null, "四化"), /*#__PURE__*/React.createElement("th", null, "落宫"))), /*#__PURE__*/React.createElement("tbody", null, arr(z.sihua).map((s, i) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['sihua-star']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['sihua-mutagen']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['sihua-palace']))), /*#__PURE__*/React.createElement("tbody", null, arr(z.sihua).map((s, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(s.star)), /*#__PURE__*/React.createElement("td", null, val(s.mutagen)), /*#__PURE__*/React.createElement("td", null, val(s.palace)))))));
 }
@@ -337,9 +337,9 @@ function WesternSummary({
   }, /*#__PURE__*/React.createElement("b", null, title, "："), Object.entries(obj).map(([k, v]) => `${k}(${Array.isArray(v) ? v.join('、') : v})`).join('  ')) : null;
   return /*#__PURE__*/React.createElement("div", null, sec('四元素', s.elements), sec('三方', s.modalities), s.retrograde && s.retrograde.length ? /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, /*#__PURE__*/React.createElement("b", null, "逆行："), s.retrograde.join('、')) : null, s.patterns && s.patterns.length ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, UI_COPY.chartLabels['retrograde-label']), s.retrograde.join('、')) : null, s.patterns && s.patterns.length ? /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
-  }, /*#__PURE__*/React.createElement("b", null, "格局："), s.patterns.map(translatePattern).join('、')) : null);
+  }, /*#__PURE__*/React.createElement("b", null, UI_COPY.chartLabels['patterns-label']), s.patterns.map(translatePattern).join('、')) : null);
 }
 function WesternPlate({
   d,
@@ -348,35 +348,35 @@ function WesternPlate({
   const w = d.western || {};
   if (!w.planets) return /*#__PURE__*/React.createElement(EmptyNote, {
     deg: deg,
-    name: "占星盘"
+    name: UI_COPY.chartLabels['astrology-name']
   });
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(WesternSummary, {
     s: w.summary
   }), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "行星落位"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['planets-positions']), /*#__PURE__*/React.createElement("table", {
     className: "planet-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "星体"), /*#__PURE__*/React.createElement("th", null, "星座"), /*#__PURE__*/React.createElement("th", null, "宫位"), /*#__PURE__*/React.createElement("th", null, "度数"), /*#__PURE__*/React.createElement("th", null))), /*#__PURE__*/React.createElement("tbody", null, arr(w.planets).map((p, i) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-star']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-sign']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-house']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-degree']), /*#__PURE__*/React.createElement("th", null))), /*#__PURE__*/React.createElement("tbody", null, arr(w.planets).map((p, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(p.label), p.name && p.label !== p.name ? ' (' + p.name + ')' : ''), /*#__PURE__*/React.createElement("td", null, val(p.sign)), /*#__PURE__*/React.createElement("td", null, val(p.house)), /*#__PURE__*/React.createElement("td", null, val(p.formatted)), /*#__PURE__*/React.createElement("td", null, p.retrograde ? /*#__PURE__*/React.createElement("span", {
     className: "retro"
   }, "逆") : ''))))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "四轴"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['four-angles']), /*#__PURE__*/React.createElement("table", {
     className: "planet-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "轴"), /*#__PURE__*/React.createElement("th", null, "星座"), /*#__PURE__*/React.createElement("th", null, "度数"))), /*#__PURE__*/React.createElement("tbody", null, arr(w.angles).map((a, i) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-axis']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-sign']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-degree']))), /*#__PURE__*/React.createElement("tbody", null, arr(w.angles).map((a, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(a.label)), /*#__PURE__*/React.createElement("td", null, val(a.sign)), /*#__PURE__*/React.createElement("td", null, val(a.formatted)))))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "宫位"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels.houses), /*#__PURE__*/React.createElement("table", {
     className: "planet-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "宫"), /*#__PURE__*/React.createElement("th", null, "星座"), /*#__PURE__*/React.createElement("th", null, "度数"))), /*#__PURE__*/React.createElement("tbody", null, arr(w.houses).map((h, i) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-palace']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-sign']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-degree']))), /*#__PURE__*/React.createElement("tbody", null, arr(w.houses).map((h, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(h.label)), /*#__PURE__*/React.createElement("td", null, val(h.sign)), /*#__PURE__*/React.createElement("td", null, val(h.formatted)))))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "主要相位"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['major-aspects']), /*#__PURE__*/React.createElement("table", {
     className: "aspect-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "星体1"), /*#__PURE__*/React.createElement("th", null, "星体2"), /*#__PURE__*/React.createElement("th", null, "相位"), /*#__PURE__*/React.createElement("th", null, "紧密"))), /*#__PURE__*/React.createElement("tbody", null, arr(w.aspects).map((a, i) => /*#__PURE__*/React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-star1']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-star2']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-aspect']), /*#__PURE__*/React.createElement("th", null, UI_COPY.chartLabels['th-closeness']))), /*#__PURE__*/React.createElement("tbody", null, arr(w.aspects).map((a, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(a.body1)), /*#__PURE__*/React.createElement("td", null, val(a.body2)), /*#__PURE__*/React.createElement("td", null, translateAspect(a.type)), /*#__PURE__*/React.createElement("td", null, val(a.closeness)))))));
 }
@@ -389,19 +389,19 @@ function QizhengPlate({
   const q = d.qizheng || {};
   if (!q.stars) return /*#__PURE__*/React.createElement(EmptyNote, {
     deg: deg,
-    name: "七政四余"
+    name: UI_COPY.chartLabels['qizheng-name']
   });
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "aux-line"
   }, "命宫 ", /*#__PURE__*/React.createElement("b", null, val(q.mingGong)), " · 身宫 ", /*#__PURE__*/React.createElement("b", null, val(q.shenGong)), " · 命主 ", /*#__PURE__*/React.createElement("b", null, val(q.mingZhu))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "星曜躔次"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['xingyao-chanci']), /*#__PURE__*/React.createElement("table", {
     className: "star-table"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "星"), /*#__PURE__*/React.createElement("th", null, "种类"), /*#__PURE__*/React.createElement("th", null, "宿"), /*#__PURE__*/React.createElement("th", null, "落宫"), /*#__PURE__*/React.createElement("th", null, "庙旺"))), /*#__PURE__*/React.createElement("tbody", null, arr(q.stars).map((s, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
   }, /*#__PURE__*/React.createElement("td", null, val(s.name)), /*#__PURE__*/React.createElement("td", null, val(s.kind)), /*#__PURE__*/React.createElement("td", null, val(s.xiu)), /*#__PURE__*/React.createElement("td", null, val(s.palace)), /*#__PURE__*/React.createElement("td", null, val(s.dignity)))))), arr(q.twelvePalaces).length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "十二宫"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['twelve-palaces']), /*#__PURE__*/React.createElement("div", {
     className: "palace-grid"
   }, arr(q.twelvePalaces).map((p, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -412,7 +412,7 @@ function QizhengPlate({
     className: "pc-stars sm"
   }, joinArr([p.stars || p.mainStar, p.notes || p.note].filter(Boolean))))))), arr(q.shensha).length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "神煞"), /*#__PURE__*/React.createElement(ShenshaTags, {
+  }, UI_COPY.chartLabels.shensha), /*#__PURE__*/React.createElement(ShenshaTags, {
     list: q.shensha
   })));
 }
@@ -437,7 +437,7 @@ function QimenPlate({
   const bc = q.baseChart || {};
   if (!bc.jiuGongGe) return /*#__PURE__*/React.createElement(EmptyNote, {
     deg: deg,
-    name: "奇门终身局"
+    name: UI_COPY.chartLabels['qimen-name']
   });
   const cells = arr(bc.jiuGongGe).slice().sort((a, b) => {
     const pa = GONG_POS[a.gong] || [9, 9],
@@ -448,7 +448,7 @@ function QimenPlate({
     className: "aux-line"
   }, val(bc.juMethod, '排盘'), " · ", bc.isYangDun ? '阳遁' : '阴遁', " · 局数 ", /*#__PURE__*/React.createElement("b", null, val(bc.juShu)), " · 值符 ", /*#__PURE__*/React.createElement("b", null, val(bc.zhiFu)), " · 值使 ", /*#__PURE__*/React.createElement("b", null, val(bc.zhiShi))), /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "九宫格"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.chartLabels['nine-palace-grid']), /*#__PURE__*/React.createElement("div", {
     className: "qimen-grid"
   }, cells.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -461,7 +461,7 @@ function QimenPlate({
     className: "qc-lines"
   }, c.tianPan && /*#__PURE__*/React.createElement("div", null, "天盘 ", val(c.tianPan.star), val(c.tianPan.stem)), c.diPan && /*#__PURE__*/React.createElement("div", null, "地盘 ", val(c.diPan.stem)), c.renPan && /*#__PURE__*/React.createElement("div", null, "人盘 ", val(c.renPan.door)), c.shenPan && /*#__PURE__*/React.createElement("div", null, "神盘 ", val(c.shenPan.god)))))), arr(q.stages).length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sub-title"
-  }, "分限行运"), /*#__PURE__*/React.createElement("table", {
+  }, UI_COPY.chartLabels['fenxian-xingyun']), /*#__PURE__*/React.createElement("table", {
     className: "mini-table"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "限"), /*#__PURE__*/React.createElement("th", null, "主题"), /*#__PURE__*/React.createElement("th", null, "年龄"), /*#__PURE__*/React.createElement("th", null, "倾向"))), /*#__PURE__*/React.createElement("tbody", null, arr(q.stages).map((s, i) => /*#__PURE__*/React.createElement("tr", {
     key: i
@@ -487,7 +487,7 @@ function WuyunPlate({
   const cy = w.current_year || {};
   if (!by.annualMovement && !by.sitian) return /*#__PURE__*/React.createElement(EmptyNote, {
     deg: deg,
-    name: "五运六气"
+    name: UI_COPY.chartLabels['wuyun-liuqi-name']
   });
   const Row = ({
     label,
@@ -734,10 +734,10 @@ function ArchivePage({
   }
   const inp = data && data.input || {};
   const statusMap = {
-    created: '已建档',
-    paipan_done: '已排盘',
-    calibrated: '已校准',
-    predicted: '已预测'
+    created: UI_COPY.caseDetail['status-created'],
+    paipan_done: UI_COPY.caseDetail['status-paipan'],
+    calibrated: UI_COPY.caseDetail['status-calibrated'],
+    predicted: UI_COPY.caseDetail['status-predicted']
   };
   // REQ-053 ①②③：完整盘面 chart.data 即后端 chart_json（含八字/紫微/占星/七政/奇门/五运六气）；
   // degraded 为已降级方法列表 —— 干支/农历/生肖等展示需先取到它，故移到此处在 rows 之前。
@@ -771,7 +771,7 @@ function ArchivePage({
     if (!Number.isFinite(y)) return null;
     return ZODIAC_CN[((y - 4) % 12 + 12) % 12] || null;
   })();
-  const genderText = inp.gender === 'female' ? '女' : inp.gender === 'male' ? '男' : null;
+  const genderText = inp.gender === 'female' ? UI_COPY.onboarding['gender-female'] : inp.gender === 'male' ? UI_COPY.onboarding['gender-male'] : null;
   // —— ② 出生地坐标：经度/纬度合并单字段（如「经度 116.4°E · 纬度 39.9°N」；缺则「未提供」）
   const fmtDir = (v, posSuf, negSuf) => {
     if (v === null || v === undefined || v === '') return null;
@@ -781,8 +781,8 @@ function ArchivePage({
   };
   const lngTxt = fmtDir(inp.longitude, 'E', 'W');
   const latTxt = fmtDir(inp.latitude, 'N', 'S');
-  const coordText = [lngTxt ? '经度 ' + lngTxt : null, latTxt ? '纬度 ' + latTxt : null].filter(Boolean).join(' · ') || '未提供';
-  const rows = [['出生年月日时辰', birthDT], ['中式干支传统写法', ganzhiText], ['农历生日', lunarText], ['生肖', zodiacText], ['性别', genderText], ['出生地', notEmpty(inp.birthplace)], ['出生地坐标', coordText], ['真太阳时', inp.true_solar_time ? '是' : '否'], [UI_COPY.caseDetail.phone_label, casePhone], [UI_COPY.caseDetail.email_label, caseEmail]];
+  const coordText = [lngTxt ? UI_COPY.caseDetail['coord-lng-prefix'] + lngTxt : null, latTxt ? UI_COPY.caseDetail['coord-lat-prefix'] + latTxt : null].filter(Boolean).join(' · ') || UI_COPY.caseDetail['coord-not-provided'];
+  const rows = [[UI_COPY.caseDetail['row-birth-dt'], birthDT], [UI_COPY.caseDetail['row-ganzhi'], ganzhiText], [UI_COPY.caseDetail['row-lunar'], lunarText], [UI_COPY.caseDetail['row-zodiac'], zodiacText], [UI_COPY.caseDetail['row-gender'], genderText], [UI_COPY.caseDetail['row-birthplace'], notEmpty(inp.birthplace)], [UI_COPY.caseDetail['row-coord'], coordText], [UI_COPY.caseDetail['row-true-solar'], inp.true_solar_time ? UI_COPY.caseDetail.yes : UI_COPY.caseDetail.no], [UI_COPY.caseDetail.phone_label, casePhone], [UI_COPY.caseDetail.email_label, caseEmail]];
 
   // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
   // 整体契合度若能取到数值则展示，否则只展示反馈条数
@@ -823,7 +823,7 @@ function ArchivePage({
   // 提交 PATCH name+phone+email，成功后重拉档案（页头档案名 + 建档信息手机号/邮箱随之刷新）。
   // 不改动出生等排盘信息。不再使用弹窗（BUG-022：长页面弹窗错位偏下）。
   const openEditInfo = () => {
-    setEditName(caseTitle === '未命名档案' ? '' : caseTitle);
+    setEditName(caseTitle === UI_COPY.caseDetail.unnamed ? '' : caseTitle);
     setEditPhone(casePhone);
     setEditEmail(caseEmail);
     setEditBusy(false);
@@ -841,11 +841,11 @@ function ArchivePage({
     const phone = String(editPhone || '').trim();
     const email = String(editEmail || '').trim();
     if (phone && !/^\d{11}$/.test(phone)) {
-      toast('手机号须为 11 位数字');
+      toast(UI_COPY.caseDetail['phone-err']);
       return;
     }
     if (email && !/^[^\s@]+@[^\s@]+$/.test(email)) {
-      toast('邮箱格式不正确（需包含 @）');
+      toast(UI_COPY.caseDetail['email-err']);
       return;
     }
     setEditBusy(true);
@@ -853,17 +853,17 @@ function ArchivePage({
       const res = await api('/cases/' + caseId, {
         method: 'PATCH',
         body: JSON.stringify({
-          name: name || '未命名档案',
+          name: name || UI_COPY.caseDetail.unnamed,
           phone: phone || null,
           email: email || null
         })
       });
-      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '修改失败');
-      toast('修改成功');
+      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || UI_COPY.caseDetail['save-fail']);
+      toast(UI_COPY.caseDetail['save-ok']);
       setEditing(false);
       reloadArchive();
     } catch (err) {
-      toast(err && err.message || '修改失败，请重试。');
+      toast(err && err.message || UI_COPY.caseDetail['save-fail-retry']);
     } finally {
       setEditBusy(false);
     }
@@ -872,10 +872,10 @@ function ArchivePage({
     if (e && e.stopPropagation) e.stopPropagation();
     const rid = rec && rec.id;
     if (rid == null) {
-      toast('该记录缺少编号，无法删除。');
+      toast(UI_COPY.caseDetail['delete-no-id']);
       return;
     }
-    const tip = kind === 'astro' ? '确认删除这条星盘记录？删除后不可恢复。' : '确认删除这条 MBTI 判型记录？删除后不可恢复。';
+    const tip = kind === 'astro' ? UI_COPY.caseDetail['delete-confirm-astro'] : UI_COPY.caseDetail['delete-confirm-mbti'];
     if (!window.confirm(tip)) return;
     try {
       const path = kind === 'astro' ? '/astrology/charts/' : '/mbti/results/';
@@ -883,11 +883,11 @@ function ArchivePage({
         method: 'DELETE'
       });
       // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
-      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || '删除失败');
-      toast('已删除');
+      if (res && res.code != null && res.code !== 0) throw new Error(res && res.message || UI_COPY.caseDetail['delete-fail']);
+      toast(UI_COPY.caseDetail['delete-ok']);
       reloadArchive();
     } catch (err) {
-      toast(err && err.message || '删除失败，请重试。');
+      toast(err && err.message || UI_COPY.caseDetail['delete-fail-retry']);
     }
   };
   const removeAstroRecord = (e, rec) => doDeleteRecord(e, rec, 'astro');
@@ -921,13 +921,13 @@ function ArchivePage({
     style: {
       marginBottom: 0
     }
-  }, "占星盘"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.caseDetail['astro-card-title']), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: 'var(--text-2)',
       marginTop: 2
     }
-  }, astroScopeLabel(astroMain && astroMain.scope), fmtArchiveTime(astroMain && astroMain.created_at) ? ' · 生成于 ' + fmtArchiveTime(astroMain && astroMain.created_at) : '')), /*#__PURE__*/React.createElement("div", {
+  }, astroScopeLabel(astroMain && astroMain.scope), fmtArchiveTime(astroMain && astroMain.created_at) ? UI_COPY.caseDetail['generated-prefix'] + fmtArchiveTime(astroMain && astroMain.created_at) : '')), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
@@ -939,10 +939,10 @@ function ArchivePage({
     onClick: () => onNavigate('astrology', {
       caseId
     })
-  }, "查看"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.caseDetail['view-btn']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline btn-mini",
     onClick: e => removeAstroRecord(e, astroMain)
-  }, "删除"))), astroNatalNorm && (astroNatalNorm.planets.length > 0 || astroNatalNorm.angles.length > 0) ? /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.caseDetail['delete-btn']))), astroNatalNorm && (astroNatalNorm.planets.length > 0 || astroNatalNorm.angles.length > 0) ? /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
       margin: '4px 0 2px'
@@ -955,7 +955,7 @@ function ArchivePage({
       color: 'var(--text-3)',
       margin: '6px 0 2px'
     }
-  }, "该条星盘数据缺失，无法展示盘面。"));
+  }, UI_COPY.caseDetail['data-missing']));
 
   // REQ-112②③ + REQ-114：档案内「心理测试」板块 —— 只展示并保存「最新一次」判型结果：
   // 以类表格形式展示「MBTI 类型」与「人格类型」（alias）；不再保留历史判型记录、不再显示
@@ -993,24 +993,24 @@ function ArchivePage({
     style: {
       margin: '4px 0 8px'
     }
-  }, '心理测试'), mbtiShowType ? R('div', null, R('div', {
+  }, UI_COPY.caseDetail['mbti-card-title']), mbtiShowType ? R('div', null, R('div', {
     className: 'mbti-tbl',
     style: {
       cursor: 'pointer'
     },
-    title: mbtiDetailSections.length ? '点击查看详情' : '暂无详情',
+    title: mbtiDetailSections.length ? UI_COPY.caseDetail['mbti-tap-detail'] : UI_COPY.caseDetail['mbti-no-detail'],
     onClick: () => setMbtiDetailOpen(o => !o)
   }, R('div', {
     className: 'mbti-tbl-row'
   }, R('span', {
     className: 'k'
-  }, 'MBTI 类型'), R('span', {
+  }, UI_COPY.caseDetail['mbti-type-label']), R('span', {
     className: 'v'
   }, mbtiShowType)), R('div', {
     className: 'mbti-tbl-row'
   }, R('span', {
     className: 'k'
-  }, '人格类型'), R('span', {
+  }, UI_COPY.caseDetail['mbti-personality-label']), R('span', {
     className: 'v'
   }, mbtiAlias || '—'))), R('div', {
     style: {
@@ -1032,7 +1032,7 @@ function ArchivePage({
       e.stopPropagation();
       setMbtiDetailOpen(o => !o);
     }
-  }, mbtiDetailOpen ? '收起详情' : '查看详情') : null), mbtiDetailOpen ? R('div', {
+  }, mbtiDetailOpen ? UI_COPY.caseDetail['mbti-collapse'] : UI_COPY.caseDetail['mbti-expand']) : null), mbtiDetailOpen ? R('div', {
     className: 'mbti-detail'
   }, mbtiDetailSections.length ? mbtiDetailSections.map(f => R('div', {
     key: f.title,
@@ -1058,13 +1058,13 @@ function ArchivePage({
       color: 'var(--text-3)',
       margin: '2px 0'
     }
-  }, '暂无详细文案')) : null) : R('p', {
+  }, UI_COPY.caseDetail['mbti-no-copy'])) : null) : R('p', {
     style: {
       fontSize: 13,
       color: 'var(--text-3)',
       margin: '4px 0'
     }
-  }, '尚未完成心理测试。用几分钟，认识另一个角度的自己。'));
+  }, UI_COPY.caseDetail['mbti-empty']));
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1080,15 +1080,15 @@ function ArchivePage({
       color: 'var(--text-2)',
       marginBottom: 8
     }
-  }, "档案编号：", caseId, " · 状态：", statusMap[data && data.status] || data && data.status || '-'), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.caseDetail['case-id-label'], caseId, UI_COPY.caseDetail['status-label'], statusMap[data && data.status] || data && data.status || '-'), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "建档信息"), /* REQ-114 + BUG-022：内联编辑态 —— 档案名称/手机号/邮箱 行直接变为可编辑
+  }, UI_COPY.caseDetail['info-title']), /* REQ-114 + BUG-022：内联编辑态 —— 档案名称/手机号/邮箱 行直接变为可编辑
       文本框（预填原信息），保存/取消就地完成，不再使用弹窗 */
   editing ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "kv"
   }, /*#__PURE__*/React.createElement("span", {
     className: "k"
-  }, "档案名称"), /*#__PURE__*/React.createElement("span", {
+  }, UI_COPY.caseDetail['name-label']), /*#__PURE__*/React.createElement("span", {
     className: "v"
   }, /*#__PURE__*/React.createElement("input", {
     id: "edit-case-name",
@@ -1097,7 +1097,7 @@ function ArchivePage({
     maxLength: 30,
     value: editName,
     onChange: e => setEditName(e.target.value),
-    placeholder: "请输入档案名称",
+    placeholder: UI_COPY.caseDetail['name-ph'],
     onKeyDown: e => {
       if (e.key === 'Enter') submitEditInfo();
     }
@@ -1115,7 +1115,7 @@ function ArchivePage({
     maxLength: 11,
     value: editPhone,
     onChange: e => setEditPhone(e.target.value),
-    placeholder: "请输入 11 位手机号"
+    placeholder: UI_COPY.caseDetail['phone-ph']
   }))), /*#__PURE__*/React.createElement("div", {
     className: "kv"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1128,7 +1128,7 @@ function ArchivePage({
     type: "email",
     value: editEmail,
     onChange: e => setEditEmail(e.target.value),
-    placeholder: "请输入电子邮箱（需包含 @）",
+    placeholder: UI_COPY.caseDetail['email-ph'],
     onKeyDown: e => {
       if (e.key === 'Enter') submitEditInfo();
     }
@@ -1144,7 +1144,7 @@ function ArchivePage({
     style: {
       marginTop: 8
     }
-  }, "提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。")), /* REQ-114 + BUG-022：建档信息卡下方的「修改信息」入口 —— 内联编辑态就地渲染 保存/取消（无弹窗） */
+  }, UI_COPY.caseDetail['coord-missing-hint'])), /* REQ-114 + BUG-022：建档信息卡下方的「修改信息」入口 —— 内联编辑态就地渲染 保存/取消（无弹窗） */
   /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
@@ -1155,7 +1155,7 @@ function ArchivePage({
     type: "button",
     disabled: editBusy,
     onClick: submitEditInfo
-  }, editBusy ? '保存中…' : '保存'), /*#__PURE__*/React.createElement("button", {
+  }, editBusy ? UI_COPY.caseDetail['saving-btn'] : UI_COPY.caseDetail['save-btn']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     type: "button",
     disabled: editBusy,
@@ -1172,23 +1172,23 @@ function ArchivePage({
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "校准记录"), calibCount != null && /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.caseDetail['calib-title']), calibCount != null && /*#__PURE__*/React.createElement("div", {
     className: "kv"
   }, /*#__PURE__*/React.createElement("span", {
     className: "k"
-  }, "用户反馈"), /*#__PURE__*/React.createElement("span", {
+  }, UI_COPY.caseDetail['feedback-title']), /*#__PURE__*/React.createElement("span", {
     className: "v"
-  }, calibCount, " 条断言")), calibFitText != null && /*#__PURE__*/React.createElement("div", {
+  }, calibCount, UI_COPY.caseDetail['feedback-suffix'])), calibFitText != null && /*#__PURE__*/React.createElement("div", {
     className: "kv"
   }, /*#__PURE__*/React.createElement("span", {
     className: "k"
-  }, "整体契合度"), /*#__PURE__*/React.createElement("span", {
+  }, UI_COPY.caseDetail['fit-title']), /*#__PURE__*/React.createElement("span", {
     className: "v"
   }, calibFitText))), convos.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "对话历史"), convos.map((m, i) => {
+  }, UI_COPY.caseDetail['conv-title']), convos.map((m, i) => {
     const isUser = m.role === 'user';
     return /*#__PURE__*/React.createElement("div", {
       key: i,
@@ -1211,7 +1211,7 @@ function ArchivePage({
         opacity: .65,
         marginBottom: 2
       }
-    }, isUser ? '我' : '助手'), /*#__PURE__*/React.createElement("div", {
+    }, isUser ? UI_COPY.caseDetail['role-user'] : UI_COPY.caseDetail['role-assistant']), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 13,
         lineHeight: 1.6,
@@ -1243,17 +1243,17 @@ function ArchivePage({
     onClick: () => onNavigate('nine-pick', {
       caseId
     })
-  }, "国学预测"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.caseDetail['enter-guoxue']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('tarot', {
       caseId
     })
-  }, "西式占卜"), /*#__PURE__*/React.createElement("button", {
+  }, UI_COPY.caseDetail['enter-xishi']), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate('mbti', {
       caseId
     })
-  }, "心理测试")));
+  }, UI_COPY.caseDetail['enter-mbti'] )));
 }
 
 // 档案命名模态框：受控输入 + 取消/确定，确定中禁用按钮防重复提交
@@ -1553,11 +1553,11 @@ function CasesPage({
     const phone = String(editPhone || '').trim();
     const email = String(editEmail || '').trim();
     if (phone && !/^\d{11}$/.test(phone)) {
-      toast('手机号须为 11 位数字');
+      toast(UI_COPY.caseDetail['phone-err']);
       return;
     }
     if (email && !/^[^\s@]+@[^\s@]+$/.test(email)) {
-      toast('邮箱格式不正确（需包含 @）');
+      toast(UI_COPY.caseDetail['email-err']);
       return;
     }
     setEditBusy(true);
@@ -1846,7 +1846,7 @@ function CasesPage({
       className: "btn btn-outline",
       type: "button",
       onClick: openArchive
-    }, "查看"), /*#__PURE__*/React.createElement("button", {
+    }, UI_COPY.caseDetail['view-btn']), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
       type: "button",
       onClick: () => openEdit(c)
