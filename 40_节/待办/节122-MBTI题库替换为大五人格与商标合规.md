@@ -353,6 +353,51 @@
 3. ⚠️ **IPIP 官方那句免责同样适用于我们自己翻的档位** —— "翻译准确性未经 IPIP 项目方核实"（§1.2）。
 4. ✅ 但**合规性是干净的**：IPIP 明文允许 **edit / translate**（§1.1）→ 翻译产物是**我们自己的**，**不涉及任何第三方许可、无需通报**。
 
+## 4.1.3 🆕 抓取结果与"母本"选型（**2026-09-11 实测 · 改写了 §4.1.1 的建议**）
+
+**抓取落盘**：`40_节/待办/节122-题库原件/`（各档位 JSON + `README.md`；**程序化比对，非目视**）
+
+| 档位 | 实得题数 | 字段完整度 | 来源（IPIP 官网） |
+|---|---|---|---|
+| **IPIP-NEO-300**（Goldberg，30 层面 × 10 题） | **300** ✅ | text_en/dimension/facet/**keying 全有** | `newNEOFacetsKey.htm` |
+| **IPIP-NEO-120**（Johnson 2014） | **120** ✅ | 同上 | `30FacetNEO-PI-RItems.htm` |
+| **IPIP-NEO-120**（Maples 2014，**另一套 120**） | **120** ✅ | 同上 | `30FacetNEO-PI-RItems_Maples_etal.htm` |
+| **IPIP-NEO-120 官方普通话译本** | **120** ✅ | text_en/text_zh ✅；**dimension/facet/keying 该页不印** | `Mandarin translation of IPIP-NEO-120.htm` |
+| **IPIP-NEO-60**（Maples-Keller 2019，IRT 推出） | **60** ✅ | 同 300 | `IPIP-NEO-60ScoringKeys.htm` |
+| **IPIP-50**（Goldberg） | **50** ✅ | facet ❌（该量表无层面） | `New_IPIP-50-item-scale.htm` |
+| **Mini-IPIP-20**（Donnellan 2006） | **20** ✅ | facet ❌ | `MiniIPIPKey.htm` |
+
+> 📌 **官方中文的取回过程有一条教训**：`web_fetch` **在固定长度处截断**（两次抓取返回**字节级相同**的截断点，停在第 33 题）→ **改用直连下载**（`Invoke-WebRequest`）拿到**完整页面 175,394 字节 / 121 个 `<tr>`（表头 + 120 题）**，全部 120 题到手。→ **"工具拿不到" ≠ "数据拿不到"，换通道即可。**（记入 `99_状态/已知问题.md`）
+
+### 🚨 结论一：**我原来的"60 题快速版直接套官方中文"思路 —— 被数据否掉了**
+
+程序化比对（非目视）：
+
+| 比对 | 结果 |
+|---|---|
+| **IPIP-NEO-60 ⊆ Johnson-120** | ❌ **只有 51/60** → **9 题不在其中** |
+| **IPIP-NEO-60 ⊆ Maples-120** | ❌ **只有 58/60** → **2 题不在其中** |
+| **IPIP-NEO-60 ⊆ 300 题池** | ✅ **60/60 完全在** |
+
+**不在 Johnson-120 里的 9 题**：`Am easily intimidated.`／`Am calm even in tense situations.`／`Act comfortably with others.`／`Do not like art.`／`Am not easily affected by my emotions.`／`Don't like the idea of change.`／`Believe in one true religion.`／`Like order.`／`Set high standards for myself and others.`
+
+→ 🛑 **所以"以 120 为母本"会缺 9 题，而缺的那些题官方中文也不存在。**
+→ ✅ **正确做法：以 300 题池为"翻译母本"** —— 因为 **60 全含其中**（120 亦由其派生）。这样才能做到**"翻一次，长短两版都能用"**。
+→ ⚠️ **代价**：官方中文**只有 Johnson-120 那一档的 120 题**。所以合理组合是「**官方中文 120 题（直接套用）+ 300 池里其余 180 题自译**」，且**快速版 60 题中那 9 条缺中文的必须另行翻译**。
+
+**附（供选型）**：**Johnson-120 与 Maples-120 只有 85/120 逐字相同（71%）→ 两版不能互相替代**；IPIP-50 vs 300 池 28/50；Mini-IPIP vs 300 池 16/20。
+
+### 🚨 结论二：两个**实现期的口径陷阱**（**必须在节123 落地前处理，否则会算错方向**）
+
+1. **❌ 两个量表的"第 4 个因子"方向相反**：
+   - **IPIP-50** 官网原话是 **"Emotional Stability"（情绪稳定性）** → `keying:"+"` = **情绪稳定性高 = 神经质低**
+   - **Mini-IPIP-20** 官网第 IV 因子**就叫 Neuroticism** → `keying:"+"` = **神经质高**
+   - → **两者方向相反**。若统一当成"N"处理，**会把其中一个量表的神经质整体算反**。用时**必须看各文件 `notes`**。
+2. **⚠️ 官方中文页的题面 ≠ 计分键页的题面**：中文页第 28 题英文是 `View myself as predominantly liberal politically.`，而计分键页 O6 是 `Tend to vote for liberal political candidates.` → **判断（Agent）**：中文页译的是"**实际施测卷**"题面，与"**计分键页**"题面有出入。
+   → **后果：`中文题 → 30 个层面` 的映射不可想当然**，必须先做逐题比对（已派子任务核 120 题全量差异）。
+
+> 📌 **官方中文页不印维度/层面/计分键** → 所以抓取文件里这三项是 `null`（**不猜**，硬猜会引错层面映射）。
+
 ## 4.2 计分
 
 - 5 点 Likert：正向题 `1–5` 计分，反向题 `6 − x`（IPIP 官方计分说明页：`newScoringInstructions.htm`）。
