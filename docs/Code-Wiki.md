@@ -51,7 +51,7 @@
 | 层 | 技术 | 说明 |
 |---|---|---|
 | 后端 | Python 3.13 + FastAPI | 单进程单端口 **8000**，同时服务 `/api` 与前端静态文件 |
-| 前端 | 免构建 CDN React 18 + Babel Standalone | 权威入口 `frontend/public/index.html`；`frontend/src/` 为旧 Vite+TS 参考，不参与运行 |
+| 前端 | 免构建 CDN React 18（**JSX 已预编译为普通 JS，无 Babel 实时转译**） | 权威入口 `frontend/public/index.html`（节110 解耦后 = **入口壳 ~1,380 行** + `js/*.js` + `css/*.css`）；旧 Vite+TS 源码已归档 `_archive/前端-vite-ts-参考实现/` |
 | 数据库 | SQLite（三库） | `taichu_analytics` / `taichu_feedback` / `taichu_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
 | LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走 `backend/.env` 的 `TAICHU_LLM_API_KEY` |
@@ -92,10 +92,12 @@ taichu/
 │   └── README.md
 ├── frontend/
 │   ├── public/                   # 实际生效的前端（index.html + admin.html + 资源）
-│   │   ├── index.html            # H5 主入口（React CDN + 内联 JSX）
-│   │   ├── admin.html            # 后台管理入口
-│   │   └── vendor/               # 本地化 React / ReactDOM / Babel
-│   └── src/                      # 旧 Vite+TS 参考源码（不参与运行）
+│   │   ├── index.html            # H5 主入口（入口壳：骨架 + vendor 引入 + 加载顺序 + 全局状态/api）
+│   │   ├── admin.html            # 后台管理入口（仍为单文件）
+│   │   ├── js/                   # 解耦视图/组件（节110；已预编译普通 JS，禁写 JSX）
+│   │   ├── css/                  # tokens / components / pages
+│   │   └── vendor/               # 本地化 React / ReactDOM（Babel 已移除）
+│   └── （src/ 旧 Vite+TS 源码已归档 _archive/前端-vite-ts-参考实现/）
 ├── data/                         # 数据目录（migrations/schema/seeds，git 忽略 *.db）
 ├── docs/                         # 架构、ADR、标准、交接文档
 ├── docker-compose.yml            # web + caddy 编排
@@ -680,7 +682,8 @@ docker-compose up -d
 
 ### 前端红线
 
-- 权威入口只有 `frontend/public/index.html`（+ `admin.html`）；`frontend/src/` 不参与运行。
+- 权威入口只有 `frontend/public/index.html`（+ `admin.html`）；旧 `frontend/src/`（Vite+TS）已归档 `_archive/前端-vite-ts-参考实现/`。
+- 拆出的 `frontend/public/js/*.js` 只放**已预编译的普通 JS**，**禁止再写 JSX**（`precompile.js` 门禁会扫描并拒绝含 JSX 的文件）。
 - 静态资源必须根绝对路径 `/vendor/*`，禁止相对路径。
 - 改 JSX 后须跑 `node frontend/scripts/precompile.js`。
 
