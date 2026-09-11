@@ -15,15 +15,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# 2. 复制后端（含 pyproject.toml、app/ 代码、paipan-node/ 排盘 Node 依赖）并安装 Python 依赖
-COPY backend/ /app/backend/
-RUN cd /app/backend/paipan-node && npm install --no-audit --no-fund
+# 2a. 先复制「依赖清单」再装依赖（节113：层缓存只看清单，后端源码改动不再触发全量重装）
+COPY backend/pyproject.toml /app/backend/pyproject.toml
+COPY backend/paipan-node/package.json /app/backend/paipan-node/package.json
 RUN pip install --no-cache-dir /app/backend/
+RUN cd /app/backend/paipan-node && npm install --no-audit --no-fund
 
-# 3. 复制前端免构建静态文件（frontend/public 由 FastAPI 直接托管）
+# 2b. 复制后端源码与前端免构建静态文件（前端由 Caddy 直服 + FastAPI 兜底托管）
+COPY backend/ /app/backend/
 COPY frontend/public/ /app/frontend/public/
 
-# 4. 数据目录（运行时挂载持久卷）
+# 3. 数据目录（运行时挂载持久卷）
 RUN mkdir -p /app/data
 
 WORKDIR /app/backend

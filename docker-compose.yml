@@ -40,6 +40,8 @@ services:
       - 1.1.1.1
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # 节113：静态资源由 Caddy 直服，只读挂载 frontend/public（勿挂整个仓库）
+      - ./frontend/public:/srv/static:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
