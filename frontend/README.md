@@ -15,7 +15,7 @@
 ## 关键约束
 
 1. **免构建**：不引 Vite/打包器；`<link rel="stylesheet">` 引 `.css`、`<script src>` 引 `.js`（顺序加载，见 `../00_根/导航.md` §7 牵连表）。
-2. **权威入口唯一**：只有 `public/index.html`（+ `admin.html`）。旧 Vite+TS 参考源码已归档至 `docs/_archive/前端-vite-ts-参考实现/`（节110）。
+2. **权威入口唯一**：只有 `public/index.html`（+ `admin.html`）。旧 Vite+TS 参考源码已归档至 `_archive/前端-vite-ts-参考实现/`（节110；`_archive/` 在**项目根**，2026-09-11 按破竹协议从 `docs/_archive/` 迁出）。
 3. **静态资源根绝对路径**：`/vendor/*` `/art/*` `/data/*`（BUG-009 教训）。
 4. **改 JSX 必跑门禁**：`node scripts/precompile.js`；禁止浏览器端 `<script type="text/babel">` 实时转译。
 5. **拆分约定（节110）**：入口壳逐步拆为 `css/*.css` + `js/*.js`；拆出的 `.js` 是编译后普通 JS、禁止再写 JSX。详见 `../00_根/复用.md` §六。
