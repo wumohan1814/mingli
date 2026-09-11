@@ -212,3 +212,64 @@ cd backend
   （可用 `--mode opening` 单跑，但语料的问题标注是按"提问"语义写的）。
 - **口径限制**：「准确率（严格）」只认标注的期望记忆，不放宽到"语义相似"；
   因此该列对任何按重要度/新鲜度排序的通道都会偏低，**不宜单独当质量结论**。
+
+---
+
+## 9. 召回开关怎么关 / 消融测量（节118 方向一）
+
+实现侧开关是 `app/memory/service.py` 顶部的**模块常量**（**函数调用时**读取 → 改属性即生效；
+不读环境变量、不影响生产默认行为）：
+
+| 常量 | 默认 | 作用 |
+|---|---|---|
+| `RECALL_ENABLE_QUERY_TERMS` | 1 | **R1**：整句短语 → ≥3 字词项 `OR` |
+| `RECALL_PHRASE_FIRST` | 0 | R1 变体：先试原短语、零候选再退 OR（代价：多 1 次 SQL） |
+| `RECALL_ENABLE_SHORT_QUERY_LIKE` | 1 | **R2-1**：<3 字查询用 `LIKE` 兜底（而非直接退化 recency） |
+| `RECALL_SHORT_QUERY_UNION` | 1 | R2-1 变体：`1` = LIKE 命中 **∪ recency 全集**；`0` = 只取 LIKE 命中（**实测丢召回**，见 STEP2 报告 q031） |
+| `RECALL_HALVE_K_ON_FALLBACK` | 0 | **R2-2**：`1` = 保留旧的「零命中 → k 减半」（已判定有害） |
+| `RECALL_ENABLE_TAGS_MATCH` | 1 | **R3**：`tags_json` 参与 Python 侧补充打分（不动 FTS/表结构） |
+| `RECALL_TAG_BONUS` | 0.25 | R3 命中 tag 的加分 |
+| `RECALL_KEYWORD_BONUS` | 0.35 | R2-1 LIKE 命中 content 的加分 |
+| `RECALL_PHRASE_BONUS` | 0.30 | R1 content 含整句的加分（不做两段式 SQL 时的短语精度补偿） |
+| `RECALL_TERM_LEN` | 3 | 词项最小长度 = **trigram 硬约束，勿改小** |
+| `RECALL_MAX_TERMS` | 24 | OR 词项数上限（防超长查询撑爆 MATCH 表达式） |
+
+**怎么关**：
+- 生产/联调：把对应常量置 `0`；**全部 `RECALL_ENABLE_*` 置 0 即完全回到旧行为**
+- 测量：不改代码，用下面的消融脚本按配置切换
+
+### 消融测量（逐项归因）
+
+```powershell
+$py = "C:\Users\wumoh\AppData\Local\Programs\Python\Python313\python.exe"
+cd backend
+# ① 同进程跑 6 组配置 → 对比表 + 与「全关」的配对 McNemar（用于**召回**归因）
+& $py tools/memory_bench/ablation.py --repeat 3
+# ② 单配置独立进程（用于**延迟**归因）
+& $py tools/memory_bench/ablation.py --repeat 5 --single ALL
+```
+
+产物：`results/ABLATION.md`（含 6 组总表、McNemar、分档、开关取值）+ `results/ABLATION.json`。
+配置名：`R0_off`（全关＝旧行为）/ `R1_only` / `R2_only` / `R3_only` / `R1R2` / `ALL`。
+
+> ⚠️ **延迟必须用 `--single` 逐配置独立进程测**：同进程连续跑 6 组时延迟随**执行顺序单调上升**
+> （实测 p50 5.7 → 11.6ms），那是 WAL/缓存累积，**不是单项成本**。召回指标不受影响（确定性）。
+>
+> ⚠️ **本基准的延迟不具跨机可比性**，且同一台机器上受负载影响很大：基线 `run.py` 的
+> p50 在两次运行中量到 10.4ms 与 22.0ms，而 `--single` 交替 A/B（每轮独立进程）显示
+> 改动前后差值仅 **+0.035ms**。判断"有没有变慢"必须用交替 A/B，不能只看两次 `run.py`。
+
+## 10. 语料的「词面天花板」（读数字前必看）
+
+本语料的 `expected_fact_ids` 由生成器**按主题自动标注**，而问题也是按主题生成的
+——**两者常常没有任何共同字面**（例：问「事业」，期望事实内容是「用户准备考公务员」）。
+因此**纯词法通道在这份语料上存在结构性天花板**（实测，见 `results/STEP2-REPORT.md`）：
+
+| 通道 | 理论上限（期望事实能被该通道命中的题占比） |
+|---|---|
+| BM25 词项 OR | **3/70 = 4.3%**（期望事实与问题有共同 3-gram） |
+| LIKE（整句子串） | **1/70 = 1.4%** |
+| **tags 匹配** | **26/70 = 37.1%**（期望事实的某个 tag 出现在问题里） |
+
+**含义**：这份语料测的是「**主题**检索」而不是「词面检索」。要评估语义能力，需要
+另建语料或引入语义通道；评估 tags/元数据能否救回，用上表 37.1% 当上限。

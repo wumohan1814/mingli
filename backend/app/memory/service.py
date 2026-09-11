@@ -290,19 +290,131 @@ def _freshness(row_ts, now: datetime) -> float:
     return math.exp(-_age_days(row_ts, now) / TAU_DAYS)
 
 
+# --------------------------------------------------------------------------- #
+# 节118 方向一 · 召回可用性修复开关（默认全开；置 0 可**单独**回归测量每项贡献）
+#
+# 这些常量在**函数调用时**读取模块全局，因此测量进程只要改
+# `app.memory.service.RECALL_ENABLE_*` 即可切换 —— 不读环境变量、不改代码、
+# **不影响生产默认行为**。消融测量见 `tools/memory_bench/ablation.py`。
+#
+# 背景（已复测，见 40_节/待办/节118）：索引是 `tokenize='trigram'`（database.py L110），
+# 旧实现把**整句**包成 FTS5 短语（`_fts_quote`）→ 等价于「要求记忆原文包含用户原句的
+# 连续子串」→ 基准 70 道题里 BM25 **一次都没命中**（100% 退化到 recency）。
+# --------------------------------------------------------------------------- #
+RECALL_ENABLE_QUERY_TERMS = 1       # R1：整句短语 → ≥3 字词项 OR（修结构性零命中）
+RECALL_PHRASE_FIRST = 0            # R1 变体：1 = 先试原短语、零候选再退 OR（代价：多 1 次 SQL）
+RECALL_ENABLE_SHORT_QUERY_LIKE = 1  # R2-1：<3 字查询用 LIKE 兜底，而非直接退化 recency
+RECALL_HALVE_K_ON_FALLBACK = 0      # R2-2：1 = 保留旧的「零命中 → k 减半」（已判定有害：越模糊注入越多）
+RECALL_ENABLE_TAGS_MATCH = 1        # R3：tags_json 参与 Python 侧补充打分（不动 FTS/表结构）
+
+RECALL_TERM_LEN = 3                 # trigram 下可匹配的最短词项长度（**硬约束，勿改小**）
+RECALL_MAX_TERMS = 24               # OR 词项数上限（防超长查询把 MATCH 表达式撑爆）
+RECALL_TAG_BONUS = 0.25             # R3：命中 tag 的加分（加在混合分上）
+RECALL_PHRASE_BONUS = 0.30          # R1：content 含整句时加分（免第二次 SQL 的短语精度补偿）
+RECALL_KEYWORD_BONUS = 0.35         # R2-1：短问 LIKE 命中 content 的加分
+RECALL_SHORT_QUERY_UNION = 1        # R2-1 变体：1 = LIKE 命中 **∪ recency 全集**（默认，保预算）；
+                                    #             0 = 只取 LIKE 命中（窄，实测会丢召回 → q031 反例）
+
+# trigram 能索引的字符（中文/字母/数字）；整窗都是标点的词项直接丢弃，减少噪声
+_INDEXABLE_RE = re.compile(r"[0-9A-Za-z\u4e00-\u9fff]")
+
+
 def _fts_quote(query: str) -> str:
     """FTS5 MATCH 短语：整体加双引号、内部双引号翻倍（trigram 需短语查询）。"""
     return '"' + query.replace('"', '""') + '"'
 
 
-def _bm25_candidates(session: Session, user_id: int, query: str, now: datetime) -> list[dict]:
+def _query_terms(query: str) -> list[str]:
+    """把查询切成 trigram **可匹配**的词项（≥`RECALL_TERM_LEN` 字），保序去重。
+
+    为什么是滑窗 n-gram：`tokenize='trigram'` 下 **<3 字的词项根本无法匹配**
+    （已复测：`"财运"` 命中 0）；而整句短语又太严。滑窗 3-gram 让「含查询任意
+    3 字连续片段的记忆」都能进粗召回，再交给 `bm25()` 按**命中词项数**排序
+    （命中越多分越高 → 天然近似「短语优先」），精度由打分与 token 预算共同收口。
+
+    返回 [] 表示「本查询无可用词项」→ 调用方应直接走兜底通道。
+    """
+    if not query:
+        return []
+    n = len(query)
+    if n < RECALL_TERM_LEN:
+        return []
+    if n == RECALL_TERM_LEN:
+        return [query]
+    seen: set[str] = set()
+    out: list[str] = []
+    for i in range(n - RECALL_TERM_LEN + 1):
+        term = query[i:i + RECALL_TERM_LEN]
+        if term in seen or not _INDEXABLE_RE.search(term):
+            continue
+        seen.add(term)
+        out.append(term)
+        if len(out) >= RECALL_MAX_TERMS:
+            break
+    return out
+
+
+def _fts_match_expr(query: str) -> str | None:
+    """构造 FTS5 MATCH 表达式。
+
+    - `RECALL_ENABLE_QUERY_TERMS=0`（旧行为）→ 整句短语；
+    - `=1` → `"词1" OR "词2" OR ...`（词项均 ≥3 字，trigram 可匹配）。
+
+    返回 None = 无可用词项 → 调用方走兜底通道（不再打一次注定空集的 SQL）。
+    """
+    if not RECALL_ENABLE_QUERY_TERMS:
+        return _fts_quote(query)
+    terms = _query_terms(query)
+    if not terms:
+        return None
+    return " OR ".join(_fts_quote(t) for t in terms)
+
+
+def _parse_tags(raw) -> list[str]:
+    """`tags_json`（JSON 数组文本）→ 小写去空字符串列表；非法/空 → []（永不抛）。"""
+    if not raw:
+        return []
+    try:
+        value = json.loads(raw)
+    except Exception:
+        return []
+    if not isinstance(value, list):
+        return []
+    return [str(t).strip().lower() for t in value if str(t).strip()]
+
+
+def _tag_hit_ratio(tags: list[str], query: str) -> float:
+    """查询与 tags 的重合度 ∈ [0,1] = 命中 tag 数 / tag 总数。
+
+    双向子串判定（`tag in query` 或 `query in tag`）：抽取产出的 tag 就是
+    「这句话的关键词」（prompt 见 L126 要求 2~5 个简短关键词），用户提问里
+    出现该关键词即**强相关信号**，而旧实现只搜 `content`、tags 从未参与检索。
+    """
+    if not tags or not query:
+        return 0.0
+    q = query.lower()
+    hits = sum(1 for t in tags if t and (t in q or q in t))
+    return hits / len(tags)
+
+
+def _escape_like(value: str) -> str:
+    """转义 LIKE 通配符（配合 SQL 里的 `ESCAPE '\\'`）。"""
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def _bm25_candidates(session: Session, user_id: int, query: str, now: datetime,
+                     *, match_expr: str | None = None) -> list[dict]:
     """BM25 粗召回（§4 SQL 形态）：FTS 命中行 join 回事实表，强制 m.user_id 过滤。
 
     rel = 1/(1+|bm25|) 的归一在 Python 侧与时间衰减混合（§5.2），SQL 只粗召回 60 条。
+
+    `match_expr` 为 None 时用旧行为（整句短语）；节118 起由 `_recall_candidates_bm25`
+    传入「词项 OR」表达式。
     """
     rows = session.execute(
         text(
             "SELECT m.id, m.content, m.fact_type, m.importance, m.updated_at, "
+            "       m.tags_json, "
             "       bm25(agent_memories_fts) AS bm "
             "FROM agent_memories_fts "
             "JOIN agent_memories m ON m.id = agent_memories_fts.rowid "
@@ -310,16 +422,110 @@ def _bm25_candidates(session: Session, user_id: int, query: str, now: datetime) 
             "  AND m.user_id = :uid AND m.deleted_at IS NULL "
             "ORDER BY bm LIMIT :limit"
         ),
-        {"q": _fts_quote(query), "uid": user_id, "limit": RECALL_COARSE_LIMIT},
+        {"q": match_expr if match_expr is not None else _fts_quote(query),
+         "uid": user_id, "limit": RECALL_COARSE_LIMIT},
     ).fetchall()
     out = []
     for r in rows:
         out.append({
             "id": r.id, "content": r.content, "fact_type": r.fact_type,
             "importance": float(r.importance or 0.5), "updated_at": r.updated_at,
+            "tags": _parse_tags(r.tags_json),
             "rel": 1.0 / (1.0 + abs(float(r.bm or 0.0))),
         })
     return out
+
+
+def _recall_candidates_bm25(session: Session, user_id: int, query: str,
+                            now: datetime) -> list[dict]:
+    """BM25 粗召回入口（受 `RECALL_ENABLE_QUERY_TERMS` / `RECALL_PHRASE_FIRST` 控制）。
+
+    - 开关关 → 完全旧行为（整句短语，1 次 SQL）；
+    - `RECALL_PHRASE_FIRST=1` → 两段式：先原短语（保精度），零候选再退 OR（保召回），
+      代价是最多多打 1 次 SQL；
+    - 默认（`=0`）→ 直接一次 OR 查询，短语精度由 `RECALL_PHRASE_BONUS` 在
+      Python 侧补偿（content 含整句即加分），**不额外打 SQL**。
+    """
+    if not RECALL_ENABLE_QUERY_TERMS:
+        return _bm25_candidates(session, user_id, query, now,
+                                match_expr=_fts_quote(query))
+    if RECALL_PHRASE_FIRST:
+        rows = _bm25_candidates(session, user_id, query, now,
+                               match_expr=_fts_quote(query))
+        if rows:
+            return rows
+    expr = _fts_match_expr(query)
+    if expr is None:
+        return []
+    return _bm25_candidates(session, user_id, query, now, match_expr=expr)
+
+
+def _like_candidates(session: Session, user_id: int, query: str, now: datetime) -> list[dict]:
+    """短问（<`RECALL_TERM_LEN` 字）兜底通道：一次 LIKE 子串扫描该用户活跃事实。
+
+    trigram 下 <3 字**无法进 FTS**，旧实现直接退化 recency（**相关度归零**：只按
+    重要度×新鲜度取，与问题无关）。改用 LIKE 保住相关度。
+
+    代价边界：扫描行数由 `MAX_FACTS_PER_USER=300` 保证（≤300 行、微秒级）。
+    ⚠️ 复用 `ix_agent_memories_user_created` 先按 user 收窄，**必须带 user_id 过滤**
+    （多用户隔离红线）且只含未删除行。
+    """
+    pattern = "%" + _escape_like(query) + "%"
+    rows = session.execute(
+        text(
+            "SELECT m.id, m.content, m.fact_type, m.importance, m.updated_at, "
+            "       m.tags_json "
+            "FROM agent_memories m "
+            "WHERE m.content LIKE :pat ESCAPE '\\' "
+            "  AND m.user_id = :uid AND m.deleted_at IS NULL "
+            "ORDER BY m.updated_at DESC LIMIT :limit"
+        ),
+        {"pat": pattern, "uid": user_id, "limit": RECALL_COARSE_LIMIT},
+    ).fetchall()
+    out = []
+    for r in rows:
+        out.append({
+            "id": r.id, "content": r.content, "fact_type": r.fact_type,
+            "importance": float(r.importance or 0.5), "updated_at": r.updated_at,
+            "tags": _parse_tags(r.tags_json),
+            # LIKE 命中的行按定义都含该关键词 → 同等相关度，排序交给重要度×新鲜度
+            "rel": 1.0,
+        })
+    return out
+
+
+def _short_query_candidates(session: Session, user_id: int, query: str, now: datetime,
+                            *, union: bool | None = None) -> tuple[list[dict], int]:
+    """短问（<`RECALL_TERM_LEN` 字）候选。返回 (candidates, LIKE 命中数)。
+
+    **为什么默认取并集（`RECALL_SHORT_QUERY_UNION=1`）而不是只取 LIKE 命中**：
+    基准实测的反例 q031 —— 问题「性格」，期望事实的 content 是
+    「用户做决定的时候比较容易犹豫」，**content 里没有「性格」二字、只有 tag 里有**。
+    只取 LIKE 命中 → 注入 1 条且全是噪声（候选预算从 k=6 塌到 1），
+    **反而丢掉了 recency 本来能命中的期望记忆**。
+
+    取并集后：关键词命中被 `RECALL_KEYWORD_BONUS` 抬到前面，但候选预算仍是完整 k 条，
+    不会因通道变窄而丢召回。`union=0` 保留窄口径，供消融对照。
+    """
+    if union is None:
+        union = bool(RECALL_SHORT_QUERY_UNION)
+    like_rows = _like_candidates(session, user_id, query, now)
+    for c in like_rows:
+        c["keyword_hit"] = True
+    if not union:
+        return list(like_rows), len(like_rows)
+
+    rows = _recency_candidates(session, user_id)
+    by_id = {c["id"]: c for c in rows}
+    for c in like_rows:
+        cur = by_id.get(c["id"])
+        if cur is None:  # 防御：recency 已是全集，理论上不会走到
+            cur = {k: c[k] for k in ("id", "content", "fact_type",
+                                     "importance", "updated_at", "tags")}
+            rows.append(cur)
+            by_id[c["id"]] = cur
+        cur["keyword_hit"] = True
+    return rows, len(like_rows)
 
 
 def _recency_candidates(session: Session, user_id: int) -> list[dict]:
@@ -332,6 +538,7 @@ def _recency_candidates(session: Session, user_id: int) -> list[dict]:
     return [{
         "id": m.id, "content": m.content, "fact_type": m.fact_type,
         "importance": float(m.importance or 0.5), "updated_at": m.updated_at,
+        "tags": _parse_tags(m.tags_json),
     } for m in rows]
 
 
@@ -363,24 +570,44 @@ def recall_memories(user_id: int, query: str = "", k: int | None = None,
         now = _now()
         t0 = time.monotonic()
 
-        # 查询词有效性：≥3 个有效字符才走 BM25（trigram 对 <3 字查询返回空集）
+        # 查询词有效性（节118）：≥RECALL_TERM_LEN 字走 BM25（trigram 对更短词项返回空集）；
+        # 更短的「短问」若开了 R2-1 则走 LIKE 兜底，而不是直接退化 recency。
         eff_query = "".join(query.split()) if query else ""
-        use_bm25 = mode != "opening" and len(eff_query) >= 3
+        is_short_query = len(eff_query) < RECALL_TERM_LEN
+        use_bm25 = mode != "opening" and not is_short_query
+        use_short_like = (mode != "opening" and is_short_query and bool(eff_query)
+                          and bool(RECALL_ENABLE_SHORT_QUERY_LIKE))
 
         channel = "recency"
         candidates: list[dict] = []
-        if use_bm25:
+        if use_short_like:
+            # 节118-R2-1：短问 LIKE 兜底（**并集口径**，见 _short_query_candidates）
+            channel = "like"
+            try:
+                candidates, keyword_hits = _short_query_candidates(
+                    session, user_id, eff_query, now)
+                if not keyword_hits:
+                    channel = "recency"   # LIKE 零命中 → 等价于纯 recency
+            except Exception as exc:  # 任何异常 → 静默降级 recency（§5.5）
+                logger.warning("记忆短问兜底召回失败，降级 recency user_id=%s error=%s",
+                               user_id, exc)
+                channel = "recency"
+                candidates = []
+        elif use_bm25:
             channel = "bm25"
             try:
-                candidates = _bm25_candidates(session, user_id, eff_query, now)
+                candidates = _recall_candidates_bm25(session, user_id, eff_query, now)
             except Exception as exc:  # FTS 不可用等 → 静默降级 recency（§5.5）
                 logger.warning("记忆 BM25 召回失败，降级 recency user_id=%s error=%s",
                                user_id, exc)
                 channel = "recency"
                 candidates = []
-            if channel == "bm25" and not candidates:
-                # BM25 零命中 → 降级 recency 通道取 K/2（§5.2 兜底，避免空召回）
-                channel = "recency"
+
+        if channel == "bm25" and not candidates:
+            # 零命中 → 降级 recency 通道兜底（§5.2，避免空召回）。
+            # 节118-R2-2：**不再把 k 减半** —— 旧行为让「问得越模糊注入越多」且各档名额不一致。
+            channel = "recency"
+            if RECALL_HALVE_K_ON_FALLBACK:
                 k = max(1, k // 2)
 
         if channel == "bm25":
@@ -388,9 +615,28 @@ def recall_memories(user_id: int, query: str = "", k: int | None = None,
             for c in candidates:
                 c["score"] = c["rel"] + ALPHA * c["importance"] * _freshness(c["updated_at"], now)
         else:
-            candidates = _recency_candidates(session, user_id)
+            # recency / 短问兜底：基分 importance×freshness；LIKE 关键词命中额外加分
+            if not candidates:
+                candidates = _recency_candidates(session, user_id)
             for c in candidates:
                 c["score"] = c["importance"] * _freshness(c["updated_at"], now)
+                if c.get("keyword_hit"):
+                    c["score"] += RECALL_KEYWORD_BONUS
+
+        # 节118-R3：tags 免费信号进场（**只在候选集上做 Python 侧补充打分**，
+        # 不动 FTS DDL / 触发器 / 表结构 —— 那属另案）
+        if RECALL_ENABLE_TAGS_MATCH and eff_query:
+            for c in candidates:
+                ratio = _tag_hit_ratio(c.get("tags") or [], eff_query)
+                if ratio:
+                    c["tag_ratio"] = ratio
+                    c["score"] += RECALL_TAG_BONUS * ratio
+
+        # 节118-R1：content 含整句时加分 —— 默认（不做两段式 SQL）时用它补偿短语精度
+        if RECALL_ENABLE_QUERY_TERMS and RECALL_PHRASE_BONUS > 0 and eff_query:
+            for c in candidates:
+                if eff_query in (c.get("content") or ""):
+                    c["score"] += RECALL_PHRASE_BONUS
 
         ranked = sorted(candidates, key=lambda c: c["score"], reverse=True)
 
