@@ -53,7 +53,7 @@ backend/.pytest_tmp/
 
 # 节111 系统优化：排除 node 缓存与探针死件
 frontend/.npm-cache/
-frontend/scripts/_tmp_*
+frontend/scripts/_tmp*
 frontend/scripts/_baseline-index.html
 frontend/scripts/_pristine-index.html
 frontend/scripts/_check1.js
