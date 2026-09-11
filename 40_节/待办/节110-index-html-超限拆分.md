@@ -1,6 +1,6 @@
 # 节 110 · index.html 拆分（解耦）—— 执行方案书 v2（对齐破竹 v0.24）
 
-状态：🔵 进行中（阶段 0/1/2 完成；阶段 3 拆视图已外置 8 个 JS，剩国学工具域/杂项；阶段 4 收敛未开始）｜ 强度：大改（单向门）｜ 日期：2026-09-10
+状态：🔵 阶段 4 收敛中（阶段 0/1/2/3 全部完成，index.html 1,381 行 <2000 达标；剩复用.md 红线更新 + 用户逐屏验收）｜ 强度：大改（单向门）｜ 日期：2026-09-10
 
 ## 用户原话
 （审计 + 用户追加）①`frontend/public/index.html` 21841 行，超「单文件 2 万行」红线需拆。②按破竹最新协议（v0.24）复审本方案并更新。③执行方任务 = **只做解耦（4 阶段）**；同时**审查全部代码 + 把系统优化点记录到单独文件**，优化在解耦完成后另行执行。
@@ -52,8 +52,8 @@
 - ✅ **阶段 0 · 建体系**：只读统计 → 定拆分规范/加载顺序/命名/precompile 适配（落 `复用.md`+`导航.md`）→ 建牵连表（§5）→ 归档 `frontend/src/`（§7）
 - ✅ **阶段 1 · 拆 CSS**：设计令牌/组件/页面样式 → `css/tokens.css|components.css|pages.css`；验收逐屏样式一致
 - ✅ **阶段 2 · 拆通用件**：ModalBase/Toast/Skeleton/皮肤/共享工具 → `js/components.js`（必须在 views 之前加载）
-- 🔵 **阶段 3 · 拆视图**：按域逐节；已拆 8 个 JS（guoxue/xishi/mbti/zodiac/cases/divination/onboarding，明细见「交接点」）；剩国学工具域 + 杂项（CaseShare/Settings/Agent/首页导航）
-- ⬜ **阶段 4 · 收敛达标**：index.html 只剩骨架+vendor+加载顺序+全局状态+api；`复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」；precompile 多文件定稿
+- ✅ **阶段 3 · 拆视图**：按域逐节；已拆 11 个 JS（guoxue/xishi/mbti/zodiac/cases/divination/onboarding/home/guoxue-tools/agent，明细见「交接点」）
+- 🔵 **阶段 4 · 收敛达标**：index.html 只剩骨架+vendor+全局状态+api+App 路由（已 1,381 行 <2000 达标）；`复用.md` 红线更新 + precompile 定稿 + 用户逐屏验收
 
 ## 5. 牵连表（v0.19：阶段 0 必建，写进 `00_根/导航.md`）
 - 拆分会让"同一份信息散多处"风险上升，必须建牵连表，至少含：**加载顺序**（vendor → components.js → views-* → 骨架挂载）、**全局依赖**（token/page/params/navigate/api 被哪些视图引用）、**皮肤系统**（--skin-* 引用点）、**静态资源绝对路径**（/vendor/* /art/* 引用点）
@@ -98,8 +98,8 @@
 
 ## 13. 交接点（2026-09-11 更新，供下一 session 续做）
 
-- **当前进度**：阶段 0/1/2 全部完成；阶段 3「拆视图」已外置 8 个 JS，`index.html` 由 22,046 行降至 **4,117 行**（阶段 4 目标 <2000 行）。
-- **已拆 8 个 JS**（加载顺序见 `导航.md` §7.1，均在 head、早于主脚本；`css/*.css` 为阶段 1）：
+- **当前进度**：阶段 0/1/2/3 全部完成（阶段 3 已外置 11 个 JS）；`index.html` 由 22,046 行降至 **1,381 行**（阶段 4 目标 <2000 行已达标）。
+- **已拆 11 个 JS**（加载顺序见 `导航.md` §7.1，均在 head、早于主脚本；`css/*.css` 为阶段 1）：
   | 文件 | 内容 |
   |---|---|
   | `js/components.js` | 通用件 toast/Icon/ModalBase/SkinSwitcher + 共享西洋盘面 AstroWheel/AstroNatalPanel |
@@ -110,10 +110,13 @@
   | `js/views-cases.js` | 档案列表 CasesPage + 建档弹窗 Rename/CaseContact/ShareFill + 解读流程 Waiting/Calibration/Predict/Revise/Topic + 档案详情 ArchivePage + 9 法命盘渲染 |
   | `js/views-divination.js` | 临时起卦 DivinationPage + 六爻/梅花/小六壬/六壬/金口诀/奇门/文王圣卦 + 卦辞常量 |
   | `js/views-onboarding.js` | 登录注册 AuthPage + 建档引导 OnboardingPage |
-- **阶段 3 剩余待拆**（index.html 内，均已不大）：国学工具域（NinePickPage/NamerModal/GuoxueHubPage/GuoxueToolsPage）、杂项（CaseSharePage/SettingsPage/AgentPage）、首页与导航（LandingPage/积分/配对 + NavRail/TopbarModNav/TopbarMenu）。
-- **阶段 4 收敛（未开始）**：index.html 只剩骨架+vendor+全局状态+api+App 路由；`复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」。
+  | `js/views-home.js` | 首页 LandingPage + 积分 CreditBalance/BannerBalance/MenuBalance/CreditInsufficientModal + 配对 PairModal + 余额明细 CreditTransactionsPage + 导航 NavRail/TopbarModNav/TopbarMenu + 设置 SettingsPage |
+  | `js/views-guoxue-tools.js` | 国学工具 NinePickPage/NamerModal/GuoxueHubPage/GuoxueToolsPage + 九法状态 nineRunState |
+  | `js/views-agent.js` | 太初先生 AgentPage + AGENT_GREETINGS/AGENT_CASE_KEYWORDS |
+- **阶段 3 已完成**：无剩余视图待拆。
+- **阶段 4 收敛（进行中）**：index.html 只剩骨架+vendor+全局状态+api+App 路由（已 1,381 行达标）；待办 = `复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」+ 用户逐屏验收。
 - **门禁/验证**：每步拆后跑 `node frontend/scripts/precompile.js`（必须全绿，0 编译块）；后端 :8000 冒烟（index.html + 各 js 均 200）。拆出的 .js 只放已预编译普通 JS、禁止 JSX。
-- **git 留底**：阶段 3 每域一 commit（`b1593f3` 起至 `4aa97d8`），可回退。
+- **git 留底**：阶段 3 每域一 commit（`b1593f3` 起至 `9932a10`），可回退。
 
 ## 本节指标（v0.21，执行方收尾填写）
 - 模型 + provider：{{执行方填}}
