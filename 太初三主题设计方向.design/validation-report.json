@@ -1,0 +1,112 @@
+{
+  "success": true,
+  "outcome": "passed",
+  "repairable": true,
+  "terminalViolations": [],
+  "terminalBlockingSummary": null,
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.08.06.19.15.08",
+    "version_source": "skill-release-manifest.json",
+    "runtime_skill_dir": "c:\\Users\\wumoh\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+    "recorded_at": null,
+    "expected_version": "2026.08.06.19.15.08",
+    "status": "manifest_fallback",
+    "read_status": "ok",
+    "reason": "runtime-orchestration-summary.json missing skillProvenance; used skill-release-manifest.json"
+  },
+  "operatingMode": "free-explore",
+  "renderBlockingErrorCount": 0,
+  "softWarningCount": 4,
+  "renderBlockingErrors": [],
+  "errorSignatures": [],
+  "softWarnings": [
+    "[orchestration-summary] runtime-orchestration-summary.json is missing skillProvenance.name/version/version_source. Version provenance will be reported as observed_unknown by external evaluators.",
+    "[mobile-bottom-overlay] pages/xishi-home.html: bottom fixed/absolute CTA or navigation found. Ensure it has safe-area spacing and does not cover content. Evidence: class=\"absolute bottom-4 left-0 right-0 text-center text-[10px] tracking-[0.3em] text-[var(--taichu-gold-500)]/70 uppercase\"",
+    "[html-quality] colors_and_type.css: free-explore radius tokens must stay within the restrained 2/4/8/12/16px scale; oversized or forbidden radius tokens found (--taichu-radius-xl: 28px, --taichu-radius-lg: 20px). Do not use 20px+ radii unless the user explicitly requested large rounded shapes.",
+    "[html-quality] colors_and_type.css: ordinary/static shadow tokens must keep every shadow alpha <= 0.05; deeper shadows are allowed only for floating-layer tokens such as modal/popover/dropdown/drawer/overlay (--taichu-shadow-card: 0 4px 24px rgba(26, 33, 56, 0.06), 0 1px 2px rgba(26, 33, 56, 0.04), --taichu-shadow-elevated: 0 8px 32px rgba(26, 33, 56, 0.08), 0 2px 4px rgba(26, 33, 56, 0.04))."
+  ],
+  "repairPlanHints": [],
+  "repairActionTable": [],
+  "errorCount": 0,
+  "warningCount": 4,
+  "errors": [],
+  "warnings": [
+    "[orchestration-summary] runtime-orchestration-summary.json is missing skillProvenance.name/version/version_source. Version provenance will be reported as observed_unknown by external evaluators.",
+    "[mobile-bottom-overlay] pages/xishi-home.html: bottom fixed/absolute CTA or navigation found. Ensure it has safe-area spacing and does not cover content. Evidence: class=\"absolute bottom-4 left-0 right-0 text-center text-[10px] tracking-[0.3em] text-[var(--taichu-gold-500)]/70 uppercase\"",
+    "[html-quality] colors_and_type.css: free-explore radius tokens must stay within the restrained 2/4/8/12/16px scale; oversized or forbidden radius tokens found (--taichu-radius-xl: 28px, --taichu-radius-lg: 20px). Do not use 20px+ radii unless the user explicitly requested large rounded shapes.",
+    "[html-quality] colors_and_type.css: ordinary/static shadow tokens must keep every shadow alpha <= 0.05; deeper shadows are allowed only for floating-layer tokens such as modal/popover/dropdown/drawer/overlay (--taichu-shadow-card: 0 4px 24px rgba(26, 33, 56, 0.06), 0 1px 2px rgba(26, 33, 56, 0.04), --taichu-shadow-elevated: 0 8px 32px rgba(26, 33, 56, 0.08), 0 2px 4px rgba(26, 33, 56, 0.04))."
+  ],
+  "validationRunDisciplineStatus": {
+    "declared": true,
+    "restoreMode": false,
+    "maxFullValidationRuns": 2,
+    "validationHistoryCount": 0,
+    "repairLedgerCount": 0,
+    "softWarningsTriggerRepair": false,
+    "terminalState": null,
+    "nextAction": null,
+    "violations": [],
+    "success": true
+  },
+  "terminalState": null,
+  "nextCheck": {
+    "type": "finish-readiness",
+    "command": "node \"c:\\Users\\wumoh\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs\" \"c:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\太初三主题设计方向.design\" --check=all",
+    "fullValidationAllowed": false,
+    "reason": "workspace validation passed; run complete finish readiness before final delivery"
+  },
+  "repairBatch": [],
+  "repairContextPacket": {
+    "schema_version": "1.0",
+    "purpose": "small-context repair packet; read this before full validation-report.json",
+    "success": true,
+    "terminalState": null,
+    "skillProvenance": {
+      "name": "solo-design",
+      "version": "2026.08.06.19.15.08",
+      "version_source": "skill-release-manifest.json",
+      "runtime_skill_dir": "c:\\Users\\wumoh\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+      "recorded_at": null,
+      "expected_version": "2026.08.06.19.15.08",
+      "status": "manifest_fallback",
+      "read_status": "ok",
+      "reason": "runtime-orchestration-summary.json missing skillProvenance; used skill-release-manifest.json"
+    },
+    "renderBlockingErrorCount": 0,
+    "softWarningCount": 4,
+    "renderBlockingErrors": [],
+    "repairActionTable": [],
+    "nextCheck": {
+      "type": "finish-readiness",
+      "command": "node \"c:\\Users\\wumoh\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs\" \"c:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\太初三主题设计方向.design\" --check=all",
+      "fullValidationAllowed": false,
+      "reason": "workspace validation passed; run complete finish readiness before final delivery"
+    },
+    "forbidden": [
+      "do not read validator source",
+      "do not rerun full validation when nextCheck.fullValidationAllowed=false",
+      "do not start preview/browser unless user explicitly asks",
+      "do not hand-edit repair ledger fields"
+    ]
+  },
+  "projectFileHashes": {
+    ".design": "c1b84594370b7f6e6de1094d3ac42ce04dcacf19f2d2e98a353353893c9ede4c",
+    "colors_and_type.css": "9218fb44e9036da68ef1e274d5ac8e4ea2038675b499a080b474526695368b28",
+    "runtime-orchestration-summary.json": "c99eea8b39f7752a7634e533716a063644285e0ba50ba6b7073c8f433b6bbe8c",
+    "pages/guoxue-home.html": "fdfe76ecac293649208c4e8528f5030b846a135828c56e56f7f302365af61805",
+    "pages/guoxue-result.html": "bfc5a816d625fe0b12502217c4375bbd7c801a91a7a783b33ab84c3e59d212cc",
+    "pages/psych-home.html": "1d7dcbf8e56e67117997c761556a3e2e9ad9d810b187476c5252445b4215d5fe",
+    "pages/psych-result.html": "80df8a7e70d7229463c68e8f974c23fbbb77e62190bb5e7f4933b0c058167d28",
+    "pages/samples.html": "7616e967836619506c43e36b0fc18827bee5feab6003d80abaa2c12b952bed36",
+    "pages/system.html": "53789d76b8a25d3cc45e3f3cf5aa8b4f2f893c10c03759f1bb8acc2f1e45208f",
+    "pages/xishi-home.html": "24ad5d9a72be59042b60ab9bed187bc2c3364e62887d5f39e6cb1d0b348b92d6",
+    "pages/xishi-result.html": "81ffbda22c6030d67db19922ccd5317cf32624f57b25a6bc4f6431b1fe2920a8",
+    "assets/taichu-logo.svg": "14707c9ad9af2e6379abf7a499f764b3c420259a4a57674af86083f466981486",
+    "assets/taichu-pattern.svg": "7652af5676627d9a08a4b45863af9e97db161e182ba6c3e89abc7317914a29f1"
+  },
+  "designDir": "c:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\太初三主题设计方向.design",
+  "expectedPages": null,
+  "requireInteractions": null,
+  "checkedAt": "2026-09-11T17:16:30.377Z"
+}

@@ -162,3 +162,133 @@ def score_fit(propositions, results=None, validations=None) -> dict:
 def calibration_weight(fit: float) -> float:
     """校准权重 = 0.4 + 0.6 × 契合度。无反馈方法的权重为 0.5（调用方自行判断）。"""
     return round(0.4 + 0.6 * clamp01(fit), 4)
+
+
+# --------------------------------------------------------------------------- #
+# 节116 第④步 · 方向级模糊否定闭环
+# --------------------------------------------------------------------------- #
+# 模糊否定：用户只说"不准"而未指明具体命题时，按领域+方向累积，
+# 达到阈值后对该领域该方向的置信度做降级。
+# --------------------------------------------------------------------------- #
+
+# 模糊否定累积阈值（对应不同惩罚力度）
+VAGUE_DENIAL_HALF_STEP_MIN = 1      # 1-2 次 → 半级惩罚（"待二次验证"）
+VAGUE_DENIAL_ONE_STEP_MIN = 3       # 3-4 次 → 降一级
+VAGUE_DENIAL_TWO_STEP_MIN = 5       # ≥5 次 → 降两级
+
+# 置信度等级（用于降级计算）
+_CONFIDENCE_LEVELS = ["speculative", "low", "medium", "high"]
+_CONFIDENCE_RANK = {v: i for i, v in enumerate(_CONFIDENCE_LEVELS)}
+
+
+def vague_denial_rank_penalty(count: int) -> int:
+    """根据模糊否定累积次数，返回应降级的等级数（0=无惩罚, 0.5=半级, 1=降一级, 2=降两级）。
+
+    设计（对齐参考项目的累积规则）：
+    - 0 次 → 0（无影响，沉默不推断）
+    - 1–2 次 → 0.5（"待二次验证"，置信度下调半级）
+    - 3–4 次 → 1（降一级）
+    - ≥5 次 → 2（降两级，顶格）
+    """
+    if count <= 0:
+        return 0
+    if count <= 2:
+        return 0.5
+    if count <= 4:
+        return 1
+    return 2
+
+
+def apply_confidence_penalty(confidence: str, penalty_ranks: float) -> str:
+    """对单个置信度等级应用降级惩罚，返回降级后的置信度。
+
+    penalty_ranks 可以是 0.5 / 1 / 2（半级/一级/两级）。
+    半级：high→medium 但标"偏高置信"？不，简化处理：半级按一级算（保守降级，避免精度过高）。
+    实际：0.5 也降一级（向保守方向取整），因为"待二次验证"本身就说明不确定性。
+    """
+    if penalty_ranks <= 0:
+        return confidence
+    # 半级及以上都按整数级降级（向保守方向取整，宁低勿高）
+    steps = int(penalty_ranks + 0.5) if penalty_ranks % 1 == 0.5 else int(penalty_ranks)
+    rank = _CONFIDENCE_RANK.get(confidence, 1)  # 默认 medium
+    new_rank = max(0, rank - steps)
+    return _CONFIDENCE_LEVELS[new_rank]
+
+
+def collect_vague_denials(vague_denials: list[dict] | None) -> dict[str, dict[str, int]]:
+    """聚合模糊否定 → {domain: {direction: count}}。
+
+    输入格式（每条一个否定信号）：
+        [{"domain": "事业", "direction": "吉"}, ...]
+
+    输出：
+        {"事业": {"吉": 3, "凶": 1}, "财运": {"吉": 2}, ...}
+
+    过滤：domain/direction 为空的丢弃；direction 不在 {吉,凶,平} 的丢弃。
+    """
+    result: dict[str, dict[str, int]] = {}
+    if not vague_denials:
+        return result
+    for item in vague_denials:
+        if not isinstance(item, dict):
+            continue
+        domain = (item.get("domain") or "").strip()
+        direction = (item.get("direction") or "").strip()
+        if not domain or direction not in ("吉", "凶", "平"):
+            continue
+        if domain not in result:
+            result[domain] = {}
+        result[domain][direction] = result[domain].get(direction, 0) + 1
+    return result
+
+
+def merge_vague_denials(old: list[dict] | None, new: list[dict] | None) -> list[dict]:
+    """合并新旧模糊否定记录（简单追加 + 去重靠 count，不在此函数做）。
+
+    旧数据可能是 None 或 list；新数据也是。返回合并后的 list。
+    """
+    merged = []
+    if isinstance(old, list):
+        merged.extend(old)
+    if isinstance(new, list):
+        merged.extend(new)
+    return merged
+
+
+def vague_denial_summary(vague_denials: list[dict] | None) -> dict[str, dict]:
+    """生成模糊否定摘要（给合成器/方法模块用的结构化信号）。
+
+    返回：
+        {
+            "by_domain_direction": {domain: {direction: count}},
+            "penalties": {domain: {direction: {"count": n, "penalty_rank": p, "note": "..."}}},
+            "has_any": bool,
+        }
+    """
+    aggregated = collect_vague_denials(vague_denials)
+    penalties: dict[str, dict] = {}
+    has_any = False
+
+    for domain, dir_counts in aggregated.items():
+        penalties[domain] = {}
+        for direction, count in dir_counts.items():
+            penalty = vague_denial_rank_penalty(count)
+            note = ""
+            if count >= VAGUE_DENIAL_TWO_STEP_MIN:
+                note = "多次模糊否定，置信度降两级"
+            elif count >= VAGUE_DENIAL_ONE_STEP_MIN:
+                note = "多次模糊否定，置信度降一级"
+            elif count >= VAGUE_DENIAL_HALF_STEP_MIN:
+                note = "少量模糊否定，待二次验证"
+            penalties[domain][direction] = {
+                "count": count,
+                "penalty_rank": penalty,
+                "note": note,
+            }
+            has_any = True
+
+    return {
+        "by_domain_direction": aggregated,
+        "penalties": penalties,
+        "has_any": has_any,
+    }

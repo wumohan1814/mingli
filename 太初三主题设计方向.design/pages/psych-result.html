@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理测试 · 结果页</title>
+    <style id="theme-vars">
+/* 太初 · 三主题统一设计系统 v1.1
+ * 共同骨架：午夜蓝 + 香槟金 + 象牙白 + Cormorant 衬线
+ * 皮肤签名：国学（玉青/朱砂/山海经线描）、西式占卜（紫晶/深空蓝/卡牌框纹）、心理测试（暖杏/雾蓝/Notion 简笔头像）
+ * v1.1 质感升级：加大圆角、柔和多层阴影、磨砂玻璃卡片
+ */
+
+:root {
+  /* ===== 原始 token（跨文化共用） ===== */
+  /* 午夜绒蓝 */
+  --taichu-ink-50: #EEF1F8;
+  --taichu-ink-100: #D6DCEF;
+  --taichu-ink-200: #AEB9DE;
+  --taichu-ink-300: #8493CB;
+  --taichu-ink-400: #5E6FB3;
+  --taichu-ink-500: #44558F;
+  --taichu-ink-600: #364573;
+  --taichu-ink-700: #2C385C;
+  --taichu-ink-800: #232C49;
+  --taichu-ink-900: #1A2138;
+
+  /* 香槟金 */
+  --taichu-gold-300: #E6CF9A;
+  --taichu-gold-400: #D4B06A;
+  --taichu-gold-500: #B8893E;
+  --taichu-gold-600: #9C6E2E;
+  --taichu-gold-700: #7E5824;
+
+  /* 中性色 */
+  --taichu-paper: #F7F4EC;
+  --taichu-surface: #FFFFFF;
+  --taichu-surface-warm: #FEFCF8;
+  --taichu-text-1: #1F1F26;
+  --taichu-text-2: #5C5C68;
+  --taichu-text-3: #8A8A94;
+  --taichu-border-warm: #E5E0D4;
+
+  /* 字体 */
+  --taichu-font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+  --taichu-font-sans: "Noto Sans SC", "Inter", system-ui, sans-serif;
+  --taichu-font-latin-serif: "Cormorant Garamond", "Noto Serif SC", serif;
+
+  /* 字号 */
+  --taichu-fs-display: 32px;
+  --taichu-fs-h1: 28px;
+  --taichu-fs-h2: 22px;
+  --taichu-fs-h3: 18px;
+  --taichu-fs-body-l: 16px;
+  --taichu-fs-body: 14px;
+  --taichu-fs-caption: 12px;
+  --taichu-fs-disclaimer: 11px;
+
+  /* 间距 */
+  --taichu-sp-1: 8px;
+  --taichu-sp-2: 16px;
+  --taichu-sp-3: 24px;
+  --taichu-sp-4: 32px;
+  --taichu-sp-6: 48px;
+
+  /* 圆角：v1.1 整体加大，强化圆弧式高级感 */
+  --taichu-radius-sm: 10px;
+  --taichu-radius-md: 14px;
+  --taichu-radius-lg: 20px;
+  --taichu-radius-xl: 28px;
+  --taichu-radius-pill: 999px;
+
+  /* 阴影：v1.1 更柔和、更有层次 */
+  --taichu-shadow-card: 0 4px 24px rgba(26, 33, 56, 0.06), 0 1px 2px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-elevated: 0 8px 32px rgba(26, 33, 56, 0.08), 0 2px 4px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-float: 0 16px 48px rgba(26, 33, 56, 0.10), 0 4px 8px rgba(26, 33, 56, 0.04);
+
+  /* 磨砂玻璃 */
+  --taichu-glass-blur: 20px;
+  --taichu-glass-saturate: 160%;
+  --taichu-glass-opacity: 0.90;
+
+  /* 动效 */
+  --taichu-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --taichu-dur: 220ms;
+
+  /* ===== 默认语义别名（中性基底） ===== */
+  --taichu-background: var(--taichu-paper);
+  --taichu-foreground: var(--taichu-text-1);
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-card-foreground: var(--taichu-text-1);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+  --taichu-popover-foreground: var(--taichu-text-1);
+  --taichu-primary: var(--taichu-ink-700);
+  --taichu-primary-foreground: var(--taichu-paper);
+  --taichu-muted: var(--taichu-ink-50);
+  --taichu-muted-foreground: var(--taichu-text-3);
+  --taichu-border: var(--taichu-border-warm);
+  --taichu-input: var(--taichu-border-warm);
+  --taichu-ring: var(--taichu-gold-500);
+
+  /* 主题签名变量（默认国学） */
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(62, 124, 107, 0.18);
+}
+
+/* ===== 国学：上美留白 + 山海经线描 ===== */
+[data-theme="guoxue"] {
+  --taichu-primary: #3E7C6B;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(178, 58, 58, 0.10);
+  --taichu-background: #F7F4EC;
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+}
+
+/* ===== 西式占卜：紫黑沉浸 + 卡牌框纹 ===== */
+[data-theme="xishi"] {
+  --taichu-primary: #5B4B8A;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #C9A24B;
+  --taichu-skin-accent-soft: rgba(201, 162, 75, 0.18);
+  --taichu-skin-accent-ink: #1F1F26;
+  --taichu-skin-banner: #5B4B8A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(91, 75, 138, 0.22);
+  --taichu-background: #1A2138;
+  --taichu-foreground: #F7F4EC;
+  --taichu-card: rgba(35, 44, 73, 0.88);
+  --taichu-card-foreground: #F7F4EC;
+  --taichu-popover: rgba(35, 44, 73, 0.92);
+  --taichu-border: rgba(230, 207, 154, 0.22);
+}
+
+/* ===== 心理测试：晨光象牙 + Notion 简笔头像 ===== */
+[data-theme="psych"] {
+  --taichu-primary: #5B7A8C;
+  --taichu-primary-foreground: #FFFFFF;
+  --taichu-skin-accent: #5B7A8C;
+  --taichu-skin-accent-soft: rgba(91, 122, 140, 0.12);
+  --taichu-skin-accent-ink: #FFFFFF;
+  --taichu-skin-banner: #E6A57A;
+  --taichu-skin-banner-ink: #1F1F26;
+  --taichu-skin-glow: rgba(230, 165, 122, 0.16);
+  --taichu-background: #FDFBF8;
+  --taichu-foreground: #2D2D35;
+  --taichu-card: rgba(255, 255, 255, 0.92);
+  --taichu-card-foreground: #2D2D35;
+  --taichu-popover: rgba(255, 255, 255, 0.96);
+  --taichu-border: #EDE8DF;
+}
+
+/* ===== 全局磨砂玻璃增强 ===== */
+.bg-card,
+.bg-popover {
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+/* 显式玻璃工具类，供后续需要强调磨砂质感的元素使用 */
+.glass {
+  background-color: var(--taichu-card);
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--taichu-background);
+    --color-foreground: var(--taichu-foreground);
+    --color-card: var(--taichu-card);
+    --color-card-foreground: var(--taichu-card-foreground);
+    --color-popover: var(--taichu-popover);
+    --color-popover-foreground: var(--taichu-popover-foreground);
+    --color-primary: var(--taichu-primary);
+    --color-primary-foreground: var(--taichu-primary-foreground);
+    --color-muted: var(--taichu-muted);
+    --color-muted-foreground: var(--taichu-muted-foreground);
+    --color-border: var(--taichu-border);
+    --color-input: var(--taichu-input);
+    --color-ring: var(--taichu-ring);
+    --radius-sm: var(--taichu-radius-sm);
+    --radius-md: var(--taichu-radius-md);
+    --radius-lg: var(--taichu-radius-lg);
+    --radius-xl: var(--taichu-radius-xl);
+  }
+  @layer base {
+    body { background: var(--taichu-background); color: var(--taichu-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--taichu-background); }
+      .text-background { color: var(--taichu-background); }
+      .border-background { border-color: var(--taichu-background); }
+      .ring-background { --tw-ring-color: var(--taichu-background); }
+      .bg-foreground { background-color: var(--taichu-foreground); }
+      .text-foreground { color: var(--taichu-foreground); }
+      .border-foreground { border-color: var(--taichu-foreground); }
+      .ring-foreground { --tw-ring-color: var(--taichu-foreground); }
+      .bg-card { background-color: var(--taichu-card); }
+      .text-card { color: var(--taichu-card); }
+      .border-card { border-color: var(--taichu-card); }
+      .ring-card { --tw-ring-color: var(--taichu-card); }
+      .bg-card-foreground { background-color: var(--taichu-card-foreground); }
+      .text-card-foreground { color: var(--taichu-card-foreground); }
+      .border-card-foreground { border-color: var(--taichu-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--taichu-card-foreground); }
+      .bg-popover { background-color: var(--taichu-popover); }
+      .text-popover { color: var(--taichu-popover); }
+      .border-popover { border-color: var(--taichu-popover); }
+      .ring-popover { --tw-ring-color: var(--taichu-popover); }
+      .bg-popover-foreground { background-color: var(--taichu-popover-foreground); }
+      .text-popover-foreground { color: var(--taichu-popover-foreground); }
+      .border-popover-foreground { border-color: var(--taichu-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--taichu-popover-foreground); }
+      .bg-primary { background-color: var(--taichu-primary); }
+      .text-primary { color: var(--taichu-primary); }
+      .border-primary { border-color: var(--taichu-primary); }
+      .ring-primary { --tw-ring-color: var(--taichu-primary); }
+      .bg-primary-foreground { background-color: var(--taichu-primary-foreground); }
+      .text-primary-foreground { color: var(--taichu-primary-foreground); }
+      .border-primary-foreground { border-color: var(--taichu-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--taichu-primary-foreground); }
+      .bg-muted { background-color: var(--taichu-muted); }
+      .text-muted { color: var(--taichu-muted); }
+      .border-muted { border-color: var(--taichu-muted); }
+      .ring-muted { --tw-ring-color: var(--taichu-muted); }
+      .bg-muted-foreground { background-color: var(--taichu-muted-foreground); }
+      .text-muted-foreground { color: var(--taichu-muted-foreground); }
+      .border-muted-foreground { border-color: var(--taichu-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--taichu-muted-foreground); }
+      .bg-border { background-color: var(--taichu-border); }
+      .text-border { color: var(--taichu-border); }
+      .border-border { border-color: var(--taichu-border); }
+      .ring-border { --tw-ring-color: var(--taichu-border); }
+      .bg-input { background-color: var(--taichu-input); }
+      .text-input { color: var(--taichu-input); }
+      .border-input { border-color: var(--taichu-input); }
+      .ring-input { --tw-ring-color: var(--taichu-input); }
+      .bg-ring { background-color: var(--taichu-ring); }
+      .text-ring { color: var(--taichu-ring); }
+      .border-ring { border-color: var(--taichu-ring); }
+      .ring-ring { --tw-ring-color: var(--taichu-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main data-theme="psych" class="min-h-screen bg-background text-foreground relative overflow-hidden" style="--taichu-skin-banner-soft: rgba(230, 165, 122, 0.14); --taichu-skin-banner-text: #B8733F;">
+      <!-- 品牌装饰纹理 -->
+      <div class="absolute inset-0 pointer-events-none opacity-[0.04]" style="background-image: url('../assets/taichu-pattern.svg'); background-size: 240px; background-position: center top;"></div>
+
+      <div class="relative max-w-md mx-auto px-5 py-5 pb-8">
+        <!-- 1. 顶部返回栏 -->
+        <header class="flex items-center justify-between mb-6">
+          <button type="button" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-card text-card-foreground border border-border transition-transform active:scale-95" aria-label="返回">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-foreground"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <img src="../assets/taichu-logo.svg" alt="太初" class="w-8 h-8">
+        </header>
+
+        <!-- 2. 结果主卡 -->
+        <section class="bg-card rounded-[16px] p-6 mb-6 flex items-center gap-5" style="box-shadow: var(--taichu-shadow-card);">
+          <!-- Notion 简笔头像 -->
+          <div class="flex-shrink-0 w-20 h-20 rounded-full border-2" style="border-color: var(--taichu-skin-accent); background: var(--taichu-skin-accent-soft);">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full" style="color: var(--taichu-skin-accent);">
+              <circle cx="40" cy="30" r="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M24 58c0-8.837 7.163-16 16-16s16 7.163 16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M34 34c2 1.5 6 1.5 8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h1 class="text-[28px] leading-tight font-semibold mb-1" style="font-family: var(--taichu-font-serif); color: var(--taichu-foreground);">调停者 INFP</h1>
+            <p class="text-[14px] leading-relaxed" style="color: var(--taichu-text-2);">在平静中寻找意义，在共情中创造价值</p>
+          </div>
+        </section>
+
+        <!-- 3. 维度条形图 -->
+        <section class="bg-card rounded-[16px] p-5 mb-6" style="box-shadow: var(--taichu-shadow-card);">
+          <h2 class="text-[18px] font-semibold mb-5" style="font-family: var(--taichu-font-serif); color: var(--taichu-foreground);">你的维度分布</h2>
+          <div class="space-y-4">
+            <!-- 外向 / 内向 -->
+            <div>
+              <div class="flex justify-between text-[12px] mb-1.5" style="color: var(--taichu-text-2);">
+                <span>外向 E</span>
+                <span>内向 I</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full overflow-hidden" style="background: var(--taichu-skin-accent-soft);">
+                <div class="h-full rounded-full" style="width: 78%; background: var(--taichu-skin-accent); margin-left: 22%;"></div>
+              </div>
+            </div>
+            <!-- 直觉 / 实感 -->
+            <div>
+              <div class="flex justify-between text-[12px] mb-1.5" style="color: var(--taichu-text-2);">
+                <span>直觉 N</span>
+                <span>实感 S</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full overflow-hidden" style="background: var(--taichu-skin-banner-soft);">
+                <div class="h-full rounded-full" style="width: 64%; background: var(--taichu-skin-banner);"></div>
+              </div>
+            </div>
+            <!-- 情感 / 思考 -->
+            <div>
+              <div class="flex justify-between text-[12px] mb-1.5" style="color: var(--taichu-text-2);">
+                <span>情感 F</span>
+                <span>思考 T</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full overflow-hidden" style="background: var(--taichu-skin-accent-soft);">
+                <div class="h-full rounded-full" style="width: 82%; background: var(--taichu-skin-accent); margin-left: 18%;"></div>
+              </div>
+            </div>
+            <!-- 计划 / 随性 -->
+            <div>
+              <div class="flex justify-between text-[12px] mb-1.5" style="color: var(--taichu-text-2);">
+                <span>计划 J</span>
+                <span>随性 P</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full overflow-hidden" style="background: var(--taichu-skin-banner-soft);">
+                <div class="h-full rounded-full" style="width: 71%; background: var(--taichu-skin-banner); margin-left: 29%;"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. 三个关键词胶囊 -->
+        <section class="flex flex-wrap gap-3 mb-6">
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-[14px] font-medium border" style="background: var(--taichu-skin-accent-soft); border-color: var(--taichu-skin-accent); color: var(--taichu-skin-accent);">共情力</span>
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-[14px] font-medium border" style="background: var(--taichu-skin-banner-soft); border-color: var(--taichu-skin-banner); color: var(--taichu-skin-banner-text);">创造力</span>
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-[14px] font-medium border" style="background: var(--taichu-skin-accent-soft); border-color: var(--taichu-skin-accent); color: var(--taichu-skin-accent);">理想主义</span>
+        </section>
+
+        <!-- 5. 建议卡 -->
+        <section class="bg-card rounded-[16px] p-5 mb-8" style="box-shadow: var(--taichu-shadow-card);">
+          <h2 class="text-[18px] font-semibold mb-4" style="font-family: var(--taichu-font-serif); color: var(--taichu-foreground);">适合你的 3 个小行动</h2>
+          <ul class="space-y-3">
+            <li class="flex gap-3 text-[14px] leading-relaxed" style="color: var(--taichu-text-2);">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium" style="background: var(--taichu-skin-accent); color: var(--taichu-primary-foreground);">1</span>
+              <span>每天留出 10 分钟独处时间，用文字或涂鸦整理内心感受。</span>
+            </li>
+            <li class="flex gap-3 text-[14px] leading-relaxed" style="color: var(--taichu-text-2);">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium" style="background: var(--taichu-skin-banner); color: var(--taichu-skin-banner-ink);">2</span>
+              <span>选一本诗或散文，只读一页，然后写下一句话的共鸣。</span>
+            </li>
+            <li class="flex gap-3 text-[14px] leading-relaxed" style="color: var(--taichu-text-2);">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-medium" style="background: var(--taichu-skin-accent); color: var(--taichu-primary-foreground);">3</span>
+              <span>对一位信任的朋友表达一次真诚的感谢，不用太长。</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 6. 底部分享 / 重测按钮 -->
+        <section class="flex flex-col gap-3 mb-8">
+          <button type="button" class="w-full h-12 rounded-[999px] text-[16px] font-medium flex items-center justify-center gap-2 transition-transform active:scale-[0.98]" style="background: var(--taichu-skin-accent); color: var(--taichu-primary-foreground);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            保存结果
+          </button>
+          <button type="button" class="w-full h-12 rounded-[12px] text-[16px] font-medium flex items-center justify-center gap-2 border transition-colors" style="background: transparent; border-color: var(--taichu-border); color: var(--taichu-foreground);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            再测一次
+          </button>
+        </section>
+
+        <!-- 7. 底部品牌免责声明 -->
+        <footer class="text-center" style="color: var(--taichu-text-3);">
+          <p class="text-[11px] leading-relaxed">内容由 AI 生成，仅供娱乐参考 · 太初</p>
+        </footer>
+      </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

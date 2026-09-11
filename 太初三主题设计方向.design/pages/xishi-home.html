@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="xishi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西式占卜 · 首页</title>
+    <style id="theme-vars">
+/* 太初 · 三主题统一设计系统 v1.1
+ * 共同骨架：午夜蓝 + 香槟金 + 象牙白 + Cormorant 衬线
+ * 皮肤签名：国学（玉青/朱砂/山海经线描）、西式占卜（紫晶/深空蓝/卡牌框纹）、心理测试（暖杏/雾蓝/Notion 简笔头像）
+ * v1.1 质感升级：加大圆角、柔和多层阴影、磨砂玻璃卡片
+ */
+
+:root {
+  /* ===== 原始 token（跨文化共用） ===== */
+  /* 午夜绒蓝 */
+  --taichu-ink-50: #EEF1F8;
+  --taichu-ink-100: #D6DCEF;
+  --taichu-ink-200: #AEB9DE;
+  --taichu-ink-300: #8493CB;
+  --taichu-ink-400: #5E6FB3;
+  --taichu-ink-500: #44558F;
+  --taichu-ink-600: #364573;
+  --taichu-ink-700: #2C385C;
+  --taichu-ink-800: #232C49;
+  --taichu-ink-900: #1A2138;
+
+  /* 香槟金 */
+  --taichu-gold-300: #E6CF9A;
+  --taichu-gold-400: #D4B06A;
+  --taichu-gold-500: #B8893E;
+  --taichu-gold-600: #9C6E2E;
+  --taichu-gold-700: #7E5824;
+
+  /* 中性色 */
+  --taichu-paper: #F7F4EC;
+  --taichu-surface: #FFFFFF;
+  --taichu-surface-warm: #FEFCF8;
+  --taichu-text-1: #1F1F26;
+  --taichu-text-2: #5C5C68;
+  --taichu-text-3: #8A8A94;
+  --taichu-border-warm: #E5E0D4;
+
+  /* 字体 */
+  --taichu-font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+  --taichu-font-sans: "Noto Sans SC", "Inter", system-ui, sans-serif;
+  --taichu-font-latin-serif: "Cormorant Garamond", "Noto Serif SC", serif;
+
+  /* 字号 */
+  --taichu-fs-display: 32px;
+  --taichu-fs-h1: 28px;
+  --taichu-fs-h2: 22px;
+  --taichu-fs-h3: 18px;
+  --taichu-fs-body-l: 16px;
+  --taichu-fs-body: 14px;
+  --taichu-fs-caption: 12px;
+  --taichu-fs-disclaimer: 11px;
+
+  /* 间距 */
+  --taichu-sp-1: 8px;
+  --taichu-sp-2: 16px;
+  --taichu-sp-3: 24px;
+  --taichu-sp-4: 32px;
+  --taichu-sp-6: 48px;
+
+  /* 圆角：v1.1 整体加大，强化圆弧式高级感 */
+  --taichu-radius-sm: 10px;
+  --taichu-radius-md: 14px;
+  --taichu-radius-lg: 20px;
+  --taichu-radius-xl: 28px;
+  --taichu-radius-pill: 999px;
+
+  /* 阴影：v1.1 更柔和、更有层次 */
+  --taichu-shadow-card: 0 4px 24px rgba(26, 33, 56, 0.06), 0 1px 2px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-elevated: 0 8px 32px rgba(26, 33, 56, 0.08), 0 2px 4px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-float: 0 16px 48px rgba(26, 33, 56, 0.10), 0 4px 8px rgba(26, 33, 56, 0.04);
+
+  /* 磨砂玻璃 */
+  --taichu-glass-blur: 20px;
+  --taichu-glass-saturate: 160%;
+  --taichu-glass-opacity: 0.90;
+
+  /* 动效 */
+  --taichu-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --taichu-dur: 220ms;
+
+  /* ===== 默认语义别名（中性基底） ===== */
+  --taichu-background: var(--taichu-paper);
+  --taichu-foreground: var(--taichu-text-1);
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-card-foreground: var(--taichu-text-1);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+  --taichu-popover-foreground: var(--taichu-text-1);
+  --taichu-primary: var(--taichu-ink-700);
+  --taichu-primary-foreground: var(--taichu-paper);
+  --taichu-muted: var(--taichu-ink-50);
+  --taichu-muted-foreground: var(--taichu-text-3);
+  --taichu-border: var(--taichu-border-warm);
+  --taichu-input: var(--taichu-border-warm);
+  --taichu-ring: var(--taichu-gold-500);
+
+  /* 主题签名变量（默认国学） */
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(62, 124, 107, 0.18);
+}
+
+/* ===== 国学：上美留白 + 山海经线描 ===== */
+[data-theme="guoxue"] {
+  --taichu-primary: #3E7C6B;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(178, 58, 58, 0.10);
+  --taichu-background: #F7F4EC;
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+}
+
+/* ===== 西式占卜：紫黑沉浸 + 卡牌框纹 ===== */
+[data-theme="xishi"] {
+  --taichu-primary: #5B4B8A;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #C9A24B;
+  --taichu-skin-accent-soft: rgba(201, 162, 75, 0.18);
+  --taichu-skin-accent-ink: #1F1F26;
+  --taichu-skin-banner: #5B4B8A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(91, 75, 138, 0.22);
+  --taichu-background: #1A2138;
+  --taichu-foreground: #F7F4EC;
+  --taichu-card: rgba(35, 44, 73, 0.88);
+  --taichu-card-foreground: #F7F4EC;
+  --taichu-popover: rgba(35, 44, 73, 0.92);
+  --taichu-border: rgba(230, 207, 154, 0.22);
+}
+
+/* ===== 心理测试：晨光象牙 + Notion 简笔头像 ===== */
+[data-theme="psych"] {
+  --taichu-primary: #5B7A8C;
+  --taichu-primary-foreground: #FFFFFF;
+  --taichu-skin-accent: #5B7A8C;
+  --taichu-skin-accent-soft: rgba(91, 122, 140, 0.12);
+  --taichu-skin-accent-ink: #FFFFFF;
+  --taichu-skin-banner: #E6A57A;
+  --taichu-skin-banner-ink: #1F1F26;
+  --taichu-skin-glow: rgba(230, 165, 122, 0.16);
+  --taichu-background: #FDFBF8;
+  --taichu-foreground: #2D2D35;
+  --taichu-card: rgba(255, 255, 255, 0.92);
+  --taichu-card-foreground: #2D2D35;
+  --taichu-popover: rgba(255, 255, 255, 0.96);
+  --taichu-border: #EDE8DF;
+}
+
+/* ===== 全局磨砂玻璃增强 ===== */
+.bg-card,
+.bg-popover {
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+/* 显式玻璃工具类，供后续需要强调磨砂质感的元素使用 */
+.glass {
+  background-color: var(--taichu-card);
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--taichu-background);
+    --color-foreground: var(--taichu-foreground);
+    --color-card: var(--taichu-card);
+    --color-card-foreground: var(--taichu-card-foreground);
+    --color-popover: var(--taichu-popover);
+    --color-popover-foreground: var(--taichu-popover-foreground);
+    --color-primary: var(--taichu-primary);
+    --color-primary-foreground: var(--taichu-primary-foreground);
+    --color-muted: var(--taichu-muted);
+    --color-muted-foreground: var(--taichu-muted-foreground);
+    --color-border: var(--taichu-border);
+    --color-input: var(--taichu-input);
+    --color-ring: var(--taichu-ring);
+    --radius-sm: var(--taichu-radius-sm);
+    --radius-md: var(--taichu-radius-md);
+    --radius-lg: var(--taichu-radius-lg);
+    --radius-xl: var(--taichu-radius-xl);
+  }
+  @layer base {
+    body { background: var(--taichu-background); color: var(--taichu-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--taichu-background); }
+      .text-background { color: var(--taichu-background); }
+      .border-background { border-color: var(--taichu-background); }
+      .ring-background { --tw-ring-color: var(--taichu-background); }
+      .bg-foreground { background-color: var(--taichu-foreground); }
+      .text-foreground { color: var(--taichu-foreground); }
+      .border-foreground { border-color: var(--taichu-foreground); }
+      .ring-foreground { --tw-ring-color: var(--taichu-foreground); }
+      .bg-card { background-color: var(--taichu-card); }
+      .text-card { color: var(--taichu-card); }
+      .border-card { border-color: var(--taichu-card); }
+      .ring-card { --tw-ring-color: var(--taichu-card); }
+      .bg-card-foreground { background-color: var(--taichu-card-foreground); }
+      .text-card-foreground { color: var(--taichu-card-foreground); }
+      .border-card-foreground { border-color: var(--taichu-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--taichu-card-foreground); }
+      .bg-popover { background-color: var(--taichu-popover); }
+      .text-popover { color: var(--taichu-popover); }
+      .border-popover { border-color: var(--taichu-popover); }
+      .ring-popover { --tw-ring-color: var(--taichu-popover); }
+      .bg-popover-foreground { background-color: var(--taichu-popover-foreground); }
+      .text-popover-foreground { color: var(--taichu-popover-foreground); }
+      .border-popover-foreground { border-color: var(--taichu-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--taichu-popover-foreground); }
+      .bg-primary { background-color: var(--taichu-primary); }
+      .text-primary { color: var(--taichu-primary); }
+      .border-primary { border-color: var(--taichu-primary); }
+      .ring-primary { --tw-ring-color: var(--taichu-primary); }
+      .bg-primary-foreground { background-color: var(--taichu-primary-foreground); }
+      .text-primary-foreground { color: var(--taichu-primary-foreground); }
+      .border-primary-foreground { border-color: var(--taichu-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--taichu-primary-foreground); }
+      .bg-muted { background-color: var(--taichu-muted); }
+      .text-muted { color: var(--taichu-muted); }
+      .border-muted { border-color: var(--taichu-muted); }
+      .ring-muted { --tw-ring-color: var(--taichu-muted); }
+      .bg-muted-foreground { background-color: var(--taichu-muted-foreground); }
+      .text-muted-foreground { color: var(--taichu-muted-foreground); }
+      .border-muted-foreground { border-color: var(--taichu-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--taichu-muted-foreground); }
+      .bg-border { background-color: var(--taichu-border); }
+      .text-border { color: var(--taichu-border); }
+      .border-border { border-color: var(--taichu-border); }
+      .ring-border { --tw-ring-color: var(--taichu-border); }
+      .bg-input { background-color: var(--taichu-input); }
+      .text-input { color: var(--taichu-input); }
+      .border-input { border-color: var(--taichu-input); }
+      .ring-input { --tw-ring-color: var(--taichu-input); }
+      .bg-ring { background-color: var(--taichu-ring); }
+      .text-ring { color: var(--taichu-ring); }
+      .border-ring { border-color: var(--taichu-ring); }
+      .ring-ring { --tw-ring-color: var(--taichu-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased bg-background text-foreground">
+    <main class="relative max-w-md mx-auto min-h-screen flex flex-col px-5 pb-8 overflow-x-hidden">
+      <!-- 顶部品牌栏 -->
+      <header class="flex items-center justify-between py-5">
+        <div class="flex items-center gap-3">
+          <img src="../assets/taichu-logo.svg" alt="太初" class="w-9 h-9 drop-shadow-[0_0_8px_rgba(201,162,75,0.45)]">
+          <span class="font-serif text-lg tracking-wide text-[var(--taichu-gold-400)]">太初 · 星象</span>
+        </div>
+      </header>
+
+      <!-- Hero -->
+      <section class="relative rounded-[var(--taichu-radius-lg)] overflow-hidden mb-6 py-10 px-6 text-center border border-[var(--taichu-gold-500)]/20 shadow-[0_0_28px_rgba(91,75,138,0.22)]">
+        <div class="hero-sky absolute inset-0 -z-10"></div>
+        <div class="hero-pattern absolute inset-0 -z-10"></div>
+        <div class="absolute inset-0 -z-10 bg-[var(--taichu-ink-900)]/40"></div>
+        <h1 class="font-serif text-[var(--taichu-gold-300)] text-[32px] leading-tight mb-3 drop-shadow-sm">Ask the Stars</h1>
+        <p class="font-sans text-[var(--taichu-paper)]/80 text-sm tracking-wider">当卡牌落下，答案已在风中</p>
+      </section>
+
+      <!-- 今日塔罗主卡 -->
+      <section class="mb-6">
+        <p class="text-xs uppercase tracking-[0.18em] text-[var(--taichu-gold-400)] mb-3 font-sans">今日塔罗 · Daily Tarot</p>
+        <div class="relative mx-auto w-48 aspect-[2/3] rounded-[var(--taichu-radius-lg)] border-2 border-[var(--taichu-gold-500)] bg-gradient-to-b from-[var(--taichu-ink-700)] to-[var(--taichu-ink-900)] shadow-[0_0_30px_rgba(201,162,75,0.25)] flex flex-col items-center justify-center p-5">
+          <div class="w-16 h-16 rounded-full bg-[var(--taichu-gold-500)]/10 flex items-center justify-center mb-5 border border-[var(--taichu-gold-400)]/40">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-9 h-9 text-[var(--taichu-gold-300)]">
+              <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-[var(--taichu-gold-300)] text-xl text-center leading-snug">The Star<br><span class="text-base text-[var(--taichu-paper)]/90">星辰</span></h2>
+          <div class="absolute bottom-4 left-0 right-0 text-center text-[10px] tracking-[0.3em] text-[var(--taichu-gold-500)]/70 uppercase"> XVII </div>
+        </div>
+      </section>
+
+      <!-- 服务入口网格 -->
+      <section class="mb-6">
+        <div class="grid grid-cols-2 gap-3">
+          <a href="#" class="group rounded-[var(--taichu-radius-lg)] bg-[var(--taichu-primary)] p-4 border border-[var(--taichu-gold-500)]/15 shadow-[0_0_16px_rgba(91,75,138,0.18)] transition-all duration-200 ease-[var(--taichu-ease)] hover:-translate-y-0.5 hover:shadow-[0_0_22px_rgba(201,162,75,0.22)]">
+            <i data-lucide="sparkles" class="w-6 h-6 text-[var(--taichu-skin-accent)] mb-3"></i>
+            <h3 class="font-serif text-[var(--taichu-paper)] text-base">塔罗牌阵</h3>
+            <p class="text-[11px] text-[var(--taichu-paper)]/60 mt-1">经典与灵感牌阵</p>
+          </a>
+          <a href="#" class="group rounded-[var(--taichu-radius-lg)] bg-[var(--taichu-primary)] p-4 border border-[var(--taichu-gold-500)]/15 shadow-[0_0_16px_rgba(91,75,138,0.18)] transition-all duration-200 ease-[var(--taichu-ease)] hover:-translate-y-0.5 hover:shadow-[0_0_22px_rgba(201,162,75,0.22)]">
+            <i data-lucide="circle-dot" class="w-6 h-6 text-[var(--taichu-skin-accent)] mb-3"></i>
+            <h3 class="font-serif text-[var(--taichu-paper)] text-base">本命星盘</h3>
+            <p class="text-[11px] text-[var(--taichu-paper)]/60 mt-1">行星与宫位解读</p>
+          </a>
+          <a href="#" class="group rounded-[var(--taichu-radius-lg)] bg-[var(--taichu-primary)] p-4 border border-[var(--taichu-gold-500)]/15 shadow-[0_0_16px_rgba(91,75,138,0.18)] transition-all duration-200 ease-[var(--taichu-ease)] hover:-translate-y-0.5 hover:shadow-[0_0_22px_rgba(201,162,75,0.22)]">
+            <i data-lucide="book-open" class="w-6 h-6 text-[var(--taichu-skin-accent)] mb-3"></i>
+            <h3 class="font-serif text-[var(--taichu-paper)] text-base">雷诺曼</h3>
+            <p class="text-[11px] text-[var(--taichu-paper)]/60 mt-1">象征符号预言</p>
+          </a>
+          <a href="#" class="group rounded-[var(--taichu-radius-lg)] bg-[var(--taichu-primary)] p-4 border border-[var(--taichu-gold-500)]/15 shadow-[0_0_16px_rgba(91,75,138,0.18)] transition-all duration-200 ease-[var(--taichu-ease)] hover:-translate-y-0.5 hover:shadow-[0_0_22px_rgba(201,162,75,0.22)]">
+            <i data-lucide="dices" class="w-6 h-6 text-[var(--taichu-skin-accent)] mb-3"></i>
+            <h3 class="font-serif text-[var(--taichu-paper)] text-base">骰子占卜</h3>
+            <p class="text-[11px] text-[var(--taichu-paper)]/60 mt-1">星骰快速问事</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- 月相提示条 -->
+      <section class="mb-6">
+        <div class="flex items-center gap-3 rounded-[var(--taichu-radius-md)] border border-[var(--taichu-gold-500)]/20 bg-[var(--taichu-ink-800)]/60 px-4 py-3 shadow-[0_0_12px_rgba(91,75,138,0.14)]">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--taichu-skin-accent)] flex-shrink-0">
+            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 0 1 0-16 8 8 0 0 1 0 16Z" opacity="0.4"/>
+            <path d="M12 4a8 8 0 0 1 0 16 8 8 0 0 1 0-16Z"/>
+          </svg>
+          <div>
+            <p class="text-xs text-[var(--taichu-gold-400)] font-serif">下弦月</p>
+            <p class="text-xs text-[var(--taichu-paper)]/80 font-sans">适合内省与复盘</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="mb-8">
+        <button class="w-full rounded-[999px] bg-[var(--taichu-skin-accent)] text-[var(--taichu-primary)] font-serif text-lg py-3.5 shadow-[0_0_20px_rgba(201,162,75,0.35)] transition-all duration-200 ease-[var(--taichu-ease)] hover:shadow-[0_0_28px_rgba(201,162,75,0.48)] hover:scale-[1.02] active:scale-[1.01]">
+          抽一张今日牌
+        </button>
+      </section>
+
+      <!-- 底部品牌免责声明 -->
+      <footer class="mt-auto text-center">
+        <p class="text-[var(--taichu-gold-500)]/60 text-[11px] font-sans">内容由 AI 生成，仅供娱乐参考 · 太初</p>
+      </footer>
+    </main>
+    <script>lucide.createIcons();</script>
+
+    <style>
+      .hero-sky {
+        background:
+          radial-gradient(circle at 20% 30%, rgba(201, 162, 75, 0.10) 0%, transparent 25%),
+          radial-gradient(circle at 80% 20%, rgba(91, 75, 138, 0.22) 0%, transparent 30%),
+          radial-gradient(circle at 60% 80%, rgba(201, 162, 75, 0.08) 0%, transparent 25%),
+          linear-gradient(180deg, #1A2138 0%, #232C49 100%);
+      }
+      .hero-pattern {
+        background-image: url('../assets/taichu-pattern.svg');
+        background-size: 160%;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      @media (min-width: 640px) {
+        .hero-pattern { background-size: 120%; }
+      }
+    </style>
+</body>
+</html>

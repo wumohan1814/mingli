@@ -1,0 +1,230 @@
+{
+  "data": [
+    {
+      "id": "page-system",
+      "title": "三主题视觉系统",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789137400000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 3336,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-e7124789",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/system.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-samples",
+      "title": "三主题页面样例",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789137400000,
+      "canvasData": {
+        "x": 169,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1999,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-5db2c783",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/samples.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-guoxue-home",
+      "title": "国学预测 · 首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 338,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-487742c6",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/guoxue-home.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-guoxue-result",
+      "title": "国学预测 · 结果页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 507,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1183,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-13043c8f",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/guoxue-result.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-xishi-home",
+      "title": "西式占卜 · 首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 676,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1076,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-48cdb4b9",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/xishi-home.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-xishi-result",
+      "title": "西式占卜 · 结果页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 845,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-2bff6851",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/xishi-result.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-psych-home",
+      "title": "心理测试 · 首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 1014,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1055,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-eadf07dd",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/psych-home.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-psych-result",
+      "title": "心理测试 · 结果页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789142785000,
+      "canvasData": {
+        "x": 1183,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1064,
+          "viewportWidth": 375,
+          "sourceHash": "fnv1a-d7375014",
+          "measuredAt": 1789147025546
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/psych-result.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "太初品牌 Logo",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1789142840000,
+      "canvasData": {
+        "x": 0,
+        "y": 1080,
+        "naturalSize": {
+          "width": 150,
+          "height": 150
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/taichu-logo.svg"
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "太初品牌纹样",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1789142840000,
+      "canvasData": {
+        "x": 169,
+        "y": 1080,
+        "naturalSize": {
+          "width": 120,
+          "height": 120
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/taichu-pattern.svg"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "mobile",
+    "projectName": "太初三主题设计方向",
+    "visualEditorEnabled": true
+  }
+}

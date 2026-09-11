@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三主题视觉系统</title>
+    <style id="theme-vars">
+/* 太初 · 三主题统一设计系统 v1.1
+ * 共同骨架：午夜蓝 + 香槟金 + 象牙白 + Cormorant 衬线
+ * 皮肤签名：国学（玉青/朱砂/山海经线描）、西式占卜（紫晶/深空蓝/卡牌框纹）、心理测试（暖杏/雾蓝/Notion 简笔头像）
+ * v1.1 质感升级：加大圆角、柔和多层阴影、磨砂玻璃卡片
+ */
+
+:root {
+  /* ===== 原始 token（跨文化共用） ===== */
+  /* 午夜绒蓝 */
+  --taichu-ink-50: #EEF1F8;
+  --taichu-ink-100: #D6DCEF;
+  --taichu-ink-200: #AEB9DE;
+  --taichu-ink-300: #8493CB;
+  --taichu-ink-400: #5E6FB3;
+  --taichu-ink-500: #44558F;
+  --taichu-ink-600: #364573;
+  --taichu-ink-700: #2C385C;
+  --taichu-ink-800: #232C49;
+  --taichu-ink-900: #1A2138;
+
+  /* 香槟金 */
+  --taichu-gold-300: #E6CF9A;
+  --taichu-gold-400: #D4B06A;
+  --taichu-gold-500: #B8893E;
+  --taichu-gold-600: #9C6E2E;
+  --taichu-gold-700: #7E5824;
+
+  /* 中性色 */
+  --taichu-paper: #F7F4EC;
+  --taichu-surface: #FFFFFF;
+  --taichu-surface-warm: #FEFCF8;
+  --taichu-text-1: #1F1F26;
+  --taichu-text-2: #5C5C68;
+  --taichu-text-3: #8A8A94;
+  --taichu-border-warm: #E5E0D4;
+
+  /* 字体 */
+  --taichu-font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+  --taichu-font-sans: "Noto Sans SC", "Inter", system-ui, sans-serif;
+  --taichu-font-latin-serif: "Cormorant Garamond", "Noto Serif SC", serif;
+
+  /* 字号 */
+  --taichu-fs-display: 32px;
+  --taichu-fs-h1: 28px;
+  --taichu-fs-h2: 22px;
+  --taichu-fs-h3: 18px;
+  --taichu-fs-body-l: 16px;
+  --taichu-fs-body: 14px;
+  --taichu-fs-caption: 12px;
+  --taichu-fs-disclaimer: 11px;
+
+  /* 间距 */
+  --taichu-sp-1: 8px;
+  --taichu-sp-2: 16px;
+  --taichu-sp-3: 24px;
+  --taichu-sp-4: 32px;
+  --taichu-sp-6: 48px;
+
+  /* 圆角：v1.1 整体加大，强化圆弧式高级感 */
+  --taichu-radius-sm: 10px;
+  --taichu-radius-md: 14px;
+  --taichu-radius-lg: 20px;
+  --taichu-radius-xl: 28px;
+  --taichu-radius-pill: 999px;
+
+  /* 阴影：v1.1 更柔和、更有层次 */
+  --taichu-shadow-card: 0 4px 24px rgba(26, 33, 56, 0.06), 0 1px 2px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-elevated: 0 8px 32px rgba(26, 33, 56, 0.08), 0 2px 4px rgba(26, 33, 56, 0.04);
+  --taichu-shadow-float: 0 16px 48px rgba(26, 33, 56, 0.10), 0 4px 8px rgba(26, 33, 56, 0.04);
+
+  /* 磨砂玻璃 */
+  --taichu-glass-blur: 20px;
+  --taichu-glass-saturate: 160%;
+  --taichu-glass-opacity: 0.90;
+
+  /* 动效 */
+  --taichu-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --taichu-dur: 220ms;
+
+  /* ===== 默认语义别名（中性基底） ===== */
+  --taichu-background: var(--taichu-paper);
+  --taichu-foreground: var(--taichu-text-1);
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-card-foreground: var(--taichu-text-1);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+  --taichu-popover-foreground: var(--taichu-text-1);
+  --taichu-primary: var(--taichu-ink-700);
+  --taichu-primary-foreground: var(--taichu-paper);
+  --taichu-muted: var(--taichu-ink-50);
+  --taichu-muted-foreground: var(--taichu-text-3);
+  --taichu-border: var(--taichu-border-warm);
+  --taichu-input: var(--taichu-border-warm);
+  --taichu-ring: var(--taichu-gold-500);
+
+  /* 主题签名变量（默认国学） */
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(62, 124, 107, 0.18);
+}
+
+/* ===== 国学：上美留白 + 山海经线描 ===== */
+[data-theme="guoxue"] {
+  --taichu-primary: #3E7C6B;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #3E7C6B;
+  --taichu-skin-accent-soft: rgba(62, 124, 107, 0.14);
+  --taichu-skin-accent-ink: #F7F4EC;
+  --taichu-skin-banner: #B23A3A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(178, 58, 58, 0.10);
+  --taichu-background: #F7F4EC;
+  --taichu-card: rgba(255, 255, 255, 0.90);
+  --taichu-popover: rgba(255, 255, 255, 0.94);
+}
+
+/* ===== 西式占卜：紫黑沉浸 + 卡牌框纹 ===== */
+[data-theme="xishi"] {
+  --taichu-primary: #5B4B8A;
+  --taichu-primary-foreground: #F7F4EC;
+  --taichu-skin-accent: #C9A24B;
+  --taichu-skin-accent-soft: rgba(201, 162, 75, 0.18);
+  --taichu-skin-accent-ink: #1F1F26;
+  --taichu-skin-banner: #5B4B8A;
+  --taichu-skin-banner-ink: #F7F4EC;
+  --taichu-skin-glow: rgba(91, 75, 138, 0.22);
+  --taichu-background: #1A2138;
+  --taichu-foreground: #F7F4EC;
+  --taichu-card: rgba(35, 44, 73, 0.88);
+  --taichu-card-foreground: #F7F4EC;
+  --taichu-popover: rgba(35, 44, 73, 0.92);
+  --taichu-border: rgba(230, 207, 154, 0.22);
+}
+
+/* ===== 心理测试：晨光象牙 + Notion 简笔头像 ===== */
+[data-theme="psych"] {
+  --taichu-primary: #5B7A8C;
+  --taichu-primary-foreground: #FFFFFF;
+  --taichu-skin-accent: #5B7A8C;
+  --taichu-skin-accent-soft: rgba(91, 122, 140, 0.12);
+  --taichu-skin-accent-ink: #FFFFFF;
+  --taichu-skin-banner: #E6A57A;
+  --taichu-skin-banner-ink: #1F1F26;
+  --taichu-skin-glow: rgba(230, 165, 122, 0.16);
+  --taichu-background: #FDFBF8;
+  --taichu-foreground: #2D2D35;
+  --taichu-card: rgba(255, 255, 255, 0.92);
+  --taichu-card-foreground: #2D2D35;
+  --taichu-popover: rgba(255, 255, 255, 0.96);
+  --taichu-border: #EDE8DF;
+}
+
+/* ===== 全局磨砂玻璃增强 ===== */
+.bg-card,
+.bg-popover {
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+/* 显式玻璃工具类，供后续需要强调磨砂质感的元素使用 */
+.glass {
+  background-color: var(--taichu-card);
+  backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--taichu-glass-blur)) saturate(var(--taichu-glass-saturate));
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--taichu-background);
+    --color-foreground: var(--taichu-foreground);
+    --color-card: var(--taichu-card);
+    --color-card-foreground: var(--taichu-card-foreground);
+    --color-popover: var(--taichu-popover);
+    --color-popover-foreground: var(--taichu-popover-foreground);
+    --color-primary: var(--taichu-primary);
+    --color-primary-foreground: var(--taichu-primary-foreground);
+    --color-muted: var(--taichu-muted);
+    --color-muted-foreground: var(--taichu-muted-foreground);
+    --color-border: var(--taichu-border);
+    --color-input: var(--taichu-input);
+    --color-ring: var(--taichu-ring);
+    --radius-sm: var(--taichu-radius-sm);
+    --radius-md: var(--taichu-radius-md);
+    --radius-lg: var(--taichu-radius-lg);
+    --radius-xl: var(--taichu-radius-xl);
+  }
+  @layer base {
+    body { background: var(--taichu-background); color: var(--taichu-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--taichu-background); }
+      .text-background { color: var(--taichu-background); }
+      .border-background { border-color: var(--taichu-background); }
+      .ring-background { --tw-ring-color: var(--taichu-background); }
+      .bg-foreground { background-color: var(--taichu-foreground); }
+      .text-foreground { color: var(--taichu-foreground); }
+      .border-foreground { border-color: var(--taichu-foreground); }
+      .ring-foreground { --tw-ring-color: var(--taichu-foreground); }
+      .bg-card { background-color: var(--taichu-card); }
+      .text-card { color: var(--taichu-card); }
+      .border-card { border-color: var(--taichu-card); }
+      .ring-card { --tw-ring-color: var(--taichu-card); }
+      .bg-card-foreground { background-color: var(--taichu-card-foreground); }
+      .text-card-foreground { color: var(--taichu-card-foreground); }
+      .border-card-foreground { border-color: var(--taichu-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--taichu-card-foreground); }
+      .bg-popover { background-color: var(--taichu-popover); }
+      .text-popover { color: var(--taichu-popover); }
+      .border-popover { border-color: var(--taichu-popover); }
+      .ring-popover { --tw-ring-color: var(--taichu-popover); }
+      .bg-popover-foreground { background-color: var(--taichu-popover-foreground); }
+      .text-popover-foreground { color: var(--taichu-popover-foreground); }
+      .border-popover-foreground { border-color: var(--taichu-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--taichu-popover-foreground); }
+      .bg-primary { background-color: var(--taichu-primary); }
+      .text-primary { color: var(--taichu-primary); }
+      .border-primary { border-color: var(--taichu-primary); }
+      .ring-primary { --tw-ring-color: var(--taichu-primary); }
+      .bg-primary-foreground { background-color: var(--taichu-primary-foreground); }
+      .text-primary-foreground { color: var(--taichu-primary-foreground); }
+      .border-primary-foreground { border-color: var(--taichu-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--taichu-primary-foreground); }
+      .bg-muted { background-color: var(--taichu-muted); }
+      .text-muted { color: var(--taichu-muted); }
+      .border-muted { border-color: var(--taichu-muted); }
+      .ring-muted { --tw-ring-color: var(--taichu-muted); }
+      .bg-muted-foreground { background-color: var(--taichu-muted-foreground); }
+      .text-muted-foreground { color: var(--taichu-muted-foreground); }
+      .border-muted-foreground { border-color: var(--taichu-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--taichu-muted-foreground); }
+      .bg-border { background-color: var(--taichu-border); }
+      .text-border { color: var(--taichu-border); }
+      .border-border { border-color: var(--taichu-border); }
+      .ring-border { --tw-ring-color: var(--taichu-border); }
+      .bg-input { background-color: var(--taichu-input); }
+      .text-input { color: var(--taichu-input); }
+      .border-input { border-color: var(--taichu-input); }
+      .ring-input { --tw-ring-color: var(--taichu-input); }
+      .bg-ring { background-color: var(--taichu-ring); }
+      .text-ring { color: var(--taichu-ring); }
+      .border-ring { border-color: var(--taichu-ring); }
+      .ring-ring { --tw-ring-color: var(--taichu-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="w-full overflow-x-hidden">
+      <!-- Hero -->
+      <section id="hero" class="relative bg-background text-foreground px-6 pt-12 pb-10 overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" style="background-image: url('../assets/taichu-pattern.svg'); background-size: 160px 160px; background-position: center; opacity: 0.08;"></div>
+        <div class="relative max-w-md mx-auto text-center">
+          <img src="../assets/taichu-logo.svg" alt="太初" class="w-16 h-16 mx-auto mb-4" style="color: var(--taichu-gold-500);">
+          <p class="text-caption tracking-widest text-muted-foreground mb-3" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-caption); letter-spacing: 0.18em;">TAICHU 太初</p>
+          <h1 class="mb-4" style="font-family: var(--taichu-font-latin-serif); font-size: var(--taichu-fs-display); line-height: 1.25; font-weight: 500;">太初 · 三主题视觉系统</h1>
+          <p class="text-body-l text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body-l); line-height: 1.7;">同一套骨架，三种文化皮肤。国学、西式占卜、心理测试共享版式节奏，却以专属色彩与纹样保持各自气质。</p>
+        </div>
+      </section>
+
+      <!-- 共同骨架 -->
+      <section id="shared-base" class="bg-background text-foreground px-6 py-10">
+        <div class="max-w-md mx-auto">
+          <div class="flex items-baseline gap-3 mb-6">
+            <span class="inline-block w-8 h-px bg-gold-500" style="background-color: var(--taichu-gold-500);"></span>
+            <h2 class="text-h2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h2); font-weight: 600;">共同骨架</h2>
+          </div>
+          <p class="text-body mb-6 text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">午夜蓝、香槟金、象牙纸构成太初的底层语言，所有主题在此基础上叠加签名色。</p>
+
+          <!-- Color swatches -->
+          <div class="grid grid-cols-3 gap-3 mb-8">
+            <div class="rounded-lg p-3 text-center" style="background-color: var(--taichu-ink-900); color: var(--taichu-paper);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">ink-900</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#1A2138</div>
+            </div>
+            <div class="rounded-lg p-3 text-center" style="background-color: var(--taichu-gold-500); color: var(--taichu-ink-900);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">gold-500</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#B8893E</div>
+            </div>
+            <div class="rounded-lg p-3 text-center border" style="background-color: var(--taichu-paper); color: var(--taichu-text-1); border-color: var(--taichu-border-warm);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">paper</div>
+              <div class="text-disclaimer opacity-70" style="font-size: var(--taichu-fs-disclaimer);">#F7F4EC</div>
+            </div>
+          </div>
+
+          <!-- Typography samples -->
+          <div class="bg-card text-card-foreground rounded-xl p-5 mb-6 border border-border shadow-card" style="box-shadow: var(--taichu-shadow-card);">
+            <div class="mb-4" style="font-family: var(--taichu-font-latin-serif); font-size: var(--taichu-fs-display); line-height: 1.2;">Display 32px</div>
+            <div class="mb-3" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h1); font-weight: 600; line-height: 1.3;">H1 标题 28px</div>
+            <div class="mb-3" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body-l); line-height: 1.7;">Body Large 16px：用于较长的引导说明，行高宽松，阅读舒适。</div>
+            <div class="text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-caption); line-height: 1.6;">Caption 12px：辅助信息、标签与元数据。</div>
+          </div>
+
+          <!-- Sample card with gold hairline border -->
+          <div class="rounded-xl p-5 bg-card text-card-foreground" style="border: 1px solid var(--taichu-gold-400);">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background-color: var(--taichu-gold-500); color: var(--taichu-ink-900);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              </div>
+              <h3 class="text-h3" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h3); font-weight: 600;">通用卡片</h3>
+            </div>
+            <p class="text-body text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.7;">卡片使用细金线边框、圆角与柔和投影，既显精致，又为后续主题换肤保留一致结构。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 国学 -->
+      <section id="theme-guoxue" data-theme="guoxue" class="bg-background text-foreground px-6 py-12">
+        <div class="max-w-md mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full" style="background-color: var(--taichu-skin-banner); color: var(--taichu-skin-banner-ink); font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-caption);">国</span>
+            <h2 class="text-h2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h2); font-weight: 600;">国学</h2>
+          </div>
+          <div class="flex items-center gap-2 mb-5">
+            <span class="inline-block w-6 h-px" style="background-color: var(--taichu-gold-500);"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-gold-500);">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span class="inline-block flex-1 h-px" style="background-color: var(--taichu-gold-500); opacity: 0.35;"></span>
+          </div>
+          <p class="text-body mb-6 text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">玉青为主，朱砂点睛，山海经线描增添东方神秘。</p>
+
+          <!-- Color chips -->
+          <div class="flex gap-3 mb-6">
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">玉青</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#3E7C6B</div>
+            </div>
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-skin-banner); color: var(--taichu-skin-banner-ink);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">朱砂</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#B23A3A</div>
+            </div>
+          </div>
+
+          <button class="mb-6 px-6 py-3 rounded-full text-body-l font-medium transition-colors" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body-l);">
+            启卷问卜
+          </button>
+
+          <!-- Card with Shanhaijing linear icon -->
+          <div class="rounded-xl p-5 border bg-card text-card-foreground" style="border-color: var(--taichu-border);">
+            <div class="flex items-center gap-3 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" class="text-primary" style="color: var(--taichu-primary);">
+                <circle cx="24" cy="20" r="8"/>
+                <path d="M16 28c-4 2-6 6-6 10h28c0-4-2-8-6-10"/>
+                <path d="M20 16c-2-2-6-2-8 0"/>
+                <path d="M28 16c2-2 6-2 8 0"/>
+                <path d="M22 22h4"/>
+                <path d="M18 34l-2 6"/>
+                <path d="M30 34l2 6"/>
+                <path d="M24 34v6"/>
+              </svg>
+              <h3 class="text-h3" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h3); font-weight: 600;">山海经异兽</h3>
+            </div>
+            <p class="text-body text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">「青丘之山有兽焉，其状如狐而九尾，其音如婴儿。」以线描勾勒神韵，留白处即是天地。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 西式占卜 -->
+      <section id="theme-xishi" data-theme="xishi" class="bg-background text-foreground px-6 py-12">
+        <div class="max-w-md mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full" style="background-color: var(--taichu-skin-accent); color: var(--taichu-skin-accent-ink); font-family: var(--taichu-font-latin-serif); font-size: var(--taichu-fs-caption);">XI</span>
+            <h2 class="text-h2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h2); font-weight: 600;">西式占卜</h2>
+          </div>
+          <div class="flex items-center gap-2 mb-5">
+            <span class="inline-block w-6 h-px" style="background-color: var(--taichu-gold-500);"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-gold-500);">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+            <span class="inline-block flex-1 h-px" style="background-color: var(--taichu-gold-500); opacity: 0.35;"></span>
+          </div>
+          <p class="text-body mb-6 text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">紫晶与深空蓝营造沉浸式星夜，卡牌框纹暗示命运揭晓的仪式感。</p>
+
+          <!-- Color chips -->
+          <div class="flex gap-3 mb-6">
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">紫晶</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#5B4B8A</div>
+            </div>
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-skin-accent); color: var(--taichu-skin-accent-ink);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">琥珀</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#C9A24B</div>
+            </div>
+          </div>
+
+          <button class="mb-6 px-6 py-3 rounded-full text-body-l font-medium transition-colors" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body-l);">
+            抽一张牌
+          </button>
+
+          <!-- Tarot card frame -->
+          <div class="rounded-xl p-5 border-2 bg-card text-card-foreground" style="border-color: var(--taichu-skin-accent); border-radius: var(--taichu-radius-lg);">
+            <div class="border p-4 rounded-lg mb-4" style="border-color: rgba(230,207,154,0.35);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="80" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-primary" style="color: var(--taichu-skin-accent);">
+                <circle cx="60" cy="40" r="14"/>
+                <path d="M60 26v-8"/>
+                <path d="M60 62v-8"/>
+                <path d="M46 40h-8"/>
+                <path d="M82 40h-8"/>
+                <circle cx="60" cy="40" r="4" fill="currentColor" fill-opacity="0.3"/>
+                <path d="M32 20l4 4"/>
+                <path d="M88 20l-4 4"/>
+                <path d="M32 60l4 -4"/>
+                <path d="M88 60l-4 -4"/>
+              </svg>
+            </div>
+            <h3 class="text-h3 mb-2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h3); font-weight: 600;">The Star</h3>
+            <p class="text-body text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">星光洒落卡牌边缘，象征希望、指引与潜意识深处的答案。金色框线克制而庄重。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 心理测试 -->
+      <section id="theme-psych" data-theme="psych" class="bg-background text-foreground px-6 py-12">
+        <div class="max-w-md mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full" style="background-color: var(--taichu-skin-banner); color: var(--taichu-skin-banner-ink); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-caption); font-weight: 700;">Ps</span>
+            <h2 class="text-h2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h2); font-weight: 600;">心理测试</h2>
+          </div>
+          <div class="flex items-center gap-2 mb-5">
+            <span class="inline-block w-6 h-px" style="background-color: var(--taichu-gold-500);"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-gold-500);">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+              <line x1="9" y1="9" x2="9.01" y2="9"/>
+              <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+            <span class="inline-block flex-1 h-px" style="background-color: var(--taichu-gold-500); opacity: 0.35;"></span>
+          </div>
+          <p class="text-body mb-6 text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">晨光象牙底色，暖杏与雾蓝组合，用 Notion 简笔头像传递轻松可亲近的情绪。</p>
+
+          <!-- Color chips -->
+          <div class="flex gap-3 mb-6">
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-skin-banner); color: var(--taichu-skin-banner-ink);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">暖杏</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#E6A57A</div>
+            </div>
+            <div class="flex-1 rounded-lg p-3 text-center" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground);">
+              <div class="text-caption mb-1" style="font-size: var(--taichu-fs-caption);">雾蓝</div>
+              <div class="text-disclaimer opacity-80" style="font-size: var(--taichu-fs-disclaimer);">#5B7A8C</div>
+            </div>
+          </div>
+
+          <button class="mb-6 px-6 py-3 rounded-full text-body-l font-medium transition-colors" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body-l);">
+            开始测试
+          </button>
+
+          <!-- Card -->
+          <div class="rounded-xl p-5 border bg-card text-card-foreground mb-6" style="border-color: var(--taichu-border);">
+            <h3 class="text-h3 mb-4" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h3); font-weight: 600;">情绪脸谱</h3>
+            <div class="grid grid-cols-4 gap-3 mb-4">
+              <!-- Happy -->
+              <div class="aspect-square rounded-lg flex items-center justify-center" style="background-color: var(--taichu-skin-accent-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-primary);">
+                  <circle cx="16" cy="16" r="12"/>
+                  <circle cx="12" cy="13" r="1.5" fill="currentColor"/>
+                  <circle cx="20" cy="13" r="1.5" fill="currentColor"/>
+                  <path d="M11 20c1.5 2.5 8.5 2.5 10 0"/>
+                </svg>
+              </div>
+              <!-- Confused -->
+              <div class="aspect-square rounded-lg flex items-center justify-center" style="background-color: var(--taichu-skin-accent-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-primary);">
+                  <circle cx="16" cy="16" r="12"/>
+                  <circle cx="12" cy="13" r="1.5" fill="currentColor"/>
+                  <circle cx="20" cy="13" r="1.5" fill="currentColor"/>
+                  <path d="M13 22h6"/>
+                  <path d="M15 10l2 2-2 2"/>
+                </svg>
+              </div>
+              <!-- Calm -->
+              <div class="aspect-square rounded-lg flex items-center justify-center" style="background-color: var(--taichu-skin-accent-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-primary);">
+                  <circle cx="16" cy="16" r="12"/>
+                  <line x1="10" y1="14" x2="13" y2="14"/>
+                  <line x1="19" y1="14" x2="22" y2="14"/>
+                  <path d="M12 22h8"/>
+                </svg>
+              </div>
+              <!-- Excited -->
+              <div class="aspect-square rounded-lg flex items-center justify-center" style="background-color: var(--taichu-skin-accent-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--taichu-primary);">
+                  <circle cx="16" cy="16" r="12"/>
+                  <path d="M10 14l3-2 3 2"/>
+                  <path d="M16 14l3-2 3 2"/>
+                  <path d="M11 21c1.5-2 8.5-2 10 0"/>
+                </svg>
+              </div>
+            </div>
+            <p class="text-body text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">用极简线条描摹四种基础情绪，帮助用户在轻松氛围中认识自己。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 组件对比 -->
+      <section id="component-comparison" class="bg-background text-foreground px-6 py-12">
+        <div class="max-w-md mx-auto">
+          <div class="flex items-baseline gap-3 mb-5">
+            <span class="inline-block w-8 h-px" style="background-color: var(--taichu-gold-500);"></span>
+            <h2 class="text-h2" style="font-family: var(--taichu-font-serif); font-size: var(--taichu-fs-h2); font-weight: 600;">组件对比</h2>
+          </div>
+          <p class="text-body mb-6 text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body); line-height: 1.8;">同一 CTA 按钮置于不同主题容器中，变量自动切换，骨架始终可见。</p>
+
+          <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            <div data-theme="guoxue" class="flex-shrink-0 rounded-xl p-5 w-44 bg-background text-foreground border" style="border-color: var(--taichu-border);">
+              <p class="text-caption mb-3 text-muted-foreground" style="font-size: var(--taichu-fs-caption);">国学</p>
+              <button class="w-full px-4 py-2.5 rounded-full text-body font-medium" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body);">
+                立即体验
+              </button>
+            </div>
+            <div data-theme="xishi" class="flex-shrink-0 rounded-xl p-5 w-44 bg-background text-foreground border" style="border-color: var(--taichu-border);">
+              <p class="text-caption mb-3 text-muted-foreground" style="font-size: var(--taichu-fs-caption);">西式占卜</p>
+              <button class="w-full px-4 py-2.5 rounded-full text-body font-medium" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body);">
+                立即体验
+              </button>
+            </div>
+            <div data-theme="psych" class="flex-shrink-0 rounded-xl p-5 w-44 bg-background text-foreground border" style="border-color: var(--taichu-border);">
+              <p class="text-caption mb-3 text-muted-foreground" style="font-size: var(--taichu-fs-caption);">心理测试</p>
+              <button class="w-full px-4 py-2.5 rounded-full text-body font-medium" style="background-color: var(--taichu-primary); color: var(--taichu-primary-foreground); font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-body);">
+                立即体验
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-background text-foreground px-6 py-8">
+        <div class="max-w-md mx-auto text-center">
+          <img src="../assets/taichu-logo.svg" alt="太初" class="w-8 h-8 mx-auto mb-3" style="color: var(--taichu-gold-500); opacity: 0.7;">
+          <p class="text-disclaimer text-muted-foreground" style="font-family: var(--taichu-font-sans); font-size: var(--taichu-fs-disclaimer); line-height: 1.6;">内容由 AI 生成，仅供娱乐参考 · 太初</p>
+        </div>
+      </footer>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
