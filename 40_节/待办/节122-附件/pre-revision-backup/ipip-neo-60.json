@@ -362,17 +362,12 @@
     {
       "instrument": "ipip-neo-60",
       "item_no": 35,
-      "text_en": "Like to try new things.",
-      "text_zh": "喜欢尝试新鲜事物",
+      "text_en": "Tend to vote for liberal political candidates.",
+      "text_zh": "倾向于投票给自由派候选人",
       "dimension": "O",
       "facet": "O6",
       "keying": "+",
-      "source_url": "https://ipip.ori.org/IPIP-NEO-60ScoringKeys.htm",
-      "original_text_en": "Tend to vote for liberal political candidates.",
-      "revised": true,
-      "revised_by": "agent",
-      "revision_category": "政治(自由派)",
-      "revision_note": "Agent 改版：原题涉政治/宗教/司法/纳税/爱国等敏感表述，O6 即「自由主义」面，同层面替换在 O6 内不可行；已草拟同等测量功能的「开放性-价值观（中性版）」题替换，keying 方向保持不变。原英文见 original_text_en。"
+      "source_url": "https://ipip.ori.org/IPIP-NEO-60ScoringKeys.htm"
     },
     {
       "instrument": "ipip-neo-60",
