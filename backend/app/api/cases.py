@@ -41,8 +41,10 @@ from app.methods import ANALYZERS, METHOD_KEYS
 from app.paipan import (
     paipan as paipan_engine,  # 端点函数名也是 paipan，故加别名避免遮蔽
     calibration_weight,
+    merge_vague_denials,
     score_fit,
     slice_chart,
+    vague_denial_summary,
 )
 from app.jobs.orchestrator import run_duan_qian_chen, run_predict
 from app.profile.archive import build_archive
@@ -204,6 +206,10 @@ class CreateCaseRequest(CaseContactFields):
 
 class CalibrationRequest(BaseModel):
     feedback: list[dict]
+    # 节116 第④步 · 方向级模糊否定：用户只说"不准"未指明具体命题时，
+    # 按领域+方向累积（不指名具体哪条结论，但否定该领域的整体倾向）。
+    # 元素格式：{"domain": "事业", "direction": "吉"}
+    vague_denials: Optional[list[dict]] = None
 
 
 class ReviseRequest(BaseModel):
@@ -490,13 +496,27 @@ async def calibration(
 
     # upsert calibrations（case_id 为 PK，一行一案；存在则更新）
     cal = db.query(Calibration).filter_by(case_id=case_id).first()
+
+    # 节116 第④步 · 方向级模糊否定：合并旧数据 + 生成摘要
+    # （vague_denials 存在 fit_json 里，不动 record_json 结构，保前端兼容）
+    old_fit = cal.fit_json if cal is not None and isinstance(cal.fit_json, dict) else {}
+    old_vd = old_fit.get("vague_denials", {}).get("raw") if isinstance(old_fit.get("vague_denials"), dict) else None
+    merged_vd = merge_vague_denials(old_vd, req.vague_denials)
+    vd_summary = vague_denial_summary(merged_vd) if merged_vd else None
+
     if cal is None:
         cal = Calibration(case_id=case_id, user_id=user_id)
         db.add(cal)
     else:
         cal.user_id = user_id
     cal.record_json = req.feedback
-    cal.fit_json = {"fit": fit, "weights": weights}
+    fit_json = {"fit": fit, "weights": weights}
+    if vd_summary and vd_summary.get("has_any"):
+        fit_json["vague_denials"] = {
+            "raw": merged_vd,
+            "summary": vd_summary,
+        }
+    cal.fit_json = fit_json
 
     case.status = CaseStatus.calibrated
     db.commit()

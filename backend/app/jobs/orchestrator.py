@@ -45,6 +45,7 @@ from app.methods import ANALYZERS, METHOD_KEYS
 from app.models import (
     Case,
     CaseStatus,
+    Calibration,
     Chart,
     Job,
     JobStatus,
@@ -53,6 +54,7 @@ from app.models import (
     RouteDecision,
 )
 from app.paipan import slice_chart
+from app.paipan.marker import mark_chart
 from app.routing.router import route
 from app.synthesis.synthesizer import synthesize
 from app.validation.validator import validate
@@ -122,9 +124,20 @@ def _bump_completed(s, job_id: int) -> None:
 
 
 def _build_slices(chart: dict) -> dict[str, dict]:
-    """缺省 8 片 + 补 bazi-hunyin-caiyun 第 9 片，合并成 key → fragment。"""
+    """缺省 8 片 + 补 bazi-hunyin-caiyun 第 9 片，合并成 key → fragment。
+
+    节117 · 预判标记层：切片后注入确定性标记（`_markers` 字段），
+    供各方法模块在解读时参考，降低幻觉面。
+    """
     slices = slice_chart(chart)
     slices.update(slice_chart(chart, methods=["bazi-hunyin-caiyun"]))
+
+    # 节117 · 计算预判标记并注入到各方法切片
+    markers_by_method = mark_chart(chart)
+    for key, markers in markers_by_method.items():
+        if key in slices and markers:
+            slices[key]["_markers"] = markers
+
     return slices
 
 
@@ -424,6 +437,19 @@ async def run_predict(job_id: int) -> None:
         )
         session.commit()
 
+        # 节116 第④步 · 读取校准数据中的模糊否定信号（如已校准）
+        cal_row = session.query(Calibration).filter_by(case_id=job.case_id).first()
+        vague_denials_summary = None
+        calibration_feedback = None
+        if cal_row and isinstance(cal_row.fit_json, dict):
+            vd = cal_row.fit_json.get("vague_denials")
+            if isinstance(vd, dict) and isinstance(vd.get("summary"), dict):
+                vague_denials_summary = vd["summary"]
+                calibration_feedback = {
+                    "vague_denials": vague_denials_summary,
+                    "note": "以下领域存在用户模糊否定反馈，相关方向的置信度请适当下调。",
+                }
+
         reset_usage()
 
         # 续跑检测（与断前尘同语义）：0 < done_count < total 说明是服务重启后中断
@@ -479,6 +505,7 @@ async def run_predict(job_id: int) -> None:
                     try:
                         out = await ANALYZERS[key](
                             "prediction", slices.get(key), user_question,
+                            calibration_feedback=calibration_feedback,
                             continuation=continuation,
                         )
                     except (LLMError, ValueError) as exc:
@@ -551,7 +578,7 @@ async def run_predict(job_id: int) -> None:
                 results.append(payload)
 
         # 合成 + 合规拦截（免责由前端全局 DisclaimerFooter 统一展示，不再追加进 report 文字）
-        report = await synthesize(results, decision)
+        report = await synthesize(results, decision, vague_denials=vague_denials_summary)
         _apply_compliance(report)
 
         # _usage 用逐法 tokens 求和——主 task 的 contextvar 不含子协程的累计

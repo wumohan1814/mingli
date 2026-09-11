@@ -36,6 +36,7 @@ reference/
 reference-not in project/
 temp/
 .workbuddy/
+.trae-tmp/
 
 
 # 素材上传运行时目录（REQ-059；admin 上传落盘，不入库）

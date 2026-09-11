@@ -305,11 +305,15 @@ RECALL_ENABLE_QUERY_TERMS = 1       # R1：整句短语 → ≥3 字词项 OR（
 RECALL_PHRASE_FIRST = 0            # R1 变体：1 = 先试原短语、零候选再退 OR（代价：多 1 次 SQL）
 RECALL_ENABLE_SHORT_QUERY_LIKE = 1  # R2-1：<3 字查询用 LIKE 兜底，而非直接退化 recency
 RECALL_HALVE_K_ON_FALLBACK = 0      # R2-2：1 = 保留旧的「零命中 → k 减半」（已判定有害：越模糊注入越多）
-RECALL_ENABLE_TAGS_MATCH = 1        # R3：tags_json 参与 Python 侧补充打分（不动 FTS/表结构）
+RECALL_ENABLE_TAGS_MATCH = 1        # R3-1：tags_json 参与 Python 侧补充打分（不动 FTS/表结构）
+RECALL_ENABLE_TAGS_CHANNEL = 1      # R3-2：tags 升级为独立召回通道（SQL LIKE 粗召回 + Python 精确匹配）
 
 RECALL_TERM_LEN = 3                 # trigram 下可匹配的最短词项长度（**硬约束，勿改小**）
 RECALL_MAX_TERMS = 24               # OR 词项数上限（防超长查询把 MATCH 表达式撑爆）
-RECALL_TAG_BONUS = 0.25             # R3：命中 tag 的加分（加在混合分上）
+RECALL_TAG_BONUS = 0.25             # R3-1：命中 tag 的加分（加在混合分上）
+RECALL_TAG_CHANNEL_WEIGHT = 0.40    # R3-2：tag 通道独立命中的权重（加到基分上）
+RECALL_TAG_MIN_KEYWORD_LEN = 2      # R3-2：tag 关键词最短长度
+RECALL_TAG_MAX_KEYWORDS = 6         # R3-2：单次查询最多提取的 tag 关键词数
 RECALL_PHRASE_BONUS = 0.30          # R1：content 含整句时加分（免第二次 SQL 的短语精度补偿）
 RECALL_KEYWORD_BONUS = 0.35         # R2-1：短问 LIKE 命中 content 的加分
 RECALL_SHORT_QUERY_UNION = 1        # R2-1 变体：1 = LIKE 命中 **∪ recency 全集**（默认，保预算）；
@@ -395,6 +399,129 @@ def _tag_hit_ratio(tags: list[str], query: str) -> float:
     q = query.lower()
     hits = sum(1 for t in tags if t and (t in q or q in t))
     return hits / len(tags)
+
+
+# R3-2：从查询中提取可能匹配 tags 的关键词（2~6 字的中文/英文数字词块）。
+# 太初记忆的 tags 是 LLM 抽的"简短关键词"（2~5 个），典型如「财运」「性格」
+# 「事业」「婚姻」「健康」等。用纯正则切词，零依赖、零算力。
+_TAG_KEYWORD_RE = re.compile(r"[A-Za-z0-9\u4e00-\u9fff]+")
+
+
+def _extract_tag_keywords(query: str) -> list[str]:
+    """从查询中提取候选 tag 关键词。
+
+    太初记忆的 tags 是 LLM 抽的「简短关键词」（2~5 个，多为 2 字中文词，
+    如「财运」「性格」「事业」「婚姻」）。tag 通道的核心是：query 里出现
+    的词如果正好是某个 tag，那条记忆就是强相关。
+
+    切分策略（零依赖、纯正则）：
+    1. 先按非 [中文/字母/数字] 切成若干「连续块」
+    2. **纯中文块**：用 2 字滑窗切，每个 2 字片段都是候选 tag（太初 tags
+       绝大多数是 2 字词）；3 字词也保留（如「公务员」「金牛座」）
+       —— 无意义组合（如「我今」「年财」）会在 Python 精确验证阶段被过滤掉
+    3. **英文/数字/混合块**：整块保留（英文 tags 本身就是空格分隔的单词）
+    4. 过滤：<2 字丢弃；纯数字且 ≤3 位丢弃（如「30」「25」）
+    5. 去重、保序，最多取 `RECALL_TAG_MAX_KEYWORDS` 个
+    """
+    if not query:
+        return []
+    q = query.lower()
+    seen: set[str] = set()
+    out: list[str] = []
+
+    def _add(word: str):
+        if len(word) < RECALL_TAG_MIN_KEYWORD_LEN:
+            return
+        if word.isdigit() and len(word) <= 3:
+            return
+        if word in seen:
+            return
+        seen.add(word)
+        out.append(word)
+
+    for m in _TAG_KEYWORD_RE.finditer(q):
+        chunk = m.group(0).strip()
+        if not chunk:
+            continue
+        # 判断是否全中文（含中文标点之外的纯中文字符）
+        has_chinese = any('\u4e00' <= ch <= '\u9fff' for ch in chunk)
+        has_alpha = any('a' <= ch <= 'z' or 'A' <= ch <= 'Z' for ch in chunk)
+
+        if has_chinese and not has_alpha:
+            # 纯中文块 → 2 字滑窗优先（太初 tags 绝大多数是 2 字词），
+            # 3 字滑窗作为补充（覆盖三字 tag 如「公务员」「金牛座」）。
+            # 2 字先加，保证核心短词不被长词挤掉上限。
+            n = len(chunk)
+            for k in (2, 3):  # 先短后长
+                if n >= k:
+                    for i in range(n - k + 1):
+                        _add(chunk[i:i + k])
+                        if len(out) >= RECALL_TAG_MAX_KEYWORDS:
+                            return out
+        else:
+            # 英文/数字/混合块 → 整块保留
+            _add(chunk)
+
+        if len(out) >= RECALL_TAG_MAX_KEYWORDS:
+            break
+    return out
+
+
+def _tag_channel_candidates(session: Session, user_id: int, keywords: list[str],
+                            now: datetime) -> list[dict]:
+    """R3-2：tags 独立召回通道。
+
+    做法（零表结构变动、不动 FTS DDL）：
+    1. SQL 层：`tags_json LIKE '%keyword%'` 粗召回（带 user_id + deleted_at 过滤）
+    2. Python 层：用 `_parse_tags` 精确验证（keyword 在 tags 数组中才算命中）
+    3. 返回命中的记忆，附带 `tag_hits`（命中的 tag 列表）和 `tag_hit_count`
+
+    为什么不直接在 SQL 层精确匹配：SQLite 内置没有 JSON 数组包含查询的高效
+    算子，且单用户 ≤300 条事实，Python 侧精确过滤成本可忽略。
+    """
+    if not keywords:
+        return []
+    # 每个关键词一次 LIKE 查询，UNION 去重（用 Python set 更简单）
+    seen_ids: set[int] = set()
+    out_map: dict[int, dict] = {}
+    for kw in keywords:
+        like_pattern = f"%{_escape_like(kw)}%"
+        rows = session.execute(
+            text(
+                "SELECT m.id, m.content, m.fact_type, m.importance, m.updated_at, "
+                "       m.tags_json "
+                "FROM agent_memories m "
+                "WHERE m.user_id = :uid AND m.deleted_at IS NULL "
+                "  AND m.tags_json IS NOT NULL AND m.tags_json LIKE :pat ESCAPE '\\' "
+                "LIMIT :limit"
+            ),
+            {"uid": user_id, "pat": like_pattern, "limit": RECALL_COARSE_LIMIT},
+        ).fetchall()
+        for r in rows:
+            if r.id in seen_ids:
+                # 已被其他关键词命中，累加 tag_hits
+                tags = _parse_tags(r.tags_json)
+                if kw in tags:
+                    out_map[r.id]["tag_hits"].add(kw)
+                continue
+            # 精确验证：keyword 必须在 tags 数组中（不是子串匹配）
+            tags = _parse_tags(r.tags_json)
+            if kw not in tags:
+                continue
+            seen_ids.add(r.id)
+            out_map[r.id] = {
+                "id": r.id, "content": r.content, "fact_type": r.fact_type,
+                "importance": float(r.importance or 0.5), "updated_at": r.updated_at,
+                "tags": tags,
+                "tag_hits": {kw},
+                "tag_channel_hit": True,
+            }
+    # 把 set 转成 list（方便 JSON 序列化 / 计数）
+    out = list(out_map.values())
+    for c in out:
+        c["tag_hit_count"] = len(c["tag_hits"])
+        c["tag_hits"] = sorted(c["tag_hits"])  # type: ignore[assignment]
+    return out
 
 
 def _escape_like(value: str) -> str:
@@ -610,10 +737,35 @@ def recall_memories(user_id: int, query: str = "", k: int | None = None,
             if RECALL_HALVE_K_ON_FALLBACK:
                 k = max(1, k // 2)
 
+        # 节118-R3-2：tags 独立召回通道（与主通道并行，命中合并去重）
+        # 零表结构变动、零新依赖：SQL LIKE 粗召回 + Python 精确匹配
+        tag_candidates: list[dict] = []
+        if RECALL_ENABLE_TAGS_CHANNEL and eff_query and mode != "opening":
+            tag_keywords = _extract_tag_keywords(eff_query)
+            if tag_keywords:
+                try:
+                    tag_candidates = _tag_channel_candidates(
+                        session, user_id, tag_keywords, now)
+                except Exception as exc:
+                    logger.warning("记忆 tags 通道召回失败，跳过 user_id=%s error=%s",
+                                   user_id, exc)
+                    tag_candidates = []
+
+        # 合并 tag 通道命中到主候选集（按 id 去重）
+        if tag_candidates:
+            existing_ids = {c["id"] for c in candidates}
+            for tc in tag_candidates:
+                if tc["id"] not in existing_ids:
+                    candidates.append(tc)
+                    existing_ids.add(tc["id"])
+
         if channel == "bm25":
             # 混合分：score = rel + α·importance·fresh（§5.2）
             for c in candidates:
-                c["score"] = c["rel"] + ALPHA * c["importance"] * _freshness(c["updated_at"], now)
+                c["score"] = c.get("rel", 0.0) + ALPHA * c["importance"] * _freshness(c["updated_at"], now)
+                # R3-2：tag 通道独立命中的额外加权
+                if c.get("tag_channel_hit"):
+                    c["score"] += RECALL_TAG_CHANNEL_WEIGHT * min(1.0, c.get("tag_hit_count", 1) / 2.0)
         else:
             # recency / 短问兜底：基分 importance×freshness；LIKE 关键词命中额外加分
             if not candidates:
@@ -622,6 +774,9 @@ def recall_memories(user_id: int, query: str = "", k: int | None = None,
                 c["score"] = c["importance"] * _freshness(c["updated_at"], now)
                 if c.get("keyword_hit"):
                     c["score"] += RECALL_KEYWORD_BONUS
+                # R3-2：tag 通道独立命中的额外加权
+                if c.get("tag_channel_hit"):
+                    c["score"] += RECALL_TAG_CHANNEL_WEIGHT * min(1.0, c.get("tag_hit_count", 1) / 2.0)
 
         # 节118-R3：tags 免费信号进场（**只在候选集上做 Python 侧补充打分**，
         # 不动 FTS DDL / 触发器 / 表结构 —— 那属另案）
