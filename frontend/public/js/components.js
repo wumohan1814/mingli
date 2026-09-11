@@ -1,4 +1,4 @@
-// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes
+// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
 // 加载于 vendor+data（React/ReactDOM/TC_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
 
 // 全局轻提示
@@ -442,4 +442,368 @@ function ensureSpriteKeyframes(s) {
   st.textContent = '@keyframes ' + name + '{' + stops.join('') + '}';
   (document.head || document.documentElement).appendChild(st);
   return name;
+}
+
+// REQ-039 ②③：星盘 scope → 中文名（仅展示用；未收录的 scope 原样显示）
+const ASTRO_SCOPE_CN = {
+  natal: '本命盘',
+  yearly: '年运',
+  monthly: '月运',
+  daily: '日运',
+  transit: '行运',
+  solar_return: '太阳返照',
+  secondary: '次限',
+  firdaria: '法达'
+};
+function astroScopeLabel(scope) {
+  return ASTRO_SCOPE_CN[scope] || scope;
+}
+// REQ-053 L1：共享盘面渲染单元 —— AstrologyPage（星座页）与档案内 AstroNatalPanel 共用，
+// 消除两处重复 ~70 行：行星落座/四轴行 astroPointRow + 元素/模式 chip 与逆行/格局
+// AstroSummaryChips（wheel 两处仍共享 AstroWheel）。
+const astroEl = React.createElement;
+function astroPointRow(p, i) {
+  return astroEl('div', {
+    key: i,
+    className: 'planet-row'
+  }, astroEl('span', {
+    className: 'pr-sym'
+  }, PLANET_SYM[p.label] || '·'), astroEl('span', {
+    style: {
+      flex: 1
+    }
+  }, p.label + ' · ' + (p.pos || '—') + (p.house ? ' · 第' + p.house + '宫' : '') + (p.retro ? '（逆）' : '') + (p.dignityLabel ? ' · ' + p.dignityLabel : '')));
+}
+function AstroSummaryChips({
+  s,
+  detail,
+  wrapStyle,
+  pStyle
+}) {
+  const sum = s && typeof s === 'object' ? s : {};
+  const elSum = sum.elements || {};
+  const modSum = sum.modalities || {};
+  const retrograde = Array.isArray(sum.retrograde) ? sum.retrograde : [];
+  const patterns = Array.isArray(sum.patterns) ? sum.patterns : [];
+  const chip = (k, item) => astroEl('span', {
+    key: k,
+    className: 'tag'
+  }, k + ' ' + (item && item.count != null ? item.count : 0));
+  const lines = [];
+  if (detail) {
+    ['elements', 'modalities'].forEach(grp => {
+      const o = grp === 'elements' ? elSum : modSum;
+      Object.keys(o).forEach(k => {
+        const item = o[k];
+        if (item && Array.isArray(item.list) && item.list.length) {
+          lines.push(astroEl('div', {
+            key: grp + k,
+            style: {
+              fontSize: 11,
+              color: 'var(--text-3)',
+              lineHeight: 1.8
+            }
+          }, (grp === 'elements' ? '元素' : '模式') + '·' + k + '：' + item.list.join('、')));
+        }
+      });
+    });
+  }
+  return astroEl(React.Fragment, null, astroEl('div', {
+    className: 'row-gap',
+    style: wrapStyle
+  }, Object.keys(elSum).map(k => chip(k, elSum[k])), Object.keys(modSum).map(k => chip(k, modSum[k]))), lines.length ? astroEl('div', {
+    style: {
+      marginTop: 6
+    }
+  }, lines) : null, astroEl('p', {
+    style: pStyle || {
+      marginTop: 8,
+      fontSize: 13,
+      color: 'var(--text-2)'
+    }
+  }, '逆行：', retrograde.length ? retrograde.join('、') : '无', '\u3000|\u3000格局：', patterns.length ? patterns.join('、') : '无'));
+}
+// REQ-039 退回细化①：档案内直接渲染 astrology 记录 chart.natal 的完整本命盘。
+// 复用星座页的 astroNorm / AstroWheel / astroPointRow / AstroSummaryChips；判空不崩。
+function AstroNatalPanel({
+  chart
+}) {
+  const el = React.createElement;
+  const natal = astroNorm(chart && chart.natal ? chart.natal : null);
+  const birthInfo = natal.birth || {};
+  const birthMeta = [birthInfo.dateTime ? '出生 ' + birthInfo.dateTime : '', birthInfo.location ? '地点 ' + birthInfo.location : ''].filter(Boolean).join(' ｜ ');
+  if (!natal.planets.length && !natal.angles.length) {
+    return el('div', {
+      style: {
+        fontSize: 13,
+        color: 'var(--text-3)',
+        padding: '8px 0'
+      }
+    }, '该条星盘数据不完整，无法展示盘面。');
+  }
+  return el('div', null, el('div', {
+    style: {
+      textAlign: 'center',
+      margin: '2px 0'
+    }
+  }, el(AstroWheel, {
+    data: natal
+  }), birthMeta ? el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginTop: 6,
+      lineHeight: 1.7
+    }
+  }, birthMeta) : null), natal.planets.length > 0 && el('div', null, el('div', {
+    className: 'sub-title',
+    style: {
+      marginTop: 8
+    }
+  }, '行星落座落宫'), natal.planets.map(astroPointRow)), natal.angles.length > 0 && el('div', null, el('div', {
+    className: 'sub-title',
+    style: {
+      marginTop: 8
+    }
+  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.map(astroPointRow)), el(AstroSummaryChips, {
+    s: natal.summary,
+    wrapStyle: {
+      marginTop: 10
+    },
+    pStyle: {
+      marginTop: 6,
+      fontSize: 13,
+      color: 'var(--text-2)'
+    }
+  }));
+}
+
+const SIGN_SYM = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+const PLANET_SYM = {
+  '太阳': '☉',
+  '月亮': '☽',
+  '水星': '☿',
+  '金星': '♀',
+  '火星': '♂',
+  '木星': '♃',
+  '土星': '♄',
+  '天王星': '♅',
+  '海王星': '♆',
+  '冥王星': '♇',
+  '凯龙星': '⚷',
+  '谷神星': '⚳',
+  '智神星': '⚴',
+  '婚神星': '⚵',
+  '灶神星': '⚶',
+  '北交点': '☊',
+  '南交点': '☋',
+  '莉莉丝': '⚸',
+  '福点': '⊕',
+  '上升': 'ASC',
+  '天顶': 'MC'
+};
+
+/* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
+/* 把后端 natal / 单盘结构归一化成前端渲染结构（兼容 DEMO 字段与真实字段，缺字段不崩） */
+function astroNorm(scope) {
+  const emptySum = {
+    elements: {},
+    modalities: {},
+    retrograde: [],
+    patterns: []
+  };
+  const empty = {
+    planets: [],
+    angles: [],
+    houses: [],
+    aspects: [],
+    summary: emptySum,
+    birth: {}
+  };
+  if (!scope || typeof scope !== 'object') return empty;
+  const num = v => {
+    if (v === undefined || v === null || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+  const mapPoint = p => {
+    if (!p || typeof p !== 'object') return null;
+    const degree = num(p.degree);
+    const minute = num(p.minute);
+    const house = num(p.house);
+    const long = num(p.longitude) != null ? num(p.longitude) : num(p.long);
+    let pos = typeof p.formatted === 'string' && p.formatted ? p.formatted : '';
+    if (!pos) {
+      pos = (p.sign || '') + (degree != null ? degree + '°' : '');
+      if (minute != null && minute > 0) pos += minute + '′';
+    }
+    return {
+      name: p.name || '',
+      label: p.label || p.name || '星体',
+      sign: p.sign || '',
+      degree,
+      minute,
+      house: house == null ? '' : house,
+      long,
+      retro: !!(p.retrograde || p.retro),
+      formatted: typeof p.formatted === 'string' ? p.formatted : '',
+      dignityLabel: p.dignityLabel || '',
+      pos
+    };
+  };
+  const sumSrc = scope.summary && typeof scope.summary === 'object' ? scope.summary : {};
+  const sumOut = {
+    elements: {},
+    modalities: {},
+    retrograde: [],
+    patterns: []
+  };
+  ['elements', 'modalities'].forEach(k => {
+    const s = sumSrc[k] || {};
+    const o = {};
+    Object.keys(s).forEach(key => {
+      const v = s[key];
+      if (Array.isArray(v)) o[key] = { count: v.length, list: v.filter(Boolean) };else if (typeof v === 'number') o[key] = { count: v, list: [] };else o[key] = { count: 0, list: [] };
+    });
+    sumOut[k] = o;
+  });
+  sumOut.retrograde = Array.isArray(sumSrc.retrograde) ? sumSrc.retrograde.filter(Boolean) : [];
+  sumOut.patterns = Array.isArray(sumSrc.patterns) ? sumSrc.patterns.filter(Boolean) : [];
+  return {
+    birth: scope.birth && typeof scope.birth === 'object' ? scope.birth : {},
+    planets: (Array.isArray(scope.planets) ? scope.planets.map(mapPoint) : []).filter(Boolean),
+    angles: (Array.isArray(scope.angles) ? scope.angles.map(mapPoint) : []).filter(Boolean),
+    houses: (Array.isArray(scope.houses) ? scope.houses.map(mapPoint) : []).filter(Boolean),
+    aspects: (Array.isArray(scope.aspects) ? scope.aspects : []).filter(a => a && typeof a === 'object').map(a => ({
+      b1: a.body1 || a.b1 || '',
+      b2: a.body2 || a.b2 || '',
+      type: a.type || a.aspectName || '相位',
+      l1: a.actualAngle != null ? num(a.actualAngle) : num(a.l1),
+      l2: num(a.l2),
+      orb: num(a.orb),
+      closeness: a.closeness || '',
+      applying: !!a.applying
+    })),
+    summary: sumOut
+  };
+}
+function polar(cx, cy, r, long) {
+  const a = long / 360 * Math.PI * 2 - Math.PI / 2;
+  return {
+    x: cx + r * Math.cos(a),
+    y: cy + r * Math.sin(a)
+  };
+}
+function AstroWheel({
+  data
+}) {
+  const cx = 160,
+    cy = 160;
+  const R_OUT = 150,
+    R_MID = 118,
+    R_IN = 86;
+  const planets = data.planets || [];
+  const aspects = data.aspects || [];
+  const byLabel = {};
+  planets.forEach(p => {
+    if (p && p.label) byLabel[p.label] = p;
+  });
+  const lg = p => p && p.long != null ? p.long : p && p.longitude != null ? p.longitude : null;
+  const aspectColor = {
+    '合': '#C9A24B',
+    '合相': '#C9A24B',
+    '刑': '#B23A3A',
+    '刑相': '#B23A3A',
+    '拱': '#3E7C6B',
+    '拱相': '#3E7C6B',
+    '冲': '#3B7BB0',
+    '冲相': '#3B7BB0',
+    '六合': '#5B4B8A'
+  };
+  return /*#__PURE__*/React.createElement("svg", {
+    className: "astro-wheel",
+    viewBox: "0 0 320 320",
+    role: "img",
+    "aria-label": "星盘"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_OUT,
+    fill: "none",
+    stroke: "var(--skin-accent)",
+    strokeWidth: "2"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_MID,
+    fill: "none",
+    stroke: "var(--border)",
+    strokeWidth: "1.5"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: R_IN,
+    fill: "none",
+    stroke: "var(--border)",
+    strokeWidth: "1.5"
+  }), Array.from({
+    length: 12
+  }, (_, i) => {
+    const a1 = polar(cx, cy, R_OUT, i * 30),
+      a2 = polar(cx, cy, R_MID, i * 30);
+    const s = polar(cx, cy, R_OUT - 14, i * 30 + 15);
+    return /*#__PURE__*/React.createElement("g", {
+      key: i
+    }, /*#__PURE__*/React.createElement("line", {
+      x1: a1.x,
+      y1: a1.y,
+      x2: a2.x,
+      y2: a2.y,
+      stroke: "var(--border)",
+      strokeWidth: "1"
+    }), /*#__PURE__*/React.createElement("text", {
+      x: s.x,
+      y: s.y,
+      fontSize: "13",
+      textAnchor: "middle",
+      dominantBaseline: "middle",
+      fill: "var(--skin-accent)"
+    }, SIGN_SYM[i]));
+  }), aspects.map((asp, i) => {
+    const p1 = byLabel[asp.b1 || asp.body1],
+      p2 = byLabel[asp.b2 || asp.body2];
+    if (!p1 || !p2) return null;
+    const c1 = polar(cx, cy, R_OUT - 24, lg(p1)),
+      c2 = polar(cx, cy, R_OUT - 24, lg(p2));
+    return /*#__PURE__*/React.createElement("line", {
+      key: i,
+      x1: c1.x,
+      y1: c1.y,
+      x2: c2.x,
+      y2: c2.y,
+      stroke: aspectColor[asp.type] || '#999',
+      strokeWidth: "1.4",
+      strokeOpacity: "0.8"
+    });
+  }), planets.map((p, i) => {
+    const c = polar(cx, cy, R_OUT - 24, lg(p));
+    return /*#__PURE__*/React.createElement("g", {
+      key: i
+    }, /*#__PURE__*/React.createElement("circle", {
+      cx: c.x,
+      cy: c.y,
+      r: "9",
+      fill: "var(--surface)",
+      stroke: "var(--skin-accent)",
+      strokeWidth: "1.4"
+    }), /*#__PURE__*/React.createElement("text", {
+      x: c.x,
+      y: c.y,
+      fontSize: "11",
+      textAnchor: "middle",
+      dominantBaseline: "middle",
+      fill: "var(--skin-accent)",
+      fontWeight: "700"
+    }, PLANET_SYM[p.label] || '·'));
+  }));
 }
