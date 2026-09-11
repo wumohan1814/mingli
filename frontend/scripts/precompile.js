@@ -8,10 +8,15 @@
  *   1) 移除加载 babel.min.js 的 <script src> 行；
  *   2) 逐个把 type="text/babel" 块编译成普通 JS 并改写为无 type 的 <script>。
  *
+ * 另含一道守卫（先于上述编译执行）：
+ *   0) 扫描 frontend/public/js/*.js —— 拆出的 .js 只允许放「已预编译的普通 JS」，
+ *      不得再写 JSX；用 @babel/core 的默认解析器（不含 jsx 插件）逐个解析，
+ *      任一失败即报错并 exit(1)（防止 JSX 逃过门禁、留到浏览器端静默失效）。
+ *
  * 原地覆盖 HTML（UTF-8）。不写 package.json、不改 vendor。
  * 用法：node frontend/scripts/precompile.js
  */
-import { readFileSync, writeFileSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, statSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { transformSync } from '@babel/core';
@@ -34,6 +39,46 @@ function stats(file) {
 function fmtDiff(label, before, after) {
   console.log(`  ${label}: ${before} -> ${after} (${after - before >= 0 ? '+' : ''}${after - before})`);
 }
+
+// 拆出的 .js 只允许放「已预编译的普通 JS」：用默认解析器（不含 jsx 插件）解析，
+// 含 JSX 或语法错误即抛错。防止 JSX 逃过门禁（门禁只编译 HTML 内联块）而静默失效。
+const JS_DIR = 'public/js';
+
+function checkJsDirForJsx() {
+  const dir = join(ROOT, JS_DIR);
+  let names;
+  try {
+    names = readdirSync(dir).filter((n) => n.endsWith('.js')).sort();
+  } catch {
+    // js/ 目录不存在（拆分之前的旧状态）→ 无守卫对象，跳过
+    return;
+  }
+  const failures = [];
+  for (const name of names) {
+    const code = readFileSync(join(dir, name), 'utf8');
+    try {
+      transformSync(code, {
+        presets: [],
+        configFile: false,
+        babelrc: false,
+        ast: false,
+        sourceType: 'unambiguous',
+      });
+    } catch (e) {
+      const reason = String((e && e.message) || e).split('\n')[0];
+      failures.push({ name, reason });
+    }
+  }
+  if (failures.length) {
+    console.error(`\n✗ 发现 ${failures.length} 个 js/ 文件含 JSX 或语法错误（拆出的 .js 只允许放已预编译的普通 JS）：`);
+    for (const f of failures) console.error(`  - ${JS_DIR}/${f.name}：${f.reason}`);
+    process.exit(1);
+  }
+  console.log(`✓ ${JS_DIR}/（${names.length} 个文件）均为已预编译的普通 JS`);
+}
+
+// 守卫先于 HTML 编译：js/ 有问题时直接退出，不改动任何 HTML
+checkJsDirForJsx();
 
 let anyError = false;
 
