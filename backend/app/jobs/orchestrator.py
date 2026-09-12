@@ -34,7 +34,7 @@ import logging
 
 from sqlalchemy import update
 
-from app.compliance.guardrails import append_disclaimer, check_output
+from app.compliance.guardrails import check_output
 from app.config import settings
 from app.credits.service import check_balance, consume
 from app.database import AnalyticsSession
@@ -632,15 +632,3 @@ def _apply_compliance(report: dict) -> None:
             is_safe, _msg = check_output(detail["description"])
             if not is_safe:
                 detail["description"] = fallback
-
-
-def _apply_disclaimer(report: dict) -> None:
-    """对 report 里的 summary / 文字字段追加免责声明（幂等，已有则跳过）。"""
-    if isinstance(report, dict):
-        for text_field in ("summary", "description", "trend_text"):
-            val = report.get(text_field)
-            if isinstance(val, str) and val:
-                report[text_field] = append_disclaimer(val)
-        for detail in report.get("details") or []:
-            if isinstance(detail, dict) and isinstance(detail.get("description"), str) and detail["description"]:
-                detail["description"] = append_disclaimer(detail["description"])

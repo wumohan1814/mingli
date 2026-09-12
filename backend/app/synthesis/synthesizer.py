@@ -338,8 +338,3 @@ def _adjudicate(
         "vague_denial_applied": vague_denial_applied,
         "vague_denial_note": vague_denial_note,
     }
-
-
-def _decide_trend(conclusions: list[dict]) -> str:
-    """旧接口保留（向后兼容）：直接调用新裁决，只取direction）。"""
-    return _adjudicate(conclusions)["direction"]
