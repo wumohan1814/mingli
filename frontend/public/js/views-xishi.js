@@ -10,7 +10,7 @@ function XishiHubPage({
   const cards = [{
     name: TC_COPY.ui.hub['xishi-astrology-name'],
     sub: TC_COPY.ui.hub['xishi-astrology-sub'],
-    bar: '#2A3A5C',
+    bar: 'var(--tc-astro)',
     ico: 'orbit',
     to: () => {
       applySkin('xingzuo');
@@ -19,7 +19,7 @@ function XishiHubPage({
   }, {
     name: TC_COPY.ui.hub['xishi-tarot-name'],
     sub: TC_COPY.ui.hub['xishi-tarot-sub'],
-    bar: '#C9A24B',
+    bar: 'var(--tc-amber)',
     ico: 'spark',
     to: () => {
       applySkin('tarot');
@@ -28,7 +28,7 @@ function XishiHubPage({
   }, {
     name: TC_COPY.ui.hub['xishi-lenormand-name'],
     sub: TC_COPY.ui.hub['xishi-lenormand-sub'],
-    bar: '#5B4B8A',
+    bar: 'var(--tc-amethyst)',
     ico: 'nine',
     to: () => {
       applySkin('tarot');
@@ -37,7 +37,7 @@ function XishiHubPage({
   }, {
     name: TC_COPY.ui.hub['xishi-more-name'],
     sub: TC_COPY.ui.hub['xishi-more-sub'],
-    bar: '#888',
+    bar: 'var(--tc-gray-dark)',
     ico: 'flat',
     disabled: true
   }];
@@ -191,7 +191,7 @@ const TAROT_SPREAD_GROUPS = [{
 }];
 /* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
 const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔' };
-const TAROT_SUIT_COLOR = { major: '#5B4B8A', wands: '#b8893e', cups: '#c0392b', swords: '#2c3e6e', pentacles: '#4a7c59' };
+const TAROT_SUIT_COLOR = { major: 'var(--tc-amethyst)', wands: 'var(--gold-500)', cups: 'var(--error)', swords: 'var(--tc-suit-swords)', pentacles: 'var(--tc-suit-pentacles)' };
 function tarotDeckMatch(name) {
   if (!name) return null;
   return TAROT_DECK.find(d => d.name === (TAROT_NAME_ALIAS[name] || name)) || TAROT_DECK.find(d => d.name === name) || null;
@@ -289,7 +289,7 @@ function TarotCard({
   }) : React.createElement('div', {
     className: 'tc-ph',
     style: {
-      background: TAROT_SUIT_COLOR[suit] || '#5B4B8A'
+      background: TAROT_SUIT_COLOR[suit] || 'var(--tc-amethyst)'
     }
   }, name)), React.createElement('div', {
     className: 'tc-name'
@@ -663,7 +663,7 @@ function TarotPickBoard(props) {
     if (c) {
       const imgInner = c.img
         ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-        : React.createElement('div', { className: 'rd-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || '#5B4B8A') } }, c.name);
+        : React.createElement('div', { className: 'rd-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || 'var(--tc-amethyst)') } }, c.name);
       const face = React.createElement('div', {
         className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : ''),
         ref: function (el) { slotEls.current[i] = el; }
@@ -833,7 +833,7 @@ function TarotReadBoard({ spread, cards, onOpen }) {
     const label = c.position || ('第' + (i + 1) + '位');
     const imgInner = c.img
       ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-      : React.createElement('div', { className: 'rd-ph', style: { background: TAROT_SUIT_COLOR[c.suit] || '#5B4B8A' } }, c.name);
+      : React.createElement('div', { className: 'rd-ph', style: { background: TAROT_SUIT_COLOR[c.suit] || 'var(--tc-amethyst)' } }, c.name);
     const face = React.createElement('div', { className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : '') }, imgInner);
     const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
     const cellKids = [inner];
@@ -880,7 +880,7 @@ function TarotReadZoom({ cards, idx, onClose, onGo }) {
   const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg' + (rev ? ' reversed' : ''), src: card.img, alt: card.name })
-    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || '#5B4B8A' } }, card.name);
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || 'var(--tc-amethyst)' } }, card.name);
   const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '', React.createElement('span', { className: 'rd-zori ' + (rev ? 'rev' : 'up') }, rev ? UI_COPY.xishi['reversed'] : UI_COPY.xishi['up']));
   const bodyEl = bodyText ? React.createElement('div', { className: 'rd-zbody' }, bodyText) : null;
   const kwEl = kwLine ? React.createElement('div', { className: 'rd-zkw' }, UI_COPY.xishi.keywords, kwLine) : null;
@@ -1244,7 +1244,7 @@ function TarotPage({
       className: 'dk-cell',
       onClick: function () { placeCard(di); }
     },
-      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: '#fff', fontSize: 17, fontWeight: 700 } }, d.name.slice(0, 1))),
+      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--tc-white)', fontSize: 17, fontWeight: 700 } }, d.name.slice(0, 1))),
       React.createElement('div', { className: 'dk-n' }, d.name)));
   });
   const pickBody = React.createElement('div', { className: 'card pick-box' },
@@ -1609,7 +1609,7 @@ const LENORMAND_SPREADS = [{
    grandTableau 大桌按需求方口径「单独评估另行」不做） */
 /* 后端雷诺曼牌名 → 前端 LENORMAND_DECK 卡面映射（个别译名差异） */
 const LN_NAME_ALIAS = { '骑士': '骑手', '孩子': '小孩', '路': '路口', '男士': '男人', '女士': '女人', '十字架': '十字' };
-const LN_SUIT_COLOR = { hearts: '#b94a4a', diamonds: '#3a6ea5', spades: '#2c2c2c', clubs: '#4a8a5e' };
+const LN_SUIT_COLOR = { hearts: 'var(--tc-suit-hearts)', diamonds: 'var(--tc-suit-diamonds)', spades: 'var(--tc-suit-spades)', clubs: 'var(--tc-suit-clubs)' };
 function lnCardOf(c) {
   const name = (c && (c.name || c.cardName)) || '';
   const pos = (c && (c.position || c.pos)) || '';
@@ -1634,7 +1634,7 @@ function lnCardEl(item, idx) {
     item.pos ? React.createElement('div', { className: 'tc-pos' }, item.pos) : null,
     React.createElement('div', { className: 'tarot-card suit-' + item.suit },
       React.createElement('div', { className: 'tc-imgwrap' },
-        item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || '#3E7C6B' } }, item.name)),
+        item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || 'var(--jade-500)' } }, item.name)),
       React.createElement('div', { className: 'tc-name' }, item.name),
       React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
 }
@@ -1718,7 +1718,7 @@ function LenormandReadBoard({ spread, cards, onOpen }) {
     const label = c.position || ('第' + (i + 1) + '位');
     const imgInner = c.img
       ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-      : React.createElement('div', { className: 'rd-ph', style: { background: LN_SUIT_COLOR[c.suit] || '#3E7C6B' } }, c.name);
+      : React.createElement('div', { className: 'rd-ph', style: { background: LN_SUIT_COLOR[c.suit] || 'var(--jade-500)' } }, c.name);
     const face = React.createElement('div', { className: 'rd-imgwrap' }, imgInner);
     const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
     const cellKids = [inner];
@@ -1766,7 +1766,7 @@ function LenormandReadZoom({ cards, idx, onClose, onGo }) {
   const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg', src: card.img, alt: card.name })
-    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || '#3E7C6B' } }, card.name);
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || 'var(--jade-500)' } }, card.name);
   const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '');
   const boxKids = [
     React.createElement('div', { key: 'bar' + idx, className: 'rd-count' }),
@@ -2112,7 +2112,7 @@ function LenormandPage({
       className: 'dk-cell',
       onClick: function () { placeCard(di); }
     },
-      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: '#fff', fontSize: 17, fontWeight: 700 } }, String(d.num))),
+      React.createElement('div', { className: 'dk-thumb' }, d.thumb && cardImagesOn ? React.createElement('img', { src: d.thumb, alt: d.name, loading: 'lazy', decoding: 'async' }) : React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--tc-white)', fontSize: 17, fontWeight: 700 } }, String(d.num))),
       React.createElement('div', { className: 'dk-n' }, d.name)));
   });
   const pickBody = React.createElement('div', { className: 'card pick-box' },
@@ -2354,7 +2354,7 @@ function SunLoveModal({
       }
     }, el('span', {
       style: {
-        color: '#C9A24B'
+        color: 'var(--tc-amber)'
       }
     }, FULL.slice(0, n)), el('span', {
       style: {
@@ -2538,7 +2538,7 @@ function SunRelationModal({
       }
     }, el('span', {
       style: {
-        color: '#C9A24B'
+        color: 'var(--tc-amber)'
       }
     }, FULL.slice(0, n)), el('span', {
       style: {

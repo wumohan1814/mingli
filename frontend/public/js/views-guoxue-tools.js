@@ -550,8 +550,8 @@ function NamerModal({
       style: {
         fontSize: 11,
         fontWeight: 700,
-        color: '#C9A24B',
-        border: '1px solid #C9A24B',
+        color: 'var(--tc-amber)',
+        border: '1px solid var(--tc-amber)',
         borderRadius: 'var(--radius-pill)',
         padding: '1px 7px'
       }

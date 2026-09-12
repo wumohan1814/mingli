@@ -371,7 +371,7 @@ function MenuBalance({
   }, /*#__PURE__*/React.createElement("span", {
     className: "mi-dot",
     style: {
-      background: '#B8893E'
+      background: 'var(--gold-500)'
     }
   }), TC_COPY.ui.balance.label, " ", /*#__PURE__*/React.createElement("span", {
     className: "mb-val"
@@ -916,17 +916,17 @@ const MODULE_HUB = {
 const RAIL_MODS = [{
   id: 'guoxue',
   label: TC_COPY.ui.nav.guoxue,
-  color: '#3E7C6B',
+  color: 'var(--jade-500)',
   icon: 'nine'
 }, {
   id: 'xishi',
   label: TC_COPY.ui.nav.xishi,
-  color: '#5B4B8A',
+  color: 'var(--tc-amethyst)',
   icon: 'orbit'
 }, {
   id: 'mbti',
   label: TC_COPY.ui.nav.mbti,
-  color: '#4A5BB5',
+  color: 'var(--tc-indigo)',
   icon: 'spark'
 }];
 // REQ-064 v2：首页左侧导航恢复为 3 键（国学预测 / 西式占卜 / MBTI）；
@@ -949,7 +949,7 @@ function NavRail({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: m.icon,
     size: 20,
-    color: "#fff"
+    color: "var(--tc-white)"
   }), /*#__PURE__*/React.createElement("span", {
     className: "rail-label"
   }, m.label))));
@@ -961,7 +961,7 @@ function NavRail({
 // item: {label, page, module, skin} —— module 同步左侧 bg/落地面板，skin 与 HUB 卡片跳转口径一致。
 const MOD_NAV_GROUPS = [{
   title: TC_COPY.ui.nav.guoxue,
-  color: '#3E7C6B',
+  color: 'var(--jade-500)',
   // REQ-126：国学组按 4 张场景大卡同步（① 命盘·九法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
   items: [{
     label: TC_COPY.ui.nav['item-nine-pick'],
@@ -986,7 +986,7 @@ const MOD_NAV_GROUPS = [{
   }]
 }, {
   title: TC_COPY.ui.nav.xishi,
-  color: '#5B4B8A',
+  color: 'var(--tc-amethyst)',
   items: [{
     label: TC_COPY.ui.nav['item-astrology'],
     page: 'astrology',
@@ -1005,7 +1005,7 @@ const MOD_NAV_GROUPS = [{
   }]
 }, {
   title: TC_COPY.ui.nav.mbti,
-  color: '#4A5BB5',
+  color: 'var(--tc-indigo)',
   items: [{
     label: TC_COPY.ui.nav['item-mbti'],
     page: 'mbti',
@@ -1218,7 +1218,7 @@ function TopbarMenu({
   }, /*#__PURE__*/React.createElement("span", {
     className: "mi-dot",
     style: {
-      background: '#44558F'
+      background: 'var(--ink-500)'
     }
   }), TC_COPY.ui.menu.settings), /*#__PURE__*/React.createElement("button", {
     className: "menu-item",
@@ -1230,7 +1230,7 @@ function TopbarMenu({
   }, /*#__PURE__*/React.createElement("span", {
     className: "mi-dot",
     style: {
-      background: '#3E7C6B'
+      background: 'var(--jade-500)'
     }
   }), TC_COPY.ui.menu.cases), /* PWA：「安装到桌面」常驻菜单项（永不消失；点击按状态机分派：a 可安装→prompt / b 已安装→提示 / c 其他→浏览器菜单手动安装指引） */
   /*#__PURE__*/React.createElement("button", {

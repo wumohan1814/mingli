@@ -291,7 +291,7 @@ function ZodiacRelModal({
       }
     }, el('span', {
       style: {
-        color: '#C9A24B'
+        color: 'var(--tc-amber)'
       }
     }, FULL.slice(0, n)), el('span', {
       style: {

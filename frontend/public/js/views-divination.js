@@ -1473,7 +1473,7 @@ function ArtCardFront(props) {
   const { img, name, suit, rev, phColor } = props;
   const art = img
     ? React.createElement('img', { className: 'tc-img', src: img, alt: name, loading: 'lazy', decoding: 'async' })
-    : React.createElement('div', { className: 'fc-ph', style: { background: phColor || '#5B4B8A' } }, name);
+    : React.createElement('div', { className: 'fc-ph', style: { background: phColor || 'var(--tc-amethyst)' } }, name);
   return React.createElement('div', { className: 'fc-side fc-front' },
     React.createElement('div', { className: 'fc-art suit-' + (suit || 'major') + (rev ? ' reversed' : '') }, art));
 }
@@ -1644,7 +1644,7 @@ function SsgwResultScreen(props) {
   if (number != null && draw.poolSize) extras.push(UI_COPY.divination['gylq-qianchi'] + draw.poolSize + ' 支');
   if (draw.method) extras.push(UI_COPY.divination['gylq-chouqian-fangshi'] + (draw.method === 'manual' ? '手动录入' : '自动摇签'));
   if (extras.length) cardKids.push(React.createElement('div', { key: 'ex', className: 'ssgw-res-extra' }, extras.join(' · ')));
-  if (res && res.text) cardKids.push(React.createElement('p', { key: 'tx', style: { marginTop: 8, color: '#6E4A24', lineHeight: 1.7, fontSize: 12.5 } }, String(res.text)));
+  if (res && res.text) cardKids.push(React.createElement('p', { key: 'tx', style: { marginTop: 8, color: 'var(--tc-brown-sign)', lineHeight: 1.7, fontSize: 12.5 } }, String(res.text)));
   // 免费签意（后端确定性签解字段，静态零 LLM；字段缺失则整段不展示）
   const freeKids = [];
   const ji = det && det['吉凶'] ? String(det['吉凶']) : '';

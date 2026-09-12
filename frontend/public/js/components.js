@@ -688,15 +688,15 @@ function AstroWheel({
   });
   const lg = p => p && p.long != null ? p.long : p && p.longitude != null ? p.longitude : null;
   const aspectColor = {
-    '合': '#C9A24B',
-    '合相': '#C9A24B',
-    '刑': '#B23A3A',
-    '刑相': '#B23A3A',
-    '拱': '#3E7C6B',
-    '拱相': '#3E7C6B',
-    '冲': '#3B7BB0',
-    '冲相': '#3B7BB0',
-    '六合': '#5B4B8A'
+    '合': 'var(--tc-amber)',
+    '合相': 'var(--tc-amber)',
+    '刑': 'var(--cinnabar)',
+    '刑相': 'var(--cinnabar)',
+    '拱': 'var(--jade-500)',
+    '拱相': 'var(--jade-500)',
+    '冲': 'var(--tc-blue)',
+    '冲相': 'var(--tc-blue)',
+    '六合': 'var(--tc-amethyst)'
   };
   return /*#__PURE__*/React.createElement("svg", {
     className: "astro-wheel",
@@ -759,7 +759,7 @@ function AstroWheel({
       y1: c1.y,
       x2: c2.x,
       y2: c2.y,
-      stroke: aspectColor[asp.type] || '#999',
+      stroke: aspectColor[asp.type] || 'var(--tc-gray)',
       strokeWidth: "1.4",
       strokeOpacity: "0.8"
     });
