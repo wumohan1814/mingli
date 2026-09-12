@@ -16,7 +16,7 @@
  * 原地覆盖 HTML（UTF-8）。不写 package.json、不改 vendor。
  * 用法：node frontend/scripts/precompile.js
  */
-import { readFileSync, writeFileSync, statSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, statSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { transformSync } from '@babel/core';
@@ -77,8 +77,97 @@ function checkJsDirForJsx() {
   console.log(`✓ ${JS_DIR}/（${names.length} 个文件）均为已预编译的普通 JS`);
 }
 
+// 节136 阶段A：硬编码色值基线门禁。
+// 现存散色（pages.css / components.css / js/views-*.js / 两个 HTML 内联样式）登记在
+// scripts/hardcode-baseline.json；门禁只拦「比基线多」——阶段 B 每回收一批散色，
+// 用 `node frontend/scripts/precompile.js --update-hardcode-baseline` 缩小基线，
+// 直到归零。tokens.css 是令牌定义处，整文件豁免。
+const HARDCODE_BASELINE = join(ROOT, 'scripts', 'hardcode-baseline.json');
+const COLOR_LITERAL_RE = /#[0-9a-fA-F]{3,8}\b|rgba?\s*\(/g;
+// 基线键统一用 POSIX 正斜杠，保证 Windows / Linux 结果一致
+const normKey = (rel) => rel.replaceAll('\\', '/');
+
+function hardcodeScanTargets() {
+  const list = [];
+  for (const dir of [join('public', 'css'), join('public', 'js')]) {
+    try {
+      for (const n of readdirSync(join(ROOT, dir)).filter((x) => x.endsWith('.css') || x.endsWith('.js')).sort()) {
+        if (dir.endsWith('css') && n === 'tokens.css') continue; // 令牌定义处豁免
+        list.push(join(dir, n));
+      }
+    } catch { /* 目录不存在则跳过 */ }
+  }
+  for (const html of ['public/index.html', 'public/admin.html']) list.push(html);
+  return list;
+}
+
+function scanColorLiterals(rel) {
+  const lines = readFileSync(join(ROOT, rel), 'utf8').split('\n');
+  const hits = [];
+  lines.forEach((text, i) => {
+    const m = text.match(COLOR_LITERAL_RE);
+    if (m) hits.push({ line: i + 1, count: m.length });
+  });
+  return { count: hits.reduce((s, h) => s + h.count, 0), hits };
+}
+
+function measureHardcode() {
+  const measured = {};
+  for (const rel of hardcodeScanTargets()) {
+    if (!existsSync(join(ROOT, rel))) continue;
+    const { count } = scanColorLiterals(rel);
+    if (count > 0) measured[normKey(rel)] = count;
+  }
+  return measured;
+}
+
+function runHardcodeBaseline(update) {
+  const measured = measureHardcode();
+  if (update) {
+    writeFileSync(HARDCODE_BASELINE, JSON.stringify(measured, null, 2) + '\n', 'utf8');
+    console.log(`✓ 已更新硬编码色值基线 scripts/hardcode-baseline.json（${Object.keys(measured).length} 个文件有散色）`);
+    return;
+  }
+  let baseline;
+  try {
+    baseline = JSON.parse(readFileSync(HARDCODE_BASELINE, 'utf8'));
+  } catch {
+    console.error('✗ 缺少散色基线 scripts/hardcode-baseline.json：先运行 --update-hardcode-baseline 生成。');
+    process.exit(1);
+  }
+  const failures = [];
+  for (const [rel, now] of Object.entries(measured)) {
+    const before = baseline[rel] || 0;
+    if (now > before) {
+      const osRel = join(...rel.split('/')); // 转回平台相对路径，scanColorLiterals 内部再接 ROOT
+      failures.push({ rel, before, now, hits: scanColorLiterals(osRel).hits });
+    }
+  }
+  if (failures.length) {
+    console.error('\n✗ 发现新增硬编码色值（节136：色值只能进 css/tokens.css；见 standards/04）：');
+    for (const f of failures) {
+      console.error(`  - ${f.rel}：基线 ${f.before} → 现 ${f.now}（+${f.now - f.before}），命中行（前 8 条）：`);
+      for (const h of f.hits.slice(0, 8)) console.error(`      L${h.line}（${h.count} 处）`);
+    }
+    console.error('  如确属正当新增（如新语义令牌），请改入 tokens.css；不要自行调大基线。');
+    process.exit(1);
+  }
+  const reduced = Object.entries(baseline)
+    .filter(([rel, n]) => (measured[rel] || 0) < n)
+    .map(([rel, n]) => `${rel} ${n}→${measured[rel] || 0}`);
+  const total = Object.values(measured).reduce((s, n) => s + n, 0);
+  console.log(`✓ 硬编码色值基线门禁通过（现存 ${total} 处散色，只许减不许增）${reduced.length ? `；可更新基线：${reduced.join('；')}` : ''}`);
+}
+
+if (process.argv.includes('--update-hardcode-baseline')) {
+  runHardcodeBaseline(true);
+  process.exit(0);
+}
+
 // 守卫先于 HTML 编译：js/ 有问题时直接退出，不改动任何 HTML
 checkJsDirForJsx();
+// 节136 阶段A：散色基线门禁，同样先于 HTML 编译
+runHardcodeBaseline(false);
 
 let anyError = false;
 
