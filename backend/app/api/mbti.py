@@ -3,27 +3,29 @@
 """MBTI 人格测试 API 路由（横向扩展 Phase D2 · 人格测试）。
 
 契约（全部纯代码，零 LLM、零扣费、无 interpret 付费点）：
-  - GET  /api/mbti/questions      题库公开，无需鉴权：返回 {code:0, data:{questions}}，
-                                  questions 直接读 mbti/data/questions.json（60 题，
-                                  每题为二选一，选项带 dim pole 映射）。
+  - GET  /api/mbti/questions      题库公开，无需鉴权：返回 {code:0, data:{scale,
+                                  questions}}，scale 为 5 档李克特文案，questions
+                                  直接读 mbti/data/questions.json（IPIP-NEO-300
+                                  中文题库，300 题，每题 {id,dim,facet,text,reverse}）。
   - GET  /api/mbti/types/{type}   16 型文案公开，无需鉴权（前端手动输入类型时取
                                   五栏详解，BUG-005）：type 大小写不敏感（转大写
                                   匹配），非法类型 400；零落库零 LLM 零扣费。
   - POST /api/mbti/score          鉴权（Bearer token）：body {case_id, answers}，
                                   case_id 必填（须为本人档案，非本人/不存在 404）：
-                                  调 mbti.scoring.score 纯代码判型得 {type, scores}，
-                                  落 mbti_results 表（带 case_id）并回写
-                                  case.mbti_type = type，再写 mbti_score 埋点
-                                  （props={type, case_id}），返回 {id, type, scores}。
+                                  调 mbti.scoring.score 纯代码计大五五维并映射四字母
+                                  得 {scores, mapped_type, boundaries}，落 mbti_results
+                                  表（带 case_id）并回写 case.mbti_type = mapped_type，
+                                  再写 mbti_score 埋点（props={type, case_id}），
+                                  返回 {id, type, scores, boundaries}。
                                   答案缺失/结构非法/某维度未作答 → 400 参数错误。
   - GET  /api/mbti/results/{id}   鉴权：按 id+user_id 隔离取记录（查不到 404），
-                                  返回 {id, case_id, type, scores, type_info}，
-                                  type_info 从 mbti/data/types.json 实时取该型的
-                                  五栏文案（alias/优势/盲点/职场/关系/成长）。
+                                  返回 {id, case_id, type, scores, boundaries,
+                                  type_info}，type_info 从 mbti/data/types.json
+                                  实时取该型的五栏文案。
   - GET  /api/mbti/results?case_id={case_id}
                                   鉴权：按 case_id+user_id 隔离列出该档案全部
                                   MbtiResult（id 倒序），每项 {id, type, scores,
-                                  created_at}（不含 answers_json 全量，控制体积）。
+                                  boundaries, created_at}（不含 answers_json 全量）。
                                   与路径版 GET /results/{result_id} 并存
                                   （REQ-047②：档案内回看各次填写记录）。
   - DELETE /api/mbti/results/{result_id}
@@ -62,7 +64,7 @@ from app.auth.router import get_user_id_from_token
 from app.database import get_analytics_db
 from app.events.service import record_event
 from app.mbti import scoring
-from app.mbti.scoring import load_questions
+from app.mbti.scoring import load_questions, map_to_mbti
 from app.models import Case, MbtiResult, MbtiShareLink
 
 logger = logging.getLogger(__name__)
@@ -117,10 +119,8 @@ def _get_share_link(db: Session, token: str) -> MbtiShareLink:
 class ScoreRequest(BaseModel):
     case_id: int = Field(description="国学档案 id（判型结果关联该档案并回写 case.mbti_type）")
     answers: List[Dict[str, Any]] = Field(
-        description="逐题答案，两种形态："
-                    "[{\"question_id\":1,\"choice\":\"A\"}, ...]（按选项 key 取 pole）或 "
-                    "[{\"id\":1,\"pole\":\"E\"}, ...]（直接给所选端字母）；"
-                    "需覆盖 EI/SN/TF/JP 四个维度",
+        description="逐题答案：[{\"question_id\":1,\"value\":4}, ...]；"
+                    "value 为 1–5（非常不准确→非常准确）；需覆盖 N/E/O/A/C 五个维度",
     )
 
 
@@ -137,8 +137,15 @@ class ShareScoreRequest(BaseModel):
 # --- 路由 ---
 @router.get("/mbti/questions")
 def get_mbti_questions():
-    """题库（公开，无需鉴权）：返回 60 题标准版，每题为二选一并带维度 pole。"""
-    return {"code": 0, "message": "ok", "data": {"questions": load_questions()}}
+    """题库（公开，无需鉴权）：返回 IPIP-NEO-300 中文题库（300 题，5 点李克特）。
+
+    返回 {scale: [5档选项文案], questions: [{id,dim,facet,text,reverse}]}。
+    """
+    raw = json.loads((MBTI_DATA_DIR / "questions.json").read_text(encoding="utf-8"))
+    return {"code": 0, "message": "ok", "data": {
+        "scale": raw.get("scale", []),
+        "questions": load_questions(),
+    }}
 
 
 @router.get("/mbti/types/{type_code}")
@@ -179,17 +186,17 @@ def score_mbti(
     except ValueError as exc:
         raise _err(400, str(exc))
 
-    # ③ 落库（免费持久化，供 GET /results/{id} 只读复看）+ 回写档案 MBTI 类型，
+    # ③ 落库（免费持久化，供 GET /results/{id} 只读复看）+ 回写档案类型，
     #    同一次 db commit 保证原子（case.mbti_type 与结果行要么都在要么都不在）
     row = MbtiResult(
         user_id=user_id,
         case_id=body.case_id,
         answers_json=body.answers,
         scores_json=result["scores"],
-        type=result["type"],
+        type=result["mapped_type"],
     )
     db.add(row)
-    case.mbti_type = result["type"]
+    case.mbti_type = result["mapped_type"]
     db.commit()
     db.refresh(row)
 
@@ -198,7 +205,10 @@ def score_mbti(
                  props={"type": row.type, "case_id": body.case_id})
 
     return {"code": 0, "message": "ok",
-            "data": {"id": row.id, "type": row.type, "scores": row.scores_json}}
+            "data": {"id": row.id,
+                     "type": row.type,
+                     "scores": row.scores_json,
+                     "boundaries": result["boundaries"]}}
 
 
 # --- REQ-047：免登录分享 + 历史记录 ---
@@ -245,8 +255,10 @@ def get_mbti_share_landing(
     if case is None:
         raise _err(404, "分享链接不存在或已失效")
 
+    raw = json.loads((MBTI_DATA_DIR / "questions.json").read_text(encoding="utf-8"))
     return {"code": 0, "message": "ok", "data": {
         "case_name": case.name,
+        "scale": raw.get("scale", []),
         "questions": load_questions(),
     }}
 
@@ -278,7 +290,7 @@ def score_mbti_via_share(
         case_id=case.id,
         answers_json=body.answers,
         scores_json=result["scores"],
-        type=result["type"],
+        type=result["mapped_type"],
     )
     db.add(row)
     db.commit()
@@ -289,7 +301,9 @@ def score_mbti_via_share(
                  props={"type": row.type, "case_id": case.id, "source": "share"})
 
     return {"code": 0, "message": "ok",
-            "data": {"id": row.id, "type": row.type, "scores": row.scores_json}}
+            "data": {"id": row.id, "type": row.type,
+                     "scores": row.scores_json,
+                     "boundaries": result["boundaries"]}}
 
 
 @router.get("/mbti/results")
@@ -313,12 +327,16 @@ def list_mbti_results_by_case(
             .filter_by(case_id=case_id, user_id=user_id)
             .order_by(MbtiResult.id.desc())
             .all())
-    items = [{
-        "id": row.id,
-        "type": row.type,
-        "scores": row.scores_json,
-        "created_at": row.created_at,
-    } for row in rows]
+    items = []
+    for row in rows:
+        _, boundaries = map_to_mbti(row.scores_json or {})
+        items.append({
+            "id": row.id,
+            "type": row.type,
+            "scores": row.scores_json,
+            "boundaries": boundaries,
+            "created_at": row.created_at,
+        })
     return {"code": 0, "message": "ok", "data": {"items": items, "total": len(items)}}
 
 
@@ -334,12 +352,14 @@ def get_mbti_result(
     row = _get_owned_result(db, result_id, user_id)
 
     type_info = load_types().get(row.type) or {}
+    _, boundaries = map_to_mbti(row.scores_json or {})
 
     return {"code": 0, "message": "ok", "data": {
         "id": row.id,
         "case_id": row.case_id,
         "type": row.type,
         "scores": row.scores_json,
+        "boundaries": boundaries,
         "type_info": type_info,
     }}
 

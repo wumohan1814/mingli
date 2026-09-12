@@ -1,244 +1,2111 @@
 {
+  "scale": [
+    "非常不准确",
+    "不太不准确",
+    "适中",
+    "比较准确",
+    "非常准确"
+  ],
   "questions": [
-    {"id": 1, "dim": "EI", "text": "周末你更愿意……", "options": [
-      {"key": "A", "text": "约朋友出门聚会或逛街", "pole": "E"},
-      {"key": "B", "text": "独自在家安静休息充电", "pole": "I"}
-    ]},
-    {"id": 2, "dim": "EI", "text": "参加完一场热闹的活动后，你通常……", "options": [
-      {"key": "A", "text": "感到精力充沛，还想再多待一会儿", "pole": "E"},
-      {"key": "B", "text": "感到有点疲惫，想赶紧回家静一静", "pole": "I"}
-    ]},
-    {"id": 3, "dim": "EI", "text": "刚到一个新环境，你会……", "options": [
-      {"key": "A", "text": "主动先和周围的人打招呼、聊起来", "pole": "E"},
-      {"key": "B", "text": "先观察熟悉环境，等别人来搭话", "pole": "I"}
-    ]},
-    {"id": 4, "dim": "EI", "text": "工作中遇到难题，你更倾向……", "options": [
-      {"key": "A", "text": "马上找同事当面讨论、边说边理思路", "pole": "E"},
-      {"key": "B", "text": "先自己安静琢磨清楚，再找人沟通", "pole": "I"}
-    ]},
-    {"id": 5, "dim": "EI", "text": "长时间没人跟你说话，你会……", "options": [
-      {"key": "A", "text": "觉得憋得慌，想找人聊几句", "pole": "E"},
-      {"key": "B", "text": "觉得自在，不开口也没关系", "pole": "I"}
-    ]},
-    {"id": 6, "dim": "EI", "text": "在一群人的聚会上，你通常是……", "options": [
-      {"key": "A", "text": "活跃气氛、话题不断的那个人", "pole": "E"},
-      {"key": "B", "text": "坐在旁边认真听大家聊的那个人", "pole": "I"}
-    ]},
-    {"id": 7, "dim": "EI", "text": "接到陌生来电时，你一般会……", "options": [
-      {"key": "A", "text": "没什么心理负担，直接接起来", "pole": "E"},
-      {"key": "B", "text": "犹豫一下，宁可稍后看消息再回", "pole": "I"}
-    ]},
-    {"id": 8, "dim": "EI", "text": "学习一项新技能时，你更喜欢……", "options": [
-      {"key": "A", "text": "约人一起学，互相讨论互相督促", "pole": "E"},
-      {"key": "B", "text": "独自按自己的节奏慢慢钻研", "pole": "I"}
-    ]},
-    {"id": 9, "dim": "EI", "text": "和一大群不太熟的人相处一整天后，你的感觉是……", "options": [
-      {"key": "A", "text": "认识了新朋友，心情很愉快", "pole": "E"},
-      {"key": "B", "text": "心里有点累，需要独处缓缓", "pole": "I"}
-    ]},
-    {"id": 10, "dim": "EI", "text": "周末计划突然全部取消，你更可能……", "options": [
-      {"key": "A", "text": "临时约人出去走走、一起吃顿饭", "pole": "E"},
-      {"key": "B", "text": "享受这意外多出来的独处时光", "pole": "I"}
-    ]},
-    {"id": 11, "dim": "EI", "text": "在会议上，你通常……", "options": [
-      {"key": "A", "text": "想到就举手发言，喜欢边想边说", "pole": "E"},
-      {"key": "B", "text": "先在脑子里组织好再说，或干脆不说", "pole": "I"}
-    ]},
-    {"id": 12, "dim": "EI", "text": "在朋友圈等社交平台上，你一般是……", "options": [
-      {"key": "A", "text": "常常分享生活动态的那个人", "pole": "E"},
-      {"key": "B", "text": "很少发东西、基本潜水的那个人", "pole": "I"}
-    ]},
-    {"id": 13, "dim": "EI", "text": "排队或等车时，你通常会……", "options": [
-      {"key": "A", "text": "和旁边的人随口聊上两句", "pole": "E"},
-      {"key": "B", "text": "习惯性掏出手机自己待着", "pole": "I"}
-    ]},
-    {"id": 14, "dim": "EI", "text": "对你来说，值得纪念的时刻最好……", "options": [
-      {"key": "A", "text": "有人一起见证、分享才算完整", "pole": "E"},
-      {"key": "B", "text": "自己安安静静度过就很满足", "pole": "I"}
-    ]},
-    {"id": 15, "dim": "EI", "text": "工作日的午休时间，你更愿意……", "options": [
-      {"key": "A", "text": "和同事一起吃饭、聊聊天", "pole": "E"},
-      {"key": "B", "text": "一个人吃饭或独处休息", "pole": "I"}
-    ]},
-    {"id": 16, "dim": "SN", "text": "学一门新手艺时，你更看重……", "options": [
-      {"key": "A", "text": "一步步照着教程和实例做出来", "pole": "S"},
-      {"key": "B", "text": "先弄懂它背后的原理和规律", "pole": "N"}
-    ]},
-    {"id": 17, "dim": "SN", "text": "向别人讲述一件事时，你习惯……", "options": [
-      {"key": "A", "text": "讲清楚时间地点、谁做了什么这些具体细节", "pole": "S"},
-      {"key": "B", "text": "说它的意义、感受和由此引发的联想", "pole": "N"}
-    ]},
-    {"id": 18, "dim": "SN", "text": "别人跟你解释一个抽象概念时，你更希望……", "options": [
-      {"key": "A", "text": "直接举具体的例子来说明", "pole": "S"},
-      {"key": "B", "text": "先讲这个概念背后的整体框架和思路", "pole": "N"}
-    ]},
-    {"id": 19, "dim": "SN", "text": "看书或追剧时，你更在意……", "options": [
-      {"key": "A", "text": "情节走向和人物做了哪些具体的事", "pole": "S"},
-      {"key": "B", "text": "故事背后的主题、隐喻和潜台词", "pole": "N"}
-    ]},
-    {"id": 20, "dim": "SN", "text": "你和朋友聊天，话题更容易落在……", "options": [
-      {"key": "A", "text": "身边正在发生的实际事情上", "pole": "S"},
-      {"key": "B", "text": "对未来的设想和如果怎样会怎样上", "pole": "N"}
-    ]},
-    {"id": 21, "dim": "SN", "text": "拿到一份新的说明文档，你会……", "options": [
-      {"key": "A", "text": "逐条细看每一句具体要求", "pole": "S"},
-      {"key": "B", "text": "先快速扫一遍，抓整体大意再说", "pole": "N"}
-    ]},
-    {"id": 22, "dim": "SN", "text": "拿不定主意时，你更愿意相信……", "options": [
-      {"key": "A", "text": "自己过去的经验和确凿的事实", "pole": "S"},
-      {"key": "B", "text": "脑子里冒出来的灵感和直觉", "pole": "N"}
-    ]},
-    {"id": 23, "dim": "SN", "text": "听别人讲笑话时，你常常会……", "options": [
-      {"key": "A", "text": "专注于包袱和情节本身好不好笑", "pole": "S"},
-      {"key": "B", "text": "联想到它背后影射的生活现象", "pole": "N"}
-    ]},
-    {"id": 24, "dim": "SN", "text": "自己做饭或组装东西时，你通常……", "options": [
-      {"key": "A", "text": "严格照着菜谱或图纸一步步来", "pole": "S"},
-      {"key": "B", "text": "凭感觉自由发挥，随手改良", "pole": "N"}
-    ]},
-    {"id": 25, "dim": "SN", "text": "认识一个人后，你更容易记住……", "options": [
-      {"key": "A", "text": "他的长相、声音等具体印象", "pole": "S"},
-      {"key": "B", "text": "和他聊天时给我留下的整体感觉", "pole": "N"}
-    ]},
-    {"id": 26, "dim": "SN", "text": "考虑要不要换工作时，你会先想……", "options": [
-      {"key": "A", "text": "薪资、通勤、具体职责这些现实条件", "pole": "S"},
-      {"key": "B", "text": "这份工作能带来怎样的发展想象", "pole": "N"}
-    ]},
-    {"id": 27, "dim": "SN", "text": "面对一条规章制度，你倾向于……", "options": [
-      {"key": "A", "text": "照字面意思老老实实执行", "pole": "S"},
-      {"key": "B", "text": "结合实际情况琢磨它背后的用意", "pole": "N"}
-    ]},
-    {"id": 28, "dim": "SN", "text": "更让你着迷的是……", "options": [
-      {"key": "A", "text": "看得见摸得着的真实世界", "pole": "S"},
-      {"key": "B", "text": "脑海中各种可能性的世界", "pole": "N"}
-    ]},
-    {"id": 29, "dim": "SN", "text": "完成一项任务时，你的习惯是……", "options": [
-      {"key": "A", "text": "按已经验证过的步骤稳妥推进", "pole": "S"},
-      {"key": "B", "text": "琢磨有没有更新更巧的办法", "pole": "N"}
-    ]},
-    {"id": 30, "dim": "SN", "text": "一趟旅行结束后，你更容易记住……", "options": [
-      {"key": "A", "text": "沿途的风景、食物等具体见闻", "pole": "S"},
-      {"key": "B", "text": "旅途带来的感悟和冒出的新念头", "pole": "N"}
-    ]},
-    {"id": 31, "dim": "TF", "text": "朋友向你倾诉烦恼，你的第一反应是……", "options": [
-      {"key": "A", "text": "帮他分析原因，一起想解决办法", "pole": "T"},
-      {"key": "B", "text": "先共情，让他感到被理解", "pole": "F"}
-    ]},
-    {"id": 32, "dim": "TF", "text": "两个方案都可行时，你会更看重……", "options": [
-      {"key": "A", "text": "哪一个更合理、更高效", "pole": "T"},
-      {"key": "B", "text": "哪一个让大家更容易接受", "pole": "F"}
-    ]},
-    {"id": 33, "dim": "TF", "text": "当你的观点和大多数人不一样时，你往往……", "options": [
-      {"key": "A", "text": "坚持把道理和逻辑摆出来讲清楚", "pole": "T"},
-      {"key": "B", "text": "照顾气氛，不太想当面争执", "pole": "F"}
-    ]},
-    {"id": 34, "dim": "TF", "text": "评价一个人的工作时，你更倾向……", "options": [
-      {"key": "A", "text": "直接指出哪里做得不对、怎么改进", "pole": "T"},
-      {"key": "B", "text": "先肯定对方的努力，再委婉提建议", "pole": "F"}
-    ]},
-    {"id": 35, "dim": "TF", "text": "做重要决定时，你优先考虑的是……", "options": [
-      {"key": "A", "text": "事实、数据和利弊分析", "pole": "T"},
-      {"key": "B", "text": "这件事对相关的人有什么影响", "pole": "F"}
-    ]},
-    {"id": 36, "dim": "TF", "text": "同事在工作中犯了错，你的第一念头是……", "options": [
-      {"key": "A", "text": "找出错在哪一步、怎么避免再犯", "pole": "T"},
-      {"key": "B", "text": "担心他现在是不是很难受", "pole": "F"}
-    ]},
-    {"id": 37, "dim": "TF", "text": "听别人争论时，你更在意的是……", "options": [
-      {"key": "A", "text": "哪一方说得更有道理", "pole": "T"},
-      {"key": "B", "text": "气氛会不会变得尴尬伤人", "pole": "F"}
-    ]},
-    {"id": 38, "dim": "TF", "text": "处理人际矛盾时，你更相信……", "options": [
-      {"key": "A", "text": "把规则和是非讲清楚最重要", "pole": "T"},
-      {"key": "B", "text": "维护关系比争个对错更重要", "pole": "F"}
-    ]},
-    {"id": 39, "dim": "TF", "text": "收到别人对你的批评时，你更能接受……", "options": [
-      {"key": "A", "text": "客观直接地指出问题在哪", "pole": "T"},
-      {"key": "B", "text": "先照顾情绪、再慢慢说的方式", "pole": "F"}
-    ]},
-    {"id": 40, "dim": "TF", "text": "别人征求你的意见时，你通常会……", "options": [
-      {"key": "A", "text": "实话实说，哪怕不太好听", "pole": "T"},
-      {"key": "B", "text": "挑对方想听的讲，尽量不伤人", "pole": "F"}
-    ]},
-    {"id": 41, "dim": "TF", "text": "团队分工有分歧时，你更支持按什么分配……", "options": [
-      {"key": "A", "text": "能力和效率，谁合适谁上", "pole": "T"},
-      {"key": "B", "text": "每个人的意愿和当下状态", "pole": "F"}
-    ]},
-    {"id": 42, "dim": "TF", "text": "当规则和人情发生冲突时，你更可能……", "options": [
-      {"key": "A", "text": "按规定办，规则就是规则", "pole": "T"},
-      {"key": "B", "text": "看具体情况，适当通融一下", "pole": "F"}
-    ]},
-    {"id": 43, "dim": "TF", "text": "你夸别人时，通常更偏向……", "options": [
-      {"key": "A", "text": "基于事实：你这件事做得真漂亮", "pole": "T"},
-      {"key": "B", "text": "表达感受：你让我觉得很感动", "pole": "F"}
-    ]},
-    {"id": 44, "dim": "TF", "text": "团队气氛变得紧张时，你更想……", "options": [
-      {"key": "A", "text": "把问题摆上台面说清楚", "pole": "T"},
-      {"key": "B", "text": "先缓和气氛，别让大家难堪", "pole": "F"}
-    ]},
-    {"id": 45, "dim": "TF", "text": "谈到公平，你更认同……", "options": [
-      {"key": "A", "text": "一视同仁、奖罚分明", "pole": "T"},
-      {"key": "B", "text": "考虑每个人不同的处境", "pole": "F"}
-    ]},
-    {"id": 46, "dim": "JP", "text": "安排出行或工作时，你习惯……", "options": [
-      {"key": "A", "text": "提前把计划定好，按表执行", "pole": "J"},
-      {"key": "B", "text": "走一步看一步，保留变化空间", "pole": "P"}
-    ]},
-    {"id": 47, "dim": "JP", "text": "你的桌面通常是……", "options": [
-      {"key": "A", "text": "东西各归各位，干净整洁", "pole": "J"},
-      {"key": "B", "text": "东西随手放，自己找得到就行", "pole": "P"}
-    ]},
-    {"id": 48, "dim": "JP", "text": "面对一个截止日期，你通常……", "options": [
-      {"key": "A", "text": "早早就开始做，尽量提前完成", "pole": "J"},
-      {"key": "B", "text": "越临近越有状态，踩着点完成", "pole": "P"}
-    ]},
-    {"id": 49, "dim": "JP", "text": "行程临时有变时，你一般会……", "options": [
-      {"key": "A", "text": "有点不适应，希望一切按原计划走", "pole": "J"},
-      {"key": "B", "text": "觉得无所谓，变化反而有新鲜感", "pole": "P"}
-    ]},
-    {"id": 50, "dim": "JP", "text": "出门旅行前打包行李，你通常……", "options": [
-      {"key": "A", "text": "提前列清单，早早收拾妥当", "pole": "J"},
-      {"key": "B", "text": "出发前才匆匆塞几件", "pole": "P"}
-    ]},
-    {"id": 51, "dim": "JP", "text": "面对好几个选项难以取舍时，你更想……", "options": [
-      {"key": "A", "text": "尽快做个决定，把事定下来", "pole": "J"},
-      {"key": "B", "text": "再多看看比较，先不急着定", "pole": "P"}
-    ]},
-    {"id": 52, "dim": "JP", "text": "你的手机或电脑里的文件……", "options": [
-      {"key": "A", "text": "分类清楚，摆放得井井有条", "pole": "J"},
-      {"key": "B", "text": "随手一存，到时候能搜到就行", "pole": "P"}
-    ]},
-    {"id": 53, "dim": "JP", "text": "对周末的安排，你更喜欢……", "options": [
-      {"key": "A", "text": "提前想好做什么、大概几点做", "pole": "J"},
-      {"key": "B", "text": "睡醒再说，看当时的心情", "pole": "P"}
-    ]},
-    {"id": 54, "dim": "JP", "text": "负责一个项目时，你希望……", "options": [
-      {"key": "A", "text": "有明确的阶段目标，按节点推进", "pole": "J"},
-      {"key": "B", "text": "边做边看，方向随时可以调整", "pole": "P"}
-    ]},
-    {"id": 55, "dim": "JP", "text": "做一件事正投入时被人打断，你……", "options": [
-      {"key": "A", "text": "会有点烦躁，想按原来的顺序做完", "pole": "J"},
-      {"key": "B", "text": "能随时切换，回头接着做也没关系", "pole": "P"}
-    ]},
-    {"id": 56, "dim": "JP", "text": "关于做事方式，你更认同……", "options": [
-      {"key": "A", "text": "有始有终，做完一件再开下一件", "pole": "J"},
-      {"key": "B", "text": "同时开几件事，凭兴趣来回推进", "pole": "P"}
-    ]},
-    {"id": 57, "dim": "JP", "text": "和朋友约定聚餐时，你希望……", "options": [
-      {"key": "A", "text": "尽早定死时间和地点，免得惦记", "pole": "J"},
-      {"key": "B", "text": "大概定个时间，临场再商量细节", "pole": "P"}
-    ]},
-    {"id": 58, "dim": "JP", "text": "你的日常生活更接近……", "options": [
-      {"key": "A", "text": "作息规律，按习惯有条不紊地走", "pole": "J"},
-      {"key": "B", "text": "比较随性，看状态随时调整", "pole": "P"}
-    ]},
-    {"id": 59, "dim": "JP", "text": "突然多出一天空闲，你会……", "options": [
-      {"key": "A", "text": "把它排进计划，做该做的事", "pole": "J"},
-      {"key": "B", "text": "随心所欲，想到什么就做什么", "pole": "P"}
-    ]},
-    {"id": 60, "dim": "JP", "text": "面对必须按流程一步步走的任务，你……", "options": [
-      {"key": "A", "text": "按流程踏实走完，觉得安心", "pole": "J"},
-      {"key": "B", "text": "觉得繁琐，总想找找有没有捷径", "pole": "P"}
-    ]}
+    {
+      "id": 79,
+      "dim": "E",
+      "facet": "E2",
+      "text": "避开人多的地方",
+      "reverse": true
+    },
+    {
+      "id": 181,
+      "dim": "A",
+      "facet": "A1",
+      "text": "信任其他人",
+      "reverse": false
+    },
+    {
+      "id": 269,
+      "dim": "C",
+      "facet": "C3",
+      "text": "故意做和要求相反的事",
+      "reverse": true
+    },
+    {
+      "id": 30,
+      "dim": "N",
+      "facet": "N3",
+      "text": "对自己非常满意",
+      "reverse": true
+    },
+    {
+      "id": 204,
+      "dim": "A",
+      "facet": "A3",
+      "text": "关心他人",
+      "reverse": false
+    },
+    {
+      "id": 286,
+      "dim": "C",
+      "facet": "C5",
+      "text": "很难静下心开始工作",
+      "reverse": true
+    },
+    {
+      "id": 19,
+      "dim": "N",
+      "facet": "N2",
+      "text": "能保持冷静",
+      "reverse": true
+    },
+    {
+      "id": 157,
+      "dim": "O",
+      "facet": "O4",
+      "text": "不喜欢改变的想法",
+      "reverse": true
+    },
+    {
+      "id": 251,
+      "dim": "C",
+      "facet": "C2",
+      "text": "喜欢有条理",
+      "reverse": false
+    },
+    {
+      "id": 288,
+      "dim": "C",
+      "facet": "C5",
+      "text": "需要被人推一把才开始",
+      "reverse": true
+    },
+    {
+      "id": 144,
+      "dim": "O",
+      "facet": "O3",
+      "text": "喜欢审视自己和自己的生活",
+      "reverse": false
+    },
+    {
+      "id": 81,
+      "dim": "E",
+      "facet": "E3",
+      "text": "承担责任",
+      "reverse": false
+    },
+    {
+      "id": 165,
+      "dim": "O",
+      "facet": "O5",
+      "text": "喜欢思考事情",
+      "reverse": false
+    },
+    {
+      "id": 53,
+      "dim": "N",
+      "facet": "N6",
+      "text": "感觉自己处理事情力不从心",
+      "reverse": false
+    },
+    {
+      "id": 298,
+      "dim": "C",
+      "facet": "C6",
+      "text": "做出疯狂的举动",
+      "reverse": true
+    },
+    {
+      "id": 211,
+      "dim": "A",
+      "facet": "A4",
+      "text": "很容易得到满足",
+      "reverse": false
+    },
+    {
+      "id": 299,
+      "dim": "C",
+      "facet": "C6",
+      "text": "做事不经过思考",
+      "reverse": true
+    },
+    {
+      "id": 197,
+      "dim": "A",
+      "facet": "A2",
+      "text": "会给人施加压力",
+      "reverse": true
+    },
+    {
+      "id": 297,
+      "dim": "C",
+      "facet": "C6",
+      "text": "仓促行事",
+      "reverse": true
+    },
+    {
+      "id": 1,
+      "dim": "N",
+      "facet": "N1",
+      "text": "为很多事情感到担心",
+      "reverse": false
+    },
+    {
+      "id": 139,
+      "dim": "O",
+      "facet": "O2",
+      "text": "不喜欢听音乐会",
+      "reverse": true
+    },
+    {
+      "id": 2,
+      "dim": "N",
+      "facet": "N1",
+      "text": "担心会发生最糟糕的情况",
+      "reverse": false
+    },
+    {
+      "id": 14,
+      "dim": "N",
+      "facet": "N2",
+      "text": "经常心情不好",
+      "reverse": false
+    },
+    {
+      "id": 7,
+      "dim": "N",
+      "facet": "N1",
+      "text": "大部分时间都很放松",
+      "reverse": true
+    },
+    {
+      "id": 126,
+      "dim": "O",
+      "facet": "O1",
+      "text": "花时间反思事情",
+      "reverse": false
+    },
+    {
+      "id": 107,
+      "dim": "E",
+      "facet": "E5",
+      "text": "什么都愿意尝试一次",
+      "reverse": false
+    },
+    {
+      "id": 64,
+      "dim": "E",
+      "facet": "E1",
+      "text": "和别人相处时很自在",
+      "reverse": false
+    },
+    {
+      "id": 88,
+      "dim": "E",
+      "facet": "E3",
+      "text": "话很少",
+      "reverse": true
+    },
+    {
+      "id": 273,
+      "dim": "C",
+      "facet": "C4",
+      "text": "把计划付诸行动",
+      "reverse": false
+    },
+    {
+      "id": 263,
+      "dim": "C",
+      "facet": "C3",
+      "text": "按时付清账单",
+      "reverse": false
+    },
+    {
+      "id": 203,
+      "dim": "A",
+      "facet": "A3",
+      "text": "乐于帮助他人",
+      "reverse": false
+    },
+    {
+      "id": 61,
+      "dim": "E",
+      "facet": "E1",
+      "text": "很容易交到朋友",
+      "reverse": false
+    },
+    {
+      "id": 183,
+      "dim": "A",
+      "facet": "A1",
+      "text": "相信他人说的话",
+      "reverse": false
+    },
+    {
+      "id": 117,
+      "dim": "E",
+      "facet": "E6",
+      "text": "会放声大笑",
+      "reverse": false
+    },
+    {
+      "id": 138,
+      "dim": "O",
+      "facet": "O2",
+      "text": "不喜欢去美术馆",
+      "reverse": true
+    },
+    {
+      "id": 185,
+      "dim": "A",
+      "facet": "A1",
+      "text": "相信人性本善",
+      "reverse": false
+    },
+    {
+      "id": 253,
+      "dim": "C",
+      "facet": "C2",
+      "text": "希望一切都恰到好处",
+      "reverse": false
+    },
+    {
+      "id": 124,
+      "dim": "O",
+      "facet": "O1",
+      "text": "喜欢陷入沉思",
+      "reverse": false
+    },
+    {
+      "id": 208,
+      "dim": "A",
+      "facet": "A3",
+      "text": "让别人感到不自在",
+      "reverse": true
+    },
+    {
+      "id": 80,
+      "dim": "E",
+      "facet": "E2",
+      "text": "寻求安静",
+      "reverse": true
+    },
+    {
+      "id": 149,
+      "dim": "O",
+      "facet": "O3",
+      "text": "很少经历情绪的大起大落",
+      "reverse": true
+    },
+    {
+      "id": 172,
+      "dim": "O",
+      "facet": "O6",
+      "text": "相信没有绝对的对与错",
+      "reverse": false
+    },
+    {
+      "id": 3,
+      "dim": "N",
+      "facet": "N1",
+      "text": "对很多事情感到害怕",
+      "reverse": false
+    },
+    {
+      "id": 180,
+      "dim": "O",
+      "facet": "O6",
+      "text": "听到国歌时喜欢起立",
+      "reverse": true
+    },
+    {
+      "id": 290,
+      "dim": "C",
+      "facet": "C5",
+      "text": "拖延做决定",
+      "reverse": true
+    },
+    {
+      "id": 225,
+      "dim": "A",
+      "facet": "A5",
+      "text": "相信自己比别人更好",
+      "reverse": true
+    },
+    {
+      "id": 11,
+      "dim": "N",
+      "facet": "N2",
+      "text": "很容易生气",
+      "reverse": false
+    },
+    {
+      "id": 15,
+      "dim": "N",
+      "facet": "N2",
+      "text": "发脾气",
+      "reverse": false
+    },
+    {
+      "id": 25,
+      "dim": "N",
+      "facet": "N3",
+      "text": "情绪经常大起大落",
+      "reverse": false
+    },
+    {
+      "id": 194,
+      "dim": "A",
+      "facet": "A2",
+      "text": "会利用他人来达成自己的目的",
+      "reverse": true
+    },
+    {
+      "id": 176,
+      "dim": "O",
+      "facet": "O6",
+      "text": "认为太多税款被用来资助艺术家",
+      "reverse": true
+    },
+    {
+      "id": 227,
+      "dim": "A",
+      "facet": "A5",
+      "text": "对自己的评价很高",
+      "reverse": true
+    },
+    {
+      "id": 5,
+      "dim": "N",
+      "facet": "N1",
+      "text": "会深陷自己的问题之中",
+      "reverse": false
+    },
+    {
+      "id": 190,
+      "dim": "A",
+      "facet": "A1",
+      "text": "认为人本质上是邪恶的",
+      "reverse": true
+    },
+    {
+      "id": 246,
+      "dim": "C",
+      "facet": "C1",
+      "text": "知道如何完成任务",
+      "reverse": false
+    },
+    {
+      "id": 151,
+      "dim": "O",
+      "facet": "O4",
+      "text": "相比墨守成规，我更喜欢有变化。",
+      "reverse": false
+    },
+    {
+      "id": 152,
+      "dim": "O",
+      "facet": "O4",
+      "text": "喜欢去新的地方",
+      "reverse": false
+    },
+    {
+      "id": 229,
+      "dim": "A",
+      "facet": "A5",
+      "text": "吹嘘自己的美德",
+      "reverse": true
+    },
+    {
+      "id": 75,
+      "dim": "E",
+      "facet": "E2",
+      "text": "喜欢惊喜派对",
+      "reverse": false
+    },
+    {
+      "id": 120,
+      "dim": "E",
+      "facet": "E6",
+      "text": "很少开玩笑",
+      "reverse": true
+    },
+    {
+      "id": 92,
+      "dim": "E",
+      "facet": "E4",
+      "text": "总是在奔波",
+      "reverse": false
+    },
+    {
+      "id": 195,
+      "dim": "A",
+      "facet": "A2",
+      "text": "知道怎么钻规则的空子",
+      "reverse": true
+    },
+    {
+      "id": 26,
+      "dim": "N",
+      "facet": "N3",
+      "text": "感到绝望",
+      "reverse": false
+    },
+    {
+      "id": 156,
+      "dim": "O",
+      "facet": "O4",
+      "text": "不喜欢改变",
+      "reverse": true
+    },
+    {
+      "id": 231,
+      "dim": "A",
+      "facet": "A6",
+      "text": "同情流浪汉",
+      "reverse": false
+    },
+    {
+      "id": 51,
+      "dim": "N",
+      "facet": "N6",
+      "text": "容易慌张",
+      "reverse": false
+    },
+    {
+      "id": 89,
+      "dim": "E",
+      "facet": "E3",
+      "text": "不喜欢成为别人注意的焦点",
+      "reverse": true
+    },
+    {
+      "id": 209,
+      "dim": "A",
+      "facet": "A3",
+      "text": "对别人不理不睬",
+      "reverse": true
+    },
+    {
+      "id": 240,
+      "dim": "A",
+      "facet": "A6",
+      "text": "受不了软弱的人",
+      "reverse": true
+    },
+    {
+      "id": 210,
+      "dim": "A",
+      "facet": "A3",
+      "text": "不愿为他人花费时间",
+      "reverse": true
+    },
+    {
+      "id": 72,
+      "dim": "E",
+      "facet": "E2",
+      "text": "在聚会上，我会和很多不同的人交谈",
+      "reverse": false
+    },
+    {
+      "id": 68,
+      "dim": "E",
+      "facet": "E1",
+      "text": "避免和他人接触",
+      "reverse": true
+    },
+    {
+      "id": 184,
+      "dim": "A",
+      "facet": "A1",
+      "text": "相信人本质上是善良守德的",
+      "reverse": false
+    },
+    {
+      "id": 212,
+      "dim": "A",
+      "facet": "A4",
+      "text": "受不了正面冲突",
+      "reverse": false
+    },
+    {
+      "id": 143,
+      "dim": "O",
+      "facet": "O3",
+      "text": "对理想与信念充满热情",
+      "reverse": false
+    },
+    {
+      "id": 104,
+      "dim": "E",
+      "facet": "E5",
+      "text": "喜欢置身喧闹的人群",
+      "reverse": false
+    },
+    {
+      "id": 276,
+      "dim": "C",
+      "facet": "C4",
+      "text": "对自己和他人都高标准要求",
+      "reverse": false
+    },
+    {
+      "id": 264,
+      "dim": "C",
+      "facet": "C3",
+      "text": "我会实话实说",
+      "reverse": false
+    },
+    {
+      "id": 133,
+      "dim": "O",
+      "facet": "O2",
+      "text": "我能发现别人看不到的美",
+      "reverse": false
+    },
+    {
+      "id": 262,
+      "dim": "C",
+      "facet": "C3",
+      "text": "信守承诺",
+      "reverse": false
+    },
+    {
+      "id": 70,
+      "dim": "E",
+      "facet": "E1",
+      "text": "和他人保持距离",
+      "reverse": true
+    },
+    {
+      "id": 52,
+      "dim": "N",
+      "facet": "N6",
+      "text": "感到被各种事情压得喘不过气来",
+      "reverse": false
+    },
+    {
+      "id": 128,
+      "dim": "O",
+      "facet": "O1",
+      "text": "想象力不太好",
+      "reverse": true
+    },
+    {
+      "id": 234,
+      "dim": "A",
+      "facet": "A6",
+      "text": "会替别人的不幸感到难过",
+      "reverse": false
+    },
+    {
+      "id": 90,
+      "dim": "E",
+      "facet": "E3",
+      "text": "把自己的看法藏起来",
+      "reverse": true
+    },
+    {
+      "id": 71,
+      "dim": "E",
+      "facet": "E2",
+      "text": "喜欢参加大型聚会",
+      "reverse": false
+    },
+    {
+      "id": 38,
+      "dim": "N",
+      "facet": "N4",
+      "text": "在陌生情境里也很自在",
+      "reverse": true
+    },
+    {
+      "id": 34,
+      "dim": "N",
+      "facet": "N4",
+      "text": "害怕引起他人的注意",
+      "reverse": false
+    },
+    {
+      "id": 218,
+      "dim": "A",
+      "facet": "A4",
+      "text": "侮辱他人",
+      "reverse": true
+    },
+    {
+      "id": 114,
+      "dim": "E",
+      "facet": "E6",
+      "text": "笑着过日子",
+      "reverse": false
+    },
+    {
+      "id": 217,
+      "dim": "A",
+      "facet": "A4",
+      "text": "会冲人大喊大叫",
+      "reverse": true
+    },
+    {
+      "id": 260,
+      "dim": "C",
+      "facet": "C2",
+      "text": "不会因杂乱无章而困扰",
+      "reverse": true
+    },
+    {
+      "id": 131,
+      "dim": "O",
+      "facet": "O2",
+      "text": "认为艺术是很重要的",
+      "reverse": false
+    },
+    {
+      "id": 6,
+      "dim": "N",
+      "facet": "N1",
+      "text": "不容易被事情困扰",
+      "reverse": true
+    },
+    {
+      "id": 182,
+      "dim": "A",
+      "facet": "A1",
+      "text": "相信他人的出发点是好的",
+      "reverse": false
+    },
+    {
+      "id": 142,
+      "dim": "O",
+      "facet": "O3",
+      "text": "能感受到他人的情绪",
+      "reverse": false
+    },
+    {
+      "id": 283,
+      "dim": "C",
+      "facet": "C5",
+      "text": "马上开始做事",
+      "reverse": false
+    },
+    {
+      "id": 102,
+      "dim": "E",
+      "facet": "E5",
+      "text": "喜欢冒险",
+      "reverse": false
+    },
+    {
+      "id": 94,
+      "dim": "E",
+      "facet": "E4",
+      "text": "能同时处理很多事",
+      "reverse": false
+    },
+    {
+      "id": 189,
+      "dim": "A",
+      "facet": "A1",
+      "text": "对别人心存戒备",
+      "reverse": true
+    },
+    {
+      "id": 132,
+      "dim": "O",
+      "facet": "O2",
+      "text": "喜欢音乐",
+      "reverse": false
+    },
+    {
+      "id": 9,
+      "dim": "N",
+      "facet": "N1",
+      "text": "不为已经发生的事担忧",
+      "reverse": true
+    },
+    {
+      "id": 249,
+      "dim": "C",
+      "facet": "C1",
+      "text": "没什么可贡献的",
+      "reverse": true
+    },
+    {
+      "id": 40,
+      "dim": "N",
+      "facet": "N4",
+      "text": "能够为自己挺身而出",
+      "reverse": true
+    },
+    {
+      "id": 134,
+      "dim": "O",
+      "facet": "O2",
+      "text": "喜欢花",
+      "reverse": false
+    },
+    {
+      "id": 84,
+      "dim": "E",
+      "facet": "E3",
+      "text": "力求去影响他人",
+      "reverse": false
+    },
+    {
+      "id": 247,
+      "dim": "C",
+      "facet": "C1",
+      "text": "对局势判断失误",
+      "reverse": true
+    },
+    {
+      "id": 48,
+      "dim": "N",
+      "facet": "N5",
+      "text": "可以控制自己的欲望",
+      "reverse": true
+    },
+    {
+      "id": 267,
+      "dim": "C",
+      "facet": "C3",
+      "text": "违背自己的承诺",
+      "reverse": true
+    },
+    {
+      "id": 105,
+      "dim": "E",
+      "facet": "E5",
+      "text": "喜欢不计后果地行事",
+      "reverse": false
+    },
+    {
+      "id": 293,
+      "dim": "C",
+      "facet": "C6",
+      "text": "坚持自己选定的路",
+      "reverse": false
+    },
+    {
+      "id": 254,
+      "dim": "C",
+      "facet": "C2",
+      "text": "钟爱秩序与规律",
+      "reverse": false
+    },
+    {
+      "id": 57,
+      "dim": "N",
+      "facet": "N6",
+      "text": "能应付复杂的问题",
+      "reverse": true
+    },
+    {
+      "id": 4,
+      "dim": "N",
+      "facet": "N1",
+      "text": "我很容易觉得压力大",
+      "reverse": false
+    },
+    {
+      "id": 241,
+      "dim": "C",
+      "facet": "C1",
+      "text": "能成功完成任务",
+      "reverse": false
+    },
+    {
+      "id": 97,
+      "dim": "E",
+      "facet": "E4",
+      "text": "喜欢不慌不忙",
+      "reverse": true
+    },
+    {
+      "id": 300,
+      "dim": "C",
+      "facet": "C6",
+      "text": "经常临时才做安排",
+      "reverse": true
+    },
+    {
+      "id": 224,
+      "dim": "A",
+      "facet": "A5",
+      "text": "很少自我吹嘘",
+      "reverse": false
+    },
+    {
+      "id": 67,
+      "dim": "E",
+      "facet": "E1",
+      "text": "和别人在一起时常感到不自在",
+      "reverse": true
+    },
+    {
+      "id": 146,
+      "dim": "O",
+      "facet": "O3",
+      "text": "很少情绪化",
+      "reverse": true
+    },
+    {
+      "id": 47,
+      "dim": "N",
+      "facet": "N5",
+      "text": "能轻松抵御诱惑",
+      "reverse": true
+    },
+    {
+      "id": 235,
+      "dim": "A",
+      "facet": "A6",
+      "text": "对别人遇到的麻烦事不感兴趣",
+      "reverse": true
+    },
+    {
+      "id": 112,
+      "dim": "E",
+      "facet": "E6",
+      "text": "我的生活很快乐",
+      "reverse": false
+    },
+    {
+      "id": 268,
+      "dim": "C",
+      "facet": "C3",
+      "text": "让别人替我履行职责",
+      "reverse": true
+    },
+    {
+      "id": 58,
+      "dim": "N",
+      "facet": "N6",
+      "text": "知道怎么应对",
+      "reverse": true
+    },
+    {
+      "id": 207,
+      "dim": "A",
+      "facet": "A3",
+      "text": "对他人的感受漠不关心",
+      "reverse": true
+    },
+    {
+      "id": 101,
+      "dim": "E",
+      "facet": "E5",
+      "text": "喜欢追求刺激",
+      "reverse": false
+    },
+    {
+      "id": 22,
+      "dim": "N",
+      "facet": "N3",
+      "text": "不喜欢自己",
+      "reverse": false
+    },
+    {
+      "id": 78,
+      "dim": "E",
+      "facet": "E2",
+      "text": "不喜欢人挤人的场合",
+      "reverse": true
+    },
+    {
+      "id": 155,
+      "dim": "O",
+      "facet": "O4",
+      "text": "我更喜欢做自己熟悉的事情",
+      "reverse": true
+    },
+    {
+      "id": 266,
+      "dim": "C",
+      "facet": "C3",
+      "text": "破坏规则",
+      "reverse": true
+    },
+    {
+      "id": 140,
+      "dim": "O",
+      "facet": "O2",
+      "text": "不喜欢看舞蹈表演",
+      "reverse": true
+    },
+    {
+      "id": 106,
+      "dim": "E",
+      "facet": "E5",
+      "text": "我的行为狂放不羁",
+      "reverse": false
+    },
+    {
+      "id": 174,
+      "dim": "O",
+      "facet": "O6",
+      "text": "相信存在唯一真正的宗教",
+      "reverse": true
+    },
+    {
+      "id": 248,
+      "dim": "C",
+      "facet": "C1",
+      "text": "弄不懂一些事情",
+      "reverse": true
+    },
+    {
+      "id": 193,
+      "dim": "A",
+      "facet": "A2",
+      "text": "会靠阿谀奉承往上爬",
+      "reverse": true
+    },
+    {
+      "id": 292,
+      "dim": "C",
+      "facet": "C6",
+      "text": "说话字斟句酌",
+      "reverse": false
+    },
+    {
+      "id": 220,
+      "dim": "A",
+      "facet": "A4",
+      "text": "怀恨在心",
+      "reverse": true
+    },
+    {
+      "id": 196,
+      "dim": "A",
+      "facet": "A2",
+      "text": "为了领先别人，我会采用作弊的方式",
+      "reverse": true
+    },
+    {
+      "id": 166,
+      "dim": "O",
+      "facet": "O5",
+      "text": "对抽象概念不感兴趣",
+      "reverse": true
+    },
+    {
+      "id": 187,
+      "dim": "A",
+      "facet": "A1",
+      "text": "不相信别人",
+      "reverse": true
+    },
+    {
+      "id": 270,
+      "dim": "C",
+      "facet": "C3",
+      "text": "歪曲事实",
+      "reverse": true
+    },
+    {
+      "id": 284,
+      "dim": "C",
+      "facet": "C5",
+      "text": "立即投入工作",
+      "reverse": false
+    },
+    {
+      "id": 121,
+      "dim": "O",
+      "facet": "O1",
+      "text": "有丰富的想象力",
+      "reverse": false
+    },
+    {
+      "id": 237,
+      "dim": "A",
+      "facet": "A6",
+      "text": "信奉以牙还牙",
+      "reverse": true
+    },
+    {
+      "id": 91,
+      "dim": "E",
+      "facet": "E4",
+      "text": "总是很忙碌",
+      "reverse": false
+    },
+    {
+      "id": 159,
+      "dim": "O",
+      "facet": "O4",
+      "text": "不喜欢尝试新食物",
+      "reverse": true
+    },
+    {
+      "id": 59,
+      "dim": "N",
+      "facet": "N6",
+      "text": "能很快从挫折中恢复",
+      "reverse": true
+    },
+    {
+      "id": 178,
+      "dim": "O",
+      "facet": "O6",
+      "text": "认为我们对罪犯太过宽容",
+      "reverse": true
+    },
+    {
+      "id": 73,
+      "dim": "E",
+      "facet": "E2",
+      "text": "喜欢成为群体的一员",
+      "reverse": false
+    },
+    {
+      "id": 201,
+      "dim": "A",
+      "facet": "A3",
+      "text": "让人觉得受到欢迎",
+      "reverse": false
+    },
+    {
+      "id": 252,
+      "dim": "C",
+      "facet": "C2",
+      "text": "喜欢整洁",
+      "reverse": false
+    },
+    {
+      "id": 214,
+      "dim": "A",
+      "facet": "A4",
+      "text": "说话尖酸刻薄",
+      "reverse": true
+    },
+    {
+      "id": 186,
+      "dim": "A",
+      "facet": "A1",
+      "text": "相信一切都会好起来",
+      "reverse": false
+    },
+    {
+      "id": 148,
+      "dim": "O",
+      "facet": "O3",
+      "text": "很少察觉到自己的情绪反应",
+      "reverse": true
+    },
+    {
+      "id": 21,
+      "dim": "N",
+      "facet": "N3",
+      "text": "时常感到忧郁",
+      "reverse": false
+    },
+    {
+      "id": 256,
+      "dim": "C",
+      "facet": "C2",
+      "text": "经常忘记把东西放回原处",
+      "reverse": true
+    },
+    {
+      "id": 291,
+      "dim": "C",
+      "facet": "C6",
+      "text": "尽量避免出错",
+      "reverse": false
+    },
+    {
+      "id": 163,
+      "dim": "O",
+      "facet": "O5",
+      "text": "词汇量很丰富",
+      "reverse": false
+    },
+    {
+      "id": 219,
+      "dim": "A",
+      "facet": "A4",
+      "text": "报复别人",
+      "reverse": true
+    },
+    {
+      "id": 236,
+      "dim": "A",
+      "facet": "A6",
+      "text": "不太喜欢心肠软的人",
+      "reverse": true
+    },
+    {
+      "id": 274,
+      "dim": "C",
+      "facet": "C4",
+      "text": "全心全意投入任务",
+      "reverse": false
+    },
+    {
+      "id": 153,
+      "dim": "O",
+      "facet": "O4",
+      "text": "对很多事物感兴趣",
+      "reverse": false
+    },
+    {
+      "id": 161,
+      "dim": "O",
+      "facet": "O5",
+      "text": "喜欢解决复杂的问题",
+      "reverse": false
+    },
+    {
+      "id": 8,
+      "dim": "N",
+      "facet": "N1",
+      "text": "不容易被变故打乱",
+      "reverse": true
+    },
+    {
+      "id": 233,
+      "dim": "A",
+      "facet": "A6",
+      "text": "比起竞争更看重合作",
+      "reverse": false
+    },
+    {
+      "id": 296,
+      "dim": "C",
+      "facet": "C6",
+      "text": "喜欢凭一时冲动行事",
+      "reverse": true
+    },
+    {
+      "id": 205,
+      "dim": "A",
+      "facet": "A3",
+      "text": "对谁都愿意说好话",
+      "reverse": false
+    },
+    {
+      "id": 228,
+      "dim": "A",
+      "facet": "A5",
+      "text": "知道很多问题的答案",
+      "reverse": true
+    },
+    {
+      "id": 46,
+      "dim": "N",
+      "facet": "N5",
+      "text": "很少过度放纵自己",
+      "reverse": true
+    },
+    {
+      "id": 289,
+      "dim": "C",
+      "facet": "C5",
+      "text": "拖很久才开始做一件事",
+      "reverse": true
+    },
+    {
+      "id": 213,
+      "dim": "A",
+      "facet": "A4",
+      "text": "不喜欢显得咄咄逼人",
+      "reverse": false
+    },
+    {
+      "id": 123,
+      "dim": "O",
+      "facet": "O1",
+      "text": "喜欢做白日梦",
+      "reverse": false
+    },
+    {
+      "id": 74,
+      "dim": "E",
+      "facet": "E2",
+      "text": "会拉别人一起参与我的事",
+      "reverse": false
+    },
+    {
+      "id": 82,
+      "dim": "E",
+      "facet": "E3",
+      "text": "我会尝试去领导他人",
+      "reverse": false
+    },
+    {
+      "id": 137,
+      "dim": "O",
+      "facet": "O2",
+      "text": "不喜欢诗歌",
+      "reverse": true
+    },
+    {
+      "id": 191,
+      "dim": "A",
+      "facet": "A2",
+      "text": "绝不会在纳税上作弊",
+      "reverse": false
+    },
+    {
+      "id": 285,
+      "dim": "C",
+      "facet": "C5",
+      "text": "能执行自己制定的计划",
+      "reverse": false
+    },
+    {
+      "id": 223,
+      "dim": "A",
+      "facet": "A5",
+      "text": "认为自己是个普通人",
+      "reverse": false
+    },
+    {
+      "id": 99,
+      "dim": "E",
+      "facet": "E4",
+      "text": "让事情按自己的步调走",
+      "reverse": true
+    },
+    {
+      "id": 154,
+      "dim": "O",
+      "facet": "O4",
+      "text": "喜欢开启新的事物",
+      "reverse": false
+    },
+    {
+      "id": 258,
+      "dim": "C",
+      "facet": "C2",
+      "text": "我的东西放得到处都是",
+      "reverse": true
+    },
+    {
+      "id": 116,
+      "dim": "E",
+      "facet": "E6",
+      "text": "看到生活中好的一面",
+      "reverse": false
+    },
+    {
+      "id": 147,
+      "dim": "O",
+      "facet": "O3",
+      "text": "不容易受情绪左右",
+      "reverse": true
+    },
+    {
+      "id": 125,
+      "dim": "O",
+      "facet": "O1",
+      "text": "沉迷于自己的幻想",
+      "reverse": false
+    },
+    {
+      "id": 13,
+      "dim": "N",
+      "facet": "N2",
+      "text": "很容易心烦",
+      "reverse": false
+    },
+    {
+      "id": 63,
+      "dim": "E",
+      "facet": "E1",
+      "text": "和其他人待在一起时，我觉得很自在",
+      "reverse": false
+    },
+    {
+      "id": 100,
+      "dim": "E",
+      "facet": "E4",
+      "text": "反应很慢",
+      "reverse": true
+    },
+    {
+      "id": 222,
+      "dim": "A",
+      "facet": "A5",
+      "text": "不喜欢谈论自己",
+      "reverse": false
+    },
+    {
+      "id": 86,
+      "dim": "E",
+      "facet": "E3",
+      "text": "等着别人来带头",
+      "reverse": true
+    },
+    {
+      "id": 36,
+      "dim": "N",
+      "facet": "N4",
+      "text": "说话会磕巴",
+      "reverse": false
+    },
+    {
+      "id": 98,
+      "dim": "E",
+      "facet": "E4",
+      "text": "喜欢慢节奏的生活",
+      "reverse": true
+    },
+    {
+      "id": 215,
+      "dim": "A",
+      "facet": "A4",
+      "text": "反驳他人",
+      "reverse": true
+    },
+    {
+      "id": 122,
+      "dim": "O",
+      "facet": "O1",
+      "text": "喜欢天马行空地幻想",
+      "reverse": false
+    },
+    {
+      "id": 170,
+      "dim": "O",
+      "facet": "O5",
+      "text": "回避有难度的阅读内容",
+      "reverse": true
+    },
+    {
+      "id": 76,
+      "dim": "E",
+      "facet": "E2",
+      "text": "更喜欢一个人独处",
+      "reverse": true
+    },
+    {
+      "id": 10,
+      "dim": "N",
+      "facet": "N1",
+      "text": "能轻松适应新环境",
+      "reverse": true
+    },
+    {
+      "id": 113,
+      "dim": "E",
+      "facet": "E6",
+      "text": "流露出孩子般的快乐",
+      "reverse": false
+    },
+    {
+      "id": 259,
+      "dim": "C",
+      "facet": "C2",
+      "text": "不会被杂乱的人影响",
+      "reverse": true
+    },
+    {
+      "id": 45,
+      "dim": "N",
+      "facet": "N5",
+      "text": "很爱吃",
+      "reverse": false
+    },
+    {
+      "id": 96,
+      "dim": "E",
+      "facet": "E4",
+      "text": "喜欢慢慢来",
+      "reverse": true
+    },
+    {
+      "id": 216,
+      "dim": "A",
+      "facet": "A4",
+      "text": "喜欢和别人比试",
+      "reverse": true
+    },
+    {
+      "id": 136,
+      "dim": "O",
+      "facet": "O2",
+      "text": "不喜欢艺术",
+      "reverse": true
+    },
+    {
+      "id": 130,
+      "dim": "O",
+      "facet": "O1",
+      "text": "很难去想象事物",
+      "reverse": true
+    },
+    {
+      "id": 167,
+      "dim": "O",
+      "facet": "O5",
+      "text": "会避免参与关于哲学的讨论",
+      "reverse": true
+    },
+    {
+      "id": 43,
+      "dim": "N",
+      "facet": "N5",
+      "text": "会做让自己后悔的事",
+      "reverse": false
+    },
+    {
+      "id": 95,
+      "dim": "E",
+      "facet": "E4",
+      "text": "反应很快",
+      "reverse": false
+    },
+    {
+      "id": 87,
+      "dim": "E",
+      "facet": "E3",
+      "text": "躲在幕后不出头",
+      "reverse": true
+    },
+    {
+      "id": 175,
+      "dim": "O",
+      "facet": "O6",
+      "text": "习惯沿用老办法处事",
+      "reverse": true
+    },
+    {
+      "id": 31,
+      "dim": "N",
+      "facet": "N4",
+      "text": "很容易被人吓住",
+      "reverse": false
+    },
+    {
+      "id": 199,
+      "dim": "A",
+      "facet": "A2",
+      "text": "占别人的便宜",
+      "reverse": true
+    },
+    {
+      "id": 27,
+      "dim": "N",
+      "facet": "N3",
+      "text": "觉得自己的生活没有方向",
+      "reverse": false
+    },
+    {
+      "id": 65,
+      "dim": "E",
+      "facet": "E1",
+      "text": "能让别人开心起来",
+      "reverse": false
+    },
+    {
+      "id": 129,
+      "dim": "O",
+      "facet": "O1",
+      "text": "很少陷入沉思",
+      "reverse": true
+    },
+    {
+      "id": 150,
+      "dim": "O",
+      "facet": "O3",
+      "text": "不理解那些情绪化的人",
+      "reverse": true
+    },
+    {
+      "id": 265,
+      "dim": "C",
+      "facet": "C3",
+      "text": "听从自己的良知",
+      "reverse": false
+    },
+    {
+      "id": 158,
+      "dim": "O",
+      "facet": "O4",
+      "text": "是个墨守成规的人",
+      "reverse": true
+    },
+    {
+      "id": 160,
+      "dim": "O",
+      "facet": "O4",
+      "text": "我喜欢传统的方式",
+      "reverse": true
+    },
+    {
+      "id": 202,
+      "dim": "A",
+      "facet": "A3",
+      "text": "能预见他人的需求",
+      "reverse": false
+    },
+    {
+      "id": 200,
+      "dim": "A",
+      "facet": "A2",
+      "text": "给别人使坏",
+      "reverse": true
+    },
+    {
+      "id": 278,
+      "dim": "C",
+      "facet": "C4",
+      "text": "没有很强的成功动力",
+      "reverse": true
+    },
+    {
+      "id": 17,
+      "dim": "N",
+      "facet": "N2",
+      "text": "很少生气",
+      "reverse": true
+    },
+    {
+      "id": 192,
+      "dim": "A",
+      "facet": "A2",
+      "text": "遵守规则",
+      "reverse": false
+    },
+    {
+      "id": 179,
+      "dim": "O",
+      "facet": "O6",
+      "text": "认为我们应该严惩犯罪",
+      "reverse": true
+    },
+    {
+      "id": 12,
+      "dim": "N",
+      "facet": "N2",
+      "text": "容易被激怒",
+      "reverse": false
+    },
+    {
+      "id": 135,
+      "dim": "O",
+      "facet": "O2",
+      "text": "享受大自然的美",
+      "reverse": false
+    },
+    {
+      "id": 238,
+      "dim": "A",
+      "facet": "A6",
+      "text": "我尽量不去想那些需要帮助的人",
+      "reverse": true
+    },
+    {
+      "id": 54,
+      "dim": "N",
+      "facet": "N6",
+      "text": "拿不定主意",
+      "reverse": false
+    },
+    {
+      "id": 206,
+      "dim": "A",
+      "facet": "A3",
+      "text": "看不起别人",
+      "reverse": true
+    },
+    {
+      "id": 24,
+      "dim": "N",
+      "facet": "N3",
+      "text": "对自己的评价很低",
+      "reverse": false
+    },
+    {
+      "id": 245,
+      "dim": "C",
+      "facet": "C1",
+      "text": "能想出好的解决办法",
+      "reverse": false
+    },
+    {
+      "id": 93,
+      "dim": "E",
+      "facet": "E4",
+      "text": "我的闲暇时间非常充实",
+      "reverse": false
+    },
+    {
+      "id": 50,
+      "dim": "N",
+      "facet": "N5",
+      "text": "从不挥霍",
+      "reverse": true
+    },
+    {
+      "id": 49,
+      "dim": "N",
+      "facet": "N5",
+      "text": "从不花超过自己能力的钱",
+      "reverse": true
+    },
+    {
+      "id": 277,
+      "dim": "C",
+      "facet": "C4",
+      "text": "对品质有要求",
+      "reverse": false
+    },
+    {
+      "id": 282,
+      "dim": "C",
+      "facet": "C5",
+      "text": "我总是有所准备",
+      "reverse": false
+    },
+    {
+      "id": 242,
+      "dim": "C",
+      "facet": "C1",
+      "text": "在自己所从事的领域出类拔萃",
+      "reverse": false
+    },
+    {
+      "id": 108,
+      "dim": "E",
+      "facet": "E5",
+      "text": "寻求危险",
+      "reverse": false
+    },
+    {
+      "id": 111,
+      "dim": "E",
+      "facet": "E6",
+      "text": "我的快乐会感染周围的人",
+      "reverse": false
+    },
+    {
+      "id": 173,
+      "dim": "O",
+      "facet": "O6",
+      "text": "认为罪犯应该得到帮助而非惩罚",
+      "reverse": false
+    },
+    {
+      "id": 280,
+      "dim": "C",
+      "facet": "C4",
+      "text": "对工作或学业不怎么投入时间和精力",
+      "reverse": true
+    },
+    {
+      "id": 257,
+      "dim": "C",
+      "facet": "C2",
+      "text": "我的房间很乱",
+      "reverse": true
+    },
+    {
+      "id": 145,
+      "dim": "O",
+      "facet": "O3",
+      "text": "努力去了解自己",
+      "reverse": false
+    },
+    {
+      "id": 198,
+      "dim": "A",
+      "facet": "A2",
+      "text": "假装对别人表示关心",
+      "reverse": true
+    },
+    {
+      "id": 44,
+      "dim": "N",
+      "facet": "N5",
+      "text": "大吃大喝寻欢作乐",
+      "reverse": false
+    },
+    {
+      "id": 239,
+      "dim": "A",
+      "facet": "A6",
+      "text": "认为人就该自己顾自己",
+      "reverse": true
+    },
+    {
+      "id": 37,
+      "dim": "N",
+      "facet": "N4",
+      "text": "不容易感到难堪",
+      "reverse": true
+    },
+    {
+      "id": 39,
+      "dim": "N",
+      "facet": "N4",
+      "text": "不会被复杂的社交情境所困扰",
+      "reverse": true
+    },
+    {
+      "id": 18,
+      "dim": "N",
+      "facet": "N2",
+      "text": "不会轻易被惹恼",
+      "reverse": true
+    },
+    {
+      "id": 271,
+      "dim": "C",
+      "facet": "C4",
+      "text": "直奔目标而去",
+      "reverse": false
+    },
+    {
+      "id": 109,
+      "dim": "E",
+      "facet": "E5",
+      "text": "绝不会去玩滑翔或蹦极",
+      "reverse": true
+    },
+    {
+      "id": 60,
+      "dim": "N",
+      "facet": "N6",
+      "text": "即使在紧张局面下也很镇定",
+      "reverse": true
+    },
+    {
+      "id": 188,
+      "dim": "A",
+      "facet": "A1",
+      "text": "怀疑他人别有用心",
+      "reverse": true
+    },
+    {
+      "id": 177,
+      "dim": "O",
+      "facet": "O6",
+      "text": "认为法律应当被严格执行",
+      "reverse": true
+    },
+    {
+      "id": 295,
+      "dim": "C",
+      "facet": "C6",
+      "text": "会做出草率的决定",
+      "reverse": true
+    },
+    {
+      "id": 168,
+      "dim": "O",
+      "facet": "O5",
+      "text": "理解抽象概念对我来说有些困难",
+      "reverse": true
+    },
+    {
+      "id": 20,
+      "dim": "N",
+      "facet": "N2",
+      "text": "很少抱怨",
+      "reverse": true
+    },
+    {
+      "id": 28,
+      "dim": "N",
+      "facet": "N3",
+      "text": "很少感到忧郁",
+      "reverse": true
+    },
+    {
+      "id": 162,
+      "dim": "O",
+      "facet": "O5",
+      "text": "喜欢阅读有挑战性的材料",
+      "reverse": false
+    },
+    {
+      "id": 141,
+      "dim": "O",
+      "facet": "O3",
+      "text": "能强烈感受到自己的情绪",
+      "reverse": false
+    },
+    {
+      "id": 56,
+      "dim": "N",
+      "facet": "N6",
+      "text": "在压力下能保持冷静",
+      "reverse": true
+    },
+    {
+      "id": 281,
+      "dim": "C",
+      "facet": "C5",
+      "text": "立刻把杂事做完",
+      "reverse": false
+    },
+    {
+      "id": 115,
+      "dim": "E",
+      "facet": "E6",
+      "text": "热爱生活",
+      "reverse": false
+    },
+    {
+      "id": 85,
+      "dim": "E",
+      "facet": "E3",
+      "text": "掌控局面",
+      "reverse": false
+    },
+    {
+      "id": 272,
+      "dim": "C",
+      "facet": "C4",
+      "text": "工作努力",
+      "reverse": false
+    },
+    {
+      "id": 69,
+      "dim": "E",
+      "facet": "E1",
+      "text": "对别人并不真的感兴趣",
+      "reverse": true
+    },
+    {
+      "id": 164,
+      "dim": "O",
+      "facet": "O5",
+      "text": "能处理大量信息",
+      "reverse": false
+    },
+    {
+      "id": 83,
+      "dim": "E",
+      "facet": "E3",
+      "text": "能说服别人去做事",
+      "reverse": false
+    },
+    {
+      "id": 169,
+      "dim": "O",
+      "facet": "O5",
+      "text": "对理论性的讨论不感兴趣",
+      "reverse": true
+    },
+    {
+      "id": 127,
+      "dim": "O",
+      "facet": "O1",
+      "text": "很少做白日梦",
+      "reverse": true
+    },
+    {
+      "id": 119,
+      "dim": "E",
+      "facet": "E6",
+      "text": "不容易被逗乐",
+      "reverse": true
+    },
+    {
+      "id": 279,
+      "dim": "C",
+      "facet": "C4",
+      "text": "在工作或学习上，我不会多做，过得去就行",
+      "reverse": true
+    },
+    {
+      "id": 66,
+      "dim": "E",
+      "facet": "E1",
+      "text": "别人很难了解我",
+      "reverse": true
+    },
+    {
+      "id": 118,
+      "dim": "E",
+      "facet": "E6",
+      "text": "能逗朋友们开心",
+      "reverse": false
+    },
+    {
+      "id": 77,
+      "dim": "E",
+      "facet": "E2",
+      "text": "希望一个人待着",
+      "reverse": true
+    },
+    {
+      "id": 35,
+      "dim": "N",
+      "facet": "N4",
+      "text": "只有和朋友在一起的时候我才会感到自在",
+      "reverse": false
+    },
+    {
+      "id": 226,
+      "dim": "A",
+      "facet": "A5",
+      "text": "觉得自己很了不起",
+      "reverse": true
+    },
+    {
+      "id": 243,
+      "dim": "C",
+      "facet": "C1",
+      "text": "能轻松完成任务",
+      "reverse": false
+    },
+    {
+      "id": 55,
+      "dim": "N",
+      "facet": "N6",
+      "text": "会被情绪淹没",
+      "reverse": false
+    },
+    {
+      "id": 261,
+      "dim": "C",
+      "facet": "C3",
+      "text": "尽量遵守规则",
+      "reverse": false
+    },
+    {
+      "id": 232,
+      "dim": "A",
+      "facet": "A6",
+      "text": "我同情那些处境不如自己的人",
+      "reverse": false
+    },
+    {
+      "id": 23,
+      "dim": "N",
+      "facet": "N3",
+      "text": "经常情绪低落",
+      "reverse": false
+    },
+    {
+      "id": 255,
+      "dim": "C",
+      "facet": "C2",
+      "text": "按照计划做事",
+      "reverse": false
+    },
+    {
+      "id": 275,
+      "dim": "C",
+      "facet": "C4",
+      "text": "我会超出预期地完成任务或工作",
+      "reverse": false
+    },
+    {
+      "id": 171,
+      "dim": "O",
+      "facet": "O6",
+      "text": "喜欢尝试新鲜事物",
+      "reverse": false
+    },
+    {
+      "id": 33,
+      "dim": "N",
+      "facet": "N4",
+      "text": "感觉自己很难接近别人",
+      "reverse": false
+    },
+    {
+      "id": 29,
+      "dim": "N",
+      "facet": "N3",
+      "text": "对自己感到满意",
+      "reverse": true
+    },
+    {
+      "id": 287,
+      "dim": "C",
+      "facet": "C5",
+      "text": "浪费时间",
+      "reverse": true
+    },
+    {
+      "id": 230,
+      "dim": "A",
+      "facet": "A5",
+      "text": "让自己成为关注的焦点",
+      "reverse": true
+    },
+    {
+      "id": 250,
+      "dim": "C",
+      "facet": "C1",
+      "text": "看不清事情的后果",
+      "reverse": true
+    },
+    {
+      "id": 41,
+      "dim": "N",
+      "facet": "N5",
+      "text": "经常吃得太撑",
+      "reverse": false
+    },
+    {
+      "id": 103,
+      "dim": "E",
+      "facet": "E5",
+      "text": "热爱行动",
+      "reverse": false
+    },
+    {
+      "id": 42,
+      "dim": "N",
+      "facet": "N5",
+      "text": "不知道自己为什么会做某些事",
+      "reverse": false
+    },
+    {
+      "id": 244,
+      "dim": "C",
+      "facet": "C1",
+      "text": "对自己的立场很有把握",
+      "reverse": false
+    },
+    {
+      "id": 294,
+      "dim": "C",
+      "facet": "C6",
+      "text": "会不经过思考就开始行动",
+      "reverse": true
+    },
+    {
+      "id": 16,
+      "dim": "N",
+      "facet": "N2",
+      "text": "很少被惹恼",
+      "reverse": true
+    },
+    {
+      "id": 62,
+      "dim": "E",
+      "facet": "E1",
+      "text": "很快就能和别人热络起来",
+      "reverse": false
+    },
+    {
+      "id": 110,
+      "dim": "E",
+      "facet": "E5",
+      "text": "不喜欢吵闹的音乐",
+      "reverse": true
+    },
+    {
+      "id": 221,
+      "dim": "A",
+      "facet": "A5",
+      "text": "不喜欢成为关注的焦点",
+      "reverse": false
+    },
+    {
+      "id": 32,
+      "dim": "N",
+      "facet": "N4",
+      "text": "害怕自己会做错事",
+      "reverse": false
+    }
   ]
 }
