@@ -33,6 +33,11 @@
        ui.<模块>.<动作|状态>，小写+连字符；既有 UI_COPY key 保持原名迁入，index.html 内以
        UI_COPY = TC_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
   <script src="/data/ui-copy.js"></script>
+  <!-- 节135：正文数据总表（卦辞/牌义/类型描述等正文内容统一管理，i18n 就绪）。
+       数据文件 frontend/public/data/content/，全局访问：window.CONTENT
+       各领域模块按语言分文件；当前默认中文，同步加载 -->
+  <script src="/data/content/index.js"></script>
+  <script src="/data/content/tarot/cards-zh.js"></script>
   <script src="/js/components.js"></script>
   <script src="/js/views-guoxue.js"></script>
   <script src="/js/views-xishi.js"></script>
