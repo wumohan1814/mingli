@@ -6,14 +6,14 @@
 // travel/medical/study/burial/renovation/custom；custom 关键词为空，仅按通用历书比较，
 // 用户填写的具体事项文本随 customTopicLabel 透传后端供展示与深度解读引用）
 const ALMANAC_TOPIC_OPTIONS = [
-  { key: 'move', label: '搬家入宅' },
-  { key: 'marriage', label: '订婚结婚' },
-  { key: 'opening', label: '开业启动' },
-  { key: 'contract', label: '签约合作' },
-  { key: 'travel', label: '出行赴任' },
-  { key: 'medical', label: '就医手术' },
-  { key: 'study', label: '考试学习' },
-  { key: 'burial', label: '安葬修坟' },
+  { key: 'move', label: UI_COPY.guoxue.move },
+  { key: 'marriage', label: UI_COPY.guoxue.marriage },
+  { key: 'opening', label: UI_COPY.guoxue.opening },
+  { key: 'contract', label: UI_COPY.guoxue.contract },
+  { key: 'travel', label: UI_COPY.guoxue.travel },
+  { key: 'medical', label: UI_COPY.guoxue.medical },
+  { key: 'study', label: UI_COPY.guoxue.study },
+  { key: 'burial', label: UI_COPY.guoxue.burial },
   { key: 'renovation', label: '修造动土' },
   { key: 'custom', label: '自定义' }
 ];

@@ -4,44 +4,44 @@
 /* ---------- 临时起卦 ---------- */
 const DIVIN_METHODS = [{
   id: 'liuyao',
-  name: '六爻',
-  desc: '以铜钱摇卦成卦，依六亲、世应、动爻断吉凶',
+  name: UI_COPY.divination['method-liuyao'],
+  desc: UI_COPY.divination['method-liuyao-desc'],
   group: 'yao',
   todo: false
 }, {
   id: 'meihua',
-  name: '梅花易数',
-  desc: '以时间或数字起卦，凭体用生克察事应',
+  name: UI_COPY.divination['method-meihua'],
+  desc: UI_COPY.divination['method-meihua-desc'],
   group: 'yao',
   todo: false
 }, {
   id: 'xiaoliuren',
-  name: '小六壬',
-  desc: '按月日时三数顺数落宫，速断所问吉凶',
+  name: UI_COPY.divination['method-xiaoliuren'],
+  desc: UI_COPY.divination['method-xiaoliuren-desc'],
   group: 'su',
   todo: false
 }, {
   id: 'sign',
-  name: '观音灵签',
-  desc: '诚心默问后抽签，依签诗断语解疑',
+  name: UI_COPY.divination['method-guanyin'],
+  desc: UI_COPY.divination['method-guanyin-desc'],
   group: 'su',
   todo: false
 }, {
   id: 'liuren',
-  name: '大六壬',
-  desc: '以月将加时起天地盘，四课三传断吉凶',
+  name: UI_COPY.divination['method-daliuren'],
+  desc: UI_COPY.divination['method-daliuren-desc'],
   group: 'shi',
   todo: false
 }, {
   id: 'jinkoujue',
-  name: '金口诀',
-  desc: '以地分起课，四位一体（人元/贵神/将神/地分）断吉凶',
+  name: UI_COPY.divination['method-jinkoujue'],
+  desc: UI_COPY.divination['method-jinkoujue-desc'],
   group: 'shi',
   todo: false
 }, {
   id: 'qimen',
-  name: '奇门时家',
-  desc: '以转盘/飞盘排九宫四盘，时日月年四家定局，一事一占',
+  name: UI_COPY.divination['method-qimen'],
+  desc: UI_COPY.divination['method-qimen-desc'],
   group: 'shi',
   todo: false
 }];
@@ -110,9 +110,9 @@ const QIMEN_JU_METHODS = [
   { key: 'chaibu', label: '拆补', hint: '以节气为界，当代主流定局法' },
   { key: 'zhirun', label: '置闰', hint: '累计超神置闰的定局法' }
 ];
-const QIMEN_SCOPE_CN = { hour: '时家', day: '日家', month: '月家', year: '年家' };
-const QIMEN_METHOD_CN = { zhuanpan: '转盘', feipan: '飞盘' };
-const QIMEN_JU_CN = { chaibu: '拆补', zhirun: '置闰' };
+const QIMEN_SCOPE_CN = { hour: UI_COPY.divination['qm-scope-hour'], day: UI_COPY.divination['qm-scope-day'], month: UI_COPY.divination['qm-scope-month'], year: UI_COPY.divination['qm-scope-year'] };
+const QIMEN_METHOD_CN = { zhuanpan: UI_COPY.divination['qm-method-zhuanpan'], feipan: UI_COPY.divination['qm-method-feipan'] };
+const QIMEN_JU_CN = { chaibu: UI_COPY.divination['qm-ju-chaibu'], zhirun: UI_COPY.divination['qm-ju-zhirun'] };
 const pad2 = function (x) { return String(x).padStart(2, '0'); };
 const todayStr = function () { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
 /* 当前小时 → 时辰下标（23:00/00:00 均为子时），时辰起始小时即该时辰内任一可解析时刻 */
@@ -120,19 +120,19 @@ const nowShichen = function () { return Math.floor((new Date().getHours() + 1) /
 function yaoView(v) {
   const n = typeof v === 'number' ? v : null;
   const s = String(v);
-  if (n === 9 || s === '老阳') return { name: '老阳', cls: 'old-yang', moving: true };
-  if (n === 6 || s === '老阴') return { name: '老阴', cls: 'old-yin', moving: true };
-  if (n === 8 || s === '少阴' || s === '阴') return { name: '少阴', cls: 'yin', moving: false };
-  if (n === 7 || s === '少阳' || s === '阳') return { name: '少阳', cls: '', moving: false };
-  return { name: s || '爻', cls: '', moving: /老|动/.test(s) };
+  if (n === 9 || s === UI_COPY.divination['ly-old-yang']) return { name: UI_COPY.divination['ly-old-yang'], cls: 'old-yang', moving: true };
+  if (n === 6 || s === UI_COPY.divination['ly-old-yin']) return { name: UI_COPY.divination['ly-old-yin'], cls: 'old-yin', moving: true };
+  if (n === 8 || s === UI_COPY.divination['ly-shao-yin'] || s === UI_COPY.divination['ly-yin']) return { name: UI_COPY.divination['ly-shao-yin'], cls: 'yin', moving: false };
+  if (n === 7 || s === UI_COPY.divination['ly-shao-yang'] || s === UI_COPY.divination['ly-yang']) return { name: UI_COPY.divination['ly-shao-yang'], cls: '', moving: false };
+  return { name: s || UI_COPY.divination['ly-yao'], cls: '', moving: /老|动/.test(s) };
 }
 /* REQ-055：六爻整齐列表 —— 爻位|爻线|六亲|纳甲|世应|阴阳(动)|六神 固定分列对齐 */
 function wrCellAt(wrArr, i) {
   if (!wrArr) return '';
   // 兼容旧结果：worldAndResponse = [世爻位, 应爻位] 的数字数组（需先于通用字符串分支判断）
   if (wrArr.length === 2 && typeof wrArr[0] === 'number' && typeof wrArr[1] === 'number') {
-    if (i + 1 === wrArr[0]) return '世';
-    if (i + 1 === wrArr[1]) return '应';
+    if (i + 1 === wrArr[0]) return UI_COPY.divination['ly-shi'];
+    if (i + 1 === wrArr[1]) return UI_COPY.divination['ly-ying'];
     return '';
   }
   const v = wrArr[i];
@@ -165,7 +165,7 @@ function DivLiuyaoView(res) {
       const wr = wrCellAt(wAndR, i);
       const cells = [];
       // 列序：爻位 | 爻线(阴阳符号) | 六亲 | 纳甲地支 | 世/应 | 阴阳名(含动爻标记) | 六神
-      cells.push(React.createElement('span', { key: 'pos', className: 'c c-pos' }, YAO_LABEL[i] + '爻'));
+      cells.push(React.createElement('span', { key: 'pos', className: 'c c-pos' }, YAO_LABEL[i] + UI_COPY.divination['ly-yao']));
       cells.push(React.createElement('span', { key: 'bar', className: 'yao-bar c-bar ' + info.cls }));
       cells.push(React.createElement('span', { key: 'rel', className: 'c c-rel' }, sr));
       cells.push(React.createElement('span', { key: 'nj', className: 'c c-nj' }, nj));
@@ -177,7 +177,7 @@ function DivLiuyaoView(res) {
   }
   let grid = null;
   if (rowEls.length) {
-    const head = ['爻位', '爻象', '六亲', '纳甲', '世应', '阴阳', '六神'].map(function (h, i) {
+    const head = [UI_COPY.divination['ly-th-yaowei'], UI_COPY.divination['ly-th-yaoxiang'], UI_COPY.divination['ly-th-liuqin'], UI_COPY.divination['ly-th-najia'], UI_COPY.divination['ly-th-shiying'], UI_COPY.divination['ly-th-yinyang'], UI_COPY.divination['ly-th-liushen']].map(function (h, i) {
       return React.createElement('span', { key: i, className: 'c' }, h);
     });
     grid = React.createElement('div', { className: 'ly-wrap' },
@@ -189,8 +189,8 @@ function DivLiuyaoView(res) {
   const palaceText = res.palace ? ((res.palace.name || '') + (res.palace.wuxing ? '（' + res.palace.wuxing + '）' : '') + (res.palaceStage ? ' · ' + res.palaceStage : '')) : (res.palaceStage || '');
   const ganzhiText = res.ganzhi ? [res.ganzhi.year, res.ganzhi.month, res.ganzhi.day, res.ganzhi.hour].filter(Boolean).join(' ') : '';
   const meta = [];
-  if (palaceText) meta.push(React.createElement('div', { key: 'p' }, '宫位：' + palaceText));
-  if (ganzhiText) meta.push(React.createElement('div', { key: 'g' }, '干支：' + ganzhiText));
+  if (palaceText) meta.push(React.createElement('div', { key: 'p' }, UI_COPY.divination['ly-gongwei'] + palaceText));
+  if (ganzhiText) meta.push(React.createElement('div', { key: 'g' }, UI_COPY.divination['ly-ganzhi'] + ganzhiText));
   return React.createElement('div', null,
     grid,
     nameText ? React.createElement('div', { style: { fontWeight: 700, marginTop: grid ? 8 : 0 } }, nameText) : null,
@@ -200,9 +200,9 @@ function DivMeihuaView(res) {
   const gua = function (g) { return g && g.name ? g.name + (g.element ? '（' + g.element + '）' : '') : ''; };
   const sym = function (h) { return h && h.symbol ? h.symbol : ''; };
   const parts = [];
-  if (res.originalName) parts.push('本卦 ' + res.originalName + (sym(res.mainHexagram) ? ' ' + sym(res.mainHexagram) : ''));
-  if (res.interName) parts.push('互卦 ' + res.interName + (sym(res.interHexagram) ? ' ' + sym(res.interHexagram) : ''));
-  if (res.changedName && res.changedName !== res.originalName) parts.push('变卦 ' + res.changedName + (sym(res.changedHexagram) ? ' ' + sym(res.changedHexagram) : ''));
+  if (res.originalName) parts.push(UI_COPY.divination['ly-ben-gua'] + res.originalName + (sym(res.mainHexagram) ? ' ' + sym(res.mainHexagram) : ''));
+  if (res.interName) parts.push(UI_COPY.divination['ly-hu-gua'] + res.interName + (sym(res.interHexagram) ? ' ' + sym(res.interHexagram) : ''));
+  if (res.changedName && res.changedName !== res.originalName) parts.push(UI_COPY.divination['ly-bian-gua'] + res.changedName + (sym(res.changedHexagram) ? ' ' + sym(res.changedHexagram) : ''));
   const items = [];
   if (parts.length) items.push(React.createElement('div', { key: 'head', style: { fontWeight: 700, lineHeight: 1.8 } }, parts.join(' · ')));
   // REQ-055 ③：本卦爻列（类六爻：爻位|爻象|阴阳(含动)|体用），其余卦以卦名+卦符展示
@@ -213,21 +213,21 @@ function DivMeihuaView(res) {
       const y = ys[i] || {};
       const pos = y.position != null ? y.position : (i + 1);
       const moving = Boolean(y.isChanging);
-      const yang = y.yaoType === '阳';
+      const yang = y.yaoType === UI_COPY.divination['ly-yang'];
       const ty = String(y.tiYong || '');
       const barCls = moving ? (yang ? 'old-yang' : 'old-yin') : (yang ? '' : 'yin');
       const cells = [];
-      cells.push(React.createElement('span', { key: 'p', className: 'c c-pos' }, YAO_LABEL[pos - 1] + '爻'));
+      cells.push(React.createElement('span', { key: 'p', className: 'c c-pos' }, YAO_LABEL[pos - 1] + UI_COPY.divination['ly-yao']));
       cells.push(React.createElement('span', { key: 'b', className: 'yao-bar c-bar ' + barCls }));
-      cells.push(React.createElement('span', { key: 'n', className: 'c-name' }, yang ? '阳' : '阴', moving ? React.createElement('span', { key: 'm', className: 'mv-badge' }, '动') : null));
+      cells.push(React.createElement('span', { key: 'n', className: 'c-name' }, yang ? UI_COPY.divination['ly-yang'] : UI_COPY.divination['ly-yin'], moving ? React.createElement('span', { key: 'm', className: 'mv-badge' }, '动') : null));
       cells.push(React.createElement('span', { key: 't', className: 'c' }, ty ? React.createElement('span', { className: 'ty-badge ' + (ty === '体' ? 'ti' : 'yong') }, ty) : null));
       rowEls.push(React.createElement('div', { key: pos, className: 'mh-row' }, cells));
     }
   }
   if (rowEls.length) {
-    const head = ['爻位', '爻象', '阴阳', '体用'].map(function (h, i) { return React.createElement('span', { key: i, className: 'c' }, h); });
+    const head = [UI_COPY.divination['ly-th-yaowei'], UI_COPY.divination['ly-th-yaoxiang'], UI_COPY.divination['ly-th-yinyang'], '体用'].map(function (h, i) { return React.createElement('span', { key: i, className: 'c' }, h); });
     items.push(React.createElement('div', { key: 'gua', className: 'mh-gua' },
-      React.createElement('div', { className: 'mh-gua-t' }, '本卦爻象（初爻 → 上爻 逐爻排列，体/用按动爻分属）'),
+      React.createElement('div', { className: 'mh-gua-t' }, UI_COPY.divination['ly-ben-gua-yaoxiang']),
       React.createElement('div', { className: 'mh-wrap' },
         React.createElement('div', { className: 'mh-grid' },
           React.createElement('div', { className: 'mh-head' }, head),
@@ -238,10 +238,10 @@ function DivMeihuaView(res) {
   const yo = res.yongGua || {};
   if (ti.name || yo.name) detail.push('体卦 ' + gua(res.tiGua) + (yo.name ? ' · 用卦 ' + gua(res.yongGua) : ''));
   const mv = res.movingYao || {};
-  if (mv.description || mv.yaoName || mv.position) detail.push('动爻：' + (mv.description || '第' + mv.position + '爻动'));
+  if (mv.description || mv.yaoName || mv.position) detail.push(UI_COPY.divination['ly-dong-yao'] + (mv.description || '第' + mv.position + '爻动'));
   const an = res.analysis || {};
-  if (an.tiYongRelation) detail.push('体用关系：' + an.tiYongRelation + (an.tiYongSeasonEvaluation ? '；' + an.tiYongSeasonEvaluation : ''));
-  if (an.timelineTrend && an.timelineTrend.summary) detail.push('阶段趋势：' + (an.timelineTrend.trend ? an.timelineTrend.trend + '。' : '') + an.timelineTrend.summary);
+  if (an.tiYongRelation) detail.push(UI_COPY.divination['ly-ti-yong-rel'] + an.tiYongRelation + (an.tiYongSeasonEvaluation ? '；' + an.tiYongSeasonEvaluation : ''));
+  if (an.timelineTrend && an.timelineTrend.summary) detail.push(UI_COPY.divination['ly-jieduan-qushi'] + (an.timelineTrend.trend ? an.timelineTrend.trend + '。' : '') + an.timelineTrend.summary);
   if (res.up || res.down || res.dong) detail.push('上卦 ' + res.up + ' · 下卦 ' + res.down + ' · 动爻 ' + res.dong);
   detail.forEach(function (t, i) {
     items.push(React.createElement('div', { key: 'd' + i, style: { marginTop: 6, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7 } }, t));
@@ -250,10 +250,10 @@ function DivMeihuaView(res) {
   const gz = res.ganzhi;
   if (gz) {
     const gzText = [gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' ');
-    if (gzText) meta.push('干支：' + gzText);
+    if (gzText) meta.push(UI_COPY.divination['ly-ganzhi'] + gzText);
   }
   const calc = res.calculation || {};
-  if (calc.method || calc.methodKey) meta.push('起卦：' + (calc.method || calc.methodKey));
+  if (calc.method || calc.methodKey) meta.push(UI_COPY.divination['ly-qi-gua'] + (calc.method || calc.methodKey));
   if (meta.length) items.push(React.createElement('div', { key: 'meta', style: { marginTop: 6, fontSize: 12, color: 'var(--text-2)', lineHeight: 1.7 } }, meta.join(' · ')));
   return React.createElement('div', null, items);
 }
@@ -267,8 +267,8 @@ function DivXiaoliurenView(res) {
   if (seqNames.length) items.push(React.createElement('div', { key: 'seq', style: { textAlign: 'center', fontSize: 13, color: 'var(--text-2)', marginBottom: 4 } }, '月 ' + seqNames[0] + (seqNames[1] ? ' → 日 ' + seqNames[1] : '') + (seqNames[2] ? ' → 时 ' + seqNames[2] : '')));
   const meta = [];
   if (res.methodLabel) meta.push(res.methodLabel);
-  if (res.hourLabel) meta.push('时辰 ' + res.hourLabel);
-  if (res.lunarMonth) meta.push('农历 ' + res.lunarMonth + '月' + (res.lunarDay != null ? res.lunarDay + '日' : ''));
+  if (res.hourLabel) meta.push(UI_COPY.divination['ly-shichen'] + res.hourLabel);
+  if (res.lunarMonth) meta.push(UI_COPY.divination['ly-nongli'] + res.lunarMonth + '月' + (res.lunarDay != null ? res.lunarDay + '日' : ''));
   if (meta.length) items.push(React.createElement('div', { key: 'meta', style: { textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 2 } }, meta.join(' · ')));
   if (primary.verse) items.push(React.createElement('div', { key: 'verse', style: { marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.8 } }, primary.verse));
   return React.createElement('div', null, items);
@@ -279,12 +279,12 @@ function DivLiurenView(res) {
   const gz = (res && typeof res === 'object' && res.ganzhi) || {};
   const meta = [];
   if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
-  if (res.monthLeader) meta.push('月将 ' + res.monthLeader);
-  if (res.divinationBranch) meta.push('占时 ' + res.divinationBranch);
+  if (res.monthLeader) meta.push(UI_COPY.divination['dlr-yuejiang'] + res.monthLeader);
+  if (res.divinationBranch) meta.push(UI_COPY.divination['dlr-zhanshi'] + res.divinationBranch);
   if (res.dayNight) meta.push(res.dayNight);
-  if (res.xunKong && res.xunKong.length) meta.push('旬空 ' + res.xunKong.join('、'));
-  if (res.noblemanBranch) meta.push('贵人 ' + res.noblemanBranch + (res.noblemanGroundBranch ? '（临' + res.noblemanGroundBranch + '）' : ''));
-  if (res.dayStemResidence) meta.push('日干寄 ' + res.dayStemResidence);
+  if (res.xunKong && res.xunKong.length) meta.push(UI_COPY.divination['dlr-xunkong'] + res.xunKong.join('、'));
+  if (res.noblemanBranch) meta.push(UI_COPY.divination['dlr-guiren'] + res.noblemanBranch + (res.noblemanGroundBranch ? '（临' + res.noblemanGroundBranch + '）' : ''));
+  if (res.dayStemResidence) meta.push(UI_COPY.divination['dlr-rijiji'] + res.dayStemResidence);
   if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'lr-meta' }, meta.join(' · ')));
 
   // 天地盘 12 位（天将 / 天盘支 / 所临地盘支）
@@ -294,11 +294,11 @@ function DivLiurenView(res) {
       return React.createElement('div', { key: i, className: 'lr-plate-cell' },
         React.createElement('span', { className: 'lpc-god' }, p.god || ''),
         React.createElement('span', { className: 'lpc-tian' }, p.branch || ''),
-        React.createElement('span', { className: 'lpc-di' }, '临' + (p.under || '')));
+        React.createElement('span', { className: 'lpc-di' }, UI_COPY.divination['dlr-lin'] + (p.under || '')));
     });
-    items.push(React.createElement('div', { key: 'plate-h', className: 'lr-sec' }, '天地盘（12 位）'),
+    items.push(React.createElement('div', { key: 'plate-h', className: 'lr-sec' }, UI_COPY.divination['dlr-tiandipan']),
       React.createElement('div', { key: 'plate', className: 'lr-plate' }, plateEls),
-      React.createElement('div', { key: 'plate-note', className: 'lr-note' }, '每格：天将 / 天盘支 / 所临地盘支（月将加时转动）。'));
+      React.createElement('div', { key: 'plate-note', className: 'lr-note' }, UI_COPY.divination['dlr-tiandipan-note']));
   }
 
   // 四课
@@ -307,12 +307,12 @@ function DivLiurenView(res) {
     const lessonEls = lessons.map(function (l) {
       return React.createElement('div', { key: l.name || 'x', className: 'lr-lesson' },
         React.createElement('div', { className: 'lrl-name' }, l.name || ''),
-        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '上神'), React.createElement('b', null, l.upper || '')),
-        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '下位'), React.createElement('b', null, l.lower || '')),
-        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, '天将'), React.createElement('b', null, l.god || '')),
-        React.createElement('div', { className: 'lrl-rel' }, '关系：' + (l.relation || '')));
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, UI_COPY.divination['dlr-shangshen']), React.createElement('b', null, l.upper || '')),
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, UI_COPY.divination['dlr-xiawei']), React.createElement('b', null, l.lower || '')),
+        React.createElement('div', { className: 'lrl-row' }, React.createElement('span', { className: 'lrl-cap' }, UI_COPY.divination['dlr-tianjiang-sec']), React.createElement('b', null, l.god || '')),
+        React.createElement('div', { className: 'lrl-rel' }, UI_COPY.divination['dlr-guanxi'] + (l.relation || '')));
     });
-    items.push(React.createElement('div', { key: 'l4-h', className: 'lr-sec' }, '四课'),
+    items.push(React.createElement('div', { key: 'l4-h', className: 'lr-sec' }, UI_COPY.divination['dlr-sike']),
       React.createElement('div', { key: 'l4', className: 'lr-lessons' }, lessonEls));
   }
 
@@ -323,16 +323,16 @@ function DivLiurenView(res) {
       const kid = [
         React.createElement('div', { key: 'stage', className: 'lrt-stage' }, t.stage || ''),
         React.createElement('div', { key: 'main', className: 'lrt-main' }, t.branch || ''),
-        React.createElement('div', { key: 'god', className: 'lrt-god' }, '乘' + (t.god || '')),
+        React.createElement('div', { key: 'god', className: 'lrt-god' }, UI_COPY.divination['dlr-cheng'] + (t.god || '')),
         React.createElement('div', { key: 'sub', className: 'lrt-sub' },
           [t.wuxing ? t.wuxing : '', t.seasonState ? t.seasonState : '', t.relation ? t.relation : ''].filter(Boolean).join(' · ')),
-        (t.isVoid ? React.createElement('div', { key: 'void', className: 'lrt-note' }, React.createElement('span', { className: 'lr-badge' }, '空亡')) : null)
+        (t.isVoid ? React.createElement('div', { key: 'void', className: 'lrt-note' }, React.createElement('span', { className: 'lr-badge' }, UI_COPY.divination['qm-kongwang'])) : null)
       ];
-      if (t.dayRelation) kid.push(React.createElement('div', { key: 'dr', className: 'lrt-note' }, '与日支' + t.dayRelation));
+      if (t.dayRelation) kid.push(React.createElement('div', { key: 'dr', className: 'lrt-note' }, UI_COPY.divination['dlr-yuerizhi'] + t.dayRelation));
       return React.createElement('div', { key: t.stage || i, className: 'lr-trans' + (i < trans.length - 1 ? ' with-arrow' : '') }, kid);
     });
     const transHead = (res.transmissionRule || '') + ((res.transmissionRule && res.transmissionPattern) ? ' · ' : '') + (res.transmissionPattern || '');
-    items.push(React.createElement('div', { key: 't3-h', className: 'lr-sec' }, '三传' + (transHead ? '（' + transHead + '）' : '')),
+    items.push(React.createElement('div', { key: 't3-h', className: 'lr-sec' }, UI_COPY.divination['dlr-sanzhuan'] + (transHead ? '（' + transHead + '）' : '')),
       React.createElement('div', { key: 't3', className: 'lr-trans-row' }, transEls));
     if (res.transmissionDetail) items.push(React.createElement('div', { key: 't3d', className: 'lr-rule' }, res.transmissionDetail));
   }
@@ -342,7 +342,7 @@ function DivLiurenView(res) {
   const pTags = Array.isArray(res.patternTags) ? res.patternTags : [];
   if (guaTi.length || pTags.length) {
     const tags = [].concat(pTags, guaTi).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
-    items.push(React.createElement('div', { key: 'gt-h', className: 'lr-sec' }, '课体'),
+    items.push(React.createElement('div', { key: 'gt-h', className: 'lr-sec' }, UI_COPY.divination['dlr-keti']),
       React.createElement(TCTermRow, { key: 'gt', method: 'liuren', items: tags, chipClass: 'lr-tag' }));
     const rules = Array.isArray(res.classicalRules) ? res.classicalRules : [];
     if (rules.length) {
@@ -350,7 +350,7 @@ function DivLiurenView(res) {
         return React.createElement('li', { key: i },
           (r.source ? '【' + r.source + '】' : '') + (r.rule ? r.rule + '：' : '') + (r.summary || ''));
       });
-      items.push(React.createElement('div', { key: 'rules', className: 'lr-sec' }, '古籍依据'),
+      items.push(React.createElement('div', { key: 'rules', className: 'lr-sec' }, UI_COPY.divination['dlr-guji-yiju']),
         React.createElement('ul', { key: 'rules-l', className: 'lr-list' }, ruleEls));
     }
   }
@@ -359,19 +359,19 @@ function DivLiurenView(res) {
   const focus = Array.isArray(res.focusEvidence) ? res.focusEvidence : [];
   if (focus.length) {
     const focusEls = focus.map(function (f, i) {
-      const lv = f.level === '主证' ? 'master' : 'assist';
+      const lv = f.level === UI_COPY.divination['dlr-zhuzheng'] ? 'master' : 'assist';
       const evLines = Array.isArray(f.evidence) ? f.evidence : [];
       const lim = Array.isArray(f.limitations) ? f.limitations : [];
       const dParts = [];
       if (evLines.length) dParts.push(evLines.join('；'));
-      if (lim.length) dParts.push('限制：' + lim.join('；'));
+      if (lim.length) dParts.push(UI_COPY.divination['dlr-xianzhi'] + lim.join('；'));
       return React.createElement('div', { key: i, className: 'lr-ev' },
         React.createElement('span', { className: 'lr-ev-lv ' + lv }, f.level || ''),
         React.createElement('div', { className: 'lr-ev-body' },
           React.createElement('div', { className: 'lr-ev-t' }, (f.target || '') + (f.role ? '（' + f.role + '）' : '')),
           dParts.length ? React.createElement('div', { className: 'lr-ev-d' }, dParts.join('\n')) : null));
     });
-    items.push(React.createElement('div', { key: 'fc-h', className: 'lr-sec' }, '类神（主证/辅证）'),
+    items.push(React.createElement('div', { key: 'fc-h', className: 'lr-sec' }, UI_COPY.divination['dlr-leishen']),
       React.createElement('div', { key: 'fc', className: 'lr-ev-wrap' }, focusEls));
   }
 
@@ -384,22 +384,22 @@ function DivLiurenView(res) {
       const line = [v.wuxing ? v.wuxing : '', v.yinYang ? v.yinYang : '', v.category ? v.category : ''].filter(Boolean).join(' · ');
       return k + (line ? '：' + line : '') + (v.description ? '（' + v.description + '）' : '');
     };
-    items.push(React.createElement('div', { key: 'tj-h', className: 'lr-sec' }, '天将'),
+    items.push(React.createElement('div', { key: 'tj-h', className: 'lr-sec' }, UI_COPY.divination['dlr-tianjiang-sec']),
       React.createElement(TCTermRow, { key: 'tj', method: 'liuren', items: tjpKeys, chipClass: 'lr-tag', matchOf: function (k) { return k; }, textOf: tjpText }));
   }
 
   // 神煞
   const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
   if (ss.length) {
-    items.push(React.createElement('div', { key: 'ss-h', className: 'lr-sec' }, '神煞'),
+    items.push(React.createElement('div', { key: 'ss-h', className: 'lr-sec' }, UI_COPY.divination['dlr-shensha']),
       React.createElement(TCTermRow, { key: 'ss', method: 'liuren', items: ss, chipClass: 'lr-tag' }),
-      React.createElement('div', { key: 'ss-n', className: 'lr-note' }, '神煞只定位所在干支，须入课/入传或临干支才有象意，不单项定吉凶。'));
+      React.createElement('div', { key: 'ss-n', className: 'lr-note' }, UI_COPY.divination['dlr-shensha-note']));
   }
 
   // 应期参考
   const timing = Array.isArray(res.timingEvidence) ? res.timingEvidence : [];
   if (timing.length) {
-    items.push(React.createElement('div', { key: 'tm-h', className: 'lr-sec' }, '应期参考'),
+    items.push(React.createElement('div', { key: 'tm-h', className: 'lr-sec' }, UI_COPY.divination['dlr-yingqi']),
       React.createElement('ul', { key: 'tm', className: 'lr-list' },
         timing.map(function (t, i) { return React.createElement('li', { key: i }, t); })));
   }
@@ -414,17 +414,17 @@ function DivJinkoujueView(res) {
   const meta = [];
   if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
   if (res.methodLabel) meta.push(res.methodLabel);
-  if (res.monthLeader) meta.push('月将 ' + res.monthLeader);
-  if (res.divinationBranch) meta.push('占时 ' + res.divinationBranch);
+  if (res.monthLeader) meta.push(UI_COPY.divination['dlr-yuejiang'] + res.monthLeader);
+  if (res.divinationBranch) meta.push(UI_COPY.divination['dlr-zhanshi'] + res.divinationBranch);
   if (res.dayNight) meta.push(res.dayNight);
-  if (res.noblemanBranch) meta.push('贵人 ' + res.noblemanBranch);
-  if (res.xunKong && res.xunKong.length) meta.push('旬空 ' + res.xunKong.join('、'));
+  if (res.noblemanBranch) meta.push(UI_COPY.divination['dlr-guiren'] + res.noblemanBranch);
+  if (res.xunKong && res.xunKong.length) meta.push(UI_COPY.divination['dlr-xunkong'] + res.xunKong.join('、'));
   if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'jk-meta' }, meta.join(' · ')));
 
   // 四位一体（自上而下：人元 → 贵神 → 将神 → 地分）
   const pos = (res && typeof res === 'object' && res.positions) || {};
   const posOrder = ['renYuan', 'guiShen', 'jiangShen', 'diFen'];
-  const posName = { renYuan: '人元', guiShen: '贵神', jiangShen: '将神', diFen: '地分' };
+  const posName = { renYuan: UI_COPY.divination['jk-renyuan'], guiShen: UI_COPY.divination['jk-guishen'], jiangShen: UI_COPY.divination['jk-jiangshen'], diFen: UI_COPY.divination['jk-difen'] };
   const rows = [];
   posOrder.forEach(function (k) {
     const p = pos[k];
@@ -432,14 +432,14 @@ function DivJinkoujueView(res) {
     const subBits = [];
     if (p.elementBasis) subBits.push(p.elementBasis);
     if (p.element) subBits.push(p.element + (p.yinYang || ''));
-    if (p.seasonState) subBits.push('月令' + p.seasonState);
+    if (p.seasonState) subBits.push(UI_COPY.divination['jk-yueling'] + p.seasonState);
     rows.push(React.createElement('div', { key: k, className: 'jk-four-row' },
       React.createElement('span', { className: 'jkf-name' }, posName[k]),
       React.createElement('span', { className: 'jkf-main' }, (p.stem || '') + (p.branch || '')),
-      p.god ? React.createElement('span', { className: 'jkf-god' }, '乘' + p.god) : null,
+      p.god ? React.createElement('span', { className: 'jkf-god' }, UI_COPY.divination['dlr-cheng'] + p.god) : null,
       React.createElement('span', { className: 'jkf-sub' },
         React.createElement('span', null, subBits.join(' · ')),
-        p.isVoid ? React.createElement('span', { className: 'jkf-void' }, '旬空') : null)));
+        p.isVoid ? React.createElement('span', { className: 'jkf-void' }, UI_COPY.divination['jk-xunkong']) : null)));
   });
   // REQ-128：四位一体渲染出的名词（位置名 + 贵神名）供内嵌白话卡标签
   const jkNounNames = [];
@@ -450,7 +450,7 @@ function DivJinkoujueView(res) {
     if (p.god) jkNounNames.push(p.god);
   });
   if (rows.length) {
-    items.push(React.createElement('div', { key: 'four-h', className: 'jk-sec' }, '四位一体（自上而下：人元 / 贵神 / 将神 / 地分）'),
+    items.push(React.createElement('div', { key: 'four-h', className: 'jk-sec' }, UI_COPY.divination['jk-siwei']),
       React.createElement('div', { key: 'four', className: 'jk-four' }, rows),
       React.createElement(TCTermRow, { key: 'four-tc', method: 'jinkoujue', items: jkNounNames, chipClass: 'jk-tag' }));
   }
@@ -458,11 +458,11 @@ function DivJinkoujueView(res) {
   // 阴阳发用
   const yy = (res && typeof res === 'object' && res.yinYangUse) || {};
   if (yy.pattern) {
-    const yyBits = [yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + '阳' + (yy.yinCount != null ? yy.yinCount : '') + '阴）'];
+    const yyBits = [yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + UI_COPY.divination['ly-yang'] + (yy.yinCount != null ? yy.yinCount : '') + '阴）'];
     if (yy.rule) yyBits.push(yy.rule);
     if (yy.usePosition) yyBits.push('取「' + yy.usePosition + '」为用');
     if (yy.isVoid) yyBits.push('发用旬空');
-    items.push(React.createElement('div', { key: 'yy-h', className: 'jk-sec' }, '阴阳发用'),
+    items.push(React.createElement('div', { key: 'yy-h', className: 'jk-sec' }, UI_COPY.divination['jk-yinyang-fayong']),
       React.createElement('div', { key: 'yy', className: 'jk-rule' }, yyBits.join('；')),
       React.createElement('div', { key: 'yy-n', className: 'jk-note' }, '发用位为断事主轴：三阴一阳取唯一阴位、三阳一阴取唯一阳位、二阴二阳以旺相者取用、纯阴/纯阳按次第取用。'));
   }
@@ -477,7 +477,7 @@ function DivJinkoujueView(res) {
           React.createElement('div', { className: 'jkm-t' }, (m2.name || '') + (m2.from && m2.to ? '（' + m2.from + '→' + m2.to + '）' : '')),
           React.createElement('div', { className: 'jkm-d' }, [m2.trigger, m2.relation ? '关系' + m2.relation : '', m2.source].filter(Boolean).join(' · '))));
     });
-    items.push(React.createElement('div', { key: 'mv-h', className: 'jk-sec' }, '五动三动'),
+    items.push(React.createElement('div', { key: 'mv-h', className: 'jk-sec' }, UI_COPY.divination['jk-wudong-sandong']),
       React.createElement('div', { key: 'mv', className: 'jk-mv-wrap' }, mvEls),
       React.createElement(TCTermRow, { key: 'mv-tc', method: 'jinkoujue', items: mv.map(function (m2) { return m2.name; }).filter(Boolean), chipClass: 'jk-tag' }),
       React.createElement('div', { key: 'mv-n', className: 'jk-note' }, '动名须结合所问与用位综合体会，不按动名直接定现实结果。'));
@@ -488,14 +488,14 @@ function DivJinkoujueView(res) {
   const relKeys = [['guiToJiang', '贵神→将神'], ['guiToRen', '贵神→人元'], ['jiangToDi', '将神→地分'], ['renToDi', '人元→地分'], ['guiToDi', '贵神→地分']];
   const relBits = relKeys.filter(function (rk) { return rel[rk[0]]; }).map(function (rk) { return rk[1] + rel[rk[0]]; });
   if (relBits.length) {
-    items.push(React.createElement('div', { key: 'rel-h', className: 'jk-sec' }, '四位生克'),
+    items.push(React.createElement('div', { key: 'rel-h', className: 'jk-sec' }, UI_COPY.divination['jk-siwei-shengke']),
       React.createElement('div', { key: 'rel', className: 'jk-tags' }, relBits.map(function (b, i) { return React.createElement('span', { key: i, className: 'jk-tag' }, b); })),
       React.createElement('div', { key: 'rel-n', className: 'jk-note' }, '生克只表盘内作用方向，不直接写成现实顺利/受阻。'));
   }
 
   // 比合歌诀（二木为爻 / 二火为灾 / 二土为滞 / 二金为刑 / 二水为盗）
   if (res.bihePoem) {
-    items.push(React.createElement('div', { key: 'bh-h', className: 'jk-sec' }, '比合歌诀'),
+    items.push(React.createElement('div', { key: 'bh-h', className: 'jk-sec' }, UI_COPY.divination['jk-bihe-gejue']),
       React.createElement('div', { key: 'bh', className: 'jk-rule' }, res.bihePoem),
       React.createElement('div', { key: 'bh-n', className: 'jk-note' }, '歌诀为四位五行比合气质的概括性提示（二木为爻、二火为灾、二土为滞、二金为刑、二水为盗），只作辅助取象。'));
   }
@@ -504,7 +504,7 @@ function DivJinkoujueView(res) {
   const calc = (res && typeof res === 'object' && res.calculation) || {};
   const calcBits = [calc.diFenNote, calc.monthLeaderRule, calc.yuanDunRule, calc.dayNightRule, calc.noblemanRule, calc.guiShenRule].filter(Boolean);
   if (calcBits.length) {
-    items.push(React.createElement('div', { key: 'calc-h', className: 'jk-sec' }, '起课依据'),
+    items.push(React.createElement('div', { key: 'calc-h', className: 'jk-sec' }, UI_COPY.divination['jk-qike-yiju']),
       React.createElement('ul', { key: 'calc', className: 'jk-list' },
         calcBits.map(function (b, i) { return React.createElement('li', { key: i }, b); })),
       React.createElement('div', { key: 'calc-n', className: 'jk-note' }, '依据《六壬神课金口诀古本》（入式歌解 / 贵神起例 / 五子元遁起例 / 阴阳次第五用）。'));
@@ -514,19 +514,19 @@ function DivJinkoujueView(res) {
   const focus = Array.isArray(res.focusEvidence) ? res.focusEvidence : [];
   if (focus.length) {
     const focusEls = focus.map(function (f, i) {
-      const lv = f.level === '主证' ? 'master' : 'assist';
+      const lv = f.level === UI_COPY.divination['dlr-zhuzheng'] ? 'master' : 'assist';
       const evLines = Array.isArray(f.evidence) ? f.evidence : [];
       const lim = Array.isArray(f.limitations) ? f.limitations : [];
       const dParts = [];
       if (evLines.length) dParts.push(evLines.join('；'));
-      if (lim.length) dParts.push('限制：' + lim.join('；'));
+      if (lim.length) dParts.push(UI_COPY.divination['dlr-xianzhi'] + lim.join('；'));
       return React.createElement('div', { key: i, className: 'jk-ev' },
         React.createElement('span', { className: 'jke-lv ' + lv }, f.level || ''),
         React.createElement('div', { className: 'jke-body' },
           React.createElement('div', { className: 'jke-t' }, (f.target || '') + (f.role ? '（' + f.role + '）' : '')),
           dParts.length ? React.createElement('div', { className: 'jke-d' }, dParts.join('\n')) : null));
     });
-    items.push(React.createElement('div', { key: 'fc-h', className: 'jk-sec' }, '类神标定（主证/辅证）'),
+    items.push(React.createElement('div', { key: 'fc-h', className: 'jk-sec' }, UI_COPY.divination['jk-leishen']),
       React.createElement('div', { key: 'fc', className: 'jk-ev-wrap' }, focusEls));
   }
 
@@ -541,21 +541,21 @@ function DivQimenView(res) {
   const meta = [];
   if (gz.year) meta.push([gz.year, gz.month, gz.day, gz.hour].filter(Boolean).join(' '));
   meta.push((QIMEN_SCOPE_CN[res.scope] || res.scope || '时家') + '奇门');
-  meta.push((res.isYangDun ? '阳遁' : '阴遁') + (res.juShu != null ? res.juShu + '局' : ''));
+  meta.push((res.isYangDun ? UI_COPY.divination['qm-yangdun'] : UI_COPY.divination['qm-yindun']) + (res.juShu != null ? res.juShu + '局' : ''));
   meta.push((QIMEN_METHOD_CN[res.method] || res.method || '转盘') + '法');
   meta.push(QIMEN_JU_CN[res.juMethod] || res.juMethod || '拆补');
   const ti = (res && typeof res === 'object' && res.timeInfo) || {};
   if (ti.solarTerm) meta.push(ti.solarTerm + (ti.epoch ? ti.epoch : ''));
-  if (res.zhiFu) meta.push('值符' + res.zhiFu);
-  if (res.zhiShi) meta.push('值使' + res.zhiShi);
-  if (Array.isArray(res.voidBranches) && res.voidBranches.length) meta.push('旬空 ' + res.voidBranches.join('、'));
-  if (res.horseStar) meta.push('驿马落' + (res.horseStar.name || res.horseStar.palace));
+  if (res.zhiFu) meta.push(UI_COPY.divination['qm-zhifu'] + res.zhiFu);
+  if (res.zhiShi) meta.push(UI_COPY.divination['qm-zhishi'] + res.zhiShi);
+  if (Array.isArray(res.voidBranches) && res.voidBranches.length) meta.push(UI_COPY.divination['dlr-xunkong'] + res.voidBranches.join('、'));
+  if (res.horseStar) meta.push(UI_COPY.divination['qm-yima'] + (res.horseStar.name || res.horseStar.palace));
   if (meta.length) items.push(React.createElement('div', { key: 'meta', className: 'qm-meta' }, meta.join(' · ')));
 
   // 定局说明（节气/符头/超神接气/置闰说明）
   const tiBits = [];
-  if (ti.juTerm && ti.juTerm !== ti.solarTerm) tiBits.push('定局用节：' + ti.juTerm);
-  if (ti.fuTou) tiBits.push('符头 ' + ti.fuTou + (ti.fuTouDate ? '（' + ti.fuTouDate + '）' : ''));
+  if (ti.juTerm && ti.juTerm !== ti.solarTerm) tiBits.push(UI_COPY.divination['qm-dingju-jie'] + ti.juTerm);
+  if (ti.fuTou) tiBits.push(UI_COPY.divination['qm-futou'] + ti.fuTou + (ti.fuTouDate ? '（' + ti.fuTouDate + '）' : ''));
   if (ti.chaoShenOrJieQi) tiBits.push(ti.chaoShenOrJieQi);
   if (ti.juMethodNote) tiBits.push(ti.juMethodNote);
   if (tiBits.length) items.push(React.createElement('div', { key: 'ju', className: 'qm-note' }, tiBits.join('；')));
@@ -585,16 +585,16 @@ function DivQimenView(res) {
       if (!g) return React.createElement('div', { key: n, className: 'qm-cell' }, '');
       const marks = [];
       const tp = g.tianPan || {};
-      if (tp.star && tp.star === res.zhiFu) marks.push(React.createElement('span', { key: 'zf', className: 'qmc-mark zhi' }, '值符'));
+      if (tp.star && tp.star === res.zhiFu) marks.push(React.createElement('span', { key: 'zf', className: 'qmc-mark zhi' }, UI_COPY.divination['qm-zhifu']));
       const rp = g.renPan || {};
-      if (rp.door && rp.door === res.zhiShi) marks.push(React.createElement('span', { key: 'zs', className: 'qmc-mark zhi' }, '值使'));
-      if (voidSet[g.gong]) marks.push(React.createElement('span', { key: 'v', className: 'qmc-mark void' }, '空亡'));
+      if (rp.door && rp.door === res.zhiShi) marks.push(React.createElement('span', { key: 'zs', className: 'qmc-mark zhi' }, UI_COPY.divination['qm-zhishi']));
+      if (voidSet[g.gong]) marks.push(React.createElement('span', { key: 'v', className: 'qmc-mark void' }, UI_COPY.divination['qm-kongwang']));
       if (horseGong != null && horseGong === g.gong) marks.push(React.createElement('span', { key: 'h', className: 'qmc-mark horse' }, '马星'));
       const dp = g.diPan || {};
       const sp = g.shenPan || {};
       const starLine = (tp.star || '') + (tp.stem || '')
         + (tp.companionStar ? '（随' + tp.companionStar + (tp.companionStem || '') + '）' : '');
-      const diLine = '地' + (dp.stem || '') + (rp.door ? ' · ' + rp.door : '');
+      const diLine = UI_COPY.divination['qm-di'] + (dp.stem || '') + (rp.door ? ' · ' + rp.door : '');
       return React.createElement('div', { key: n, className: 'qm-cell' },
         React.createElement('div', { className: 'qmc-head' }, (g.name || g.gong + '宫') + (g.direction ? ' · ' + g.direction : '') + (g.element ? ' · ' + g.element : '')),
         React.createElement('div', { className: 'qmc-main' }, starLine || '—'),
@@ -602,7 +602,7 @@ function DivQimenView(res) {
         React.createElement('div', { className: 'qmc-god' }, sp.god || ''),
         marks.length ? React.createElement('div', { className: 'qmc-marks' }, marks) : null);
     });
-    items.push(React.createElement('div', { key: 'grid-h', className: 'qm-sec' }, '九宫四盘（九星 · 八门 · 八神 · 天地盘干）'),
+    items.push(React.createElement('div', { key: 'grid-h', className: 'qm-sec' }, UI_COPY.divination['qm-jiugong-sipan']),
       React.createElement('div', { key: 'grid', className: 'qm-grid' }, cellEls),
       React.createElement('div', { key: 'grid-n', className: 'qm-note' }, '每格：宫名·方位·五行 / 天盘星干（随星） / 地盘干·门 / 八神；值符、值使、空亡、马星以角标标出。'),
       React.createElement(TCTermRow, { key: 'grid-tc', method: 'qimen', items: qmNounNames, chipClass: 'qm-tag' }));
@@ -612,7 +612,7 @@ function DivQimenView(res) {
   const tags = Array.isArray(res.patternTags) ? res.patternTags : [];
   const details = Array.isArray(res.patternDetails) ? res.patternDetails : [];
   if (tags.length) {
-    items.push(React.createElement('div', { key: 'pt-h', className: 'qm-sec' }, '格局（基础标签）'),
+    items.push(React.createElement('div', { key: 'pt-h', className: 'qm-sec' }, UI_COPY.divination['qm-geju-jichu']),
       React.createElement(TCTermRow, { key: 'pt', method: 'qimen', items: tags, chipClass: 'qm-tag' }),
       details.length ? React.createElement('ul', { key: 'pd', className: 'qm-list' },
         details.map(function (d, i) { return React.createElement('li', { key: i }, (d.tag || '') + '：' + (d.summary || '')); })) : null);
@@ -626,7 +626,7 @@ function DivQimenView(res) {
       return React.createElement('span', { key: i, className: 'qm-tag ' + clsTone },
         c.name + (Array.isArray(c.palaces) && c.palaces.length ? '（' + c.palaces.map(function (p) { return p + '宫'; }).join('、') + '）' : ''));
     });
-    items.push(React.createElement('div', { key: 'cp-h', className: 'qm-sec' }, '经典格局'),
+    items.push(React.createElement('div', { key: 'cp-h', className: 'qm-sec' }, UI_COPY.divination['qm-geju-jingdian']),
       React.createElement('div', { key: 'cp', className: 'qm-tags' }, clsChips),
       React.createElement('ul', { key: 'cp-l', className: 'qm-list' },
         cls.map(function (c, i) { return React.createElement('li', { key: i }, (c.name || '') + '：' + (c.summary || '')); })),
@@ -642,7 +642,7 @@ function DivQimenView(res) {
         React.createElement('span', { className: 'qm-tag ' + toneCls, style: { marginRight: 6 } }, c.name || ''),
         (c.summary || ''));
     });
-    items.push(React.createElement('div', { key: 'cb-h', className: 'qm-sec' }, '复合格局'),
+    items.push(React.createElement('div', { key: 'cb-h', className: 'qm-sec' }, UI_COPY.divination['qm-geju-fuhe']),
       React.createElement('ul', { key: 'cb', className: 'qm-list' }, comboEls));
   }
 
@@ -651,23 +651,23 @@ function DivQimenView(res) {
   const voidPalaces = Array.isArray(res.voidPalaces) ? res.voidPalaces : [];
   if (voidPalaces.length) {
     counter.push(React.createElement('li', { key: 'vp' },
-      '旬空：' + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
-      + '（旬空之位信息未实，须待出空/填实后再作主断，不直接判无成）'));
+      UI_COPY.divination['qm-xunkong-prefix'] + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
+      + UI_COPY.divination['qm-xunkong-note']));
   }
   const sc = (res && typeof res === 'object' && res.specialConditions) || {};
-  if (sc.description) counter.push(React.createElement('li', { key: 'sc' }, '特殊时辰：' + sc.description));
+  if (sc.description) counter.push(React.createElement('li', { key: 'sc' }, UI_COPY.divination['qm-teshu-shichen'] + sc.description));
   const risks = Array.isArray(res.palaceInsights) ? res.palaceInsights.filter(function (p) { return p.level === '风险' || p.level === '关注'; }) : [];
   if (risks.length) {
     counter.push(React.createElement('li', { key: 'ri' },
-      '风险宫位：' + risks.map(function (p) { return p.name + '（' + p.level + '）' + (p.summary || ''); }).join('；')));
+      UI_COPY.divination['qm-fengxian-gongwei'] + risks.map(function (p) { return p.name + '（' + p.level + '）' + (p.summary || ''); }).join('；')));
   }
   const badCls = cls.filter(function (c) { return c.type === 'bad'; });
   if (badCls.length) {
     counter.push(React.createElement('li', { key: 'bc' },
-      '凶性格局：' + badCls.map(function (c) { return c.name; }).join('、') + '（见上方经典格局，构成盘面限制）'));
+      UI_COPY.divination['qm-xiongxing-geju'] + badCls.map(function (c) { return c.name; }).join('、') + '（见上方经典格局，构成盘面限制）'));
   }
   if (counter.length) {
-    items.push(React.createElement('div', { key: 'ct-h', className: 'qm-sec' }, '反证与限制'),
+    items.push(React.createElement('div', { key: 'ct-h', className: 'qm-sec' }, UI_COPY.divination['qm-fanzheng-xianzhi']),
       React.createElement('ul', { key: 'ct', className: 'qm-list' }, counter),
       React.createElement('div', { key: 'ct-n', className: 'qm-note' }, '反证只提示盘面限制与反向条件，不把单项限制写成现实失败或灾祸。'));
   }
@@ -676,13 +676,13 @@ function DivQimenView(res) {
   const yq = (res && typeof res === 'object' && res.yingQi) || {};
   if (yq.rhythm || yq.description || yq.triggerConditions) {
     const yqBits = [];
-    if (yq.rhythm) yqBits.push('盘内节奏：' + yq.rhythm);
+    if (yq.rhythm) yqBits.push(UI_COPY.divination['qm-pan-nei-jiezou'] + yq.rhythm);
     if (yq.description) yqBits.push(yq.description);
     const tc = Array.isArray(yq.triggerConditions) ? yq.triggerConditions : [];
-    if (tc.length) yqBits.push('触发条件：' + tc.join('；'));
+    if (tc.length) yqBits.push(UI_COPY.divination['qm-chufa-tiaojian'] + tc.join('；'));
     const lm = Array.isArray(yq.limitations) ? yq.limitations : [];
-    if (lm.length) yqBits.push('限制：' + lm.join('；'));
-    items.push(React.createElement('div', { key: 'yq-h', className: 'qm-sec' }, '应期参考'),
+    if (lm.length) yqBits.push(UI_COPY.divination['dlr-xianzhi'] + lm.join('；'));
+    items.push(React.createElement('div', { key: 'yq-h', className: 'qm-sec' }, UI_COPY.divination['dlr-yingqi']),
       React.createElement('div', { key: 'yq', className: 'qm-pat' }, yqBits.join('\n')),
       React.createElement('div', { key: 'yq-n', className: 'qm-note' }, '应期只给相对节奏与触发条件（出空/填实/马星/冲合），不换算固定天数或具体日期。'));
   }
@@ -695,19 +695,19 @@ function DivQimenView(res) {
     const dirRows = [];
     goodDirs.forEach(function (d2, i) {
       dirRows.push(React.createElement('div', { key: 'g' + i, className: 'qm-dir-row' },
-        React.createElement('span', { className: 'qmd-tag good' }, '建议方位'),
+        React.createElement('span', { className: 'qmd-tag good' }, UI_COPY.divination['qm-jianyi-fangwei']),
         React.createElement('div', { className: 'qmd-body' },
           React.createElement('div', { className: 'qmd-t' }, (d2.direction || '') + (d2.name ? '（' + d2.name + '）' : '') + (d2.use ? ' · 宜' + d2.use : '')),
           React.createElement('div', { className: 'qmd-d' }, (Array.isArray(d2.reasons) ? d2.reasons.join('；') : '') || ''))));
     });
     avoidDirs.forEach(function (d2, i) {
       dirRows.push(React.createElement('div', { key: 'a' + i, className: 'qm-dir-row' },
-        React.createElement('span', { className: 'qmd-tag avoid' }, '避用方位'),
+        React.createElement('span', { className: 'qmd-tag avoid' }, UI_COPY.divination['qm-biyong-fangwei']),
         React.createElement('div', { className: 'qmd-body' },
           React.createElement('div', { className: 'qmd-t' }, (d2.direction || '') + (d2.name ? '（' + d2.name + '）' : '') + (d2.use ? ' · 宜' + d2.use : '')),
           React.createElement('div', { className: 'qmd-d' }, (Array.isArray(d2.reasons) ? d2.reasons.join('；') : '') || ''))));
     });
-    items.push(React.createElement('div', { key: 'dr-h', className: 'qm-sec' }, '方位参考'),
+    items.push(React.createElement('div', { key: 'dr-h', className: 'qm-sec' }, UI_COPY.divination['qm-fangwei-cankao']),
       React.createElement('div', { key: 'dr', className: 'qm-dir' }, dirRows),
       React.createElement('div', { key: 'dr-n', className: 'qm-note' }, '方位为盘面象义参考，采用前须核实现实路线、安全与条件，不构成行动保证。'));
   }
@@ -721,8 +721,8 @@ function DivSsgwView(res) {
   if (res.poem) items.push(React.createElement('div', { key: 'poem', style: { fontStyle: 'italic', color: 'var(--text-2)', marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.8 } }, String(res.poem)));
   const draw = res.draw || {};
   const extra = [];
-  if (res.number != null && draw.poolSize) extra.push('签池共 ' + draw.poolSize + ' 支');
-  if (draw.method) extra.push('抽签方式：' + String(draw.method));
+  if (res.number != null && draw.poolSize) extra.push(UI_COPY.divination['gylq-qianchi'] + draw.poolSize + ' 支');
+  if (draw.method) extra.push(UI_COPY.divination['gylq-chouqian-fangshi'] + String(draw.method));
   if (extra.length) items.push(React.createElement('div', { key: 'extra', style: { marginTop: 8, fontSize: 12, color: 'var(--text-3)' } }, extra.join(' · ')));
   return React.createElement('div', null, items);
 }
@@ -1314,7 +1314,7 @@ const HEX_TEXT = {
   },
   '地泽临': {
     number: 19,
-    short: '临',
+    short: UI_COPY.divination['dlr-lin'],
     guaCi: { original: '臨，元亨，利貞。至于八月有凶。', baihua: '临卦，元亨利贞，至八月有凶。阳长临物。' },
     xiangCi: { original: '澤上有地，臨。君子以教思無窮、容保民無疆。', baihua: '泽上有地、临，君子当教思无穷、容保民无疆。' },
     yaoCi: [
@@ -1986,7 +1986,7 @@ const SHIYING_CN = {
 
 /* S05：常用占断术语短释（10 条，词条卡/术语展示用） */
 const TERMS_CN = {
-  '旬空': '旬空（空亡）：日柱所值旬内无此支，该爻如落空——主该事暂不落实、虚位待填。趋势参考：旬空之事常需出空后才有眉目。',
+  UI_COPY.divination['jk-xunkong']: '旬空（空亡）：日柱所值旬内无此支，该爻如落空——主该事暂不落实、虚位待填。趋势参考：旬空之事常需出空后才有眉目。',
   '月破': '月破：爻支被当月所冲——主当月经受冲击、效力减损；月过之后渐复。',
   '日破': '日破 / 日冲：被当日所冲——当日多生变动、被催促；冲实或冲空另有别论。',
   '暗动': '暗动：静爻被日辰冲动而暗自发用——主暗流已动、事在悄悄变化。',
@@ -2025,7 +2025,7 @@ const LIUYAO_FOCUS_CN = {
 /* 卦理通则：六爻/梅花/小六壬通用规则提示（免费解读区正文之外的静态规则参考；世应为六爻专有概念）。 */
 const C3_GENERIC_RULES = {
   '动爻': '动爻是本卦转为之卦的关键爻位，提示当下最易生变、最需留意的环节；一爻动宜看变爻之意，多爻动则综观整体趋势。',
-  '世应': '世爻代表问事者自身，应爻代表所问之人或事之方；世应相生多顺、相克多阻，是判读双方态势与远近的基础坐标。',
+  UI_COPY.divination['ly-th-shiying']: '世爻代表问事者自身，应爻代表所问之人或事之方；世应相生多顺、相克多阻，是判读双方态势与远近的基础坐标。',
   '互卦': '互卦由本卦二至四爻、三至五爻重组而成，揭示事情发展过程中潜伏的中间阶段，补本卦与变卦未尽之处。',
   '本卦': '本卦呈现事情起始与整体基调，是判读的根基。',
   '变卦': '变卦呈现事情的可能走向与结果，由动爻推演而来，宜与本卦对照着看。'
@@ -2047,7 +2047,7 @@ const C4_XIAOLIUREN_SHENS = {
   '速喜': '速喜主喜信速至，事有进展、多有佳音，宜把握当下、乘势而动。',
   '赤口': '赤口主口舌是非，易生争执或误解，宜谨言慎行、避开冲突。',
   '小吉': '小吉主小有所成，事渐顺遂、可得其利，宜稳妥推进、积小为大。',
-  '空亡': '空亡主落空虚无，谋事易散、难得其实，宜暂收手、另择时机。'
+  UI_COPY.divination['qm-kongwang']: '空亡主落空虚无，谋事易散、难得其实，宜暂收手、另择时机。'
 };
 
 /* REQ-107：免费解读区折叠 —— 块级折叠（label 作点击头，默认收起；openDefault=true 可直显）。
@@ -2238,7 +2238,7 @@ function LiuyaoTermCard(res) {
   // S05 术语短释：按本课 yaosDetail 富字段（空亡/月破/日破/暗动/回头生克/化空/入墓/六合六冲/伏神）命中取用
   const hits = [];
   const hit = function (key, yes) { if (yes && hits.indexOf(key) === -1) hits.push(key); };
-  hit('旬空', any(function (y) { return Boolean(y.isVoid); }));
+  hit(UI_COPY.divination['jk-xunkong'], any(function (y) { return Boolean(y.isVoid); }));
   hit('月破', any(function (y) { return Boolean(y.isMonthBreak); }));
   hit('日破', any(function (y) { return Boolean(y.isDayBreak || y.isDayClash); }));
   hit('暗动', any(function (y) { return Boolean(y.isHiddenMove); }));
@@ -2276,7 +2276,7 @@ function LiuyaoFocusPanel({ res, focusMap, onDetail, onToggle }) {
   const hasHuaKong = Boolean(any(function (y) { return Boolean(y.isChanging) && Array.isArray(y.changeRelations) && y.changeRelations.indexOf('化空') !== -1; }));
   const items = [
     { key: 'moving_yao', label: '动爻', hit: hasMoving },
-    { key: 'shi_ying', label: '世应', hit: true },
+    { key: 'shi_ying', label: UI_COPY.divination['ly-th-shiying'], hit: true },
     { key: 'kong_wang', label: '空亡·月破·日破', hit: hasKong },
     { key: 'an_dong', label: '暗动', hit: hasAnDong },
     { key: 'hui_tou_sheng_ke', label: '回头生克', hit: hasHuiTou },
@@ -2390,7 +2390,7 @@ function LiuyaoFreeReading(res) {
   if (wAndR) {
     for (let i = 0; i < 6; i++) {
       const s = wrCellAt(wAndR, i);
-      if (s === '世' || s === '应') wrParts.push((s === '世' ? '世爻' : '应爻') + '在' + YAO_LABEL[i] + '爻（第' + (i + 1) + '爻）');
+      if (s === UI_COPY.divination['ly-shi'] || s === UI_COPY.divination['ly-ying']) wrParts.push((s === UI_COPY.divination['ly-shi'] ? '世爻' : '应爻') + '在' + YAO_LABEL[i] + '爻（第' + (i + 1) + '爻）');
     }
   }
   blocks.push({
@@ -2434,7 +2434,7 @@ function MeihuaFreeReading(res) {
   // C3 genericRules：梅花免费区通用提示改用原创通则（动爻/本卦/互卦/变卦；世应为六爻专有概念，梅花不取）
   const mv = res.movingYao || {};
   const c3Lines = [];
-  c3Lines.push('动爻：' + C3_GENERIC_RULES['动爻'] + (mv.position != null ? '（本卦第' + mv.position + '爻为动爻）' : ''));
+  c3Lines.push(UI_COPY.divination['ly-dong-yao'] + C3_GENERIC_RULES['动爻'] + (mv.position != null ? '（本卦第' + mv.position + '爻为动爻）' : ''));
   c3Lines.push('本卦：' + C3_GENERIC_RULES['本卦']);
   c3Lines.push('互卦：' + C3_GENERIC_RULES['互卦']);
   c3Lines.push('变卦：' + C3_GENERIC_RULES['变卦']);
@@ -2492,7 +2492,7 @@ function LiurenFreeReading(res) {
   const guaTi = Array.isArray(res.guaTi) ? res.guaTi : [];
   if (guaTi.length) {
     blocks.push({
-      label: '课体',
+      label: UI_COPY.divination['dlr-keti'],
       text: '本课课体：' + guaTi.join('、') + '。' + (res.transmissionDetail ? '\n' + res.transmissionDetail : ''),
       tip: '课体为经典取象的概括性名称，提示整课气质；具体吉凶仍须结合四课三传与所问综合体会。'
     });
@@ -2514,7 +2514,7 @@ function LiurenFreeReading(res) {
   const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
   if (ss.length) {
     blocks.push({
-      label: '神煞',
+      label: UI_COPY.divination['dlr-shensha'],
       text: ss.join('、') + '\n神煞只定位所在干支，须入课/入传或临干支才有象意；不凭单项神煞定吉凶。',
       tip: '神煞作辅助取象，须与课传结合方有象意。'
     });
@@ -2523,7 +2523,7 @@ function LiurenFreeReading(res) {
   const timing = Array.isArray(res.timingEvidence) ? res.timingEvidence : [];
   if (timing.length) {
     blocks.push({
-      label: '应期参考',
+      label: UI_COPY.divination['dlr-yingqi'],
       text: timing.join('\n') + '\n应期只作先后、快慢与触发条件的趋势提示，不硬报到具体日期。',
       tip: '以发用→三传→日月条件的先后节奏作参考，不承诺具体时间点。'
     });
@@ -2542,8 +2542,8 @@ function JinkoujueFreeReading(res) {
   const calc = (res && typeof res === 'object' && res.calculation) || {};
   const methodLine = (res.methodLabel || '') + (calc.diFenNote ? '：' + calc.diFenNote : '');
   const pos = (res && typeof res === 'object' && res.positions) || {};
-  const fourLine = '人元' + (pos.renYuan ? (pos.renYuan.stem || '') + (pos.renYuan.branch || '') : '')
-    + '、贵神' + (pos.guiShen ? (pos.guiShen.stem || '') + (pos.guiShen.branch || '') + '乘' + (pos.guiShen.god || '') : '')
+  const fourLine = UI_COPY.divination['jk-renyuan'] + (pos.renYuan ? (pos.renYuan.stem || '') + (pos.renYuan.branch || '') : '')
+    + '、贵神' + (pos.guiShen ? (pos.guiShen.stem || '') + (pos.guiShen.branch || '') + UI_COPY.divination['dlr-cheng'] + (pos.guiShen.god || '') : '')
     + '、将神' + (pos.jiangShen ? (pos.jiangShen.stem || '') + (pos.jiangShen.branch || '') : '')
     + '、地分' + (res.diFenBranch || '') + '。';
   blocks.push({
@@ -2556,8 +2556,8 @@ function JinkoujueFreeReading(res) {
   const yy = (res && typeof res === 'object' && res.yinYangUse) || {};
   if (yy.pattern) {
     blocks.push({
-      label: '阴阳发用',
-      text: '本课' + yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + '阳' + (yy.yinCount != null ? yy.yinCount : '') + '阴）：'
+      label: UI_COPY.divination['jk-yinyang-fayong'],
+      text: '本课' + yy.pattern + '（' + (yy.yangCount != null ? yy.yangCount : '') + UI_COPY.divination['ly-yang'] + (yy.yinCount != null ? yy.yinCount : '') + '阴）：'
         + (yy.rule || '') + '，取「' + (yy.usePosition || '') + '」为用'
         + (yy.isVoid ? '；发用旬空，须待出空/填实后再作主断' : '') + '。\n发用位为断事主轴：三阴一阳取唯一阴位、三阳一阴取唯一阳位、二阴二阳以旺相者取用、纯阴/纯阳按次第取用。',
       tip: '发用位是整课的断事落点，先认发用再谈吉凶趋势。'
@@ -2567,7 +2567,7 @@ function JinkoujueFreeReading(res) {
   const mv = Array.isArray(res.movements) ? res.movements : [];
   if (mv.length) {
     blocks.push({
-      label: '五动三动',
+      label: UI_COPY.divination['jk-wudong-sandong'],
       text: mv.map(function (m2) {
         return '· ' + (m2.category || '') + '「' + (m2.name || '') + '」：' + (m2.trigger || '') + '（' + (m2.source || '') + '）';
       }).join('\n')
@@ -2612,9 +2612,9 @@ function QimenFreeReading(res) {
   const scopeCn = QIMEN_SCOPE_CN[res.scope] || res.scope || '时家';
   const methodCn = QIMEN_METHOD_CN[res.method] || res.method || '转盘';
   const juCn = QIMEN_JU_CN[res.juMethod] || res.juMethod || '拆补';
-  const juLine = (res.isYangDun ? '阳遁' : '阴遁') + (res.juShu != null ? res.juShu + '局' : '');
+  const juLine = (res.isYangDun ? UI_COPY.divination['qm-yangdun'] : UI_COPY.divination['qm-yindun']) + (res.juShu != null ? res.juShu + '局' : '');
   const juBits = [scopeCn + '奇门', methodCn + '法', juCn + '定局', juLine,
-    res.zhiFu ? '值符' + res.zhiFu : '', res.zhiShi ? '值使' + res.zhiShi : '',
+    res.zhiFu ? UI_COPY.divination['qm-zhifu'] + res.zhiFu : '', res.zhiShi ? UI_COPY.divination['qm-zhishi'] + res.zhiShi : '',
     ti.solarTerm ? ti.solarTerm + (ti.epoch ? ti.epoch : '') : ''].filter(Boolean);
   blocks.push({
     label: '定局与值符值使',
@@ -2632,7 +2632,7 @@ function QimenFreeReading(res) {
     const patBits = [];
     if (tags.length) patBits.push('基础标签：' + tags.join('、') + '。');
     if (goodCls.length) patBits.push('吉性格局：' + goodCls.map(function (c) { return c.name; }).join('、') + '。');
-    if (badCls.length) patBits.push('凶性格局：' + badCls.map(function (c) { return c.name; }).join('、') + '。');
+    if (badCls.length) patBits.push(UI_COPY.divination['qm-xiongxing-geju'] + badCls.map(function (c) { return c.name; }).join('、') + '。');
     blocks.push({
       label: '格局主线',
       text: patBits.join('\n') + '\n格局为盘面组合提示：伏吟主迟滞反复、反吟主冲动反复、门迫主该宫受阻、入墓主事迟；吉凶混杂宫须分清主次，不单向取吉。',
@@ -2643,14 +2643,14 @@ function QimenFreeReading(res) {
   const counterBits = [];
   const voidPalaces = Array.isArray(res.voidPalaces) ? res.voidPalaces : [];
   if (voidPalaces.length) {
-    counterBits.push('旬空：' + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
+    counterBits.push(UI_COPY.divination['qm-xunkong-prefix'] + voidPalaces.map(function (v) { return (v.branch || '') + '·' + (v.name || ''); }).join('、')
       + '（待出空/填实后再作主断）。');
   }
   const sc = (res && typeof res === 'object' && res.specialConditions) || {};
-  if (sc.description) counterBits.push('特殊时辰：' + sc.description);
+  if (sc.description) counterBits.push(UI_COPY.divination['qm-teshu-shichen'] + sc.description);
   const risks = Array.isArray(res.palaceInsights) ? res.palaceInsights.filter(function (p) { return p.level === '风险' || p.level === '关注'; }) : [];
   if (risks.length) {
-    counterBits.push('风险宫位：' + risks.map(function (p) { return p.name + '（' + p.summary + '）'; }).join('；'));
+    counterBits.push(UI_COPY.divination['qm-fengxian-gongwei'] + risks.map(function (p) { return p.name + '（' + p.summary + '）'; }).join('；'));
   }
   if (counterBits.length) {
     blocks.push({
@@ -2664,7 +2664,7 @@ function QimenFreeReading(res) {
   if (yq.rhythm || yq.description || yq.triggerConditions) {
     const tc = Array.isArray(yq.triggerConditions) ? yq.triggerConditions : [];
     blocks.push({
-      label: '应期参考',
+      label: UI_COPY.divination['dlr-yingqi'],
       text: (yq.description || '') + '\n盘内节奏：' + (yq.rhythm || '—')
         + (tc.length ? '；触发条件：' + tc.join('；') : '')
         + '\n应期只按局盘层级给相对节奏与触发条件（出空/填实/马星/冲合），不换算固定天数或具体日期。',
@@ -2680,7 +2680,7 @@ function QimenFreeReading(res) {
     if (goodDirs.length) dirBits.push('建议方位：' + goodDirs.map(function (d2) { return d2.direction + (d2.use ? '（宜' + d2.use + '）' : ''); }).join('、') + '。');
     if (avoidDirs.length) dirBits.push('避用方位：' + avoidDirs.map(function (d2) { return d2.direction + (d2.use ? '（宜' + d2.use + '）' : ''); }).join('、') + '。');
     blocks.push({
-      label: '方位参考',
+      label: UI_COPY.divination['qm-fangwei-cankao'],
       text: dirBits.join('\n') + '\n方位为盘面象义参考，采用前须核实现实路线、安全与条件，不构成行动保证。',
       tip: '方位提示只作行动参考，不以方位断言成败。'
     });
@@ -2706,7 +2706,7 @@ const mhTrigramIdx = function (r3) {
 const SSGW_POOL_SIZE = 92;
 const signReplaySample = function (n) { return (n - 0.5) / SSGW_POOL_SIZE; };
 /* 小六壬六宫（与后端 XIAOLIUREN_PALACES 同序：大安/留连/速喜/赤口/小吉/空亡） */
-const XLR_PALACE_ORDER = ['大安', '留连', '速喜', '赤口', '小吉', '空亡'];
+const XLR_PALACE_ORDER = ['大安', '留连', '速喜', '赤口', '小吉', UI_COPY.divination['qm-kongwang']];
 /* 按传统「月→日→时」顺数落宫：宫位索引=(月-1+日-1+时-1) mod 6（shichen 序数 1=子…12=亥） */
 const xlrPalaceName = function (m, d, h) { return XLR_PALACE_ORDER[(((m - 1) + (d - 1) + (h - 1)) % 6 + 6) % 6] || ''; };
 
@@ -2932,8 +2932,8 @@ function SsgwResultScreen(props) {
   if (cleanName) cardKids.push(React.createElement('div', { key: 'nm', className: 'ssgw-res-name' }, cleanName));
   if (poem) cardKids.push(React.createElement('div', { key: 'poem', className: 'ssgw-res-poem' }, poem));
   const extras = [];
-  if (number != null && draw.poolSize) extras.push('签池共 ' + draw.poolSize + ' 支');
-  if (draw.method) extras.push('抽签方式：' + (draw.method === 'manual' ? '手动录入' : '自动摇签'));
+  if (number != null && draw.poolSize) extras.push(UI_COPY.divination['gylq-qianchi'] + draw.poolSize + ' 支');
+  if (draw.method) extras.push(UI_COPY.divination['gylq-chouqian-fangshi'] + (draw.method === 'manual' ? '手动录入' : '自动摇签'));
   if (extras.length) cardKids.push(React.createElement('div', { key: 'ex', className: 'ssgw-res-extra' }, extras.join(' · ')));
   if (res && res.text) cardKids.push(React.createElement('p', { key: 'tx', style: { marginTop: 8, color: '#6E4A24', lineHeight: 1.7, fontSize: 12.5 } }, String(res.text)));
   // 免费签意（后端确定性签解字段，静态零 LLM；字段缺失则整段不展示）
@@ -3067,9 +3067,9 @@ function LiuyaoCastStage(props) {
     const yang = (v === 7 || v === 9);
     const barCls = 'lc-bar ' + (mv ? (yang ? 'moving-yang' : 'moving-yin') : (yang ? 'yang' : 'yin'));
     const rCls = 'ly-cast-row' + (cur === i ? ' casting' : '') + (doneRows.indexOf(i) >= 0 ? ' reveal' : '') + (mv ? ' moving' : '');
-    const nameTxt = v === 6 ? '老阴' : v === 7 ? '少阳' : v === 8 ? '少阴' : v === 9 ? '老阳' : '';
+    const nameTxt = v === 6 ? UI_COPY.divination['ly-old-yin'] : v === 7 ? UI_COPY.divination['ly-shao-yang'] : v === 8 ? UI_COPY.divination['ly-shao-yin'] : v === 9 ? UI_COPY.divination['ly-old-yang'] : '';
     const kids = [
-      React.createElement('span', { key: 'p', className: 'lc-pos' }, YAO_LABEL[i] + '爻'),
+      React.createElement('span', { key: 'p', className: 'lc-pos' }, YAO_LABEL[i] + UI_COPY.divination['ly-yao']),
       React.createElement('span', { key: 'b', className: barCls }),
       React.createElement('span', { key: 'n', className: 'lc-name' }, nameTxt)
     ];
@@ -3137,9 +3137,9 @@ function MeihuaCastStage(props) {
   const downName = res.down || '';
   const dongTxt = res.dong != null ? '第 ' + res.dong + ' 爻动' : '';
   const partsName = [];
-  if (res.originalName) partsName.push('本卦 ' + res.originalName);
-  if (res.interName) partsName.push('互卦 ' + res.interName);
-  if (res.changedName && res.changedName !== res.originalName) partsName.push('变卦 ' + res.changedName);
+  if (res.originalName) partsName.push(UI_COPY.divination['ly-ben-gua'] + res.originalName);
+  if (res.interName) partsName.push(UI_COPY.divination['ly-hu-gua'] + res.interName);
+  if (res.changedName && res.changedName !== res.originalName) partsName.push(UI_COPY.divination['ly-bian-gua'] + res.changedName);
   const slotsRow = React.createElement('div', { className: 'mh-slots-row' },
     React.createElement('div', { className: 'mh-slot' }, '上卦', React.createElement('b', { className: upName ? '' : 'blank' }, upName || '待成')),
     React.createElement('div', { className: 'mh-slot' }, '下卦', React.createElement('b', { className: downName ? '' : 'blank' }, downName || '待成')),
@@ -3243,16 +3243,16 @@ function LiuyaoShakePanel(props) {
     const mv = (v === 6 || v === 9);
     const yang = (v === 7 || v === 9);
     const barCls = 'sh-bar ' + (mv ? (yang ? 'moving-yang' : 'moving-yin') : (yang ? 'yang' : 'yin'));
-    const nameTxt = v === 6 ? '老阴' : v === 7 ? '少阳' : v === 8 ? '少阴' : v === 9 ? '老阳' : '';
+    const nameTxt = v === 6 ? UI_COPY.divination['ly-old-yin'] : v === 7 ? UI_COPY.divination['ly-shao-yang'] : v === 8 ? UI_COPY.divination['ly-shao-yin'] : v === 9 ? UI_COPY.divination['ly-old-yang'] : '';
     const kids = [
-      React.createElement('span', { key: 'p', className: 'sh-pos' }, YAO_LABEL[i] + '爻'),
+      React.createElement('span', { key: 'p', className: 'sh-pos' }, YAO_LABEL[i] + UI_COPY.divination['ly-yao']),
       React.createElement('span', { key: 'b', className: barCls }),
       React.createElement('span', { key: 'n', className: 'sh-name' }, nameTxt)
     ];
     if (mv) kids.push(React.createElement('span', { key: 'm', className: 'sh-mv' }, '动'));
     return React.createElement('div', { key: i, className: 'sh-row reveal' + (mv ? ' moving' : '') }, kids);
   });
-  const nextLabel = done ? '' : '摇一次 · ' + YAO_LABEL[yaos.length] + '爻';
+  const nextLabel = done ? '' : '摇一次 · ' + YAO_LABEL[yaos.length] + UI_COPY.divination['ly-yao'];
   const actBtn = done
     ? React.createElement('button', { type: 'button', className: 'btn btn-primary', onClick: finish }, '成卦并查看结果')
     : React.createElement('button', { type: 'button', className: 'btn btn-primary', disabled: tossing, onClick: toss }, tossing ? '铜钱翻动中…' : nextLabel);
@@ -4026,10 +4026,10 @@ function DivinationPage({
     if (method === 'liuyao' || method === 'meihua') {
       const rowEls = yaoPick.map(function (r, i) {
         return React.createElement('div', { key: 'y' + i, className: 'yao-row' },
-          React.createElement('span', { className: 'yr-pos' }, YAO_LABEL[i] + '爻'),
+          React.createElement('span', { className: 'yr-pos' }, YAO_LABEL[i] + UI_COPY.divination['ly-yao']),
           React.createElement('div', { className: 'yr-btns' },
-            React.createElement('button', { type: 'button', className: 'yr-b yang' + (r.yang === true ? ' sel' : ''), onClick: function () { setYRow(i, true); } }, '阳'),
-            React.createElement('button', { type: 'button', className: 'yr-b yin' + (r.yang === false ? ' sel' : ''), onClick: function () { setYRow(i, false); } }, '阴')),
+            React.createElement('button', { type: 'button', className: 'yr-b yang' + (r.yang === true ? ' sel' : ''), onClick: function () { setYRow(i, true); } }, UI_COPY.divination['ly-yang']),
+            React.createElement('button', { type: 'button', className: 'yr-b yin' + (r.yang === false ? ' sel' : ''), onClick: function () { setYRow(i, false); } }, UI_COPY.divination['ly-yin'])),
           React.createElement('button', { type: 'button', className: 'yr-mv' + (r.mv ? ' sel' : ''), onClick: function () { toggleYmv(i); } },
             React.createElement('span', { className: 'mv-ring' }), '动'));
       });

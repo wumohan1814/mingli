@@ -1274,12 +1274,12 @@ function SettingsPage({
     d: '保持现状：进入占卜界面默认停在自动起卦 / 自动抽卡。'
   }, {
     v: 'manual',
-    t: '默认手动快速填写',
-    d: '进入后默认停在手动录入 / 手动选牌入口，直接填写真实结果。'
+    t: UI_COPY.home['mode-manual'],
+    d: UI_COPY.home['mode-manual-desc']
   }, {
     v: 'both',
-    t: '两方式都可用',
-    d: '自动与手动两入口并行展示、不强行预设（保留上次所选）。'
+    t: UI_COPY.home['mode-both'],
+    d: UI_COPY.home['mode-both-desc']
   }];
   const curDm = settings.default_mode === 'manual' || settings.default_mode === 'both' ? settings.default_mode : 'auto';
   // 开关行渲染（label.switch 复用既有 .switch/.slider 样式）
@@ -1300,8 +1300,8 @@ function SettingsPage({
   // 默认模式行（三选一单选行）
   const dmRow = React.createElement('div', { className: 'tc-set-row col' },
     React.createElement('div', { className: 'tc-set-text' },
-      React.createElement('span', { className: 'tc-set-name' }, '占卜界面默认模式'),
-      React.createElement('span', { className: 'tc-set-desc' }, '控制塔罗 / 雷诺曼 / 临时起卦等占卜界面的默认入口方式。')),
+      React.createElement('span', { className: 'tc-set-name' }, UI_COPY.home['set-div-mode']),
+      React.createElement('span', { className: 'tc-set-desc' }, UI_COPY.home['set-div-mode-desc'])),
     React.createElement('div', { className: 'tc-set-opts' }, dmOpts.map(function (o) {
       return React.createElement('button', {
         key: o.v,
@@ -1316,10 +1316,10 @@ function SettingsPage({
         React.createElement('span', { className: 'so-d' }, o.d)));
     })));
   const saveCls = saveState === 'failed' ? 'failed' : saveState === 'saving' ? 'saving' : 'ok';
-  const saveTxt = !loggedIn ? '未登录：以下为前端默认值，登录后调整将同步保存到账户。'
-    : saveState === 'saving' ? '保存中…'
-      : saveState === 'failed' ? '保存失败，已回退为最近一次保存值，请重试。'
-        : '已保存';
+  const saveTxt = !loggedIn ? UI_COPY.home['save-not-login']
+    : saveState === 'saving' ? UI_COPY.home['save-saving']
+      : saveState === 'failed' ? UI_COPY.home['save-fail']
+        : UI_COPY.home['save-done'];
   const goBack = function () {
     try {
       if (window.history.length > 1) {
@@ -1331,13 +1331,13 @@ function SettingsPage({
   };
   return React.createElement('div', { className: 'container' },
     React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 功能设置'),
-    React.createElement('div', { className: 'tc-set-sub' }, '功能设置 · 全部改动即时生效并自动保存（无需额外保存按钮）'),
+    React.createElement('div', { className: 'tc-set-sub' }, UI_COPY.home['settings-sub']),
     React.createElement('div', { className: 'card tc-set-card' },
-      switchRow('anim_enabled', '动画与抽卡模拟', '关闭后各占卜界面跳过动效直接出结果。', settings.anim_enabled),
+      switchRow('anim_enabled', UI_COPY.home['set-anim'], UI_COPY.home['set-anim-desc'], settings.anim_enabled),
       dmRow,
-      switchRow('banner_dropdown', 'Banner 模块下拉导航', '开启后顶部横幅正中显示「模块」下拉，直达各功能页；关闭则不展示。', settings.banner_dropdown),
-      switchRow('share_taichu_ui', '分享表单太初 UI', '开启后分享答题表单内显示太初 logo、登录注册与免责提示；关闭后仅表单。', settings.share_taichu_ui),
-      switchRow('bg_enabled', '背景图显示', '开启显示模块主题运营背景（含星点背景）；关闭后为纯色默认样式。', settings.bg_enabled),
+      switchRow('banner_dropdown', UI_COPY.home['set-banner'], UI_COPY.home['set-banner-desc'], settings.banner_dropdown),
+      switchRow('share_taichu_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_taichu_ui),
+      switchRow('bg_enabled', UI_COPY.home['set-bg'], UI_COPY.home['set-bg-desc'], settings.bg_enabled),
       switchRow('card_images', '牌面图片显示（塔罗 / 雷诺曼）', '关闭后为纯文字列表模式：仅显示抽到的卡名、正 / 逆位与含义段落。', settings.card_images),
       switchRow('agent_enabled', '太初先生 Agent', '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。', settings.agent_enabled)),
     React.createElement('div', { className: 'tc-set-status ' + saveCls },

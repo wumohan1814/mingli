@@ -360,7 +360,7 @@ function ModalBase(_ref) {
     style: { position: 'relative' }
   }, title, closable ? el('button', {
     className: 'modal-close-btn',
-    'aria-label': '关闭',
+    'aria-label': UI_COPY.components.close,
     onClick: onClose,
     style: {
       position: 'absolute', top: -4, right: -8, width: 28, height: 28,
@@ -446,14 +446,14 @@ function ensureSpriteKeyframes(s) {
 
 // REQ-039 ②③：星盘 scope → 中文名（仅展示用；未收录的 scope 原样显示）
 const ASTRO_SCOPE_CN = {
-  natal: '本命盘',
-  yearly: '年运',
-  monthly: '月运',
-  daily: '日运',
-  transit: '行运',
-  solar_return: '太阳返照',
-  secondary: '次限',
-  firdaria: '法达'
+  natal: UI_COPY.components['chart-natal'],
+  yearly: UI_COPY.components['chart-yearly'],
+  monthly: UI_COPY.components['chart-monthly'],
+  daily: UI_COPY.components['chart-daily'],
+  transit: UI_COPY.components['chart-transit'],
+  solar_return: UI_COPY.components['chart-solar-return'],
+  secondary: UI_COPY.components['chart-secondary'],
+  firdaria: UI_COPY.components['chart-firdaria']
 };
 function astroScopeLabel(scope) {
   return ASTRO_SCOPE_CN[scope] || scope;
@@ -503,7 +503,7 @@ function AstroSummaryChips({
               color: 'var(--text-3)',
               lineHeight: 1.8
             }
-          }, (grp === 'elements' ? '元素' : '模式') + '·' + k + '：' + item.list.join('、')));
+          }, (grp === 'elements' ? '元素' : UI_COPY.components.modalities) + '·' + k + '：' + item.list.join('、')));
         }
       });
     });
@@ -521,7 +521,7 @@ function AstroSummaryChips({
       fontSize: 13,
       color: 'var(--text-2)'
     }
-  }, '逆行：', retrograde.length ? retrograde.join('、') : '无', '\u3000|\u3000格局：', patterns.length ? patterns.join('、') : '无'));
+  }, UI_COPY.components['retro-label'], retrograde.length ? retrograde.join('、') : UI_COPY.components['retro-none'], '\u3000|\u3000格局：', patterns.length ? patterns.join('、') : UI_COPY.components['retro-none']));
 }
 // REQ-039 退回细化①：档案内直接渲染 astrology 记录 chart.natal 的完整本命盘。
 // 复用星座页的 astroNorm / AstroWheel / astroPointRow / AstroSummaryChips；判空不崩。
@@ -560,12 +560,12 @@ function AstroNatalPanel({
     style: {
       marginTop: 8
     }
-  }, '行星落座落宫'), natal.planets.map(astroPointRow)), natal.angles.length > 0 && el('div', null, el('div', {
+  }, UI_COPY.components['planet-positions']), natal.planets.map(astroPointRow)), natal.angles.length > 0 && el('div', null, el('div', {
     className: 'sub-title',
     style: {
       marginTop: 8
     }
-  }, '四轴（上升 / 天顶 / 下降 / 天底）'), natal.angles.map(astroPointRow)), el(AstroSummaryChips, {
+  }, UI_COPY.components['angles-title']), natal.angles.map(astroPointRow)), el(AstroSummaryChips, {
     s: natal.summary,
     wrapStyle: {
       marginTop: 10

@@ -65,7 +65,7 @@ function AgentPage({
       } catch (e) {
         if (!alive) return;
         if (e && e.status === 401) return; // 401 由 App 统一跳登录
-        setCaseErr((e && e.message) || '档案列表加载失败，请重试。');
+        setCaseErr((e && e.message) || UI_COPY.agent['case-list-fail']);
         setCaseList([]);
       }
     })();

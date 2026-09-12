@@ -674,13 +674,13 @@ function normTarotCard(c) {
   const src = c && c.card && typeof c.card === 'object' ? c.card : c;
   const name = (src && (src.name || src.cardName)) || '';
   const pos = (c && (c.position || c.pos)) || '';
-  // 逆位判定兼容三种来源：random 分支 item.isReversed、interactive/manual 分支布尔 item.reversed、以及 orientation==='逆位'
+  // 逆位判定兼容三种来源：random 分支 item.isReversed、interactive/manual 分支布尔 item.reversed、以及 orientation===UI_COPY.xishi['reversed']
   let reversed = false;
   if (c) {
     if (typeof c.isReversed === 'boolean') reversed = c.isReversed;
     else if (typeof c.reversed === 'boolean') reversed = c.reversed;
     else if (src && typeof src.reversed === 'boolean') reversed = src.reversed;
-    else if (c.orientation === '逆位' || (src && src.orientation === '逆位')) reversed = true;
+    else if (c.orientation === UI_COPY.xishi['reversed'] || (src && src.orientation === UI_COPY.xishi['reversed'])) reversed = true;
   }
   const strOf = function (o, key) {
     return (o && typeof o[key] === 'string' && o[key].trim()) ? o[key] : '';
@@ -1179,13 +1179,13 @@ function TarotPickBoard(props) {
         n < total ? ' · 轻点下方扇形牌背取下一张' : ' · 全部取毕，正在收扇…'),
       React.createElement('div', { className: 'tp-acts' },
         React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onBackMenu }, '← 返回重选牌阵'),
-        React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onRedo }, '重新洗牌'))),
+        React.createElement('button', { type: 'button', className: 'tp-act', onClick: props.onRedo }, UI_COPY.xishi['shuffle-again']))),
     React.createElement('div', {
       className: 'rd-box tp-table' + (isLeno ? ' leno-table' : ''),
       style: { aspectRatio: String(ratio), '--rd-cap-fs': capFs + 'px' }
     }, slotKids),
     React.createElement('div', { className: 'tp-fan' + (closing ? ' closing' : '') },
-      React.createElement('div', { className: 'tp-fan-cap' }, '牌背朝下 · 沿底部左右滑动浏览整副牌 · 依直觉轻点一张 · 选过即定不可反悔'),
+      React.createElement('div', { className: 'tp-fan-cap' }, UI_COPY.xishi['fan-hint']),
       React.createElement('div', { className: 'tp-fanrow', ref: rowRef },
         React.createElement('div', { className: 'tp-fanstrip', ref: stripRef }, fanBtns))));
 }
@@ -1343,13 +1343,13 @@ function TarotReadZoom({ cards, idx, onClose, onGo }) {
   };
   const title = React.createElement('div', { className: 'rd-ztitle' }, React.createElement('b', null, '第 ' + (card.index || (idx + 1)) + ' 位'), ' · ', card.position || '');
   const closeBtn = React.createElement('button', { type: 'button', className: 'rd-zclose', 'aria-label': '收起大图', onClick: function (e) { e.stopPropagation(); fireClose(); } }, '✕');
-  const sub = React.createElement('div', { className: 'rd-zsub' }, '约 2.5 秒后自动收起 · 可点「上一张 / 下一张」连看');
+  const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg' + (rev ? ' reversed' : ''), src: card.img, alt: card.name })
     : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || '#5B4B8A' } }, card.name);
-  const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '', React.createElement('span', { className: 'rd-zori ' + (rev ? 'rev' : 'up') }, rev ? '逆位' : '正位'));
+  const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '', React.createElement('span', { className: 'rd-zori ' + (rev ? 'rev' : 'up') }, rev ? UI_COPY.xishi['reversed'] : UI_COPY.xishi['up']));
   const bodyEl = bodyText ? React.createElement('div', { className: 'rd-zbody' }, bodyText) : null;
-  const kwEl = kwLine ? React.createElement('div', { className: 'rd-zkw' }, '关键词：', kwLine) : null;
+  const kwEl = kwLine ? React.createElement('div', { className: 'rd-zkw' }, UI_COPY.xishi.keywords, kwLine) : null;
   const boxKids = [
     React.createElement('div', { key: 'bar' + idx, className: 'rd-count' }),
     React.createElement('div', { key: 'top', className: 'rd-ztop' }, title, closeBtn),
@@ -1420,7 +1420,7 @@ function TarotPage({
       // REQ-129：取数先行（结果不变）→ 动画开（且图开）进入「洗牌→切牌→扇形自选」取牌段；关=直接 v2 布局出结果
       if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
     } catch (e) {
-      setErrored((e && e.message) || '塔罗抽牌失败，请重试。');
+      setErrored((e && e.message) || UI_COPY.xishi['pick-fail']);
     } finally {
       setLoading(false);
     }
@@ -1483,7 +1483,7 @@ function TarotPage({
       setZoomIdx(null);
       lastTarotPickStream = null;
     } catch (e) {
-      setErrored((e && e.message) || '塔罗手动选牌提交失败，请重试。');
+      setErrored((e && e.message) || UI_COPY.xishi['pick-submit-fail']);
     } finally {
       setLoading(false);
     }
@@ -1494,9 +1494,9 @@ function TarotPage({
     setInterpErr('');
     try {
       const res = await api('/tarot/readings' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
-      setInterp((res && res.data && res.data.interpretation) || '（暂无解读内容）');
+      setInterp((res && res.data && res.data.interpretation) || UI_COPY.xishi['no-content']);
     } catch (e) {
-      setInterpErr((e && e.message) || '综合解读失败，请重试。');
+      setInterpErr((e && e.message) || UI_COPY.xishi['interp-fail']);
     } finally {
       setInterpLoading(false);
     }
@@ -1538,12 +1538,12 @@ function TarotPage({
   };
   const drawData = (data && data.draw) || null;
   const cards = drawData && Array.isArray(drawData.cards) ? drawData.cards : [];
-  const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || '抽卡结果';
+  const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || UI_COPY.xishi['result-title'];
   // REQ-066⑥：牌面图片显示（塔罗/雷诺曼）—— 关 = 纯文字列表模式（隐藏牌面图/扇形）
   const cardImagesOn = TC_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-042 v2：draw 顶部承接所填占问问题文本（保留）
-  const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, UI_COPY.xishi.question, askQ) : null;
   // REQ-129 C：读牌段数据流 —— 优先消费取牌段 lastTarotPickStream（getTarotPickStream()）；
   // 动画关/手动录入等直出路径在缓存缺失或不匹配当前牌阵时，按当前成牌确定性重建（只读消费，不改抽牌结果/计费/数据流结构）
   let readStream = getTarotPickStream();
@@ -1566,9 +1566,9 @@ function TarotPage({
       React.createElement('div', { className: 'mi-head' },
         React.createElement('span', { className: 'mi-pos' }, n.pos || ('第' + (i + 1) + '张')),
         React.createElement('span', { className: 'mi-name' }, n.name),
-        React.createElement('span', { className: 'mi-orient' + (n.reversed ? ' rev' : ' up') }, n.reversed ? '逆位' : '正位')),
+        React.createElement('span', { className: 'mi-orient' + (n.reversed ? ' rev' : ' up') }, n.reversed ? UI_COPY.xishi['reversed'] : UI_COPY.xishi['up'])),
       meanText ? React.createElement('div', { className: 'mi-txt' }, meanText) : null,
-      kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
+      kwLine ? React.createElement('div', { className: 'mi-kw' }, UI_COPY.xishi.keywords, kwLine) : null);
   });
   // REQ-129：扇形抽满 N 张自动收扇 → 落定真实牌序数据流（读牌段经 getTarotPickStream() 消费，position 即 pos[i]）→ 进入结果段
   const handlePickAllRevealed = function () {
@@ -1584,7 +1584,7 @@ function TarotPage({
       React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
   } else if (errored && step === 'draw') {
     drawBody = React.createElement('div', { className: 'card failed-box' },
-      React.createElement('div', { className: 'section-title' }, '抽牌失败'),
+      React.createElement('div', { className: 'section-title' }, UI_COPY.xishi['draw-fail']),
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
@@ -2229,7 +2229,7 @@ function LenormandReadZoom({ cards, idx, onClose, onGo }) {
   };
   const title = React.createElement('div', { className: 'rd-ztitle' }, React.createElement('b', null, '第 ' + (card.index || (idx + 1)) + ' 位'), ' · ', card.position || '');
   const closeBtn = React.createElement('button', { type: 'button', className: 'rd-zclose', 'aria-label': '收起大图', onClick: function (e) { e.stopPropagation(); fireClose(); } }, '✕');
-  const sub = React.createElement('div', { className: 'rd-zsub' }, '约 2.5 秒后自动收起 · 可点「上一张 / 下一张」连看');
+  const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg', src: card.img, alt: card.name })
     : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || '#3E7C6B' } }, card.name);
@@ -2244,7 +2244,7 @@ function LenormandReadZoom({ cards, idx, onClose, onGo }) {
   bodyLines.forEach(function (t, k) {
     boxKids.push(React.createElement('div', { key: 'b' + k, className: 'rd-zbody' }, t));
   });
-  if (kwLine) boxKids.push(React.createElement('div', { key: 'kw', className: 'rd-zkw' }, '关键词：', kwLine));
+  if (kwLine) boxKids.push(React.createElement('div', { key: 'kw', className: 'rd-zkw' }, UI_COPY.xishi.keywords, kwLine));
   boxKids.push(React.createElement('div', { key: 'nav', className: 'rd-znav' },
     React.createElement('button', { type: 'button', className: 'rd-zbtn', disabled: idx <= 0, onClick: function (e) { go(e, idx - 1); } }, '‹ 上一张'),
     React.createElement('span', { className: 'rd-zcount' }, (idx + 1) + '/' + n),
@@ -2376,7 +2376,7 @@ function LenormandPage({
     setInterpErr('');
     try {
       const res = await api('/divinations' + '/' + data.id + '/interpret', { method: 'POST', body: '{}' });
-      setInterp((res && res.data && res.data.interpretation) || '（暂无解读内容）');
+      setInterp((res && res.data && res.data.interpretation) || UI_COPY.xishi['no-content']);
     } catch (e) {
       setInterpErr((e && e.message) || '深度解读失败，请重试。');
     } finally {
@@ -2421,7 +2421,7 @@ function LenormandPage({
   const cardImagesOn = TC_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-043 v2：draw 顶部承接所填占问问题文本
-  const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, '问题：', askQ) : null;
+  const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, UI_COPY.xishi.question, askQ) : null;
   // REQ-130②：读牌段数据流 —— 优先消费取牌段 lastLenormandPickStream（getLenormandPickStream()）；
   // 动画关/手动录入等直出路径在缓存缺失或不匹配当前牌阵时，按当前成牌确定性重建（只读消费，不改抽牌结果/计费/数据流结构）
   let readStream = getLenormandPickStream();
@@ -2450,7 +2450,7 @@ function LenormandPage({
         React.createElement('span', { className: 'mi-name' }, it.name)),
       it.theme ? React.createElement('div', { className: 'mi-theme' }, it.theme) : null,
       it.detail ? React.createElement('div', { className: 'mi-txt' }, it.detail) : null,
-      kwLine ? React.createElement('div', { className: 'mi-kw' }, '关键词：', kwLine) : null);
+      kwLine ? React.createElement('div', { className: 'mi-kw' }, UI_COPY.xishi.keywords, kwLine) : null);
   });
   let body = null;
   if (loading && step === 'draw') {
@@ -2460,7 +2460,7 @@ function LenormandPage({
       React.createElement('div', { className: 'skeleton sk-line', style: { width: '60%' } }));
   } else if (errored && step === 'draw') {
     body = React.createElement('div', { className: 'card failed-box' },
-      React.createElement('div', { className: 'section-title' }, '抽牌失败'),
+      React.createElement('div', { className: 'section-title' }, UI_COPY.xishi['draw-fail']),
       React.createElement('div', { className: 'error' }, errored),
       React.createElement('button', { className: 'btn btn-primary', onClick: redo }, UI_COPY.buttons.retry));
   } else if (data) {
@@ -3318,7 +3318,7 @@ function AstrologyPage({
         method: 'POST',
         body: '{}'
       });
-      setInterp(res && res.data && res.data.interpretation ? res.data.interpretation : '（暂无解读内容）');
+      setInterp(res && res.data && res.data.interpretation ? res.data.interpretation : UI_COPY.xishi['no-content']);
     } catch (e) {
       setInterpErr(e && e.message ? e.message : '本命深度解读失败，请重试。');
     } finally {
@@ -3629,7 +3629,7 @@ function AstrologyPage({
   }, el('button', {
     type: 'button',
     className: 'triple-arrow',
-    'aria-label': '上一张',
+    'aria-label': UI_COPY.xishi['prev-btn'],
     onClick: () => tripleGo(-1)
   }, '‹'), el('div', {
     className: 'triple-dots'
@@ -3646,7 +3646,7 @@ function AstrologyPage({
   }))), el('button', {
     type: 'button',
     className: 'triple-arrow',
-    'aria-label': '下一张',
+    'aria-label': UI_COPY.xishi['next-btn'],
     onClick: () => tripleGo(1)
   }, '›')));
   const planetCard = el('div', {

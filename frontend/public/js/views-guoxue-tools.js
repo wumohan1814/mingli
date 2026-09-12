@@ -13,38 +13,38 @@ function nineRunState(c) {
     return {
       view: false,
       go: false,
-      label: '未排盘',
+      label: UI_COPY.guoxueTools['status-not-paipan'],
       cls: 'none'
     };
   }
   if ((c && c.hasReport) || st === 'predict_done') return {
     view: true,
     go: true,
-    label: '九法已完成 · 已解读',
+    label: UI_COPY.guoxueTools['status-done'],
     cls: ''
   };
   if (st === 'predict_running') return {
     view: true,
     go: true,
-    label: '预测生成中…',
+    label: UI_COPY.guoxueTools['status-generating'],
     cls: ''
   };
   if (st === 'calibrated') return {
     view: true,
     go: true,
-    label: '已校准 · 待生成预测',
+    label: UI_COPY.guoxueTools['status-calibrated'],
     cls: ''
   };
   if (st === 'dqc_done') return {
     view: true,
     go: true,
-    label: '九法已跑（断前尘完成）',
+    label: UI_COPY.guoxueTools['status-duanqianchen'],
     cls: ''
   };
   if (st === 'dqc_running') return {
     view: false,
     go: true,
-    label: '九法推演中…',
+    label: UI_COPY.guoxueTools['status-running'],
     cls: 'none'
   };
   if (mc > 0) return {
@@ -56,7 +56,7 @@ function nineRunState(c) {
   return {
     view: false,
     go: true,
-    label: '未跑九法',
+    label: UI_COPY.guoxueTools['status-not-run'],
     cls: 'none'
   };
 }
@@ -82,7 +82,7 @@ function NinePickPage({
       // 预选档案（如 returnTo=nine 建档回跳）在列表中不存在时清空，避免悬空选中
       if (selId && !arr.some(c => String(c.caseId) === String(selId))) setSelId('');
     } catch (e) {
-      setErrored(e.message || '读取档案列表失败，请重试。');
+      setErrored(e.message || UI_COPY.guoxueTools['case-list-fail']);
     }
   };
   // 初次进入加载档案；从建档页回跳（caseId 变化，本页复用不重挂载）时重载并预选新档案
@@ -104,7 +104,7 @@ function NinePickPage({
         padding: '24px 12px',
         fontSize: 13
       }
-    }, '正在读取档案列表…');
+    }, UI_COPY.guoxueTools['case-loading']);
   } else if (errored && !(list && list.length)) {
     pickBody = el('div', {
       className: 'card failed-box',
@@ -113,7 +113,7 @@ function NinePickPage({
       }
     }, el('div', {
       className: 'section-title'
-    }, '档案加载失败'), el('div', {
+    }, UI_COPY.guoxueTools['case-load-fail']), el('div', {
       className: 'error'
     }, errored), el('div', {
       className: 'back-row',
@@ -165,7 +165,7 @@ function NinePickPage({
         width: 'auto'
       },
       onClick: () => onNavigate('cases')
-    }, '管理档案')));
+    }, UI_COPY.guoxueTools['manage-case'])));
   } else {
     // REQ-137：九法合一选档案改下拉（对齐生肖流年下拉样式：档案名/生日展示、选中即用）；
     // 九法状态短标并入选项文本，选中后操作区展示完整状态与可用动作。
@@ -178,7 +178,7 @@ function NinePickPage({
       }
     }, el('option', {
       value: ''
-    }, '请选择档案'), list.map(c => {
+    }, UI_COPY.guoxueTools['select-case-ph']), list.map(c => {
       const st = nineRunState(c);
       const nm = c.name || '档案 ' + c.caseId;
       const birth = c.birthYear ? '（' + c.birthYear + ' 年生）' : '';
@@ -196,7 +196,7 @@ function NinePickPage({
     }
   }, el('div', {
     className: 'section-title'
-  }, '开始九法合一'), selCase ? el('div', null, el('div', {
+  }, UI_COPY.guoxueTools['start-btn']), selCase ? el('div', null, el('div', {
     style: {
       fontSize: 12,
       color: 'var(--text-2)',
@@ -250,7 +250,7 @@ function NinePickPage({
     onClick: () => onNavigate('predict', {
       caseId: selId
     })
-  }, '查看 / 修改结果'))) : el('div', {
+  }, UI_COPY.guoxueTools['view-btn']))) : el('div', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
@@ -286,7 +286,7 @@ function NinePickPage({
       width: 'auto'
     },
     onClick: () => onNavigate('cases')
-  }, '管理档案')) : null;
+  }, UI_COPY.guoxueTools['manage-case'])) : null;
   return el('div', {
     className: 'container'
   }, el('div', {
@@ -294,7 +294,7 @@ function NinePickPage({
   }, el(Icon, {
     name: 'nine',
     size: 22
-  }), '九法合一 · 选择档案'), el('div', {
+  }), UI_COPY.guoxueTools.title), el('div', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
