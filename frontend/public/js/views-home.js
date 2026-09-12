@@ -390,7 +390,10 @@ function CreditInsufficientModal({
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
   // 充值入口暂时隐藏：中性提示，不引导充值
-  const body = need != null && have != null ? '本次推演约需 ¥' + (Number(need) / CREDIT_YUAN_RATE).toFixed(2) + '，当前余额 ¥' + (Number(have) / CREDIT_YUAN_RATE).toFixed(2) + '。' : UI_COPY.error.points_insufficient;
+  const body = need != null && have != null ? fmtTpl(UI_COPY.home['credit-need-have-tpl'], {
+    need: (Number(need) / CREDIT_YUAN_RATE).toFixed(2),
+    have: (Number(have) / CREDIT_YUAN_RATE).toFixed(2)
+  }) : UI_COPY.error.points_insufficient;
   // 已迁移至 ModalBase 通用基座（2026-09-10）
   return el(ModalBase, {
     title: UI_COPY.error.points_insufficient,
@@ -400,7 +403,7 @@ function CreditInsufficientModal({
       type: 'button',
       onClick: onClose,
       style: { marginTop: 8 }
-    }, '知道了')
+    }, UI_COPY.home['credit-know-btn'])
   }, body);
 }
 
@@ -408,15 +411,10 @@ function CreditInsufficientModal({
 // 交互：选两份不同档案（GET /cases）→ 关系类型单选（恋爱/朋友/家人/同事/其他）→ 可选自由关注点
 // → POST /api/pair/analyze（module 由入口带入）→ 展示 interpretation。
 // 缺数据档案由后端 400 detail 直接展示（提示先生成，不自动生成）；余额不足走既有 5002 → creditInsuffHandler。
-const PAIR_MODULE_META = {
-  guoxue: { title: '国学 · 九法配对', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
-  xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
-  mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
-  // REQ-100：八字配对 —— 入口在国学 HUB「九法配对 / 八字配对 / 档案起名」同排 3 键；
-  // module='bazi' 走同一 POST /api/pair/analyze
-  bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
-};
-const PAIR_RELATIONS = ['恋爱', '朋友', '家人', '同事', '其他'];
+// REQ-128 阶段5：meta 四套与关系类型表迁入 TC_COPY.ui.pair（文案总表统一管理）
+const PAIR_MODULE_META = UI_COPY.pair.meta;
+// relations 数组同时作按钮文案与提交值（与 views-zodiac PAIR_REL_ICONS 键一致），值不变仅改来源
+const PAIR_RELATIONS = UI_COPY.pair.relations;
 function PairModal({
   cfg,
   onClose
@@ -438,15 +436,15 @@ function PairModal({
   // 档案选项展示：档案名 + 出生年（MBTI 模块附加已测类型标签）
   const optLabel = c => {
     const id = c.caseId;
-    const nm = (c.name && String(c.name).trim()) || '档案 ' + id;
+    const nm = (c.name && String(c.name).trim()) || fmtTpl(UI_COPY.pair['case-fallback-tpl'], { id: id });
     const bits = [];
-    if (c.birthYear != null && c.birthYear !== '') bits.push(String(c.birthYear) + ' 年');
-    if (cfg && cfg.module === 'mbti' && c.mbti_type) bits.push('已测 ' + String(c.mbti_type));
+    if (c.birthYear != null && c.birthYear !== '') bits.push(fmtTpl(UI_COPY.pair['birth-year-tpl'], { year: c.birthYear }));
+    if (cfg && cfg.module === 'mbti' && c.mbti_type) bits.push(fmtTpl(UI_COPY.pair['mbti-tested-tpl'], { type: c.mbti_type }));
     return nm + (bits.length ? '（' + bits.join(' · ') + '）' : '');
   };
   const caseName = id => {
     const c = (caseList || []).find(x => String(x.caseId) === String(id));
-    return c ? ((c.name && String(c.name).trim()) || '档案 ' + c.caseId) : '';
+    return c ? ((c.name && String(c.name).trim()) || fmtTpl(UI_COPY.pair['case-fallback-tpl'], { id: c.caseId })) : '';
   };
   // 打开即拉档案列表（PairModal 每次打开都是全新挂载，无需清表单）
   const load = async () => {
@@ -464,7 +462,7 @@ function PairModal({
         onClose();
         return;
       }
-      setListErr(e && e.message ? e.message : '档案列表加载失败，请重试。');
+      setListErr(e && e.message ? e.message : UI_COPY.pair['list-fail']);
       setCaseList([]);
     }
   };
@@ -532,7 +530,7 @@ function PairModal({
       setRes({
         id: d && d.id != null ? d.id : null,
         relation: relation,
-        interpretation: (d && d.interpretation) || '（暂无解读内容）'
+        interpretation: (d && d.interpretation) || UI_COPY.pair['no-interpretation']
       });
     } catch (e) {
       // 余额不足 5002：api() 已自动弹既有 creditInsuffHandler 充值引导，此处同文案展示
@@ -546,12 +544,12 @@ function PairModal({
       const m = em.match(/（case\s*(\d+)）/);
       if (m) {
         const cid = m[1];
-        const nm = caseName(cid) || ('档案 ' + cid);
+        const nm = caseName(cid) || fmtTpl(UI_COPY.pair['case-fallback-tpl'], { id: cid });
         const head = em.indexOf('（case') >= 0 ? em.slice(0, em.indexOf('（case')) : em;
-        const reason = head.replace(/^该档案/, '').trim() || '数据未生成';
-        setErr('档案「' + nm + '」' + reason + '。\n生成指引：' + (meta.guideTxt || '在对应模块为该档案先生成所需数据'));
+        const reason = head.replace(/^该档案/, '').trim() || UI_COPY.pair['reason-default'];
+        setErr(fmtTpl(UI_COPY.pair['err-case'], { name: nm, reason: reason, guide: meta.guideTxt || UI_COPY.pair['guide-default'] }));
       } else {
-        setErr(em || '配对解析失败，请重试。');
+        setErr(em || UI_COPY.pair['submit-fail']);
       }
     } finally {
       setBusy(false);
@@ -563,7 +561,7 @@ function PairModal({
   const caseOptions = [el('option', {
     key: '__ph__',
     value: ''
-  }, '— 请选择档案 —')].concat(Array.isArray(caseList) ? caseList.map(c => el('option', {
+  }, UI_COPY.pair['ph-case'])].concat(Array.isArray(caseList) ? caseList.map(c => el('option', {
     key: String(c.caseId),
     value: String(c.caseId)
   }, optLabel(c))) : []);
@@ -585,44 +583,44 @@ function PairModal({
     }, '✕')
   );
   const content = [
-    el('div', { key: 'sub', className: 'pair-sub' }, '选择两份档案，基于' + meta.dataTxt + '，让 AI 解析两人的关系契合、相处模式与建议。'),
-    el('div', { key: 'pay', className: 'pair-pay' }, '配对解析为付费 LLM 解读：按实际用量扣余额（¥），解读成功后即时扣费（余额不足将自动提示）。'),
+    el('div', { key: 'sub', className: 'pair-sub' }, fmtTpl(UI_COPY.pair.sub, { data: meta.dataTxt })),
+    el('div', { key: 'pay', className: 'pair-pay' }, UI_COPY.pair.pay),
     err ? el('div', { key: 'err', className: 'pair-err' }, err) : null,
-    busy ? el('div', { key: 'busy', className: 'pair-busy' }, '配对解析生成中（LLM 撰写约需 10–40 秒），请勿重复提交…') : null,
+    busy ? el('div', { key: 'busy', className: 'pair-busy' }, UI_COPY.pair.busy) : null,
     res ? el('div', { key: 'res' },
-      el('div', { className: 'interp-title' }, '配对解析结果'),
-      el('div', { style: { fontSize: 12, color: 'var(--text-3)', margin: '8px 0 2px', lineHeight: 1.7 } }, '「' + caseName(aId) + ' × ' + caseName(bId) + '」 · ' + res.relation),
+      el('div', { className: 'interp-title' }, UI_COPY.pair['result-title']),
+      el('div', { style: { fontSize: 12, color: 'var(--text-3)', margin: '8px 0 2px', lineHeight: 1.7 } }, fmtTpl(UI_COPY.pair['result-sub'], { a: caseName(aId), b: caseName(bId), rel: res.relation })),
       el('div', { className: 'interp-body', style: { marginBottom: 12 } }, res.interpretation)
     ) : null,
     listLoading
-      ? el('div', { key: 'loading', className: 'pair-busy' }, '档案列表加载中…')
+      ? el('div', { key: 'loading', className: 'pair-busy' }, UI_COPY.pair['list-loading'])
       : listErr
         ? el('div', { key: 'listerr' },
             el('div', { className: 'pair-err' }, listErr),
             el('div', { className: 'pair-foot', style: { marginTop: 0 } },
-              el('button', { type: 'button', className: 'btn btn-outline', onClick: load }, '重试档案')
+              el('button', { type: 'button', className: 'btn btn-outline', onClick: load }, UI_COPY.pair['retry-list'])
             )
           )
         : listEmpty
-          ? el('div', { key: 'empty', className: 'pair-err' }, '暂无可用档案：' + meta.prepTxt + '。')
+          ? el('div', { key: 'empty', className: 'pair-err' }, fmtTpl(UI_COPY.pair['list-empty'], { prep: meta.prepTxt }))
           : el(React.Fragment, { key: 'form' },
               el('div', { className: 'pair-sec' },
                 el('div', { className: 'pair-sec-label' },
-                  el('span', { className: 'ps-n' }, 'A'), '档案一'
+                  el('span', { className: 'ps-n' }, 'A'), UI_COPY.pair['case-a']
                 ),
                 el('select', { className: 'pair-field', value: aId, onChange: pick('a') }, caseOptions)
               ),
               el('div', { className: 'pair-sec' },
                 el('div', { className: 'pair-sec-label' },
-                  el('span', { className: 'ps-n' }, 'B'), '档案二',
-                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, '（需与档案一不同）'),
-                  bId && aId ? el('span', { style: { fontWeight: 400, color: 'var(--skin-accent)', fontSize: 11.5 } }, '已选：' + caseName(bId)) : null
+                  el('span', { className: 'ps-n' }, 'B'), UI_COPY.pair['case-b'],
+                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, UI_COPY.pair['case-b-note']),
+                  bId && aId ? el('span', { style: { fontWeight: 400, color: 'var(--skin-accent)', fontSize: 11.5 } }, fmtTpl(UI_COPY.pair.picked, { name: caseName(bId) })) : null
                 ),
                 el('select', { className: 'pair-field', value: bId, onChange: pick('b') }, caseOptions)
               ),
               el('div', { className: 'pair-sec' },
                 el('div', { className: 'pair-sec-label' },
-                  el('span', { className: 'ps-n' }, '①'), '关系类型'
+                  el('span', { className: 'ps-n' }, '①'), UI_COPY.pair['rel-label']
                 ),
                 el('div', { className: 'pair-rel' },
                   PAIR_RELATIONS.map(r => el('button', {
@@ -636,20 +634,20 @@ function PairModal({
                   style: { marginTop: 8 },
                   value: relOther,
                   onChange: e => setRelOther(e.target.value),
-                  placeholder: '自定义关系类型（如：合伙人 / 师徒 / 暧昧）',
+                  placeholder: UI_COPY.pair['rel-other-ph'],
                   maxLength: 20
                 }) : null
               ),
               el('div', { className: 'pair-sec' },
                 el('div', { className: 'pair-sec-label' },
-                  el('span', { className: 'ps-n' }, '②'), '自由关注点',
-                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, '（选填）')
+                  el('span', { className: 'ps-n' }, '②'), UI_COPY.pair['focus-label'],
+                  el('span', { style: { fontWeight: 400, color: 'var(--text-3)', fontSize: 11.5 } }, UI_COPY.pair['focus-note'])
                 ),
                 el('textarea', {
                   className: 'pair-field',
                   value: question,
                   onChange: e => setQuestion(e.target.value),
-                  placeholder: '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…'
+                  placeholder: UI_COPY.pair['focus-ph']
                 })
               )
             )
@@ -664,7 +662,7 @@ function PairModal({
       className: 'btn btn-primary',
       disabled: busy || listLoading || listEmpty,
       onClick: submit
-    }, busy ? '配对解析中…' : ['开始配对解析', payBadge(payEnough)])
+    }, busy ? UI_COPY.pair.submitting : [UI_COPY.pair.submit, payBadge(payEnough)])
   ) : null;
 
   return el(ModalBase, {
@@ -728,7 +726,7 @@ function CreditTransactionsPage({
       setOffset(off + list.length);
       await loadBalance();
     } catch (e) {
-      if (!append) setErrored(e.message || '余额记录加载失败，请重试。');
+      if (!append) setErrored(e.message || UI_COPY.balance['txn-list-fail']);
     } finally {
       if (append) setLoadingMore(false);else setLoading(false);
     }
@@ -806,12 +804,12 @@ function CreditTransactionsPage({
       className: "card failed-box"
     }, /*#__PURE__*/React.createElement("h2", {
       className: "title"
-    }, "余额明细加载失败"), /*#__PURE__*/React.createElement("div", {
+    }, UI_COPY.balance['txn-page-fail-title']), /*#__PURE__*/React.createElement("div", {
       className: "error"
     }, errored), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-primary",
       onClick: () => load(0, false)
-    }, "重试"), /*#__PURE__*/React.createElement("button", {
+    }, UI_COPY.buttons.retry), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-outline",
       style: {
         marginTop: 8
@@ -819,7 +817,7 @@ function CreditTransactionsPage({
       onClick: () => onNavigate(caseId ? 'archive' : 'cases', {
         caseId
       })
-    }, "返回")));
+    }, UI_COPY.buttons.back)));
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "container"
@@ -830,7 +828,7 @@ function CreditTransactionsPage({
       fontSize: 12,
       color: 'var(--text-3)'
     }
-  }, "当前余额"), /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.balance['txn-current-balance']), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 30,
       fontWeight: 700,
@@ -843,15 +841,17 @@ function CreditTransactionsPage({
       color: 'var(--text-3)',
       marginTop: 4
     }
-  }, "换算：1 元 = ", rate, " 存储单位（余额 ¥ = 存储单位 ÷ 汇率）"))), /*#__PURE__*/React.createElement("div", {
+  }, fmtTpl(UI_COPY.balance['txn-rate-note-tpl'], {
+    rate: rate
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "section-title"
-  }, "余额明细"), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.balance['txn-page-title']), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
       color: 'var(--text-3)'
     }
-  }, "暂无消费记录") : /*#__PURE__*/React.createElement("div", {
+  }, UI_COPY.balance['txn-empty']) : /*#__PURE__*/React.createElement("div", {
     className: "txn-list"
   }, items.map((it, i) => {
     const delta = it.delta != null ? Number(it.delta) : null;
@@ -859,7 +859,7 @@ function CreditTransactionsPage({
     const cls = delta == null ? '' : income ? ' plus' : ' minus';
     const amt = delta == null ? '—' : (income ? '+' : '-') + '¥' + (Math.abs(delta) / rate).toFixed(2);
     const time = String(it.createdAt || it.time || '').replace('T', ' ').slice(0, 16);
-    const title = it.label || typeText(it.type) || '交易';
+    const title = it.label || typeText(it.type) || UI_COPY.balance['txn-type-fallback'];
     const caseName = it.case_name ? String(it.case_name) : null;
     return /*#__PURE__*/React.createElement("div", {
       className: "txn-item",
@@ -877,7 +877,7 @@ function CreditTransactionsPage({
       className: "txn-time"
     }, time), caseName ? /*#__PURE__*/React.createElement("div", {
       className: "txn-case"
-    }, "消耗档案：", caseName) : null), /*#__PURE__*/React.createElement("div", {
+    }, UI_COPY.balance['txn-case-consume'], caseName) : null), /*#__PURE__*/React.createElement("div", {
       className: "txn-right"
     }, /*#__PURE__*/React.createElement("div", {
       className: 'txn-delta' + cls
@@ -886,7 +886,7 @@ function CreditTransactionsPage({
     className: "btn btn-outline",
     disabled: loadingMore,
     onClick: () => load(offset, true)
-  }, loadingMore ? '加载中...' : '加载更多')), /*#__PURE__*/React.createElement("button", {
+  }, loadingMore ? UI_COPY.balance['txn-loading-more'] : UI_COPY.balance['txn-load-more'])), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     style: {
       marginTop: 12
@@ -894,7 +894,7 @@ function CreditTransactionsPage({
     onClick: () => onNavigate(caseId ? 'archive' : 'cases', {
       caseId
     })
-  }, "返回"));
+  }, UI_COPY.buttons.back));
 }
 
 
@@ -1272,8 +1272,8 @@ function SettingsPage({
   // 默认模式三选一（与后端 default_mode 契约一致）
   const dmOpts = [{
     v: 'auto',
-    t: '默认项目起卦 / 抽卡方式（默认）',
-    d: '保持现状：进入占卜界面默认停在自动起卦 / 自动抽卡。'
+    t: UI_COPY.home['mode-auto'],
+    d: UI_COPY.home['mode-auto-desc']
   }, {
     v: 'manual',
     t: UI_COPY.home['mode-manual'],
@@ -1332,7 +1332,7 @@ function SettingsPage({
     onNavigate('landing');
   };
   return React.createElement('div', { className: 'container' },
-    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' 功能设置'),
+    React.createElement('div', { className: 'hub-title' }, React.createElement(Icon, { name: 'spark', size: 22 }), ' ' + UI_COPY.home['settings-title']),
     React.createElement('div', { className: 'tc-set-sub' }, UI_COPY.home['settings-sub']),
     React.createElement('div', { className: 'card tc-set-card' },
       switchRow('anim_enabled', UI_COPY.home['set-anim'], UI_COPY.home['set-anim-desc'], settings.anim_enabled),
@@ -1340,8 +1340,8 @@ function SettingsPage({
       switchRow('banner_dropdown', UI_COPY.home['set-banner'], UI_COPY.home['set-banner-desc'], settings.banner_dropdown),
       switchRow('share_taichu_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_taichu_ui),
       switchRow('bg_enabled', UI_COPY.home['set-bg'], UI_COPY.home['set-bg-desc'], settings.bg_enabled),
-      switchRow('card_images', '牌面图片显示（塔罗 / 雷诺曼）', '关闭后为纯文字列表模式：仅显示抽到的卡名、正 / 逆位与含义段落。', settings.card_images),
-      switchRow('agent_enabled', '太初先生 Agent', '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。', settings.agent_enabled),
+      switchRow('card_images', UI_COPY.home['set-card-images'], UI_COPY.home['set-card-images-desc'], settings.card_images),
+      switchRow('agent_enabled', UI_COPY.home['set-agent'], UI_COPY.home['set-agent-desc'], settings.agent_enabled),
       React.createElement('div', { className: 'tc-set-row col' },
         React.createElement('div', { className: 'tc-set-text' },
           React.createElement('span', { className: 'tc-set-name' }, UI_COPY.home['set-skin']),
@@ -1353,8 +1353,8 @@ function SettingsPage({
     React.createElement('div', { className: 'tc-set-status ' + saveCls },
       React.createElement('span', { className: 'ss-dot' }),
       React.createElement('span', null, saveTxt)),
-    !loggedIn ? React.createElement('div', { className: 'tc-set-guest' }, '当前为未登录状态：设置仅按前端默认值展示，暂不可修改；登录后将从账户拉取并保存。') : null,
+    !loggedIn ? React.createElement('div', { className: 'tc-set-guest' }, UI_COPY.home['guest-note']) : null,
     React.createElement('div', { className: 'back-row' },
-      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: goBack }, '返回'),
+      React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: goBack }, UI_COPY.buttons.back),
       React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: function () { onNavigate('landing'); } }, UI_COPY.buttons.back_home)));
 }

@@ -50,7 +50,7 @@ function nineRunState(c) {
   if (mc > 0) return {
     view: false,
     go: true,
-    label: '九法进行中（' + mc + '/9）',
+    label: UI_COPY.guoxueTools['status-progress-prefix'] + mc + UI_COPY.guoxueTools['status-progress-suffix'],
     cls: 'none'
   };
   return {
@@ -93,7 +93,7 @@ function NinePickPage({
   }, [caseId]);
   const selCase = selId ? (list || []).find(c => String(c.caseId) === String(selId)) || null : null;
   const stSel = nineRunState(selCase);
-  const selNm = selCase ? (selCase.name || '档案 ' + selCase.caseId) : '';
+  const selNm = selCase ? (selCase.name || UI_COPY.guoxueTools['case-prefix'] + selCase.caseId) : '';
   // —— 档案选择卡片（复用 星座/MBTI 的 case-opt 可选卡样式：明显可选 + 选中态 ✓）——
   let pickBody;
   if (!list && !errored) {
@@ -146,7 +146,7 @@ function NinePickPage({
         lineHeight: 1.8,
         marginBottom: 10
       }
-    }, '暂无档案：请先建立一份出生档案并排盘（确定性计算、零 LLM），再回到这里发起九法合一；九法合一只针对所选档案，建档本身不启动九法流程。'), el('div', {
+    }, UI_COPY.guoxueTools['no-case']), el('div', {
       className: 'back-row',
       style: {
         justifyContent: 'center'
@@ -180,8 +180,8 @@ function NinePickPage({
       value: ''
     }, UI_COPY.guoxueTools['select-case-ph']), list.map(c => {
       const st = nineRunState(c);
-      const nm = c.name || '档案 ' + c.caseId;
-      const birth = c.birthYear ? '（' + c.birthYear + ' 年生）' : '';
+      const nm = c.name || UI_COPY.guoxueTools['case-prefix'] + c.caseId;
+      const birth = c.birthYear ? fmtTpl(UI_COPY.guoxueTools['birth-year-tpl'], { year: c.birthYear }) : '';
       return el('option', {
         key: c.caseId,
         value: String(c.caseId)
@@ -203,28 +203,28 @@ function NinePickPage({
       lineHeight: 1.7,
       marginBottom: 8
     }
-  }, '已选档案：', el('b', null, selNm), '（', stSel.label, '）'), stSel.view ? el('p', {
+  }, UI_COPY.guoxueTools['selected-label'], el('b', null, selNm), '（', stSel.label, '）'), stSel.view ? el('p', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
       lineHeight: 1.8,
       margin: '0 0 10px'
     }
-  }, '该档案已跑过九法：可点「查看 / 修改结果」进入结果查看（综合解读 + 校准记录/追问/重跑修改）；如校准或档案信息有更新，可再点「跑九法合一开始预测」重跑，沿用现有异步编排、幂等与断点续跑。') : stSel.go ? el('p', {
+  }, UI_COPY.guoxueTools['already-run']) : stSel.go ? el('p', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
       lineHeight: 1.8,
       margin: '0 0 10px'
     }
-  }, '命盘已备，九法待启。先生将以此盘为基，综九家之言，解您所问') : el('p', {
+  }, UI_COPY.guoxueTools['ready-text']) : el('p', {
     style: {
       fontSize: 12,
       color: 'var(--text-3)',
       lineHeight: 1.8,
       margin: '0 0 10px'
     }
-  }, '该档案尚未排盘（无盘面数据）：请先到「管理档案」对该档案执行排盘（确定性计算、零 LLM）后，再回来发起九法合一。'), el('div', {
+  }, UI_COPY.guoxueTools['not-paipan']), el('div', {
     style: {
       display: 'flex',
       gap: 10,
@@ -236,7 +236,7 @@ function NinePickPage({
       flex: '1 1 190px'
     },
     disabled: !stSel.go,
-    title: stSel.go ? '' : '该档案尚未排盘，请先执行排盘',
+    title: stSel.go ? '' : UI_COPY.guoxueTools['title-no-paipan'],
     onClick: () => onNavigate('waiting', {
       caseId: selId
     })
@@ -246,7 +246,7 @@ function NinePickPage({
       flex: '1 1 190px'
     },
     disabled: !stSel.view,
-    title: stSel.view ? '' : '该档案尚未跑过九法，请先点击「跑九法合一开始预测」',
+    title: stSel.view ? '' : UI_COPY.guoxueTools['title-not-run'],
     onClick: () => onNavigate('predict', {
       caseId: selId
     })
@@ -256,7 +256,7 @@ function NinePickPage({
       color: 'var(--text-3)',
       lineHeight: 1.7
     }
-  }, '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑九法）与「跑九法合一开始预测」（未跑 / 续跑）两个操作。'), el('div', {
+  }, UI_COPY.guoxueTools['select-first']), el('div', {
     style: {
       fontSize: 12,
       color: 'var(--cinnabar)',
@@ -264,7 +264,7 @@ function NinePickPage({
       marginTop: 8,
       lineHeight: 1.7
     }
-  }, '九法合一汇聚九术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议'));
+  }, UI_COPY.guoxueTools['cost-note']));
   const listActions = list && list.length > 0 ? el('div', {
     style: {
       display: 'flex',
@@ -301,26 +301,26 @@ function NinePickPage({
       lineHeight: 1.7,
       marginBottom: 6
     }
-  }, '档案是独立数据实体，九法合一只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已跑过的九法解读结果。'), el('div', {
+  }, UI_COPY.guoxueTools['case-note']), el('div', {
     className: 'step-hint'
   }, el('span', {
     className: 'sh' + (selCase ? '' : ' cur')
-  }, '① 选择档案'), el('span', {
+  }, UI_COPY.guoxueTools['step-1']), el('span', {
     className: 'sh-arr'
   }, '→'), el('span', {
     className: 'sh' + (selCase ? ' cur' : '')
-  }, '② 查看 / 修改结果 · 跑九法合一开始预测')), el('div', {
+  }, UI_COPY.guoxueTools['step-2'])), el('div', {
     className: 'card'
   }, el('div', {
     className: 'section-title'
-  }, '选择档案 · 九法合一'), el('div', {
+  }, UI_COPY.guoxueTools['pick-title']), el('div', {
     style: {
       fontSize: 11,
       color: 'var(--text-3)',
       lineHeight: 1.7,
       marginBottom: 4
     }
-  }, '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。'), pickBody, listActions, actionCard), el('div', {
+  }, UI_COPY.guoxueTools['pick-note']), pickBody, listActions, actionCard), el('div', {
     className: 'back-row'
   }, el('button', {
     className: 'btn btn-outline',
@@ -409,7 +409,7 @@ function NamerModal({
         onClose();
         return;
       }
-      setListErr(e && e.message ? e.message : '档案列表加载失败，请重试。');
+      setListErr(e && e.message ? e.message : UI_COPY.namer['list-fail']);
       setCaseList([]);
     }
   };
@@ -435,8 +435,8 @@ function NamerModal({
   }, '✕'));
   const curCase = (Array.isArray(caseList) ? caseList : []).find(c => String(c.caseId) === String(pickId)) || null;
   const curName = caseId != null && String(caseId).trim()
-    ? (caseName || '档案 ' + caseId)
-    : (curCase ? ((curCase.name && String(curCase.name).trim()) || '档案 ' + curCase.caseId) : '');
+    ? (caseName || fmtTpl(UI_COPY.namer['case-fallback-tpl'], { id: caseId }))
+    : (curCase ? ((curCase.name && String(curCase.name).trim()) || fmtTpl(UI_COPY.namer['case-fallback-tpl'], { id: curCase.caseId })) : '');
   const sub = curName ? el('div', {
     className: 'pair-sub'
   }, fmtTpl(C.caseLine, {
@@ -445,10 +445,10 @@ function NamerModal({
   const caseOptions = [el('option', {
     key: '__ph__',
     value: ''
-  }, '— 请选择档案 —')].concat((Array.isArray(caseList) ? caseList : []).map(c => el('option', {
+  }, UI_COPY.namer['case-ph'])].concat((Array.isArray(caseList) ? caseList : []).map(c => el('option', {
     key: String(c.caseId),
     value: String(c.caseId)
-  }, (c.name && String(c.name).trim()) || '档案 ' + c.caseId)));
+  }, (c.name && String(c.name).trim()) || fmtTpl(UI_COPY.namer['case-fallback-tpl'], { id: c.caseId }))));
   // REQ-100：未预选档案时弹窗内自选档案（默认已选中默认档案/最新一份），起名主流程不变
   const picker = caseId != null && String(caseId).trim() ? null : el('div', {
     className: 'pair-sec'
@@ -456,9 +456,9 @@ function NamerModal({
     className: 'pair-sec-label'
   }, el('span', {
     className: 'ps-n'
-  }, '档'), '档案'), caseList === null ? el('div', {
+  }, UI_COPY.namer['sec-case-ps']), UI_COPY.namer['sec-case-label']), caseList === null ? el('div', {
     className: 'pair-busy'
-  }, '档案列表加载中…') : listErr ? el('div', null, el('div', {
+  }, UI_COPY.namer['list-loading']) : listErr ? el('div', null, el('div', {
     className: 'pair-err'
   }, listErr), el('div', {
     className: 'pair-foot',
@@ -469,9 +469,9 @@ function NamerModal({
     type: 'button',
     className: 'btn btn-outline',
     onClick: loadCases
-  }, '重试档案'))) : Array.isArray(caseList) && caseList.length === 0 ? el('div', {
+  }, UI_COPY.namer['retry-cases']))) : Array.isArray(caseList) && caseList.length === 0 ? el('div', {
     className: 'pair-err'
-  }, '暂无可用档案：请先建立一份出生档案并完成排盘后再来起名。') : el('select', {
+  }, UI_COPY.namer['no-case']) : el('select', {
     className: 'pair-field',
     value: pickId,
     onChange: e => {
@@ -486,7 +486,7 @@ function NamerModal({
     className: 'pair-sec-label'
   }, el('span', {
     className: 'ps-n'
-  }, '姓'), '姓氏'), el('input', {
+  }, UI_COPY.namer['sec-surname-ps']), UI_COPY.namer['sec-surname-label']), el('input', {
     className: 'pair-field',
     value: surname,
     onChange: e => setSurname(e.target.value),
@@ -498,13 +498,13 @@ function NamerModal({
     className: 'pair-sec-label'
   }, el('span', {
     className: 'ps-n'
-  }, '向'), '起名方向', el('span', {
+  }, UI_COPY.namer['sec-direction-ps']), UI_COPY.namer['sec-direction-label'], el('span', {
     style: {
       fontWeight: 400,
       color: 'var(--text-3)',
       fontSize: 11.5
     }
-  }, '（选填）')), el('input', {
+  }, UI_COPY.namer['optional-note'])), el('input', {
     className: 'pair-field',
     value: direction,
     onChange: e => setDirection(e.target.value),
@@ -546,7 +546,7 @@ function NamerModal({
         color: 'var(--text-2)',
         fontWeight: 600
       }
-    }, '名「' + given + '」') : null, adjusted ? el('span', {
+    }, fmtTpl(UI_COPY.namer['given-tpl'], { name: given })) : null, adjusted ? el('span', {
       style: {
         fontSize: 11,
         fontWeight: 700,
