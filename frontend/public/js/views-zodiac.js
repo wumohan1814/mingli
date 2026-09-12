@@ -170,7 +170,7 @@ function zodiacRelCode(a, b) {
 }
 /* 说明正文：从 window.TC_PAIRS 查表（self=当前生肖单字名、other=对方；kind 映射 shengxiao_love /
    shengxiao_friend / shengxiao_boss）。查表失败 → 兜底说明（优雅降级，不报错） */
-const REL_TEXT_FALLBACK = '该组合的详细说明暂未收录，以上分值仅供趋势参考。';
+const REL_TEXT_FALLBACK = UI_COPY.zodiac['rel-text-fallback'];
 function zodiacRelText(kind, mine, other) {
   const key = kind === 'friend' ? 'shengxiao_friend' : kind === 'boss' ? 'shengxiao_boss' : 'shengxiao_love';
   const mod = window.TC_PAIRS && window.TC_PAIRS[key];
@@ -219,7 +219,7 @@ function ZodiacRelModal({
   const k = kind === 'friend' || kind === 'boss' ? kind : 'love';
   const meta = UI_COPY.zodiacRel;
   const relCn = meta.relName && meta.relName[k] ? meta.relName[k] : '';
-  const mTitle = meta.modalTitle && meta.modalTitle[k] ? meta.modalTitle[k] : '关系匹配 · 生肖';
+  const mTitle = meta.modalTitle && meta.modalTitle[k] ? meta.modalTitle[k] : UI_COPY.zodiac['rel-modal-title-fallback'];
   const me = mineIdx != null && ZODIAC[mineIdx] ? ZODIAC[mineIdx] : '';
   const hasMe = !!me;
   const list = hasMe ? zodiacRelPairs(mineIdx, k) : [];
@@ -283,7 +283,9 @@ function ZodiacRelModal({
         color: 'var(--text-3)',
         fontWeight: 400
       }
-    }, '分 ' + p.score)), el('div', {
+    }, fmtTpl(UI_COPY.zodiac['score-tpl'], {
+      score: p.score
+    }))), el('div', {
       style: {
         fontSize: 12,
         lineHeight: 1,
@@ -323,10 +325,10 @@ function ZodiacRelModal({
   const sub = el('div', {
     className: 'pair-sub'
   }, hasMe ? fmtTpl(meta.modalSub, {
-    case: caseName ? caseName : '当前档案',
+    case: caseName ? caseName : UI_COPY.zodiac['current-case-name'],
     me: me,
     rel: relCn
-  }) : '生肖未知：请先在生肖流年页选择一份档案。');
+  }) : UI_COPY.zodiac['no-zodiac-sub']);
   let inner = null;
   if (hasMe) {
     inner = el('div', null, el('div', {
@@ -336,7 +338,10 @@ function ZodiacRelModal({
       }
     }, el('span', {
       className: 'ps-n'
-    }, '我'), '生肖 · ', me, '（', ZD_BRANCH[mineIdx], '）对 其余 11 生肖匹配度，按地支基础分值从高到低'), el('div', {
+    }, UI_COPY.zodiac['rel-sec-me']), fmtTpl(UI_COPY.zodiac['rel-sec-tpl'], {
+      me: me,
+      branch: ZD_BRANCH[mineIdx]
+    })), el('div', {
       style: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))',
@@ -356,7 +361,7 @@ function ZodiacRelModal({
         color: 'var(--text-2)',
         lineHeight: 1.8
       }
-    }, '未取得当前档案生肖，无法生成匹配表。');
+    }, UI_COPY.zodiac['no-zodiac-data']);
   }
   const disclaimer = el('div', {
     className: 'pair-pay'
@@ -384,7 +389,7 @@ function ZodiacGuideModal({
 }) {
   const el = React.createElement;
   const k = kind === 'risk' ? 'risk' : 'element';
-  const title = k === 'risk' ? '风险关系 · 名词解释' : '五行关系 · 名词解释';
+  const title = k === 'risk' ? UI_COPY.zodiac['guide-title-risk'] : UI_COPY.zodiac['guide-title-element'];
   const body = k === 'risk' ? UI_COPY.zodiacGuide.riskRelation : UI_COPY.zodiacGuide.elementRelation;
   // 已迁移至 ModalBase 通用基座（2026-09-10）
   // pair-modal 自定义标题栏
@@ -463,7 +468,7 @@ function ZodiacPage({
       setData(res && res.data || res);
     } catch (e) {
       if (runRef.current !== myRun) return;
-      setErrored(e.message || '生肖流年加载失败，请重试。');
+      setErrored(e.message || UI_COPY.zodiac['load-fail-msg']);
     } finally {
       if (runRef.current === myRun) setLoading(false);
     }
@@ -544,7 +549,10 @@ function ZodiacPage({
   const conflicts = data && data.conflicts && data.conflicts.length ? data.conflicts : [{
     type: '平顺无冲'
   }];
-  const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? data.yearGanZhi + ' · ' + data.taiSui.star + '星君' : '';
+  const starName = data && data.yearGanZhi && data.taiSui && data.taiSui.star ? fmtTpl(UI_COPY.zodiac['star-tpl'], {
+    gz: data.yearGanZhi,
+    star: data.taiSui.star
+  }) : '';
   // BUG-003：五行关系中段字段（elementRelation / relation / zodiacWuxing 全量容错，空值兜底 '—'）
   const er = data && data.elementRelation && typeof data.elementRelation === 'object' ? data.elementRelation : null;
   const erCls = er && typeof er.classification === 'string' && er.classification ? er.classification : '';
@@ -576,9 +584,9 @@ function ZodiacPage({
       if (v) nobleLines.push(label + '（' + (who || '—') + '）' + (exp ? '：' + exp : ''));
     };
     if (nd) {
-      pushLine('六合贵人', nd['六合'], (nd['六合'] && nd['六合'].partner) || '', (nd['六合'] && nd['六合'].explain) || '');
-      pushLine('三合贵人', nd['三合'], (nd['三合'] && nd['三合'].partners) || '', (nd['三合'] && nd['三合'].explain) || '');
-      if (nd['天乙贵人']) nobleLines.push('天乙贵人（' + ((nd['天乙贵人'].partners) || '—') + '）' + ((nd['天乙贵人'].note) ? '：' + nd['天乙贵人'].note : ''));
+      pushLine(UI_COPY.zodiac['noble-liuhe'], nd['六合'], (nd['六合'] && nd['六合'].partner) || '', (nd['六合'] && nd['六合'].explain) || '');
+      pushLine(UI_COPY.zodiac['noble-sanhe'], nd['三合'], (nd['三合'] && nd['三合'].partners) || '', (nd['三合'] && nd['三合'].explain) || '');
+      if (nd['天乙贵人']) nobleLines.push(UI_COPY.zodiac['noble-tianyi'] + '（' + ((nd['天乙贵人'].partners) || '—') + '）' + ((nd['天乙贵人'].note) ? '：' + nd['天乙贵人'].note : ''));
     }
   }
   const selCase = (caseList || []).find(x => String(x.caseId) === String(selId)) || null;
@@ -640,28 +648,28 @@ function ZodiacPage({
   if (!token) {
     picker = React.createElement(React.Fragment, null, React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "生肖流年需登录后按档案出生年份自动推算，请先登录。"), React.createElement("div", {
+    }, UI_COPY.zodiac['login-hint']), React.createElement("div", {
       className: "zodiac-pick-actions"
     }, React.createElement("button", {
       className: "btn btn-primary",
       onClick: () => onNavigate('auth')
-    }, "去登录")));
+    }, UI_COPY.zodiac['go-login'])));
   } else if (caseList === null) {
     picker = React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "正在读取档案…");
+    }, UI_COPY.zodiac['loading-cases']);
   } else if (!caseList.length) {
     picker = React.createElement(React.Fragment, null, React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "还没有可用档案。建档后将按出生年份自动推算对应生肖与流年运程。"), React.createElement("div", {
+    }, UI_COPY.zodiac['no-case-hint']), React.createElement("div", {
       className: "zodiac-pick-actions"
     }, React.createElement("button", {
       className: "btn btn-primary",
       onClick: () => onNavigate('onboarding')
-    }, "去建档"), React.createElement("button", {
+    }, UI_COPY.zodiac['go-onboard']), React.createElement("button", {
       className: "btn btn-outline",
       onClick: () => onNavigate('cases')
-    }, "去档案管理")));
+    }, UI_COPY.zodiac['go-cases'])));
   } else {
     picker = React.createElement(React.Fragment, null, React.createElement("select", {
       className: "input",
@@ -672,14 +680,25 @@ function ZodiacPage({
       }
     }, React.createElement("option", {
       value: ""
-    }, "请选择档案"), caseList.map(c => React.createElement("option", {
+    }, UI_COPY.zodiac['select-case-ph']), caseList.map(c => React.createElement("option", {
       key: String(c.caseId),
       value: String(c.caseId)
-    }, (c.name || '未命名档案') + (c.birthYear ? '（' + c.birthYear + ' 年生）' : '')))), selCase ? React.createElement("p", {
+    }, (c.name || UI_COPY.zodiac['unnamed-case']) + (c.birthYear ? fmtTpl(UI_COPY.zodiac['birth-year-tpl'], {
+      year: c.birthYear
+    }) : '')))), selCase ? React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "档案「", selCase.name || '未命名档案', "」", selCase.birthYear ? ' · ' + selCase.birthYear + ' 年生' : '', " → 生肖 ", zName || '—', "；当前查看流年 ", year, " 年（生肖由出生年推算、固定不变；出结果后点标题两侧箭头切换年份）") : React.createElement("p", {
+    }, fmtTpl(UI_COPY.zodiac['picked-tpl'], {
+      name: selCase.name || UI_COPY.zodiac['unnamed-case'],
+      birth: selCase.birthYear ? fmtTpl(UI_COPY.zodiac['birth-suffix-tpl'], {
+        year: selCase.birthYear
+      }) : '',
+      zodiac: zName || '—',
+      year: year
+    })) : React.createElement("p", {
       className: "zodiac-pick-hint"
-    }, "选中档案后自动推演该生肖在 ", year, " 年的流年运程（生肖 = 出生年份推算；出结果后点标题两侧箭头切换 2027、2028 等其它流年年份）"));
+    }, fmtTpl(UI_COPY.zodiac['unpicked-hint-tpl'], {
+      year: year
+    })));
   }
   return React.createElement("div", {
     className: "container"
@@ -688,27 +707,27 @@ function ZodiacPage({
   }, React.createElement(Icon, {
     name: "spark",
     size: 22
-  }), " 生肖流年"), React.createElement("div", {
+  }), UI_COPY.zodiac['page-title']), React.createElement("div", {
     className: "card"
   }, React.createElement("div", {
     className: "label"
-  }, "选择档案"), picker), loading ? React.createElement("div", {
+  }, UI_COPY.zodiac['pick-label']), picker), loading ? React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',
       color: 'var(--text-2)',
       padding: '28px 16px'
     }
-  }, "推演中…") : errored ? React.createElement("div", {
+  }, UI_COPY.zodiac['running']) : errored ? React.createElement("div", {
     className: "card failed-box"
   }, React.createElement("div", {
     className: "section-title"
-  }, "生肖流年加载失败"), React.createElement("div", {
+  }, UI_COPY.zodiac['load-fail-title']), React.createElement("div", {
     className: "error"
   }, errored), React.createElement("button", {
     className: "btn btn-primary",
     onClick: load
-  }, "重试")) : data ? React.createElement(React.Fragment, null,
+  }, UI_COPY.zodiac['retry'])) : data ? React.createElement(React.Fragment, null,
   /* —— 生肖 medallion + 年运程标题（保留展示；标题左右各加 ← / → 箭头切换流年年份，生肖不变） —— */
   React.createElement("div", {
     className: "card",
@@ -728,7 +747,7 @@ function ZodiacPage({
   }, React.createElement("button", {
     type: "button",
     className: "zodiac-year-arrow",
-    "aria-label": "上一年",
+    "aria-label": UI_COPY.zodiac['aria-prev-year'],
     disabled: year <= MIN_YEAR,
     onClick: () => shiftYear(-1)
   }, "←"), React.createElement("div", {
@@ -736,10 +755,13 @@ function ZodiacPage({
       fontSize: 18,
       fontWeight: 700
     }
-  }, data.zodiac, " · ", year, " 年运程"), React.createElement("button", {
+  }, fmtTpl(UI_COPY.zodiac['year-title-tpl'], {
+    zodiac: data.zodiac,
+    year: year
+  })), React.createElement("button", {
     type: "button",
     className: "zodiac-year-arrow",
-    "aria-label": "下一年",
+    "aria-label": UI_COPY.zodiac['aria-next-year'],
     disabled: year >= MAX_YEAR,
     onClick: () => shiftYear(1)
   }, "→")), React.createElement("div", {
@@ -760,7 +782,7 @@ function ZodiacPage({
       fontSize: 13,
       color: 'var(--cinnabar)'
     }
-  }, "值年星君"), React.createElement("div", {
+  }, UI_COPY.zodiac['taisui-label']), React.createElement("div", {
     style: {
       fontSize: 17,
       fontWeight: 700
@@ -769,7 +791,7 @@ function ZodiacPage({
   /* —— 贵人色块（内容保留；C2 nobleDetail 有内容才追加解读，子字段缺失兜底 '—'） —— */
   React.createElement("div", {
     className: "noble-card"
-  }, "贵人", React.createElement("br", null), data.noble || data.tianyiNoble || '本年无', nobleLines.length ? React.createElement("div", {
+  }, UI_COPY.zodiac['noble-label'], React.createElement("br", null), data.noble || data.tianyiNoble || UI_COPY.zodiac['noble-none'], nobleLines.length ? React.createElement("div", {
     className: "noble-sub"
   }, nobleLines.map((ln, i) => React.createElement("div", {
     key: i,
@@ -785,13 +807,13 @@ function ZodiacPage({
     className: 'rel-card ' + elemCls
   }, React.createElement("div", {
     className: "wx-hd"
-  }, "五行关系", React.createElement("span", {
+  }, UI_COPY.zodiac['wx-title'], React.createElement("span", {
     className: "wx-cls"
   }, erCls || '—')), React.createElement("p", {
     className: "wx-s"
   }, relCopyTxt)), React.createElement("div", {
     className: "zrel-box"
-  }, erLine('流年干支', gzTxt || '—'), erLine('关系类型', erKind || '—'), erLine('关系判定', erCls || '—'), erLine('生克详情', relTxt || '—'), erLine('生肖地支本气', zxTxt || '—'), erLine('流年年干五行', yswxTxt || erYearWx || '—')), React.createElement("p", {
+  }, erLine(UI_COPY.zodiac['er-gz'], gzTxt || '—'), erLine(UI_COPY.zodiac['er-kind'], erKind || '—'), erLine(UI_COPY.zodiac['er-cls'], erCls || '—'), erLine(UI_COPY.zodiac['er-rel'], relTxt || '—'), erLine(UI_COPY.zodiac['er-zx'], zxTxt || '—'), erLine(UI_COPY.zodiac['er-yswx'], yswxTxt || erYearWx || '—')), React.createElement("p", {
     className: "zrel-guide"
   }, React.createElement("a", {
     href: "javascript:void(0)",
@@ -800,7 +822,7 @@ function ZodiacPage({
       e.preventDefault();
       setGuideOpen('element');
     }
-  }, "查看解析：五行关系"))),
+  }, UI_COPY.zodiac['guide-element']))),
   /* BUG-003：风险关系区块（非空数组才渲染，空则跳过不占位） */
   hasRisk ? React.createElement("div", {
     className: "card"
@@ -809,7 +831,7 @@ function ZodiacPage({
     style: {
       color: 'var(--cinnabar)'
     }
-  }, "风险关系"), React.createElement("div", {
+  }, UI_COPY.zodiac['risk-title']), React.createElement("div", {
     className: "signal-list"
   }, data.riskRelations.map((s, i) => React.createElement("div", {
     key: i,
@@ -823,7 +845,7 @@ function ZodiacPage({
       e.preventDefault();
       setGuideOpen('risk');
     }
-  }, "查看解析：风险关系")))) : null,
+  }, UI_COPY.zodiac['guide-risk'])))) : null,
   /* BUG-003：有利关系区块（同上，空则不渲染） */
   hasFav ? React.createElement("div", {
     className: "card"
@@ -832,7 +854,7 @@ function ZodiacPage({
     style: {
       color: 'var(--skin-accent)'
     }
-  }, "有利关系"), React.createElement("div", {
+  }, UI_COPY.zodiac['fav-title']), React.createElement("div", {
     className: "signal-list"
   }, data.favorableRelations.map((s, i) => React.createElement("div", {
     key: i,
@@ -842,7 +864,7 @@ function ZodiacPage({
     className: "card"
   }, React.createElement("div", {
     className: "section-title"
-  }, "行动建议"), React.createElement("div", {
+  }, UI_COPY.zodiac['action-title']), React.createElement("div", {
     className: "signal-list"
   }, (data.actionSignals || []).map((s, i) => React.createElement("div", {
     key: i,
@@ -858,18 +880,20 @@ function ZodiacPage({
       color: 'var(--text-2)',
       padding: '28px 16px'
     }
-  }, "选择档案后将自动推演（生肖 = 出生年份推算、固定不变 · 流年默认当前年份，可在上方切换 2027、2028 等）"), React.createElement("div", {
+  }, UI_COPY.zodiac['empty-hint']), React.createElement("div", {
     className: "back-row"
   }, React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('guoxue-hub')
-  }, "返回选项"), React.createElement("button", {
+  }, UI_COPY.buttons.back_options), React.createElement("button", {
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, UI_COPY.buttons.back_home)), relKind ? React.createElement(ZodiacRelModal, {
     kind: relKind,
     mineIdx: z,
-    caseName: selCase ? (selCase.name || '档案 ' + selCase.caseId) : '',
+    caseName: selCase ? (selCase.name || fmtTpl(UI_COPY.zodiac['case-id-tpl'], {
+      id: selCase.caseId
+    })) : '',
     onClose: () => setRelKind(null)
   }) : null, guideOpen ? React.createElement(ZodiacGuideModal, {
     kind: guideOpen,

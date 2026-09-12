@@ -487,6 +487,47 @@ window.TC_COPY = {
       modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），配趋势参考说明（静态轻内容、免费、不扣余额）。',
       modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「九法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
     },
+    // REQ-128 阶段5：配对解析弹窗（PairModal，views-home）—— guoxue/xishi/mbti/bazi 四模块共用；
+    // meta 四套按 module 取用；relations 数组同时作按钮文案与提交值（与 zodiac PAIR_REL_ICONS 键一致）
+    pair: {
+      meta: {
+        guoxue: { title: '国学 · 九法配对', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
+        xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
+        mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
+        bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
+      },
+      relations: ['恋爱', '朋友', '家人', '同事', '其他'],
+      sub: '选择两份档案，基于{data}，让 AI 解析两人的关系契合、相处模式与建议。',
+      pay: '配对解析为付费 LLM 解读：按实际用量扣余额（¥），解读成功后即时扣费（余额不足将自动提示）。',
+      busy: '配对解析生成中（LLM 撰写约需 10–40 秒），请勿重复提交…',
+      'result-title': '配对解析结果',
+      'result-sub': '「{a} × {b}」 · {rel}',
+      'list-loading': '档案列表加载中…',
+      'retry-list': '重试档案',
+      'list-empty': '暂无可用档案：{prep}。',
+      'ph-case': '— 请选择档案 —',
+      'case-a': '档案一',
+      'case-b': '档案二',
+      'case-b-note': '（需与档案一不同）',
+      'picked': '已选：{name}',
+      'rel-label': '关系类型',
+      'rel-other-ph': '自定义关系类型（如：合伙人 / 师徒 / 暧昧）',
+      'focus-label': '自由关注点',
+      'focus-note': '（选填）',
+      'focus-ph': '想重点看什么？如：性格是否合拍、容易在哪些方面起冲突、相处建议…',
+      submit: '开始配对解析',
+      submitting: '配对解析中…',
+      'submit-fail': '配对解析失败，请重试。',
+      'err-case': '档案「{name}」{reason}。\n生成指引：{guide}',
+      // REQ-128 阶段5：档案选项兜底与错误兜底（PairModal 整屏长文案收尾）
+      'case-fallback-tpl': '档案 {id}',
+      'birth-year-tpl': '{year} 年',
+      'mbti-tested-tpl': '已测 {type}',
+      'list-fail': '档案列表加载失败，请重试。',
+      'no-interpretation': '（暂无解读内容）',
+      'reason-default': '数据未生成',
+      'guide-default': '在对应模块为该档案先生成所需数据'
+    },
     // REQ-093UI：九法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
     // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）
     ninePickPair: {
@@ -516,14 +557,26 @@ window.TC_COPY = {
       adjustedTag: '已调整',
       emptyNames: '（本轮暂无名字返回，请稍后重试）',
       notes: '说明：所列为姓名学方向的 AI 参考建议，最终是否采用请结合家庭约定与个人喜好自行判断（文化娱乐向参考，不构成现实决策依据）。',
-      submitFail: '起名失败，请重试。'
+      submitFail: '起名失败，请重试。',
+      // REQ-128 阶段5：弹窗内档案选择 / 表单标签 / 结果名单（NamerModal 整屏长文案收尾）
+      'list-fail': '档案列表加载失败，请重试。',
+      'case-ph': '— 请选择档案 —',
+      'case-fallback-tpl': '档案 {id}',
+      'list-loading': '档案列表加载中…',
+      'retry-cases': '重试档案',
+      'no-case': '暂无可用档案：请先建立一份出生档案并完成排盘后再来起名。',
+      'sec-case-ps': '档',
+      'sec-case-label': '档案',
+      'sec-surname-ps': '姓',
+      'sec-surname-label': '姓氏',
+      'sec-direction-ps': '向',
+      'sec-direction-label': '起名方向',
+      'optional-note': '（选填）',
+      'given-tpl': '名「{name}」'
     },
     /* ===== REQ-128 阶段1 新增：框架层界面字（命名小写+连字符，模块与页面 id 对齐）===== */
-    agent: {
-      name: '太初先生',
-      talk: '对坐谈心',
-      'chat-title': '找太初先生聊聊'
-    },
+    /* agent 框架字（name/talk/chat-title）已并入下方「REQ-128 阶段4」agent 块（节105 阶段5：
+       原两处同名 agent 键重复定义，后者覆盖前者导致 name/talk/chat-title 运行时 undefined，合并修复） */
     auth: {
       'phone-label': '手机号',
       'phone-placeholder': '请输入 11 位手机号',
@@ -570,7 +623,18 @@ window.TC_COPY = {
       'pay-insufficient': '余额不足，补足后可继续',
       'pay-badge': '¥ 消耗',
       'pay-badge-ok': '¥ 消耗：按实际用量从余额扣除',
-      'pay-badge-warn': '¥ 消耗：余额不足'
+      'pay-badge-warn': '¥ 消耗：余额不足',
+      // REQ-128 阶段5：余额明细页（CreditTransactionsPage）整屏长文案
+      'txn-page-title': '余额明细',
+      'txn-current-balance': '当前余额',
+      'txn-rate-note-tpl': '换算：1 元 = {rate} 存储单位（余额 ¥ = 存储单位 ÷ 汇率）',
+      'txn-empty': '暂无消费记录',
+      'txn-type-fallback': '交易',
+      'txn-case-consume': '消耗档案：',
+      'txn-load-more': '加载更多',
+      'txn-loading-more': '加载中...',
+      'txn-list-fail': '余额记录加载失败，请重试。',
+      'txn-page-fail-title': '余额明细加载失败'
     },
     footer: {
       'legal-agreement': '用户协议',
@@ -977,8 +1041,17 @@ window.TC_COPY = {
       'select-first': '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑九法）与「跑九法合一开始预测」（未跑 / 续跑）两个操作。',
       'cost-note': '九法合一汇聚九术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
       'case-note': '档案是独立数据实体，九法合一只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已跑过的九法解读结果。',
+      // REQ-128 阶段5：选档案页剩余结构文案（按钮 title / 步骤条 / 卡题 / 勾选说明）
+      'title-no-paipan': '该档案尚未排盘，请先执行排盘',
+      'title-not-run': '该档案尚未跑过九法，请先点击「跑九法合一开始预测」',
+      'step-1': '① 选择档案',
+      'step-2': '② 查看 / 修改结果 · 跑九法合一开始预测',
+      'pick-title': '选择档案 · 九法合一',
+      'pick-note': '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。',
       // 工具名
-      'case-prefix': '档案 '
+      'case-prefix': '档案 ',
+      // REQ-128 阶段5：档案下拉选项出生年后缀（NinePickPage）
+      'birth-year-tpl': '（{year} 年生）'
     },
     // REQ-128 阶段4：首页（home）UI 文案
     home: {
@@ -1022,6 +1095,14 @@ window.TC_COPY = {
       'set-skin-desc': '选择不同主题的视觉风格，各模块进入时会自动切换对应皮肤。',
       'set-div-mode': '占卜界面默认模式',
       'set-div-mode-desc': '控制塔罗 / 雷诺曼 / 临时起卦等占卜界面的默认入口方式。',
+      // REQ-128 阶段5：设置页剩余开关与提示
+      'mode-auto': '默认项目起卦 / 抽卡方式（默认）',
+      'mode-auto-desc': '保持现状：进入占卜界面默认停在自动起卦 / 自动抽卡。',
+      'set-card-images': '牌面图片显示（塔罗 / 雷诺曼）',
+      'set-card-images-desc': '关闭后为纯文字列表模式：仅显示抽到的卡名、正 / 逆位与含义段落。',
+      'set-agent': '太初先生 Agent',
+      'set-agent-desc': '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。',
+      'guest-note': '当前为未登录状态：设置仅按前端默认值展示，暂不可修改；登录后将从账户拉取并保存。',
       'mode-manual': '默认手动快速填写',
       'mode-manual-desc': '进入后默认停在手动录入 / 手动选牌入口，直接填写真实结果。',
       'mode-both': '两方式都可用',
@@ -1030,10 +1111,17 @@ window.TC_COPY = {
       'save-not-login': '未登录：以下为前端默认值，登录后调整将同步保存到账户。',
       'save-saving': '保存中…',
       'save-fail': '保存失败，已回退为最近一次保存值，请重试。',
-      'save-done': '已保存'
+      'save-done': '已保存',
+      // REQ-128 阶段5：余额不足弹窗（CreditInsufficientModal）整屏长文案
+      'credit-need-have-tpl': '本次推演约需 ¥{need}，当前余额 ¥{have}。',
+      'credit-know-btn': '知道了'
     },
-    // REQ-128 阶段4：AI 对话（agent）UI 文案
+    // REQ-128 阶段4：AI 对话（agent）UI 文案（节105 阶段5：并入阶段1 框架字 name/talk/chat-title）
     agent: {
+      // 框架层界面字（原阶段1 块，因同名键重复被覆盖失效，合并至此）
+      name: '太初先生',
+      talk: '对坐谈心',
+      'chat-title': '找太初先生聊聊',
       // 开场白（随机 4 条）
       'greeting-1': '有缘相见，我是太初先生。人生如棋局，落子无悔；心事如浮云，看开即散。今日有什么想说的，不妨慢慢道来。',
       'greeting-2': '来，先坐，喝口茶。命里的事急不来，心里的事放得下。你我闲话几句，你想从哪儿说起？',
@@ -1065,7 +1153,61 @@ window.TC_COPY = {
       'boss': '上下级',
       // 标题
       'title': '生肖 · 星座',
-      'compat-title': '配对速查'
+      'compat-title': '配对速查',
+      // REQ-128 阶段5：生肖流年页（ZodiacPage）结构文案
+      'login-hint': '生肖流年需登录后按档案出生年份自动推算，请先登录。',
+      'go-login': '去登录',
+      'loading-cases': '正在读取档案…',
+      'no-case-hint': '还没有可用档案。建档后将按出生年份自动推算对应生肖与流年运程。',
+      'go-onboard': '去建档',
+      'go-cases': '去档案管理',
+      'pick-label': '选择档案',
+      'select-case-ph': '请选择档案',
+      'picked-tpl': '档案「{name}」{birth} → 生肖 {zodiac}；当前查看流年 {year} 年（生肖由出生年推算、固定不变；出结果后点标题两侧箭头切换年份）',
+      'unpicked-hint-tpl': '选中档案后自动推演该生肖在 {year} 年的流年运程（生肖 = 出生年份推算；出结果后点标题两侧箭头切换 2027、2028 等其它流年年份）',
+      'running': '推演中…',
+      'load-fail-title': '生肖流年加载失败',
+      'retry': '重试',
+      'aria-prev-year': '上一年',
+      'aria-next-year': '下一年',
+      'year-title-tpl': '{zodiac} · {year} 年运程',
+      'taisui-label': '值年星君',
+      'noble-label': '贵人',
+      'noble-none': '本年无',
+      'wx-title': '五行关系',
+      'er-gz': '流年干支',
+      'er-kind': '关系类型',
+      'er-cls': '关系判定',
+      'er-rel': '生克详情',
+      'er-zx': '生肖地支本气',
+      'er-yswx': '流年年干五行',
+      'guide-element': '查看解析：五行关系',
+      'risk-title': '风险关系',
+      'guide-risk': '查看解析：风险关系',
+      'fav-title': '有利关系',
+      'action-title': '行动建议',
+      'empty-hint': '选择档案后将自动推演（生肖 = 出生年份推算、固定不变 · 流年默认当前年份，可在上方切换 2027、2028 等）',
+      'guide-title-element': '五行关系 · 名词解释',
+      'guide-title-risk': '风险关系 · 名词解释',
+      // REQ-128 阶段5：整屏长文案收尾（页标题 / 三关系弹窗 / 结果卡贵人行 / 档案选项兜底）
+      'page-title': '生肖流年',
+      'rel-text-fallback': '该组合的详细说明暂未收录，以上分值仅供趋势参考。',
+      'rel-modal-title-fallback': '关系匹配 · 生肖',
+      'score-tpl': '分 {score}',
+      'rel-sec-me': '我',
+      'rel-sec-tpl': '生肖 · {me}（{branch}）对 其余 11 生肖匹配度，按地支基础分值从高到低',
+      'no-zodiac-sub': '生肖未知：请先在生肖流年页选择一份档案。',
+      'no-zodiac-data': '未取得当前档案生肖，无法生成匹配表。',
+      'current-case-name': '当前档案',
+      'load-fail-msg': '生肖流年加载失败，请重试。',
+      'star-tpl': '{gz} · {star}星君',
+      'noble-liuhe': '六合贵人',
+      'noble-sanhe': '三合贵人',
+      'noble-tianyi': '天乙贵人',
+      'unnamed-case': '未命名档案',
+      'birth-year-tpl': '（{year} 年生）',
+      'birth-suffix-tpl': ' · {year} 年生',
+      'case-id-tpl': '档案 {id}'
     },
     // REQ-128 阶段4：国学（guoxue）择吉等 UI 文案
     guoxue: {
