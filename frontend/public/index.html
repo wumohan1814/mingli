@@ -1286,7 +1286,9 @@ function App() {
       saveState: tcSave,
       loggedIn: !!token,
       onPatch: patchTcSettings,
-      onNavigate: navigate
+      onNavigate: navigate,
+      applySkin: applySkin,
+      skin: skin
     }),
     // REQ-076：太初先生 Agent 会话页（右上角图标入口进入）
     agent: /*#__PURE__*/React.createElement(AgentPage, {

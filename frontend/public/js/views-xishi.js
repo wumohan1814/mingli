@@ -191,7 +191,7 @@ const TAROT_SPREAD_GROUPS = [{
 }];
 /* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
 const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔' };
-const TAROT_SUIT_COLOR = { major: 'var(--tc-amethyst)', wands: 'var(--gold-500)', cups: 'var(--error)', swords: 'var(--tc-suit-swords)', pentacles: 'var(--tc-suit-pentacles)' };
+const TAROT_SUIT_COLOR = { major: 'var(--tc-suit-major)', wands: 'var(--tc-suit-wands)', cups: 'var(--tc-suit-cups)', swords: 'var(--tc-suit-swords)', pentacles: 'var(--tc-suit-pentacles)' };
 function tarotDeckMatch(name) {
   if (!name) return null;
   return TAROT_DECK.find(d => d.name === (TAROT_NAME_ALIAS[name] || name)) || TAROT_DECK.find(d => d.name === name) || null;
@@ -289,7 +289,7 @@ function TarotCard({
   }) : React.createElement('div', {
     className: 'tc-ph',
     style: {
-      background: TAROT_SUIT_COLOR[suit] || 'var(--tc-amethyst)'
+      background: TAROT_SUIT_COLOR[suit] || 'var(--tc-suit-major)'
     }
   }, name)), React.createElement('div', {
     className: 'tc-name'
@@ -663,7 +663,7 @@ function TarotPickBoard(props) {
     if (c) {
       const imgInner = c.img
         ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-        : React.createElement('div', { className: 'rd-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || 'var(--tc-amethyst)') } }, c.name);
+        : React.createElement('div', { className: 'rd-ph', style: { background: (TAROT_SUIT_COLOR[c.suit] || 'var(--tc-suit-major)') } }, c.name);
       const face = React.createElement('div', {
         className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : ''),
         ref: function (el) { slotEls.current[i] = el; }
@@ -833,7 +833,7 @@ function TarotReadBoard({ spread, cards, onOpen }) {
     const label = c.position || ('第' + (i + 1) + '位');
     const imgInner = c.img
       ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-      : React.createElement('div', { className: 'rd-ph', style: { background: TAROT_SUIT_COLOR[c.suit] || 'var(--tc-amethyst)' } }, c.name);
+      : React.createElement('div', { className: 'rd-ph', style: { background: TAROT_SUIT_COLOR[c.suit] || 'var(--tc-suit-major)' } }, c.name);
     const face = React.createElement('div', { className: 'rd-imgwrap suit-' + (c.suit || 'major') + (c.reversed ? ' reversed' : '') }, imgInner);
     const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
     const cellKids = [inner];
@@ -880,7 +880,7 @@ function TarotReadZoom({ cards, idx, onClose, onGo }) {
   const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg' + (rev ? ' reversed' : ''), src: card.img, alt: card.name })
-    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || 'var(--tc-amethyst)' } }, card.name);
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: TAROT_SUIT_COLOR[card.suit] || 'var(--tc-suit-major)' } }, card.name);
   const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '', React.createElement('span', { className: 'rd-zori ' + (rev ? 'rev' : 'up') }, rev ? UI_COPY.xishi['reversed'] : UI_COPY.xishi['up']));
   const bodyEl = bodyText ? React.createElement('div', { className: 'rd-zbody' }, bodyText) : null;
   const kwEl = kwLine ? React.createElement('div', { className: 'rd-zkw' }, UI_COPY.xishi.keywords, kwLine) : null;
@@ -1634,7 +1634,7 @@ function lnCardEl(item, idx) {
     item.pos ? React.createElement('div', { className: 'tc-pos' }, item.pos) : null,
     React.createElement('div', { className: 'tarot-card suit-' + item.suit },
       React.createElement('div', { className: 'tc-imgwrap' },
-        item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || 'var(--jade-500)' } }, item.name)),
+        item.img ? React.createElement('img', { className: 'tc-img', src: item.img, alt: item.name, loading: 'lazy', decoding: 'async' }) : React.createElement('div', { className: 'tc-ph', style: { background: LN_SUIT_COLOR[item.suit] || 'var(--tc-suit-clubs)' } }, item.name)),
       React.createElement('div', { className: 'tc-name' }, item.name),
       React.createElement('div', { className: 'tc-kw' }, item.keywords.join(' / '))));
 }
@@ -1718,7 +1718,7 @@ function LenormandReadBoard({ spread, cards, onOpen }) {
     const label = c.position || ('第' + (i + 1) + '位');
     const imgInner = c.img
       ? React.createElement('img', { src: c.img, alt: c.name, loading: 'lazy', decoding: 'async' })
-      : React.createElement('div', { className: 'rd-ph', style: { background: LN_SUIT_COLOR[c.suit] || 'var(--jade-500)' } }, c.name);
+      : React.createElement('div', { className: 'rd-ph', style: { background: LN_SUIT_COLOR[c.suit] || 'var(--tc-suit-clubs)' } }, c.name);
     const face = React.createElement('div', { className: 'rd-imgwrap' }, imgInner);
     const inner = rot ? React.createElement('div', { className: 'rd-rot' + (rot === 90 ? ' layer2' : ''), style: { transform: 'rotate(' + rot + 'deg)' } }, face) : face;
     const cellKids = [inner];
@@ -1766,7 +1766,7 @@ function LenormandReadZoom({ cards, idx, onClose, onGo }) {
   const sub = React.createElement('div', { className: 'rd-zsub' }, UI_COPY.xishi['zoom-hint']);
   const imgEl = card.img
     ? React.createElement('img', { key: 'im' + idx, className: 'rd-zimg', src: card.img, alt: card.name })
-    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || 'var(--jade-500)' } }, card.name);
+    : React.createElement('div', { className: 'rd-zimg rd-zph', style: { background: LN_SUIT_COLOR[card.suit] || 'var(--tc-suit-clubs)' } }, card.name);
   const nameRow = React.createElement('div', { className: 'rd-zname' }, card.name || '');
   const boxKids = [
     React.createElement('div', { key: 'bar' + idx, className: 'rd-count' }),

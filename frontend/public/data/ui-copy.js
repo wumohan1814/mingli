@@ -667,10 +667,13 @@ window.TC_COPY = {
     },
     skin: {
       guoxue: '国学',
-      'xishi-astrology': '西式占星',
+      xishi: '西式占卜',
       tarot: '塔罗',
+      astrology: '占星',
+      xingzuo: '星座',
+      mbti: '人格测试',
       aria: '文化皮肤切换',
-      'unavailable-toast': '西式占星 / 塔罗暂未开放'
+      'unavailable-toast': '该皮肤暂未开放'
     },
     // REQ-128 阶段3：占卜页（divination）UI 文案
     // 仅含界面标签与结构标题；卦辞/爻辞/签诗/古籍原文等正文类不入本表
@@ -1015,6 +1018,8 @@ window.TC_COPY = {
       'set-share-ui-desc': '开启后分享答题表单内显示太初 logo、登录注册与免责提示；关闭后仅表单。',
       'set-bg': '背景图显示',
       'set-bg-desc': '开启显示模块主题运营背景（含星点背景）；关闭后为纯色默认样式。',
+      'set-skin': '文化皮肤',
+      'set-skin-desc': '选择不同主题的视觉风格，各模块进入时会自动切换对应皮肤。',
       'set-div-mode': '占卜界面默认模式',
       'set-div-mode-desc': '控制塔罗 / 雷诺曼 / 临时起卦等占卜界面的默认入口方式。',
       'mode-manual': '默认手动快速填写',

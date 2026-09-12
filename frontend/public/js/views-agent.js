@@ -242,7 +242,7 @@ function AgentPage({
   } else if (messages.length === 0) {
     chatBody = el('div', { className: 'agent-chat' },
       el('div', { className: 'agent-empty' },
-        el('div', { className: 'agent-empty-icon' }, '☕'),
+        el('div', { className: 'agent-empty-icon' }, el(Icon, { name: 'chat', size: 28 })),
         el('div', null, '太初先生在这儿，有什么想聊聊的？'),
         el('div', null, caseList && caseList.length ? '已默认选中你的档案，可直接开口。' : '请先建立一份档案，再与太初先生对话。')));
   } else {

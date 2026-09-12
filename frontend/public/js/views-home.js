@@ -1264,7 +1264,9 @@ function SettingsPage({
   saveState,
   loggedIn,
   onPatch,
-  onNavigate
+  onNavigate,
+  applySkin,
+  skin
 }) {
   const disabled = !loggedIn;
   // 默认模式三选一（与后端 default_mode 契约一致）
@@ -1339,7 +1341,15 @@ function SettingsPage({
       switchRow('share_taichu_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_taichu_ui),
       switchRow('bg_enabled', UI_COPY.home['set-bg'], UI_COPY.home['set-bg-desc'], settings.bg_enabled),
       switchRow('card_images', '牌面图片显示（塔罗 / 雷诺曼）', '关闭后为纯文字列表模式：仅显示抽到的卡名、正 / 逆位与含义段落。', settings.card_images),
-      switchRow('agent_enabled', '太初先生 Agent', '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。', settings.agent_enabled)),
+      switchRow('agent_enabled', '太初先生 Agent', '预留开关：开启后由「太初先生」提供对话式陪伴与解读（入口随 Agent 功能上线）。', settings.agent_enabled),
+      React.createElement('div', { className: 'tc-set-row col' },
+        React.createElement('div', { className: 'tc-set-text' },
+          React.createElement('span', { className: 'tc-set-name' }, UI_COPY.home['set-skin']),
+          React.createElement('span', { className: 'tc-set-desc' }, UI_COPY.home['set-skin-desc'])),
+        React.createElement(SkinSwitcher, {
+          skin: skin || 'guoxue',
+          onPick: function (id) { applySkin(id); }
+        }))),
     React.createElement('div', { className: 'tc-set-status ' + saveCls },
       React.createElement('span', { className: 'ss-dot' }),
       React.createElement('span', null, saveTxt)),

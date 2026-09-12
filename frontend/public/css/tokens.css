@@ -130,7 +130,26 @@
       --tc-suit-diamonds:#3A6EA5; /* 雷诺曼·方块 */
       --tc-suit-spades:#2C2C2C; /* 雷诺曼·黑桃 */
       --tc-suit-clubs:#4A8A5E; /* 雷诺曼·梅花 */
-      --tc-chip-wands:#C96A3B; /* 浅底芯片·权杖（赤陶） */
+      /* 节136 D1：补齐塔罗三花色主色 + 全九色浅底芯片，三处合一 */
+      --tc-suit-major:#5B4B8A; /* 塔罗·大阿卡纳（紫晶） */
+      --tc-suit-wands:#B8893E; /* 塔罗·权杖（金） */
+      --tc-suit-cups:#C0392B; /* 塔罗·圣杯（朱砂） */
+      --tc-suit-major-bg:rgba(91,75,138,.12); /* 大阿卡纳浅底 */
+      --tc-suit-wands-bg:rgba(184,137,62,.14); /* 权杖浅底 */
+      --tc-suit-cups-bg:rgba(192,57,43,.10); /* 圣杯浅底 */
+      --tc-suit-swords-bg:rgba(44,62,110,.12); /* 宝剑浅底 */
+      --tc-suit-pentacles-bg:rgba(74,124,89,.12); /* 星币浅底 */
+      --tc-suit-hearts-bg:rgba(185,74,74,.10); /* 红心浅底 */
+      --tc-suit-diamonds-bg:rgba(58,110,165,.12); /* 方块浅底 */
+      --tc-suit-spades-bg:rgba(44,44,44,.08); /* 黑桃浅底 */
+      --tc-suit-clubs-bg:rgba(74,138,94,.12); /* 梅花浅底 */
+      /* 节136 D1：星盘相位色（与花色同套视觉语言） */
+      --tc-aspect-conjunction:#C9A24B; /* 合相（琥珀金） */
+      --tc-aspect-square:#C0392B; /* 刑相（朱砂） */
+      --tc-aspect-trine:#3E7C6B; /* 拱相（玉青） */
+      --tc-aspect-opposition:#3B7BB0; /* 冲相（蓝） */
+      --tc-aspect-sextile:#5B4B8A; /* 六合（紫晶） */
+      --tc-chip-wands:#C96A3B; /* [旧名，兼容] 浅底芯片·权杖（赤陶），新用 --tc-suit-wands-bg */
       /* 浅底标签（吉凶宜平等） */
       --tc-danger-bg:#FFF0F0; /* 朱砂浅底 */
       --tc-danger-bg-2:#FDECE8; /* 朱砂浅底（暖桃） */
