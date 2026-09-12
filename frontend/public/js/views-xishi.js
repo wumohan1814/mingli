@@ -1,4 +1,4 @@
-﻿// 西式占卜域视图（节110 阶段3）：西式 HUB XishiHubPage + 塔罗 TarotPage + 雷诺曼 LenormandPage + 星座 AstrologyPage
+// 西式占卜域视图（节110 阶段3）：西式 HUB XishiHubPage + 塔罗 TarotPage + 雷诺曼 LenormandPage + 星座 AstrologyPage
 // （星座页依赖共享盘面，本轮已随「共享盘面→components.js」就绪）
 // 加载于 components.js/views-guoxue.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
@@ -991,7 +991,7 @@ function TarotPage({
   const submitManual = async () => {
     if (loading || !spread) return;
     if (!picks || picks.length !== spread.pos.length) {
-      toast('请把「' + spread.name + '」的 ' + spread.pos.length + ' 个牌位逐张选完');
+      toast(fmtTpl(TC_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: spread.pos.length }));
       return;
     }
     track('manual_input', { method: 'tarot' });
@@ -1875,7 +1875,7 @@ function LenormandPage({
     if (loading || !spread) return;
     const need = spread.n || 1;
     if (!picks || picks.length !== need) {
-      toast('请把「' + spread.name + '」的 ' + need + ' 个牌位逐张选完');
+      toast(fmtTpl(TC_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: need }));
       return;
     }
     const askTrim = (question || '').trim();
@@ -3030,7 +3030,7 @@ function AstrologyPage({
     },
     onClick: () => {
       if (t[0] === 'natal') setTab('natal');
-      else toast('「' + t[1] + '」敬请期待，当前仅支持本命盘');
+      else toast(fmtTpl(TC_COPY.ui.toast['xishi-tab-coming-soon-birth-only'], { name: t[1] }));
     }
   }, t[1])));
 

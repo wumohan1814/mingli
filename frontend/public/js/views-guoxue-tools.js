@@ -355,7 +355,7 @@ function NamerModal({
   const submit = async () => {
     if (busy) return;
     if (!pickId) {
-      toast('请先选择档案');
+      toast(TC_COPY.ui.toast['tools-case-required']);
       return;
     }
     const sn = String(surname || '').trim();
