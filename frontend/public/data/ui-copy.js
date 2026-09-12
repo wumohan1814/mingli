@@ -1355,6 +1355,5 @@ window.TC_COPY = {
       'xishi-tab-coming-soon-birth-only': '「{name}」敬请期待，当前仅支持本命盘',
       'zodiac-birth-year-missing': '该档案缺少有效的出生年份，请先补全档案信息',
     }
-    }
   }
 };
