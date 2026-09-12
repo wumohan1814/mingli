@@ -1,4 +1,4 @@
-﻿// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
+// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
 // 加载于 views-zodiac.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 // ===== 完整盘面组件（直接消费 archive 的 data.chart.data，零 LLM） =====
@@ -1529,10 +1529,10 @@ function CasesPage({
         phone: data.phone != null ? data.phone : (phone || null),
         email: data.email != null ? data.email : (email || null)
       } : x));
-      toast('修改成功');
+      toast(TC_COPY.ui.toast['case-edit-ok']);
       setEditTarget(null);
     } catch (e) {
-      toast(e.message || '修改失败，请重试。');
+      toast(e.message || TC_COPY.ui.toast['case-edit-fail']);
     } finally {
       setEditBusy(false);
     }
@@ -1551,7 +1551,7 @@ function CasesPage({
     if (!renameTarget) return;
     const name = String(renameValue || '').trim();
     if (!name) {
-      toast('名字不能为空');
+      toast(TC_COPY.ui.toast['case-name-required']);
       return;
     }
     setRenameBusy(true);
@@ -1568,10 +1568,10 @@ function CasesPage({
         ...x,
         name: savedName
       } : x));
-      toast('命名成功');
+      toast(TC_COPY.ui.toast['case-rename-ok']);
       setRenameTarget(null);
     } catch (e) {
-      toast(e.message || '命名失败，请重试。');
+      toast(e.message || TC_COPY.ui.toast['case-rename-fail']);
     } finally {
       setRenameBusy(false);
     }
@@ -1599,7 +1599,7 @@ function CasesPage({
         }
         return next;
       });
-      toast(wasDefault && caseList.length > 1 ? '档案已删除，最新档案已设为默认' : '档案已删除');
+      toast(wasDefault && caseList.length > 1 ? TC_COPY.ui.toast['case-deleted-with-default'] : TC_COPY.ui.toast['case-deleted']);
       // REQ-092：删光全部档案（当前列表只剩被删这一条）→ 重校验触发强制建档门禁：
       // 0 档 → 立即强制进入新建档案（与「新注册/无档案存量账号」同一口径）
       if (caseList.length === 1) {
@@ -1616,7 +1616,7 @@ function CasesPage({
   const setCaseDefault = async c => {
     if (!c || c.caseId == null) return;
     if (c.isDefault) {
-      toast('已是默认档案');
+      toast(TC_COPY.ui.toast['case-already-default']);
       return;
     }
     try {
@@ -1628,10 +1628,10 @@ function CasesPage({
       });
       // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
       if (res && res.code != null && res.code !== 0) throw new Error(res.message || '设置失败');
-      toast('已设为默认档案');
+      toast(TC_COPY.ui.toast['case-set-default-ok']);
       load();
     } catch (e) {
-      toast(e.message || '设置默认档案失败，请重试。');
+      toast(e.message || TC_COPY.ui.toast['case-set-default-fail']);
     }
   };
   if (loading) {
@@ -2962,7 +2962,7 @@ function RevisePage({
             const jd = job.data || job;
             if (jd.status === 'succeeded') break;
             if (jd.status === 'failed') {
-              toast('解读重新生成失败，请返回解读页重试。');
+              toast(TC_COPY.ui.toast['case-reinterpret-fail']);
               break;
             }
           } catch (e) {

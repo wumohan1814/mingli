@@ -476,7 +476,7 @@ function PairModal({
     const v = e.target.value;
     const other = which === 'a' ? bId : aId;
     if (v && other && String(v) === String(other)) {
-      toast('两份档案不能相同，请另选一份');
+      toast(TC_COPY.ui.toast['pair-cases-must-differ-pick-another']);
       if (which === 'a') setAId('');else setBId('');
       return;
     }
@@ -492,20 +492,20 @@ function PairModal({
   const submit = async () => {
     if (busy) return;
     if (!aId) {
-      toast('请先选择档案 A');
+      toast(TC_COPY.ui.toast['pair-case-a-required']);
       return;
     }
     if (!bId) {
-      toast('请先选择档案 B');
+      toast(TC_COPY.ui.toast['pair-case-b-required']);
       return;
     }
     if (String(aId) === String(bId)) {
-      toast('两份档案不能相同');
+      toast(TC_COPY.ui.toast['pair-cases-must-differ']);
       return;
     }
     let relation = rel;
     if (!relation) {
-      toast('请选择关系类型（恋爱 / 朋友 / 家人 / 同事…）');
+      toast(TC_COPY.ui.toast['pair-rel-type-required']);
       return;
     }
     if (relation === '其他') {

@@ -16,6 +16,14 @@ function toast(msg) {
   t._tm = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
+// 模板字符串替换：fmtTpl('你好，{name}', { name: '太初' }) → '你好，太初'
+// 节136 阶段C 从 views-xishi.js 上移到全局，供所有模块使用
+function fmtTpl(t, kv) {
+  return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {
+    return kv && kv[k] != null ? kv[k] : '{' + k + '}';
+  });
+}
+
 // 轨道引擎（C1）：构建星盘 + 按真实进度点亮节点
 function svgEl(tag, attrs, parent) {
   const e = document.createElementNS('http://www.w3.org/2000/svg', tag);

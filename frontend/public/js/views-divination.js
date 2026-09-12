@@ -2303,11 +2303,11 @@ function DivinationPage({
   // 校验时间字段（timeDate/shichen 必填）—— 自动/手动共用
   const timeValid = function () {
     if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-      toast('请先选择起卦日期（必填）');
+      toast(TC_COPY.ui.toast['divin-date-required']);
       return false;
     }
     if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-      toast('请选择起卦时辰（必填）');
+      toast(TC_COPY.ui.toast['divin-shichen-required']);
       return false;
     }
     return true;
@@ -2360,13 +2360,13 @@ function DivinationPage({
   // REQ-119：金口诀起课参数校验（指定地分须为十二地支之一；数字起课须为正整数）
   const jkValid = function () {
     if (jkMethod === 'branch' && !SHICHEN_ARR.some(function (s) { return s.n === jkBranch; })) {
-      toast('请选择地分（十二地支之一）');
+      toast(TC_COPY.ui.toast['divin-difen-required']);
       return false;
     }
     if (jkMethod === 'number') {
       const n = Number(jkNumber);
       if (!Number.isInteger(n) || n < 1) {
-        toast('请输入不小于 1 的整数作为起课数字');
+        toast(TC_COPY.ui.toast['divin-number-min-1']);
         return false;
       }
     }
@@ -2466,7 +2466,7 @@ function DivinationPage({
   };
   const openAsk = x => {
     if (x.todo) {
-      toast('「' + x.name + '」敬请期待');
+      toast(fmtTpl(TC_COPY.ui.toast['divin-method-coming-soon'], { name: x.name }));
       return;
     }
     if (loading) return;
@@ -2535,12 +2535,12 @@ function DivinationPage({
     const q = qText;
     if (method === 'liuyao' || method === 'meihua') {
       if (!yaoPick || yaoPick.length !== 6 || yaoPick.some(function (r) { return r.yang == null; })) {
-        toast('请把 6 爻逐爻点选完整（每爻选阳或阴）');
+        toast(TC_COPY.ui.toast['divin-liuyao-six-yao-required']);
         return;
       }
       const movingCount = yaoPick.filter(function (r) { return r.mv; }).length;
       if (method === 'meihua' && movingCount !== 1) {
-        toast('梅花易数以单爻为动爻成变卦：请仅标注 1 个动爻');
+        toast(TC_COPY.ui.toast['divin-meihua-one-dongyao']);
         return;
       }
       if (isTimeMethod && !timeValid()) return;
@@ -2551,7 +2551,7 @@ function DivinationPage({
         const upper = mhTrigramIdx(yaoPick.slice(3, 6));
         const lower = mhTrigramIdx(yaoPick.slice(0, 3));
         if (!upper || !lower) {
-          toast('所录六爻无法组成卦象，请重新点选');
+          toast(TC_COPY.ui.toast['divin-liuyao-invalid']);
           return;
         }
         const mvIdx = yaoPick.findIndex(function (r) { return r.mv; }); // 0..5
@@ -2570,7 +2570,7 @@ function DivinationPage({
       doCast(seed, meta);
     } else if (method === 'sign') {
       if (!(signNo >= 1 && signNo <= SSGW_POOL_SIZE)) {
-        toast('请选择你实际摇中的签号（1-' + SSGW_POOL_SIZE + '）');
+        toast(fmtTpl(TC_COPY.ui.toast['divin-guanyin-sign-range'], { max: SSGW_POOL_SIZE }));
         return;
       }
       setAsking(false);
@@ -2588,17 +2588,17 @@ function DivinationPage({
         const M = Number(xlrM);
         const D = Number(xlrD);
         if (!Number.isInteger(M) || M < 1 || M > 12) {
-          toast('请输入月数（1-12）');
+          toast(TC_COPY.ui.toast['divin-xiaoliuren-month-range']);
           return;
         }
         if (!Number.isInteger(D) || D < 1 || D > 30) {
-          toast('请输入日数（1-30）');
+          toast(TC_COPY.ui.toast['divin-xiaoliuren-day-range']);
           return;
         }
         expected = xlrPalaceName(M, D, shichen + 1);
       } else {
         if (!(xlrPalace >= 0 && xlrPalace < XLR_PALACE_ORDER.length)) {
-          toast('请点选实际得到的掌诀（结果宫）');
+          toast(TC_COPY.ui.toast['divin-xiaoliuren-palace-required']);
           return;
         }
         expected = XLR_PALACE_ORDER[xlrPalace];

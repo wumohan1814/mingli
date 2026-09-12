@@ -516,7 +516,7 @@ function ZodiacPage({
       } catch (e) {/* 回查失败按无出生年处理 */}
     }
     if (!Number.isFinite(by) || by < 1900 || by > 2200) {
-      toast('该档案缺少有效的出生年份，请先补全档案信息');
+      toast(TC_COPY.ui.toast['zodiac-birth-year-missing']);
       return;
     }
     const idx = ((by - 4) % 12 + 12) % 12;

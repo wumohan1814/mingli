@@ -106,7 +106,7 @@ function AlmanacPage({
     }
     const cid = String(c.caseId);
     if (participants.some(function (p) { return p.caseId === cid; })) {
-      toast('该档案已在参与人中');
+      toast(TC_COPY.ui.toast['guoxue-participant-duplicate']);
       return;
     }
     try {
@@ -117,7 +117,7 @@ function AlmanacPage({
       const m = inp.birth_month != null ? String(inp.birth_month) : '';
       const dd = inp.birth_day != null ? String(inp.birth_day) : '';
       if (!y || !m || !dd) {
-        toast('档案「' + ((c.name && String(c.name).trim()) || c.caseId) + '」缺少完整出生日期，请先到档案管理补全');
+        toast(fmtTpl(TC_COPY.ui.toast['guoxue-case-birth-missing'], { name: (c.name && String(c.name).trim()) || c.caseId }));
         return;
       }
       setParticipants(prev => prev.concat([{
@@ -130,7 +130,7 @@ function AlmanacPage({
         timeIndex: hourToShichen(inp.birth_hour)
       }]));
     } catch (e) {
-      toast((e && e.message) || '档案信息加载失败，请重试。');
+      toast((e && e.message) || TC_COPY.ui.toast['guoxue-case-load-fail']);
     }
   };
   const toggleHours = function (date) {
@@ -138,17 +138,17 @@ function AlmanacPage({
   };
   const rangeValid = function () {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
-      toast('请填写起止日期（YYYY-MM-DD）');
+      toast(TC_COPY.ui.toast['guoxue-date-range-required']);
       return false;
     }
     const s = new Date(startDate + 'T00:00:00+08:00').getTime();
     const e = new Date(endDate + 'T00:00:00+08:00').getTime();
     if (isNaN(s) || isNaN(e) || e < s) {
-      toast('结束日期不得早于开始日期');
+      toast(TC_COPY.ui.toast['guoxue-end-before-start']);
       return false;
     }
     if (Math.round((e - s) / 86400000) > ALMANAC_MAX_DAYS - 1) {
-      toast('一次最多比较 180 天，请缩小日期范围');
+      toast(TC_COPY.ui.toast['guoxue-range-too-long-180']);
       return false;
     }
     return true;
@@ -158,15 +158,15 @@ function AlmanacPage({
       const p = participants[i];
       const y = Number(p.year), m = Number(p.month), d = Number(p.day);
       if (!/^\d{4}$/.test(String(p.year).trim()) || y < 1900 || y > 2100) {
-        toast('参与人 ' + (i + 1) + '：出生年份需为 1900-2100 的整数');
+        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-year-range'], { n: i + 1 }));
         return false;
       }
       if (!/^\d{1,2}$/.test(String(p.month).trim()) || m < 1 || m > 12) {
-        toast('参与人 ' + (i + 1) + '：出生月份需为 1-12');
+        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-month-range'], { n: i + 1 }));
         return false;
       }
       if (!/^\d{1,2}$/.test(String(p.day).trim()) || d < 1 || d > 31) {
-        toast('参与人 ' + (i + 1) + '：出生日期需为 1-31');
+        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-day-range'], { n: i + 1 }));
         return false;
       }
     }
@@ -508,16 +508,16 @@ function TaiyiPage({
     if (scope === 'year') {
       const y = Number(year);
       if (!/^\d{1,4}$/.test(String(year).trim()) || !Number.isInteger(y) || y < 1 || y > 9999) {
-        toast('年家需填写 1-9999 的公历年份（整数）');
+        toast(TC_COPY.ui.toast['guoxue-taiyi-year-range']);
         return false;
       }
     } else {
       if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-        toast('请先选择日期（必填）');
+        toast(TC_COPY.ui.toast['guoxue-date-required']);
         return false;
       }
       if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-        toast('请选择时辰（必填）');
+        toast(TC_COPY.ui.toast['guoxue-shichen-required']);
         return false;
       }
     }
@@ -835,16 +835,16 @@ function HuangjiPage({
     if (mode === 'year') {
       const y = Number(year);
       if (!/^-?\d{1,6}$/.test(String(year).trim()) || !Number.isInteger(y) || y === 0 || y < -67017 || y > 9999) {
-        toast('值年模式需填写公元整数年份（无公元 0 年，不早于公元前 67017 年）');
+        toast(TC_COPY.ui.toast['guoxue-huangji-year-range']);
         return false;
       }
     } else {
       if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-        toast('请先选择日期（必填）');
+        toast(TC_COPY.ui.toast['guoxue-date-required']);
         return false;
       }
       if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-        toast('请选择时辰（必填）');
+        toast(TC_COPY.ui.toast['guoxue-shichen-required']);
         return false;
       }
     }
