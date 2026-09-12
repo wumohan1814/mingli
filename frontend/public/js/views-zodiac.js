@@ -847,7 +847,11 @@ function ZodiacPage({
   }, (data.actionSignals || []).map((s, i) => React.createElement("div", {
     key: i,
     className: "signal-item"
-  }, "💡 ", React.createElement("span", null, s)))))) : React.createElement("div", {
+  }, React.createElement(Icon, {
+    name: 'bulb',
+    size: 15,
+    className: 'signal-bulb'
+  }), React.createElement("span", null, s)))))) : React.createElement("div", {
     className: "card",
     style: {
       textAlign: 'center',

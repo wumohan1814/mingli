@@ -211,6 +211,7 @@
     .rel-neutral{background:var(--surface);border:1px solid var(--border);color:var(--text-2)}
     .signal-list{display:flex;flex-direction:column;gap:8px}
     .signal-item{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text-2)}
+    .signal-bulb{flex:none;margin-top:1px}
     .conflict-tag{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;color:var(--tc-white)}
     .c-zhi{background:var(--cinnabar)}.c-chong{background:var(--tc-orange)}.c-xing{background:var(--tc-amethyst)}.c-hai{background:var(--tc-blue)}.c-po{background:var(--tc-steel)}
 
@@ -625,9 +626,9 @@
     .card-fan{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
     .tarot-card{width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .tarot-card .tc-imgwrap{width:104px;height:168px;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px var(--tc-black-a22);background:var(--tc-amethyst);position:relative;box-sizing:border-box}
-.tarot-card.suit-major .tc-imgwrap{border:2px solid var(--tc-amethyst)}
-.tarot-card.suit-wands .tc-imgwrap{border:2px solid var(--gold-500)}
-.tarot-card.suit-cups .tc-imgwrap{border:2px solid var(--error)}
+.tarot-card.suit-major .tc-imgwrap{border:2px solid var(--tc-suit-major)}
+.tarot-card.suit-wands .tc-imgwrap{border:2px solid var(--tc-suit-wands)}
+.tarot-card.suit-cups .tc-imgwrap{border:2px solid var(--tc-suit-cups)}
 .tarot-card.suit-swords .tc-imgwrap{border:2px solid var(--tc-suit-swords)}
 .tarot-card.suit-pentacles .tc-imgwrap{border:2px solid var(--tc-suit-pentacles)}
 .tarot-card.suit-hearts .tc-imgwrap{border:2px solid var(--tc-suit-hearts)}
@@ -709,7 +710,7 @@
 .mean-item .mi-theme{font-size:12px;font-weight:700;color:var(--skin-accent);margin-top:7px;text-align:left}
 .mean-item .mi-txt{font-size:13px;color:var(--text-2);line-height:1.8;margin-top:4px;text-align:left}
 .mean-item .mi-kw{font-size:12px;color:var(--text-3);margin-top:4px;text-align:left}
-    .suit-wands{background:var(--tc-chip-wands)}.suit-cups{background:var(--tc-blue)}.suit-swords{background:var(--tc-steel)}.suit-pentacles{background:var(--tc-amber)}.suit-major{background:var(--tc-amethyst)}
+    .suit-wands{background:var(--tc-suit-wands-bg)}.suit-cups{background:var(--tc-suit-cups-bg)}.suit-swords{background:var(--tc-suit-swords-bg)}.suit-pentacles{background:var(--tc-suit-pentacles-bg)}.suit-major{background:var(--tc-suit-major-bg)}
     .tc-pos{font-size:12px;color:var(--skin-accent);font-weight:600;text-align:center;margin-bottom:4px}
 
     /* ===== 星座星盘 ===== */
@@ -1228,8 +1229,8 @@
     .fc-back .back-mark{font-family:var(--font-serif);font-size:11px;letter-spacing:.2em;color:var(--tc-foil-title-a80);
       text-shadow:0 1px 2px var(--tc-black-a50)}
     .fc-front .fc-art{position:absolute;inset:0;background:var(--tc-stage-card);overflow:hidden}
-    .fc-art.suit-major{border:2px solid var(--tc-amethyst)}.fc-art.suit-wands{border:2px solid var(--gold-500)}
-    .fc-art.suit-cups{border:2px solid var(--error)}.fc-art.suit-swords{border:2px solid var(--tc-suit-swords)}
+    .fc-art.suit-major{border:2px solid var(--tc-suit-major)}.fc-art.suit-wands{border:2px solid var(--tc-suit-wands)}
+    .fc-art.suit-cups{border:2px solid var(--tc-suit-cups)}.fc-art.suit-swords{border:2px solid var(--tc-suit-swords)}
     .fc-art.suit-pentacles{border:2px solid var(--tc-suit-pentacles)}.fc-art.suit-hearts{border:2px solid var(--tc-suit-hearts)}
     .fc-art.suit-diamonds{border:2px solid var(--tc-suit-diamonds)}.fc-art.suit-spades{border:2px solid var(--tc-suit-spades)}
     .fc-art.suit-clubs{border:2px solid var(--tc-suit-clubs)}

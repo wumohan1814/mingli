@@ -1,4 +1,4 @@
-﻿// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
+// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
 // 加载于 vendor+data（React/ReactDOM/TC_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
 
 // 全局轻提示
@@ -180,6 +180,14 @@ function Icon({
         d: "M18 6 6 18"
       }), /*#__PURE__*/React.createElement("path", {
         d: "M6 6l12 12"
+      }));
+    case 'bulb':
+      return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("path", {
+        d: "M9 18h6"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M10 22h4"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"
       }));
     case 'list':
       return /*#__PURE__*/React.createElement("svg", common, /*#__PURE__*/React.createElement("path", {
@@ -398,7 +406,7 @@ function ModalBase(_ref) {
   return modalNode;
 }
 
-// 皮肤切换胶囊（MVP 仅国学可切，占星/塔罗置灰）
+// 皮肤切换胶囊（6 皮肤：国学/西式/塔罗/占星/星座/MBTI）
 function SkinSwitcher({
   skin,
   onPick
@@ -408,13 +416,25 @@ function SkinSwitcher({
     name: TC_COPY.ui.skin.guoxue,
     enabled: true
   }, {
-    id: 'astrology',
-    name: TC_COPY.ui.skin['xishi-astrology'],
-    enabled: false
+    id: 'xishi',
+    name: TC_COPY.ui.skin.xishi,
+    enabled: true
   }, {
     id: 'tarot',
     name: TC_COPY.ui.skin.tarot,
-    enabled: false
+    enabled: true
+  }, {
+    id: 'astrology',
+    name: TC_COPY.ui.skin.astrology,
+    enabled: true
+  }, {
+    id: 'xingzuo',
+    name: TC_COPY.ui.skin.xingzuo,
+    enabled: true
+  }, {
+    id: 'mbti',
+    name: TC_COPY.ui.skin.mbti,
+    enabled: true
   }];
   return /*#__PURE__*/React.createElement("nav", {
     className: "skin-switch",
@@ -696,15 +716,15 @@ function AstroWheel({
   });
   const lg = p => p && p.long != null ? p.long : p && p.longitude != null ? p.longitude : null;
   const aspectColor = {
-    '合': 'var(--tc-amber)',
-    '合相': 'var(--tc-amber)',
-    '刑': 'var(--cinnabar)',
-    '刑相': 'var(--cinnabar)',
-    '拱': 'var(--jade-500)',
-    '拱相': 'var(--jade-500)',
-    '冲': 'var(--tc-blue)',
-    '冲相': 'var(--tc-blue)',
-    '六合': 'var(--tc-amethyst)'
+    '合': 'var(--tc-aspect-conjunction)',
+    '合相': 'var(--tc-aspect-conjunction)',
+    '刑': 'var(--tc-aspect-square)',
+    '刑相': 'var(--tc-aspect-square)',
+    '拱': 'var(--tc-aspect-trine)',
+    '拱相': 'var(--tc-aspect-trine)',
+    '冲': 'var(--tc-aspect-opposition)',
+    '冲相': 'var(--tc-aspect-opposition)',
+    '六合': 'var(--tc-aspect-sextile)'
   };
   return /*#__PURE__*/React.createElement("svg", {
     className: "astro-wheel",
