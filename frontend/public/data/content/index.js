@@ -13,6 +13,12 @@
   if (typeof window.CONTENT !== 'undefined') return; // 防止重复初始化
   window.CONTENT = {};
 
+  // 节135：桥接早于本文件加载的既有数据文件（物理位置/文案轮次流程不变）
+  // term-cards.js 在 index.html 中先于本文件（无 defer）立即执行，故此处反向挂载；
+  // pairs.js 为 defer（解析后执行），由其文件末尾桥接自挂，这里仅作双保险。
+  if (window.TC_TERM_CARDS) window.CONTENT.termCards = window.TC_TERM_CARDS;
+  if (window.TC_PAIRS) window.CONTENT.pairs = window.TC_PAIRS;
+
   // 预留：语言状态
   // let currentLang = 'zh';
 

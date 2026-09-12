@@ -3,7 +3,8 @@
 // 加载于 views-mbti.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 /* ---------- 生肖流年（确定性，零 LLM） ---------- */
-const ZODIAC = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+// 十二生肖名 · 来自 CONTENT 基础名词表（节135；顺序对齐地支与 ZE_IDS 图标）
+const ZODIAC = CONTENT.basics.zodiacAnimals;
 // REQ-041：生肖 medallion 走 art/zodiac/zodiac-icons.svg 的 symbol（顺序对齐 ZODIAC 12 生肖）
 const ZE_IDS = ['zx-rat', 'zx-ox', 'zx-tiger', 'zx-rabbit', 'zx-dragon', 'zx-snake', 'zx-horse', 'zx-goat', 'zx-monkey', 'zx-rooster', 'zx-dog', 'zx-pig'];
 const ZODIAC_SPRITE = './art/zodiac/zodiac-icons.svg';
@@ -88,8 +89,8 @@ function CxIcon({
    pair-* 五枚 symbol：pair-love 恋爱 / pair-friend 朋友 / pair-family 家人 / pair-colleague 同事 /
    pair-other 其他。与 RelIcon 同机制（<use href> 外部引用，只做引用、不改动 SVG 内容）。 */
 const PAIR_REL_ICONS = {
-  UI_COPY.zodiac.love: 'pair-love',
-  UI_COPY.zodiac.friend: 'pair-friend',
+  [UI_COPY.zodiac.love]: 'pair-love',
+  [UI_COPY.zodiac.friend]: 'pair-friend',
   '家人': 'pair-family',
   '同事': 'pair-colleague',
   '其他': 'pair-other'
@@ -121,7 +122,8 @@ function PairRelIcon({
    地支规则换算（与 T4 JSON 分值逐一一致，已验证），故展示逻辑不需改动；查表失败时优雅降级为兜底说明
    （不报错）。本模块展示纯前端固定数据（免费、零请求、非双人生辰合盘）。 */
 /* 地支基础关系集（index 与 ZODIAC 12 生肖对齐：0=鼠(子) … 11=猪(亥)） */
-const ZD_BRANCH = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+// 十二地支 · 来自 CONTENT 基础名词表（节135；index 与 ZODIAC 12 生肖对齐：0=鼠(子) … 11=猪(亥)）
+const ZD_BRANCH = CONTENT.basics.dizhi;
 const LIUHE_PAIRS = [[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]]; // 六合：子丑 寅亥 卯戌 辰酉 巳申 午未
 const SANHE_GROUPS = [[0, 4, 8], [2, 6, 10], [3, 7, 11], [5, 9, 1]]; // 三合：申子辰 亥卯未 寅午戌 巳酉丑
 const CHONG_PAIRS = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]]; // 相冲：子午 丑未 寅申 卯酉 辰戌 巳亥

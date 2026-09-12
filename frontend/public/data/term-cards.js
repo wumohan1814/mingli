@@ -205,5 +205,8 @@ window.TC_TERM_CARDS = {
     { "key": "gua-guanwu", "term": "观物篇", "plain": "《皇极经世·观物篇》的核心方法——以物观物、推究理数；它代表「跳出小我、看大规律」的视角。" },
     { "key": "gua-jingshi", "term": "皇极经世", "plain": "邵雍所著、本方法的思想源典，用元会运世框架推演历史治乱；它只是「借古观今」的宏大参考。" },
     { "key": "gua-zonggang", "term": "元会运世总纲", "plain": "元→会→运→世的层级嵌套结构，是本方法看时间的标尺；它帮你把「眼前事」放进长周期里定位。" }
-  ]
-};
+    ]
+  };
+
+// 节135：桥接到 CONTENT 正文数据统一入口（物理文件位置与文案轮次替换流程不变；i18n 阶段按语言版本挂载）
+if (typeof CONTENT !== 'undefined' && !CONTENT.termCards) CONTENT.termCards = window.TC_TERM_CARDS;
