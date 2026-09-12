@@ -37,9 +37,3 @@ def append_disclaimer(text: str) -> str:
     if REQUIRED_DISCLAIMER not in text:
         text += f"\n\n---\n*{REQUIRED_DISCLAIMER}*"
     return text
-
-
-def filter_forbidden_domains(domains: list[str]) -> list[str]:
-    """过滤掉禁区领域"""
-    forbidden = {"医疗", "投资", "司法"}
-    return [d for d in domains if d not in forbidden]
