@@ -1,5 +1,5 @@
 """应用配置（pydantic-settings，从环境变量/.env加载）"""
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
@@ -26,10 +26,24 @@ class Settings(BaseSettings):
     llm_max_concurrency: int = 3                 # TAICHU_LLM_MAX_CONCURRENCY（单用户断前尘/预测 method 并发上限）
     llm_global_max_concurrency: int = 100        # TAICHU_LLM_GLOBAL_MAX_CONCURRENCY（全局 method 并发兜底，跨所有用户）
 
-    # JWT 鉴权（ADR-0008：HS256）
-    jwt_secret: str = "change-me-in-production-use-random-32-bytes"
+    # JWT 鉴权（ADR-0008：HS256）——必填、无弱默认；生产由 ops/deploy/deploy.sh 生成强随机
+    jwt_secret: str
     access_token_ttl: int = 1800
     refresh_token_ttl: int = 604800
+
+    @field_validator("jwt_secret")
+    @classmethod
+    def _require_strong_jwt_secret(cls, v: str) -> str:
+        weak = {
+            "change-me-in-production-use-random-32-bytes",
+            "change-me-to-a-random-32-byte-string",
+        }
+        if v in weak or len(v) < 32:
+            raise ValueError(
+                "TAICHU_JWT_SECRET 必须设为 ≥32 字符的随机值（禁止默认/占位字符串）。"
+                "本地：backend/.env 或根 .env；生产：ops/deploy/deploy.sh 自动生成。"
+            )
+        return v
 
     # Agent 运维接入（REQ-050）：OpenClaw Agent 专用静态 token，独立于 admin 账号密码/JWT
     # key 只允许来自环境变量/backend/.env（TAICHU_AGENT_TOKEN），严禁硬编码进源码；
@@ -41,7 +55,6 @@ class Settings(BaseSettings):
 
     # 校验
     validation_enabled: bool = True
-    validation_model: str = "mock-cheap-model"
 
     # 聚合窗口
     aggregation_window_dqc: int = 300

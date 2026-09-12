@@ -92,15 +92,6 @@ def verify_access_token(token: str) -> int:
         raise HTTPException(status_code=401, detail="令牌无效或已过期")
 
 
-# --- 依赖注入：从JWT获取当前用户 ---
-async def get_current_user(
-    db: Session = Depends(get_analytics_db),
-    token: str = Depends(lambda: ...),
-) -> User:
-    """需在路由中注入 Authorization header"""
-    raise NotImplementedError("使用 get_current_user_from_header 代替")
-
-
 def get_user_id_from_token(authorization: str = "") -> int:
     """从 Authorization header 提取 user_id"""
     if not authorization.startswith("Bearer "):
