@@ -4819,3 +4819,6 @@ window.TC_PAIRS = {
  ]
 }
 };
+
+// 节135：桥接到 CONTENT 正文数据统一入口（物理文件位置与文案轮次替换流程不变；i18n 阶段按语言版本挂载）
+if (typeof CONTENT !== 'undefined' && !CONTENT.pairs) CONTENT.pairs = window.TC_PAIRS;
