@@ -105,7 +105,7 @@ function MbtiPage({
       if (!list.length) throw new Error('题库为空');
       setQuestions(list);
     } catch (e) {
-      setQErrored(e && e.message || '题库加载失败，请重试。');
+      setQErrored(e && e.message || UI_COPY.mbti['qbank-load-fail']);
     } finally {
       setQLoading(false);
     }
@@ -121,7 +121,7 @@ function MbtiPage({
       const list = res && res.data && res.data.cases || res && res.cases || [];
       setCaseList(list);
     } catch (e) {
-      setCaseErrored(e && e.message ? e.message : '档案列表加载失败，请重试。');
+      setCaseErrored(e && e.message ? e.message : UI_COPY.mbti['case-load-fail']);
     } finally {
       setCaseLoading(false);
     }
@@ -205,7 +205,7 @@ function MbtiPage({
       const dd = rr && rr.data || rr || {};
       setInfo(dd.type_info || null);
     } catch (e) {
-      setInfoErr(e && e.message || '类型文案加载失败，请重试。');
+      setInfoErr(e && e.message || UI_COPY.mbti['info-load-fail']);
     } finally {
       setInfoLoading(false);
     }
@@ -219,7 +219,7 @@ function MbtiPage({
       const items = rr && rr.data && rr.data.items || (rr && rr.items) || [];
       const latest = items && items.length ? items[0] : null;
       if (!latest || !latest.type) {
-        toast('该档案还没有已完成的测试，请先开始测试。');
+        toast(UI_COPY.mbti['no-test']);
         return;
       }
       // 同步刷新该档案「已测类型」角标（含他人分享填写的最新记录口径）
@@ -237,14 +237,14 @@ function MbtiPage({
       setView('result');
       if (latest.id != null) fetchInfo(latest.id);
     } catch (e) {
-      toast(e && e.message || '结果读取失败，请重试。');
+      toast(e && e.message || UI_COPY.mbti['result-read-fail']);
     }
   };
   // —— 提交答案并判型（POST /api/mbti/score，case_id 必填；判型结果回写档案 mbti_type）——
   const submitScore = async list => {
     if (!list || !total || list.length !== total) return;
     if (!caseId) {
-      setScoreErr('请先选择一份档案（判型结果需写入档案）');
+      setScoreErr(UI_COPY.mbti['select-case-first']);
       return;
     }
     setScoring(true);
@@ -258,7 +258,7 @@ function MbtiPage({
         })
       });
       const d = res && res.data || res || {};
-      if (!d || !d.type) throw new Error(d && d.message || '判型失败，请重试。');
+      if (!d || !d.type) throw new Error(d && d.message || UI_COPY.mbti['score-fail']);
       // 判型成功同步刷新该档案卡片「已测类型」角标（同一会话内不必重进列表）
       setTypeMap(prev => Object.assign({}, prev, {[String(caseId)]: String(d.type).toUpperCase()}));
       setResult({id: d.id || null, type: d.type, scores: d.scores || {}, mode: 'scored'});
@@ -268,7 +268,7 @@ function MbtiPage({
       setView('result');
       if (d.id) fetchInfo(d.id);
     } catch (e) {
-      setScoreErr(e && e.message || '判型失败，请重试。');
+      setScoreErr(e && e.message || UI_COPY.mbti['score-fail']);
     } finally {
       setScoring(false);
     }
@@ -277,7 +277,7 @@ function MbtiPage({
   const choose = key => {
     if (scoring || !total) return;
     if (!caseId) {
-      toast('请先选择用于记录结果的档案');
+      toast(UI_COPY.mbti['select-case-result']);
       return;
     }
     const q = questions[idx];
@@ -334,9 +334,9 @@ function MbtiPage({
       const rr = await api('/mbti/types' + '/' + encodeURIComponent(t));
       const dd = rr && rr.data || rr || {};
       setInfo(dd.type_info || null);
-      if (!dd.type_info) setInfoErr('该类型暂无详细文案');
+      if (!dd.type_info) setInfoErr(UI_COPY.mbti['no-info']);
     } catch (e) {
-      setInfoErr(e && e.message || '类型文案加载失败，请重试。');
+      setInfoErr(e && e.message || UI_COPY.mbti['info-load-fail']);
     } finally {
       setInfoLoading(false);
     }
@@ -354,10 +354,10 @@ function MbtiPage({
         })
       });
       const d = res && res.data || res || {};
-      if (!d || !d.token || !d.url) throw new Error(d && d.message || '生成分享链接失败，请重试。');
+      if (!d || !d.token || !d.url) throw new Error(d && d.message || UI_COPY.mbti['share-fail']);
       setShareUrl(window.location.origin + d.url);
     } catch (e) {
-      setShareErr(e && e.message || '生成分享链接失败，请重试。');
+      setShareErr(e && e.message || UI_COPY.mbti['share-fail']);
     } finally {
       setShareLoading(false);
     }
@@ -368,14 +368,14 @@ function MbtiPage({
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(shareUrl);
-        toast('链接已复制');
+        toast(UI_COPY.mbti['link-copied']);
         return;
       }
     } catch (e) {/* 走下方回退 */}
     try {
       window.prompt('请复制以下分享链接：', shareUrl);
     } catch (e) {/* prompt 不可用则仅提示 */}
-    toast('请在弹窗中手动复制链接');
+    toast(UI_COPY.mbti['link-copy-manual']);
   };
   // —— 五栏文案值 → 段落行数组（兼容 string / string[] / 换行分隔）——
   const toLines = v => {
@@ -393,7 +393,7 @@ function MbtiPage({
   const cur = view === 'quiz' && total ? questions[idx] : null;
   const isManual = result && result.mode === 'manual';
   // BUG-005：无论 scored / manual，只要 info 就展示别名；manual 拉取中则显示加载中
-  const alias = info && info.alias ? info.alias : infoLoading && !info ? '加载中…' : '—';
+  const alias = info && info.alias ? info.alias : infoLoading && !info ? UI_COPY.mbti.loading : '—';
   // —— 结果页：单维双向比例条（左端计数 / 右端计数 / 中间双向填充）——
   const bar = d => {
     const s = result && result.scores ? result.scores[d.k] || {} : {};
@@ -416,13 +416,13 @@ function MbtiPage({
   // （仍复用 shareResult / copyShare / shareUrl / shareErr / shareLoading 原逻辑）。
   const shareZone = el('div', {style: {display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%'}},
     shareUrl ? el(React.Fragment, null,
-      el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, '分享测试链接'),
+      el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, UI_COPY.mbti['share-link-title']),
       el('input', {readOnly: true, value: shareUrl, onFocus: e => e.target.select(), title: shareUrl,
         style: {flex: '1 1 160px', minWidth: 0, fontSize: 12, color: 'var(--text-2)', border: '1px solid var(--border)', background: 'var(--paper)', borderRadius: 8, padding: '6px 10px', outline: 'none'}}),
       el('button', {type: 'button', className: 'btn btn-outline', style: {width: 'auto', flex: 'none', fontSize: 13}, onClick: copyShare}, '复制'))
     : el(React.Fragment, null,
         shareErr ? el('div', {className: 'error', style: {width: '100%', textAlign: 'left', margin: '0 0 4px'}}, shareErr) : null,
-        el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, '分享测试链接'),
+        el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, UI_COPY.mbti['share-link-title']),
         el('button', {type: 'button', className: 'btn btn-outline', style: {width: 'auto', fontSize: 13}, onClick: shareResult}, shareLoading ? '生成中…' : '生成分享链接')),
     el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.6, width: '100%'}},
       '生成该档案专属链接：他人免登录填写后，档案当前心理测试结果将更新为最新填写内容，各次填写保留可回看。'));
@@ -659,14 +659,14 @@ function MbtiSharePage({
         })
       });
       const d = res && res.data || res || {};
-      if (!d || !d.type) throw new Error(d && d.message || '判型失败，请重试。');
+      if (!d || !d.type) throw new Error(d && d.message || UI_COPY.mbti['score-fail']);
       setResult({
         type: d.type,
         scores: d.scores || {}
       });
     } catch (e) {
       // 保留在最后一题，用户可重新点选项重试
-      toast(e && e.message || '判型失败，请重试。');
+      toast(e && e.message || UI_COPY.mbti['score-fail']);
     } finally {
       setScoring(false);
     }
