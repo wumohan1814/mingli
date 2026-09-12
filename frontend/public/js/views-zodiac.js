@@ -88,8 +88,8 @@ function CxIcon({
    pair-* 五枚 symbol：pair-love 恋爱 / pair-friend 朋友 / pair-family 家人 / pair-colleague 同事 /
    pair-other 其他。与 RelIcon 同机制（<use href> 外部引用，只做引用、不改动 SVG 内容）。 */
 const PAIR_REL_ICONS = {
-  '恋爱': 'pair-love',
-  '朋友': 'pair-friend',
+  UI_COPY.zodiac.love: 'pair-love',
+  UI_COPY.zodiac.friend: 'pair-friend',
   '家人': 'pair-family',
   '同事': 'pair-colleague',
   '其他': 'pair-other'
