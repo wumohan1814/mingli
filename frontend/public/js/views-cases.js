@@ -1,4 +1,4 @@
-// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
+﻿// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
 // 加载于 views-zodiac.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 // ===== 完整盘面组件（直接消费 archive 的 data.chart.data，零 LLM） =====
@@ -263,58 +263,10 @@ function ZiweiPlate({
 }
 
 // —— 占星盘 ——
-const PLANET_CN = {
-  // B3（docs/文案交付/B3_astrology_translations.json）planets 补全
-  Sun: '太阳',
-  Moon: '月亮',
-  Mercury: '水星',
-  Venus: '金星',
-  Mars: '火星',
-  Jupiter: '木星',
-  Saturn: '土星',
-  Uranus: '天王星',
-  Neptune: '海王星',
-  Pluto: '冥王星',
-  NorthNode: '北交点',
-  SouthNode: '南交点',
-  Chiron: '凯龙星',
-  Lilith: '莉莉丝',
-  Asc: '上升点（ASC）',
-  MC: '中天（MC）',
-  IC: '天底（IC）',
-  Dsc: '下降点（DSC）',
-  // 既有兼容键（带空格/全称变体，供格局行星串回退匹配）
-  Ceres: '谷神星',
-  Juno: '婚神星',
-  Vesta: '灶神星',
-  Pallas: '智神星',
-  'North Node': '北交点',
-  'True North Node': '北交点',
-  'South Node': '南交点',
-  'True Lilith': '莉莉丝',
-  'Part of Fortune': '福点',
-  'Part of Spirit': '灵点'
-};
-const PATTERN_CN = {
-  // B3 8 格局（docs/文案交付/B3_astrology_translations.json patterns，覆盖原 3 项）
-  grand_cross: '大十字格局',
-  mystic_rectangle: '神秘矩形格局',
-  kite: '风筝格局',
-  t_square: 'T 三角格局',
-  grand_trine: '大三角格局',
-  yod: '上帝之指（贤者之指）',
-  stellium_sign: '星座群星（同星座三体以上）',
-  stellium_house: '宫位群星（同宫位三体以上）'
-};
-// B3 aspects（备用常量；相位表 type 列已接线 translateAspect）
-const ASPECT_CN = {
-  conjunction: '合相',
-  sextile: '六分相',
-  square: '四分相',
-  trine: '三分相',
-  quincunx: '补十二分相（150°）',
-  opposition: '对分相'
-};
+// 行星/格局/相位中译 · 来自 CONTENT 统一正文数据（节135）
+const PLANET_CN = CONTENT.astrology.planetCn;
+const PATTERN_CN = CONTENT.astrology.patternCn;
+const ASPECT_CN = CONTENT.astrology.aspectCn;
 const translateAspect = t => {
   const k = String(t == null ? '' : t).trim().toLowerCase();
   return ASPECT_CN[k] || t;

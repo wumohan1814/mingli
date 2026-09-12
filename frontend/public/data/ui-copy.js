@@ -672,8 +672,6 @@ window.TC_COPY = {
       aria: '文化皮肤切换',
       'unavailable-toast': '西式占星 / 塔罗暂未开放'
     },
-    // REQ-128 阶段2：建档表单（onboarding）文案
-    // 与 caseShareLanding 字段命名风格一致，便于后续合并
     // REQ-128 阶段3：占卜页（divination）UI 文案
     // 仅含界面标签与结构标题；卦辞/爻辞/签诗/古籍原文等正文类不入本表
     divination: {
@@ -1053,14 +1051,9 @@ window.TC_COPY = {
       'tab-zodiac': '生肖',
       'tab-constellation': '星座',
       'tab-compat': '配对',
-      // 生肖名（数据类，若需 i18n 可迁；暂保留为 UI 标签）
-      'rat': '鼠', 'ox': '牛', 'tiger': '虎', 'rabbit': '兔',
-      'dragon': '龙', 'snake': '蛇', 'horse': '马', 'goat': '羊',
-      'monkey': '猴', 'rooster': '鸡', 'dog': '狗', 'pig': '猪',
-      // 星座名
-      'aries': '白羊', 'taurus': '金牛', 'gemini': '双子', 'cancer': '巨蟹',
-      'leo': '狮子', 'virgo': '处女', 'libra': '天秤', 'scorpio': '天蝎',
-      'sagittarius': '射手', 'capricorn': '摩羯', 'aquarius': '水瓶', 'pisces': '双鱼',
+      // 生肖名 / 星座名已迁至 CONTENT.basics（节135 正文数据统一管理）：
+      //   CONTENT.basics.zodiacAnimals（十二生肖）、CONTENT.basics.zodiacSigns（十二星座）
+      //   i18n 时随基础名词语言包整体替换；此处不再保留重复名表
       // 配对类型
       'love': '恋爱',
       'friend': '朋友',
@@ -1129,6 +1122,9 @@ window.TC_COPY = {
       'loading': '加载中…',
       'retry': '重试'
     },
+    // REQ-128 阶段2：建档表单（onboarding）文案
+    // 与 caseShareLanding 字段命名风格一致，便于后续合并
+    onboarding: {
       title: '建档 · 输入生辰信息',
       'case-name-label': '档案名（选填）',
       'case-name-ph': '给档案起个名字，如：我的事业盘（留空则显示「未命名档案」，可稍后重命名）',

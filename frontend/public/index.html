@@ -33,12 +33,21 @@
        ui.<模块>.<动作|状态>，小写+连字符；既有 UI_COPY key 保持原名迁入，index.html 内以
        UI_COPY = TC_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
   <script src="/data/ui-copy.js"></script>
+  <script>
+  // 节135：UI_COPY 兼容别名必须在数据文件（content/*.js）与业务文件（/js/*.js）之前就绪——
+  // 它们的顶层常量（DIVIN_METHODS、PAIR_REL_ICONS、CONTENT 计算键等）加载时即解引用 UI_COPY；
+  // 若定义在后面的主引导脚本里，会因执行顺序抛 ReferenceError 使整个脚本文件失效。
+  const UI_COPY = TC_COPY.ui;
+  </script>
   <!-- 节135：正文数据总表（卦辞/牌义/类型描述等正文内容统一管理，i18n 就绪）。
        数据文件 frontend/public/data/content/，全局访问：window.CONTENT
        各领域模块按语言分文件；当前默认中文，同步加载 -->
   <script src="/data/content/index.js"></script>
   <script src="/data/content/tarot/cards-zh.js"></script>
   <script src="/data/content/i-ching/hexagrams-zh.js"></script>
+  <script src="/data/content/divination/glossary-zh.js"></script>
+  <script src="/data/content/astrology/names-zh.js"></script>
+  <script src="/data/content/basics/names-zh.js"></script>
   <script src="/js/components.js"></script>
   <script src="/js/views-guoxue.js"></script>
   <script src="/js/views-xishi.js"></script>
@@ -66,10 +75,9 @@ const {
 // ===== B1 全站 UI 文案常量（REQ-037）→ REQ-128 阶段1：全站界面文案总表 TC_COPY =====
 // 文案总表已迁至独立数据文件 frontend/public/data/ui-copy.js（window.TC_COPY，key 规范见
 // docs/standards/01-命名与变量约定.md §12：ui.<模块>.<动作|状态>，小写+连字符）。
-// 说明：既有 190+ 处 UI_COPY.xxx 引用（各模块页/内容页）保留原名继续可用 —— 本行以兼容
-// 别名指向 TC_COPY.ui（同一文案源，零改写零回归）；框架层页面（落地/登录注册/三 Hub/
-// Banner/菜单/页脚/通用）已直引 TC_COPY.ui.* 规范路径。
-const UI_COPY = TC_COPY.ui;
+// 说明：既有 190+ 处 UI_COPY.xxx 引用（各模块页/内容页）保留原名继续可用 —— 该兼容
+// 别名已在 ui-copy.js 之后的内联脚本中提前定义（节135，保证数据/业务脚本加载时可用）；
+// 框架层页面（落地/登录注册/三 Hub/Banner/菜单/页脚/通用）已直引 TC_COPY.ui.* 规范路径。
 const API = '/api';
 // REQ-增强：全局请求超时配置（毫秒）。可通过 api(path, { timeout: N }) 单接口覆盖；
 // 设 0 或 false 禁用超时（与旧行为一致）。默认 15s 平衡用户体验与后端长任务容忍度。

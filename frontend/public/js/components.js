@@ -1,4 +1,4 @@
-// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
+﻿// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
 // 加载于 vendor+data（React/ReactDOM/TC_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
 
 // 全局轻提示
@@ -579,29 +579,7 @@ function AstroNatalPanel({
 }
 
 const SIGN_SYM = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
-const PLANET_SYM = {
-  '太阳': '☉',
-  '月亮': '☽',
-  '水星': '☿',
-  '金星': '♀',
-  '火星': '♂',
-  '木星': '♃',
-  '土星': '♄',
-  '天王星': '♅',
-  '海王星': '♆',
-  '冥王星': '♇',
-  '凯龙星': '⚷',
-  '谷神星': '⚳',
-  '智神星': '⚴',
-  '婚神星': '⚵',
-  '灶神星': '⚶',
-  '北交点': '☊',
-  '南交点': '☋',
-  '莉莉丝': '⚸',
-  '福点': '⊕',
-  '上升': 'ASC',
-  '天顶': 'MC'
-};
+const PLANET_SYM = CONTENT.astrology.planetSym;
 
 /* 星座星盘页（档案驱动）：生辰取自国学档案 case.input_json，本页不再收集出生表单 */
 /* 把后端 natal / 单盘结构归一化成前端渲染结构（兼容 DEMO 字段与真实字段，缺字段不崩） */
