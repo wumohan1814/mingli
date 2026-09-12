@@ -580,8 +580,8 @@ function OnboardingPage({
   }, UI_COPY.onboarding.title), forced && /*#__PURE__*/React.createElement("div", {
     role: "alert",
     style: {
-      background: 'rgba(184,137,62,.12)',
-      border: '1px solid rgba(184,137,62,.45)',
+      background: 'var(--tc-gold-a12)',
+      border: '1px solid var(--tc-gold-a45)',
       borderRadius: 8,
       padding: '10px 12px',
       marginBottom: 12,

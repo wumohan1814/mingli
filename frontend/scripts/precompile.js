@@ -86,6 +86,15 @@ const HARDCODE_BASELINE = join(ROOT, 'scripts', 'hardcode-baseline.json');
 const COLOR_LITERAL_RE = /#[0-9a-fA-F]{3,8}\b|rgba?\s*\(/g;
 // 基线键统一用 POSIX 正斜杠，保证 Windows / Linux 结果一致
 const normKey = (rel) => rel.replaceAll('\\', '/');
+// 行豁免：上一行或本行含 hardcode-allow 注释（CSS /* ... */ 或 JS // ... 风格）
+const HARDCODE_ALLOW_RE = /hardcode-allow\s*:/;
+// 块豁免：CSS/JS 中 hardcode-allow-block 到 hardcode-allow-block-end 之间整段豁免
+const BLOCK_START_RE = /hardcode-allow-block\s*:/;
+const BLOCK_END_RE = /hardcode-allow-block-end/;
+function isLineAllowed(text, prevText, inBlock) {
+  if (inBlock) return true;
+  return HARDCODE_ALLOW_RE.test(text) || (prevText !== undefined && HARDCODE_ALLOW_RE.test(prevText));
+}
 
 function hardcodeScanTargets() {
   const list = [];
@@ -104,7 +113,11 @@ function hardcodeScanTargets() {
 function scanColorLiterals(rel) {
   const lines = readFileSync(join(ROOT, rel), 'utf8').split('\n');
   const hits = [];
+  let inBlock = false;
   lines.forEach((text, i) => {
+    if (BLOCK_START_RE.test(text)) { inBlock = true; return; }
+    if (BLOCK_END_RE.test(text)) { inBlock = false; return; }
+    if (isLineAllowed(text, lines[i - 1], inBlock)) return;
     const m = text.match(COLOR_LITERAL_RE);
     if (m) hits.push({ line: i + 1, count: m.length });
   });

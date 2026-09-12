@@ -2375,7 +2375,7 @@ function CalibrationPage({
   }), UI_COPY.buttons.confirm), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-outline",
     style: {
-      background: '#FFF0F0',
+      background: 'var(--tc-danger-bg)',
       color: 'var(--cinnabar)',
       fontWeight: 600
     },
@@ -3223,8 +3223,8 @@ function TopicPage({
       padding: '4px 14px',
       borderRadius: 999,
       background: meta.color,
-      color: '#fff',
-      boxShadow: '0 2px 8px rgba(26,33,56,.16)'
+      color: 'var(--tc-white)',
+      boxShadow: '0 2px 8px var(--tc-ink-a16)'
     }
   }, trendName))), /*#__PURE__*/React.createElement("div", {
     className: "card",

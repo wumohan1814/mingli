@@ -6,8 +6,8 @@
   <title>太初 · 识己于星，安己于时</title>
   <!-- REQ-098：PWA —— manifest + 主题色 + iOS Safari「添加到主屏幕」适配。
        资源一律根绝对路径（BUG-009 约定）：/manifest.webmanifest、/art/pwa/…。
-       主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 -->
-  <meta name="theme-color" content="#1A2138" />
+       主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 hardcode-allow: PWA 主题色注释 -->
+  <meta name="theme-color" content="#1A2138" /> <!-- hardcode-allow: PWA theme-color 必须是字面量 -->
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="apple-touch-icon" href="/art/pwa/apple-touch-icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -470,12 +470,12 @@ function generateDeviceFingerprint() {
     c.height = 72;
     const g = c.getContext ? c.getContext('2d') : null;
     if (g) {
-      g.fillStyle = '#F7F4EC';
+      g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paper'); /* hardcode-allow: Canvas 2D API 不支持 var() */
       g.fillRect(0, 0, c.width, c.height);
       g.font = 'bold 18px "Songti SC",serif';
-      g.fillStyle = '#44558F';
+      g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink-500'); /* hardcode-allow: Canvas 2D API 不支持 var() */
       g.fillText('Taichu\u2605\u592a\u521d\u6307\u7eb9', 12, 12);
-      g.strokeStyle = '#B8893E';
+      g.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--gold-500'); /* hardcode-allow: Canvas 2D API 不支持 var() */
       g.lineWidth = 2;
       g.strokeRect(120, 24, 60, 30);
       g.beginPath();
