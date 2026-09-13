@@ -1,7 +1,7 @@
 """前台公开素材接口（REQ-059）：后台配置的素材槽 → 前台按需取 URL（免登录）。
 
 后台「素材管理」（admin /admin/assets/*）把背景图 / 卡面等写进运维库
-taichu_ops.asset_slots（key → url + 蒙版），本模块只负责对外提供查询，URL 拼进
+mingli_ops.asset_slots（key → url + 蒙版），本模块只负责对外提供查询，URL 拼进
 background-image 等渲染逻辑由前端任务做（本文件不做渲染）。
 
 热更语义：每次实时查 asset_slots 表、无启动缓存 → 后台 PUT（上传/替换）/

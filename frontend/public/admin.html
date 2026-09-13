@@ -198,8 +198,8 @@ const {
   useState,
   useEffect
 } = React;
-const TOKEN_KEY = 'taichu_admin_token';
-const ROLE_KEY = 'taichu_admin_role';
+const TOKEN_KEY = 'mingli_admin_token';
+const ROLE_KEY = 'mingli_admin_role';
 let onUnauthorized = null; // 由 App 注册：401 时回登录页
 
 const STATUS_TEXT = {
@@ -358,10 +358,10 @@ function logoutLocal() {
 
 // 轻提示
 function toast(msg) {
-  let t = document.getElementById('taichu-admin-toast');
+  let t = document.getElementById('mingli-admin-toast');
   if (!t) {
     t = document.createElement('div');
-    t.id = 'taichu-admin-toast';
+    t.id = 'mingli-admin-toast';
     t.className = 'toast';
     document.body.appendChild(t);
   }

@@ -920,7 +920,7 @@
       color:var(--skin-accent-ink);font-size:14px;font-weight:600;cursor:pointer;transition:box-shadow .2s}
     .agent-send:hover:not(:disabled){box-shadow:0 4px 14px var(--tc-ink-a20)}
     .agent-send:disabled{opacity:.55;cursor:not-allowed}
-    /* REQ-066④：分享表单「命理太初 UI」品牌条（share_taichu_ui 开时显示在答题卡顶部） */
+    /* REQ-066④：分享表单「命理太初 UI」品牌条（share_mingli_ui 开时显示在答题卡顶部） */
     .tc-share-brand{border-bottom:1px dashed var(--border);padding:2px 0 12px;margin:0 0 12px}
     .tc-share-brand-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .tc-share-brand-name{font-family:var(--font-serif);font-weight:700;font-size:17px;color:var(--text-1);letter-spacing:.04em}

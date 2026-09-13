@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 
 # 7 项设置的字段名（列名 = 接口字段名，契约 key）
 _FIELDS = (
-    "anim_enabled", "default_mode", "banner_dropdown", "share_taichu_ui",
+    "anim_enabled", "default_mode", "banner_dropdown", "share_mingli_ui",
     "bg_enabled", "card_images", "agent_enabled",
 )
 
@@ -31,7 +31,7 @@ DEFAULT_SETTINGS = {
     "anim_enabled": True,      # ①动画与抽卡模拟
     "default_mode": "auto",    # ②占卜界面默认模式：manual|auto|both
     "banner_dropdown": False,  # ③Banner 模块下拉导航
-    "share_taichu_ui": True,   # ④分享表单命理太初 UI
+    "share_mingli_ui": True,   # ④分享表单命理太初 UI
     "bg_enabled": True,        # ⑤背景图显示
     "card_images": True,       # ⑥牌面图片显示
     "agent_enabled": True,     # ⑦王先生 Agent
@@ -55,7 +55,7 @@ class SettingsUpdateRequest(BaseModel):
     anim_enabled: Optional[bool] = None       # ①动画与抽卡模拟
     default_mode: Optional[str] = None        # ②占卜界面默认模式
     banner_dropdown: Optional[bool] = None    # ③Banner 模块下拉导航
-    share_taichu_ui: Optional[bool] = None    # ④分享表单命理太初 UI
+    share_mingli_ui: Optional[bool] = None    # ④分享表单命理太初 UI
     bg_enabled: Optional[bool] = None         # ⑤背景图显示
     card_images: Optional[bool] = None        # ⑥牌面图片显示
     agent_enabled: Optional[bool] = None      # ⑦王先生 Agent

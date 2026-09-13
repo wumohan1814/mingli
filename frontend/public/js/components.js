@@ -1,12 +1,12 @@
 // 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
-// 加载于 vendor+data（React/ReactDOM/TC_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
+// 加载于 vendor+data（React/ReactDOM/ML_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
 
 // 全局轻提示
 function toast(msg) {
-  let t = document.getElementById('taichu-toast');
+  let t = document.getElementById('mingli-toast');
   if (!t) {
     t = document.createElement('div');
-    t.id = 'taichu-toast';
+    t.id = 'mingli-toast';
     t.className = 'toast';
     document.body.appendChild(t);
   }
@@ -93,17 +93,17 @@ function DisclaimerFooter() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "spark",
     size: 14
-  })), TC_COPY.ui.compliance.disclaimer_full, /*#__PURE__*/React.createElement("div", {
+  })), ML_COPY.ui.compliance.disclaimer_full, /*#__PURE__*/React.createElement("div", {
     className: "legal-links"
   }, /*#__PURE__*/React.createElement("a", {
-    href: TC_COPY.ui.footer['legal-agreement-href'],
+    href: ML_COPY.ui.footer['legal-agreement-href'],
     target: "_blank"
-  }, TC_COPY.ui.footer['legal-agreement']), /*#__PURE__*/React.createElement("span", {
+  }, ML_COPY.ui.footer['legal-agreement']), /*#__PURE__*/React.createElement("span", {
     className: "legal-sep"
   }, " · "), /*#__PURE__*/React.createElement("a", {
-    href: TC_COPY.ui.footer['legal-privacy-href'],
+    href: ML_COPY.ui.footer['legal-privacy-href'],
     target: "_blank"
-  }, TC_COPY.ui.footer['legal-privacy'])));
+  }, ML_COPY.ui.footer['legal-privacy'])));
 }
 
 // 内联 SVG 图标组件（替代原 Unicode 字符）
@@ -413,39 +413,39 @@ function SkinSwitcher({
 }) {
   const items = [{
     id: 'guoxue',
-    name: TC_COPY.ui.skin.guoxue,
+    name: ML_COPY.ui.skin.guoxue,
     enabled: true
   }, {
     id: 'xishi',
-    name: TC_COPY.ui.skin.xishi,
+    name: ML_COPY.ui.skin.xishi,
     enabled: true
   }, {
     id: 'tarot',
-    name: TC_COPY.ui.skin.tarot,
+    name: ML_COPY.ui.skin.tarot,
     enabled: true
   }, {
     id: 'astrology',
-    name: TC_COPY.ui.skin.astrology,
+    name: ML_COPY.ui.skin.astrology,
     enabled: true
   }, {
     id: 'xingzuo',
-    name: TC_COPY.ui.skin.xingzuo,
+    name: ML_COPY.ui.skin.xingzuo,
     enabled: true
   }, {
     id: 'mbti',
-    name: TC_COPY.ui.skin.mbti,
+    name: ML_COPY.ui.skin.mbti,
     enabled: true
   }];
   return /*#__PURE__*/React.createElement("nav", {
     className: "skin-switch",
-    "aria-label": TC_COPY.ui.skin.aria
+    "aria-label": ML_COPY.ui.skin.aria
   }, items.map(it => /*#__PURE__*/React.createElement("button", {
     key: it.id,
     "data-skin-btn": it.id,
     className: skin === it.id ? 'active' : '',
     "aria-pressed": skin === it.id ? 'true' : 'false',
     disabled: !it.enabled,
-    onClick: () => it.enabled ? onPick(it.id) : toast(TC_COPY.ui.skin['unavailable-toast'])
+    onClick: () => it.enabled ? onPick(it.id) : toast(ML_COPY.ui.skin['unavailable-toast'])
   }, it.name)));
 }
 

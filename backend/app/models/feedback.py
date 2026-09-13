@@ -1,4 +1,4 @@
-"""跨用户质疑库 ORM 模型（taichu_feedback）"""
+"""跨用户质疑库 ORM 模型（mingli_feedback）"""
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, Enum as SAEnum
 from app.database import FeedbackBase

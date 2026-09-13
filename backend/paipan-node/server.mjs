@@ -133,7 +133,7 @@ import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorith
 import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
-import { applyTaichuTarotSpreads } from './taichu-tarot-spreads.mjs';
+import { applyMingliTarotSpreads } from './mingli-tarot-spreads.mjs';
 import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
 import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
 import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
@@ -147,7 +147,7 @@ import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jings
 
 // REQ-122：命理太初塔罗牌阵覆盖层 —— 新增 fourSeasons + 覆盖 celtic/horseshoe/hexagram 牌位
 // （ESM 共享对象就地写入，computeTarot / drawTarotSpread 立即生效；不动 vendored 文件）
-applyTaichuTarotSpreads(tarotSpreads);
+applyMingliTarotSpreads(tarotSpreads);
 
 /* ---------- /ziwei：紫微排盘（对齐 ziwei.cjs 的 main()） ---------- */
 

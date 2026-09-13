@@ -3,7 +3,7 @@
   "diagram_type": "sequence",
   "meta": {
     "title": "断前尘异步任务全链路",
-    "output": "taichu-sequence-duanqianchen.html",
+    "output": "mingli-sequence-duanqianchen.html",
     "quality_profile": "showcase",
     "column_fit": "spread",
     "viewBox": [1160, 920],
@@ -21,7 +21,7 @@
     { "id": "llm", "type": "cloud", "label": "DeepSeek", "sublabel": "deepseek-v4-flash" },
     { "id": "valid", "type": "backend", "label": "规则校验器", "sublabel": "validation/validator.py" },
     { "id": "credits", "type": "backend", "label": "积分计费", "sublabel": "credits/service.py" },
-    { "id": "db", "type": "database", "label": "taichu_analytics.db", "sublabel": "job / method_results" }
+    { "id": "db", "type": "database", "label": "mingli_analytics.db", "sublabel": "job / method_results" }
   ],
   "segments": [
     { "from": 150, "to": 296, "label": "受理（202 即返回）" },

@@ -355,7 +355,7 @@ function NamerModal({
   const submit = async () => {
     if (busy) return;
     if (!pickId) {
-      toast(TC_COPY.ui.toast['tools-case-required']);
+      toast(ML_COPY.ui.toast['tools-case-required']);
       return;
     }
     const sn = String(surname || '').trim();
@@ -619,26 +619,26 @@ function GuoxueHubPage({
   // ④ 生肖流年）。原 6 方法卡（黄历择日/太乙/皇极）与 REQ-100 同排 3 键（八法配对/八字配对/
   // 档案起名）收归 ③「择吉与时势」新页 GuoxueToolsPage（/guoxue/tools，需登录）。本 HUB 保持公开页。
   const cards = [{
-    name: TC_COPY.ui.hub['guoxue-card-nine-name'],
-    sub: TC_COPY.ui.hub['guoxue-card-nine-sub'],
+    name: ML_COPY.ui.hub['guoxue-card-nine-name'],
+    sub: ML_COPY.ui.hub['guoxue-card-nine-sub'],
     bar: 'var(--skin-accent)',
     ico: 'nine',
     to: () => onNavigate('nine-pick')
   }, {
-    name: TC_COPY.ui.hub['guoxue-card-divination-name'],
-    sub: TC_COPY.ui.hub['guoxue-card-divination-sub'],
+    name: ML_COPY.ui.hub['guoxue-card-divination-name'],
+    sub: ML_COPY.ui.hub['guoxue-card-divination-sub'],
     bar: 'var(--gold-500)',
     ico: 'orbit',
     to: () => onNavigate('divination')
   }, {
-    name: TC_COPY.ui.hub['guoxue-card-tools-name'],
-    sub: TC_COPY.ui.hub['guoxue-card-tools-sub'],
+    name: ML_COPY.ui.hub['guoxue-card-tools-name'],
+    sub: ML_COPY.ui.hub['guoxue-card-tools-sub'],
     bar: 'var(--cinnabar)',
     ico: 'calendar',
     to: () => onNavigate('guoxue-tools')
   }, {
-    name: TC_COPY.ui.hub['guoxue-zodiac-name'],
-    sub: TC_COPY.ui.hub['guoxue-zodiac-sub'],
+    name: ML_COPY.ui.hub['guoxue-zodiac-name'],
+    sub: ML_COPY.ui.hub['guoxue-zodiac-sub'],
     bar: 'var(--cinnabar)',
     ico: 'spark',
     to: () => onNavigate('zodiac')
@@ -650,7 +650,7 @@ function GuoxueHubPage({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "nine",
     size: 22
-  }), TC_COPY.ui.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
+  }), ML_COPY.ui.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -690,34 +690,34 @@ function GuoxueToolsPage({
     onClick: onClick
   }, label);
   const cards = [{
-    name: TC_COPY.ui.hub['tools-almanac-name'],
-    sub: TC_COPY.ui.hub['tools-almanac-sub'],
+    name: ML_COPY.ui.hub['tools-almanac-name'],
+    sub: ML_COPY.ui.hub['tools-almanac-sub'],
     bar: 'var(--skin-accent)',
     ico: 'calendar',
     to: () => onNavigate('almanac')
   }, {
-    name: TC_COPY.ui.hub['tools-namer-name'],
-    sub: TC_COPY.ui.hub['tools-namer-sub'],
+    name: ML_COPY.ui.hub['tools-namer-name'],
+    sub: ML_COPY.ui.hub['tools-namer-sub'],
     bar: 'var(--gold-500)',
     ico: 'nine',
     to: () => setNamerOpen(true)
   }, {
-    name: TC_COPY.ui.hub['tools-pair-name'],
-    sub: TC_COPY.ui.hub['tools-pair-sub'],
+    name: ML_COPY.ui.hub['tools-pair-name'],
+    sub: ML_COPY.ui.hub['tools-pair-sub'],
     bar: 'var(--cinnabar)',
     ico: 'orbit',
     actions: [
-      actBtn(TC_COPY.ui.hub['tools-pair-guoxue'], function () { return openPairAnalyze({ module: 'guoxue' }); }),
-      actBtn(TC_COPY.ui.hub['tools-pair-bazi'], function () { return openPairAnalyze({ module: 'bazi' }); })
+      actBtn(ML_COPY.ui.hub['tools-pair-guoxue'], function () { return openPairAnalyze({ module: 'guoxue' }); }),
+      actBtn(ML_COPY.ui.hub['tools-pair-bazi'], function () { return openPairAnalyze({ module: 'bazi' }); })
     ]
   }, {
-    name: TC_COPY.ui.hub['tools-shishi-name'],
-    sub: TC_COPY.ui.hub['tools-shishi-sub'],
+    name: ML_COPY.ui.hub['tools-shishi-name'],
+    sub: ML_COPY.ui.hub['tools-shishi-sub'],
     bar: 'var(--cinnabar)',
     ico: 'huangji',
     actions: [
-      actBtn(TC_COPY.ui.hub['tools-shishi-huangji'], function () { return onNavigate('huangji'); }),
-      actBtn(TC_COPY.ui.hub['tools-shishi-taiyi'], function () { return onNavigate('taiyi'); })
+      actBtn(ML_COPY.ui.hub['tools-shishi-huangji'], function () { return onNavigate('huangji'); }),
+      actBtn(ML_COPY.ui.hub['tools-shishi-taiyi'], function () { return onNavigate('taiyi'); })
     ]
   }];
   return el('div', {
@@ -727,7 +727,7 @@ function GuoxueToolsPage({
   }, el(Icon, {
     name: 'calendar',
     size: 22
-  }), TC_COPY.ui.hub['guoxue-card-tools-name']), el('div', {
+  }), ML_COPY.ui.hub['guoxue-card-tools-name']), el('div', {
     className: 'hub-grid'
   }, cards.map((c, i) => el('div', {
     key: i,

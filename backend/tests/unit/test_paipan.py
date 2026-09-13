@@ -123,7 +123,7 @@ def chart():
 
 def test_paipan_full_chart_structure(chart):
     assert set(chart.keys()) == TOP_KEYS
-    assert chart["meta"]["source"] == "taichu-paipan"
+    assert chart["meta"]["source"] == "mingli-paipan"
     assert chart["meta"]["version"] == "1.0.0"
     assert chart["meta"]["degraded_methods"] == []
     assert set(chart["bazi"]["pillars"].keys()) == {"year", "month", "day", "hour"}

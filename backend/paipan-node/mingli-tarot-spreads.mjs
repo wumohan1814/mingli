@@ -3,7 +3,7 @@
  *
  * 目标：不动 vendored mingyu-core（backend/paipan-node/vendor/）源码，按命理太初口径
  * 就地覆盖/新增 `tarotSpreads` 中的牌阵定义。ESM 的 `export const tarotSpreads` 是
- * 共享对象引用，server.mjs 引入本层并调用 applyTaichuTarotSpreads(tarotSpreads) 后，
+ * 共享对象引用，server.mjs 引入本层并调用 applyMingliTarotSpreads(tarotSpreads) 后，
  * computeTarot / drawTarotSpread 读取到的即覆盖后的定义，立即生效。
  *
  * 口径（用户拍板）：
@@ -16,7 +16,7 @@
  * （chakra/year/mindBodySpirit/holyTriangle/universal/fourElements/relationship/
  * wealth/problemSolving/twelveHouses）沿用 vendored 定义，不在此覆盖。
  */
-export const TAICHU_TAROT_SPREADS = {
+export const MINGLI_TAROT_SPREADS = {
   // 四牌四季（新增，REQ-122）：1 春 / 2 夏 / 3 秋 / 4 冬
   fourSeasons: {
     name: '四牌四季',
@@ -59,8 +59,8 @@ export const TAICHU_TAROT_SPREADS = {
  * 把命理太初牌阵定义就地写入传入的 tarotSpreads（ESM 共享对象引用）：
  * 新增 fourSeasons、覆盖 celtic/horseshoe/hexagram；不改动 vendored 文件。
  */
-export function applyTaichuTarotSpreads(tarotSpreads) {
-  for (const [key, def] of Object.entries(TAICHU_TAROT_SPREADS)) {
+export function applyMingliTarotSpreads(tarotSpreads) {
+  for (const [key, def] of Object.entries(MINGLI_TAROT_SPREADS)) {
     tarotSpreads[key] = def;
   }
   return tarotSpreads;

@@ -194,7 +194,7 @@ app.include_router(memory_router)
 app.include_router(credits_router)
 app.include_router(events_router)
 
-# 请求埋点中间件（记录 /api/* 到 taichu_ops.events）
+# 请求埋点中间件（记录 /api/* 到 mingli_ops.events）
 app.middleware("http")(api_metrics_middleware)
 
 

@@ -124,7 +124,7 @@
 - **安全 / 数据**：不适用（纯前端静态重构，无鉴权 / 数据 / method-result v2 / chart.json 契约改动）。
 - **性能 / 资源**：不适用（字节搬移，无新增依赖 / 渲染 / 查询 / 循环；拆分不引入性能退化）。
 - **结构反思**（触发：定位 ≥3 次 grep + 同区域多次修改）：
-  - 哪里难：`index.html` 22,046 行单文件，改任一功能都要在 2 万行里 grep 定位；视图与全局状态（api/token/TC_SETTINGS/usePaySufficient）交织，拆视图时须逐块核对「顶层语句是否引用主脚本全局（加载顺序风险）」。
+  - 哪里难：`index.html` 22,046 行单文件，改任一功能都要在 2 万行里 grep 定位；视图与全局状态（api/token/ML_SETTINGS/usePaySufficient）交织，拆视图时须逐块核对「顶层语句是否引用主脚本全局（加载顺序风险）」。
   - 结构上怎么改：按域拆 11 个 `views-*.js` + `components.js` + 3 个 `css`；全局状态/api/App 路由留入口壳；`导航.md` §7 牵连表固化加载顺序与共享依赖（PairRelIcon/usePaySufficient 等跨域复用件保持全局可见）。
   - 下次会怎样：改同类功能只需读对应 `views-<域>.js`（检索量从 2 万行降到 <5k 行）；新增视图照 `复用.md` §六 落对应域文件，不再塞回 index.html。
 

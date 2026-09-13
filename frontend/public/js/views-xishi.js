@@ -8,8 +8,8 @@ function XishiHubPage({
   applySkin
 }) {
   const cards = [{
-    name: TC_COPY.ui.hub['xishi-astrology-name'],
-    sub: TC_COPY.ui.hub['xishi-astrology-sub'],
+    name: ML_COPY.ui.hub['xishi-astrology-name'],
+    sub: ML_COPY.ui.hub['xishi-astrology-sub'],
     bar: 'var(--tc-astro)',
     ico: 'orbit',
     to: () => {
@@ -17,8 +17,8 @@ function XishiHubPage({
       onNavigate('astrology');
     }
   }, {
-    name: TC_COPY.ui.hub['xishi-tarot-name'],
-    sub: TC_COPY.ui.hub['xishi-tarot-sub'],
+    name: ML_COPY.ui.hub['xishi-tarot-name'],
+    sub: ML_COPY.ui.hub['xishi-tarot-sub'],
     bar: 'var(--tc-amber)',
     ico: 'spark',
     to: () => {
@@ -26,8 +26,8 @@ function XishiHubPage({
       onNavigate('tarot');
     }
   }, {
-    name: TC_COPY.ui.hub['xishi-lenormand-name'],
-    sub: TC_COPY.ui.hub['xishi-lenormand-sub'],
+    name: ML_COPY.ui.hub['xishi-lenormand-name'],
+    sub: ML_COPY.ui.hub['xishi-lenormand-sub'],
     bar: 'var(--tc-amethyst)',
     ico: 'nine',
     to: () => {
@@ -35,8 +35,8 @@ function XishiHubPage({
       onNavigate('lenormand');
     }
   }, {
-    name: TC_COPY.ui.hub['xishi-more-name'],
-    sub: TC_COPY.ui.hub['xishi-more-sub'],
+    name: ML_COPY.ui.hub['xishi-more-name'],
+    sub: ML_COPY.ui.hub['xishi-more-sub'],
     bar: 'var(--tc-gray-dark)',
     ico: 'flat',
     disabled: true
@@ -48,12 +48,12 @@ function XishiHubPage({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "orbit",
     size: 22
-  }), TC_COPY.ui.module_hub.western_title), /*#__PURE__*/React.createElement("div", {
+  }), ML_COPY.ui.module_hub.western_title), /*#__PURE__*/React.createElement("div", {
     className: "hub-grid"
   }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
     className: 'hub-card' + (c.disabled ? ' disabled' : ''),
-    onClick: () => c.disabled ? toast(TC_COPY.ui.hub['coming-soon-toast']) : c.to()
+    onClick: () => c.disabled ? toast(ML_COPY.ui.hub['coming-soon-toast']) : c.to()
   }, /*#__PURE__*/React.createElement("span", {
     className: "hc-bar",
     style: {
@@ -916,7 +916,7 @@ function TarotPage({
   const [interpErr, setInterpErr] = useState('');
   // REQ-069：手动选牌（真实世界已抽好 → 从牌库按牌位录入 + 定正/逆位）与自动抽牌并行
   // REQ-066②：默认入口按功能设置 default_mode —— manual=手动选牌 / auto=自动抽牌（现状）/ both=并行不预设
-  const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
+  const [mode, setMode] = useState(function () { return mlAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // {id,name,reversed}
   const [pickOri, setPickOri] = useState('up'); // 当前待选牌的正/逆位
   const [dkFilter, setDkFilter] = useState('all');
@@ -952,7 +952,7 @@ function TarotPage({
       const d = (res && res.data) || res;
       setData(d);
       // REQ-129：取数先行（结果不变）→ 动画开（且图开）进入「洗牌→切牌→扇形自选」取牌段；关=直接 v2 布局出结果
-      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
+      if (mlShouldPlayAnim() && mlShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || UI_COPY.xishi['pick-fail']);
     } finally {
@@ -991,7 +991,7 @@ function TarotPage({
   const submitManual = async () => {
     if (loading || !spread) return;
     if (!picks || picks.length !== spread.pos.length) {
-      toast(fmtTpl(TC_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: spread.pos.length }));
+      toast(fmtTpl(ML_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: spread.pos.length }));
       return;
     }
     track('manual_input', { method: 'tarot' });
@@ -1049,7 +1049,7 @@ function TarotPage({
     setZoomIdx(null);
     lastTarotPickStream = null;
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
-    setMode(tcAskNextDefault(mode));
+    setMode(mlAskNextDefault(mode));
     setWasManual(false);
   };
   // 重新出牌：手动结果回到选牌步骤重录；自动结果重新自动抽牌
@@ -1074,7 +1074,7 @@ function TarotPage({
   const cards = drawData && Array.isArray(drawData.cards) ? drawData.cards : [];
   const spreadName = (drawData && drawData.spreadName) || (spread && spread.name) || UI_COPY.xishi['result-title'];
   // REQ-066⑥：牌面图片显示（塔罗/雷诺曼）—— 关 = 纯文字列表模式（隐藏牌面图/扇形）
-  const cardImagesOn = TC_SETTINGS.card_images !== false;
+  const cardImagesOn = ML_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-042 v2：draw 顶部承接所填占问问题文本（保留）
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, UI_COPY.xishi.question, askQ) : null;
@@ -1124,7 +1124,7 @@ function TarotPage({
   } else if (data) {
     // ================= REQ-129：取牌段（shuffle/cut/fan）与结果段（done）分流 =================
     // 取牌段演出仅当 动画开 && 牌面图开 && 牌阵有 pos && 非手动路径 时进入（手动路径直接 done）
-    const animOn = tcShouldPlayAnim();
+    const animOn = mlShouldPlayAnim();
     const hasPos = Boolean(spread && spread.pos && spread.pos.length);
     const pickPlaying = cardImagesOn && animOn && hasPos && (dealStage === 'shuffle' || dealStage === 'cut' || dealStage === 'fan');
     if (pickPlaying) {
@@ -1202,7 +1202,7 @@ function TarotPage({
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
     /* BUG-017：默认模式=auto/manual 时另一入口收起到切换入口，仅 both 保留双栏（REQ-066②） */
-    TC_SETTINGS.default_mode === 'both'
+    ML_SETTINGS.default_mode === 'both'
       ? React.createElement('div', { className: 'mode-switch' },
           React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
           React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick))
@@ -1276,7 +1276,7 @@ function TarotPage({
       React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== posLen || !posLen }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + posLen + '）')));
   // REQ-042 v2：draw 底部三按钮全宽并列大按钮（重新抽卡/重选牌阵/返回，保持）
   // REQ-129：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
-  const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
+  const inPickPlay = Boolean(data && cardImagesOn && mlShouldPlayAnim() && dealStage !== 'done');
   // 节100③：取牌演出段（洗牌/切牌/扇形）底栏统一为标准「返回选项 / 回到首页」（同星座页底部）
   const hubHomeRow = React.createElement('div', { className: 'back-row fill' },
     React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options),
@@ -1802,7 +1802,7 @@ function LenormandPage({
   const [interpErr, setInterpErr] = useState('');
   // REQ-069：手动选牌（真实世界已抽好 → 从 36 张牌库按牌位数录入）与自动抽牌并行
   // REQ-066②：默认入口按功能设置 default_mode（manual=手动选牌 / auto=自动抽牌 / both=并行不预设）
-  const [mode, setMode] = useState(function () { return tcAskNextDefault('auto'); }); // 'auto' | 'manual'
+  const [mode, setMode] = useState(function () { return mlAskNextDefault('auto'); }); // 'auto' | 'manual'
   const [picks, setPicks] = useState([]); // LENORMAND_DECK 条目（含 num）
   const [wasManual, setWasManual] = useState(false);
   // REQ-130③：雷诺曼取牌段阶段机（复用塔罗 REQ-129：shuffle=洗牌 → cut=切牌三摞（可跳过） →
@@ -1838,7 +1838,7 @@ function LenormandPage({
       const d = (res && res.data) || res;
       setData(d);
       // REQ-130：取数先行（结果不变）→ 动画开（且图开）进入「洗牌→切牌→扇形自选」取牌段；关=直接 v2 布局出结果
-      if (tcShouldPlayAnim() && tcShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
+      if (mlShouldPlayAnim() && mlShouldShowCards()) setDealStage('shuffle'); else setDealStage('done');
     } catch (e) {
       setErrored((e && e.message) || '雷诺曼抽牌失败，请重试。');
     } finally {
@@ -1875,7 +1875,7 @@ function LenormandPage({
     if (loading || !spread) return;
     const need = spread.n || 1;
     if (!picks || picks.length !== need) {
-      toast(fmtTpl(TC_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: need }));
+      toast(fmtTpl(ML_COPY.ui.toast['xishi-pick-all-positions'], { name: spread.name, count: need }));
       return;
     }
     const askTrim = (question || '').trim();
@@ -1929,7 +1929,7 @@ function LenormandPage({
     lastLenormandPickStream = null;
     setDealStage('done');
     // REQ-066②：按 default_mode 决定返回后的出牌方式（manual=手动 / auto=自动 / both=保留上次）
-    setMode(tcAskNextDefault(mode));
+    setMode(mlAskNextDefault(mode));
     setWasManual(false);
   };
   const redo = () => {
@@ -1952,7 +1952,7 @@ function LenormandPage({
   const cards = result && Array.isArray(result.cards) ? result.cards : [];
   const spreadName = (result && result.spreadName) || (spread && spread.name) || '抽牌结果';
   // REQ-066⑥：牌面图片显示（塔罗/雷诺曼）—— 关 = 纯文字列表模式（隐藏牌面图/扇形）
-  const cardImagesOn = TC_SETTINGS.card_images !== false;
+  const cardImagesOn = ML_SETTINGS.card_images !== false;
   const askQ = (question || '').trim();
   // REQ-043 v2：draw 顶部承接所填占问问题文本
   const askEcho = askQ ? React.createElement('div', { className: 'ask-echo' }, UI_COPY.xishi.question, askQ) : null;
@@ -2000,7 +2000,7 @@ function LenormandPage({
   } else if (data) {
     // ================= REQ-130：取牌段（shuffle/cut/fan）与结果段（done）分流 =================
     // 取牌段演出仅当 动画开 && 牌面图开 && 牌阵有 pos && 非手动路径 时进入（手动路径直接 done）
-    const animOn = tcShouldPlayAnim();
+    const animOn = mlShouldPlayAnim();
     const hasPos = Boolean(spread && spread.pos && spread.pos.length);
     const pickPlaying = cardImagesOn && animOn && hasPos && (dealStage === 'shuffle' || dealStage === 'cut' || dealStage === 'fan');
     if (pickPlaying) {
@@ -2078,7 +2078,7 @@ function LenormandPage({
     React.createElement('div', { className: 'section-title step-title', style: { marginTop: 10 } }, React.createElement('span', { className: 'st-no' }, '2'), '选择牌阵'),
     React.createElement('div', { className: 'ask-cap', style: { marginTop: 2 } }, '出牌方式'),
     /* BUG-017：默认模式=auto/manual 时另一入口收起到切换入口，仅 both 保留双栏（REQ-066②） */
-    TC_SETTINGS.default_mode === 'both'
+    ML_SETTINGS.default_mode === 'both'
       ? React.createElement('div', { className: 'mode-switch' },
           React.createElement('button', { type: 'button', className: mode === 'auto' ? 'sel' : '', onClick: function () { setMode('auto'); } }, UI_COPY.buttons.auto_pick),
           React.createElement('button', { type: 'button', className: mode === 'manual' ? 'sel' : '', onClick: function () { setMode('manual'); } }, UI_COPY.buttons.manual_pick))
@@ -2133,7 +2133,7 @@ function LenormandPage({
       React.createElement('button', { className: 'btn btn-primary', onClick: submitManual, disabled: loading || picks.length !== need }, loading ? UI_COPY.tips.submitting : UI_COPY.buttons.finish_pick + '（' + picks.length + '/' + need + '）')));
   // REQ-043 v2：draw 底部三按钮全宽并列大按钮（重新抽牌 / 重选牌阵 / 返回选项，保持）
   // REQ-130：取牌段演出中（shuffle/cut/fan）隐藏底栏大按钮 —— 演出段内自带「返回重选牌阵 / 重新洗牌」小入口
-  const inPickPlay = Boolean(data && cardImagesOn && tcShouldPlayAnim() && dealStage !== 'done');
+  const inPickPlay = Boolean(data && cardImagesOn && mlShouldPlayAnim() && dealStage !== 'done');
   // 节100③：取牌演出段（洗牌/切牌/扇形）底栏统一为标准「返回选项 / 回到首页」（同星座页底部）
   const hubHomeRow = React.createElement('div', { className: 'back-row fill' },
     React.createElement('button', { className: 'btn btn-outline', onClick: function () { onNavigate('xishi-hub'); } }, UI_COPY.buttons.back_options),
@@ -2246,7 +2246,7 @@ function zodiacTrendText(kind, signCn, gender) {
 /* ================= REQ-057：星座 · 恋爱关系（太阳星座匹配轻板块） =================
    P3 区分：与 REQ-030「配对解析」（双档案合盘、付费 LLM、独立入口）不同，本条仅展示
    「当前档案太阳星座 × 其余 11 星座」的静态固定匹配（免费、零请求、非双人生辰合盘）。
-   文案（T1–T3 星座 132×3 对「分值 + 说明」）从 window.TC_PAIRS 查表（frontend/public/data/pairs.js，
+   文案（T1–T3 星座 132×3 对「分值 + 说明」）从 window.ML_PAIRS 查表（frontend/public/data/pairs.js，
    文案轮次交付物，更新时只替换该文件；self/other 用「白羊座…双鱼座」全名，与 T1T3_zodiac_*.json 一致）。
    查表失败时优雅降级为兜底说明（不报错）。
    合规口径：与 REQ-045 三格 / 文案轮次同一体系 —— 趋势参考口吻，页面级免责沿用全局页脚。 */
@@ -2257,10 +2257,10 @@ function sunFullOf(short) {
   const i = SUN_LOVE_ORDER.indexOf(short);
   return i >= 0 ? SUN_FULL[i] : '';
 }
-/* 按关系 kind 从 window.TC_PAIRS 查 self=全名 mineFull、other=全名 otherFull 的配对；命中返回该条，未命中返回 null */
+/* 按关系 kind 从 window.ML_PAIRS 查 self=全名 mineFull、other=全名 otherFull 的配对；命中返回该条，未命中返回 null */
 function sunPairLookup(kind, mineFull, otherFull) {
   const key = kind === 'friend' ? 'zodiac_friend' : kind === 'boss' ? 'zodiac_boss' : 'zodiac_love';
-  const mod = window.TC_PAIRS && window.TC_PAIRS[key];
+  const mod = window.ML_PAIRS && window.ML_PAIRS[key];
   const pairs = mod && Array.isArray(mod.pairs) ? mod.pairs : null;
   if (!pairs) return null;
   for (let i = 0; i < pairs.length; i++) {
@@ -2272,7 +2272,7 @@ function sunPairLookup(kind, mineFull, otherFull) {
   return null;
 }
 /* 生成「当前太阳星座 × 其余 11 星座」匹配列表（kind: 'love' | 'friend' | 'boss'；分值 + 说明文字
-   取自 TC_PAIRS，分值降序、同分按星座序）。REQ-083 恋爱 / 朋友 / 上下级三关系统一走本函数 */
+   取自 ML_PAIRS，分值降序、同分按星座序）。REQ-083 恋爱 / 朋友 / 上下级三关系统一走本函数 */
 function sunRelPairs(mine, kind) {
   const k = kind === 'friend' || kind === 'boss' ? kind : 'love';
   const mineFull = sunFullOf(mine);
@@ -2467,7 +2467,7 @@ function SunLoveModal({
 }
 
 /* REQ-083：朋友 / 上下级关系弹窗 —— 与 SunLoveModal 同款容器（PairModal 同款样式）：
-   分值 + 说明文字从 window.TC_PAIRS 查表（sunRelPairs(mine, kind)，T2 / T3 文案交付）；
+   分值 + 说明文字从 window.ML_PAIRS 查表（sunRelPairs(mine, kind)，T2 / T3 文案交付）；
    kind: 'friend' | 'boss'，标题分别「朋友关系 / 上下级关系 · 太阳星座匹配」。 */
 function fmtTpl(t, kv) {
   return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {
@@ -3030,7 +3030,7 @@ function AstrologyPage({
     },
     onClick: () => {
       if (t[0] === 'natal') setTab('natal');
-      else toast(fmtTpl(TC_COPY.ui.toast['xishi-tab-coming-soon-birth-only'], { name: t[1] }));
+      else toast(fmtTpl(ML_COPY.ui.toast['xishi-tab-coming-soon-birth-only'], { name: t[1] }));
     }
   }, t[1])));
 

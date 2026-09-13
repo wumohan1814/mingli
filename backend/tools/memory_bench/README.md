@@ -58,7 +58,7 @@ cd backend
 
 | 保证 | 实现 |
 |---|---|
-| **绝不碰生产库** | `bench_env.prepare()` 把 `TAICHU_DB_PATH / _FEEDBACK_ / _OPS_` 三个环境变量指向**仓库外**的临时文件；`assert_isolated()` 只要解析后落在**仓库内**或 `/opt/taichu/data` 下就 `RuntimeError` 拒绝运行 |
+| **绝不碰生产库** | `bench_env.prepare()` 把 `MINGLI_DB_PATH / _FEEDBACK_ / _OPS_` 三个环境变量指向**仓库外**的临时文件；`assert_isolated()` 只要解析后落在**仓库内**或 `/opt/mingli/data` 下就 `RuntimeError` 拒绝运行 |
 | **不联网、不调 LLM** | 全流程无网络调用；**绕过抽取链路**（直接按 `AgentMemory` 表结构 INSERT），因为抽取 worker 才依赖 LLM |
 | **零新增三方依赖** | 只用标准库 + 项目已有依赖 |
 | **不改线上行为** | 不修改 `app/` 下任何文件；仅在**测量进程内** monkeypatch（见 §4），进程退出即消失 |

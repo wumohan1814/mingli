@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""命理太初排盘引擎（app.paipan.engine）——从 reference/mingli/scripts/paipan.py 逐字移植的胶水层。
+"""命理太初排盘引擎（app.paipan.engine）——从 reference/mingli-reference/scripts/paipan.py 逐字移植的胶水层。
 
 把公历出生信息排成 chart dict（唯一事实源）。**排盘是历法算术，全部由本模块产出，
 LLM 只做解读、禁止重算。**
@@ -14,7 +14,7 @@ LLM 只做解读、禁止重算。**
 
 与参考实现（CLI + 写 chart.json）的关键差异：
   1. 无 argparse / CLI / 写文件，改为可 import 的纯函数 paipan(...) -> dict
-  2. meta.source = "taichu-paipan"
+  2. meta.source = "mingli-paipan"
   3. normalize_gender 无法识别时 raise ValueError（不再 SystemExit）
   4. 神煞 import 自 app.paipan.shensha（不再 sys.path.insert 参考目录）
   5. Node 脚本经 NODE_DIR（backend/paipan-node）解析
@@ -401,7 +401,7 @@ def paipan(*, year: int, month: int, day: int,
         chart = {
             "meta": {"version": "1.0.0",
                      "generated_at": datetime.now().isoformat(timespec="seconds"),
-                     "source": "taichu-paipan", "degraded_methods": degraded},
+                     "source": "mingli-paipan", "degraded_methods": degraded},
             "input": {"calendar": "solar", "year": year, "month": month,
                       "day": day, "hour": input_hour, "minute": input_minute,
                       "gender": gender, "birthplace_name": birthplace,

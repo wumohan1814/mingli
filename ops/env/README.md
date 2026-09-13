@@ -5,14 +5,14 @@
 
 ## 规则
 
-- 命名 `TAICHU_` + `UPPER_SNAKE_CASE`。
+- 命名 `MINGLI_` + `UPPER_SNAKE_CASE`。
 - 只有 `.env.example` 入库；真实 `.env` 已被 `.gitignore` 排除。
 - 密钥（JWT / LLM API Key / captcha）走部署平台密钥管理，不落文件。
 
 ## 关键变量
 
-`TAICHU_ENV` ｜ `TAICHU_DB_PATH` ｜ `TAICHU_FEEDBACK_DB_PATH` ｜ `TAICHU_JWT_SECRET` ｜
-`TAICHU_LLM_API_KEY` ｜ `TAICHU_LLM_MODEL` ｜ `TAICHU_COST_GATE_MODE` ｜ `TAICHU_NODE_BIN`
+`MINGLI_ENV` ｜ `MINGLI_DB_PATH` ｜ `MINGLI_FEEDBACK_DB_PATH` ｜ `MINGLI_JWT_SECRET` ｜
+`MINGLI_LLM_API_KEY` ｜ `MINGLI_LLM_MODEL` ｜ `MINGLI_COST_GATE_MODE` ｜ `MINGLI_NODE_BIN`
 
 ## 待补
 

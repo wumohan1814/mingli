@@ -7,9 +7,9 @@
 
 职责：
   1. `prepare(db_dir)` —— 把 analytics / feedback / ops 三个库路径指向
-     **仓库外**的独立临时文件，并写回 `TAICHU_*_DB_PATH` 环境变量；
+     **仓库外**的独立临时文件，并写回 `MINGLI_*_DB_PATH` 环境变量；
   2. `assert_isolated()` —— 双保险：目录解析后只要落在**仓库内**或
-     `/opt/taichu/data`（生产挂载点）下，一律 `RuntimeError` 拒绝执行；
+     `/opt/mingli/data`（生产挂载点）下，一律 `RuntimeError` 拒绝执行；
   3. `cleanup()` —— 删除本次产生的库文件（`--keep` 时保留并打印路径）。
 
 ⚠ 实现注意（实测得出的约束，别改回去）：
@@ -33,14 +33,14 @@ REPO_ROOT = BACKEND_ROOT.parent
 #: 绝对禁止写入的目录（仓库整棵树 + 生产机数据挂载点）
 FORBIDDEN_ROOTS: tuple[Path, ...] = (
     REPO_ROOT,
-    Path("/opt/taichu/data"),
+    Path("/opt/mingli/data"),
 )
 
-#: 三个库的环境变量名（对应 app/config.py 的 model_config env_prefix="TAICHU_"）
+#: 三个库的环境变量名（对应 app/config.py 的 model_config env_prefix="MINGLI_"）
 ENV_KEYS: dict[str, str] = {
-    "analytics": "TAICHU_DB_PATH",
-    "feedback": "TAICHU_FEEDBACK_DB_PATH",
-    "ops": "TAICHU_OPS_DB_PATH",
+    "analytics": "MINGLI_DB_PATH",
+    "feedback": "MINGLI_FEEDBACK_DB_PATH",
+    "ops": "MINGLI_OPS_DB_PATH",
 }
 
 
@@ -65,7 +65,7 @@ def assert_isolated(db_dir: str) -> Path:
     """断言 db_dir 不在仓库内、不在生产数据目录内；返回解析后的绝对路径。
 
     注意：**不判断禁止目录是否存在** —— 早先写成 `if root.exists()` 时，
-    `/opt/taichu/data` 在非 Linux 上不存在，这条守卫会被整体跳过（曾实测到
+    `/opt/mingli/data` 在非 Linux 上不存在，这条守卫会被整体跳过（曾实测到
     该情况下只是被沙箱的 mkdir 拒绝，而不是被本断言拒绝）。始终比较才严密。
     """
     resolved = Path(db_dir).resolve()

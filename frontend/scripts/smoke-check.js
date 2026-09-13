@@ -112,7 +112,7 @@ const criticalGlobals = [
   { name: 'refreshToken', pattern: /^let\s+refreshToken\s*=/m, desc: '刷新令牌' },
   // 关键常量
   { name: 'API (baseURL)', pattern: /const\s+API\s*=/, desc: 'API 基础路径' },
-  { name: 'UI_COPY / TC_COPY', pattern: /TC_COPY\s*=|window\.TC_COPY/, desc: '全局文案表' },
+  { name: 'UI_COPY / ML_COPY', pattern: /ML_COPY\s*=|window\.ML_COPY/, desc: '全局文案表' },
 ];
 
 for (const g of criticalGlobals) {

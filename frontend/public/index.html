@@ -22,22 +22,22 @@
   <script src="/vendor/regions.js"></script>
   <!-- T1–T4 文案接入（REQ-083 / REQ-095 正式文案）：星座 / 生肖三关系匹配 792 对「分值 + 说明」数据。
        数据文件 frontend/public/data/pairs.js（文案轮次交付物，更新时只替换该文件；根绝对路径约定）。
-       defer 延迟加载（节111：配对视图内懒访问 window.TC_PAIRS，首屏不再被它阻塞）。 -->
+       defer 延迟加载（节111：配对视图内懒访问 window.ML_PAIRS，首屏不再被它阻塞）。 -->
   <script src="/data/pairs.js" defer></script>
   <!-- REQ-128 阶段 0：6 套名词白话卡（大六壬/金口诀/奇门时家/黄历择日/太乙/皇极经世）。
        数据文件 frontend/public/data/term-cards.js（文案组第四轮交付物，后续文案轮次只替换该文件；根绝对路径约定）。
-       必须在 React 组件主脚本之前引入（供 TCTermRow / TCTermPanel 查表）。 -->
+       必须在 React 组件主脚本之前引入（供 MLTermRow / MLTermPanel 查表）。 -->
   <script src="/data/term-cards.js"></script>
   <!-- REQ-128 阶段1：全站界面文案总表（框架层 落地/登录注册/三Hub/Banner/菜单/页脚/通用）。
-       数据文件 frontend/public/data/ui-copy.js（window.TC_COPY，key 规范见 docs/standards/01 §12：
+       数据文件 frontend/public/data/ui-copy.js（window.ML_COPY，key 规范见 docs/standards/01 §12：
        ui.<模块>.<动作|状态>，小写+连字符；既有 UI_COPY key 保持原名迁入，index.html 内以
-       UI_COPY = TC_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
+       UI_COPY = ML_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
   <script src="/data/ui-copy.js"></script>
   <script>
   // 节135：UI_COPY 兼容别名必须在数据文件（content/*.js）与业务文件（/js/*.js）之前就绪——
   // 它们的顶层常量（DIVIN_METHODS、PAIR_REL_ICONS、CONTENT 计算键等）加载时即解引用 UI_COPY；
   // 若定义在后面的主引导脚本里，会因执行顺序抛 ReferenceError 使整个脚本文件失效。
-  const UI_COPY = TC_COPY.ui;
+  const UI_COPY = ML_COPY.ui;
   </script>
   <!-- 节135：正文数据总表（卦辞/牌义/类型描述等正文内容统一管理，i18n 就绪）。
        数据文件 frontend/public/data/content/，全局访问：window.CONTENT
@@ -72,12 +72,12 @@ const {
   useRef,
   useLayoutEffect
 } = React;
-// ===== B1 全站 UI 文案常量（REQ-037）→ REQ-128 阶段1：全站界面文案总表 TC_COPY =====
-// 文案总表已迁至独立数据文件 frontend/public/data/ui-copy.js（window.TC_COPY，key 规范见
+// ===== B1 全站 UI 文案常量（REQ-037）→ REQ-128 阶段1：全站界面文案总表 ML_COPY =====
+// 文案总表已迁至独立数据文件 frontend/public/data/ui-copy.js（window.ML_COPY，key 规范见
 // docs/standards/01-命名与变量约定.md §12：ui.<模块>.<动作|状态>，小写+连字符）。
 // 说明：既有 190+ 处 UI_COPY.xxx 引用（各模块页/内容页）保留原名继续可用 —— 该兼容
 // 别名已在 ui-copy.js 之后的内联脚本中提前定义（节135，保证数据/业务脚本加载时可用）；
-// 框架层页面（落地/登录注册/三 Hub/Banner/菜单/页脚/通用）已直引 TC_COPY.ui.* 规范路径。
+// 框架层页面（落地/登录注册/三 Hub/Banner/菜单/页脚/通用）已直引 ML_COPY.ui.* 规范路径。
 const API = '/api';
 // REQ-增强：全局请求超时配置（毫秒）。可通过 api(path, { timeout: N }) 单接口覆盖；
 // 设 0 或 false 禁用超时（与旧行为一致）。默认 15s 平衡用户体验与后端长任务容忍度。
@@ -91,42 +91,42 @@ let authRedirect = null;
 let onUnauthorized = null;
 // ===== REQ-066：功能设置（前端全局设置核心） =====
 // 后端契约：GET /api/settings（需 Bearer）→ {code:0,data:{settings:{anim_enabled,default_mode,
-// banner_dropdown,share_taichu_ui,bg_enabled,card_images,agent_enabled}}}；PUT 部分字段 → 全量 settings。
+// banner_dropdown,share_mingli_ui,bg_enabled,card_images,agent_enabled}}}；PUT 部分字段 → 全量 settings。
 // 前端默认值见 SETTINGS_DEFAULTS；未登录或接口失败一律用前端默认值（登录后由 App 拉取覆盖）。
-// 运行期镜像 TC_SETTINGS 供各页面/钩子读取（模块级对象原地 Object.assign，页挂载即读到最新值），
-// 另暴露 camelCase 只读钩子（animEnabled / defaultMode / bannerDropdown / shareTaichuUi /
+// 运行期镜像 ML_SETTINGS 供各页面/钩子读取（模块级对象原地 Object.assign，页挂载即读到最新值），
+// 另暴露 camelCase 只读钩子（animEnabled / defaultMode / bannerDropdown / shareMingliUi /
 // bgEnabled / cardImages / agentEnabled），供 REQ-061 动效、REQ-076 Agent 后续接入。
 const SETTINGS_DEFAULTS = {
   anim_enabled: true,
   default_mode: 'auto', // 'auto'=默认项目起卦/抽卡（现状）| 'manual'=默认手动快速填写 | 'both'=两入口并行不设默认
   banner_dropdown: false,
-  share_taichu_ui: true,
+  share_mingli_ui: true,
   bg_enabled: true,
   card_images: true,
   agent_enabled: true
 };
 const SETTINGS_KEYS = Object.keys(SETTINGS_DEFAULTS);
-const TC_SETTINGS = Object.assign({}, SETTINGS_DEFAULTS);
-(function installTcAliases() {
+const ML_SETTINGS = Object.assign({}, SETTINGS_DEFAULTS);
+(function installMlAliases() {
   const map = {
     anim_enabled: 'animEnabled',
     default_mode: 'defaultMode',
     banner_dropdown: 'bannerDropdown',
-    share_taichu_ui: 'shareTaichuUi',
+    share_mingli_ui: 'shareMingliUi',
     bg_enabled: 'bgEnabled',
     card_images: 'cardImages',
     agent_enabled: 'agentEnabled'
   };
   Object.keys(map).forEach(function (k) {
-    Object.defineProperty(TC_SETTINGS, map[k], {
+    Object.defineProperty(ML_SETTINGS, map[k], {
       enumerable: false,
       configurable: true,
-      get: function () { return TC_SETTINGS[k]; }
+      get: function () { return ML_SETTINGS[k]; }
     });
   });
 })();
 // 服务端原始值 → 前端规范化设置对象（未知/缺失字段回退默认值；default_mode 白名单校验）
-function normalizeTcSettings(raw) {
+function normalizeMlSettings(raw) {
   const out = Object.assign({}, SETTINGS_DEFAULTS);
   if (raw && typeof raw === 'object') {
     SETTINGS_KEYS.forEach(function (k) {
@@ -140,7 +140,7 @@ function normalizeTcSettings(raw) {
   }
   return out;
 }
-function shallowEqTc(a, b) {
+function shallowEqMl(a, b) {
   for (let i = 0; i < SETTINGS_KEYS.length; i++) {
     if (a[SETTINGS_KEYS[i]] !== b[SETTINGS_KEYS[i]]) return false;
   }
@@ -148,8 +148,8 @@ function shallowEqTc(a, b) {
 }
 // ② 默认模式助手：manual=默认停在手动录入入口；auto=自动起卦/抽卡（现状）；
 // both=两入口并行、不强行设默认 → 每次打开保留上次所选（返回 keepCurrent 原值）。
-function tcAskNextDefault(keepCurrent) {
-  const dm = TC_SETTINGS.default_mode;
+function mlAskNextDefault(keepCurrent) {
+  const dm = ML_SETTINGS.default_mode;
   if (dm === 'manual') return 'manual';
   if (dm === 'both') return keepCurrent;
   return 'auto';
@@ -174,14 +174,14 @@ function switchShareGuestSession(entering) {
   if (token) return;
   let saved = null;
   try {
-    saved = localStorage.getItem('taichu_token');
+    saved = localStorage.getItem('mingli_token');
   } catch (e) {
     saved = null;
   }
   if (saved) {
     token = saved;
     try {
-      refreshToken = localStorage.getItem('taichu_refresh_token') || '';
+      refreshToken = localStorage.getItem('mingli_refresh_token') || '';
     } catch (e) {
       refreshToken = '';
     }
@@ -298,10 +298,10 @@ function trendMeta(v) {
 let _trackQueue = [];
 let _trackTimer = null;
 function _sessionId() {
-  let s = localStorage.getItem('taichu_session_id');
+  let s = localStorage.getItem('mingli_session_id');
   if (!s) {
     s = window.crypto && crypto.randomUUID ? crypto.randomUUID() : 's' + Date.now();
-    localStorage.setItem('taichu_session_id', s);
+    localStorage.setItem('mingli_session_id', s);
   }
   return s;
 }
@@ -366,7 +366,7 @@ function generateDeviceFingerprint() {
       g.fillRect(0, 0, c.width, c.height);
       g.font = 'bold 18px "Songti SC",serif';
       g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink-500'); /* hardcode-allow: Canvas 2D API 不支持 var() */
-      g.fillText('Taichu\u2605\u592a\u521d\u6307\u7eb9', 12, 12);
+      g.fillText('Mingli\u2605\u592a\u521d\u6307\u7eb9', 12, 12);
       g.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--gold-500'); /* hardcode-allow: Canvas 2D API 不支持 var() */
       g.lineWidth = 2;
       g.strokeRect(120, 24, 60, 30);
@@ -420,7 +420,7 @@ async function api(path, options = {}) {
   };
   const parseErrorDetail = function (e) {
     // FastAPI 的 422 detail 是数组 [{loc,msg,type}]，转成可读字符串，避免 [object Object]
-    let msg = TC_COPY.ui.error['request-failed'];
+    let msg = ML_COPY.ui.error['request-failed'];
     const d = e && e.detail;
     if (typeof d === 'string' && d) msg = d;else if (Array.isArray(d) && d.length) msg = d.map(function (x) { return x && x.msg || JSON.stringify(x); }).join('；');else if (d) msg = JSON.stringify(d);
     return msg;
@@ -451,14 +451,14 @@ async function api(path, options = {}) {
     if (timeoutId) clearTimeout(timeoutId);
     // 区分超时与网络错误
     if (e && e.name === 'AbortError') {
-      var timeoutErr = new Error(TC_COPY.ui.error['request-timeout'] || '请求超时，请检查网络后重试');
+      var timeoutErr = new Error(ML_COPY.ui.error['request-timeout'] || '请求超时，请检查网络后重试');
       timeoutErr.status = 0;
       timeoutErr.code = 'TIMEOUT';
       timeoutErr.timeout = timeoutMs;
       throw timeoutErr;
     }
     // 网络错误（离线 / DNS 失败 / CORS 等）
-    var netErr = new Error(TC_COPY.ui.error['network-error'] || '网络连接失败，请检查网络设置');
+    var netErr = new Error(ML_COPY.ui.error['network-error'] || '网络连接失败，请检查网络设置');
     netErr.status = 0;
     netErr.code = 'NETWORK_ERROR';
     netErr.cause = e;
@@ -485,10 +485,10 @@ async function api(path, options = {}) {
         var newRefresh = rd.refresh_token || rd.data && rd.data.refresh_token;
         if (newToken) {
           token = newToken;
-          localStorage.setItem('taichu_token', token);
+          localStorage.setItem('mingli_token', token);
           if (newRefresh) {
             refreshToken = newRefresh;
-            localStorage.setItem('taichu_refresh_token', refreshToken);
+            localStorage.setItem('mingli_refresh_token', refreshToken);
           }
           // 续期后重试原请求（重建超时控制器）
           var retryCtrl = options.signal ? null : (timeoutMs ? new AbortController() : null);
@@ -513,10 +513,10 @@ async function api(path, options = {}) {
   if (r.status === 401 && !options.skip401) {
     token = '';
     refreshToken = '';
-    localStorage.removeItem('taichu_token');
-    localStorage.removeItem('taichu_refresh_token');
+    localStorage.removeItem('mingli_token');
+    localStorage.removeItem('mingli_refresh_token');
     if (onUnauthorized) onUnauthorized();
-    throw new Error(TC_COPY.ui.error['login-expired']);
+    throw new Error(ML_COPY.ui.error['login-expired']);
   }
   if (r.ok) return r.json();
   var errBody = null;
@@ -525,7 +525,7 @@ async function api(path, options = {}) {
   } catch (_) {/* 响应体非 JSON（如 502 网关错误） */}
   var rawDetail = errBody && errBody.detail;
   var errMsg;
-  if (Array.isArray(rawDetail)) errMsg = rawDetail.map(function (x) { return x && x.msg || JSON.stringify(x); }).join('；');else if (typeof rawDetail === 'string' && rawDetail) errMsg = rawDetail;else if (errBody && typeof errBody.message === 'string' && errBody.message) errMsg = errBody.message;else errMsg = fmtTpl(TC_COPY.ui.error['http-status'], { status: r.status });
+  if (Array.isArray(rawDetail)) errMsg = rawDetail.map(function (x) { return x && x.msg || JSON.stringify(x); }).join('；');else if (typeof rawDetail === 'string' && rawDetail) errMsg = rawDetail;else if (errBody && typeof errBody.message === 'string' && errBody.message) errMsg = errBody.message;else errMsg = fmtTpl(ML_COPY.ui.error['http-status'], { status: r.status });
   var err = new Error(errMsg);
   err.code = errBody && typeof errBody.code === 'number' ? errBody.code : null;
   err.status = r.status;
@@ -540,8 +540,8 @@ function logout() {
   refreshToken = '';
   // REQ-092：登出即解除本会话建档门禁状态（下次登录/启动再按档案数重新校验）
   forceOnboarding = null;
-  localStorage.removeItem('taichu_token');
-  localStorage.removeItem('taichu_refresh_token');
+  localStorage.removeItem('mingli_token');
+  localStorage.removeItem('mingli_refresh_token');
   if (onUnauthorized) onUnauthorized();
 }
 
@@ -777,9 +777,9 @@ function req080ThemeFor(page) {
 function App() {
   const [page, setPage] = useState('landing');
   const [params, setParams] = useState({});
-  const [skin, setSkin] = useState(() => localStorage.getItem('taichu_skin') || 'guoxue');
+  const [skin, setSkin] = useState(() => localStorage.getItem('mingli_skin') || 'guoxue');
   const [module, setModule] = useState(() => {
-    const s = localStorage.getItem('taichu_skin') || 'guoxue';
+    const s = localStorage.getItem('mingli_skin') || 'guoxue';
     if (s === 'xishi' || s === 'tarot' || s === 'xingzuo') return 'xishi';
     if (s === 'mbti') return 'mbti';
     return 'guoxue';
@@ -788,85 +788,85 @@ function App() {
   const [pairCfg, setPairCfg] = useState(null); // REQ-072：配对解析弹窗配置 {module}，非空时渲染 PairModal
   // REQ-066：功能设置 —— 全局 state（App 顶层）+ 保存态。默认值 SETTINGS_DEFAULTS；
   // 登录后 GET /api/settings 覆盖，未登录/接口失败保持前端默认；改动本地即时生效并防抖 PUT。
-  // tcSavedRef = 服务端最近确认值（用于保存失败回退）；tcLoadedRef = 本登录会话是否已拉取。
-  const [tcSet, setTcSet] = useState(function () { return Object.assign({}, SETTINGS_DEFAULTS); });
-  const [tcSave, setTcSave] = useState('saved'); // 'saved' | 'saving' | 'failed'
-  const tcSavedRef = useRef(Object.assign({}, SETTINGS_DEFAULTS));
-  const tcLoadedRef = useRef(false);
-  const tcSeqRef = useRef(0); // PUT 序号：忽略乱序返回的旧响应，避免旧响应覆盖新改动
+  // mlSavedRef = 服务端最近确认值（用于保存失败回退）；mlLoadedRef = 本登录会话是否已拉取。
+  const [mlSet, setMlSet] = useState(function () { return Object.assign({}, SETTINGS_DEFAULTS); });
+  const [mlSave, setMlSave] = useState('saved'); // 'saved' | 'saving' | 'failed'
+  const mlSavedRef = useRef(Object.assign({}, SETTINGS_DEFAULTS));
+  const mlLoadedRef = useRef(false);
+  const mlSeqRef = useRef(0); // PUT 序号：忽略乱序返回的旧响应，避免旧响应覆盖新改动
   // BUG-013：onPatch 契约为 (key, value)——SettingsPage 两个调用点（开关 onChange、默认模式
   // onClick）均以 (key, value) 调用；旧实现把首参当「整包对象」合并，导致字符串 key 被
   // Object.assign 按字符索引铺开、7 项设置永不变更（开关点了不切换、无 PUT）。改为单键写入。
-  const patchTcSettings = function (key, value) {
-    setTcSet(function (prev) {
+  const patchMlSettings = function (key, value) {
+    setMlSet(function (prev) {
       const next = Object.assign({}, prev);
       next[key] = value;
       return next;
     });
   };
-  const applyTcSettings = function (next) {
-    tcSeqRef.current++; // 使任何在途 PUT 失效（GET/登出覆盖优先）
-    tcSavedRef.current = next;
-    setTcSet(next);
-    setTcSave('saved');
+  const applyMlSettings = function (next) {
+    mlSeqRef.current++; // 使任何在途 PUT 失效（GET/登出覆盖优先）
+    mlSavedRef.current = next;
+    setMlSet(next);
+    setMlSave('saved');
   };
   // 拉取服务端设置：成功 → 覆盖；未登录 / 接口失败 → 前端默认值
-  const loadTcSettings = async function () {
+  const loadMlSettings = async function () {
     try {
       const res = await api('/settings', { method: 'GET' });
       const raw = (res && res.data && res.data.settings) || (res && res.settings) || null;
-      applyTcSettings(raw && typeof raw === 'object' ? normalizeTcSettings(raw) : Object.assign({}, SETTINGS_DEFAULTS));
+      applyMlSettings(raw && typeof raw === 'object' ? normalizeMlSettings(raw) : Object.assign({}, SETTINGS_DEFAULTS));
     } catch (e) {
-      applyTcSettings(Object.assign({}, SETTINGS_DEFAULTS));
+      applyMlSettings(Object.assign({}, SETTINGS_DEFAULTS));
     } finally {
-      tcLoadedRef.current = true;
+      mlLoadedRef.current = true;
     }
   };
   // 退出登录：清会话 + 设置回默认（下次登录重新拉取）
   const doLogout = function () {
     logout();
-    tcLoadedRef.current = false;
-    applyTcSettings(Object.assign({}, SETTINGS_DEFAULTS));
+    mlLoadedRef.current = false;
+    applyMlSettings(Object.assign({}, SETTINGS_DEFAULTS));
   };
   // REQ-066：登录态 / 页面切换时拉取设置（启动带 token、登录/注册成功各拉一次；登出重置标记）
   useEffect(() => {
-    if (token && page !== 'auth' && !tcLoadedRef.current) {
-      loadTcSettings();
+    if (token && page !== 'auth' && !mlLoadedRef.current) {
+      loadMlSettings();
     } else if (!token) {
-      tcLoadedRef.current = false;
+      mlLoadedRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
-  // REQ-066：设置镜像 TC_SETTINGS（供各页面钩子读取）+ 防抖保存 —— tcSet 与「已确认值」
+  // REQ-066：设置镜像 ML_SETTINGS（供各页面钩子读取）+ 防抖保存 —— mlSet 与「已确认值」
   // 不一致 → 450ms 后 PUT 全量设置；成功用服务端返回值覆盖（刷新确认基线），失败回退基线并标 failed。
   useEffect(() => {
-    Object.assign(TC_SETTINGS, tcSet);
-    if (shallowEqTc(tcSet, tcSavedRef.current)) return;
-    setTcSave('saving');
-    const seq = ++tcSeqRef.current;
+    Object.assign(ML_SETTINGS, mlSet);
+    if (shallowEqMl(mlSet, mlSavedRef.current)) return;
+    setMlSave('saving');
+    const seq = ++mlSeqRef.current;
     const timer = setTimeout(async () => {
       try {
-        const res = await api('/settings', { method: 'PUT', body: JSON.stringify(tcSet) });
-        if (seq !== tcSeqRef.current) return; // 已有更新的改动/覆盖，丢弃本次旧响应
+        const res = await api('/settings', { method: 'PUT', body: JSON.stringify(mlSet) });
+        if (seq !== mlSeqRef.current) return; // 已有更新的改动/覆盖，丢弃本次旧响应
         const raw = (res && res.data && res.data.settings) || (res && res.settings) || null;
         if (raw && typeof raw === 'object') {
-          const next = normalizeTcSettings(raw);
-          tcSavedRef.current = next;
-          setTcSet(next);
+          const next = normalizeMlSettings(raw);
+          mlSavedRef.current = next;
+          setMlSet(next);
         } else {
-          tcSavedRef.current = Object.assign({}, tcSet);
+          mlSavedRef.current = Object.assign({}, mlSet);
         }
-        setTcSave('saved');
+        setMlSave('saved');
       } catch (e) {
-        if (seq !== tcSeqRef.current) return; // 旧请求失败不再回退（避免覆盖新改动）
-        setTcSave('failed');
-        setTcSet(Object.assign({}, tcSavedRef.current));
-        if (e && (e.status === 401 || e.code === 401)) tcLoadedRef.current = false;
+        if (seq !== mlSeqRef.current) return; // 旧请求失败不再回退（避免覆盖新改动）
+        setMlSave('failed');
+        setMlSet(Object.assign({}, mlSavedRef.current));
+        if (e && (e.status === 401 || e.code === 401)) mlLoadedRef.current = false;
       }
     }, 450);
     return function () { clearTimeout(timer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tcSet]);
+  }, [mlSet]);
   useEffect(() => {
     // REQ-080：App 启动（带/不带 token）统一入口 —— 解析 location.pathname 反向得 {page, params}，
     // 取代原先「启动即 cases/onboarding + 两个分享 effect 各读一次 pathname」的状态式启动；
@@ -899,10 +899,10 @@ function App() {
       setParams(parsed.params || {});
       return;
     }
-    const saved = localStorage.getItem('taichu_token');
+    const saved = localStorage.getItem('mingli_token');
     if (saved) {
       token = saved;
-      const savedR = localStorage.getItem('taichu_refresh_token');
+      const savedR = localStorage.getItem('mingli_refresh_token');
       if (savedR) refreshToken = savedR;
     }
     // REQ-080：深链/刷新直落模块功能页时同步模块与皮肤（口径同「模块下拉直达 / HUB 卡片」）
@@ -1030,7 +1030,7 @@ function App() {
   }, [page]);
   const applySkin = s => {
     setSkin(s);
-    localStorage.setItem('taichu_skin', s);
+    localStorage.setItem('mingli_skin', s);
   };
   // 切换模块（左侧 NavRail + Banner 菜单共用）：只同步 module + 皮肤并「留在 landing 落地宣传页」，
   // 不直接跳 HUB；落地页主按钮才负责进入对应 HUB / 测试页（onNavigate）。
@@ -1172,10 +1172,10 @@ function App() {
     }),
     // REQ-066：功能设置页（右上角菜单「功能设置」进入）
     settings: /*#__PURE__*/React.createElement(SettingsPage, {
-      settings: tcSet,
-      saveState: tcSave,
+      settings: mlSet,
+      saveState: mlSave,
       loggedIn: !!token,
-      onPatch: patchTcSettings,
+      onPatch: patchMlSettings,
       onNavigate: navigate,
       applySkin: applySkin,
       skin: skin
@@ -1187,10 +1187,10 @@ function App() {
   };
   return /*#__PURE__*/React.createElement("div", null, /* REQ-066⑤：bg_enabled 开 → 渲染运营背景图层（.bg-layer 模块主题渐变 + .starfield 星点）；
      关 → 一律不渲染，回 body 纯色默认样式（--paper） */
-  tcSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
+  mlSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
     className: "bg-layer bg-" + module,
     "aria-hidden": "true"
-  }), tcSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
+  }), mlSet.bg_enabled && /*#__PURE__*/React.createElement("div", {
     className: "starfield",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("header", {
@@ -1204,14 +1204,14 @@ function App() {
     style: {
       cursor: 'pointer'
     }
-  }, TC_COPY.ui.brand.name, /*#__PURE__*/React.createElement("span", {
+  }, ML_COPY.ui.brand.name, /*#__PURE__*/React.createElement("span", {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, TC_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理太初」与右上角菜单/汉堡 之间，
+  }, ML_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理太初」与右上角菜单/汉堡 之间，
      用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
      banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
-  tcSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
+  mlSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
     onGo: goFeature
   }), /*#__PURE__*/React.createElement(TopbarMenu, {
     loggedIn: !!token,
@@ -1221,7 +1221,7 @@ function App() {
     onSettings: () => navigate('settings'),
     /* REQ-076：王先生 Agent 图标入口（agent_enabled 控制显隐） */
     onAgent: () => navigate('agent'),
-    agentEnabled: tcSet.agent_enabled !== false,
+    agentEnabled: mlSet.agent_enabled !== false,
     onCredits: () => navigate('credits'),
     onLogout: () => doLogout()
   })), /*#__PURE__*/React.createElement("div", {
@@ -1230,7 +1230,7 @@ function App() {
     className: "view-enter",
     key: page,
     /* REQ-066①：anim_enabled 关 → 页面切换动画直接跳过（供 REQ-061 动效读取的现成一处） */
-    style: tcSet.anim_enabled ? undefined : { animation: 'none' }
+    style: mlSet.anim_enabled ? undefined : { animation: 'none' }
   }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
     module: module,
     onSelect: selectModule
@@ -1262,11 +1262,11 @@ class ErrorBoundary extends React.Component {
       const msg = raw && raw.message ? String(raw.message) : String(raw);
       return React.createElement('div', { className: 'container', style: { padding: '40px 16px', textAlign: 'center' } },
         React.createElement('div', { className: 'card failed-box' },
-          React.createElement('div', { className: 'section-title' }, TC_COPY.ui.error['page-error-title']),
+          React.createElement('div', { className: 'section-title' }, ML_COPY.ui.error['page-error-title']),
           React.createElement('div', { className: 'error', style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } },
-            TC_COPY.ui.error['page-error-prefix'] + msg),
+            ML_COPY.ui.error['page-error-prefix'] + msg),
           React.createElement('div', { className: 'back-row', style: { justifyContent: 'center' } },
-            React.createElement('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => { window.location.assign('/'); } }, TC_COPY.ui.buttons.back_home))));
+            React.createElement('button', { className: 'btn btn-primary', style: { width: 'auto' }, onClick: () => { window.location.assign('/'); } }, ML_COPY.ui.buttons.back_home))));
     }
     return this.props.children;
   }

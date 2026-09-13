@@ -1,10 +1,10 @@
 #!/bin/bash
 # 命理太初 · SQLite 每日备份脚本
-# 建议 crontab: 0 3 * * * /bin/bash /opt/taichu/app/ops/deploy/backup.sh
+# 建议 crontab: 0 3 * * * /bin/bash /opt/mingli/app/ops/deploy/backup.sh
 set -e
 
-DATA_DIR="/opt/taichu/data"
-BACKUP_DIR="/opt/taichu/backup"
+DATA_DIR="/opt/mingli/data"
+BACKUP_DIR="/opt/mingli/backup"
 DATE=$(date +%Y%m%d_%H%M%S)
 KEEP_DAYS=7
 

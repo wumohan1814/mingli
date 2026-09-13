@@ -2,7 +2,7 @@
 """余额核心服务单测（backend/tests/unit/test_credits.py）。
 
 依赖 tests/conftest.py：
-  - 任何 app.* import 前已把 TAICHU_DB_PATH / TAICHU_OPS_DB_PATH 指向 session 级
+  - 任何 app.* import 前已把 MINGLI_DB_PATH / MINGLI_OPS_DB_PATH 指向 session 级
     临时目录，本文件绝不触碰真实库；
   - session 级夹具 `orchestration_env` 负责在临时 analytics / ops 库建全部表。
 

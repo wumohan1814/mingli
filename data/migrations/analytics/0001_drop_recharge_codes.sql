@@ -1,5 +1,5 @@
 -- 节146 · 拆除付款充值链路：物理删除充值码表
--- 适用库：analytics（本地 backend/data/taichu_analytics.db；线上 /opt/taichu/data/taichu_analytics.db）
+-- 适用库：analytics（本地 backend/data/mingli_analytics.db；线上 /opt/mingli/data/mingli_analytics.db）
 -- 幂等：DROP TABLE IF EXISTS，可重复执行。
 --
 -- 执行前提（2026-09-14 已逐项核对，全仓无活引用）：

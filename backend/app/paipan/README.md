@@ -14,7 +14,7 @@
 |---|---|
 | `lunar-python`（八字历法）、`iztro`（紫微）、`mingyu-core`（占星 / 七政 / 奇门） | **引入**（开源库） |
 | 排盘胶水、降级逻辑、切片、打分 | **自研**（本模块） |
-| `reference/mingli/` 中的脚本与提示词 | **仅参考**，不 import、不打包 |
+| `reference/mingli-reference/` 中的脚本与提示词 | **仅参考**，不 import、不打包 |
 
 > `paipan` 的 Python 胶水层需通过 `subprocess` 调用 Node 侧的 iztro / mingyu-core，
 > 部署镜像必须同时具备 Python 3.13 与 Node 22。
@@ -31,7 +31,7 @@ LLM 不得心算、重排、"修正"或"润色"任何数值性盘面内容。`ch
 - 缺时辰 → 前三柱低置信（`bazi.pillars.hour = null`），断前尘只做年 / 月级断言。
 - 依赖缺失 → 对应段 `null`，**严禁脑补**。
 
-## 打分公式（自研，兼容 mingli 语义）
+## 打分公式（自研，兼容 mingli-reference 语义）
 
 契合度 = 0.5×命中率 + 0.3×命题质量 + 0.2×依据链完整度；`weight = 0.4 + 0.6 × 契合度`；无反馈方法权重 0.5。
 

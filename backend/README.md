@@ -20,7 +20,7 @@
 | `app/jobs/` | 模块 12：异步任务编排（jobId + 代码轮询，ADR-0005） |
 | `app/shared/` | 配置、日志、LLM 客户端、DB 访问、可观测 |
 | `prompts/` | method-prompts 与 shared 提示词（**自研**，ADR-0001） |
-| `reference/mingli/` | 排盘脚本与提示词（**仅参考，不参与构建**，ADR-0001） |
+| `reference/mingli-reference/` | 排盘脚本与提示词（**仅参考，不参与构建**，ADR-0001） |
 | `tests/` | 单元 / 集成 / 契约测试与 fixtures |
 
 ## 模块清单（技术框架方案 §2.3，9 类）
@@ -46,7 +46,7 @@
 |---|---|
 | **引入** | `lunar-python` / `iztro` / `mingyu-core`（开源库） |
 | **自研** | 排盘胶水与降级、切片、打分、全部提示词、合并规则 |
-| **参考** | `reference/mingli/`（不 import、不打包） |
+| **参考** | `reference/mingli-reference/`（不 import、不打包） |
 
 ## 构建顺序（技术框架方案 §13）
 

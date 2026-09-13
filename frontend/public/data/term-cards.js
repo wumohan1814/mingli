@@ -2,10 +2,10 @@
  * 数据来源：docs/exchange/文案交付-第四轮/ 下 6 个 JSON（liuren/jinkoujue/qimen/almanac/taiyi/huangji，文案组第四轮交付物，已 UTF-8 校验）。
  * 更新方式：后续文案轮次只替换本文件（各方法卡组），无需改动 index.html 引入逻辑与组件。
  * 引入方式：index.html 以 <script src="/data/term-cards.js"> 加载（根绝对路径，置于 React 脚本前）。
- * 结构：window.TC_TERM_CARDS = { "<method>": [ { key, term, plain }, ... ], ... }
+ * 结构：window.ML_TERM_CARDS = { "<method>": [ { key, term, plain }, ... ], ... }
  * 说明：source 溯源字段未入前端（需要时查 docs/exchange/文案交付-第四轮/ 原 JSON）；正文为文案组交付物，禁止擅自修改。
  */
-window.TC_TERM_CARDS = {
+window.ML_TERM_CARDS = {
   "liuren": [
     { "key": "tianjiang-guiren", "term": "贵人", "plain": "十二天将之首，传统象征权威、长辈与贵人扶持，代表一种「可得外力相助」的趋势参考；它只是盘面里「有人帮、有靠山」的符号提示，不等于现实必然顺遂。" },
     { "key": "tianjiang-tengshe", "term": "螣蛇", "plain": "火性阴将，常象征虚惊、变怪、口舌与心神不宁，是一种需要提防意外的趋势提示；看到它更像提醒你「稳情绪、防虚夸」，而非定论灾祸。" },
@@ -209,4 +209,4 @@ window.TC_TERM_CARDS = {
   };
 
 // 节135：桥接到 CONTENT 正文数据统一入口（物理文件位置与文案轮次替换流程不变；i18n 阶段按语言版本挂载）
-if (typeof CONTENT !== 'undefined' && !CONTENT.termCards) CONTENT.termCards = window.TC_TERM_CARDS;
+if (typeof CONTENT !== 'undefined' && !CONTENT.termCards) CONTENT.termCards = window.ML_TERM_CARDS;

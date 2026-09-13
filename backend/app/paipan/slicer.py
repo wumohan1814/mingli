@@ -9,7 +9,7 @@
 LLM 不手切、不脑补。对应源字段为 null 时，切片内相应字段写 null，
 null ⇒ 该方法按降级规则不参与本轮。
 
-key → 字段映射（= mingli SKILL.md §0 注册表）：
+key → 字段映射（= mingli-reference SKILL.md §0 注册表）：
     bazi-pattern        → {"input": chart.input,
                             "bazi": {pillars, day_master, day_master_wuxing,
                                      ming_gong, shen_gong, tai_yuan,
@@ -31,7 +31,7 @@ key → 字段映射（= mingli SKILL.md §0 注册表）：
 
 from __future__ import annotations
 
-# 7 个命盘类方法（缺省切片集；顺序同 mingli SKILL.md §0 注册表）
+# 7 个命盘类方法（缺省切片集；顺序同 mingli-reference SKILL.md §0 注册表）
 DEFAULT_METHODS = [
     "bazi-pattern",
     "bazi-dayun-liunian",

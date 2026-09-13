@@ -124,7 +124,7 @@ function AgentPage({
     const text = input.trim();
     if (!text || sending) return;
     if (!caseId) {
-      toast(TC_COPY.ui.toast['agent-please-create-case']);
+      toast(ML_COPY.ui.toast['agent-please-create-case']);
       return;
     }
     setSendErr('');
@@ -195,9 +195,9 @@ function AgentPage({
         });
       });
       setSwitchTarget(null);
-      toast(TC_COPY.ui.toast['agent-set-default-ok']);
+      toast(ML_COPY.ui.toast['agent-set-default-ok']);
     } catch (e) {
-      toast((e && e.message) || TC_COPY.ui.toast['agent-set-default-fail']);
+      toast((e && e.message) || ML_COPY.ui.toast['agent-set-default-fail']);
     } finally {
       setSwitchBusy(false);
     }
@@ -206,7 +206,7 @@ function AgentPage({
     if (!switchTarget) return;
     setCaseId(switchTarget.id);
     setSwitchTarget(null);
-    toast(TC_COPY.ui.toast['agent-temp-switch-ok']);
+    toast(ML_COPY.ui.toast['agent-temp-switch-ok']);
   };
   // 档案下拉：无档案时不提供「暂不选（闲聊）」选项（REQ-113④：不提供无档案闲聊）
   const pick = el('div', { className: 'agent-pick' },

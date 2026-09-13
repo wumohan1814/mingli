@@ -43,69 +43,69 @@
       /* ============================================================
          节136 阶段A · standards/04 v1.2 令牌底座（只新增，零视觉变化）
          规则：旧令牌（--ink-*/--gold-*/--radius-*/--shadow-card 等）一律不改动、
-         不重指；新圆角值（10/14/20/28）与三层柔和阴影只以 --taichu-* 新名提供，
+         不重指；新圆角值（10/14/20/28）与三层柔和阴影只以 --mingli-* 新名提供，
          暂无消费者。消费迁移与视觉升级归节134 运行层；届时旧名改为新名别名、
          下面同值重复（墨蓝/金色阶 400–900）一并收口为单点。
          ============================================================ */
       /* v1.2 墨蓝色阶（补 50/100/200/300/800；400–900 与旧色同值，过渡期重复） */
-      --taichu-ink-50:#EEF1F8; --taichu-ink-100:#D6DCEF; --taichu-ink-200:#AEB9DE;
-      --taichu-ink-300:#8493CB; --taichu-ink-400:#5E6FB3; --taichu-ink-500:#44558F;
-      --taichu-ink-600:#364573; --taichu-ink-700:#2C385C; --taichu-ink-800:#232C49;
-      --taichu-ink-900:#1A2138;
+      --mingli-ink-50:#EEF1F8; --mingli-ink-100:#D6DCEF; --mingli-ink-200:#AEB9DE;
+      --mingli-ink-300:#8493CB; --mingli-ink-400:#5E6FB3; --mingli-ink-500:#44558F;
+      --mingli-ink-600:#364573; --mingli-ink-700:#2C385C; --mingli-ink-800:#232C49;
+      --mingli-ink-900:#1A2138;
       /* v1.2 金色阶（补 400/700；300/500/600 与旧色同值，过渡期重复） */
-      --taichu-gold-300:#E6CF9A; --taichu-gold-400:#D4B06A; --taichu-gold-500:#B8893E;
-      --taichu-gold-600:#9C6E2E; --taichu-gold-700:#7E5824;
+      --mingli-gold-300:#E6CF9A; --mingli-gold-400:#D4B06A; --mingli-gold-500:#B8893E;
+      --mingli-gold-600:#9C6E2E; --mingli-gold-700:#7E5824;
       /* v1.2 中性色（补暖表面；余与旧色同值，过渡期重复） */
-      --taichu-paper:#F7F4EC; --taichu-surface:#FFFFFF; --taichu-surface-warm:#FEFCF8;
-      --taichu-text-1:#1F1F26; --taichu-text-2:#5C5C68; --taichu-text-3:#8A8A94;
-      --taichu-border-warm:#E5E0D4;
+      --mingli-paper:#F7F4EC; --mingli-surface:#FFFFFF; --mingli-surface-warm:#FEFCF8;
+      --mingli-text-1:#1F1F26; --mingli-text-2:#5C5C68; --mingli-text-3:#8A8A94;
+      --mingli-border-warm:#E5E0D4;
       /* v1.2 皮肤令牌：5 个别名指向现行 --skin-*（随 [data-skin] 覆盖动态生效，单点）；
          glow 为新增，默认玉青光晕，主题覆盖归节134 */
-      --taichu-skin-accent:var(--skin-accent);
-      --taichu-skin-accent-soft:var(--skin-accent-soft);
-      --taichu-skin-accent-ink:var(--skin-accent-ink);
-      --taichu-skin-banner:var(--skin-banner);
-      --taichu-skin-banner-ink:var(--skin-banner-ink);
-      --taichu-skin-glow:rgba(62,124,107,.18);
+      --mingli-skin-accent:var(--skin-accent);
+      --mingli-skin-accent-soft:var(--skin-accent-soft);
+      --mingli-skin-accent-ink:var(--skin-accent-ink);
+      --mingli-skin-banner:var(--skin-banner);
+      --mingli-skin-banner-ink:var(--skin-banner-ink);
+      --mingli-skin-glow:rgba(62,124,107,.18);
       /* v1.2 字体（新字体栈，暂无消费者；旧 --font-* 不动） */
-      --taichu-font-serif:"Noto Serif SC","Cormorant Garamond","Songti SC",serif;
-      --taichu-font-sans:"Noto Sans SC","Inter",system-ui,sans-serif;
-      --taichu-font-latin-serif:"Cormorant Garamond","Noto Serif SC",serif;
+      --mingli-font-serif:"Noto Serif SC","Cormorant Garamond","Songti SC",serif;
+      --mingli-font-sans:"Noto Sans SC","Inter",system-ui,sans-serif;
+      --mingli-font-latin-serif:"Cormorant Garamond","Noto Serif SC",serif;
       /* v1.2 字号阶 */
-      --taichu-fs-disclaimer:11px; --taichu-fs-caption:12px; --taichu-fs-body:14px;
-      --taichu-fs-body-l:16px; --taichu-fs-h3:18px; --taichu-fs-h2:22px;
-      --taichu-fs-h1:28px; --taichu-fs-display:32px;
+      --mingli-fs-disclaimer:11px; --mingli-fs-caption:12px; --mingli-fs-body:14px;
+      --mingli-fs-body-l:16px; --mingli-fs-h3:18px; --mingli-fs-h2:22px;
+      --mingli-fs-h1:28px; --mingli-fs-display:32px;
       /* v1.2 间距（8px 基准；旧 4px 基准散点待阶段 B 逐案归档，不补旧表） */
-      --taichu-sp-1:8px; --taichu-sp-2:16px; --taichu-sp-3:24px;
-      --taichu-sp-4:32px; --taichu-sp-6:48px;
+      --mingli-sp-1:8px; --mingli-sp-2:16px; --mingli-sp-3:24px;
+      --mingli-sp-4:32px; --mingli-sp-6:48px;
       /* v1.2 圆角（新值 10/14/20/28；旧 --radius-* 保持 8/12/16，不重指） */
-      --taichu-radius-sm:10px; --taichu-radius-md:14px; --taichu-radius-lg:20px;
-      --taichu-radius-xl:28px; --taichu-radius-pill:999px;
+      --mingli-radius-sm:10px; --mingli-radius-md:14px; --mingli-radius-lg:20px;
+      --mingli-radius-xl:28px; --mingli-radius-pill:999px;
       /* v1.2 三层柔和阴影（旧 --shadow-card 现值保留，不重指） */
-      --taichu-shadow-card:0 4px 24px rgba(26,33,56,.06),0 1px 2px rgba(26,33,56,.04);
-      --taichu-shadow-elevated:0 8px 32px rgba(26,33,56,.08),0 2px 4px rgba(26,33,56,.04);
-      --taichu-shadow-float:0 16px 48px rgba(26,33,56,.10),0 4px 8px rgba(26,33,56,.04);
+      --mingli-shadow-card:0 4px 24px rgba(26,33,56,.06),0 1px 2px rgba(26,33,56,.04);
+      --mingli-shadow-elevated:0 8px 32px rgba(26,33,56,.08),0 2px 4px rgba(26,33,56,.04);
+      --mingli-shadow-float:0 16px 48px rgba(26,33,56,.10),0 4px 8px rgba(26,33,56,.04);
       /* v1.2 磨砂玻璃 */
-      --taichu-glass-blur:20px; --taichu-glass-saturate:160%; --taichu-glass-opacity:.90;
+      --mingli-glass-blur:20px; --mingli-glass-saturate:160%; --mingli-glass-opacity:.90;
       /* v1.2 动效（旧 --dur/--ease 不动） */
-      --taichu-ease:cubic-bezier(.4,0,.2,1);
-      --taichu-ease-out:cubic-bezier(.16,1,.3,1);
-      --taichu-ease-spring:cubic-bezier(.34,1.56,.64,1);
-      --taichu-dur:220ms; --taichu-dur-fast:150ms; --taichu-dur-normal:250ms; --taichu-dur-slow:400ms;
+      --mingli-ease:cubic-bezier(.4,0,.2,1);
+      --mingli-ease-out:cubic-bezier(.16,1,.3,1);
+      --mingli-ease-spring:cubic-bezier(.34,1.56,.64,1);
+      --mingli-dur:220ms; --mingli-dur-fast:150ms; --mingli-dur-normal:250ms; --mingli-dur-slow:400ms;
       /* v1.2 §2.5 语义别名 */
-      --taichu-background:var(--taichu-paper);
-      --taichu-foreground:var(--taichu-text-1);
-      --taichu-card:rgba(255,255,255,.90);
-      --taichu-card-foreground:var(--taichu-text-1);
-      --taichu-popover:rgba(255,255,255,.94);
-      --taichu-popover-foreground:var(--taichu-text-1);
-      --taichu-primary:var(--taichu-ink-700);
-      --taichu-primary-foreground:var(--taichu-paper);
-      --taichu-muted:var(--taichu-ink-50);
-      --taichu-muted-foreground:var(--taichu-text-3);
-      --taichu-border:var(--taichu-border-warm);
-      --taichu-input:var(--taichu-border-warm);
-      --taichu-ring:var(--taichu-gold-500);
+      --mingli-background:var(--mingli-paper);
+      --mingli-foreground:var(--mingli-text-1);
+      --mingli-card:rgba(255,255,255,.90);
+      --mingli-card-foreground:var(--mingli-text-1);
+      --mingli-popover:rgba(255,255,255,.94);
+      --mingli-popover-foreground:var(--mingli-text-1);
+      --mingli-primary:var(--mingli-ink-700);
+      --mingli-primary-foreground:var(--mingli-paper);
+      --mingli-muted:var(--mingli-ink-50);
+      --mingli-muted-foreground:var(--mingli-text-3);
+      --mingli-border:var(--mingli-border-warm);
+      --mingli-input:var(--mingli-border-warm);
+      --mingli-ring:var(--mingli-gold-500);
       
       /* ============================================================
          节136 阶段B · 语义色族（全量同值等价收口；消费侧零视觉变化）

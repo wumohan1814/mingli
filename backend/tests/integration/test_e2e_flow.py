@@ -17,7 +17,7 @@
 fake_chat 按最后一条 user 消息 JSON 的内容分派三条链路（分析/校验/对话），
 与三处真实调用点互不污染：三个模块各自持有自己的模块级 chat 引用。
 
-DB 隔离由 tests/conftest.py 负责（TAICHU_DB_PATH / TAICHU_FEEDBACK_DB_PATH
+DB 隔离由 tests/conftest.py 负责（MINGLI_DB_PATH / MINGLI_FEEDBACK_DB_PATH
 在一切 app import 之前指向临时 sqlite），本测试绝不触碰真实库。
 """
 from __future__ import annotations

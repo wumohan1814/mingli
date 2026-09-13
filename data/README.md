@@ -6,9 +6,9 @@
 
 | 库 | MVP 文件 | 用途 | 隔离方式 |
 |---|---|---|---|
-| 用户分析库 | `taichu_analytics.db` | chart、method-result、校准、对话、报告 | 按 `user_id` **逻辑隔离** |
-| 跨用户质疑库 | `taichu_feedback.db` | 质疑反馈与归纳汇总，供方法迭代 | 跨用户共享 |
-| 后台/埋点库 | `taichu_ops.db` | 埋点 events、后台审计、错误上报 | 后台/运维专用 |
+| 用户分析库 | `mingli_analytics.db` | chart、method-result、校准、对话、报告 | 按 `user_id` **逻辑隔离** |
+| 跨用户质疑库 | `mingli_feedback.db` | 质疑反馈与归纳汇总，供方法迭代 | 跨用户共享 |
+| 后台/埋点库 | `mingli_ops.db` | 埋点 events、后台审计、错误上报 | 后台/运维专用 |
 
 三库**各自独立的迁移版本线**。
 

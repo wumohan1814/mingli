@@ -5,24 +5,24 @@ services:
     restart: always
     environment:
       # SQLite 持久化到挂载卷
-      TAICHU_DB_PATH: /app/data/taichu_analytics.db
-      TAICHU_FEEDBACK_DB_PATH: /app/data/taichu_feedback.db
-      TAICHU_OPS_DB_PATH: /app/data/taichu_ops.db
+      MINGLI_DB_PATH: /app/data/mingli_analytics.db
+      MINGLI_FEEDBACK_DB_PATH: /app/data/mingli_feedback.db
+      MINGLI_OPS_DB_PATH: /app/data/mingli_ops.db
       # 排盘常驻服务（同容器内 127.0.0.1）
-      TAICHU_PAIPAN_NODE_URL: http://127.0.0.1:9317
+      MINGLI_PAIPAN_NODE_URL: http://127.0.0.1:9317
       # 以下从 .env 注入（敏感，不进仓库）
-      TAICHU_LLM_API_KEY: ${TAICHU_LLM_API_KEY}
-      TAICHU_JWT_SECRET: ${TAICHU_JWT_SECRET}
-      TAICHU_AGENT_TOKEN: ${TAICHU_AGENT_TOKEN:-}
-      # 节146：TAICHU_JINSHUJU_ACCESS_TOKEN / _ALLOW_MOCK 已随付款充值链路整条拆除
+      MINGLI_LLM_API_KEY: ${MINGLI_LLM_API_KEY}
+      MINGLI_JWT_SECRET: ${MINGLI_JWT_SECRET}
+      MINGLI_AGENT_TOKEN: ${MINGLI_AGENT_TOKEN:-}
+      # 节146：jinshuju_access_token / _ALLOW_MOCK 已随付款充值链路整条拆除
     dns:
       - 8.8.8.8
       - 1.1.1.1
     volumes:
-      # SQLite 文件持久化到宿主机 /opt/taichu/data
-      - /opt/taichu/data:/app/data
+      # SQLite 文件持久化到宿主机 /opt/mingli/data
+      - /opt/mingli/data:/app/data
     networks:
-      taichu:
+      mingli:
         ipv4_address: 172.28.0.10
 
   caddy:
@@ -46,10 +46,10 @@ services:
     depends_on:
       - web
     networks:
-      - taichu
+      - mingli
 
 networks:
-  taichu:
+  mingli:
     ipam:
       config:
         - subnet: 172.28.0.0/24
