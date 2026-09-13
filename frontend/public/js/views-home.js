@@ -1154,7 +1154,7 @@ function TopbarMenu({
 
 /* ---------- REQ-066：功能设置页（右上角菜单「功能设置」→ 此视图） ---------- */
 // 7 项设置：①动画与抽卡模拟 ②占卜界面默认模式（三选一）③Banner 模块下拉导航
-// ④分享表单命理太初 UI ⑤背景图显示 ⑥牌面图片显示 ⑦王先生 Agent（存值 + 暴露 agentEnabled
+// ④分享表单命理 UI ⑤背景图显示 ⑥牌面图片显示 ⑦王先生 Agent（存值 + 暴露 agentEnabled
 // 钩子，入口待 REQ-076 接入）。改动即保存：props.onPatch 本地即时生效，App 防抖 PUT，
 // saveState 展示 已保存 / 保存中… / 失败回退。未登录（访客）只读展示前端默认值。
 function SettingsPage({

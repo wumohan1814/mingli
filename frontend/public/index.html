@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>命理太初 · 识己于星，安己于时</title>
+  <title>命理 · 识己于星，安己于时</title>
   <!-- REQ-098：PWA —— manifest + 主题色 + iOS Safari「添加到主屏幕」适配。
        资源一律根绝对路径（BUG-009 约定）：/manifest.webmanifest、/art/pwa/…。
        主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 hardcode-allow: PWA 主题色注释 -->
@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/art/pwa/apple-touch-icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="命理太初" />
+  <meta name="apple-mobile-web-app-title" content="命理" />
   <!-- BUG-009：脚本必须用根绝对路径 /vendor/...（不能用相对 ./vendor/...）。
        分享链接直达页路径为 /mbti/share/{token}，相对路径会被浏览器解析为
        /mbti/share/vendor/... → SPA fallback 回退 index.html（text/html 被当 JS 执行）
@@ -1208,7 +1208,7 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, ML_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理太初」与右上角菜单/汉堡 之间，
+  }, ML_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理」与右上角菜单/汉堡 之间，
      用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
      banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
   mlSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {

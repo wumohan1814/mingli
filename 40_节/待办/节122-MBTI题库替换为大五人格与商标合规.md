@@ -148,7 +148,7 @@
 | "Always use the trademark **as an adjective** … **Never use a trademark as a noun**." | 商标只能当形容词 |
 | 官方致谢句（原文）："Myers-Briggs Type Indicator, Myers-Briggs, MBTI, Step I, Step II, Step III, the MBTI logo, and The Myers-Briggs Company logo are trademarks or registered trademarks of Myers & Briggs Foundation in the United States and other countries." | 用其商标时须附此句 |
 | 🚨 "**Use of MBTI trademarks must only refer to genuine MBTI products and services. The only way to obtain an MBTI personality type assessment and results is by using the official MBTI instrument.**" | **用其商标指代"非正品"就是被点名禁止的行为——正好命中用户设想的写法** |
-| 🚨 **该商标在中国已注册 —— 注册号 4621499** | ⚠️ **本条使风险评估从"理论"变为"实际"**：中国是命理太初的目标市场（`mingli.example.com`），"中国没注册所以随便用"这条退路**不存在** |
+| 🚨 **该商标在中国已注册 —— 注册号 4621499** | ⚠️ **本条使风险评估从"理论"变为"实际"**：中国是命理的目标市场（自有域名），"中国没注册所以随便用"这条退路**不存在** |
 
 ## 1.6 ✅ **Arneson (2016)：Agent 曾误判"不存在" —— 已更正（用户提供出处后核实成立）**
 

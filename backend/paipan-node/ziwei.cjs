@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* 命理太初自研 — 紫微斗数排盘（iztro）。
+/* 命理自研 — 紫微斗数排盘（iztro）。
  *
  * 从 stdin 读 JSON：{"birthday":"1990-05-12","time_idx":7,"gender":"男"}
  * stdout 输出 UTF-8 JSON：

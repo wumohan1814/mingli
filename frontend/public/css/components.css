@@ -74,7 +74,7 @@
 
     /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
        受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
-       两侧留白相等 → 不遮挡左侧「命理太初」与右上角菜单/汉堡。 */
+       两侧留白相等 → 不遮挡左侧「命理」与右上角菜单/汉堡。 */
     .topbar-modnav{position:relative;display:flex;align-items:center;flex:none}
     .topbar-modnav .modnav-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
       font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;color:var(--skin-banner-ink);

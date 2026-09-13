@@ -1,0 +1,9 @@
+# 空文件：Caddyfile 尾部 `import /etc/caddy/extra.caddy` 的默认内容。
+#
+# 本文件（以及同目录的 caddy-extra.example）会被 docker-compose 挂载为容器内的
+# /etc/caddy/extra.caddy；默认（不设 MINGLI_CADDY_EXTRA 时）挂的就是这一份空文件，
+# 于是「附加站点」这一段等于不存在，任何部署都不受影响。
+#
+# 需要附加站点（例如 OpenClaw 等自建 Agent 接入点）时，用 caddy-extra.example 起一份
+# 本地的 caddy-extra.caddy（已被 .gitignore 排除，真实域名不进仓库），
+# 并在 .env 里设 MINGLI_CADDY_EXTRA=./ops/deploy/caddy-extra.caddy

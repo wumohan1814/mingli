@@ -1,7 +1,7 @@
 # API-Key 安全与 LLM 接入说明
 
 > 范围：DeepSeek 官方 API（OpenAI 兼容）接入层 `backend/app/llm/` + 配置项 `backend/app/config.py`。
-> 目标读者：命理太初后续实现方法模块 / 校验 / 编排的开发者。
+> 目标读者：命理后续实现方法模块 / 校验 / 编排的开发者。
 
 ## 1. MVP 现状
 

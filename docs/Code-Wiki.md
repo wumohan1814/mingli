@@ -1,6 +1,6 @@
-# 命理太初 · 命理 H5 — Code Wiki
+# 命理 H5 — Code Wiki
 
-> 本文档是「命理太初 · 多流派 AI 命理 H5」项目的代码全景 Wiki，覆盖整体架构、模块职责、关键类与函数、数据模型、依赖关系与运行方式。供新成员上手、跨模块协作与问题排查使用。
+> 本文档是「命理 · 多流派 AI 解读 H5」项目的代码全景 Wiki，覆盖整体架构、模块职责、关键类与函数、数据模型、依赖关系与运行方式。供新成员上手、跨模块协作与问题排查使用。
 >
 > 最后更新：2026-09-10 ｜ 以源码为准（backend/app/）
 
@@ -23,7 +23,7 @@
 
 ## 1. 项目概览
 
-**命理太初** 是一个多流派 AI 命理综合 H5 应用（MVP），主钩子为「事业运势趋势参考」。用户录入生辰 → 排盘 → 断前尘回溯校验 → 多流派 AI 综合解读与趋势预测，支持校准修正、反馈质疑与档案沉淀。
+**命理** 是一个多流派 AI 命理综合 H5 应用（MVP），主钩子为「事业运势趋势参考」。用户录入生辰 → 排盘 → 断前尘回溯校验 → 多流派 AI 综合解读与趋势预测，支持校准修正、反馈质疑与档案沉淀。
 
 ### 业务定位
 
@@ -55,7 +55,7 @@
 | 数据库 | SQLite（三库） | `mingli_analytics` / `mingli_feedback` / `mingli_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
 | LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走 `backend/.env` 的 `MINGLI_LLM_API_KEY` |
-| 部署 | Docker 单镜像（Python+Node 双运行时）+ Caddy | `mingli.example.com`；`docker-compose.yml` |
+| 部署 | Docker 单镜像（Python+Node 双运行时）+ Caddy | 站点域名（`MINGLI_SITE_DOMAIN`）；`docker-compose.yml` |
 
 ### 目录结构
 

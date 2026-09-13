@@ -61,3 +61,10 @@ frontend/scripts/_pristine-index.html
 frontend/scripts/_check1.js
 frontend/scripts/_check2.js
 frontend/scripts/_gen-mascot-placeholder.cjs
+
+# 节147：本地附加站点（填真实域名 / 内网地址，**开源时绝不带出去**）
+ops/deploy/caddy-extra.caddy
+
+# 未公开：经营 / 策略 / 上架可行性类文档（用户 2026-09-14 定：不上传 GitHub）
+# 放这里的文件保留在本地磁盘，但永不入库；需要公开的规范/说明请放 docs/ 其他目录
+docs/未公开/

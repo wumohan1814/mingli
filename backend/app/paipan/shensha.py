@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""命理太初自研 — 命理神煞查表（lunar-python 不提供命理神煞，此处自实现）。
+"""命理自研 — 命理神煞查表（lunar-python 不提供命理神煞，此处自实现）。
 
 输出到 chart.json 的 bazi.shensha 字段，每项：
     {"name", "category", "pillars": ["年"|"月"|"日"|"时"], "target": "地支", "note": "起法"}
