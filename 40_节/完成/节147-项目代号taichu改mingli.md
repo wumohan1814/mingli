@@ -25,7 +25,7 @@
 - [x] 5. `docker compose` 配置、`Caddyfile`、`Dockerfile`、`start.bat/sh`、`ops/deploy/*`、`standards/06` 全部同步；**线上迁移步骤已写进 `ops/deploy/README.md`（唯一清单，含第 0 步备份与回退）**
 - [x] 6. PWA：SW 缓存前缀改新名，**并保留对旧 `taichu-img*` 前缀的一次性回收**（节147 §四-3 的硬要求）
 - [x] 7. `standards/01`（命名约定）、`04`（设计令牌）、`06`（环境部署）与代码一致
-- [x] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— ✅ **已完成（用户执行改名 → Agent 在新路径复核）**：`Vibecoding\taichu\` 已不存在；`git status` 干净、HEAD = `a79402d`；**服务可起**（`uvicorn` Application startup complete、`/api/health` → 200）；门禁 **1 failed / 218 passed**（唯一失败 = 已登记既存夹具漂移 `test_fixture_snapshot_anchor`）+ 前端 `precompile` exit=0；首页 200 / 46 KB（「命理」3 处、「太初」与 `taichu` 各 0、22 个脚本全 200）。⚠️ 「改根目录名」**结构上不可能由会话内的 Agent 完成**（Windows 目录占用，见下方「留痕 · 什么没测」与 `99_状态/已知问题.md`）——本条只因此才排到会话之外
+- [x] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— ✅ **已完成（用户执行改名 → Agent 在新路径复核）**：`Vibecoding\taichu\` 已不存在；`git status` 干净、HEAD = `2e3a0ed`；**服务可起**（`uvicorn` Application startup complete、`/api/health` → 200）；门禁 **1 failed / 218 passed**（唯一失败 = 已登记既存夹具漂移 `test_fixture_snapshot_anchor`）+ 前端 `precompile` exit=0；首页 200 / 46 KB（「命理」3 处、「太初」与 `taichu` 各 0、22 个脚本全 200）。⚠️ 「改根目录名」**结构上不可能由会话内的 Agent 完成**（Windows 目录占用，见下方「留痕 · 什么没测」与 `99_状态/已知问题.md`）——本条只因此才排到会话之外
 
 ## 现状坐标（Agent 用）
 

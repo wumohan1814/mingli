@@ -7,7 +7,7 @@
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/wumohan1814/mingli.git",
-      "revision": "27b214042e91568180e7c35a82641cc56e311758"
+      "revision": "cfc877c52a7774363c15783183d057e9d34908ac"
     },
     "views": [
       { "id": "request-path", "label": "主请求链路", "focus": ["user", "caddy", "fastapi", "orchestrator", "methods", "llm"], "note": "从浏览器经 Caddy 到 FastAPI，断前尘 / 预测任务在编排器内并发执行。" },
