@@ -10,7 +10,7 @@ from jose import jwt, JWTError
 from app.auth.captcha import generate_captcha, verify_captcha
 from app.config import settings
 from app.database import get_analytics_db
-from app.errors import BizError, ERR_PARAM, ERR_RATE_LIMITED
+from app.errors import BizError, ERR_FORBIDDEN, ERR_PARAM, ERR_RATE_LIMITED
 from app.models import User, RefreshToken, LoginAttempt, RegisterLimit
 
 logger = logging.getLogger(__name__)
@@ -149,7 +149,15 @@ async def register(
     request: Request,
     db: Session = Depends(get_analytics_db),
 ):
-    """注册新用户（图形验证码 + IP/设备指纹双维度限流）"""
+    """注册新用户（图形验证码 + IP/设备指纹双维度限流）
+
+    节141：**公开注册默认关闭**（内测白名单制）。`TAICHU_ALLOW_PUBLIC_REGISTER=false`
+    （默认）时本端点一律 403 + `ERR_FORBIDDEN`，新账号只能由后台「新增 C 端用户」创建；
+    **不物理删除端点**，测试环境把开关置 true 即可继续造数（零测试返工）。
+    """
+    if not settings.allow_public_register:
+        raise BizError(ERR_FORBIDDEN, "本项目只开放给内部人员，请联系开发者获得测试资格。")
+
     # 图形验证码校验（R10：防脚本批量注册）：不通过则直接拒绝，不建用户
     if not verify_captcha(req.captcha_id, req.captcha_code):
         raise BizError(ERR_PARAM, "验证码错误或已过期")
