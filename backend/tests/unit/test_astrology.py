@@ -351,18 +351,17 @@ def astrology_node_server():
 
 
 def test_astrology_raw_functions_contract():
-    """vendored generateAstrolabe / buildAstrolabeFullScopeContexts raw 契约。"""
+    """节151 后：自研内核 generateAstrolabeCore / buildAstrolabeFullScopeContextsCore raw 契约。"""
     if NODE_BIN is None:
         pytest.skip("本地无 node，跳过占星原函数契约测试")
     script = (
-        "import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';\n"
-        "import { buildAstrolabeFullScopeContexts } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';\n"
-        "const natal = generateAstrolabe({\n"
+        "import { generateAstrolabeCore, buildAstrolabeFullScopeContextsCore } from './paipan-core/src/capabilities/astrology/index.js';\n"
+        "const natal = generateAstrolabeCore({\n"
         "  name: '契约测试', gender: 'male', locationName: '上海',\n"
         "  year: '1990', month: '5', day: '12', hour: '10', minute: '30',\n"
         "  latitude: '31.2', longitude: '121.5', timezone: '8',\n"
         "  useTrueSolarTime: false });\n"
-        "const fc = buildAstrolabeFullScopeContexts(natal, '2026-06-01');\n"
+        "const fc = buildAstrolabeFullScopeContextsCore(natal, '2026-06-01');\n"
         "console.log(JSON.stringify({\n"
         "  natalKeys: Object.keys(natal),\n"
         "  planetNames: natal.planets.map(p => p.name),\n"
@@ -387,7 +386,7 @@ def test_astrology_raw_functions_contract():
     assert proc.returncode == 0, f"node 直调占星函数失败: {proc.stderr}"
     out = json.loads(proc.stdout.strip())
 
-    # natal：行星/四轴/宫位/相位/摘要齐备；剥离前确实带 evidenceAnalysis（端点需 strip）
+    # natal：行星/四轴/宫位/相位/摘要齐备；节151 自研内核产物干净（无 evidenceAnalysis）
     assert "birth" in out["natalKeys"] and "planets" in out["natalKeys"]
     assert "angles" in out["natalKeys"] and "houses" in out["natalKeys"]
     assert "aspects" in out["natalKeys"] and "summary" in out["natalKeys"]
@@ -396,7 +395,7 @@ def test_astrology_raw_functions_contract():
     assert out["aspectCount"] >= 1
     assert out["houseCount"] == 12
     assert out["standardDateTime"] == "1990-05-12 10:30"
-    assert out["hasEvidenceAnalysis"] is True
+    assert out["hasEvidenceAnalysis"] is False
 
     # fullScope：natal + yearly + monthly + daily，各 scope 有正确的日期粒度
     assert out["fullScopeKeys"] == ["natal", "yearly", "monthly", "daily"]

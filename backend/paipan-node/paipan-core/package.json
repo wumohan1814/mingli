@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "lunar-typescript": "1.8.6"
+    "lunar-typescript": "1.8.6",
+    "astronomia": "4.2.0"
   }
 }
