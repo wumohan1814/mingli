@@ -33,6 +33,12 @@ os.environ["MINGLI_OPS_DB_PATH"] = str(_TMP_ROOT / "ops.db")
 # 节141：公开注册默认关闭（生产口径）；测试需用 /api/auth/register 造数 → 此处显式打开。
 # 环境变量优先级高于 env_file，且必须早于任何 app.* import（pydantic-settings 单例）。
 os.environ["MINGLI_ALLOW_PUBLIC_REGISTER"] = "true"
+# 节147 续：合规文书主体信息（测试夹具值，绝非真实主体）。
+# 这两份文书缺主体信息时后端会 fail closed（/legal/*.html → 500），
+# 故测试必须显式给值，否则 test_legal_docs.py 反而测不出「正常渲染」这条路径。
+os.environ.setdefault("MINGLI_OPERATOR_NAME", "测试运营者")
+os.environ.setdefault("MINGLI_OPERATOR_CONTACT", "test-contact")
+os.environ.setdefault("MINGLI_OPERATOR_EMAIL", "test@example.com")
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 CHART_JSON_PATH = FIXTURES_DIR / "chart.json"

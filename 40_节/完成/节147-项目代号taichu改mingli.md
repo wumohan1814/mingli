@@ -137,7 +137,7 @@
 
 ## 不许被推翻的约定（**给未来的自己看**）
 
-- **`personal-infra` 不进仓库（本节确立的硬规矩）**：凡是能定位到个人的东西 —— **域名 / 服务器公网 IP / 内网与隧道 IP / SSH 私钥文件名 / 真实姓名与联系方式** —— 一律**只**出现在 `.env`、`.gitignore` 覆盖的本地文件（`ops/deploy/caddy-extra.caddy`）或 `docs/未公开/`。仓库里一律占位。**开源前自检**：`git grep -n -i -E '你的域名|你的服务器 IP|@hotmail|1[3-9][0-9]{9}'` 应为空
+- **`personal-infra` 不进仓库（本节确立的硬规矩）**：凡是能定位到个人的东西 —— **域名 / 服务器公网 IP / 内网与隧道 IP / SSH 私钥文件名 / 真实姓名与联系方式** —— 一律**只**出现在 `.env`、`.gitignore` 覆盖的本地文件（`ops/deploy/caddy-extra.caddy`）或 `docs/未公开/`。仓库里一律占位。**开源前自检**：`git grep -n -i -E '你的域名|你的服务器 IP|1[3-9][0-9]{9}|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'` 应为空（合规文书里的 `{{OPERATOR_*}}` 占位符不算命中 —— 那是设计如此）
 - **域名是可配置项，不是常量**：主站域名只从 `MINGLI_SITE_DOMAIN` 来（`Caddyfile` 用 `{$MINGLI_SITE_DOMAIN}`）。**不要**把某个具体域名硬编码回 `Caddyfile`；**也不要**给这个变量配占位默认值 —— 缺配置时 Caddy 必须**启动失败**（否则会拿占位域名去申请 Let's Encrypt 证书）
 - **附加站点走「可选 import」模式**：`Caddyfile` 尾部的 `import /etc/caddy/extra.caddy` 默认挂仓库里的空文件；真实内容放 `.gitignore` 覆盖的 `caddy-extra.caddy`。**别把真实域名写回 `caddy-extra.example`**
 - **SSH 私钥改名必须「先保一条可用会话」**：服务端与本地各一份，永远不要在单一会话里同时改文件名与 ssh config

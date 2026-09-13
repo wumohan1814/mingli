@@ -7,11 +7,12 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app import legal
 from app.config import settings
 from app.database import (
     AnalyticsSession,
@@ -73,6 +74,16 @@ async def lifespan(app: FastAPI):
     FeedbackBase.metadata.create_all(bind=feedback_engine)
     OpsBase.metadata.create_all(bind=ops_engine)
     ensure_schema()
+
+    # 节147 续：合规文书主体信息体检 —— 缺了不阻断启动（本地开发/测试可能不需要），
+    # 但必须**显眼地喊一声**：这两份是线上展示的用户协议与隐私政策，缺主体信息时
+    # /legal/*.html 会返回 500（fail closed，见 app/legal.py）。
+    if legal.missing_placeholders():
+        logger.warning(
+            "合规文书主体信息未配置完整，/legal/*.html 将返回 500。缺失项：%s。"
+            "请在 .env 设置 MINGLI_OPERATOR_NAME / MINGLI_OPERATOR_CONTACT / MINGLI_OPERATOR_EMAIL。",
+            " / ".join(legal.missing_placeholders()),
+        )
 
     # 孤儿 job 恢复：服务重启后把 pending/running 任务置为 failed（请重新触发）
     _recover_orphan_jobs()
@@ -244,11 +255,15 @@ class SPAStaticFiles(StaticFiles):
 
     注意：StaticFiles 内部抛的是 starlette.exceptions.HTTPException，fastapi.HTTPException
     是其子类而非父类，故不能用于捕获这里抛出的 404。
+
+    另（节147 续）：`/legal/*.html` 是**合规文书**，仓库里只含占位符，需在服务端渲染时
+    注入真实运营主体（见 app/legal.py）。只对**确实含占位符**的文件做替换 ——
+    其它文件连 body 都不读，保持 StaticFiles 原有的 FileResponse / ETag 行为。
     """
 
     async def get_response(self, path: str, scope):
         try:
-            return await super().get_response(path, scope)
+            response = await super().get_response(path, scope)
         except StarletteHTTPException as exc:
             if exc.status_code != 404:
                 raise
@@ -264,6 +279,30 @@ class SPAStaticFiles(StaticFiles):
                 return FileResponse(str(index_path))
             # index.html 也不存在：维持 404，不崩溃。
             raise
+
+        if legal.is_legal_page(path) and isinstance(response, FileResponse):
+            return self._render_legal(response)
+        return response
+
+    @staticmethod
+    def _render_legal(response: FileResponse):
+        """把合规文书里的 {{OPERATOR_*}} 占位符替换成配置值。
+
+        - 文件不含占位符 → 原样返回（不影响任何非文书文件）
+        - 三项配置任一为空 → 返回 500 并记 error（**不**渲染出空白主体）
+        """
+        try:
+            html = Path(response.path).read_text(encoding="utf-8")
+        except OSError:
+            return response
+        if not legal.has_placeholder(html):
+            return response
+        try:
+            html = legal.render_legal_html(html)
+        except legal.OperatorInfoMissing as exc:
+            logger.error("%s", exc)
+            return PlainTextResponse(str(exc), status_code=500)
+        return HTMLResponse(html)
 
 
 # REQ-059：后台素材上传目录静态托管（backend/uploads → /uploads/assets/...）。
