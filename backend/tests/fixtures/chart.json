@@ -1,9 +1,10 @@
 {
   "meta": {
     "version": "1.0.0",
-    "generated_at": "2026-09-05T22:54:10",
+    "generated_at": "2026-09-14T00:59:04",
     "source": "mingli-paipan",
-    "degraded_methods": []
+    "degraded_methods": [],
+    "input_uncertainties": []
   },
   "input": {
     "calendar": "solar",
@@ -22,9 +23,10 @@
     "name": "测试"
   },
   "calendar": {
-    "solar": "1990-05-12 14:30:00",
+    "solar": "1990-05-12 13:30:00",
     "lunar": "一九九〇年四月十八",
-    "true_solar_applied": false
+    "true_solar_applied": false,
+    "dst_applied": true
   },
   "bazi": {
     "pillars": {
@@ -236,7 +238,7 @@
     ],
     "qi_yun": {
       "forward": true,
-      "start": "1998-08-01 14:30:00",
+      "start": "1998-08-01 13:30:00",
       "start_age": 8
     },
     "da_yun": [
@@ -1650,85 +1652,85 @@
     "birth": {
       "name": "测试",
       "gender": "男",
-      "dateTime": "1990-05-12 14:00",
+      "dateTime": "1990-05-12 13:00",
       "location": "北京（39.9000, 116.4000）",
       "latitude": 39.9,
       "longitude": 116.4,
       "timezone": 8,
-      "standardDateTime": "1990-05-12 14:00",
+      "standardDateTime": "1990-05-12 13:00",
       "isTrueSolarTime": false
     },
     "planets": [
       {
         "name": "Sun",
         "label": "太阳",
-        "longitude": 51.26048964317812,
+        "longitude": 51.220263366117194,
         "sign": "金牛座",
         "degree": 21,
-        "minute": 15,
+        "minute": 13,
         "house": 9,
-        "formatted": "金牛座21°15′",
+        "formatted": "金牛座21°13′",
         "retrograde": false
       },
       {
         "name": "Moon",
         "label": "月亮",
-        "longitude": 257.87134621620964,
+        "longitude": 257.37469458458077,
         "sign": "射手座",
         "degree": 17,
-        "minute": 52,
+        "minute": 22,
         "house": 4,
-        "formatted": "射手座17°52′",
+        "formatted": "射手座17°22′",
         "retrograde": false
       },
       {
         "name": "Mercury",
         "label": "水星",
-        "longitude": 38.787562909421126,
+        "longitude": 38.802263154918705,
         "sign": "金牛座",
         "degree": 8,
-        "minute": 47,
-        "house": 8,
-        "formatted": "金牛座8°47′",
+        "minute": 48,
+        "house": 9,
+        "formatted": "金牛座8°48′",
         "retrograde": true
       },
       {
         "name": "Venus",
         "label": "金星",
-        "longitude": 9.12005325428754,
+        "longitude": 9.07275832615835,
         "sign": "白羊座",
         "degree": 9,
-        "minute": 7,
-        "house": 7,
-        "formatted": "白羊座9°07′",
+        "minute": 4,
+        "house": 8,
+        "formatted": "白羊座9°04′",
         "retrograde": false
       },
       {
         "name": "Mars",
         "label": "火星",
-        "longitude": 345.91803958260266,
+        "longitude": 345.8870453809185,
         "sign": "双鱼座",
         "degree": 15,
-        "minute": 55,
-        "house": 6,
-        "formatted": "双鱼座15°55′",
+        "minute": 53,
+        "house": 7,
+        "formatted": "双鱼座15°53′",
         "retrograde": false
       },
       {
         "name": "Jupiter",
         "label": "木星",
-        "longitude": 98.93356936618,
+        "longitude": 98.92586165682599,
         "sign": "巨蟹座",
         "degree": 8,
-        "minute": 56,
-        "house": 10,
-        "formatted": "巨蟹座8°56′",
+        "minute": 55,
+        "house": 11,
+        "formatted": "巨蟹座8°55′",
         "retrograde": false
       },
       {
         "name": "Saturn",
         "label": "土星",
-        "longitude": 295.295979240914,
+        "longitude": 295.29646656546765,
         "sign": "摩羯座",
         "degree": 25,
         "minute": 17,
@@ -1739,29 +1741,29 @@
       {
         "name": "Uranus",
         "label": "天王星",
-        "longitude": 279.260324906666,
+        "longitude": 279.2612569676206,
         "sign": "摩羯座",
         "degree": 9,
         "minute": 15,
-        "house": 4,
+        "house": 5,
         "formatted": "摩羯座9°15′",
         "retrograde": true
       },
       {
         "name": "Neptune",
         "label": "海王星",
-        "longitude": 284.3984189306018,
+        "longitude": 284.3989703492209,
         "sign": "摩羯座",
         "degree": 14,
         "minute": 23,
-        "house": 4,
+        "house": 5,
         "formatted": "摩羯座14°23′",
         "retrograde": true
       },
       {
         "name": "Pluto",
         "label": "冥王星",
-        "longitude": 226.2578777606783,
+        "longitude": 226.25904193763336,
         "sign": "天蝎座",
         "degree": 16,
         "minute": 15,
@@ -1772,111 +1774,111 @@
       {
         "name": "Chiron",
         "label": "凯龙星",
-        "longitude": 102.9575586690899,
+        "longitude": 102.95435689163776,
         "sign": "巨蟹座",
         "degree": 12,
         "minute": 57,
-        "house": 10,
+        "house": 11,
         "formatted": "巨蟹座12°57′",
         "retrograde": false
       },
       {
         "name": "Ceres",
         "label": "谷神星",
-        "longitude": 103.93157355688095,
+        "longitude": 103.91557671700735,
         "sign": "巨蟹座",
         "degree": 13,
-        "minute": 55,
-        "house": 10,
-        "formatted": "巨蟹座13°55′",
+        "minute": 54,
+        "house": 11,
+        "formatted": "巨蟹座13°54′",
         "retrograde": false
       },
       {
         "name": "Pallas",
         "label": "智神星",
-        "longitude": 56.67131736295164,
+        "longitude": 56.64860590586659,
         "sign": "金牛座",
         "degree": 26,
-        "minute": 40,
+        "minute": 38,
         "house": 9,
-        "formatted": "金牛座26°40′",
+        "formatted": "金牛座26°38′",
         "retrograde": false
       },
       {
         "name": "Juno",
         "label": "婚神星",
-        "longitude": 226.36067144916058,
+        "longitude": 226.37002489496206,
         "sign": "天蝎座",
         "degree": 16,
-        "minute": 21,
+        "minute": 22,
         "house": 3,
-        "formatted": "天蝎座16°21′",
+        "formatted": "天蝎座16°22′",
         "retrograde": true
       },
       {
         "name": "Vesta",
         "label": "灶神星",
-        "longitude": 20.19654676634599,
+        "longitude": 20.177952366010516,
         "sign": "白羊座",
         "degree": 20,
-        "minute": 11,
+        "minute": 10,
         "house": 8,
-        "formatted": "白羊座20°11′",
+        "formatted": "白羊座20°10′",
         "retrograde": false
       },
       {
         "name": "North Node",
         "label": "北交点",
-        "longitude": 310.54461043306605,
+        "longitude": 310.55149810374166,
         "sign": "水瓶座",
         "degree": 10,
-        "minute": 32,
-        "house": 5,
-        "formatted": "水瓶座10°32′",
+        "minute": 33,
+        "house": 6,
+        "formatted": "水瓶座10°33′",
         "retrograde": false
       },
       {
         "name": "South Node",
         "label": "南交点",
-        "longitude": 130.54461043306605,
+        "longitude": 130.55149810374166,
         "sign": "狮子座",
         "degree": 10,
-        "minute": 32,
-        "house": 11,
-        "formatted": "狮子座10°32′",
+        "minute": 33,
+        "house": 12,
+        "formatted": "狮子座10°33′",
         "retrograde": false
       },
       {
         "name": "True Lilith",
         "label": "莉莉丝",
-        "longitude": 238.0648154049925,
+        "longitude": 237.9382919212478,
         "sign": "天蝎座",
-        "degree": 28,
-        "minute": 3,
+        "degree": 27,
+        "minute": 56,
         "house": 3,
-        "formatted": "天蝎座28°03′",
+        "formatted": "天蝎座27°56′",
         "retrograde": false
       },
       {
         "name": "Part of Fortune",
         "label": "福点",
-        "longitude": 15.542113079886462,
+        "longitude": 3.1146399533059252,
         "sign": "白羊座",
-        "degree": 15,
-        "minute": 32,
+        "degree": 3,
+        "minute": 6,
         "house": 8,
-        "formatted": "白羊座15°32′",
+        "formatted": "白羊座3°06′",
         "retrograde": false
       },
       {
         "name": "Part of Spirit",
         "label": "精神点",
-        "longitude": 322.3203999338234,
+        "longitude": 310.8057775163786,
         "sign": "水瓶座",
-        "degree": 22,
-        "minute": 19,
+        "degree": 10,
+        "minute": 48,
         "house": 6,
-        "formatted": "水瓶座22°19′",
+        "formatted": "水瓶座10°48′",
         "retrograde": false
       }
     ],
@@ -1884,193 +1886,193 @@
       {
         "name": "Ascendant",
         "label": "上升",
-        "longitude": 168.93125650685488,
+        "longitude": 156.96020873484235,
         "sign": "处女座",
-        "degree": 18,
-        "minute": 55,
+        "degree": 6,
+        "minute": 57,
         "house": 0,
-        "formatted": "处女座18°55′"
+        "formatted": "处女座6°57′"
       },
       {
         "name": "Midheaven",
         "label": "天顶",
-        "longitude": 77.25676184526117,
+        "longitude": 63.150445102729805,
         "sign": "双子座",
-        "degree": 17,
-        "minute": 15,
+        "degree": 3,
+        "minute": 9,
         "house": 0,
-        "formatted": "双子座17°15′"
+        "formatted": "双子座3°09′"
       },
       {
         "name": "Descendant",
         "label": "下降",
-        "longitude": 348.9312565068549,
+        "longitude": 336.96020873484235,
         "sign": "双鱼座",
-        "degree": 18,
-        "minute": 55,
+        "degree": 6,
+        "minute": 57,
         "house": 0,
-        "formatted": "双鱼座18°55′"
+        "formatted": "双鱼座6°57′"
       },
       {
         "name": "Imum Coeli",
         "label": "天底",
-        "longitude": 257.25676184526117,
+        "longitude": 243.1504451027298,
         "sign": "射手座",
-        "degree": 17,
-        "minute": 15,
+        "degree": 3,
+        "minute": 9,
         "house": 0,
-        "formatted": "射手座17°15′"
+        "formatted": "射手座3°09′"
       }
     ],
     "houses": [
       {
         "name": "House 1",
         "label": "第1宫",
-        "longitude": 168.93125650685488,
+        "longitude": 156.96020873484235,
         "sign": "处女座",
-        "degree": 18,
-        "minute": 55,
+        "degree": 6,
+        "minute": 57,
         "house": 1,
-        "formatted": "处女座18°55′"
+        "formatted": "处女座6°57′"
       },
       {
         "name": "House 2",
         "label": "第2宫",
-        "longitude": 194.1542334257564,
+        "longitude": 180.97581249489838,
         "sign": "天秤座",
-        "degree": 14,
-        "minute": 9,
+        "degree": 0,
+        "minute": 58,
         "house": 2,
-        "formatted": "天秤座14°09′"
+        "formatted": "天秤座0°58′"
       },
       {
         "name": "House 3",
         "label": "第3宫",
-        "longitude": 223.9770412908033,
-        "sign": "天蝎座",
-        "degree": 13,
-        "minute": 58,
+        "longitude": 209.94777516157706,
+        "sign": "天秤座",
+        "degree": 29,
+        "minute": 56,
         "house": 3,
-        "formatted": "天蝎座13°58′"
+        "formatted": "天秤座29°56′"
       },
       {
         "name": "House 4",
         "label": "第4宫",
-        "longitude": 257.25676184526117,
+        "longitude": 243.1504451027298,
         "sign": "射手座",
-        "degree": 17,
-        "minute": 15,
+        "degree": 3,
+        "minute": 9,
         "house": 4,
-        "formatted": "射手座17°15′"
+        "formatted": "射手座3°09′"
       },
       {
         "name": "House 5",
         "label": "第5宫",
-        "longitude": 290.9656997090201,
+        "longitude": 277.4603846588824,
         "sign": "摩羯座",
-        "degree": 20,
-        "minute": 57,
+        "degree": 7,
+        "minute": 27,
         "house": 5,
-        "formatted": "摩羯座20°57′"
+        "formatted": "摩羯座7°27′"
       },
       {
         "name": "House 6",
         "label": "第6宫",
-        "longitude": 321.92749648530685,
+        "longitude": 309.16400342797635,
         "sign": "水瓶座",
-        "degree": 21,
-        "minute": 55,
+        "degree": 9,
+        "minute": 9,
         "house": 6,
-        "formatted": "水瓶座21°55′"
+        "formatted": "水瓶座9°09′"
       },
       {
         "name": "House 7",
         "label": "第7宫",
-        "longitude": 348.9312565068549,
+        "longitude": 336.96020873484235,
         "sign": "双鱼座",
-        "degree": 18,
-        "minute": 55,
+        "degree": 6,
+        "minute": 57,
         "house": 7,
-        "formatted": "双鱼座18°55′"
+        "formatted": "双鱼座6°57′"
       },
       {
         "name": "House 8",
         "label": "第8宫",
-        "longitude": 14.154233425756445,
+        "longitude": 0.9758124948983777,
         "sign": "白羊座",
-        "degree": 14,
-        "minute": 9,
+        "degree": 0,
+        "minute": 58,
         "house": 8,
-        "formatted": "白羊座14°09′"
+        "formatted": "白羊座0°58′"
       },
       {
         "name": "House 9",
         "label": "第9宫",
-        "longitude": 43.97704129080324,
-        "sign": "金牛座",
-        "degree": 13,
-        "minute": 58,
+        "longitude": 29.947775161577,
+        "sign": "白羊座",
+        "degree": 29,
+        "minute": 56,
         "house": 9,
-        "formatted": "金牛座13°58′"
+        "formatted": "白羊座29°56′"
       },
       {
         "name": "House 10",
         "label": "第10宫",
-        "longitude": 77.25676184526117,
+        "longitude": 63.150445102729805,
         "sign": "双子座",
-        "degree": 17,
-        "minute": 15,
+        "degree": 3,
+        "minute": 9,
         "house": 10,
-        "formatted": "双子座17°15′"
+        "formatted": "双子座3°09′"
       },
       {
         "name": "House 11",
         "label": "第11宫",
-        "longitude": 110.9656997090201,
+        "longitude": 97.46038465888239,
         "sign": "巨蟹座",
-        "degree": 20,
-        "minute": 57,
+        "degree": 7,
+        "minute": 27,
         "house": 11,
-        "formatted": "巨蟹座20°57′"
+        "formatted": "巨蟹座7°27′"
       },
       {
         "name": "House 12",
         "label": "第12宫",
-        "longitude": 141.92749648530673,
+        "longitude": 129.1640034279763,
         "sign": "狮子座",
-        "degree": 21,
-        "minute": 55,
+        "degree": 9,
+        "minute": 9,
         "house": 12,
-        "formatted": "狮子座21°55′"
+        "formatted": "狮子座9°09′"
       }
     ],
     "aspects": [
+      {
+        "body1": "凯龙星",
+        "body2": "莉莉丝",
+        "type": "补八分相",
+        "symbol": "⚼",
+        "exactAngle": 135,
+        "actualAngle": 134.9839,
+        "orb": 0.02,
+        "allowedOrb": 2,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.008,
+        "isOutOfSign": true,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
       {
         "body1": "冥王星",
         "body2": "婚神星",
         "type": "合相",
         "symbol": "☌",
         "exactAngle": 0,
-        "actualAngle": 0.1028,
-        "orb": 0.1,
+        "actualAngle": 0.111,
+        "orb": 0.11,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0128,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "金星",
-        "body2": "天王星",
-        "type": "刑相",
-        "symbol": "□",
-        "exactAngle": 90,
-        "actualAngle": 89.8597,
-        "orb": 0.14,
-        "allowedOrb": 7,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.02,
+        "normalizedOrbRatio": 0.0139,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2081,11 +2083,11 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 60.146,
-        "orb": 0.15,
+        "actualAngle": 60.1236,
+        "orb": 0.12,
         "allowedOrb": 6,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0243,
+        "normalizedOrbRatio": 0.0206,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2096,14 +2098,29 @@
         "type": "刑相",
         "symbol": "□",
         "exactAngle": 90,
-        "actualAngle": 89.8135,
-        "orb": 0.19,
+        "actualAngle": 89.8531,
+        "orb": 0.15,
         "allowedOrb": 7,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0266,
+        "normalizedOrbRatio": 0.021,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
+      },
+      {
+        "body1": "金星",
+        "body2": "天王星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 89.8115,
+        "orb": 0.19,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0269,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
       },
       {
         "body1": "木星",
@@ -2111,11 +2128,11 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 179.6732,
-        "orb": 0.33,
+        "actualAngle": 179.6646,
+        "orb": 0.34,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0408,
+        "normalizedOrbRatio": 0.0419,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2126,56 +2143,11 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 119.6602,
-        "orb": 0.34,
+        "actualAngle": 119.628,
+        "orb": 0.37,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0425,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "凯龙星",
-        "body2": "莉莉丝",
-        "type": "补八分相",
-        "symbol": "⚼",
-        "exactAngle": 135,
-        "actualAngle": 135.1073,
-        "orb": 0.11,
-        "allowedOrb": 2,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.0536,
-        "isOutOfSign": true,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "火星",
-        "body2": "婚神星",
-        "type": "拱相",
-        "symbol": "△",
-        "exactAngle": 120,
-        "actualAngle": 119.5574,
-        "orb": 0.44,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.0553,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "海王星",
-        "body2": "谷神星",
-        "type": "冲相",
-        "symbol": "☍",
-        "exactAngle": 180,
-        "actualAngle": 179.5332,
-        "orb": 0.47,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.0584,
+        "normalizedOrbRatio": 0.0465,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2186,14 +2158,44 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 119.5272,
-        "orb": 0.47,
+        "actualAngle": 119.541,
+        "orb": 0.46,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.0591,
+        "normalizedOrbRatio": 0.0574,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
+      },
+      {
+        "body1": "火星",
+        "body2": "婚神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 119.517,
+        "orb": 0.48,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0604,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "海王星",
+        "body2": "谷神星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 179.5166,
+        "orb": 0.48,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.0604,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
       },
       {
         "body1": "凯龙星",
@@ -2201,11 +2203,11 @@
         "type": "合相",
         "symbol": "☌",
         "exactAngle": 0,
-        "actualAngle": 0.974,
-        "orb": 0.97,
+        "actualAngle": 0.9612,
+        "orb": 0.96,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.1218,
+        "normalizedOrbRatio": 0.1202,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2216,26 +2218,11 @@
         "type": "半六合",
         "symbol": "⚺",
         "exactAngle": 30,
-        "actualAngle": 29.6675,
-        "orb": 0.33,
+        "actualAngle": 29.7295,
+        "orb": 0.27,
         "allowedOrb": 2,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.1662,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
-      },
-      {
-        "body1": "土星",
-        "body2": "智神星",
-        "type": "拱相",
-        "symbol": "△",
-        "exactAngle": 120,
-        "actualAngle": 121.3753,
-        "orb": 1.38,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.1719,
+        "normalizedOrbRatio": 0.1352,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2246,14 +2233,29 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 178.6065,
-        "orb": 1.39,
+        "actualAngle": 178.7103,
+        "orb": 1.29,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.1742,
+        "normalizedOrbRatio": 0.1612,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
+      },
+      {
+        "body1": "土星",
+        "body2": "智神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 121.3521,
+        "orb": 1.35,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.169,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
       },
       {
         "body1": "海王星",
@@ -2261,14 +2263,44 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 178.5591,
+        "actualAngle": 178.5554,
         "orb": 1.44,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.1801,
+        "normalizedOrbRatio": 0.1806,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
+      },
+      {
+        "body1": "月亮",
+        "body2": "火星",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 88.5124,
+        "orb": 1.49,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2125,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "火星",
+        "body2": "谷神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 118.0285,
+        "orb": 1.97,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2464,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
       },
       {
         "body1": "金星",
@@ -2276,11 +2308,56 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 58.5754,
-        "orb": 1.42,
+        "actualAngle": 58.5213,
+        "orb": 1.48,
         "allowedOrb": 6,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.2374,
+        "normalizedOrbRatio": 0.2465,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "火星",
+        "body2": "海王星",
+        "type": "六合",
+        "symbol": "⚹",
+        "exactAngle": 60,
+        "actualAngle": 61.4881,
+        "orb": 1.49,
+        "allowedOrb": 6,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.248,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "水星",
+        "body2": "北交点",
+        "type": "刑相",
+        "symbol": "□",
+        "exactAngle": 90,
+        "actualAngle": 88.2508,
+        "orb": 1.75,
+        "allowedOrb": 7,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2499,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "冥王星",
+        "body2": "谷神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 122.3435,
+        "orb": 2.34,
+        "allowedOrb": 8,
+        "closeness": "紧密",
+        "normalizedOrbRatio": 0.2929,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2291,104 +2368,14 @@
         "type": "五分相",
         "symbol": "Q",
         "exactAngle": 72,
-        "actualAngle": 72.4798,
-        "orb": 0.48,
+        "actualAngle": 72.6132,
+        "orb": 0.61,
         "allowedOrb": 2,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.2399,
+        "normalizedOrbRatio": 0.3066,
         "isOutOfSign": true,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": null
-      },
-      {
-        "body1": "火星",
-        "body2": "谷神星",
-        "type": "拱相",
-        "symbol": "△",
-        "exactAngle": 120,
-        "actualAngle": 118.0135,
-        "orb": 1.99,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.2483,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
-      },
-      {
-        "body1": "水星",
-        "body2": "北交点",
-        "type": "刑相",
-        "symbol": "□",
-        "exactAngle": 90,
-        "actualAngle": 88.243,
-        "orb": 1.76,
-        "allowedOrb": 7,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.251,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
-      },
-      {
-        "body1": "火星",
-        "body2": "海王星",
-        "type": "六合",
-        "symbol": "⚹",
-        "exactAngle": 60,
-        "actualAngle": 61.5196,
-        "orb": 1.52,
-        "allowedOrb": 6,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.2533,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
-      },
-      {
-        "body1": "月亮",
-        "body2": "火星",
-        "type": "刑相",
-        "symbol": "□",
-        "exactAngle": 90,
-        "actualAngle": 88.0467,
-        "orb": 1.95,
-        "allowedOrb": 7,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.279,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
-      },
-      {
-        "body1": "月亮",
-        "body2": "灶神星",
-        "type": "拱相",
-        "symbol": "△",
-        "exactAngle": 120,
-        "actualAngle": 122.3252,
-        "orb": 2.33,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.2907,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "冥王星",
-        "body2": "谷神星",
-        "type": "拱相",
-        "symbol": "△",
-        "exactAngle": 120,
-        "actualAngle": 122.3263,
-        "orb": 2.33,
-        "allowedOrb": 8,
-        "closeness": "紧密",
-        "normalizedOrbRatio": 0.2908,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
       },
       {
         "body1": "谷神星",
@@ -2396,11 +2383,11 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 122.4291,
-        "orb": 2.43,
+        "actualAngle": 122.4544,
+        "orb": 2.45,
         "allowedOrb": 8,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.3036,
+        "normalizedOrbRatio": 0.3068,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2411,11 +2398,11 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 58.1405,
+        "actualAngle": 58.1399,
         "orb": 1.86,
         "allowedOrb": 6,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.3099,
+        "normalizedOrbRatio": 0.31,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2426,11 +2413,26 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 58.0377,
-        "orb": 1.96,
+        "actualAngle": 58.0289,
+        "orb": 1.97,
         "allowedOrb": 6,
         "closeness": "紧密",
-        "normalizedOrbRatio": 0.327,
+        "normalizedOrbRatio": 0.3285,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
+      },
+      {
+        "body1": "月亮",
+        "body2": "灶神星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 122.8033,
+        "orb": 2.8,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.3504,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2441,11 +2443,11 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 117.0395,
-        "orb": 2.96,
+        "actualAngle": 117.0673,
+        "orb": 2.93,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.3701,
+        "normalizedOrbRatio": 0.3666,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2456,11 +2458,11 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 123.3003,
+        "actualAngle": 123.3047,
         "orb": 3.3,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.4125,
+        "normalizedOrbRatio": 0.4131,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2471,29 +2473,14 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 123.4031,
-        "orb": 3.4,
+        "actualAngle": 123.4157,
+        "orb": 3.42,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.4254,
+        "normalizedOrbRatio": 0.427,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
-      },
-      {
-        "body1": "谷神星",
-        "body2": "莉莉丝",
-        "type": "补八分相",
-        "symbol": "⚼",
-        "exactAngle": 135,
-        "actualAngle": 134.1332,
-        "orb": 0.87,
-        "allowedOrb": 2,
-        "closeness": "中等",
-        "normalizedOrbRatio": 0.4334,
-        "isOutOfSign": true,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
       },
       {
         "body1": "土星",
@@ -2501,11 +2488,11 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 57.2312,
-        "orb": 2.77,
+        "actualAngle": 57.3582,
+        "orb": 2.64,
         "allowedOrb": 6,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.4615,
+        "normalizedOrbRatio": 0.4403,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2516,11 +2503,41 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 176.3028,
-        "orb": 3.7,
+        "actualAngle": 176.3069,
+        "orb": 3.69,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.4622,
+        "normalizedOrbRatio": 0.4616,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "谷神星",
+        "body2": "莉莉丝",
+        "type": "补八分相",
+        "symbol": "⚼",
+        "exactAngle": 135,
+        "actualAngle": 134.0227,
+        "orb": 0.98,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.4886,
+        "isOutOfSign": true,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "月亮",
+        "body2": "婚神星",
+        "type": "半六合",
+        "symbol": "⚺",
+        "exactAngle": 30,
+        "actualAngle": 31.0047,
+        "orb": 1,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5023,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2531,11 +2548,11 @@
         "type": "合相",
         "symbol": "☌",
         "exactAngle": 0,
-        "actualAngle": 4.024,
-        "orb": 4.02,
+        "actualAngle": 4.0285,
+        "orb": 4.03,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.503,
+        "normalizedOrbRatio": 0.5036,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2546,11 +2563,11 @@
         "type": "拱相",
         "symbol": "△",
         "exactAngle": 120,
-        "actualAngle": 115.9645,
-        "orb": 4.04,
+        "actualAngle": 115.9238,
+        "orb": 4.08,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.5044,
+        "normalizedOrbRatio": 0.5095,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2561,11 +2578,11 @@
         "type": "半六合",
         "symbol": "⚺",
         "exactAngle": 30,
-        "actualAngle": 31.0639,
-        "orb": 1.06,
+        "actualAngle": 31.0423,
+        "orb": 1.04,
         "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.532,
+        "normalizedOrbRatio": 0.5212,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2576,29 +2593,29 @@
         "type": "刑相",
         "symbol": "□",
         "exactAngle": 90,
-        "actualAngle": 93.8375,
-        "orb": 3.84,
+        "actualAngle": 93.8816,
+        "orb": 3.88,
         "allowedOrb": 7,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.5482,
+        "normalizedOrbRatio": 0.5545,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
       },
       {
-        "body1": "金星",
+        "body1": "月亮",
         "body2": "冥王星",
-        "type": "倍五分相",
-        "symbol": "bQ",
-        "exactAngle": 144,
-        "actualAngle": 142.8622,
-        "orb": 1.14,
+        "type": "半六合",
+        "symbol": "⚺",
+        "exactAngle": 30,
+        "actualAngle": 31.1157,
+        "orb": 1.12,
         "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.5689,
+        "normalizedOrbRatio": 0.5578,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
+        "applying": false
       },
       {
         "body1": "天王星",
@@ -2606,14 +2623,29 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 175.3288,
-        "orb": 4.67,
+        "actualAngle": 175.3457,
+        "orb": 4.65,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.5839,
+        "normalizedOrbRatio": 0.5818,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
+      },
+      {
+        "body1": "金星",
+        "body2": "冥王星",
+        "type": "倍五分相",
+        "symbol": "bQ",
+        "exactAngle": 144,
+        "actualAngle": 142.8137,
+        "orb": 1.19,
+        "allowedOrb": 2,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.5931,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": true
       },
       {
         "body1": "太阳",
@@ -2621,29 +2653,14 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 175.1002,
-        "orb": 4.9,
+        "actualAngle": 175.1498,
+        "orb": 4.85,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6125,
+        "normalizedOrbRatio": 0.6063,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
-      },
-      {
-        "body1": "金星",
-        "body2": "婚神星",
-        "type": "倍五分相",
-        "symbol": "bQ",
-        "exactAngle": 144,
-        "actualAngle": 142.7594,
-        "orb": 1.24,
-        "allowedOrb": 2,
-        "closeness": "中等",
-        "normalizedOrbRatio": 0.6203,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
       },
       {
         "body1": "火星",
@@ -2651,11 +2668,26 @@
         "type": "五分相",
         "symbol": "Q",
         "exactAngle": 72,
-        "actualAngle": 70.7533,
-        "orb": 1.25,
+        "actualAngle": 70.7616,
+        "orb": 1.24,
         "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6234,
+        "normalizedOrbRatio": 0.6192,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "太阳",
+        "body2": "冥王星",
+        "type": "冲相",
+        "symbol": "☍",
+        "exactAngle": 180,
+        "actualAngle": 175.0388,
+        "orb": 4.96,
+        "allowedOrb": 8,
+        "closeness": "中等",
+        "normalizedOrbRatio": 0.6202,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2666,26 +2698,26 @@
         "type": "合相",
         "symbol": "☌",
         "exactAngle": 0,
-        "actualAngle": 4.998,
-        "orb": 5,
+        "actualAngle": 4.9897,
+        "orb": 4.99,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6248,
+        "normalizedOrbRatio": 0.6237,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
       },
       {
-        "body1": "太阳",
-        "body2": "冥王星",
-        "type": "冲相",
-        "symbol": "☍",
-        "exactAngle": 180,
-        "actualAngle": 174.9974,
-        "orb": 5,
+        "body1": "天王星",
+        "body2": "海王星",
+        "type": "合相",
+        "symbol": "☌",
+        "exactAngle": 0,
+        "actualAngle": 5.1377,
+        "orb": 5.14,
         "allowedOrb": 8,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6253,
+        "normalizedOrbRatio": 0.6422,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2696,29 +2728,29 @@
         "type": "半六合",
         "symbol": "⚺",
         "exactAngle": 30,
-        "actualAngle": 31.2843,
-        "orb": 1.28,
+        "actualAngle": 31.2902,
+        "orb": 1.29,
         "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6421,
+        "normalizedOrbRatio": 0.6451,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
       },
       {
-        "body1": "天王星",
-        "body2": "海王星",
-        "type": "合相",
-        "symbol": "☌",
-        "exactAngle": 0,
-        "actualAngle": 5.1381,
-        "orb": 5.14,
-        "allowedOrb": 8,
+        "body1": "金星",
+        "body2": "婚神星",
+        "type": "倍五分相",
+        "symbol": "bQ",
+        "exactAngle": 144,
+        "actualAngle": 142.7027,
+        "orb": 1.3,
+        "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6423,
+        "normalizedOrbRatio": 0.6486,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": false
+        "applying": true
       },
       {
         "body1": "凯龙星",
@@ -2726,26 +2758,11 @@
         "type": "半刑",
         "symbol": "∠",
         "exactAngle": 45,
-        "actualAngle": 46.2862,
-        "orb": 1.29,
+        "actualAngle": 46.3058,
+        "orb": 1.31,
         "allowedOrb": 2,
         "closeness": "中等",
-        "normalizedOrbRatio": 0.6431,
-        "isOutOfSign": false,
-        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
-        "applying": true
-      },
-      {
-        "body1": "海王星",
-        "body2": "莉莉丝",
-        "type": "半刑",
-        "symbol": "∠",
-        "exactAngle": 45,
-        "actualAngle": 46.3336,
-        "orb": 1.33,
-        "allowedOrb": 2,
-        "closeness": "宽松",
-        "normalizedOrbRatio": 0.6668,
+        "normalizedOrbRatio": 0.6529,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2756,11 +2773,11 @@
         "type": "合相",
         "symbol": "☌",
         "exactAngle": 0,
-        "actualAngle": 5.4108,
-        "orb": 5.41,
+        "actualAngle": 5.4283,
+        "orb": 5.43,
         "allowedOrb": 8,
         "closeness": "宽松",
-        "normalizedOrbRatio": 0.6764,
+        "normalizedOrbRatio": 0.6785,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2771,11 +2788,11 @@
         "type": "冲相",
         "symbol": "☍",
         "exactAngle": 180,
-        "actualAngle": 174.5352,
-        "orb": 5.46,
+        "actualAngle": 174.5269,
+        "orb": 5.47,
         "allowedOrb": 8,
         "closeness": "宽松",
-        "normalizedOrbRatio": 0.6831,
+        "normalizedOrbRatio": 0.6841,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2786,11 +2803,11 @@
         "type": "刑相",
         "symbol": "□",
         "exactAngle": 90,
-        "actualAngle": 94.8115,
-        "orb": 4.81,
+        "actualAngle": 94.8428,
+        "orb": 4.84,
         "allowedOrb": 7,
         "closeness": "宽松",
-        "normalizedOrbRatio": 0.6874,
+        "normalizedOrbRatio": 0.6918,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": true
@@ -2801,11 +2818,26 @@
         "type": "六合",
         "symbol": "⚹",
         "exactAngle": 60,
-        "actualAngle": 64.17,
-        "orb": 4.17,
+        "actualAngle": 64.1521,
+        "orb": 4.15,
         "allowedOrb": 6,
         "closeness": "宽松",
-        "normalizedOrbRatio": 0.695,
+        "normalizedOrbRatio": 0.692,
+        "isOutOfSign": false,
+        "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
+        "applying": false
+      },
+      {
+        "body1": "水星",
+        "body2": "海王星",
+        "type": "拱相",
+        "symbol": "△",
+        "exactAngle": 120,
+        "actualAngle": 114.4033,
+        "orb": 5.6,
+        "allowedOrb": 8,
+        "closeness": "宽松",
+        "normalizedOrbRatio": 0.6996,
         "isOutOfSign": false,
         "source": "Caelus 星体位置与明御相位计算；紧密等级按偏差占本次允许容许度的比例换算",
         "applying": false
@@ -2815,29 +2847,29 @@
       "key": "solar-illumination:1990-05-12:39.9:116.4",
       "status": "已计算",
       "localDate": "1990-05-12",
-      "referenceLocalDateTime": "1990-05-12 14:00:00",
-      "referenceUtcDateTime": "1990-05-12 06:00:00Z",
+      "referenceLocalDateTime": "1990-05-12 13:00:00",
+      "referenceUtcDateTime": "1990-05-12 05:00:00Z",
       "latitude": 39.9,
       "longitude": 116.4,
       "timezone": 8,
-      "solarAltitudeDegrees": 57.6935,
-      "solarAzimuthDegrees": 234.9627,
-      "solarDeclinationDegrees": 17.864278,
-      "equationOfTimeMinutes": 3.8871,
+      "solarAltitudeDegrees": 65.4948,
+      "solarAzimuthDegrees": 209.4502,
+      "solarDeclinationDegrees": 17.853555,
+      "equationOfTimeMinutes": 3.8859,
       "apparentSolarNoonUtcDateTime": "1990-05-12T04:10:30.920Z",
       "apparentSolarNoonLocalDateTime": "1990-05-12 12:10:30",
       "astronomicalTime": {
-        "key": "astronomical-time:1990-05-12 14:00:00:8",
+        "key": "astronomical-time:1990-05-12 13:00:00:8",
         "status": "已计算",
-        "localDateTime": "1990-05-12 14:00:00",
+        "localDateTime": "1990-05-12 13:00:00",
         "timezone": 8,
-        "utcDateTime": "1990-05-12 06:00:00Z",
-        "unixMilliseconds": 642492000000,
-        "julianDayUtc": 2448023.75,
-        "julianDayUtApprox": 2448023.75,
+        "utcDateTime": "1990-05-12 05:00:00Z",
+        "unixMilliseconds": 642488400000,
+        "julianDayUtc": 2448023.708333333,
+        "julianDayUtApprox": 2448023.708333333,
         "deltaTSeconds": 57.13,
-        "julianDayTtApprox": 2448023.750661227,
-        "decimalYear": 1990.359589,
+        "julianDayTtApprox": 2448023.70899456,
+        "decimalYear": 1990.359475,
         "deltaTModel": "Espenak-Meeus 分段多项式（1900-2200）",
         "precisionLevel": "历史拟合",
         "assumptions": [
@@ -2877,7 +2909,7 @@
             "status": "已计算",
             "dependsOnStepKeys": [],
             "inputs": {
-              "localDateTime": "1990-05-12 14:00:00",
+              "localDateTime": "1990-05-12 13:00:00",
               "fixedOffsetHours": 8
             },
             "result": {
@@ -2894,14 +2926,14 @@
               "astronomical-time:calculation:timezone"
             ],
             "inputs": {
-              "localDateTime": "1990-05-12 14:00:00",
+              "localDateTime": "1990-05-12 13:00:00",
               "timezone": 8
             },
             "result": {
-              "utcDateTime": "1990-05-12 06:00:00Z",
-              "unixMilliseconds": 642492000000
+              "utcDateTime": "1990-05-12 05:00:00Z",
+              "unixMilliseconds": 642488400000
             },
-            "promptText": "当地钟表时间1990-05-12 14:00:00按 UTC+8换算为1990-05-12 06:00:00Z",
+            "promptText": "当地钟表时间1990-05-12 13:00:00按 UTC+8换算为1990-05-12 05:00:00Z",
             "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
           },
           {
@@ -2912,12 +2944,12 @@
               "astronomical-time:calculation:utc"
             ],
             "inputs": {
-              "unixMilliseconds": 642492000000
+              "unixMilliseconds": 642488400000
             },
             "result": {
-              "julianDayUtc": 2448023.75
+              "julianDayUtc": 2448023.708333333
             },
-            "promptText": "UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.750000000",
+            "promptText": "UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.708333333",
             "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
           },
           {
@@ -2928,12 +2960,12 @@
               "astronomical-time:calculation:jd-utc"
             ],
             "inputs": {
-              "julianDayUtc": 2448023.75
+              "julianDayUtc": 2448023.708333333
             },
             "result": {
-              "julianDayUtApprox": 2448023.75
+              "julianDayUtApprox": 2448023.708333333
             },
-            "promptText": "缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.750000000",
+            "promptText": "缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.708333333",
             "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
           },
           {
@@ -2944,14 +2976,14 @@
               "astronomical-time:calculation:ut1"
             ],
             "inputs": {
-              "decimalYear": 1990.359589
+              "decimalYear": 1990.359475
             },
             "result": {
               "deltaTSeconds": 57.13,
-              "julianDayTtApprox": 2448023.750661227,
+              "julianDayTtApprox": 2448023.70899456,
               "precisionLevel": "历史拟合"
             },
-            "promptText": "按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.750661227，模型等级历史拟合",
+            "promptText": "按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.708994560，模型等级历史拟合",
             "limitation": "时间尺度步骤只证明当地钟表时间如何换算为 UTC、JD(UTC)、近似 UT1 与近似 TT；不得把数值位数解释为观测精度或底层星历精度"
           }
         ],
@@ -3056,7 +3088,7 @@
           "limitation": "天文时间证据汇总只统计时区、UTC、儒略日、UT1近似、ΔT模型、反证与限制覆盖；不得按状态生成可信度百分比、观测精度声明或现实结论"
         },
         "source": "UTC 儒略日采用 Unix 纪元换算；ΔT 采用 NASA/Espenak-Meeus 1900-2200 分段多项式",
-        "promptText": "天文时间尺度：当地钟表时间1990-05-12 14:00:00（UTC+8）→ UTC 1990-05-12 06:00:00Z；JD(UTC)=2448023.750000，在 UT1≈UTC 假设下 JD(UT)≈2448023.750000；ΔT≈57.130秒，JD(TT)≈2448023.750661。模型等级：历史拟合。计算链：采用明确给定的法定偏移 UTC+8 → 当地钟表时间1990-05-12 14:00:00按 UTC+8换算为1990-05-12 06:00:00Z → UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.750000000 → 缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.750000000 → 按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.750661227，模型等级历史拟合。反证汇总：时间尺度含 UT1≈UTC 与 ΔT 历史拟合模型；数值可用于当前民用历法计算，但不得宣称观测级精度。证据汇总：天文时间证据状态为民用时间链完整；记录计算步骤5项、计算假设2项、反证2项、限制2项。来源：UTC 儒略日采用 Unix 纪元换算；ΔT 采用 NASA/Espenak-Meeus 1900-2200 分段多项式。限制：输入 timezone 视为该时刻已经确认的法定 UTC 偏移，不自动推断地点历史时区。；缺少实时 DUT1 数据时使用 UT1≈UTC，误差上限通常小于 0.9 秒。；ΔT 是分段多项式估计值，不是逐日观测值；未来年份的不确定性会逐渐增大。；TT 儒略日用于说明天文计算时间尺度，不代表底层依赖库一定采用同一星历或同一时间模型。"
+        "promptText": "天文时间尺度：当地钟表时间1990-05-12 13:00:00（UTC+8）→ UTC 1990-05-12 05:00:00Z；JD(UTC)=2448023.708333，在 UT1≈UTC 假设下 JD(UT)≈2448023.708333；ΔT≈57.130秒，JD(TT)≈2448023.708995。模型等级：历史拟合。计算链：采用明确给定的法定偏移 UTC+8 → 当地钟表时间1990-05-12 13:00:00按 UTC+8换算为1990-05-12 05:00:00Z → UTC 时间按 Unix 纪元换算 JD(UTC)=2448023.708333333 → 缺少实时 DUT1 时采用 UT1≈UTC，JD(UT)≈2448023.708333333 → 按 Espenak-Meeus 分段模型估算 ΔT≈57.130秒，得 JD(TT)≈2448023.708994560，模型等级历史拟合。反证汇总：时间尺度含 UT1≈UTC 与 ΔT 历史拟合模型；数值可用于当前民用历法计算，但不得宣称观测级精度。证据汇总：天文时间证据状态为民用时间链完整；记录计算步骤5项、计算假设2项、反证2项、限制2项。来源：UTC 儒略日采用 Unix 纪元换算；ΔT 采用 NASA/Espenak-Meeus 1900-2200 分段多项式。限制：输入 timezone 视为该时刻已经确认的法定 UTC 偏移，不自动推断地点历史时区。；缺少实时 DUT1 数据时使用 UT1≈UTC，误差上限通常小于 0.9 秒。；ΔT 是分段多项式估计值，不是逐日观测值；未来年份的不确定性会逐渐增大。；TT 儒略日用于说明天文计算时间尺度，不代表底层依赖库一定采用同一星历或同一时间模型。"
       },
       "sunriseSunset": {
         "key": "光照交点:日出/日落",
@@ -3143,14 +3175,14 @@
           "status": "已计算",
           "dependsOnStepKeys": [],
           "inputs": {
-            "referenceLocalDateTime": "1990-05-12 14:00:00",
+            "referenceLocalDateTime": "1990-05-12 13:00:00",
             "timezone": 8
           },
           "result": {
-            "referenceUtcDateTime": "1990-05-12 06:00:00Z",
-            "unixMilliseconds": 642492000000
+            "referenceUtcDateTime": "1990-05-12 05:00:00Z",
+            "unixMilliseconds": 642488400000
           },
-          "promptText": "将参考当地时间1990-05-12 14:00:00换算为 UTC 1990-05-12 06:00:00Z",
+          "promptText": "将参考当地时间1990-05-12 13:00:00换算为 UTC 1990-05-12 05:00:00Z",
           "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
         },
         {
@@ -3163,15 +3195,15 @@
           "inputs": {
             "latitude": 39.9,
             "longitude": 116.4,
-            "referenceUtcDateTime": "1990-05-12 06:00:00Z"
+            "referenceUtcDateTime": "1990-05-12 05:00:00Z"
           },
           "result": {
-            "solarAltitudeDegrees": 57.6935,
-            "solarAzimuthDegrees": 234.9627,
-            "solarDeclinationDegrees": 17.864278,
-            "equationOfTimeMinutes": 3.8871
+            "solarAltitudeDegrees": 65.4948,
+            "solarAzimuthDegrees": 209.4502,
+            "solarDeclinationDegrees": 17.853555,
+            "equationOfTimeMinutes": 3.8859
           },
-          "promptText": "按 NOAA/Meeus 低阶模型计算参考时刻太阳高度57.6935°、方位234.9627°、赤纬17.864278°",
+          "promptText": "按 NOAA/Meeus 低阶模型计算参考时刻太阳高度65.4948°、方位209.4502°、赤纬17.853555°",
           "limitation": "太阳光照步骤只证明天文时间、低阶太阳位置、视太阳正午和高度阈值交点如何形成；不得把几何结果解释为实际可见性、建筑采光效果或导航级精度"
         },
         {
@@ -3271,7 +3303,7 @@
         "key": "solar-illumination:evidence-summary",
         "status": "证据链完整",
         "factKeys": [
-          "astronomical-time:1990-05-12 14:00:00:8",
+          "astronomical-time:1990-05-12 13:00:00:8",
           "astronomical-time:evidence-summary",
           "solar-illumination:calculation:astronomical-time",
           "solar-illumination:calculation:reference-position",
@@ -3346,7 +3378,7 @@
           "limitation": "限制事实用于约束太阳高度、方位、日出日落和曙暮光结果可以支持的解释范围，不得被反向当作天气、建筑性能、吉凶或事件证据"
         }
       ],
-      "promptText": "太阳光照证据：1990-05-12，纬度39.9°、经度116.4°，参考当地时间1990-05-12 14:00:00太阳高度57.69°、方位角234.96°（真北起顺时针），视太阳正午1990-05-12 12:10:30；计算链：将参考当地时间1990-05-12 14:00:00换算为 UTC 1990-05-12 06:00:00Z → 按 NOAA/Meeus 低阶模型计算参考时刻太阳高度57.6935°、方位234.9627°、赤纬17.864278° → 按经度、时区与时间方程求视太阳正午：当地1990-05-12 12:10:30 → 以 -0.833°、-6°、-12°、-18° 四个太阳高度阈值求日出日落与曙暮光交点，并记录全天状态；日出/日落：太阳高度-0.833°阈值的当地上午交点为1990-05-12 05:03:18、下午交点为1990-05-12 19:17:43；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；民用曙暮光：太阳高度-6°阈值的当地上午交点为1990-05-12 04:33:07、下午交点为1990-05-12 19:47:54；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；航海曙暮光：太阳高度-12°阈值的当地上午交点为1990-05-12 03:55:59、下午交点为1990-05-12 20:25:02；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；天文曙暮光：太阳高度-18°阈值的当地上午交点为1990-05-12 03:15:15、下午交点为1990-05-12 21:05:45；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果。交点汇总：四类太阳高度阈值均找到上午和下午正常交点。证据汇总：太阳光照证据状态为证据链完整；记录计算步骤4项、正常交点阈值4类、全天状态0类、假设2项、限制3项。方法：采用 NOAA/Meeus 低阶太阳赤纬与时间方程；日出日落以太阳中心高度 -0.833°，民用、航海、天文曙暮光分别以 -6°、-12°、-18° 求时角交点。来源：NOAA Solar Calculator equations，核心公式源自 Meeus《Astronomical Algorithms》。假设：日出日落的 -0.833° 阈值包含标准太阳半径与近地平大气折射近似。；同一民用日期内采用参考时刻解析出的 UTC 偏移计算事件。。限制：未考虑实际海拔、山体与建筑遮挡、逐时气象折射和局部地平线起伏，实际可见时刻可能偏移。；IANA 时区在当天发生偏移切换时，事件当地时间仍按参考时刻偏移表达，应结合时区诊断复核。；低阶模型适合民用历法和光照背景，不宣称达到观测级或导航级精度。"
+      "promptText": "太阳光照证据：1990-05-12，纬度39.9°、经度116.4°，参考当地时间1990-05-12 13:00:00太阳高度65.49°、方位角209.45°（真北起顺时针），视太阳正午1990-05-12 12:10:30；计算链：将参考当地时间1990-05-12 13:00:00换算为 UTC 1990-05-12 05:00:00Z → 按 NOAA/Meeus 低阶模型计算参考时刻太阳高度65.4948°、方位209.4502°、赤纬17.853555° → 按经度、时区与时间方程求视太阳正午：当地1990-05-12 12:10:30 → 以 -0.833°、-6°、-12°、-18° 四个太阳高度阈值求日出日落与曙暮光交点，并记录全天状态；日出/日落：太阳高度-0.833°阈值的当地上午交点为1990-05-12 05:03:18、下午交点为1990-05-12 19:17:43；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；民用曙暮光：太阳高度-6°阈值的当地上午交点为1990-05-12 04:33:07、下午交点为1990-05-12 19:47:54；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；航海曙暮光：太阳高度-12°阈值的当地上午交点为1990-05-12 03:55:59、下午交点为1990-05-12 20:25:02；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果；天文曙暮光：太阳高度-18°阈值的当地上午交点为1990-05-12 03:15:15、下午交点为1990-05-12 21:05:45；边界：太阳高度阈值交点只描述低阶太阳模型在理想地平线条件下的几何时刻或全天状态；不代表实际可见性、天气、遮挡、建筑采光效果、吉凶或事件结果。交点汇总：四类太阳高度阈值均找到上午和下午正常交点。证据汇总：太阳光照证据状态为证据链完整；记录计算步骤4项、正常交点阈值4类、全天状态0类、假设2项、限制3项。方法：采用 NOAA/Meeus 低阶太阳赤纬与时间方程；日出日落以太阳中心高度 -0.833°，民用、航海、天文曙暮光分别以 -6°、-12°、-18° 求时角交点。来源：NOAA Solar Calculator equations，核心公式源自 Meeus《Astronomical Algorithms》。假设：日出日落的 -0.833° 阈值包含标准太阳半径与近地平大气折射近似。；同一民用日期内采用参考时刻解析出的 UTC 偏移计算事件。。限制：未考虑实际海拔、山体与建筑遮挡、逐时气象折射和局部地平线起伏，实际可见时刻可能偏移。；IANA 时区在当天发生偏移切换时，事件当地时间仍按参考时刻偏移表达，应结合时区诊断复核。；低阶模型适合民用历法和光照背景，不宣称达到观测级或导航级精度。"
     },
     "summary": {
       "elements": {
@@ -3420,11 +3452,11 @@
       {
         "name": "太阳",
         "kind": "七政",
-        "tropicalLongitude": 51.26018945747779,
-        "longitude": 51.26018945747779,
+        "tropicalLongitude": 51.219963496927846,
+        "longitude": 51.219963496927846,
         "xiu": "胃",
         "sevenStar": "土",
-        "xiuDegree": 4.456507834920785,
+        "xiuDegree": 4.416284805169823,
         "signIndex": 1,
         "signBranch": "酉",
         "palace": "迁移",
@@ -3437,11 +3469,11 @@
       {
         "name": "太阴",
         "kind": "七政",
-        "tropicalLongitude": 257.8711819233563,
-        "longitude": 257.8711819233563,
+        "tropicalLongitude": 257.37452646938505,
+        "longitude": 257.37452646938505,
         "xiu": "尾",
         "sevenStar": "火",
-        "xiuDegree": 1.846990692551742,
+        "xiuDegree": 1.3503381701706303,
         "signIndex": 8,
         "signBranch": "寅",
         "palace": "财帛",
@@ -3454,11 +3486,11 @@
       {
         "name": "辰星(水)",
         "kind": "七政",
-        "tropicalLongitude": 38.78752864445829,
-        "longitude": 38.78752864445829,
+        "tropicalLongitude": 38.80222702158426,
+        "longitude": 38.80222702158426,
         "xiu": "娄",
         "sevenStar": "金",
-        "xiuDegree": 4.949008490419658,
+        "xiuDegree": 4.963709800016886,
         "signIndex": 1,
         "signBranch": "酉",
         "palace": "迁移",
@@ -3471,11 +3503,11 @@
       {
         "name": "太白(金)",
         "kind": "七政",
-        "tropicalLongitude": 9.120178631761632,
-        "longitude": 9.120178631761632,
+        "tropicalLongitude": 9.072884459509567,
+        "longitude": 9.072884459509567,
         "xiu": "壁",
         "sevenStar": "水",
-        "xiuDegree": 0.09534630543629419,
+        "xiuDegree": 0.04805506231457457,
         "signIndex": 0,
         "signBranch": "戌",
         "palace": "官禄",
@@ -3488,11 +3520,11 @@
       {
         "name": "荧惑(火)",
         "kind": "七政",
-        "tropicalLongitude": 345.9183336116812,
-        "longitude": 345.9183336116812,
+        "tropicalLongitude": 345.8873397084069,
+        "longitude": 345.8873397084069,
         "xiu": "危",
         "sevenStar": "月",
-        "xiuDegree": 12.697178262917646,
+        "xiuDegree": 12.666187289960874,
         "signIndex": 11,
         "signBranch": "亥",
         "palace": "福德",
@@ -3505,11 +3537,11 @@
       {
         "name": "岁星(木)",
         "kind": "七政",
-        "tropicalLongitude": 98.9336524343388,
-        "longitude": 98.9336524343388,
+        "tropicalLongitude": 98.92594465166184,
+        "longitude": 98.92594465166184,
         "xiu": "井",
         "sevenStar": "木",
-        "xiuDegree": 3.7634129425887295,
+        "xiuDegree": 3.7557080942837047,
         "signIndex": 3,
         "signBranch": "未",
         "palace": "妻妾",
@@ -3522,11 +3554,11 @@
       {
         "name": "镇星(土)",
         "kind": "七政",
-        "tropicalLongitude": 295.29591278088094,
-        "longitude": 295.29591278088094,
+        "tropicalLongitude": 295.296399886598,
+        "longitude": 295.296399886598,
         "xiu": "斗",
         "sevenStar": "木",
-        "xiuDegree": 15.246205375378224,
+        "xiuDegree": 15.246695415432441,
         "signIndex": 9,
         "signBranch": "丑",
         "palace": "命宫",
@@ -3539,11 +3571,11 @@
       {
         "name": "罗睺(火余)",
         "kind": "四余",
-        "tropicalLongitude": 310.55009646069857,
-        "longitude": 310.55009646069857,
+        "tropicalLongitude": 310.5569821386399,
+        "longitude": 310.5569821386399,
         "xiu": "牛",
         "sevenStar": "金",
-        "xiuDegree": 6.63427266265694,
+        "xiuDegree": 6.641161273697264,
         "signIndex": 10,
         "signBranch": "子",
         "palace": "相貌",
@@ -3555,11 +3587,11 @@
       {
         "name": "计都(土余)",
         "kind": "四余",
-        "tropicalLongitude": 130.5500964606985,
-        "longitude": 130.5500964606985,
+        "tropicalLongitude": 130.5569821386399,
+        "longitude": 130.5569821386399,
         "xiu": "柳",
         "sevenStar": "土",
-        "xiuDegree": 0.37687091462481703,
+        "xiuDegree": 0.38375952062460783,
         "signIndex": 4,
         "signBranch": "午",
         "palace": "奴仆",
@@ -3571,11 +3603,11 @@
       {
         "name": "月孛(水余)",
         "kind": "四余",
-        "tropicalLongitude": 231.11148364142264,
-        "longitude": 231.11148364142264,
+        "tropicalLongitude": 231.10681565615312,
+        "longitude": 231.10681565615312,
         "xiu": "氐",
         "sevenStar": "土",
-        "xiuDegree": 6.160099423528891,
+        "xiuDegree": 6.155434368228839,
         "signIndex": 7,
         "signBranch": "卯",
         "palace": "兄弟",
@@ -3588,11 +3620,11 @@
       {
         "name": "紫炁(木余)",
         "kind": "四余",
-        "tropicalLongitude": 164.57033028213152,
-        "longitude": 164.57033028213152,
+        "tropicalLongitude": 164.56886360205226,
+        "longitude": 164.56886360205226,
         "xiu": "张",
         "sevenStar": "月",
-        "xiuDegree": 9.010162707685936,
+        "xiuDegree": 9.008698954579586,
         "signIndex": 5,
         "signBranch": "巳",
         "palace": "男女",
@@ -3622,10 +3654,10 @@
         "star2": "月孛(水余)",
         "type": "对照",
         "exactAngle": 180,
-        "actualAngle": 179.8513,
-        "orb": 0.1487,
+        "actualAngle": 179.8869,
+        "orb": 0.1131,
         "allowedOrb": 8,
-        "orbRatio": 0.0186,
+        "orbRatio": 0.0141,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "太阳与月孛(水余)目标日期黄经最小夹角及对照容许度"
@@ -3635,10 +3667,10 @@
         "star2": "岁星(木)",
         "type": "四正",
         "exactAngle": 90,
-        "actualAngle": 89.8135,
-        "orb": 0.1865,
+        "actualAngle": 89.8531,
+        "orb": 0.1469,
         "allowedOrb": 6,
-        "orbRatio": 0.0311,
+        "orbRatio": 0.0245,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "太白(金)与岁星(木)目标日期黄经最小夹角及四正容许度"
@@ -3648,10 +3680,10 @@
         "star2": "岁星(木)",
         "type": "六合",
         "exactAngle": 60,
-        "actualAngle": 60.1461,
-        "orb": 0.1461,
+        "actualAngle": 60.1237,
+        "orb": 0.1237,
         "allowedOrb": 4,
-        "orbRatio": 0.0365,
+        "orbRatio": 0.0309,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "辰星(水)与岁星(木)目标日期黄经最小夹角及六合容许度"
@@ -3661,10 +3693,10 @@
         "star2": "紫炁(木余)",
         "type": "对照",
         "exactAngle": 180,
-        "actualAngle": 178.652,
-        "orb": 1.348,
+        "actualAngle": 178.6815,
+        "orb": 1.3185,
         "allowedOrb": 8,
-        "orbRatio": 0.1685,
+        "orbRatio": 0.1648,
         "closeness": "紧密",
         "precisionClass": "混合模型",
         "source": "荧惑(火)与紫炁(木余)目标日期黄经最小夹角及对照容许度"
@@ -3674,23 +3706,36 @@
         "star2": "计都(土余)",
         "type": "三方",
         "exactAngle": 120,
-        "actualAngle": 121.4299,
-        "orb": 1.4299,
+        "actualAngle": 121.4841,
+        "orb": 1.4841,
         "allowedOrb": 6,
-        "orbRatio": 0.2383,
+        "orbRatio": 0.2473,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "太白(金)与计都(土余)目标日期黄经最小夹角及三方容许度"
+      },
+      {
+        "star1": "太阴",
+        "star2": "荧惑(火)",
+        "type": "四正",
+        "exactAngle": 90,
+        "actualAngle": 88.5128,
+        "orb": 1.4872,
+        "allowedOrb": 6,
+        "orbRatio": 0.2479,
+        "closeness": "紧密",
+        "precisionClass": "同层现代天文",
+        "source": "太阴与荧惑(火)目标日期黄经最小夹角及四正容许度"
       },
       {
         "star1": "辰星(水)",
         "star2": "罗睺(火余)",
         "type": "四正",
         "exactAngle": 90,
-        "actualAngle": 88.2374,
-        "orb": 1.7626,
+        "actualAngle": 88.2452,
+        "orb": 1.7548,
         "allowedOrb": 6,
-        "orbRatio": 0.2938,
+        "orbRatio": 0.2925,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "辰星(水)与罗睺(火余)目标日期黄经最小夹角及四正容许度"
@@ -3700,36 +3745,23 @@
         "star2": "计都(土余)",
         "type": "四正",
         "exactAngle": 90,
-        "actualAngle": 91.7626,
-        "orb": 1.7626,
+        "actualAngle": 91.7548,
+        "orb": 1.7548,
         "allowedOrb": 6,
-        "orbRatio": 0.2938,
+        "orbRatio": 0.2925,
         "closeness": "紧密",
         "precisionClass": "同层现代天文",
         "source": "辰星(水)与计都(土余)目标日期黄经最小夹角及四正容许度"
-      },
-      {
-        "star1": "太阴",
-        "star2": "荧惑(火)",
-        "type": "四正",
-        "exactAngle": 90,
-        "actualAngle": 88.0472,
-        "orb": 1.9528,
-        "allowedOrb": 6,
-        "orbRatio": 0.3255,
-        "closeness": "紧密",
-        "precisionClass": "同层现代天文",
-        "source": "太阴与荧惑(火)目标日期黄经最小夹角及四正容许度"
       },
       {
         "star1": "太白(金)",
         "star2": "罗睺(火余)",
         "type": "六合",
         "exactAngle": 60,
-        "actualAngle": 58.5701,
-        "orb": 1.4299,
+        "actualAngle": 58.5159,
+        "orb": 1.4841,
         "allowedOrb": 4,
-        "orbRatio": 0.3575,
+        "orbRatio": 0.371,
         "closeness": "中等",
         "precisionClass": "同层现代天文",
         "source": "太白(金)与罗睺(火余)目标日期黄经最小夹角及六合容许度"
@@ -3739,10 +3771,10 @@
         "star2": "紫炁(木余)",
         "type": "四正",
         "exactAngle": 90,
-        "actualAngle": 93.3009,
-        "orb": 3.3009,
+        "actualAngle": 92.8057,
+        "orb": 2.8057,
         "allowedOrb": 6,
-        "orbRatio": 0.5501,
+        "orbRatio": 0.4676,
         "closeness": "中等",
         "precisionClass": "混合模型",
         "source": "太阴与紫炁(木余)目标日期黄经最小夹角及四正容许度"
@@ -3752,10 +3784,10 @@
         "star2": "镇星(土)",
         "type": "三方",
         "exactAngle": 120,
-        "actualAngle": 115.9643,
-        "orb": 4.0357,
+        "actualAngle": 115.9236,
+        "orb": 4.0764,
         "allowedOrb": 6,
-        "orbRatio": 0.6726,
+        "orbRatio": 0.6794,
         "closeness": "宽松",
         "precisionClass": "同层现代天文",
         "source": "太阳与镇星(土)目标日期黄经最小夹角及三方容许度"
@@ -3765,10 +3797,10 @@
         "star2": "月孛(水余)",
         "type": "三方",
         "exactAngle": 120,
-        "actualAngle": 114.8068,
-        "orb": 5.1932,
+        "actualAngle": 114.7805,
+        "orb": 5.2195,
         "allowedOrb": 6,
-        "orbRatio": 0.8655,
+        "orbRatio": 0.8699,
         "closeness": "宽松",
         "precisionClass": "同层现代天文",
         "source": "荧惑(火)与月孛(水余)目标日期黄经最小夹角及三方容许度"
@@ -3778,10 +3810,10 @@
         "star2": "紫炁(木余)",
         "type": "三方",
         "exactAngle": 120,
-        "actualAngle": 125.7828,
-        "orb": 5.7828,
+        "actualAngle": 125.7666,
+        "orb": 5.7666,
         "allowedOrb": 6,
-        "orbRatio": 0.9638,
+        "orbRatio": 0.9611,
         "closeness": "宽松",
         "precisionClass": "混合模型",
         "source": "辰星(水)与紫炁(木余)目标日期黄经最小夹角及三方容许度"
@@ -3900,13 +3932,13 @@
       "precision": "可按输入分钟稳定复现古法均速值；误差边界来自古法均速假设、历元现代复原和宿度坐标，不宣称现代天体测量的角秒精度"
     },
     "ziqi": {
-      "tropicalLongitude": 164.57033028213152,
-      "siderealLongitude": 164.70499315599818,
+      "tropicalLongitude": 164.56886360205226,
+      "siderealLongitude": 164.7035280704721,
       "direction": "顺行",
       "dailyMotionDegrees": 0.035200321903032655,
-      "cycleProgress": 0.4571398063392542,
-      "daysSinceZeroLongitude": 4675.250718884849,
-      "daysUntilZeroLongitude": 5551.928481115151
+      "cycleProgress": 0.4571357322279229,
+      "daysSinceZeroLongitude": 4675.209052218183,
+      "daysUntilZeroLongitude": 5551.970147781817
     },
     "mansionBoundaries": [
       {
@@ -3917,8 +3949,8 @@
         "decJ2000Degrees": 15.183598429594,
         "pmRaMasPerYear": 0.492,
         "pmDecMasPerYear": -10.73,
-        "longitude": 9.024832326325338,
-        "widthDegrees": 13.220169929093117
+        "longitude": 9.024829397194992,
+        "widthDegrees": 13.220169931408805
       },
       {
         "mansion": "奎",
@@ -3928,8 +3960,8 @@
         "decJ2000Degrees": 23.417650023124,
         "pmRaMasPerYear": -43.008,
         "pmDecMasPerYear": -45.254,
-        "longitude": 22.245002255418456,
-        "widthDegrees": 11.593517898620178
+        "longitude": 22.244999328603797,
+        "widthDegrees": 11.593517892963575
       },
       {
         "mansion": "娄",
@@ -3939,8 +3971,8 @@
         "decJ2000Degrees": 20.808031471916,
         "pmRaMasPerYear": 98.74,
         "pmDecMasPerYear": -110.41,
-        "longitude": 33.83852015403863,
-        "widthDegrees": 12.965161468518374
+        "longitude": 33.83851722156737,
+        "widthDegrees": 12.965161470190651
       },
       {
         "mansion": "胃",
@@ -3950,8 +3982,8 @@
         "decJ2000Degrees": 27.70714940929,
         "pmRaMasPerYear": 8.502,
         "pmDecMasPerYear": -11.433,
-        "longitude": 46.80368162255701,
-        "widthDegrees": 12.476752410638767
+        "longitude": 46.80367869175802,
+        "widthDegrees": 12.47675240911093
       },
       {
         "mansion": "昴",
@@ -3961,8 +3993,8 @@
         "decJ2000Degrees": 24.11333785002,
         "pmRaMasPerYear": 20.542,
         "pmDecMasPerYear": -46.081,
-        "longitude": 59.280434033195775,
-        "widthDegrees": 9.0528316674567
+        "longitude": 59.28043110086895,
+        "widthDegrees": 9.052831663915185
       },
       {
         "mansion": "毕",
@@ -3972,8 +4004,8 @@
         "decJ2000Degrees": 19.180434205814,
         "pmRaMasPerYear": 107.526,
         "pmDecMasPerYear": -36.2,
-        "longitude": 68.33326570065248,
-        "widthDegrees": 15.242067344713178
+        "longitude": 68.33326276478414,
+        "widthDegrees": 15.242067348037153
       },
       {
         "mansion": "觜",
@@ -3983,8 +4015,8 @@
         "decJ2000Degrees": 9.934155874167,
         "pmRaMasPerYear": -0.34,
         "pmDecMasPerYear": -2.94,
-        "longitude": 83.57533304536565,
-        "widthDegrees": 0.9744845116443912
+        "longitude": 83.57533011282129,
+        "widthDegrees": 0.9744845115602061
       },
       {
         "mansion": "参",
@@ -3994,8 +4026,8 @@
         "decJ2000Degrees": -1.942573585972,
         "pmRaMasPerYear": 3.19,
         "pmDecMasPerYear": 2.03,
-        "longitude": 84.54981755701004,
-        "widthDegrees": 10.620421934740023
+        "longitude": 84.5498146243815,
+        "widthDegrees": 10.620421932996635
       },
       {
         "mansion": "井",
@@ -4005,8 +4037,8 @@
         "decJ2000Degrees": 22.513582745904,
         "pmRaMasPerYear": 56.39,
         "pmDecMasPerYear": -110.03,
-        "longitude": 95.17023949175007,
-        "widthDegrees": 30.426826816901496
+        "longitude": 95.17023655737813,
+        "widthDegrees": 30.426826820314602
       },
       {
         "mansion": "鬼",
@@ -4016,8 +4048,8 @@
         "decJ2000Degrees": 18.09441817296,
         "pmRaMasPerYear": -59.639,
         "pmDecMasPerYear": -56.615,
-        "longitude": 125.59706630865156,
-        "widthDegrees": 4.576159237422132
+        "longitude": 125.59706337769273,
+        "widthDegrees": 4.576159240322568
       },
       {
         "mansion": "柳",
@@ -4027,8 +4059,8 @@
         "decJ2000Degrees": 5.70378776223,
         "pmRaMasPerYear": -68.867,
         "pmDecMasPerYear": -7.551,
-        "longitude": 130.1732255460737,
-        "widthDegrees": 16.97502410572929
+        "longitude": 130.1732226180153,
+        "widthDegrees": 16.97502410762752
       },
       {
         "mansion": "星",
@@ -4038,8 +4070,8 @@
         "decJ2000Degrees": -8.658599531746,
         "pmRaMasPerYear": -15.23,
         "pmDecMasPerYear": 34.37,
-        "longitude": 147.14824965180298,
-        "widthDegrees": 8.411917922642601
+        "longitude": 147.14824672564282,
+        "widthDegrees": 8.411917921829854
       },
       {
         "mansion": "张",
@@ -4049,8 +4081,8 @@
         "decJ2000Degrees": -14.846628713347,
         "pmRaMasPerYear": 31.037,
         "pmDecMasPerYear": -26.862,
-        "longitude": 155.5601675744456,
-        "widthDegrees": 17.99968063074789
+        "longitude": 155.56016464747267,
+        "widthDegrees": 17.999680647760215
       },
       {
         "mansion": "翼",
@@ -4060,8 +4092,8 @@
         "decJ2000Degrees": -18.298786220616,
         "pmRaMasPerYear": -462.303,
         "pmDecMasPerYear": 128.614,
-        "longitude": 173.55984820519348,
-        "widthDegrees": 17.03502719793721
+        "longitude": 173.5598452952329,
+        "widthDegrees": 17.03502718415166
       },
       {
         "mansion": "轸",
@@ -4071,8 +4103,8 @@
         "decJ2000Degrees": -17.541930457603,
         "pmRaMasPerYear": -158.61,
         "pmDecMasPerYear": 21.86,
-        "longitude": 190.59487540313071,
-        "widthDegrees": 13.115104471604184
+        "longitude": 190.59487247938458,
+        "widthDegrees": 13.115104464220167
       },
       {
         "mansion": "角",
@@ -4082,8 +4114,8 @@
         "decJ2000Degrees": -11.161319485112,
         "pmRaMasPerYear": -42.35,
         "pmDecMasPerYear": -30.67,
-        "longitude": 203.7099798747349,
-        "widthDegrees": 10.652306208379173
+        "longitude": 203.70997694360474,
+        "widthDegrees": 10.652306207710922
       },
       {
         "mansion": "亢",
@@ -4093,8 +4125,8 @@
         "decJ2000Degrees": -10.273703461482,
         "pmRaMasPerYear": 6.674,
         "pmDecMasPerYear": 138.987,
-        "longitude": 214.36228608311407,
-        "widthDegrees": 10.589098134779647
+        "longitude": 214.36228315131567,
+        "widthDegrees": 10.58909813660864
       },
       {
         "mansion": "氐",
@@ -4104,8 +4136,8 @@
         "decJ2000Degrees": -16.041776519834,
         "pmRaMasPerYear": -105.68,
         "pmDecMasPerYear": -68.4,
-        "longitude": 224.95138421789375,
-        "widthDegrees": 17.857062091516752
+        "longitude": 224.9513812879243,
+        "widthDegrees": 17.857062089719875
       },
       {
         "mansion": "房",
@@ -4115,8 +4147,8 @@
         "decJ2000Degrees": -26.114107945,
         "pmRaMasPerYear": -11.42,
         "pmDecMasPerYear": -26.83,
-        "longitude": 242.8084463094105,
-        "widthDegrees": 4.859705945194264
+        "longitude": 242.80844337764415,
+        "widthDegrees": 4.859705945031294
       },
       {
         "mansion": "心",
@@ -4126,8 +4158,8 @@
         "decJ2000Degrees": -25.592792076667,
         "pmRaMasPerYear": -10.6,
         "pmDecMasPerYear": -16.28,
-        "longitude": 247.66815225460476,
-        "widthDegrees": 8.356038976199784
+        "longitude": 247.66814932267545,
+        "widthDegrees": 8.356038976538969
       },
       {
         "mansion": "尾",
@@ -4137,8 +4169,8 @@
         "decJ2000Degrees": -38.047399464,
         "pmRaMasPerYear": -10.451,
         "pmDecMasPerYear": -18.315,
-        "longitude": 256.02419123080455,
-        "widthDegrees": 15.105872974247916
+        "longitude": 256.0241882992144,
+        "widthDegrees": 15.105872974778322
       },
       {
         "mansion": "箕",
@@ -4148,8 +4180,8 @@
         "decJ2000Degrees": -30.424089849444,
         "pmRaMasPerYear": -48.839,
         "pmDecMasPerYear": -204.86,
-        "longitude": 271.13006420505246,
-        "widthDegrees": 8.919643200450253
+        "longitude": 271.13006127399274,
+        "widthDegrees": 8.919643197172832
       },
       {
         "mansion": "斗",
@@ -4159,8 +4191,8 @@
         "decJ2000Degrees": -26.990782645111,
         "pmRaMasPerYear": 49.919,
         "pmDecMasPerYear": -0.09,
-        "longitude": 280.0497074055027,
-        "widthDegrees": 23.866116392538913
+        "longitude": 280.04970447116557,
+        "widthDegrees": 23.866116393777077
       },
       {
         "mansion": "牛",
@@ -4170,8 +4202,8 @@
         "decJ2000Degrees": -14.78140760208,
         "pmRaMasPerYear": 44.133,
         "pmDecMasPerYear": 0.36,
-        "longitude": 303.91582379804163,
-        "widthDegrees": 7.675931735590268
+        "longitude": 303.91582086494265,
+        "widthDegrees": 7.675931737000155
       },
       {
         "mansion": "女",
@@ -4181,8 +4213,8 @@
         "decJ2000Degrees": -9.495776926901,
         "pmRaMasPerYear": 33.923,
         "pmDecMasPerYear": -34.936,
-        "longitude": 311.5917555336319,
-        "widthDegrees": 11.671940233692396
+        "longitude": 311.5917526019428,
+        "widthDegrees": 11.67194023432097
       },
       {
         "mansion": "虚",
@@ -4192,8 +4224,8 @@
         "decJ2000Degrees": -5.571174828064,
         "pmRaMasPerYear": 19.214,
         "pmDecMasPerYear": -8.163,
-        "longitude": 323.2636957673243,
-        "widthDegrees": 9.957459581439252
+        "longitude": 323.2636928362638,
+        "widthDegrees": 9.957459582182253
       },
       {
         "mansion": "危",
@@ -4203,8 +4235,8 @@
         "decJ2000Degrees": -0.319850955424,
         "pmRaMasPerYear": 18.59,
         "pmDecMasPerYear": -10.45,
-        "longitude": 333.22115534876355,
-        "widthDegrees": 20.13328878526852
+        "longitude": 333.221152418446,
+        "widthDegrees": 20.133288787063123
       },
       {
         "mansion": "室",
@@ -4214,8 +4246,8 @@
         "decJ2000Degrees": 15.205267147928,
         "pmRaMasPerYear": 60.4,
         "pmDecMasPerYear": -41.3,
-        "longitude": 353.35444413403206,
-        "widthDegrees": 15.670388192293274
+        "longitude": 353.35444120550915,
+        "widthDegrees": 15.670388191685845
       }
     ],
     "mansionModel": {
@@ -4230,7 +4262,7 @@
   "qimen_lifetime": {
     "schemaVersion": "1.0.0",
     "input": {
-      "birthDateTime": "1990-05-12T14:00:00",
+      "birthDateTime": "1990-05-12T13:00:00",
       "timeZoneId": "Asia/Shanghai",
       "location": {
         "longitude": 116.4,
@@ -4275,33 +4307,38 @@
         "year": "庚午",
         "month": "辛巳",
         "day": "丁丑",
-        "hour": "丁未"
+        "hour": "丙午"
       },
       "isYangDun": true,
       "juShu": 7,
       "zhiFu": "天芮",
       "zhiShi": "死门",
       "patternTags": [
-        "门伏吟",
-        "三奇得（丁奇（星奇）合生门于艮八宫）",
-        "三奇游六仪（甲辰壬值符加丁奇（星奇）于巽四宫，游甲寅癸）",
-        "马星（驿马落巽四宫）"
+        "星伏吟",
+        "门迫（艮八宫杜门）",
+        "三奇得（丙奇（月奇）合开门于坤二宫）",
+        "三奇得（乙奇（日奇）合生门于乾六宫）",
+        "马星（驿马落坤二宫）"
       ],
       "patternDetails": [
         {
-          "tag": "门伏吟",
-          "summary": "八门回原位，事项推进迟滞，宜耐心等待。"
+          "tag": "星伏吟",
+          "summary": "九星回原位，事情多原地盘旋、推进偏慢。"
         },
         {
-          "tag": "三奇得（丁奇（星奇）合生门于艮八宫）",
+          "tag": "门迫（艮八宫杜门）",
+          "summary": "门克宫，该宫事项易受压制，行动阻力偏大。"
+        },
+        {
+          "tag": "三奇得（丙奇（月奇）合开门于坤二宫）",
           "summary": "三奇与开休生吉门同宫，主该宫方位得奇门会合之助，可借助该方位推进事项。"
         },
         {
-          "tag": "三奇游六仪（甲辰壬值符加丁奇（星奇）于巽四宫，游甲寅癸）",
-          "summary": "当旬值符所带六仪加到地盘三奇，主资源转换成助力，适合请托、协商和争取机会。"
+          "tag": "三奇得（乙奇（日奇）合生门于乾六宫）",
+          "summary": "三奇与开休生吉门同宫，主该宫方位得奇门会合之助，可借助该方位推进事项。"
         },
         {
-          "tag": "马星（驿马落巽四宫）",
+          "tag": "马星（驿马落坤二宫）",
           "summary": "驿马所在宫提示移动、变动或远行线索，是否加速需结合值符、值使和用事宫位。"
         }
       ],
@@ -4310,91 +4347,85 @@
           "gong": 1,
           "name": "坎一宫",
           "level": "风险",
-          "summary": "玄武同宫，宜防阻力、口舌或反复。"
+          "summary": "伤门同宫，宜防阻力、口舌或反复。"
         },
         {
           "gong": 1,
           "name": "坎一宫",
           "level": "有利",
-          "summary": "休门同宫，可作为推进、求助或争取资源的优先方位。"
+          "summary": "六合同宫，可作为推进、求助或争取资源的优先方位。"
         },
         {
           "gong": 2,
           "name": "坤二宫",
+          "level": "关注",
+          "summary": "值符落坤二宫，是当前局的核心观察位。"
+        },
+        {
+          "gong": 2,
+          "name": "坤二宫",
+          "level": "有利",
+          "summary": "开门、值符同宫，可作为推进、求助或争取资源的优先方位。"
+        },
+        {
+          "gong": 3,
+          "name": "震三宫",
+          "level": "风险",
+          "summary": "玄武同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 4,
+          "name": "巽四宫",
           "level": "风险",
           "summary": "死门同宫，宜防阻力、口舌或反复。"
         },
         {
-          "gong": 2,
-          "name": "坤二宫",
-          "level": "有利",
-          "summary": "值使（死门）在坤二宫，门气正旺，是行动重点方位。"
-        },
-        {
-          "gong": 2,
-          "name": "坤二宫",
-          "level": "有利",
-          "summary": "太阴同宫，可作为推进、求助或争取资源的优先方位。"
-        },
-        {
-          "gong": 3,
-          "name": "震三宫",
-          "level": "风险",
-          "summary": "伤门同宫，宜防阻力、口舌或反复。"
-        },
-        {
-          "gong": 3,
-          "name": "震三宫",
-          "level": "有利",
-          "summary": "九天同宫，可作为推进、求助或争取资源的优先方位。"
-        },
-        {
-          "gong": 4,
-          "name": "巽四宫",
-          "level": "关注",
-          "summary": "值符落巽四宫，是当前局的核心观察位。"
-        },
-        {
           "gong": 4,
           "name": "巽四宫",
           "level": "有利",
-          "summary": "值符同宫，可作为推进、求助或争取资源的优先方位。"
-        },
-        {
-          "gong": 6,
-          "name": "乾六宫",
-          "level": "风险",
-          "summary": "白虎同宫，宜防阻力、口舌或反复。"
+          "summary": "值使（死门）在巽四宫，门气正旺，是行动重点方位。"
         },
         {
           "gong": 6,
           "name": "乾六宫",
           "level": "有利",
-          "summary": "开门同宫，可作为推进、求助或争取资源的优先方位。"
+          "summary": "生门、太阴同宫，可作为推进、求助或争取资源的优先方位。"
         },
         {
           "gong": 7,
           "name": "兑七宫",
           "level": "风险",
-          "summary": "惊门同宫，宜防阻力、口舌或反复。"
+          "summary": "螣蛇同宫，宜防阻力、口舌或反复。"
         },
         {
           "gong": 7,
           "name": "兑七宫",
           "level": "有利",
-          "summary": "六合同宫，可作为推进、求助或争取资源的优先方位。"
+          "summary": "休门同宫，可作为推进、求助或争取资源的优先方位。"
         },
         {
           "gong": 8,
           "name": "艮八宫",
-          "level": "有利",
-          "summary": "生门同宫，可作为推进、求助或争取资源的优先方位。"
+          "level": "风险",
+          "summary": "该宫带有门迫（艮八宫杜门），行事阻滞和牵制较明显。"
+        },
+        {
+          "gong": 8,
+          "name": "艮八宫",
+          "level": "风险",
+          "summary": "白虎同宫，宜防阻力、口舌或反复。"
         },
         {
           "gong": 9,
           "name": "离九宫",
           "level": "风险",
-          "summary": "螣蛇同宫，宜防阻力、口舌或反复。"
+          "summary": "惊门同宫，宜防阻力、口舌或反复。"
+        },
+        {
+          "gong": 9,
+          "name": "离九宫",
+          "level": "有利",
+          "summary": "九天同宫，可作为推进、求助或争取资源的优先方位。"
         }
       ],
       "voidBranches": [
@@ -4414,10 +4445,10 @@
         }
       ],
       "horseStar": {
-        "branch": "巳",
-        "palace": 4,
-        "name": "巽四宫",
-        "sourceBranch": "未"
+        "branch": "申",
+        "palace": 2,
+        "name": "坤二宫",
+        "sourceBranch": "午"
       },
       "specialConditions": {
         "isLiuJiaHour": false,
@@ -4599,20 +4630,20 @@
         "lunarPhase": "下弦",
         "lunarPhaseDetail": "亏凸月",
         "moonPhaseEvidence": {
-          "key": "moon-phase:642484800000",
+          "key": "moon-phase:642481200000",
           "status": "已计算",
-          "utcTimestamp": 642484800000,
-          "utcDateTime": "1990-05-12T04:00:00.000Z",
-          "julianDayUtc": 2448023.666666667,
-          "sunLongitudeDegrees": 51.1800364,
-          "moonLongitudeDegrees": 256.87813494,
-          "phaseAngleDegrees": 205.69809854,
-          "elongationDegrees": 154.30190146,
-          "illuminationFraction": 0.95054571,
-          "illuminationPercent": 95.055,
+          "utcTimestamp": 642481200000,
+          "utcDateTime": "1990-05-12T03:00:00.000Z",
+          "julianDayUtc": 2448023.625,
+          "sunLongitudeDegrees": 51.13980875,
+          "moonLongitudeDegrees": 256.38166468,
+          "phaseAngleDegrees": 205.24185593,
+          "elongationDegrees": 154.75814407,
+          "illuminationFraction": 0.95225788,
+          "illuminationPercent": 95.226,
           "waxing": false,
           "eightPhaseName": "亏凸月",
-          "approximateMoonAgeDays": 16.8733,
+          "approximateMoonAgeDays": 16.8359,
           "previousPrincipalPhase": {
             "key": "四正月相:望:642281446000",
             "name": "望",
@@ -4629,7 +4660,7 @@
               "moon-phase:calculation:previous-principal"
             ],
             "promptText": "望事件：UTC 1990-05-09T19:30:46.000Z，目标日月黄经差180°，求根残差0.00003041°，迭代19次",
-            "calculation": "以平均朔望月估计望初值1990-05-10T01:24:28.804Z，在前后各2日窗口内对日月地心黄经差=180°执行二分求根，迭代19次后区间小于等于1秒",
+            "calculation": "以平均朔望月估计望初值1990-05-10T01:18:22.351Z，在前后各2日窗口内对日月地心黄经差=180°执行二分求根，迭代19次后区间小于等于1秒",
             "limitation": "四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期"
           },
           "nextPrincipalPhase": {
@@ -4648,7 +4679,7 @@
               "moon-phase:calculation:next-principal"
             ],
             "promptText": "下弦事件：UTC 1990-05-17T19:44:52.000Z，目标日月黄经差270°，求根残差0.00002874°，迭代19次",
-            "calculation": "以平均朔望月估计下弦初值1990-05-17T10:35:29.523Z，在前后各2日窗口内对日月地心黄经差=270°执行二分求根，迭代19次后区间小于等于1秒",
+            "calculation": "以平均朔望月估计下弦初值1990-05-17T10:29:23.070Z，在前后各2日窗口内对日月地心黄经差=270°执行二分求根，迭代19次后区间小于等于1秒",
             "limitation": "四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期"
           },
           "method": "以日月地心黄经差计算 0-360° 月相角；照明比例采用 (1-cos相位角)/2；前后朔弦望按平均朔望月估计初值后二分求根至 1 秒区间",
@@ -4660,15 +4691,15 @@
               "status": "已计算",
               "dependsOnStepKeys": [],
               "inputs": {
-                "utcTimestamp": 642484800000,
-                "utcDateTime": "1990-05-12T04:00:00.000Z"
+                "utcTimestamp": 642481200000,
+                "utcDateTime": "1990-05-12T03:00:00.000Z"
               },
               "result": {
-                "julianDayUtc": 2448023.666666667,
-                "sunLongitudeDegrees": 51.1800364,
-                "moonLongitudeDegrees": 256.87813494
+                "julianDayUtc": 2448023.625,
+                "sunLongitudeDegrees": 51.13980875,
+                "moonLongitudeDegrees": 256.38166468
               },
-              "promptText": "按 Caelus 计算 UTC 1990-05-12T04:00:00.000Z 的日月地心黄经：太阳51.180036°、月亮256.878135°",
+              "promptText": "按 Caelus 计算 UTC 1990-05-12T03:00:00.000Z 的日月地心黄经：太阳51.139809°、月亮256.381665°",
               "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
             },
             {
@@ -4679,15 +4710,15 @@
                 "moon-phase:calculation:positions"
               ],
               "inputs": {
-                "sunLongitudeDegrees": 51.1800364,
-                "moonLongitudeDegrees": 256.87813494
+                "sunLongitudeDegrees": 51.13980875,
+                "moonLongitudeDegrees": 256.38166468
               },
               "result": {
-                "phaseAngleDegrees": 205.69809854,
-                "illuminationPercent": 95.055,
-                "approximateMoonAgeDays": 16.8733
+                "phaseAngleDegrees": 205.24185593,
+                "illuminationPercent": 95.226,
+                "approximateMoonAgeDays": 16.8359
               },
-              "promptText": "由日月地心黄经差205.698099°计算亏凸月、亏与照明95.055%",
+              "promptText": "由日月地心黄经差205.241856°计算亏凸月、亏与照明95.226%",
               "limitation": "月相步骤只证明日月黄经、几何照明和前后四正相位求根如何形成；不得把求根区间解释为观测级精度、月食可见性或现实事件证据"
             },
             {
@@ -4698,8 +4729,8 @@
                 "moon-phase:calculation:angle-illumination"
               ],
               "inputs": {
-                "utcTimestamp": 642484800000,
-                "phaseAngleDegrees": 205.69809853754123
+                "utcTimestamp": 642481200000,
+                "phaseAngleDegrees": 205.24185592881884
               },
               "result": {
                 "eventKey": "四正月相:望:642281446000",
@@ -4716,8 +4747,8 @@
                 "moon-phase:calculation:angle-illumination"
               ],
               "inputs": {
-                "utcTimestamp": 642484800000,
-                "phaseAngleDegrees": 205.69809853754123
+                "utcTimestamp": 642481200000,
+                "phaseAngleDegrees": 205.24185592881884
               },
               "result": {
                 "eventKey": "四正月相:下弦:642973492000",
@@ -4820,7 +4851,7 @@
               "limitation": "限制事实用于约束月相角、照明比例、近似月龄与四正事件可以支持的解释范围，不得被反向当作月食、天气、吉凶或固定应期证据"
             }
           ],
-          "promptText": "月相证据：UTC 1990-05-12T04:00:00.000Z 日月黄经差205.698°，最小距角154.302°，亏凸月、亏，照明约95.1%，近似月龄16.87日；计算链：按 Caelus 计算 UTC 1990-05-12T04:00:00.000Z 的日月地心黄经：太阳51.180036°、月亮256.878135° → 由日月地心黄经差205.698099°计算亏凸月、亏与照明95.055% → 以前一相邻目标角度180°为初值，二分求根得到望 1990-05-09T19:30:46.000Z → 以后一相邻目标角度270°为初值，二分求根得到下弦 1990-05-17T19:44:52.000Z；前一四正相位：望事件：UTC 1990-05-09T19:30:46.000Z，目标日月黄经差180°，求根残差0.00003041°，迭代19次；下一四正相位：下弦事件：UTC 1990-05-17T19:44:52.000Z，目标日月黄经差270°，求根残差0.00002874°，迭代19次；事件汇总：前一四正相位为望（1990-05-09T19:30:46.000Z），下一四正相位为下弦（1990-05-17T19:44:52.000Z）；证据汇总：月相证据链记录计算步骤4项、前后四正事件2项、限制3项；四正事件统一边界：四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期。方法：以日月地心黄经差计算 0-360° 月相角；照明比例采用 (1-cos相位角)/2；前后朔弦望按平均朔望月估计初值后二分求根至 1 秒区间。来源：日月黄经由 Caelus 星历计算；朔望月均值采用 29.530588861 日。限制：月龄由相位角按平均朔望月线性换算，只是便于理解的近似值，不等于从真实朔时刻起算的严格月龄。；照明比例采用几何近似，未加入地形、视差、大气和观测地点条件；不得用于月食可见性判断。；求根到 1 秒只表示数值区间，实际精度仍受底层日月星历模型限制，不宣称达到 JPL 或观测级精度。"
+          "promptText": "月相证据：UTC 1990-05-12T03:00:00.000Z 日月黄经差205.242°，最小距角154.758°，亏凸月、亏，照明约95.2%，近似月龄16.84日；计算链：按 Caelus 计算 UTC 1990-05-12T03:00:00.000Z 的日月地心黄经：太阳51.139809°、月亮256.381665° → 由日月地心黄经差205.241856°计算亏凸月、亏与照明95.226% → 以前一相邻目标角度180°为初值，二分求根得到望 1990-05-09T19:30:46.000Z → 以后一相邻目标角度270°为初值，二分求根得到下弦 1990-05-17T19:44:52.000Z；前一四正相位：望事件：UTC 1990-05-09T19:30:46.000Z，目标日月黄经差180°，求根残差0.00003041°，迭代19次；下一四正相位：下弦事件：UTC 1990-05-17T19:44:52.000Z，目标日月黄经差270°，求根残差0.00002874°，迭代19次；事件汇总：前一四正相位为望（1990-05-09T19:30:46.000Z），下一四正相位为下弦（1990-05-17T19:44:52.000Z）；证据汇总：月相证据链记录计算步骤4项、前后四正事件2项、限制3项；四正事件统一边界：四正月相事件是日月地心黄经差对目标角度的数值求根结果；1秒求根区间不等于观测级精度，也不证明月食可见性、现实事件、吉凶或固定应期。方法：以日月地心黄经差计算 0-360° 月相角；照明比例采用 (1-cos相位角)/2；前后朔弦望按平均朔望月估计初值后二分求根至 1 秒区间。来源：日月黄经由 Caelus 星历计算；朔望月均值采用 29.530588861 日。限制：月龄由相位角按平均朔望月线性换算，只是便于理解的近似值，不等于从真实朔时刻起算的严格月龄。；照明比例采用几何近似，未加入地形、视差、大气和观测地点条件；不得用于月食可见性判断。；求根到 1 秒只表示数值区间，实际精度仍受底层日月星历模型限制，不宣称达到 JPL 或观测级精度。"
         },
         "lunarPhaseConsistency": true,
         "dayOfficer": "成",
@@ -4840,40 +4871,40 @@
             "description": "年柱午与日柱丑相害，主暗伤不利。"
           },
           {
-            "type": "六合",
+            "type": "相刑",
             "pillars": [
               "year",
               "hour"
             ],
             "values": [
               "午",
-              "未"
+              "午"
             ],
-            "description": "年柱午与时柱未六合，主和合顺利。"
+            "description": "年柱午与时柱午自刑，主是非官非。"
           },
           {
-            "type": "六冲",
+            "type": "天干五合",
+            "pillars": [
+              "month",
+              "hour"
+            ],
+            "values": [
+              "辛",
+              "丙"
+            ],
+            "description": "月柱辛与时柱丙天干五合（化水），主合作契机。"
+          },
+          {
+            "type": "相害",
             "pillars": [
               "day",
               "hour"
             ],
             "values": [
               "丑",
-              "未"
+              "午"
             ],
-            "description": "日柱丑与时柱未六冲，主冲突变动。"
-          },
-          {
-            "type": "相刑",
-            "pillars": [
-              "day",
-              "hour"
-            ],
-            "values": [
-              "丑",
-              "未"
-            ],
-            "description": "日柱丑与时柱未恃势之刑，主是非官非。"
+            "description": "日柱丑与时柱午相害，主暗伤不利。"
           },
           {
             "type": "半合",
@@ -4896,17 +4927,17 @@
           "direction": "正北",
           "element": "水",
           "tianPan": {
-            "star": "天冲",
-            "stem": "癸"
+            "star": "天蓬",
+            "stem": "辛"
           },
           "diPan": {
             "stem": "辛"
           },
           "renPan": {
-            "door": "休门"
+            "door": "伤门"
           },
           "shenPan": {
-            "god": "玄武"
+            "god": "六合"
           }
         },
         {
@@ -4915,17 +4946,19 @@
           "direction": "西南",
           "element": "土",
           "tianPan": {
-            "star": "天心",
-            "stem": "乙"
+            "star": "天芮",
+            "stem": "壬",
+            "companionStar": "天禽",
+            "companionStem": "丙"
           },
           "diPan": {
             "stem": "壬"
           },
           "renPan": {
-            "door": "死门"
+            "door": "开门"
           },
           "shenPan": {
-            "god": "太阴"
+            "god": "值符"
           }
         },
         {
@@ -4934,17 +4967,17 @@
           "direction": "正东",
           "element": "木",
           "tianPan": {
-            "star": "天英",
-            "stem": "庚"
+            "star": "天冲",
+            "stem": "癸"
           },
           "diPan": {
             "stem": "癸"
           },
           "renPan": {
-            "door": "伤门"
+            "door": "景门"
           },
           "shenPan": {
-            "god": "九天"
+            "god": "玄武"
           }
         },
         {
@@ -4953,19 +4986,17 @@
           "direction": "东南",
           "element": "木",
           "tianPan": {
-            "star": "天芮",
-            "stem": "壬",
-            "companionStar": "天禽",
-            "companionStem": "丙"
+            "star": "天辅",
+            "stem": "丁"
           },
           "diPan": {
             "stem": "丁"
           },
           "renPan": {
-            "door": "杜门"
+            "door": "死门"
           },
           "shenPan": {
-            "god": "值符"
+            "god": "九地"
           }
         },
         {
@@ -4993,17 +5024,17 @@
           "direction": "西北",
           "element": "金",
           "tianPan": {
-            "star": "天任",
-            "stem": "己"
+            "star": "天心",
+            "stem": "乙"
           },
           "diPan": {
             "stem": "乙"
           },
           "renPan": {
-            "door": "开门"
+            "door": "生门"
           },
           "shenPan": {
-            "god": "白虎"
+            "god": "太阴"
           }
         },
         {
@@ -5012,17 +5043,17 @@
           "direction": "正西",
           "element": "金",
           "tianPan": {
-            "star": "天蓬",
-            "stem": "辛"
+            "star": "天柱",
+            "stem": "戊"
           },
           "diPan": {
             "stem": "戊"
           },
           "renPan": {
-            "door": "惊门"
+            "door": "休门"
           },
           "shenPan": {
-            "god": "六合"
+            "god": "螣蛇"
           }
         },
         {
@@ -5031,17 +5062,17 @@
           "direction": "东北",
           "element": "土",
           "tianPan": {
-            "star": "天辅",
-            "stem": "丁"
+            "star": "天任",
+            "stem": "己"
           },
           "diPan": {
             "stem": "己"
           },
           "renPan": {
-            "door": "生门"
+            "door": "杜门"
           },
           "shenPan": {
-            "god": "九地"
+            "god": "白虎"
           }
         },
         {
@@ -5050,185 +5081,185 @@
           "direction": "正南",
           "element": "火",
           "tianPan": {
-            "star": "天柱",
-            "stem": "戊"
+            "star": "天英",
+            "stem": "庚"
           },
           "diPan": {
             "stem": "庚"
           },
           "renPan": {
-            "door": "景门"
+            "door": "惊门"
           },
           "shenPan": {
-            "god": "螣蛇"
+            "god": "九天"
           }
         }
       ],
       "classicPatterns": [
         {
-          "name": "三奇游六仪",
+          "name": "真诈",
           "type": "good",
-          "summary": "甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "重诈",
-          "type": "good",
-          "summary": "丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。",
-          "palaces": [
-            8
-          ]
-        },
-        {
-          "name": "日奇入墓",
-          "type": "bad",
-          "summary": "乙奇入坤二宫（三奇墓在未），日奇入墓，主协商不力。",
-          "palaces": [
-            2
-          ]
-        },
-        {
-          "name": "星奇入墓",
-          "type": "bad",
-          "summary": "丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
-          "palaces": [
-            8
-          ]
-        },
-        {
-          "name": "相佐",
-          "type": "good",
-          "summary": "值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "日干勃格",
-          "type": "bad",
-          "summary": "天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "时干勃格",
-          "type": "bad",
-          "summary": "天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "地罗遮蔽",
-          "type": "bad",
-          "summary": "天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "壬击刑",
-          "type": "bad",
-          "summary": "壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "乙入墓",
-          "type": "bad",
-          "summary": "乙在坤二宫入墓（墓在未），主能量收敛、事情停滞或难以施展。",
-          "palaces": [
-            2
-          ]
-        },
-        {
-          "name": "壬入墓",
-          "type": "bad",
-          "summary": "壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "丁入墓",
-          "type": "bad",
-          "summary": "丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
-          "palaces": [
-            8
-          ]
-        },
-        {
-          "name": "狱入天牢",
-          "type": "bad",
-          "summary": "天盘癸加地盘辛于坎一宫，癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。",
-          "palaces": [
-            1
-          ]
-        },
-        {
-          "name": "万事皆屯",
-          "type": "bad",
-          "summary": "天盘乙加地盘壬于坤二宫，乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。",
-          "palaces": [
-            2
-          ]
-        },
-        {
-          "name": "大格",
-          "type": "bad",
-          "summary": "天盘庚加地盘癸于震三宫，庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。",
-          "palaces": [
-            3
-          ]
-        },
-        {
-          "name": "干合蛇刑",
-          "type": "neutral",
-          "summary": "天盘壬加地盘丁于巽四宫，壬加地盘丁为干合蛇刑，主文书财喜，宜阴人，贵人官禄，常人平平。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "奇入朱雀",
-          "type": "neutral",
-          "summary": "天盘丙加地盘丁于巽四宫，丙加地盘丁为奇入朱雀，主文书亨通，贵占权握，常人衣禄退剥。",
-          "palaces": [
-            4
-          ]
-        },
-        {
-          "name": "墓入不明",
-          "type": "bad",
-          "summary": "天盘己加地盘乙于乾六宫，己加地盘乙为墓入不明，星门合吉尚可平稳，不合则事难成。",
+          "summary": "乙奇、生门、太阴同宫于乾六宫，三奇、吉门、太阴同宫，乃真诈之格，主隐蔽得助、柔性成事。",
           "palaces": [
             6
           ]
         },
         {
-          "name": "龙困遭伤",
-          "type": "bad",
-          "summary": "天盘辛加地盘戊于兑七宫，辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。",
+          "name": "鬼假",
+          "type": "good",
+          "summary": "死门、丁、九地同宫于巽四宫，合鬼假之格，主安葬荐度、处理沉滞旧事。",
           "palaces": [
-            7
+            4
           ]
         },
         {
-          "name": "火入勾神",
+          "name": "日奇受制",
           "type": "bad",
-          "summary": "天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。",
+          "summary": "乙奇临乾六宫，木入金乡，为三奇受制，主协商文书受制。",
+          "palaces": [
+            6
+          ]
+        },
+        {
+          "name": "守户",
+          "type": "good",
+          "summary": "值使死门加地盘丁奇于巽四宫，合“使加六丁为守户”，主门户得护。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "岁格",
+          "type": "bad",
+          "summary": "天盘庚加岁干庚于离九宫，合“六庚加岁干为岁格”，主事有阻格。",
+          "palaces": [
+            9
+          ]
+        },
+        {
+          "name": "玉女守门",
+          "type": "good",
+          "summary": "值使死门加地盘丁奇于巽四宫，合《奇门宝鉴御定》“地盘六丁守直使之门”为玉女守门；死门非三吉门，偏利秘密、阴私、和合之事，仍需合看门星吉凶。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "门迫",
+          "type": "bad",
+          "summary": "杜门（木）克艮八宫（土），乃门迫之格，主此宫事务受阻。",
           "palaces": [
             8
           ]
         },
         {
-          "name": "青龙符格",
+          "name": "宫生门",
+          "type": "good",
+          "summary": "坎一宫（水）生伤门（木），此地利助事之象。",
+          "palaces": [
+            1
+          ]
+        },
+        {
+          "name": "宫生门",
+          "type": "good",
+          "summary": "坤二宫（土）生开门（金），此地利助事之象。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "宫生门",
+          "type": "good",
+          "summary": "震三宫（木）生景门（火），此地利助事之象。",
+          "palaces": [
+            3
+          ]
+        },
+        {
+          "name": "门生宫",
+          "type": "good",
+          "summary": "生门（土）生乾六宫（金），此事有利该宫方位。",
+          "palaces": [
+            6
+          ]
+        },
+        {
+          "name": "宫生门",
+          "type": "good",
+          "summary": "兑七宫（金）生休门（水），此地利助事之象。",
+          "palaces": [
+            7
+          ]
+        },
+        {
+          "name": "狱入自刑",
           "type": "bad",
-          "summary": "天盘戊加地盘庚于离九宫，六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。",
+          "summary": "天盘辛加地盘辛于坎一宫，辛加地盘辛为狱入自刑，主自我牵制，阴人求财可喜，阳主动用多有灾害。",
+          "palaces": [
+            1
+          ]
+        },
+        {
+          "name": "地网四张",
+          "type": "bad",
+          "summary": "天盘壬加地盘壬于坤二宫，壬为地网，双壬重逢如地网四张，主沉沦停滞、陷入僵局。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "孛乱来临",
+          "type": "bad",
+          "summary": "天盘丙加地盘壬于坤二宫，丙加地盘壬为孛乱来临，主文讼公庭，庶人流离，贵人失名。",
+          "palaces": [
+            2
+          ]
+        },
+        {
+          "name": "天网四张",
+          "type": "bad",
+          "summary": "天盘癸加地盘癸于震三宫，癸为天网，双癸重逢如天网四张，主困厄至极、大凶。",
+          "palaces": [
+            3
+          ]
+        },
+        {
+          "name": "奇入太阴",
+          "type": "good",
+          "summary": "天盘丁加地盘丁于巽四宫，丁加地盘丁为奇入太阴，主文书可至，两重文意，凡百遂心。",
+          "palaces": [
+            4
+          ]
+        },
+        {
+          "name": "日奇伏刑",
+          "type": "bad",
+          "summary": "天盘乙加地盘乙于乾六宫，乙为日奇，乙乙重逢为日奇伏刑格，主才名受困、求名不利。",
+          "palaces": [
+            6
+          ]
+        },
+        {
+          "name": "青龙出地",
+          "type": "good",
+          "summary": "天盘戊加地盘戊于兑七宫，六甲加甲为青龙出地；排盘时以甲子戊代甲，故戊加地盘戊按此格论，主喜信财至。",
+          "palaces": [
+            7
+          ]
+        },
+        {
+          "name": "地户逢鬼",
+          "type": "bad",
+          "summary": "天盘己加地盘己于艮八宫，己加地盘己为地户逢鬼，主阴信难明，远近消息真假难委。",
+          "palaces": [
+            8
+          ]
+        },
+        {
+          "name": "太白",
+          "type": "bad",
+          "summary": "天盘庚加地盘庚于离九宫，庚加地盘庚为太白，主官事并发、狱禁牵连，凶期百日而后或有舒情。",
           "palaces": [
             9
           ]
@@ -5237,89 +5268,103 @@
       "stemRelations": [
         {
           "gong": 1,
-          "heavenStem": "癸",
+          "heavenStem": "辛",
           "earthStem": "辛",
           "relation": "命名格局",
-          "pattern": "狱入天牢：癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。"
+          "pattern": "狱入自刑：辛加地盘辛为狱入自刑，主自我牵制，阴人求财可喜，阳主动用多有灾害。"
         },
         {
           "gong": 2,
-          "heavenStem": "乙",
+          "heavenStem": "壬",
           "earthStem": "壬",
           "relation": "命名格局",
-          "pattern": "万事皆屯：乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。"
+          "pattern": "地网四张：壬为地网，双壬重逢如地网四张，主沉沦停滞、陷入僵局。"
+        },
+        {
+          "gong": 2,
+          "heavenStem": "丙",
+          "earthStem": "壬",
+          "relation": "命名格局",
+          "pattern": "孛乱来临：丙加地盘壬为孛乱来临，主文讼公庭，庶人流离，贵人失名。"
         },
         {
           "gong": 3,
-          "heavenStem": "庚",
+          "heavenStem": "癸",
           "earthStem": "癸",
           "relation": "命名格局",
-          "pattern": "大格：庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。"
+          "pattern": "天网四张：癸为天网，双癸重逢如天网四张，主困厄至极、大凶。"
         },
         {
           "gong": 4,
-          "heavenStem": "壬",
+          "heavenStem": "丁",
           "earthStem": "丁",
           "relation": "命名格局",
-          "pattern": "干合蛇刑：壬加地盘丁为干合蛇刑，主文书财喜，宜阴人，贵人官禄，常人平平。"
-        },
-        {
-          "gong": 4,
-          "heavenStem": "丙",
-          "earthStem": "丁",
-          "relation": "命名格局",
-          "pattern": "奇入朱雀：丙加地盘丁为奇入朱雀，主文书亨通，贵占权握，常人衣禄退剥。"
+          "pattern": "奇入太阴：丁加地盘丁为奇入太阴，主文书可至，两重文意，凡百遂心。"
         },
         {
           "gong": 6,
-          "heavenStem": "己",
+          "heavenStem": "乙",
           "earthStem": "乙",
           "relation": "命名格局",
-          "pattern": "墓入不明：己加地盘乙为墓入不明，星门合吉尚可平稳，不合则事难成。"
+          "pattern": "日奇伏刑：乙为日奇，乙乙重逢为日奇伏刑格，主才名受困、求名不利。"
         },
         {
           "gong": 7,
-          "heavenStem": "辛",
+          "heavenStem": "戊",
           "earthStem": "戊",
           "relation": "命名格局",
-          "pattern": "龙困遭伤：辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。"
+          "pattern": "青龙出地：六甲加甲为青龙出地；排盘时以甲子戊代甲，故戊加地盘戊按此格论，主喜信财至。"
         },
         {
           "gong": 8,
-          "heavenStem": "丁",
+          "heavenStem": "己",
           "earthStem": "己",
           "relation": "命名格局",
-          "pattern": "火入勾神：丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。"
+          "pattern": "地户逢鬼：己加地盘己为地户逢鬼，主阴信难明，远近消息真假难委。"
         },
         {
           "gong": 9,
-          "heavenStem": "戊",
+          "heavenStem": "庚",
           "earthStem": "庚",
           "relation": "命名格局",
-          "pattern": "青龙符格：六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。"
+          "pattern": "太白：庚加地盘庚为太白，主官事并发、狱禁牵连，凶期百日而后或有舒情。"
         }
       ],
       "patternCombos": [
         {
-          "key": "combo:mixed:4",
-          "name": "巽四宫吉凶混杂",
+          "key": "combo:mixed:6",
+          "name": "乾六宫吉凶混杂",
           "tone": "mixed",
-          "summary": "巽四宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "summary": "乾六宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "palace": 6
+        },
+        {
+          "key": "combo:triGood:4",
+          "name": "巽四宫三吉聚气",
+          "tone": "super-good",
+          "summary": "巽四宫聚集4个吉格，吉象叠加。",
           "palace": 4
         },
         {
-          "key": "combo:mixed:8",
-          "name": "艮八宫吉凶混杂",
+          "key": "combo:mixed:1",
+          "name": "坎一宫吉凶混杂",
           "tone": "mixed",
-          "summary": "艮八宫同时见吉格与凶格，气机不纯，需分清主次。",
-          "palace": 8
+          "summary": "坎一宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "palace": 1
         },
         {
-          "key": "combo:triBad:2",
-          "name": "坤二宫三凶集结",
-          "tone": "super-bad",
-          "summary": "坤二宫聚集3个凶格，凶象叠加。",
+          "key": "combo:mixed:2",
+          "name": "坤二宫吉凶混杂",
+          "tone": "mixed",
+          "summary": "坤二宫同时见吉格与凶格，气机不纯，需分清主次。",
           "palace": 2
+        },
+        {
+          "key": "combo:mixed:3",
+          "name": "震三宫吉凶混杂",
+          "tone": "mixed",
+          "summary": "震三宫同时见吉格与凶格，气机不纯，需分清主次。",
+          "palace": 3
         },
         {
           "key": "combo:fuyinPlusBad",
@@ -5334,54 +5379,60 @@
           "summary": "伏吟主静，驿马主动，表面停滞而内有变化。"
         },
         {
-          "key": "combo:xingDeKaiHe:立夏:未:天芮",
+          "key": "combo:xingDeKaiHe:立夏:午:天芮",
           "name": "刑德开阖",
           "tone": "mixed",
-          "summary": "立夏属立夏三气，德在未、刑在丑；丁未属甲辰旬（季甲），丁未时支未为德在门，值符天芮为阴星，判为半开，宜动宜战。坐阳德取未支坤二宫，击阴刑取丑支艮八宫；偏三甲兵事、主客与动静参考，不作通用吉凶评分。"
+          "summary": "立夏属立夏三气，德在未、刑在丑；丙午属甲辰旬（季甲），丙午时支午为不当刑德，值符天芮为阴星，判为阖，偏主守、宜静守审势。坐阳德取未支坤二宫，击阴刑取丑支艮八宫；偏三甲兵事、主客与动静参考，不作通用吉凶评分。"
         },
         {
-          "key": "combo:starPalaceHostGuest:1宫生星:2宫生星:3宫生星:4宫克星:4宫克星:6星生宫:7宫生星:8星克宫:9宫克星",
+          "key": "combo:starPalaceHostGuest:1星宫比和:2星宫比和:2星宫比和:3星宫比和:4星宫比和:6星宫比和:7星宫比和:8星宫比和:9星宫比和",
           "name": "星宫主客",
           "tone": "mixed",
-          "summary": "九星与落宫形成主客取向：天冲木落坎一宫（水），宫生星，利客；天心金落坤二宫（土），宫生星，利客；天英火落震三宫（木），宫生星，利客；天芮土落巽四宫（木），宫克星，利主；天禽土落巽四宫（木），宫克星，利主；天任土落乾六宫（金），星生宫，利主；天蓬水落兑七宫（金），宫生星，利客；天辅木落艮八宫（土），星克宫，利客；天柱金落离九宫（火），宫克星，利主。宫为主，星为客；此为兵事主客强弱参考，不作通用吉凶评分。"
+          "summary": "九星与落宫形成主客取向：天蓬水落坎一宫（水），星宫比和，势均；天芮土落坤二宫（土），星宫比和，势均；天禽土落坤二宫（土），星宫比和，势均；天冲木落震三宫（木），星宫比和，势均；天辅木落巽四宫（木），星宫比和，势均；天心金落乾六宫（金），星宫比和，势均；天柱金落兑七宫（金），星宫比和，势均；天任土落艮八宫（土），星宫比和，势均；天英火落离九宫（火），星宫比和，势均。宫为主，星为客；此为兵事主客强弱参考，不作通用吉凶评分。"
         },
         {
-          "key": "combo:doorPalaceHostGuest:1门宫比和:2门宫比和:3门宫比和:4门宫比和:6门宫比和:7门宫比和:8门宫比和:9门宫比和",
+          "key": "combo:doorPalaceHostGuest:1宫生门:2宫生门:3宫生门:4宫克门:6门生宫:7宫生门:8门克宫:9宫克门",
           "name": "门宫主客",
           "tone": "mixed",
-          "summary": "八门与落宫形成主客取向：休门水落坎一宫（水），门宫比和，势均；死门土落坤二宫（土），门宫比和，势均；伤门木落震三宫（木），门宫比和，势均；杜门木落巽四宫（木），门宫比和，势均；开门金落乾六宫（金），门宫比和，势均；惊门金落兑七宫（金），门宫比和，势均；生门土落艮八宫（土），门宫比和，势均；景门火落离九宫（火），门宫比和，势均。宫为主，门为客；此为兵事主客强弱参考，不作通用吉凶评分。"
+          "summary": "八门与落宫形成主客取向：伤门木落坎一宫（水），宫生门，利客；开门金落坤二宫（土），宫生门，利客；景门火落震三宫（木），宫生门，利客；死门土落巽四宫（木），宫克门，利主；生门土落乾六宫（金），门生宫，利主；休门水落兑七宫（金），宫生门，利客；杜门木落艮八宫（土），门克宫，利客；惊门金落离九宫（火），宫克门，利主。宫为主，门为客；此为兵事主客强弱参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:doorSeasonQi:巳:1:2:3:4:6:7:8:9",
           "name": "八门余气",
           "tone": "mixed",
-          "summary": "巳月属火，八门余气为：坎一宫休门属水为休；坤二宫死门属土为废；震三宫伤门属木为相；巽四宫杜门属木为相；乾六宫开门属金为囚；兑七宫惊门属金为囚；艮八宫生门属土为废；离九宫景门属火为旺。合“当时者为旺，我生者为相，我克者为休，克我者为囚，生我者为废”；偏用门旺衰和兵事进退参考，不作通用吉凶评分。"
+          "summary": "巳月属火，八门余气为：坎一宫伤门属木为相；坤二宫开门属金为囚；震三宫景门属火为旺；巽四宫死门属土为废；乾六宫生门属土为废；兑七宫休门属水为休；艮八宫杜门属木为相；离九宫惊门属金为囚。合“当时者为旺，我生者为相，我克者为休，克我者为囚，生我者为废”；偏用门旺衰和兵事进退参考，不作通用吉凶评分。"
         },
         {
-          "key": "combo:objectClues:1癸天冲玄武休门:2乙天心太阴死门:3庚天英九天伤门:4壬丙天芮天禽值符杜门:6己天任白虎开门:7辛天蓬六合惊门:8丁天辅九地生门:9戊天柱螣蛇景门",
+          "key": "combo:objectClues:1辛天蓬六合伤门:2壬丙天芮天禽值符开门:3癸天冲玄武景门:4丁天辅九地死门:6乙天心太阴生门:7戊天柱螣蛇休门:8己天任白虎杜门:9庚天英九天惊门",
           "name": "射覆物象克应",
           "tone": "mixed",
-          "summary": "按天盘干、九星、八神、八门取射覆物象：坎一宫：天盘癸主水族纹曲、苍黑，兼鳞甲珍珠；天冲主碧色木象；玄武主水族胎形、字迹纹曲、秽污之物；休门主坑坎包裹、休息聚藏；坤二宫：天盘乙主木性直瘦、青蓝，兼丝麻布帛花果；天心主白色金象；太阴主雕琢文书、羽毛飞物；死门主废缺不活、吊死行刑；震三宫：天盘庚主金性圆坚洁白，兼铁石有声；天英主紫赤火象；九天主利器盘旋、有声有足、光亮之物；伤门主转动有声、震动捕获；巽四宫：天盘壬主水族纹曲、苍黑，兼鳞甲珍珠；天盘丙主火性尖斜华彩、赤紫，兼文书羽毛；天芮主黑色土象；天禽主黄色土象；值符主贵物财帛、首领之物；杜门主闭塞难通、未成隐藏；乾六宫：天盘己主土性方厚盘旋，兼沙土陶瓷；天任主白黄土象；白虎主伤损金石、锋芒破危；开门主通利刚健、圆转能动；兑七宫：天盘辛主金性圆坚洁白，兼铁石有声；天蓬主白色水象；六合主布帛果实、两体交连；惊门主损伤缺口、歪斜惊惶；艮八宫：天盘丁主火性尖斜华彩、赤紫，兼文书羽毛；天辅主绿色木象；九地主深藏旧物、神祇暗昧；生门主初成高大、发生隆起；离九宫：天盘戊主土性方厚盘旋，兼沙土陶瓷；天柱主赤色金象；螣蛇主怪异虚花、歪斜之物；景门主华彩光芒、投书发扬。偏物形、颜色、材质、状态线索参考，不作通用吉凶评分。"
+          "summary": "按天盘干、九星、八神、八门取射覆物象：坎一宫：天盘辛主金性圆坚洁白，兼铁石有声；天蓬主白色水象；六合主布帛果实、两体交连；伤门主转动有声、震动捕获；坤二宫：天盘壬主水族纹曲、苍黑，兼鳞甲珍珠；天盘丙主火性尖斜华彩、赤紫，兼文书羽毛；天芮主黑色土象；天禽主黄色土象；值符主贵物财帛、首领之物；开门主通利刚健、圆转能动；震三宫：天盘癸主水族纹曲、苍黑，兼鳞甲珍珠；天冲主碧色木象；玄武主水族胎形、字迹纹曲、秽污之物；景门主华彩光芒、投书发扬；巽四宫：天盘丁主火性尖斜华彩、赤紫，兼文书羽毛；天辅主绿色木象；九地主深藏旧物、神祇暗昧；死门主废缺不活、吊死行刑；乾六宫：天盘乙主木性直瘦、青蓝，兼丝麻布帛花果；天心主白色金象；太阴主雕琢文书、羽毛飞物；生门主初成高大、发生隆起；兑七宫：天盘戊主土性方厚盘旋，兼沙土陶瓷；天柱主赤色金象；螣蛇主怪异虚花、歪斜之物；休门主坑坎包裹、休息聚藏；艮八宫：天盘己主土性方厚盘旋，兼沙土陶瓷；天任主白黄土象；白虎主伤损金石、锋芒破危；杜门主闭塞难通、未成隐藏；离九宫：天盘庚主金性圆坚洁白，兼铁石有声；天英主紫赤火象；九天主利器盘旋、有声有足、光亮之物；惊门主损伤缺口、歪斜惊惶。偏物形、颜色、材质、状态线索参考，不作通用吉凶评分。"
         },
         {
-          "key": "combo:zhiFuOpenClose:4",
+          "key": "combo:stemPressure:2:6:9",
+          "name": "十干迫制",
+          "tone": "mixed",
+          "summary": "奇仪临受克之宫：坤二宫天盘壬属水临土宫，水被土克；乾六宫天盘乙属木临金宫，木被金克；离九宫天盘庚属金临火宫，金被火克。合“甲乙金宫、丙丁坎内、戊己惧杜伤、庚辛离上、壬癸生死方”的十干迫制口径；需再合旺衰强弱判断，只作命宫、奇仪受制证据参考，不作通用吉凶评分。"
+        },
+        {
+          "key": "combo:zhiFuOpenClose:2",
           "name": "值符开通闭塞",
-          "tone": "super-good",
-          "summary": "值符星天芮落巽四宫，符临4宫为开通；逢开利以有为，宜主动推进。此为《奇门宝鉴御定》开合时机参考，不作通用吉凶评分。",
-          "palace": 4
+          "tone": "super-bad",
+          "summary": "值符星天芮落坤二宫，符临2宫为闭塞；值闭尤宜静默，宜守势等待。此为《奇门宝鉴御定》开合时机参考，不作通用吉凶评分。",
+          "palace": 2
         },
         {
           "key": "combo:sanShengDi",
           "name": "三胜地",
           "tone": "super-good",
-          "summary": "值符星落巽四宫、九天在震三宫、生门在艮八宫，为三胜所取之地，可作为争取主动与择方参考。"
+          "summary": "值符星落坤二宫、九天在离九宫、生门在乾六宫，为三胜所取之地，可作为争取主动与择方参考。"
         },
         {
           "key": "combo:tianYiJiChong",
           "name": "天乙击冲",
           "tone": "mixed",
-          "summary": "值符星天芮落巽四宫为天乙宫，兵事宜居其方、击其对冲乾六宫；此为坐击取向参考，不作通用吉凶评分。",
-          "palace": 4
+          "summary": "值符星天芮落坤二宫为天乙宫，兵事宜居其方、击其对冲艮八宫；此为坐击取向参考，不作通用吉凶评分。",
+          "palace": 2
         },
         {
           "key": "combo:wuBuJi",
@@ -5390,11 +5441,18 @@
           "summary": "值符星、九天、生门、九地和值使所在宫为五不击，偏兵事攻守禁忌；宜据守借势，不宜把这些方位作为攻击对象。"
         },
         {
-          "key": "combo:baJiangHuiMen:2",
+          "key": "combo:biWu",
+          "name": "避五",
+          "tone": "mixed",
+          "summary": "值使死门到巽四宫，合“值使到巽宫宜去之”之法，偏择方避让参考，不作通用凶方扣分。",
+          "palace": 4
+        },
+        {
+          "key": "combo:baJiangHuiMen:4",
           "name": "八将会门",
           "tone": "mixed",
-          "summary": "值使死门落坤二宫，上临太阴，为太阴会死门；古法收用天盘不用地盘，偏天时、行兵、捕捉等场景参考，不作通用吉凶评分。",
-          "palace": 2
+          "summary": "值使死门落巽四宫，上临九地，为九地会死门；古法收用天盘不用地盘，偏天时、行兵、捕捉等场景参考，不作通用吉凶评分。",
+          "palace": 4
         },
         {
           "key": "combo:youDuLuDu",
@@ -5406,68 +5464,68 @@
           "key": "combo:tianMuDiEr",
           "name": "天目地耳",
           "tone": "mixed",
-          "summary": "丁未属甲辰旬，天目为庚戌（乾六宫），地耳为戊申（坤二宫），偏兵事“背天目击地耳”参考，不作通用吉凶评分。"
+          "summary": "丙午属甲辰旬，天目为庚戌（乾六宫），地耳为戊申（坤二宫），偏兵事“背天目击地耳”参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:xunGuXu",
           "name": "孤虚",
           "tone": "mixed",
-          "summary": "丁未属甲辰旬，孤在寅支艮八宫、卯支震三宫，虚在申支坤二宫、酉支兑七宫；偏兵事“背孤击虚”、博弈坐向与远行避忌参考，不作通用吉凶评分。"
+          "summary": "丙午属甲辰旬，孤在寅支艮八宫、卯支震三宫，虚在申支坤二宫、酉支兑七宫；偏兵事“背孤击虚”、博弈坐向与远行避忌参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:tianMaDirection",
           "name": "天马方",
           "tone": "mixed",
-          "summary": "巳月未时以月将申加时支，顺数至卯为太冲天马方：太冲天马在寅支艮八宫；偏急难逃避与出行择方参考，不作通用吉凶评分。"
+          "summary": "巳月午时以月将申加时支，顺数至卯为太冲天马方：太冲天马在丑支艮八宫；偏急难逃避与出行择方参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:tianGangTime",
           "name": "天罡时",
           "tone": "mixed",
-          "summary": "巳月未时以月将申加时支，上盘天罡所临为斗星方：斗星天罡在卯支震三宫；偏行兵破阵与择方参考，不作通用吉凶评分。"
+          "summary": "巳月午时以月将申加时支，上盘天罡所临为斗星方：斗星天罡在寅支艮八宫；偏行兵破阵与择方参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:lostRoute",
           "name": "迷路法",
           "tone": "mixed",
-          "summary": "巳月未时以月将申加时支，天罡临卯支震三宫，属仲位，中道通；偏行军迷路、择道参考，不作通用吉凶评分。",
-          "palace": 3
+          "summary": "巳月午时以月将申加时支，天罡临寅支艮八宫，属孟位，左路通；偏行军迷路、择道参考，不作通用吉凶评分。",
+          "palace": 8
         },
         {
           "key": "combo:tianSanMenDiSiHu",
           "name": "天三门地四户",
           "tone": "mixed",
-          "summary": "巳月未时以月将申加时支，天三门为太冲在寅支艮八宫、小吉在午支离九宫、从魁在申支坤二宫；以月建加时支，地四户为除在申支坤二宫、定在亥支乾六宫、危在寅支艮八宫、开在巳支巽四宫；偏出行、避难与择方参考，遇三奇吉门更佳，不作通用吉凶评分。"
+          "summary": "巳月午时以月将申加时支，天三门为太冲在丑支艮八宫、小吉在巳支巽四宫、从魁在未支坤二宫；以月建加时支，地四户为除在未支坤二宫、定在戌支乾六宫、危在丑支艮八宫、开在辰支巽四宫；偏出行、避难与择方参考，遇三奇吉门更佳，不作通用吉凶评分。"
         },
         {
           "key": "combo:earthPrivateDoor",
           "name": "地私门",
           "tone": "mixed",
-          "summary": "丁丑日取阳贵亥，巳月未时以月将申加时支，贵人落戌支乾六宫，逆行排十二天将，地私门为六合在未支坤二宫、太常在寅支艮八宫、太阴在子支坎一宫；偏出行、隐避与败军出走参考，遇奇门相照更佳，不作通用吉凶评分。"
+          "summary": "丁丑日取阳贵亥，巳月午时以月将申加时支，贵人落酉支兑七宫，逆行排十二天将，地私门为六合在午支离九宫、太常在丑支艮八宫、太阴在亥支乾六宫；偏出行、隐避与败军出走参考，遇奇门相照更佳，不作通用吉凶评分。"
         },
         {
           "key": "combo:tingTingBaiJian",
           "name": "亭亭白奸",
           "tone": "mixed",
-          "summary": "巳月未时以月将申加时支，神后所临为亭亭方：亭亭（神后）在亥支乾六宫；功曹、胜光、天罡所临为白奸方：白奸功曹在丑支艮八宫、白奸胜光在巳支巽四宫、白奸天罡在卯支震三宫；合于巳亥宜战，格于寅申宜守，其余偏“背亭亭击白奸”参考，不作通用吉凶评分。"
+          "summary": "巳月午时以月将申加时支，神后所临为亭亭方：亭亭（神后）在戌支乾六宫；功曹、胜光、天罡所临为白奸方：白奸功曹在子支坎一宫、白奸胜光在辰支巽四宫、白奸天罡在寅支艮八宫；合于巳亥宜战，格于寅申宜守，其余偏“背亭亭击白奸”参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:tianMenDiHuTaiYinQingLong",
           "name": "天门地户太阴青龙",
           "tone": "mixed",
-          "summary": "丁未属甲辰旬，出天门取天盘戊所在离九宫，入地户取天盘己所在乾六宫，过太阴取天盘丁所在艮八宫，居青龙取本旬六甲遁壬所在巽四宫；偏出行避难与兵事用方参考，不作通用吉凶评分。"
+          "summary": "丙午属甲辰旬，出天门取天盘戊所在兑七宫，入地户取天盘己所在艮八宫，过太阴取天盘丁所在巽四宫，居青龙取本旬六甲遁壬所在坤二宫；偏出行避难与兵事用方参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:campLayout",
           "name": "下营法",
           "tone": "mixed",
-          "summary": "丁未属甲辰旬，大将取本旬六甲遁壬所在巽四宫，旗鼓取天盘乙所在坤二宫，士卒取天盘丙所在巽四宫，伏兵取天盘丁所在艮八宫，判断取天盘辛所在兑七宫，囚系粮储取天盘壬所在巽四宫，所藏取天盘癸所在坎一宫；偏行军下营分工参考，不作通用吉凶评分。"
+          "summary": "丙午属甲辰旬，大将取本旬六甲遁壬所在坤二宫，旗鼓取天盘乙所在乾六宫，士卒取天盘丙所在坤二宫，伏兵取天盘丁所在巽四宫，判断取天盘辛所在坎一宫，囚系粮储取天盘壬所在坤二宫，所藏取天盘癸所在震三宫；偏行军下营分工参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:yangYinHourHostGuest",
           "name": "五阳五阴主客",
           "tone": "mixed",
-          "summary": "丁时属五阳时，兵事利客、宜先举；用局重看天盘奇仪星门是否强盛，不作通用吉凶评分。"
+          "summary": "丙时属五阳时，兵事利客、宜先举；用局重看天盘奇仪星门是否强盛，不作通用吉凶评分。"
         },
         {
           "key": "combo:daJiangJunDirection",
@@ -5494,14 +5552,14 @@
           "key": "combo:taiYinDirection",
           "name": "太阴方",
           "tone": "mixed",
-          "summary": "八神太阴在坤二宫，偏兵事背击、伏藏与避犯参考，不作通用吉凶评分。",
-          "palace": 2
+          "summary": "八神太阴在乾六宫，偏兵事背击、伏藏与避犯参考，不作通用吉凶评分。",
+          "palace": 6
         },
         {
           "key": "combo:fourGodDirections",
           "name": "四神用方",
           "tone": "mixed",
-          "summary": "九天在震三宫宜扬兵，九地在艮八宫宜潜藏立营，太阴在坤二宫宜伏兵，六合在兑七宫宜逃形谋议；偏兵事与隐遁取向参考，不作通用吉凶评分。"
+          "summary": "九天在离九宫宜扬兵，九地在巽四宫宜潜藏立营，太阴在乾六宫宜伏兵，六合在坎一宫宜逃形谋议；偏兵事与隐遁取向参考，不作通用吉凶评分。"
         },
         {
           "key": "combo:heKuiDirection",
@@ -5539,8 +5597,8 @@
             "direction": "正北",
             "use": "宜避之方",
             "reasons": [
-              "玄武",
-              "凶格:狱入天牢"
+              "伤门",
+              "凶格:狱入自刑"
             ]
           },
           {
@@ -5549,10 +5607,8 @@
             "direction": "西南",
             "use": "宜避之方",
             "reasons": [
-              "死门",
-              "凶格:日奇入墓",
-              "凶格:乙入墓",
-              "凶格:万事皆屯"
+              "凶格:地网四张",
+              "凶格:孛乱来临"
             ]
           },
           {
@@ -5561,9 +5617,9 @@
             "direction": "正东",
             "use": "宜避之方",
             "reasons": [
-              "伤门",
+              "玄武",
               "空亡",
-              "凶格:大格"
+              "凶格:天网四张"
             ]
           },
           {
@@ -5572,11 +5628,7 @@
             "direction": "东南",
             "use": "宜避之方",
             "reasons": [
-              "凶格:日干勃格",
-              "凶格:时干勃格",
-              "凶格:地罗遮蔽",
-              "凶格:壬击刑",
-              "凶格:壬入墓"
+              "死门"
             ]
           },
           {
@@ -5585,8 +5637,8 @@
             "direction": "西北",
             "use": "宜避之方",
             "reasons": [
-              "白虎",
-              "凶格:墓入不明"
+              "凶格:日奇受制",
+              "凶格:日奇伏刑"
             ]
           },
           {
@@ -5595,8 +5647,7 @@
             "direction": "正西",
             "use": "宜避之方",
             "reasons": [
-              "惊门",
-              "凶格:龙困遭伤"
+              "螣蛇"
             ]
           },
           {
@@ -5605,10 +5656,10 @@
             "direction": "东北",
             "use": "宜避之方",
             "reasons": [
+              "白虎",
               "空亡",
-              "凶格:星奇入墓",
-              "凶格:丁入墓",
-              "凶格:火入勾神"
+              "凶格:门迫",
+              "凶格:地户逢鬼"
             ]
           },
           {
@@ -5617,32 +5668,34 @@
             "direction": "正南",
             "use": "宜避之方",
             "reasons": [
-              "螣蛇",
-              "凶格:青龙符格"
+              "惊门",
+              "凶格:岁格",
+              "凶格:太白"
             ]
           }
         ]
       },
       "yingQi": {
-        "rhythm": "中",
+        "rhythm": "慢",
         "triggerConditions": [
-          "阴日（丁日）见庚在天盘3宫，逢卯冲酉应",
-          "驿马发动，出现行动、迁移、消息流转时更容易触发进展"
+          "阴日（丁日）见庚在天盘9宫，逢午冲子应",
+          "驿马发动，出现行动、迁移、消息流转时更容易触发进展",
+          "限制格局：日奇受制、岁格、门迫、狱入自刑、地网四张、孛乱来临、天网四张、日奇伏刑、地户逢鬼、太白"
         ],
         "limitations": [
           "快、中、慢只表示盘内相对节奏，不对应固定日数、月数或公历日期",
           "庚格、空亡、马星等只给候选触发条件，必须结合问题期限和现实事件核验",
           "未按具体问题选定用神时，本结果只能作为值符落宫的通用参考"
         ],
-        "description": "盘内应期节奏为中，不机械换算固定天数。马星冲动，应期较快，宜主动把握时机。伏吟局主迟滞，需反复推动或等待外因触发。"
+        "description": "盘内应期节奏为慢，不机械换算固定天数。马星冲动，应期较快，宜主动把握时机。伏吟局主迟滞，需反复推动或等待外因触发。"
       }
     },
     "personalMarkers": [
       {
         "markerType": "yearStem",
         "value": "庚",
-        "palace": 3,
-        "palaceName": "震三宫",
+        "palace": 9,
+        "palaceName": "离九宫",
         "layer": "tianPan",
         "traditionalSignificance": "年干天盘落宫（庚）：表外在社会名位、长辈福荫、名声根基与时代大势"
       },
@@ -5667,54 +5720,54 @@
         "value": "丁",
         "palace": 4,
         "palaceName": "巽四宫",
-        "layer": "diPan",
-        "traditionalSignificance": "日干地盘落宫（丁）：本人内心隐秘居所、精神寄托与底层支撑"
-      },
-      {
-        "markerType": "dayStem",
-        "value": "丁",
-        "palace": 8,
-        "palaceName": "艮八宫",
         "layer": "tianPan",
         "traditionalSignificance": "日干天盘落宫（丁）：求测者本人显性行藏、心智精力与中年主要作为"
       },
       {
-        "markerType": "hourStem",
+        "markerType": "dayStem",
         "value": "丁",
         "palace": 4,
         "palaceName": "巽四宫",
         "layer": "diPan",
-        "traditionalSignificance": "时干地盘落宫（丁）：晚运蓄势储备与底层执行承载"
+        "traditionalSignificance": "日干地盘落宫（丁）：本人内心隐秘居所、精神寄托与底层支撑"
       },
       {
         "markerType": "hourStem",
-        "value": "丁",
-        "palace": 8,
-        "palaceName": "艮八宫",
+        "value": "丙",
+        "palace": 2,
+        "palaceName": "坤二宫",
         "layer": "tianPan",
-        "traditionalSignificance": "时干天盘落宫（丁）：晚景运势、具体事业产出、下属晚辈及事态最终归宿"
+        "traditionalSignificance": "时干天盘落宫（丙）：晚景运势、具体事业产出、下属晚辈及事态最终归宿"
+      },
+      {
+        "markerType": "hourStem",
+        "value": "丙",
+        "palace": 5,
+        "palaceName": "中五宫",
+        "layer": "diPan",
+        "traditionalSignificance": "时干地盘落宫（丙）：晚运蓄势储备与底层执行承载"
       },
       {
         "markerType": "zhiFuStar",
         "value": "天芮",
-        "palace": 4,
-        "palaceName": "巽四宫",
+        "palace": 2,
+        "palaceName": "坤二宫",
         "layer": "tianPan",
         "traditionalSignificance": "值符星落宫（天芮）：一身大纲领，时代机遇与贵人庇佑之枢纽"
       },
       {
         "markerType": "zhiShiDoor",
         "value": "死门",
-        "palace": 2,
-        "palaceName": "坤二宫",
+        "palace": 4,
+        "palaceName": "巽四宫",
         "layer": "renPan",
         "traditionalSignificance": "值使门落宫（死门）：人事具体权柄、行动落地与办事主宰"
       },
       {
         "markerType": "companionStem",
         "value": "丙",
-        "palace": 4,
-        "palaceName": "巽四宫",
+        "palace": 2,
+        "palaceName": "坤二宫",
         "layer": "tianPan",
         "traditionalSignificance": "天禽寄宫携干（丙）：中五厚土兼化之隐性能量"
       }
@@ -5724,72 +5777,67 @@
         "topic": "career",
         "topicName": "事业官禄",
         "primaryPalaces": [
-          6,
-          4,
-          8
+          2,
+          4
         ],
         "secondaryPalaces": [
-          9,
-          3
+          3,
+          9
         ],
         "basis": "《统宗》开门专司官爵仕途，值符为百官尊长，克我者官鬼司名权威柄，景门司文书名望",
         "patternSummary": [
-          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
-          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
-          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+          "坤二宫: 人盘开门，神盘值符，天盘天芮，干组合: 壬+壬，临驿马，格局:宫生门(吉)，格局:地网四张(凶)，格局:孛乱来临(凶)",
+          "巽四宫: 人盘死门，神盘九地，天盘天辅，干组合: 丁+丁，格局:鬼假(吉)，格局:守户(吉)，格局:玉女守门(吉)，格局:奇入太阴(吉)"
         ]
       },
       {
         "topic": "wealth",
         "topicName": "资产财帛",
         "primaryPalaces": [
-          8,
-          9,
-          2
+          6,
+          7
         ],
         "secondaryPalaces": [
-          1
+          4,
+          3
         ],
         "basis": "《统宗》生门专司财帛产业，甲子戊为青龙钱财资本，我克者妻财司日常资产，九地主储蓄",
         "patternSummary": [
-          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)",
-          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
-          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)"
+          "乾六宫: 人盘生门，神盘太阴，天盘天心，干组合: 乙+乙，格局:真诈(吉)，格局:日奇受制(凶)，格局:门生宫(吉)，格局:日奇伏刑(凶)",
+          "兑七宫: 人盘休门，神盘螣蛇，天盘天柱，干组合: 戊+戊，格局:宫生门(吉)，格局:青龙出地(吉)"
         ]
       },
       {
         "topic": "marriage",
         "topicName": "婚恋配偶",
         "primaryPalaces": [
-          7,
-          2
+          1,
+          6
         ],
         "secondaryPalaces": [
-          1,
-          3
+          7,
+          9
         ],
         "basis": "《统宗》六合专司媒约婚姻，男取我克之妻财、女取克我之官鬼，乙庚为阴阳夫妇正配，休门司家庭",
         "patternSummary": [
-          "兑七宫: 人盘惊门，神盘六合，天盘天蓬，干组合: 辛+戊，格局:龙困遭伤(凶)",
-          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)"
+          "坎一宫: 人盘伤门，神盘六合，天盘天蓬，干组合: 辛+辛，格局:宫生门(吉)，格局:狱入自刑(凶)",
+          "乾六宫: 人盘生门，神盘太阴，天盘天心，干组合: 乙+乙，格局:真诈(吉)，格局:日奇受制(凶)，格局:门生宫(吉)，格局:日奇伏刑(凶)"
         ]
       },
       {
         "topic": "health",
         "topicName": "身体疾厄",
         "primaryPalaces": [
-          4,
           2,
-          8
+          4
         ],
         "secondaryPalaces": [
-          3
+          1
         ],
         "basis": "《统宗》天芮星为疾病根源病灶，死门主气机滞塞，克我者官鬼疾厄司病患侵袭，伤门司外伤手术",
         "patternSummary": [
-          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
-          "坤二宫: 人盘死门，神盘太阴，天盘天心，干组合: 乙+壬，格局:日奇入墓(凶)，格局:乙入墓(凶)，格局:万事皆屯(凶)",
-          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+          "坤二宫: 人盘开门，神盘值符，天盘天芮，干组合: 壬+壬，临驿马，格局:宫生门(吉)，格局:地网四张(凶)，格局:孛乱来临(凶)",
+          "巽四宫: 人盘死门，神盘九地，天盘天辅，干组合: 丁+丁，格局:鬼假(吉)，格局:守户(吉)，格局:玉女守门(吉)，格局:奇入太阴(吉)"
         ]
       },
       {
@@ -5797,35 +5845,38 @@
         "topicName": "学业进修",
         "primaryPalaces": [
           5,
-          6,
-          9,
-          8
+          7,
+          8,
+          4,
+          3
         ],
         "secondaryPalaces": [
-          3
+          9
         ],
         "basis": "《统宗》生我者父母司学业文凭庇荫，天辅为文曲导师，景门司试卷考选，丁奇为文书玉印",
         "patternSummary": [
           "中五宫: 干组合: +丙",
-          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
-          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
-          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+          "兑七宫: 人盘休门，神盘螣蛇，天盘天柱，干组合: 戊+戊，格局:宫生门(吉)，格局:青龙出地(吉)",
+          "艮八宫: 人盘杜门，神盘白虎，天盘天任，干组合: 己+己，临旬空，格局:门迫(凶)，格局:地户逢鬼(凶)",
+          "巽四宫: 人盘死门，神盘九地，天盘天辅，干组合: 丁+丁，格局:鬼假(吉)，格局:守户(吉)，格局:玉女守门(吉)，格局:奇入太阴(吉)",
+          "震三宫: 人盘景门，神盘玄武，天盘天冲，干组合: 癸+癸，临旬空，格局:宫生门(吉)，格局:天网四张(凶)"
         ]
       },
       {
         "topic": "relocation",
         "topicName": "居所差旅",
         "primaryPalaces": [
-          4,
-          3,
-          6
+          2,
+          9
         ],
-        "secondaryPalaces": [],
+        "secondaryPalaces": [
+          1,
+          8
+        ],
         "basis": "《烟波钓叟歌》天马为动应之神，九天主升迁远行迁徙，开门司通达，伤门司车马动迁",
         "patternSummary": [
-          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
-          "震三宫: 人盘伤门，神盘九天，天盘天英，干组合: 庚+癸，临旬空，格局:大格(凶)",
-          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)"
+          "坤二宫: 人盘开门，神盘值符，天盘天芮，干组合: 壬+壬，临驿马，格局:宫生门(吉)，格局:地网四张(凶)，格局:孛乱来临(凶)",
+          "离九宫: 人盘惊门，神盘九天，天盘天英，干组合: 庚+庚，格局:岁格(凶)，格局:太白(凶)"
         ]
       },
       {
@@ -5833,51 +5884,49 @@
         "topicName": "原生家庭",
         "primaryPalaces": [
           5,
-          6,
-          9,
-          1
+          7,
+          8
         ],
         "secondaryPalaces": [
-          3
+          9
         ],
         "basis": "《统宗》生我者为父母长辈，年干为宗族根基，休门为宅舍庇护之宫",
         "patternSummary": [
           "中五宫: 干组合: +丙",
-          "乾六宫: 人盘开门，神盘白虎，天盘天任，干组合: 己+乙，格局:墓入不明(凶)",
-          "离九宫: 人盘景门，神盘螣蛇，天盘天柱，干组合: 戊+庚，格局:青龙符格(凶)",
-          "坎一宫: 人盘休门，神盘玄武，天盘天冲，干组合: 癸+辛，格局:狱入天牢(凶)"
+          "兑七宫: 人盘休门，神盘螣蛇，天盘天柱，干组合: 戊+戊，格局:宫生门(吉)，格局:青龙出地(吉)",
+          "艮八宫: 人盘杜门，神盘白虎，天盘天任，干组合: 己+己，临旬空，格局:门迫(凶)，格局:地户逢鬼(凶)"
         ]
       },
       {
         "topic": "children",
         "topicName": "晚辈后嗣",
         "primaryPalaces": [
-          1,
-          4,
-          8
+          2,
+          3
         ],
-        "secondaryPalaces": [],
+        "secondaryPalaces": [
+          6
+        ],
         "basis": "《统宗》我生者子息司晚辈团队，时干司晚运终局与具体事态产出",
         "patternSummary": [
-          "坎一宫: 人盘休门，神盘玄武，天盘天冲，干组合: 癸+辛，格局:狱入天牢(凶)",
-          "巽四宫: 人盘杜门，神盘值符，天盘天芮，干组合: 壬+丁，临驿马，格局:三奇游六仪(吉)，格局:相佐(吉)，格局:日干勃格(凶)，格局:时干勃格(凶)，格局:地罗遮蔽(凶)，格局:壬击刑(凶)，格局:壬入墓(凶)，格局:干合蛇刑(平)，格局:奇入朱雀(平)",
-          "艮八宫: 人盘生门，神盘九地，天盘天辅，干组合: 丁+己，临旬空，格局:重诈(吉)，格局:星奇入墓(凶)，格局:丁入墓(凶)，格局:火入勾神(凶)"
+          "坤二宫: 人盘开门，神盘值符，天盘天芮，干组合: 壬+壬，临驿马，格局:宫生门(吉)，格局:地网四张(凶)，格局:孛乱来临(凶)",
+          "震三宫: 人盘景门，神盘玄武，天盘天冲，干组合: 癸+癸，临旬空，格局:宫生门(吉)，格局:天网四张(凶)"
         ]
       },
       {
         "topic": "partnership",
         "topicName": "合伙合作",
         "primaryPalaces": [
-          3,
-          7
+          1,
+          9
         ],
         "secondaryPalaces": [
-          6
+          2
         ],
         "basis": "《统宗》比肩者兄弟司同侪伙伴与合伙人，六合主契约协议合作共事",
         "patternSummary": [
-          "震三宫: 人盘伤门，神盘九天，天盘天英，干组合: 庚+癸，临旬空，格局:大格(凶)",
-          "兑七宫: 人盘惊门，神盘六合，天盘天蓬，干组合: 辛+戊，格局:龙困遭伤(凶)"
+          "坎一宫: 人盘伤门，神盘六合，天盘天蓬，干组合: 辛+辛，格局:宫生门(吉)，格局:狱入自刑(凶)",
+          "离九宫: 人盘惊门，神盘九天，天盘天英，干组合: 庚+庚，格局:岁格(凶)，格局:太白(凶)"
         ]
       }
     ],
@@ -5891,10 +5940,6 @@
         "calendarEnd": "2006-05-12",
         "dominantPalaces": [
           {
-            "palace": 3,
-            "name": "震三宫"
-          },
-          {
             "palace": 9,
             "name": "离九宫"
           }
@@ -5905,15 +5950,12 @@
         ],
         "stageTheme": "年柱主限：主家庭原生教养、长辈福荫护持、学识基础与先天命质形成。",
         "supportFacts": [
-          "得吉神九天护持，贵人引路、协同有方",
-          "临景门，主文书声誉、名气外显与合同机遇"
+          "得吉神九天护持，贵人引路、协同有方"
         ],
         "constraintFacts": [
-          "临凶门伤门，需防滞塞阻力、言语是非或折伤耗散",
-          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
-          "逢凶格「大格」：天盘庚加地盘癸于震三宫，庚为太白阻隔之神，癸为螣蛇天网，金入水乡，主大凶、出行阻隔。",
-          "值螣蛇乘临，警惕暗耗、口舌争执或意外波动",
-          "逢凶格「青龙符格」：天盘戊加地盘庚于离九宫，六甲加庚为青龙符格，起咎成凶，即使星吉门顺亦宜静默。"
+          "临凶门惊门，需防滞塞阻力、言语是非或折伤耗散",
+          "逢凶格「岁格」：天盘庚加岁干庚于离九宫，合“六庚加岁干为岁格”，主事有阻格。",
+          "逢凶格「太白」：天盘庚加地盘庚于离九宫，庚加地盘庚为太白，主官事并发、狱禁牵连，凶期百日而后或有舒情。"
         ],
         "limitations": [
           "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
@@ -5932,10 +5974,6 @@
             "name": "坎一宫"
           },
           {
-            "palace": 7,
-            "name": "兑七宫"
-          },
-          {
             "palace": 4,
             "name": "巽四宫"
           }
@@ -5946,24 +5984,18 @@
         ],
         "stageTheme": "月柱主限：走出家庭踏入社会、人际圈层开拓、事业基石奠定与青年自我认知。",
         "supportFacts": [
-          "临三大吉门之休门，人事实质通达顺畅",
           "得吉神六合护持，贵人引路、协同有方",
-          "得吉神值符护持，贵人引路、协同有方",
-          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
-          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
-          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。"
+          "成吉格「宫生门」：坎一宫（水）生伤门（木），此地利助事之象。",
+          "得吉神九地护持，贵人引路、协同有方",
+          "成吉格「鬼假」：死门、丁、九地同宫于巽四宫，合鬼假之格，主安葬荐度、处理沉滞旧事。",
+          "成吉格「守户」：值使死门加地盘丁奇于巽四宫，合“使加六丁为守户”，主门户得护。",
+          "成吉格「玉女守门」：值使死门加地盘丁奇于巽四宫，合《奇门宝鉴御定》“地盘六丁守直使之门”为玉女守门；死门非三吉门，偏利秘密、阴私、和合之事，仍需合看门星吉凶。",
+          "成吉格「奇入太阴」：天盘丁加地盘丁于巽四宫，丁加地盘丁为奇入太阴，主文书可至，两重文意，凡百遂心。"
         ],
         "constraintFacts": [
-          "值玄武乘临，警惕暗耗、口舌争执或意外波动",
-          "逢凶格「狱入天牢」：天盘癸加地盘辛于坎一宫，癸加地盘辛为狱入天牢，主军吏遭系、罪恐难逃，门吉星吉则虚禁无劳。",
-          "临凶门惊门，需防滞塞阻力、言语是非或折伤耗散",
-          "逢凶格「龙困遭伤」：天盘辛加地盘戊于兑七宫，辛加地盘甲为龙困遭伤；排盘时以甲子戊代甲，故辛加地盘戊按此格论。",
-          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
-          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
-          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
-          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。"
+          "临凶门伤门，需防滞塞阻力、言语是非或折伤耗散",
+          "逢凶格「狱入自刑」：天盘辛加地盘辛于坎一宫，辛加地盘辛为狱入自刑，主自我牵制，阴人求财可喜，阳主动用多有灾害。",
+          "临凶门死门，需防滞塞阻力、言语是非或折伤耗散"
         ],
         "limitations": [
           "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
@@ -5980,10 +6012,6 @@
           {
             "palace": 4,
             "name": "巽四宫"
-          },
-          {
-            "palace": 8,
-            "name": "艮八宫"
           }
         ],
         "associatedMarkers": [
@@ -5991,25 +6019,14 @@
         ],
         "stageTheme": "日柱主限：人生核心建树期，自身心力智慧完全展现，家庭与社会中流砥柱。",
         "supportFacts": [
-          "得吉神值符护持，贵人引路、协同有方",
-          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
-          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
-          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
-          "临三大吉门之生门，人事实质通达顺畅",
           "得吉神九地护持，贵人引路、协同有方",
-          "成吉格「重诈」：丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。"
+          "成吉格「鬼假」：死门、丁、九地同宫于巽四宫，合鬼假之格，主安葬荐度、处理沉滞旧事。",
+          "成吉格「守户」：值使死门加地盘丁奇于巽四宫，合“使加六丁为守户”，主门户得护。",
+          "成吉格「玉女守门」：值使死门加地盘丁奇于巽四宫，合《奇门宝鉴御定》“地盘六丁守直使之门”为玉女守门；死门非三吉门，偏利秘密、阴私、和合之事，仍需合看门星吉凶。",
+          "成吉格「奇入太阴」：天盘丁加地盘丁于巽四宫，丁加地盘丁为奇入太阴，主文书可至，两重文意，凡百遂心。"
         ],
         "constraintFacts": [
-          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
-          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
-          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
-          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
-          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
-          "逢凶格「星奇入墓」：丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
-          "逢凶格「丁入墓」：丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
-          "逢凶格「火入勾神」：天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。"
+          "临凶门死门，需防滞塞阻力、言语是非或折伤耗散"
         ],
         "limitations": [
           "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
@@ -6024,48 +6041,28 @@
         "calendarEnd": "2070-05-12",
         "dominantPalaces": [
           {
+            "palace": 5,
+            "name": "中五宫"
+          },
+          {
             "palace": 4,
             "name": "巽四宫"
-          },
-          {
-            "palace": 8,
-            "name": "艮八宫"
-          },
-          {
-            "palace": 2,
-            "name": "坤二宫"
           }
         ],
         "associatedMarkers": [
-          "时干丁",
+          "时干丙",
           "值使死门"
         ],
         "stageTheme": "时柱主限：事业收获定型、后辈晚生接班、生活闲适自洽与精神安泰归宿。",
         "supportFacts": [
-          "得吉神值符护持，贵人引路、协同有方",
-          "临驿马星，主走动频繁、迁移外出或生活节奏加速",
-          "成吉格「三奇游六仪」：甲辰壬值符加地盘丁奇于巽四宫，星奇游于甲寅癸，合“三奇游六仪”之格；古法主百事可为。",
-          "成吉格「相佐」：值符天芮加地盘丁于巽四宫，合“符加丙丁为相佐”，主助力相辅。",
-          "临三大吉门之生门，人事实质通达顺畅",
           "得吉神九地护持，贵人引路、协同有方",
-          "成吉格「重诈」：丁奇、生门、九地同宫于艮八宫，三奇、吉门、九地同宫，乃重诈之格，主伏藏蓄势、稳中取利。",
-          "得吉神太阴护持，贵人引路、协同有方"
+          "成吉格「鬼假」：死门、丁、九地同宫于巽四宫，合鬼假之格，主安葬荐度、处理沉滞旧事。",
+          "成吉格「守户」：值使死门加地盘丁奇于巽四宫，合“使加六丁为守户”，主门户得护。",
+          "成吉格「玉女守门」：值使死门加地盘丁奇于巽四宫，合《奇门宝鉴御定》“地盘六丁守直使之门”为玉女守门；死门非三吉门，偏利秘密、阴私、和合之事，仍需合看门星吉凶。",
+          "成吉格「奇入太阴」：天盘丁加地盘丁于巽四宫，丁加地盘丁为奇入太阴，主文书可至，两重文意，凡百遂心。"
         ],
         "constraintFacts": [
-          "临杜门，主隐秘闭塞，宜潜心深耕而不利高调激进",
-          "逢凶格「日干勃格」：天盘丙加日干丁于巽四宫，合“丙奇临日干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「时干勃格」：天盘丙加时干丁于巽四宫，合“丙奇临时干名为勃格”，主纲纪紊乱、行动逆乱。",
-          "逢凶格「地罗遮蔽」：天盘壬加时干丁于巽四宫，合“六壬临时干”为地罗遮蔽，亦称地网，主前路遮障、行动受困。",
-          "逢凶格「壬击刑」：壬在巽四宫击刑（壬在此宫落于相刑之位），主规则、口舌、文书方面要小心。",
-          "逢凶格「壬入墓」：壬在巽四宫入墓（墓在辰），主能量收敛、事情停滞或难以施展。",
-          "宫逢旬空，吉凶能量暂未落地，多有虚耗等待与变动",
-          "逢凶格「星奇入墓」：丁奇入艮八宫（三奇墓在丑），星奇入墓，主智不展。",
-          "逢凶格「丁入墓」：丁在艮八宫入墓（墓在丑），主能量收敛、事情停滞或难以施展。",
-          "逢凶格「火入勾神」：天盘丁加地盘己于艮八宫，丁加地盘己为火入勾神，主文状词凶，私中有私，往则刑名。",
-          "临凶门死门，需防滞塞阻力、言语是非或折伤耗散",
-          "逢凶格「日奇入墓」：乙奇入坤二宫（三奇墓在未），日奇入墓，主协商不力。",
-          "逢凶格「乙入墓」：乙在坤二宫入墓（墓在未），主能量收敛、事情停滞或难以施展。",
-          "逢凶格「万事皆屯」：天盘乙加地盘壬于坤二宫，乙加地盘壬为万事皆屯，主事务停滞不前，阳人失财，阴人有病。"
+          "临凶门死门，需防滞塞阻力、言语是非或折伤耗散"
         ],
         "limitations": [
           "四柱分限只反映人生不同年龄主干阶段的能量倾向与宏观节奏，不代表具体某一年的必然事件。"
