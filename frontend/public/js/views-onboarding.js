@@ -4,99 +4,26 @@
 function AuthPage({
   onNavigate
 }) {
-  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [agreed, setAgreed] = useState(true);
-  // 注册分支专属：确认密码 + 图形验证码（登录分支不使用）
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [captchaId, setCaptchaId] = useState('');
-  const [captchaImage, setCaptchaImage] = useState('');
-  const [captchaCode, setCaptchaCode] = useState('');
-  // 拉取/刷新图形验证码：GET /api/auth/captcha → {code,data:{captcha_id,image}}
-  const loadCaptcha = async () => {
-    try {
-      const res = await api('/auth/captcha');
-      const d = res && res.data || res || {};
-      setCaptchaId(d.captcha_id || '');
-      setCaptchaImage(d.image || '');
-      setCaptchaCode(''); // 图片刷新后旧码即失效，清空待重输
-    } catch (e) {
-      setCaptchaId('');
-      setCaptchaImage('');
-      setCaptchaCode('');
-      toast(TC_COPY.ui.auth['captcha-load-fail']);
-    }
-  };
-  // 组件挂载/切到注册分支时拉验证码；切回登录分支时清空注册分支缓存
-  useEffect(() => {
-    if (!isLogin) {
-      loadCaptcha();
-    } else {
-      setConfirmPassword('');
-      setCaptchaId('');
-      setCaptchaImage('');
-      setCaptchaCode('');
-    }
-  }, [isLogin]);
+  // 节141：**公开注册已关闭**（内测白名单制，新账号只能由开发者经后台创建）。
+  // 本页从此只剩登录表单：原注册分支（确认密码 / 图形验证码 / 协议勾选）、
+  // 「没有账号？去注册」切换入口、验证码拉取与注册赠送提示全部移除。
+  // 后端 POST /api/auth/register 同步加了开关防护（TAICHU_ALLOW_PUBLIC_REGISTER，默认 false）。
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
-    // 注册前须勾选同意用户协议与隐私政策（登录分支不校验、不展示该勾选）
-    if (!isLogin && !agreed) {
-      setError(TC_COPY.ui.auth['agree-required']);
-      return;
-    }
-    // 注册分支：逐字段必填校验（用户名/密码/确认密码/验证码为空分别提示、不发请求），
-    // 再校验手机号格式与两次密码一致（登录分支仅要求非空，由 required 保证）
-    if (!isLogin) {
-      if (!String(username || '').trim()) {
-        setError(TC_COPY.ui.auth['username-required']);
-        return;
-      }
-      if (!password) {
-        setError(TC_COPY.ui.auth['password-required']);
-        return;
-      }
-      if (!confirmPassword) {
-        setError(TC_COPY.ui.auth['confirm-required']);
-        return;
-      }
-      if (!String(captchaCode || '').trim()) {
-        setError(TC_COPY.ui.auth['captcha-required']);
-        return;
-      }
-      if (!/^1[3-9]\d{9}$/.test(username)) {
-        setError(TC_COPY.ui.auth['phone-invalid']);
-        return;
-      }
-      if (password.length < 6) {
-        setError(TC_COPY.ui.auth['password-too-short']);
-        return;
-      }
-      if (password !== confirmPassword) {
-        setError(TC_COPY.ui.auth['password-mismatch']);
-        return;
-      }
-    }
     setLoading(true);
     try {
-      const payload = {
-        username,
-        password
-      };
-      if (!isLogin) {
-        payload.captcha_id = captchaId;
-        payload.captcha_code = captchaCode;
-        // 注册专用设备指纹（后端字段可空；生成失败为空串也不阻断提交）。登录分支不带该字段。
-        payload.device_fingerprint = generateDeviceFingerprint();
-      }
-      const res = await api(isLogin ? '/auth/login' : '/auth/register', {
+      const res = await api('/auth/login', {
         method: 'POST',
-        body: JSON.stringify(payload),
-        // REQ-049：登录/注册的 401（如「用户名或密码错误」）属业务失败而非会话过期，
+        body: JSON.stringify({
+          username,
+          password
+        }),
+        // REQ-049：登录的 401（如「用户名或密码错误」）属业务失败而非会话过期，
         // skip401 跳过统一踢出拦截，让下方 catch 拿到后端真实 message
         skip401: true
       });
@@ -105,32 +32,19 @@ function AuthPage({
       refreshToken = res.refresh_token || res.data && res.data.refresh_token;
       localStorage.setItem('taichu_token', token || '');
       localStorage.setItem('taichu_refresh_token', refreshToken || '');
-      // 注册成功：提示新用户赠送余额（数量以后端 free_credit_granted 为准，缺失则用通用文案）
-      if (!isLogin) {
-        const free = res.data && res.data.free_credit_granted || res.free_credit_granted;
-        toast(free != null ? fmtTpl(TC_COPY.ui.auth['gift-credit'], { amount: (Number(free) / CREDIT_YUAN_RATE).toFixed(2) }) : TC_COPY.ui.auth['register-ok']);
-      }
-      // REQ-092：登录/注册成功 → 先实时校验档案数（0 档 → forceOnboarding=true，下方受限落页
+      // REQ-092：登录成功 → 先实时校验档案数（0 档 → forceOnboarding=true，下方受限落页
       // 会被 App navigate 守卫统一重定向到新建档案；≥1 档 → 正常回跳 / 进入档案列表）
       await checkCaseGate();
-      // BUG-002: 登录/注册成功 → 若有被拦截的受限页回跳目标则先回跳，否则进入档案列表
+      // BUG-002: 登录成功 → 若有被拦截的受限页回跳目标则先回跳，否则进入档案列表
       if (authRedirect) {
         const r = authRedirect;
         authRedirect = null;
         onNavigate(r.p, r.p2);
       } else {
-        onNavigate('cases'); // 登录/注册成功 → 进入档案列表（可从中新建或继续档案）
+        onNavigate('cases'); // 登录成功 → 进入档案列表（可从中新建或继续档案）
       }
     } catch (e) {
-      const msg = e && e.message || TC_COPY.ui.error['request-failed'];
-      // 注册分支后端返回「验证码错误/过期」：旧验证码已失效，刷新图片并提示重输
-      if (!isLogin && /验证码/.test(msg)) {
-        setError(TC_COPY.ui.auth['captcha-expired']);
-        setCaptchaCode('');
-        loadCaptcha();
-      } else {
-        setError(msg);
-      }
+      setError(e && e.message || TC_COPY.ui.error['request-failed']);
     } finally {
       setLoading(false);
     }
@@ -141,7 +55,7 @@ function AuthPage({
     className: "card"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "title"
-  }, isLogin ? TC_COPY.ui.buttons.login : TC_COPY.ui.buttons.register), error && /*#__PURE__*/React.createElement("div", {
+  }, TC_COPY.ui.buttons.login), error && /*#__PURE__*/React.createElement("div", {
     className: "error",
     style: {
       marginBottom: 12
@@ -174,110 +88,27 @@ function AuthPage({
     placeholder: TC_COPY.ui.auth['password-placeholder'],
     required: true,
     minLength: 6
-  }), !isLogin && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", {
-    className: "label",
-    htmlFor: "auth-pass2"
-  }, TC_COPY.ui.auth['confirm-label']), /*#__PURE__*/React.createElement("input", {
-    id: "auth-pass2",
-    className: "input",
-    type: "password",
-    value: confirmPassword,
-    onChange: e => setConfirmPassword(e.target.value),
-    placeholder: TC_COPY.ui.auth['confirm-placeholder'],
-    required: true,
-    autoComplete: "new-password"
-  }), /*#__PURE__*/React.createElement("label", {
-    className: "label",
-    htmlFor: "auth-captcha"
-  }, TC_COPY.ui.auth['captcha-label']), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 10,
-      alignItems: 'center',
-      margin: '8px 0 0'
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    id: "auth-captcha",
-    className: "input",
-    value: captchaCode,
-    onChange: e => setCaptchaCode(e.target.value),
-    placeholder: TC_COPY.ui.auth['captcha-placeholder'],
-    autoComplete: "off",
-    required: true,
-    style: {
-      flex: 1,
-      minWidth: 0,
-      margin: 0
-    }
-  }), captchaImage ? /*#__PURE__*/React.createElement("img", {
-    src: captchaImage,
-    alt: TC_COPY.ui.auth['captcha-label'],
-    title: TC_COPY.ui.auth['captcha-refresh-tip'],
-    onClick: loadCaptcha,
-    style: {
-      width: 120,
-      height: 42,
-      flexShrink: 0,
-      borderRadius: 8,
-      border: '1px solid var(--border)',
-      background: 'var(--surface)',
-      cursor: 'pointer',
-      objectFit: 'cover'
-    }
-  }) : /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "btn btn-outline",
-    onClick: loadCaptcha,
-    style: {
-      width: 120,
-      height: 42,
-      padding: 0,
-      fontSize: 13,
-      flexShrink: 0
-    }
-  }, TC_COPY.ui.auth['captcha-fetch'])), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: 'var(--text-3)',
-      textAlign: 'right',
-      margin: '2px 0 0'
-    }
-  }, TC_COPY.ui.auth['captcha-refresh-tip'])), !isLogin && /*#__PURE__*/React.createElement("div", {
-    className: "agree-row",
-    style: {
-      margin: '10px 0 2px'
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    id: "auth-agree",
-    type: "checkbox",
-    checked: agreed,
-    onChange: e => setAgreed(e.target.checked)
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "auth-agree",
-    className: "agree-label"
-  }, TC_COPY.ui.auth['agree-prefix'], /*#__PURE__*/React.createElement("a", {
-    href: TC_COPY.ui.footer['legal-agreement-href'],
-    target: "_blank"
-  }, TC_COPY.ui.auth['agree-agreement']), TC_COPY.ui.auth['agree-and'], /*#__PURE__*/React.createElement("a", {
-    href: TC_COPY.ui.footer['legal-privacy-href'],
-    target: "_blank"
-  }, TC_COPY.ui.auth['agree-privacy']))), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     type: "submit",
     disabled: loading,
     style: {
       marginTop: 16
     }
-  }, loading ? TC_COPY.ui.tips.processing : isLogin ? TC_COPY.ui.buttons.login : TC_COPY.ui.buttons.register)), /*#__PURE__*/React.createElement("p", {
+  }, loading ? TC_COPY.ui.tips.processing : TC_COPY.ui.buttons.login)), /*#__PURE__*/React.createElement("div", {
+    className: "auth-internal-tip",
     style: {
-      textAlign: 'center',
       marginTop: 16,
+      padding: '10px 12px',
+      borderRadius: 'var(--radius-md)',
+      border: '1px solid var(--skin-accent)',
+      background: 'var(--skin-accent-soft)',
+      color: 'var(--text-2)',
       fontSize: 13,
-      color: 'var(--text-3)',
-      cursor: 'pointer'
-    },
-    onClick: () => setIsLogin(!isLogin)
-  }, isLogin ? TC_COPY.ui.auth['switch-to-register'] : TC_COPY.ui.auth['switch-to-login'])));
+      lineHeight: 1.7,
+      textAlign: 'center'
+    }
+  }, TC_COPY.ui.auth['internal-only-tip'])));
 }
 
 function OnboardingPage({

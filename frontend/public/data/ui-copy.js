@@ -582,30 +582,9 @@ window.TC_COPY = {
       'phone-placeholder': '请输入 11 位手机号',
       'password-label': '密码',
       'password-placeholder': '请输入密码（至少6位）',
-      'confirm-label': '确认密码',
-      'confirm-placeholder': '请再次输入密码',
-      'captcha-label': '图形验证码',
-      'captcha-placeholder': '请输入验证码',
-      'captcha-fetch': '获取验证码',
-      'captcha-refresh-tip': '看不清？点击图片刷新',
-      'agree-prefix': '我已阅读并同意',
-      'agree-agreement': '《用户协议》',
-      'agree-and': '和',
-      'agree-privacy': '《隐私政策》',
-      'switch-to-register': '没有账号？去注册',
-      'switch-to-login': '已有账号？去登录',
-      'agree-required': '请先阅读并同意用户协议与隐私政策',
-      'username-required': '请输入手机号（注册用户名）',
-      'password-required': '请输入密码',
-      'confirm-required': '请再次输入确认密码',
-      'captcha-required': '请输入图形验证码',
-      'phone-invalid': '请输入正确的 11 位手机号',
-      'password-too-short': '密码至少需要 6 位',
-      'password-mismatch': '两次输入的密码不一致',
-      'captcha-expired': '验证码错误或已过期，请重新输入',
-      'captcha-load-fail': '验证码加载失败，请点击重试',
-      'register-ok': '注册成功，余额已到账',
-      'gift-credit': '已赠送余额 ¥{amount}'
+      /* 节141：公开注册已关闭（内测白名单制）—— 注册分支文案（确认密码 / 图形验证码 /
+         协议勾选 / 去注册切换 / 注册赠送）随注册 UI 一并删除；本键为登录页常驻内测提示。 */
+      'internal-only-tip': '本项目只开放给内部人员，请联系开发者获得测试资格。'
     },
     balance: {
       label: '余额',
@@ -704,7 +683,8 @@ window.TC_COPY = {
       'mbti-sub': '16 型人格测评 · 60 题 · 判型结果写入档案'
     },
     menu: {
-      'login-register': '登录 / 注册',
+      /* 节141：公开注册已关闭 → 顶栏入口只写「登录」（原「登录 / 注册」） */
+      'login-register': '登录',
       open: '打开菜单',
       close: '关闭菜单',
       settings: '功能设置',

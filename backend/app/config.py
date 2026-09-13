@@ -66,6 +66,9 @@ class Settings(BaseSettings):
 
     # 余额系统
     credit_per_token: int = 1000            # TAICHU_CREDIT_PER_TOKEN：1 存储单位 = 1000 tokens
+    # 节141：公开注册开关（内测白名单制）。false（默认）= POST /api/auth/register 一律 403，
+    # 新账号只能由后台「新增 C 端用户」创建；测试环境在 conftest 里置 true 以便造数。
+    allow_public_register: bool = False     # TAICHU_ALLOW_PUBLIC_REGISTER
     # alias 使环境变量名为 TAICHU_FREE_CREDIT（与字段名 free_credit_on_register 不完全对应）
     free_credit_on_register: int = Field(default=220, validation_alias="TAICHU_FREE_CREDIT")  # 新用户注册赠送余额（220 存储单位 = 22 元 = 22 万 tokens ≈ 9盘首跑 + 3次追问）
     recharge_rate: float = 10.0             # TAICHU_RECHARGE_RATE：1 元 = 10 存储单位（默认，后台 system_configs 可动态改）

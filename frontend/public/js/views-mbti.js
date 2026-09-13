@@ -600,7 +600,7 @@ function MbtiSharePage({
       el('span', {className: 'tc-share-brand-tag'}, UI_COPY.brand.tagline)),
     el('div', {className: 'tc-share-brand-note'}, UI_COPY.landing.disclaimer_short),
     el('div', {className: 'tc-share-brand-links'},
-      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('auth')}, '登录 / 注册'),
+      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('auth')}, UI_COPY.menu['login-register']),
       el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('landing')}, '了解太初'))) : null;
   const [caseName, setCaseName] = useState('');
   const [questions, setQuestions] = useState([]);

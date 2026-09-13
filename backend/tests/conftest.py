@@ -30,6 +30,9 @@ _TMP_ROOT = Path(tempfile.mkdtemp(prefix="taichu_pytest_"))
 os.environ["TAICHU_DB_PATH"] = str(_TMP_ROOT / "analytics.db")
 os.environ["TAICHU_FEEDBACK_DB_PATH"] = str(_TMP_ROOT / "feedback.fb")
 os.environ["TAICHU_OPS_DB_PATH"] = str(_TMP_ROOT / "ops.db")
+# 节141：公开注册默认关闭（生产口径）；测试需用 /api/auth/register 造数 → 此处显式打开。
+# 环境变量优先级高于 env_file，且必须早于任何 app.* import（pydantic-settings 单例）。
+os.environ["TAICHU_ALLOW_PUBLIC_REGISTER"] = "true"
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 CHART_JSON_PATH = FIXTURES_DIR / "chart.json"
