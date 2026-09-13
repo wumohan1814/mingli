@@ -127,8 +127,6 @@ import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/alg
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
-import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
 import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
 import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
@@ -149,6 +147,12 @@ import { calculateWuyunLiuqiCore } from './paipan-core/src/capabilities/wuyun/in
 import { drawRandomSignCore } from './paipan-core/src/capabilities/ssgw/index.js';
 import { generateAlmanacSelectionCore } from './paipan-core/src/capabilities/almanac/index.js';
 import { calculateZodiacYearFortuneCore, getYearTaiSuiCore } from './paipan-core/src/capabilities/zodiac/index.js';
+
+// 节151：西洋占星已切换到自研内核（natal 对拍 2259/2259 全 100%）；vendor 的
+//   generateAstrolabe / buildAstrolabeFullScopeContexts / buildAstrolabeScopeContext
+//   已下线。星历地基 = astronomia@4.2.0（MIT）；fullScope 的 periodEvents 事件流
+//   暂以空容器 + not-implemented 标注（节151 已登记缺口）。
+import { generateAstrolabeCore, buildAstrolabeFullScopeContextsCore, buildAstrolabeScopeContextCore } from './paipan-core/src/capabilities/astrology/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -259,8 +263,23 @@ async function computeExtra(input) {
   let western = null;
   let qizheng = null;
   try {
-    const bundle = await calculateBirthChartBundle(profile, { systems: ['astrolabe', 'qizheng'] });
-    western = bundle.astrolabe ? stripInternal(bundle.astrolabe) : null;
+    // 节151：western 改用自研内核（astronomia 星历，natal 对拍 2259/2259）；
+    // qizheng 仍走 vendor bundle（节152 替换）。
+    western = stripInternal(generateAstrolabeCore({
+      name: input.name || '',
+      gender,
+      locationName: input.birthplace || '',
+      year: String(input.year),
+      month: input.month === undefined ? '1' : String(input.month),
+      day: input.day === undefined ? '1' : String(input.day),
+      hour: input.hour === undefined ? '0' : String(input.hour),
+      minute: input.minute === undefined ? '0' : String(input.minute),
+      latitude: String(input.latitude),
+      longitude: String(input.longitude),
+      timezone: '8',
+      useTrueSolarTime: Boolean(input.true_solar),
+    }));
+    const bundle = await calculateBirthChartBundle(profile, { systems: ['qizheng'] });
     qizheng = bundle.qizheng ? stripInternal(bundle.qizheng) : null;
   } catch (e) {
     console.error(`[paipan_extra] astrolabe/qizheng 失败: ${e && e.message ? e.message : e}`);
@@ -759,15 +778,16 @@ function computeAstrology(input) {
     useTrueSolarTime: Boolean(input.true_solar),
   };
 
-  const natal = generateAstrolabe(astrolabeInput);
+  const natal = generateAstrolabeCore(astrolabeInput);
   const result = { natal: stripInternal(natal) };
 
   if (scope !== 'natal') {
     // full 优先：行运/日返/次限等一律产出全范围上下文（引擎以统一 YYYY-MM-DD 基准
     // 派生流年/流月/流日；dateStr 缺省/非法时以当天为基准，避免引擎 normalize 抛错）。
+    // 节151：自研内核；periodEvents 事件流暂为空容器 + not-implemented 标注（已登记缺口）。
     const rawDate = (typeof input.dateStr === 'string' && input.dateStr.trim()) ? input.dateStr.trim() : '';
     const referenceDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : todayDateStr();
-    result.fullScope = stripInternal(buildAstrolabeFullScopeContexts(natal, referenceDate));
+    result.fullScope = stripInternal(buildAstrolabeFullScopeContextsCore(natal, referenceDate));
   }
   return result;
 }
