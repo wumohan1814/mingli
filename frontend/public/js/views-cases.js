@@ -734,7 +734,11 @@ function ArchivePage({
   const lngTxt = fmtDir(inp.longitude, 'E', 'W');
   const latTxt = fmtDir(inp.latitude, 'N', 'S');
   const coordText = [lngTxt ? UI_COPY.caseDetail['coord-lng-prefix'] + lngTxt : null, latTxt ? UI_COPY.caseDetail['coord-lat-prefix'] + latTxt : null].filter(Boolean).join(' · ') || UI_COPY.caseDetail['coord-not-provided'];
-  const rows = [[UI_COPY.caseDetail['row-birth-dt'], birthDT], [UI_COPY.caseDetail['row-ganzhi'], ganzhiText], [UI_COPY.caseDetail['row-lunar'], lunarText], [UI_COPY.caseDetail['row-zodiac'], zodiacText], [UI_COPY.caseDetail['row-gender'], genderText], [UI_COPY.caseDetail['row-birthplace'], notEmpty(inp.birthplace)], [UI_COPY.caseDetail['row-coord'], coordText], [UI_COPY.caseDetail['row-true-solar'], inp.true_solar_time ? UI_COPY.caseDetail.yes : UI_COPY.caseDetail.no], [UI_COPY.caseDetail.phone_label, casePhone], [UI_COPY.caseDetail.email_label, caseEmail]];
+  // 节149 N3：夏令时校正（1986–1991 官方表）与出生时间不确定项声明（message 由后端单一源下发）
+  const calMeta = chartData.meta || {};
+  const uncertList = Array.isArray(calMeta.input_uncertainties) ? calMeta.input_uncertainties.filter(u => u && u.message) : [];
+  const dstVal = chartData.calendar && typeof chartData.calendar.dst_applied === 'boolean' ? (chartData.calendar.dst_applied ? UI_COPY.caseDetail.yes : UI_COPY.caseDetail.no) : null;
+  const rows = [[UI_COPY.caseDetail['row-birth-dt'], birthDT], [UI_COPY.caseDetail['row-ganzhi'], ganzhiText], [UI_COPY.caseDetail['row-lunar'], lunarText], [UI_COPY.caseDetail['row-zodiac'], zodiacText], [UI_COPY.caseDetail['row-gender'], genderText], [UI_COPY.caseDetail['row-birthplace'], notEmpty(inp.birthplace)], [UI_COPY.caseDetail['row-coord'], coordText], [UI_COPY.caseDetail['row-true-solar'], inp.true_solar_time ? UI_COPY.caseDetail.yes : UI_COPY.caseDetail.no], [UI_COPY.caseDetail['row-dst'], dstVal], [UI_COPY.caseDetail.phone_label, casePhone], [UI_COPY.caseDetail.email_label, caseEmail]];
 
   // 校准记录：record 为反馈条数（可能是数组/数字），fit 为 score_fit 结果对象；
   // 整体契合度若能取到数值则展示，否则只展示反馈条数
@@ -1091,7 +1095,12 @@ function ArchivePage({
     className: "k"
   }, r[0]), /*#__PURE__*/React.createElement("span", {
     className: "v"
-  }, r[1] != null && r[1] !== '' ? r[1] : '—'))), (!inp.longitude || !inp.latitude) && /*#__PURE__*/React.createElement("p", {
+  }, r[1] != null && r[1] !== '' ? r[1] : '—'))), uncertList.length ? /*#__PURE__*/React.createElement("p", {
+    className: "coord-hint",
+    style: {
+      marginTop: 8
+    }
+  }, UI_COPY.caseDetail['birth-time-note'] + '：' + uncertList.map(u => u.message).join('；')) : null, (!inp.longitude || !inp.latitude) && /*#__PURE__*/React.createElement("p", {
     className: "coord-hint",
     style: {
       marginTop: 8

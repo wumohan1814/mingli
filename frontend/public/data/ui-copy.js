@@ -386,6 +386,10 @@ window.ML_COPY = {
       'row-birthplace': '出生地',
       'row-coord': '出生地坐标',
       'row-true-solar': '真太阳时',
+      // 节149 N3：夏令时校正（1986–1991 官方表）与出生时间不确定项声明（message 由后端
+      // chart.meta.input_uncertainties 单一源下发，此处只有行标签，正文不在此复制）
+      'row-dst': '夏令时校正',
+      'birth-time-note': '出生时间提示',
       'yes': '是',
       'no': '否',
       'coord-lng-prefix': '经度 ',

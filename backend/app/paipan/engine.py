@@ -33,6 +33,7 @@ import httpx
 from lunar_python import Solar
 
 from app.config import settings
+from app.paipan.birthtime import correct_birth_time
 from app.paipan.shensha import compute_shensha
 
 GAN_WUXING = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",
@@ -340,16 +341,26 @@ def paipan(*, year: int, month: int, day: int,
         gender_num = 1 if gender == "男" else 0
         has_hour = input_hour is not None
 
-        # 真太阳时近似：经度每偏离 120° 一度修正 4 分钟
-        true_solar_applied = False
+        # 节149 出生时间校正面（单一权威源）：app/paipan/birthtime.py 与自研内核
+        # paipan-core 的 true-solar-time 能力同算法同表（交叉验证见
+        # tests/unit/test_birthtime.py + paipan-node/paipan-core/tests/true-solar-time.test.mjs）。
+        #   ① 夏令时（1986–1991 官方表）：事实性修正，默认开启；
+        #   ② 真太阳时（EoT 均时差 + 经度差）：按输入开关（true_solar 且给了经度才生效）。
+        # 修正后的时间喂给**所有**下游（八字/紫微/占星/七政/奇门），并对 Node 侧关闭其内部
+        # 真太阳时（避免二次校正——单一权威）。
         hour = input_hour or 12
         minute = input_minute or 0
-        if true_solar and longitude is not None:
-            delta_min = int(round((longitude - 120) * 4))
-            total = hour * 60 + minute + delta_min
-            total %= 24 * 60
-            hour, minute = divmod(total, 60)
-            true_solar_applied = True
+        correction = correct_birth_time(
+            year, month, day, hour, minute,
+            longitude=longitude,
+            apply_true_solar=bool(true_solar and longitude is not None),
+            apply_dst=True,
+        )
+        hour = correction["hour"]
+        minute = correction["minute"]
+        true_solar_applied = bool(correction["applied"]["eot"] or correction["applied"]["longitude"])
+        dst_applied = bool(correction["applied"]["dst"])
+        input_uncertainties = correction["uncertainties"]
 
         solar = Solar.fromYmdHms(year, month, day, hour, minute, 0)
         lunar = solar.getLunar()
@@ -372,9 +383,10 @@ def paipan(*, year: int, month: int, day: int,
 
         western = qizheng = wuyun = qimen_lifetime = None
         if has_hour and longitude is not None:
+            # 节149：时间已在上面经单一校正面修正，Node 侧关闭其内部真太阳时（防二次校正）
             extra = run_extra(year, month, day, hour, gender, name,
                               birthplace, longitude, latitude,
-                              true_solar_applied)
+                              False)
             if extra:
                 western = extra.get("western")
                 qizheng = extra.get("qizheng")
@@ -401,7 +413,10 @@ def paipan(*, year: int, month: int, day: int,
         chart = {
             "meta": {"version": "1.0.0",
                      "generated_at": datetime.now().isoformat(timespec="seconds"),
-                     "source": "mingli-paipan", "degraded_methods": degraded},
+                     "source": "mingli-paipan", "degraded_methods": degraded,
+                     # 节149：出生时间不确定项声明（code+message 由校正面单一源给出，
+                     # 前端展示文案归 ML_COPY，此字段为结构化事实）
+                     "input_uncertainties": input_uncertainties},
             "input": {"calendar": "solar", "year": year, "month": month,
                       "day": day, "hour": input_hour, "minute": input_minute,
                       "gender": gender, "birthplace_name": birthplace,
@@ -409,7 +424,8 @@ def paipan(*, year: int, month: int, day: int,
                       "true_solar_time": true_solar_applied, "sect": 2, "yun_sect": 1,
                       "name": name},
             "calendar": {"solar": solar.toYmdHms(), "lunar": lunar.toString(),
-                         "true_solar_applied": true_solar_applied},
+                         "true_solar_applied": true_solar_applied,
+                         "dst_applied": dst_applied},
             "bazi": bazi,
             "timeline_20y": timeline,
             "ziwei": ziwei,
