@@ -162,10 +162,18 @@ grep '^TAICHU_' .env             # 必须为空
 
 ⚠️ 同时**删掉节146 遗留的金数据键**（`*_JINSHUJU_*`，已整组废弃）。
 
-⚠️🔴 **并补上一个新键 —— 不补 Caddy 起不来**（`Caddyfile` 已改为从环境变量取域名）：
+⚠️🔴 **并补上四个新键 —— 不补 Caddy 与合规文书都会出问题**：
 
 ```bash
-echo 'MINGLI_SITE_DOMAIN=<你的真实域名>' >> /opt/mingli/app/.env
+cd /opt/mingli/app
+# ① 站点域名（Caddyfile 已改为从环境变量取域名；不补 caddy 起不来）
+echo 'MINGLI_SITE_DOMAIN=<你的真实域名>' >> .env
+# ② 合规文书的运营主体（用户协议 / 隐私政策线上要展示；不补则 /legal/*.html 返回 500）
+cat >> .env <<'EOF'
+MINGLI_OPERATOR_NAME=<运营者名称>
+MINGLI_OPERATOR_CONTACT=<联系方式>
+MINGLI_OPERATOR_EMAIL=<邮箱>
+EOF
 docker compose config >/dev/null && echo 'compose 配置可解析'
 ```
 
@@ -205,6 +213,7 @@ docker compose logs --tail=50 web                     # 无循环重启、无 Ke
 | 站点域名 | **已改为可配置项**：值在 `.env` 的 `MINGLI_SITE_DOMAIN`，仓库里只有占位 | 用户 2026-09-14：域名是部署配置、不是项目标识；且一开源就会把自己的域名暴露出去 | 换域名 = 改 `.env` 一处 + A 记录 + `docker compose up -d --force-recreate caddy`（Caddy 自动重签证书） |
 | 可选附加站点 | 值在 `.env` 的 `MINGLI_CADDY_EXTRA` + 未入库的 `ops/deploy/caddy-extra.caddy` | 同上（含内网 IP / Tailscale 主机名等**更敏感**的信息） | 见上方「OpenClaw 接入点（可选附加站点）」 |
 | SSH 私钥文件名 | 仓库里按 `<你的私钥文件>` 占位，真实名只在你的 `~/.ssh/config` | 服务端与本地各一份，改名要两边同步；做错失去登录通道 | **先保一条可用会话**：`cp ~/.ssh/<旧> ~/.ssh/<新>` → 新开一个会话验证能登录 → 再改 `~/.ssh/config` 与服务器 `authorized_keys`/文件名 → 最后删旧文件 |
+| 合规文书运营主体 | 仓库里 `frontend/public/legal/*.html` 与 `docs/legal/*.md` **只含 `{{OPERATOR_*}}` 占位符**；真实值在 `.env` 的 `MINGLI_OPERATOR_*`，由后端服务端渲染注入 | 协议与隐私政策是线上必须写真实主体的合规文书，但一开源就公开个人信息 | 改主体信息 = 改 `.env` 三项 + 重启 web 容器（**不用改仓库文件**）；换主体记得同时更新协议里的生效日期与 `docs/legal/交付说明与风险清单.md` |
 
 > 本节的口径：**凡是能定位到你个人的东西（域名 / 公网 IP / 内网 IP / 私钥名 / 真实姓名与联系方式），
 > 一律不进仓库**，只出现在 `.env`、`.gitignore` 覆盖的本地文件、或 `docs/未公开/`。

@@ -91,6 +91,17 @@ class Settings(BaseSettings):
     paipan_node_port: int = 9317                     # MINGLI_PAIPAN_NODE_PORT
     paipan_max_concurrency: int = 3                  # MINGLI_PAIPAN_MAX_CONCURRENCY（排盘并发上限）
 
+    # 合规文书主体信息（节147 续：抽成配置，仓库里两份文书只放占位符）
+    # 背景：用户协议 / 隐私政策是**线上要展示**的合规文书，必须写真实运营主体；
+    #   但项目要开源（节142），真实姓名/联系方式留在仓库里等于开源即公开。
+    # 解法：仓库里的 docs/legal/*.md 与 frontend/public/legal/*.html 只含
+    #   {{OPERATOR_NAME}} / {{OPERATOR_CONTACT}} / {{OPERATOR_EMAIL}} 占位符，
+    #   由后端在**服务端渲染**时用这三个配置注入（见 app/legal.py）。
+    # ⚠️ 三项任一为空 → 访问 /legal/*.html 一律 500（有意为之：不发布没有运营主体的协议）。
+    operator_name: str = ""       # MINGLI_OPERATOR_NAME（运营者名称）
+    operator_contact: str = ""    # MINGLI_OPERATOR_CONTACT（联系方式）
+    operator_email: str = ""      # MINGLI_OPERATOR_EMAIL（邮箱）
+
     host: str = "0.0.0.0"
     port: int = 8000
 
