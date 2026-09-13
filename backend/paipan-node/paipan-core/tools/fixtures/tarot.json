@@ -1,0 +1,577 @@
+{
+  "capability": "tarot",
+  "note": "塔罗 18 个牌阵 × 种子域边界 × 三种随机模式的旧实现 / 自研内核对拍夹具。",
+  "defaultKeyFields": [
+    "spreadType",
+    "spreadName",
+    "draw.deckSize",
+    "cards[0].id",
+    "cards[0].name",
+    "cards[0].position",
+    "cards[0].reversed",
+    "cards[1].id",
+    "cards[1].name",
+    "cards[1].position",
+    "cards[1].reversed",
+    "cards[2].id",
+    "cards[2].name",
+    "cards[2].position",
+    "cards[2].reversed",
+    "cards[3].id",
+    "cards[3].name",
+    "cards[3].position",
+    "cards[3].reversed",
+    "cards[4].id",
+    "cards[4].name",
+    "cards[4].position",
+    "cards[4].reversed",
+    "cards[5].id",
+    "cards[5].name",
+    "cards[5].position",
+    "cards[5].reversed",
+    "cards[6].id",
+    "cards[6].name",
+    "cards[6].position",
+    "cards[6].reversed",
+    "cards[7].id",
+    "cards[7].name",
+    "cards[7].position",
+    "cards[7].reversed",
+    "cards[8].id",
+    "cards[8].name",
+    "cards[8].position",
+    "cards[8].reversed",
+    "cards[9].id",
+    "cards[9].name",
+    "cards[9].position",
+    "cards[9].reversed",
+    "cards[10].id",
+    "cards[10].name",
+    "cards[10].position",
+    "cards[10].reversed",
+    "cards[11].id",
+    "cards[11].name",
+    "cards[11].position",
+    "cards[11].reversed",
+    "draw.order[0].index",
+    "draw.order[0].position",
+    "draw.order[0].cardId",
+    "draw.order[0].cardName",
+    "draw.order[0].orientation",
+    "draw.order[1].index",
+    "draw.order[1].position",
+    "draw.order[1].cardId",
+    "draw.order[1].cardName",
+    "draw.order[1].orientation",
+    "draw.order[2].index",
+    "draw.order[2].position",
+    "draw.order[2].cardId",
+    "draw.order[2].cardName",
+    "draw.order[2].orientation",
+    "draw.order[3].index",
+    "draw.order[3].position",
+    "draw.order[3].cardId",
+    "draw.order[3].cardName",
+    "draw.order[3].orientation",
+    "draw.order[4].index",
+    "draw.order[4].position",
+    "draw.order[4].cardId",
+    "draw.order[4].cardName",
+    "draw.order[4].orientation",
+    "draw.order[5].index",
+    "draw.order[5].position",
+    "draw.order[5].cardId",
+    "draw.order[5].cardName",
+    "draw.order[5].orientation",
+    "draw.order[6].index",
+    "draw.order[6].position",
+    "draw.order[6].cardId",
+    "draw.order[6].cardName",
+    "draw.order[6].orientation",
+    "draw.order[7].index",
+    "draw.order[7].position",
+    "draw.order[7].cardId",
+    "draw.order[7].cardName",
+    "draw.order[7].orientation",
+    "draw.order[8].index",
+    "draw.order[8].position",
+    "draw.order[8].cardId",
+    "draw.order[8].cardName",
+    "draw.order[8].orientation",
+    "draw.order[9].index",
+    "draw.order[9].position",
+    "draw.order[9].cardId",
+    "draw.order[9].cardName",
+    "draw.order[9].orientation",
+    "draw.order[10].index",
+    "draw.order[10].position",
+    "draw.order[10].cardId",
+    "draw.order[10].cardName",
+    "draw.order[10].orientation",
+    "draw.order[11].index",
+    "draw.order[11].position",
+    "draw.order[11].cardId",
+    "draw.order[11].cardName",
+    "draw.order[11].orientation"
+  ],
+  "notes": [
+    "A 组 18 条逐一覆盖全部牌阵键（single / three / love / career / decision / celtic / chakra / year / mindBodySpirit / horseshoe / holyTriangle / universal / fourElements / hexagram / relationship / wealth / problemSolving / twelveHouses），对拍基准是未加载自研覆盖层的旧实现，逐字段比对 111 条关键字段路径。",
+    "B 组 10 条覆盖种子域边界：0、1、2、-1、1.5（数字），\"x\"、\"中文\"（字符串），2147483647（2^31-1）、4294967295（2^32-1）、4294967296（2^32）。随机源为 FNV-1a(String(seed))，因此 seed 的字符串化行为（负数、浮点、非 ASCII 字符、超出 32 位整数范围）正是门禁要观察的差异点。",
+    "节157 追加：fourSeasons（四牌四季）可进夹具——对拍基准 = legacy-tarot.mjs 适配器（vendor + mingli-tarot-spreads 覆盖层），覆盖后引擎认得该阵。",
+    "C 组在多牌位数上补充边界种子（single / celtic / year / twelveHouses），用于验证牌位顺序、重复抽牌与最大 12 张牌阵在不同种子下的一致性。",
+    "D 组覆盖三种随机模式：seed（确定性种子）、replay（固定样本序列回放，提供 80 个样本以覆盖最长 12 张牌阵）、interactiveSamples（交互式随机样本）。三种模式互斥，同一条 options 绝不混用 seed 与 replay。"
+  ],
+  "fixtures": [
+    {
+      "name": "spread-single-seed123",
+      "input": {
+        "spreadType": "single",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-three-seed123",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-love-seed123",
+      "input": {
+        "spreadType": "love",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-career-seed123",
+      "input": {
+        "spreadType": "career",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-decision-seed123",
+      "input": {
+        "spreadType": "decision",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-celtic-seed123",
+      "input": {
+        "spreadType": "celtic",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-chakra-seed123",
+      "input": {
+        "spreadType": "chakra",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-year-seed123",
+      "input": {
+        "spreadType": "year",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-mindBodySpirit-seed123",
+      "input": {
+        "spreadType": "mindBodySpirit",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-horseshoe-seed123",
+      "input": {
+        "spreadType": "horseshoe",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-holyTriangle-seed123",
+      "input": {
+        "spreadType": "holyTriangle",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-universal-seed123",
+      "input": {
+        "spreadType": "universal",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-fourElements-seed123",
+      "input": {
+        "spreadType": "fourElements",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-hexagram-seed123",
+      "input": {
+        "spreadType": "hexagram",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-relationship-seed123",
+      "input": {
+        "spreadType": "relationship",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-wealth-seed123",
+      "input": {
+        "spreadType": "wealth",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-problemSolving-seed123",
+      "input": {
+        "spreadType": "problemSolving",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-twelveHouses-seed123",
+      "input": {
+        "spreadType": "twelveHouses",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-01",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 0
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-02",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 1
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-03",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 2
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-04",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": -1
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-05",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 1.5
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-06",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": "x"
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-07",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": "中文"
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-08",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 2147483647
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-09",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 4294967295
+        }
+      }
+    },
+    {
+      "name": "seed-boundary-10",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "seed": 4294967296
+        }
+      }
+    },
+    {
+      "name": "multicard-single-seed1",
+      "input": {
+        "spreadType": "single",
+        "options": {
+          "seed": 1
+        }
+      }
+    },
+    {
+      "name": "multicard-celtic-seed1",
+      "input": {
+        "spreadType": "celtic",
+        "options": {
+          "seed": 1
+        }
+      }
+    },
+    {
+      "name": "multicard-celtic-seed42",
+      "input": {
+        "spreadType": "celtic",
+        "options": {
+          "seed": 42
+        }
+      }
+    },
+    {
+      "name": "multicard-year-seed7",
+      "input": {
+        "spreadType": "year",
+        "options": {
+          "seed": 7
+        }
+      }
+    },
+    {
+      "name": "multicard-twelveHouses-seed0",
+      "input": {
+        "spreadType": "twelveHouses",
+        "options": {
+          "seed": 0
+        }
+      }
+    },
+    {
+      "name": "mode-replay-three-seed7-samples",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "replay": [
+            0.5916928979568183,
+            0.7049730001017451,
+            0.5164144658483565,
+            0.44525484554469585,
+            0.07848124299198389,
+            0.03169040917418897,
+            0.08188922493718565,
+            0.35350039997138083,
+            0.10651312628760934,
+            0.4860319425351918,
+            0.08146576164290309,
+            0.5599418862257153,
+            0.06973935686983168,
+            0.5632116971537471,
+            0.40951207862235606,
+            0.8128823025617748,
+            0.4507431734818965,
+            0.41010437393561006,
+            0.08263270696625113,
+            0.7066490722354501,
+            0.5731388384010643,
+            0.18576498748734593,
+            0.2049570786766708,
+            0.5641750497743487,
+            0.372878780355677,
+            0.7718507924582809,
+            0.8545161280781031,
+            0.5019644452258945,
+            0.10147033096291125,
+            0.06683342298492789,
+            0.9880449485499412,
+            0.5471958753187209,
+            0.31224774685688317,
+            0.15220217546448112,
+            0.327389482408762,
+            0.6067386718932539,
+            0.5315379782114178,
+            0.3121684556826949,
+            0.36210362799465656,
+            0.3247932626400143,
+            0.18498839740641415,
+            0.7642240319401026,
+            0.16259306040592492,
+            0.7435565821360797,
+            0.8588230856694281,
+            0.3598064857069403,
+            0.3948563609737903,
+            0.9704016093164682,
+            0.5635910455603153,
+            0.1975035893265158,
+            0.31806887430138886,
+            0.09492098912596703,
+            0.047116252360865474,
+            0.615742678521201,
+            0.0014050686731934547,
+            0.6361645348370075,
+            0.7563695167191327,
+            0.39090669830329716,
+            0.6524046293925494,
+            0.8756789152976125,
+            0.3842254832852632,
+            0.461242089048028,
+            0.5328010658267885,
+            0.1862110635265708,
+            0.1743180863559246,
+            0.8704899344593287,
+            0.971357113448903,
+            0.8177859215065837,
+            0.8558890265412629,
+            0.08847607835195959,
+            0.9984914057422429,
+            0.4262450849637389,
+            0.9804516893345863,
+            0.5923027920071036,
+            0.5077947590034455,
+            0.7909696891438216,
+            0.28678588825277984,
+            0.4744496268685907,
+            0.5705392719246447,
+            0.5424732835963368
+          ]
+        }
+      }
+    },
+    {
+      "name": "mode-interactive-three",
+      "input": {
+        "spreadType": "three",
+        "options": {
+          "interactiveSamples": [
+            0.1,
+            0.9,
+            0.25,
+            0.75,
+            0.5,
+            0.05
+          ]
+        }
+      }
+    },
+    {
+      "name": "mode-interactive-celtic",
+      "input": {
+        "spreadType": "celtic",
+        "options": {
+          "interactiveSamples": [
+            0.05,
+            0.95,
+            0.15,
+            0.85,
+            0.25,
+            0.75,
+            0.35,
+            0.65,
+            0.45,
+            0.55,
+            0.55,
+            0.45,
+            0.65,
+            0.35,
+            0.75,
+            0.25,
+            0.85,
+            0.15,
+            0.95,
+            0.05
+          ]
+        }
+      }
+    },
+    {
+      "name": "spread-fourSeasons-seed123",
+      "input": {
+        "spreadType": "fourSeasons",
+        "options": {
+          "seed": 123
+        }
+      }
+    },
+    {
+      "name": "spread-fourSeasons-seed-reversed",
+      "input": {
+        "spreadType": "fourSeasons",
+        "options": {
+          "seed": "中文种子"
+        }
+      }
+    }
+  ]
+}

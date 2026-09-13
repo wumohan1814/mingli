@@ -331,15 +331,15 @@ def tarot_node_server():
 
 
 def test_tarot_raw_functions_contract():
-    """vendored drawTarotSpread / drawLenormandSpread raw 契约：顶层结构 + seed 确定性。"""
+    """节157 后：自研内核 drawTarotSpreadCore / drawLenormandSpreadCore raw 契约：顶层结构 + seed 确定性。"""
     if NODE_BIN is None:
         pytest.skip("本地无 node，跳过塔罗/雷诺曼原函数契约测试")
     script = (
-        "import { drawTarotSpread } from './vendor/mingyu-core/dist/divination/tarot.js';\n"
-        "import { drawLenormandSpread } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';\n"
-        "const t1 = drawTarotSpread('three', { seed: 'tarot-ut-1' });\n"
-        "const t2 = drawTarotSpread('three', { seed: 'tarot-ut-1' });\n"
-        "const ln = drawLenormandSpread('three', { seed: 'lenormand-ut-1' });\n"
+        "import { drawTarotSpreadCore } from './paipan-core/src/capabilities/tarot/index.js';\n"
+        "import { drawLenormandSpreadCore } from './paipan-core/src/capabilities/lenormand/index.js';\n"
+        "const t1 = drawTarotSpreadCore({ spreadType: 'three', options: { seed: 'tarot-ut-1' } });\n"
+        "const t2 = drawTarotSpreadCore({ spreadType: 'three', options: { seed: 'tarot-ut-1' } });\n"
+        "const ln = drawLenormandSpreadCore({ spreadType: 'three', options: { seed: 'lenormand-ut-1' } });\n"
         "console.log(JSON.stringify({\n"
         "  tarot: { spreadType: t1.spreadType, spreadName: t1.spreadName,\n"
         "    cardCount: (t1.cards || []).length,\n"
@@ -350,7 +350,7 @@ def test_tarot_raw_functions_contract():
         "    deterministic: JSON.stringify(t1.cards.map(c => c.name)) ===\n"
         "      JSON.stringify(t2.cards.map(c => c.name)),\n"
         "    hasEvidenceAnalysis: 'evidenceAnalysis' in t1,\n"
-        "    singleSpreadName: drawTarotSpread('single', { seed: 'tarot-ut-1' }).spreadName },\n"
+        "    singleSpreadName: drawTarotSpreadCore({ spreadType: 'single', options: { seed: 'tarot-ut-1' } }).spreadName },\n"
         "  lenormand: { spreadType: ln.spreadType, spreadName: ln.spreadName,\n"
         "    cardCount: (ln.cards || []).length,\n"
         "    combinationCount: (ln.combinations || []).length,\n"
@@ -382,7 +382,8 @@ def test_tarot_raw_functions_contract():
     assert t["first"]["keywordCount"] >= 1
     assert t["first"]["element"] and t["first"]["archetype"]
     assert t["deterministic"] is True
-    assert t["hasEvidenceAnalysis"] is True          # raw 剥离前确实存在 → 端点需 strip
+    # 节157：自研内核产物干净（无 evidenceAnalysis 内部字段，stripInternal 幂等）
+    assert t["hasEvidenceAnalysis"] is False
     assert t["singleSpreadName"] == "单牌指引"        # spreadType 缺省/显式 single 均单牌
 
     # lenormand three：三牌事件线 3 张 + 2 组相邻组合（两两牌序相邻）
@@ -394,7 +395,7 @@ def test_tarot_raw_functions_contract():
     assert ln["first"]["name"] and ln["first"]["keywordCount"] >= 1
     assert ln["firstCombination"]["card1"] and ln["firstCombination"]["card2"]
     assert ln["firstCombination"]["relation"] == "牌序相邻"
-    assert ln["hasEvidenceAnalysis"] is True
+    assert ln["hasEvidenceAnalysis"] is False
     assert ln["hasLayoutEvidence"] is True
 
 

@@ -50,7 +50,11 @@ let FLOAT_TOLERANCE = 0;
  *   fixtures    夹具文件名
  *   legacy      旧实现模块相对 LEGACY_ROOT 的路径 + 导出名
  *   core        自研内核模块相对 paipan-core 的路径 + 导出名
- *   toLegacyInput  把夹具 input 转成旧实现认得的实参（旧实现只认 Date，不认 ISO 字符串）
+ *   toLegacyInput  把夹具 input 转成旧实现认得的实参。返回**数组** = 展开为多个位置参数
+ *                  （如 generateQimen(customDate, method, scope, juMethod)）；
+ *                  返回其它值 = 作为单参传入。
+ *   toCoreInput    把夹具 input 转成自研内核入参（缺省 = 原样传 fixture.input）。
+ *                  返回数组同样按位置参数展开。
  */
 const CAPABILITIES = {
   xiaoliuren: {
@@ -64,7 +68,93 @@ const CAPABILITIES = {
       return { customDate: input.customDate instanceof Date ? input.customDate : new Date(input.customDate) };
     },
   },
+  liuyao: {
+    fixtures: 'liuyao.json',
+    legacy: { module: 'divination/algorithms/liuyao.js', exportName: 'generateLiuyao' },
+    core: { module: 'src/capabilities/liuyao/index.js', exportName: 'generateLiuyaoCore' },
+    toLegacyInput: (input) => [toDate(input.customDate), input.options || {}],
+    toCoreInput: (input) => ({ customDate: input.customDate, options: input.options || {} }),
+  },
+  meihua: {
+    fixtures: 'meihua.json',
+    legacy: { module: 'divination/algorithms/meihua/index.js', exportName: 'generateMeihua' },
+    core: { module: 'src/capabilities/meihua/index.js', exportName: 'generateMeihuaCore' },
+    toLegacyInput: (input) => [toDate(input.customDate), input.settings || {}],
+    toCoreInput: (input) => ({ customDate: input.customDate, settings: input.settings || {} }),
+  },
+  ssgw: {
+    fixtures: 'ssgw.json',
+    legacy: { module: 'divination/algorithms/ssgw.js', exportName: 'drawRandomSign' },
+    core: { module: 'src/capabilities/ssgw/index.js', exportName: 'drawRandomSignCore' },
+    toLegacyInput: (input) => input.options || {},
+    toCoreInput: (input) => input.options || {},
+  },
+  almanac: {
+    fixtures: 'almanac.json',
+    legacy: { module: 'divination/algorithms/almanac.js', exportName: 'generateAlmanacSelection' },
+    core: { module: 'src/capabilities/almanac/index.js', exportName: 'generateAlmanacSelectionCore' },
+    toLegacyInput: (input) => input.params || {},
+    toCoreInput: (input) => input.params || {},
+  },
+  zodiac: {
+    fixtures: 'zodiac.json',
+    legacy: { module: 'zodiac/index.js', exportName: 'calculateZodiacYearFortune' },
+    core: { module: 'src/capabilities/zodiac/index.js', exportName: 'calculateZodiacYearFortuneCore' },
+    toLegacyInput: (input) => ({ zodiac: input.zodiac, year: input.year }),
+    toCoreInput: (input) => ({ zodiac: input.zodiac, year: input.year }),
+  },
+  tarot: {
+    fixtures: 'tarot.json',
+    // 旧实现 = 覆盖层适配器（vendor + mingli-tarot-spreads 覆盖，与 server.mjs 生产装配一致）
+    legacyModule: 'tools/compare/legacy-tarot.mjs',
+    legacy: { module: 'divination/tarot.js', exportName: 'drawTarotSpread' },
+    core: { module: 'src/capabilities/tarot/index.js', exportName: 'drawTarotSpreadCore' },
+    toLegacyInput: (input) => [input.spreadType || 'single', input.options || {}],
+    toCoreInput: (input) => ({ spreadType: input.spreadType || 'single', options: input.options || {} }),
+  },
+  lenormand: {
+    fixtures: 'lenormand.json',
+    legacy: { module: 'divination/algorithms/lenormand.js', exportName: 'drawLenormandSpread' },
+    core: { module: 'src/capabilities/lenormand/index.js', exportName: 'drawLenormandSpreadCore' },
+    toLegacyInput: (input) => [input.spreadType || 'single', input.options || {}],
+    toCoreInput: (input) => ({ spreadType: input.spreadType || 'single', options: input.options || {} }),
+  },
+  astrology: {
+    fixtures: 'astrology.json',
+    legacy: { module: 'divination/algorithms/astrolabe.js', exportName: 'generateAstrolabe' },
+    core: { module: 'src/capabilities/astrology/index.js', exportName: 'generateAstrolabeCore' },
+    toLegacyInput: (input) => ({
+      name: input.name || '',
+      gender: input.gender || 'male',
+      locationName: input.birthplace || '',
+      year: String(input.year),
+      month: input.month === undefined ? '1' : String(input.month),
+      day: input.day === undefined ? '1' : String(input.day),
+      hour: input.hour === undefined ? '0' : String(input.hour),
+      minute: input.minute === undefined ? '0' : String(input.minute),
+      latitude: String(input.latitude),
+      longitude: String(input.longitude),
+      timezone: '8',
+      useTrueSolarTime: Boolean(input.true_solar),
+    }),
+    toCoreInput: (input) => input,
+  },
+  wuyun: {
+    fixtures: 'wuyun.json',
+    legacy: { module: 'wuyun-liuqi/index.js', exportName: 'calculateWuyunLiuqi' },
+    core: { module: 'src/capabilities/wuyun/index.js', exportName: 'calculateWuyunLiuqiCore' },
+    toLegacyInput: (input) => ({ year: input.year }),
+    toCoreInput: (input) => ({ year: input.year }),
+  },
 };
+
+/** 夹具 input 里的 ISO 字符串转 Date（旧实现只认 Date 的能力用）。 */
+function toDate(value) {
+  if (value === undefined || value === null || value === '') return undefined;
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) throw new Error(`Invalid customDate: ${value}`);
+  return d;
+}
 
 /** 中文对齐用：显示宽度（粗略，CJK 记 2 列）。 */
 function displayWidth(text) {
@@ -149,7 +239,6 @@ async function main() {
   }
 
   const { stripInternal, extractKeyFields } = await import(pathToFileURL(path.join(CORE_ROOT, 'src', 'pipeline', 'index.js')).href);
-  const { generateXiaoliurenCore } = await import(pathToFileURL(path.join(CORE_ROOT, 'src', 'capabilities', 'xiaoliuren', 'index.js')).href);
 
   let failedCapabilities = 0;
 
@@ -175,7 +264,12 @@ async function main() {
       if (!golden.fixtures || typeof golden.fixtures !== 'object') throw new Error(`golden 文件结构不对（需 fixtures 对象）: ${goldenPath}`);
       legacyLabel = `golden 快照 ${path.relative(process.cwd(), goldenPath)}（旧实现输出，无 vendor 依赖）`;
     } else {
-      const legacyModulePath = path.join(path.resolve(opts.legacyRoot), spec.legacy.module);
+      // legacyModule（可选）：相对 paipan-core 的旧实现**适配器**模块（如 tarot 的
+      // 覆盖层 legacy-tarot.mjs——先加载 vendor 并应用命理牌阵覆盖，再导出同名单函数）；
+      // 缺省走 legacyRoot 下的 spec.legacy.module。
+      const legacyModulePath = spec.legacyModule
+        ? path.join(CORE_ROOT, spec.legacyModule)
+        : path.join(path.resolve(opts.legacyRoot), spec.legacy.module);
       if (!fs.existsSync(legacyModulePath)) {
         throw new Error(`旧实现模块不存在: ${legacyModulePath}（可用 --use-golden 走 golden 快照，或 --legacy 指定目录）`);
       }
@@ -205,12 +299,13 @@ async function main() {
           if (!entry || !entry.stripped) throw new Error(`golden 快照缺该夹具条目: ${fixture.name}`);
           legacyStripped = entry.stripped;
         } else {
-          const legacyRaw = legacyRun(spec.toLegacyInput(fixture.input));
+          const legacyArgs = spec.toLegacyInput ? spec.toLegacyInput(fixture.input) : fixture.input;
+          const legacyRaw = Array.isArray(legacyArgs) ? legacyRun(...legacyArgs) : legacyRun(legacyArgs);
           legacyStripped = stripInternal(legacyRaw);
         }
-        const coreRaw = capability === 'xiaoliuren'
-          ? generateXiaoliurenCore(fixture.input)
-          : await (await loadExport(path.join(CORE_ROOT, spec.core.module), spec.core.exportName))(fixture.input);
+        const coreFn = await loadExport(path.join(CORE_ROOT, spec.core.module), spec.core.exportName);
+        const coreArgs = spec.toCoreInput ? spec.toCoreInput(fixture.input) : fixture.input;
+        const coreRaw = Array.isArray(coreArgs) ? coreFn(...coreArgs) : coreFn(coreArgs);
         coreStripped = stripInternal(coreRaw);
       } catch (err) {
         failedFixtures.push({ name: fixture.name, reason: `运行异常: ${err && err.message ? err.message : String(err)}` });
