@@ -1,5 +1,5 @@
 #!/bin/bash
-# 太初 · 服务器一键部署脚本（在服务器上执行）
+# 命理太初 · 服务器一键部署脚本（在服务器上执行）
 # 用法：bash ops/deploy/deploy.sh
 set -e
 

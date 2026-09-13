@@ -18,7 +18,7 @@
         memory_service.enqueue_extraction(user_id, last_user_msg_id)
     last_user_msg_id = 本回合最后一条 user 消息在 agent_messages 里的 id；
     入队失败静默记日志，不影响对话主流程。
-  - 组装发给模型的上下文时（含先生开场白）调用
+  - 组装发给模型的上下文时（含王先生开场白）调用
         memory_service.recall_memories(user_id, query=最新用户消息文本,
                                        k=None, mode="question"|"opening")
     返回的文本段作为独立 system 消息紧跟角色 prompt 之后注入（§5.3）；
@@ -115,7 +115,7 @@ _RULE_TRUST = 0.75                 # §2.4 规则抽取固定 trust
 # 抽取 LLM 的 system 提示词（REQ-048 只管 agent/master.md；记忆抽取提示词不属于
 # 后台可热改范围，按 §2.4 语义内嵌为常量，无外部文件依赖）
 _EXTRACT_SYSTEM_PROMPT = (
-    "你是「太初先生」的长期记忆抽取器。用户在与先生对话中透露了跨会话有用的稳定事实，"
+    "你是「王先生」的长期记忆抽取器。用户在与王先生对话中透露了跨会话有用的稳定事实，"
     "请抽取出来供未来会话参考。\n"
     "只抽：稳定偏好（喜欢/不喜欢什么）、身份与背景、长期目标、生活习惯、关键经历。\n"
     "忽略：寒暄、客套、一次性闲聊、提问本身、数字排盘细节、涉及他人的信息。\n"
@@ -402,7 +402,7 @@ def _tag_hit_ratio(tags: list[str], query: str) -> float:
 
 
 # R3-2：从查询中提取可能匹配 tags 的关键词（2~6 字的中文/英文数字词块）。
-# 太初记忆的 tags 是 LLM 抽的"简短关键词"（2~5 个），典型如「财运」「性格」
+# 命理太初记忆的 tags 是 LLM 抽的"简短关键词"（2~5 个），典型如「财运」「性格」
 # 「事业」「婚姻」「健康」等。用纯正则切词，零依赖、零算力。
 _TAG_KEYWORD_RE = re.compile(r"[A-Za-z0-9\u4e00-\u9fff]+")
 
@@ -410,13 +410,13 @@ _TAG_KEYWORD_RE = re.compile(r"[A-Za-z0-9\u4e00-\u9fff]+")
 def _extract_tag_keywords(query: str) -> list[str]:
     """从查询中提取候选 tag 关键词。
 
-    太初记忆的 tags 是 LLM 抽的「简短关键词」（2~5 个，多为 2 字中文词，
+    命理太初记忆的 tags 是 LLM 抽的「简短关键词」（2~5 个，多为 2 字中文词，
     如「财运」「性格」「事业」「婚姻」）。tag 通道的核心是：query 里出现
     的词如果正好是某个 tag，那条记忆就是强相关。
 
     切分策略（零依赖、纯正则）：
     1. 先按非 [中文/字母/数字] 切成若干「连续块」
-    2. **纯中文块**：用 2 字滑窗切，每个 2 字片段都是候选 tag（太初 tags
+    2. **纯中文块**：用 2 字滑窗切，每个 2 字片段都是候选 tag（命理太初 tags
        绝大多数是 2 字词）；3 字词也保留（如「公务员」「金牛座」）
        —— 无意义组合（如「我今」「年财」）会在 Python 精确验证阶段被过滤掉
     3. **英文/数字/混合块**：整块保留（英文 tags 本身就是空格分隔的单词）
@@ -448,7 +448,7 @@ def _extract_tag_keywords(query: str) -> list[str]:
         has_alpha = any('a' <= ch <= 'z' or 'A' <= ch <= 'Z' for ch in chunk)
 
         if has_chinese and not has_alpha:
-            # 纯中文块 → 2 字滑窗优先（太初 tags 绝大多数是 2 字词），
+            # 纯中文块 → 2 字滑窗优先（命理太初 tags 绝大多数是 2 字词），
             # 3 字滑窗作为补充（覆盖三字 tag 如「公务员」「金牛座」）。
             # 2 字先加，保证核心短词不被长词挤掉上限。
             n = len(chunk)
@@ -828,7 +828,7 @@ def recall_memories(user_id: int, query: str = "", k: int | None = None,
         })
         return block
     except Exception:
-        # §5.5 召回/渲染任何异常 → 静默降级为不注入（先生正常应答）
+        # §5.5 召回/渲染任何异常 → 静默降级为不注入（王先生正常应答）
         logger.exception("记忆召回异常（静默降级为空） user_id=%s", user_id)
         return ""
     finally:

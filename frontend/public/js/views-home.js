@@ -7,8 +7,7 @@
 function LandingPage({
   module,
   onNavigate,
-  loggedIn,
-  agentEnabled
+  loggedIn
 }) {
   // 各模块的「落地宣传页」配置：主标题 / 副标题 / 简介 / 主按钮 → 对应 HUB 或测试页
   const MODS = {
@@ -18,21 +17,7 @@ function LandingPage({
       subtitle: TC_COPY.ui.module_hub.guoxue_desc,
       intro: TC_COPY.ui.landing.value_1_desc,
       cta: TC_COPY.ui.module_hub.enter_guoxue,
-      to: 'guoxue-hub',
-      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes）
-         REQ-084：序列帧 sprite sheet 播放器配置 —— sprite.ready=false 走旧 CSS 动画（零回归）；
-         美术动作帧素材回传后置 ready=true 并填 src 即可（cols/rows/frames/width 按回传网格约定调整）；
-         interact 为叠加互动小元素（透明小图 + CSS 路径动画 class 占位），素材未回传保持空数组 */
-      mascot: {
-        cls: 'guoxue',
-        src: '/art/module-mascot/guoxue-mascot.webp',
-        alt: TC_COPY.ui.landing['mascot-guoxue-alt'],
-        sprite: { ready: true, src: '/art/taichu-pet/mascot-guoxue.webp', cols: 5, rows: 2, frames: 10, duration: 2.0, width: 256 },
-        interact: [
-          { key: 'bird', src: '/art/taichu-pet/fx-bird.webp', cls: 'fx-fly-bird' },
-          { key: 'butterfly', src: '/art/taichu-pet/fx-butterfly.webp', cls: 'fx-fly-butterfly' }
-        ]
-      }
+      to: 'guoxue-hub'
     },
     xishi: {
       icon: 'orbit',
@@ -40,20 +25,7 @@ function LandingPage({
       subtitle: TC_COPY.ui.module_hub.western_desc,
       intro: TC_COPY.ui.landing['xishi-intro'],
       cta: TC_COPY.ui.module_hub.enter_western,
-      to: 'xishi-hub',
-      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes）
-         REQ-084：序列帧 sprite sheet 播放器配置 —— 见 guoxue 处注释 */
-      mascot: {
-        cls: 'xishi',
-        src: '/art/module-mascot/xishi-mascot.webp',
-        alt: TC_COPY.ui.landing['mascot-xishi-alt'],
-        sprite: { ready: true, src: '/art/taichu-pet/mascot-xishi.webp', cols: 5, rows: 2, frames: 10, duration: 3.6, width: 256 },
-        interact: [
-          { key: 'star-five', src: '/art/taichu-pet/fx-star-five.webp', cls: 'fx-spin-star' },
-          { key: 'star-sparkle', src: '/art/taichu-pet/fx-star-sparkle.webp', cls: 'fx-spin-star fx-sparkle' },
-          { key: 'constellation', src: '/art/taichu-pet/fx-constellation.webp', cls: 'fx-fade-constellation' }
-        ]
-      }
+      to: 'xishi-hub'
     },
     mbti: {
       icon: 'spark',
@@ -61,19 +33,7 @@ function LandingPage({
       subtitle: TC_COPY.ui.module_hub.mbti_desc,
       intro: TC_COPY.ui.landing['mbti-intro'],
       cta: TC_COPY.ui.module_hub.enter_mbti,
-      to: 'mbti-hub',
-      /* REQ-084：Q 版动画（素材：美术素材表-第三轮 §0.4 主图，静态单图 + CSS keyframes）
-         REQ-084：序列帧 sprite sheet 播放器配置 —— 见 guoxue 处注释 */
-      mascot: {
-        cls: 'mbti',
-        src: '/art/module-mascot/mbti-mascot.webp',
-        alt: TC_COPY.ui.landing['mascot-mbti-alt'],
-        sprite: { ready: true, src: '/art/taichu-pet/mascot-mbti.webp', cols: 5, rows: 2, frames: 10, duration: 3.2, width: 256 },
-        interact: [
-          { key: 'star-five', src: '/art/taichu-pet/fx-star-five.webp', cls: 'fx-spin-star' },
-          { key: 'star-sparkle', src: '/art/taichu-pet/fx-star-sparkle.webp', cls: 'fx-spin-star fx-sparkle' }
-        ]
-      }
+      to: 'mbti-hub'
     }
   };
   const c = MODS[module] || MODS.guoxue;
@@ -108,48 +68,7 @@ function LandingPage({
       lineHeight: 1.9,
       marginBottom: 26
     }
-  }, c.intro), /* REQ-084：模块 Q 版循环动画（旧：静态单图 + CSS keyframes；新：sprite.ready=true 时
-      走序列帧播放器，div 宽=高=sprite.width、background-size=width*cols × width*rows，
-      keyframes 由 ensureSpriteKeyframes 按配置生成，CSS steps(1) 逐帧播放，不渲染旧 <img>）——
-      两种状态整块均可点击进入太初先生会话（与 banner「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
-      REQ-116：agent_enabled 关 → 不渲染，与「对坐谈心」按钮同一开关源 */
-  agentEnabled && c.mascot && /*#__PURE__*/React.createElement("button", {
-    className: "landing-mascot landing-mascot--side anim-mascot " + c.mascot.cls,
-    type: "button",
-    title: TC_COPY.ui.agent['chat-title'],
-    "aria-label": TC_COPY.ui.agent['chat-title'],
-    onClick: () => onNavigate('agent')
-  }, c.mascot.sprite && c.mascot.sprite.ready ? /*#__PURE__*/React.createElement("div", {
-    className: "mascot-sprite play",
-    role: "img",
-    "aria-label": c.mascot.alt,
-    style: {
-      width: c.mascot.sprite.width,
-      height: c.mascot.sprite.width,
-      backgroundImage: 'url("' + c.mascot.sprite.src + '")',
-      backgroundSize: c.mascot.sprite.width * c.mascot.sprite.cols + 'px ' + c.mascot.sprite.width * c.mascot.sprite.rows + 'px',
-      '--sprite-anim': ensureSpriteKeyframes(c.mascot.sprite) + ' ' + c.mascot.sprite.duration + 's steps(1) infinite'
-    }
-  }) : /*#__PURE__*/React.createElement("img", {
-    src: c.mascot.src,
-    alt: c.mascot.alt,
-    loading: "lazy",
-    decoding: "async"
-  }), /* REQ-084：互动小元素叠加层（绝对定位，默认空；interact 配置非空时渲染各透明小图 + 路径动画 class） */
-  /*#__PURE__*/React.createElement("div", {
-    className: "lm-fx"
-  }, (c.mascot.interact || []).map(function (it) {
-    return /*#__PURE__*/React.createElement("img", {
-      key: it.key,
-      src: it.src,
-      alt: "",
-      className: it.cls,
-      loading: "lazy",
-      decoding: "async"
-    });
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "lm-cap"
-  }, TC_COPY.ui.agent.talk)), /*#__PURE__*/React.createElement("button", {
+  }, c.intro), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: () => onNavigate(c.to)
   }, c.cta), /* REQ-064：主按钮正下方「档案管理」透明小按钮（字号小于主按钮；仅登录显示；点击进档案管理列表） */
@@ -1141,7 +1060,7 @@ function TopbarMenu({
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
     ref: wrapRef
-  }, /* REQ-076 + REQ-097：太初先生 Agent 文字按钮「对坐谈心」 —— 位于右上角菜单（汉堡）左侧；
+  }, /* REQ-076 + REQ-097：王先生 Agent 文字按钮「对坐谈心」 —— 位于右上角菜单（汉堡）左侧；
       agent_enabled 开（默认）才显示；关闭入口时隐藏（既有会话与数据保留，重开可见） */
   agentEnabled && /*#__PURE__*/React.createElement("button", {
     className: "agent-top-text",
@@ -1235,7 +1154,7 @@ function TopbarMenu({
 
 /* ---------- REQ-066：功能设置页（右上角菜单「功能设置」→ 此视图） ---------- */
 // 7 项设置：①动画与抽卡模拟 ②占卜界面默认模式（三选一）③Banner 模块下拉导航
-// ④分享表单太初 UI ⑤背景图显示 ⑥牌面图片显示 ⑦太初先生 Agent（存值 + 暴露 agentEnabled
+// ④分享表单命理太初 UI ⑤背景图显示 ⑥牌面图片显示 ⑦王先生 Agent（存值 + 暴露 agentEnabled
 // 钩子，入口待 REQ-076 接入）。改动即保存：props.onPatch 本地即时生效，App 防抖 PUT，
 // saveState 展示 已保存 / 保存中… / 失败回退。未登录（访客）只读展示前端默认值。
 function SettingsPage({

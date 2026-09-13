@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""REQ-076 太初先生 Agent 会话契约测试（backend/tests/unit/test_agent.py）。
+"""REQ-076 王先生 Agent 会话契约测试（backend/tests/unit/test_agent.py）。
 
 覆盖（对应实现范围要求的关键契约）：
   1. GET /api/agent/greeting：鉴权返回开场白文本（含 greeting.md 话术内容）；
@@ -203,7 +203,7 @@ def test_greeting_returns_text_and_auth_401(agent_client):
     assert body["code"] == 0
     greeting = body["data"]["greeting"]
     assert isinstance(greeting, str) and greeting.strip()
-    assert "太初先生" in greeting
+    assert "王先生" in greeting
     assert "开场白" in greeting          # 读取了 prompts/agent/greeting.md
     assert "1." in greeting and "4." in greeting  # 含可轮换的多条话术
 
@@ -245,7 +245,7 @@ def test_chat_success_persists_and_charges(agent_client, monkeypatch):
     assert len(chat_calls) == 1
     msgs = chat_calls[0]["messages"]
     assert msgs[0]["role"] == "system"
-    assert "太初先生" in msgs[0]["content"] and "合规红线" in msgs[0]["content"]
+    assert "王先生" in msgs[0]["content"] and "合规红线" in msgs[0]["content"]
     assert msgs[-1] == {"role": "user", "content": "最近很焦虑，想聊聊。"}
     assert chat_calls[0]["json_mode"] is False
 
@@ -351,7 +351,7 @@ def test_chat_injects_recalled_memory_block(agent_client, monkeypatch):
 
     # 注入契约：system[0]=master.md；system[1]=记忆块（紧跟角色 prompt，§5.3）
     msgs = chat_calls[0]["messages"]
-    assert msgs[0]["role"] == "system" and "太初先生" in msgs[0]["content"]
+    assert msgs[0]["role"] == "system" and "王先生" in msgs[0]["content"]
     assert msgs[1]["role"] == "system"
     assert "长期记忆" in msgs[1]["content"] and "偏好绿茶" in msgs[1]["content"]
 

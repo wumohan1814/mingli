@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* 太初自研 — 排盘引擎常驻 HTTP 服务。
+/* 命理太初自研 — 排盘引擎常驻 HTTP 服务。
  *
  * 目的：把 ziwei.cjs / extra.mjs 原先「每次 subprocess 调用即启动、用完即退」的
  * 排盘过程收敛为单进程常驻服务。进程启动时一次性加载 iztro + mingyu-core（含
@@ -145,7 +145,7 @@ import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jings
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
 // ---------------------------------------------------------------------------
 
-// REQ-122：太初塔罗牌阵覆盖层 —— 新增 fourSeasons + 覆盖 celtic/horseshoe/hexagram 牌位
+// REQ-122：命理太初塔罗牌阵覆盖层 —— 新增 fourSeasons + 覆盖 celtic/horseshoe/hexagram 牌位
 // （ESM 共享对象就地写入，computeTarot / drawTarotSpread 立即生效；不动 vendored 文件）
 applyTaichuTarotSpreads(tarotSpreads);
 

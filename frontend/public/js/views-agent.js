@@ -1,7 +1,7 @@
-// 太初先生 Agent 域视图（节110 阶段3）：太初先生会话页 AgentPage + 开场白候选 AGENT_GREETINGS + 档案关键词 AGENT_CASE_KEYWORDS + randomAgentGreeting/agentLooksCaseRelated
+// 王先生 Agent 域视图（节110 阶段3）：王先生会话页 AgentPage + 开场白候选 AGENT_GREETINGS + 档案关键词 AGENT_CASE_KEYWORDS + randomAgentGreeting/agentLooksCaseRelated
 // 加载于 views-guoxue-tools.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
-// ===== REQ-076：太初先生 Agent 会话页 =====
+// ===== REQ-076：王先生 Agent 会话页 =====
 // 固定 session 对话（C 端对话大师）：顶部档案下拉（仅本人档案，可随时切换）。
 // REQ-113④：会话不提供不选档案的闲聊 —— 进入默认选中「默认档案」（无默认的存量账号
 // 回退选中最新一份），无档案时提示先建档；下拉切换到非默认档案时弹确认窗口
@@ -14,10 +14,10 @@
 const AGENT_CASE_KEYWORDS = ['档案','命盘','八字','紫微','星盘','本命','排盘','命宫','身宫','大运','流年'];
 // BUG-014：开场白候选池（对齐 backend/prompts/agent/greeting.md 既有 4 条话术；仅开场展示用，不入 system prompt）
 const AGENT_GREETINGS = [
-  '有缘相见，我是太初先生。人生如棋局，落子无悔；心事如浮云，看开即散。今日有什么想说的，不妨慢慢道来。',
+  '有缘相见，我是王先生。人生如棋局，落子无悔；心事如浮云，看开即散。今日有什么想说的，不妨慢慢道来。',
   '来，先坐，喝口茶。命里的事急不来，心里的事放得下。你我闲话几句，你想从哪儿说起？',
-  '贫道太初，陪你聊聊这烟火人间。悲欢离合、得失起落，看开了都是修行。近来可有什么心事？',
-  '一盏清茶，几句闲话。我是太初先生，懂些命理，更懂人心。今日相逢，你想问些什么，或只是想找人说说话？'
+  '我是王先生，陪你聊聊这烟火人间。悲欢离合、得失起落，看开了都是修行。近来可有什么心事？',
+  '一盏清茶，几句闲话。我是王先生，懂些命理，更懂人心。今日相逢，你想问些什么，或只是想找人说说话？'
 ];
 function randomAgentGreeting() {
   return AGENT_GREETINGS[Math.floor(Math.random() * AGENT_GREETINGS.length)];
@@ -150,7 +150,7 @@ function AgentPage({
         return arr;
       });
     } catch (e) {
-      setSendErr((e && e.message) || '先生暂时没有回应，请稍后重试。');
+      setSendErr((e && e.message) || '王先生暂时没有回应，请稍后重试。');
       setMessages(function (prev) { return (prev || []).filter(function (m) { return !m.pending; }); });
     } finally {
       setSending(false);
@@ -243,8 +243,8 @@ function AgentPage({
     chatBody = el('div', { className: 'agent-chat' },
       el('div', { className: 'agent-empty' },
         el('div', { className: 'agent-empty-icon' }, el(Icon, { name: 'chat', size: 28 })),
-        el('div', null, '太初先生在这儿，有什么想聊聊的？'),
-        el('div', null, caseList && caseList.length ? '已默认选中你的档案，可直接开口。' : '请先建立一份档案，再与太初先生对话。')));
+        el('div', null, '王先生在这儿，有什么想聊聊的？'),
+        el('div', null, caseList && caseList.length ? '已默认选中你的档案，可直接开口。' : '请先建立一份档案，再与王先生对话。')));
   } else {
     chatBody = el('div', { className: 'agent-chat', ref: chatRef },
       messages.map(function (m, i) {
@@ -263,7 +263,7 @@ function AgentPage({
       value: input,
       onChange: function (e) { setInput(e.target.value); },
       onKeyDown: onInputKey,
-      placeholder: selName ? '向太初先生提问（已结合「' + selName + '」）…' : '请先建立档案，再与太初先生对话…',
+      placeholder: selName ? '向王先生提问（已结合「' + selName + '」）…' : '请先建立档案，再与王先生对话…',
       disabled: sending || !caseId,
       maxLength: 500
     }),
@@ -294,7 +294,7 @@ function AgentPage({
 
   return el('div', { className: 'agent-page' },
     el('div', { className: 'agent-head' },
-      el('div', { className: 'agent-title' }, el(Icon, { name: 'chat', size: 20 }), ' 太初先生'),
+      el('div', { className: 'agent-title' }, el(Icon, { name: 'chat', size: 20 }), ' 王先生'),
       pick),
     bill,
     loadErr ? el('div', { className: 'agent-err' }, loadErr) : null,

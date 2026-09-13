@@ -13,7 +13,7 @@
 
 ## 归属：自研（ADR-0001）
 
-提示词由太初自研，`reference/mingli/references/` 仅作结构与注入边界的**设计参考**。
+提示词由命理太初自研，`reference/mingli/references/` 仅作结构与注入边界的**设计参考**。
 不采用软链 / 复制 / submodule 等引入方式——引入等于把上游形态带进自研实现。
 
 ## 纪律

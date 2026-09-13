@@ -1,4 +1,4 @@
-# 太初 · 命理 H5 后端镜像（Python 3.13 + Node 22 双运行时）
+# 命理太初 · 命理 H5 后端镜像（Python 3.13 + Node 22 双运行时）
 # 说明：排盘引擎需要 Node 子进程（紫微 iztro / 占星·七政·奇门·五运六气 mingyu-core），
 #       因此镜像必须同时具备 Python 与 Node 两个运行时。
 FROM python:3.13-slim

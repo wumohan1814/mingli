@@ -1,6 +1,6 @@
 # ops/deploy · 部署说明
 
-太初线上部署采用「**模块化单体 Docker 镜像 + Caddy HTTPS 反代 + SQLite 持久卷**」。
+命理太初线上部署采用「**模块化单体 Docker 镜像 + Caddy HTTPS 反代 + SQLite 持久卷**」。
 
 ## 文件
 

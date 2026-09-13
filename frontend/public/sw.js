@@ -1,5 +1,5 @@
 /* =====================================================================
- * sw.js — 太初最小 Service Worker（REQ-098 PWA，代码占位版）
+ * sw.js — 命理太初最小 Service Worker（REQ-098 PWA，代码占位版）
  *
  * 只做两件事：
  *   1. cache-as-you-go：运行时把「本项目静态图片」按需写入 CacheStorage；

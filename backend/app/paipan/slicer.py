@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""太初自研 — chart.json 片段裁剪（slice）。
+"""命理太初自研 — chart.json 片段裁剪（slice）。
 
 按方法 key 从 chart dict 抽出每个方法模块只需要的那一小块盘面，返回
 `{method_key: fragment}`。目的：**压上下文**——每个方法只喂它自己的切片，

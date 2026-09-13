@@ -871,7 +871,7 @@
     .tc-set-status.failed{color:var(--cinnabar)}
     .tc-set-status.failed .ss-dot{background:var(--cinnabar)}
     .tc-set-guest{font-size:12px;color:var(--text-3);background:var(--paper);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:9px 12px;line-height:1.7;margin-top:10px}
-    /* ===== REQ-076 + REQ-097：太初先生 Agent —— 右上角文字按钮入口 + 会话页 ===== */
+    /* ===== REQ-076 + REQ-097：王先生 Agent —— 右上角文字按钮入口 + 会话页 ===== */
     /* 右上角文字按钮「对坐谈心」（位于品牌区与右上角汉堡菜单之间；agent_enabled 开才显示；
        2026-09-09 文案定稿取代旧对话图标，与 REQ-087 余额菜单/右上角布局协调） */
     .agent-top-text{display:flex;align-items:center;gap:4px;padding:7px 13px;border-radius:999px;
@@ -920,7 +920,7 @@
       color:var(--skin-accent-ink);font-size:14px;font-weight:600;cursor:pointer;transition:box-shadow .2s}
     .agent-send:hover:not(:disabled){box-shadow:0 4px 14px var(--tc-ink-a20)}
     .agent-send:disabled{opacity:.55;cursor:not-allowed}
-    /* REQ-066④：分享表单「太初 UI」品牌条（share_taichu_ui 开时显示在答题卡顶部） */
+    /* REQ-066④：分享表单「命理太初 UI」品牌条（share_taichu_ui 开时显示在答题卡顶部） */
     .tc-share-brand{border-bottom:1px dashed var(--border);padding:2px 0 12px;margin:0 0 12px}
     .tc-share-brand-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .tc-share-brand-name{font-family:var(--font-serif);font-weight:700;font-size:17px;color:var(--text-1);letter-spacing:.04em}

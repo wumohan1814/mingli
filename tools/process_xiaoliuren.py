@@ -1,4 +1,4 @@
-# 太初 · M1/REQ-106 小六壬掌诀图后处理
+# 命理太初 · M1/REQ-106 小六壬掌诀图后处理
 # 输入: 1024x1024 纯白底生图稿
 # 输出: art/xiaoliuren/xiaoliuren-palm.{png,webp} 512x512 透明
 # 附: 六宫中心点画布百分比锚点清单（写入 xiaoliuren-anchors.txt）

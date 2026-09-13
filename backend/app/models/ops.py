@@ -96,7 +96,7 @@ class AssetSlot(OpsBase):
                    仅结果/详情页展示）
       - card       卡牌素材（塔罗 78 + 雷诺曼 36 卡面，按卡 key：tarot-<牌名
                    文件 stem> / lenormand-01…36，统一查看与更换）
-      - agent      太初先生会话页背景槽 ×5（key=agent-1…agent-5，前台进入会话/
+      - agent      王先生会话页背景槽 ×5（key=agent-1…agent-5，前台进入会话/
                    每 10 分钟从已填充槽随机轮换，见 REQ-059⑥）
     url 为素材地址：已上传文件的相对路径（/uploads/assets/...）或完整 URL。
     未配置 / 删除该行 → 前台回退既有 CSS 艺术背景。热更：前台 GET /api/assets

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 太初 · SQLite 每日备份脚本
+# 命理太初 · SQLite 每日备份脚本
 # 建议 crontab: 0 3 * * * /bin/bash /opt/taichu/app/ops/deploy/backup.sh
 set -e
 

@@ -23,7 +23,7 @@
 - `frontend/public/index.html` = 21841 行权威入口；`frontend/public/admin.html` = 2374 行（后台，独立文件，不在本拆分主目标）
 - 免构建管线：`frontend/scripts/precompile.js` 只处理 `public/index.html` + `public/admin.html` **两个**文件（`FILES=[...]`），把 `<script type="text/babel">` JSX 编译成普通 JS，产物引用全局 React/ReactDOM
 - 全部是**全局作用域的普通 JS**（预编译后），组件/函数跨区块互相引用（拆分后**加载顺序**是关键风险）
-- 已知大块：CSS 设计令牌 `:root` ≈37 行 + 大量组件/页面样式；`ModalBase` ≈2830 行；皮肤系统 `--skin-*`（guoxue/astrology/tarot/xishi/xingzuo/mbti）；9 法 / 西式 / MBTI / 档案 / 设置 / 后台 / 太初先生 各视图
+- 已知大块：CSS 设计令牌 `:root` ≈37 行 + 大量组件/页面样式；`ModalBase` ≈2830 行；皮肤系统 `--skin-*`（guoxue/astrology/tarot/xishi/xingzuo/mbti）；9 法 / 西式 / MBTI / 档案 / 设置 / 后台 / 王先生 各视图
 - ⚠️ **执行第一步先做只读统计**：量 CSS 段 vs JS 段各行数、列最大 20 个视图/组件，决定"第一刀切哪"，不盲拆
 
 ## 1. 拆分判据（v0.18：按职责拆，不按行数）
@@ -112,7 +112,7 @@
   | `js/views-onboarding.js` | 登录注册 AuthPage + 建档引导 OnboardingPage |
   | `js/views-home.js` | 首页 LandingPage + 积分 CreditBalance/BannerBalance/MenuBalance/CreditInsufficientModal + 配对 PairModal + 余额明细 CreditTransactionsPage + 导航 NavRail/TopbarModNav/TopbarMenu + 设置 SettingsPage |
   | `js/views-guoxue-tools.js` | 国学工具 NinePickPage/NamerModal/GuoxueHubPage/GuoxueToolsPage + 九法状态 nineRunState |
-  | `js/views-agent.js` | 太初先生 AgentPage + AGENT_GREETINGS/AGENT_CASE_KEYWORDS |
+  | `js/views-agent.js` | 王先生 AgentPage + AGENT_GREETINGS/AGENT_CASE_KEYWORDS |
 - **阶段 3 已完成**：无剩余视图待拆。
 - **阶段 4 收敛（进行中）**：index.html 只剩骨架+vendor+全局状态+api+App 路由（已 1,381 行达标）；待办 = `复用.md` 红线更新为「入口壳 <2000 行；单 .js/.css <5000 行」+ 用户逐屏验收。
 - **门禁/验证**：每步拆后跑 `node frontend/scripts/precompile.js`（必须全绿，0 编译块）；后端 :8000 冒烟（index.html + 各 js 均 200）。拆出的 .js 只放已预编译普通 JS、禁止 JSX。

@@ -408,10 +408,10 @@ class UserSetting(Base):
     anim_enabled = Column(Boolean, default=True)        # ①动画与抽卡模拟
     default_mode = Column(String(16), default="auto")   # ②占卜界面默认模式：manual|auto|both
     banner_dropdown = Column(Boolean, default=False)    # ③Banner 模块下拉导航
-    share_taichu_ui = Column(Boolean, default=True)     # ④分享表单太初 UI
+    share_taichu_ui = Column(Boolean, default=True)     # ④分享表单命理太初 UI
     bg_enabled = Column(Boolean, default=True)          # ⑤背景图显示
     card_images = Column(Boolean, default=True)         # ⑥牌面图片显示
-    agent_enabled = Column(Boolean, default=True)       # ⑦太初先生 Agent
+    agent_enabled = Column(Boolean, default=True)       # ⑦王先生 Agent
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
@@ -486,9 +486,9 @@ class AgentMemoryTask(Base):
 
 
 class AgentMessage(Base):
-    """太初先生 Agent 会话消息表（agent_messages，REQ-076）。
+    """王先生 Agent 会话消息表（agent_messages，REQ-076）。
 
-    固定 session 对话：用户与「太初先生」的每一回合在此落两条消息（role='user' 与
+    固定 session 对话：用户与「王先生」的每一回合在此落两条消息（role='user' 与
     role='assistant'，role 取值 user|assistant）。id 为 autoincrement，天然单调，
     记忆模块（REQ-077）按 (user_id, id) 区间只读 role='user' 消息（方案书 §7.2
     最小列契约 id/user_id/role/content/created_at；本表在最小列之上扩展 case_id /

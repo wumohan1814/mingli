@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>太初 · 识己于星，安己于时</title>
+  <title>命理太初 · 识己于星，安己于时</title>
   <!-- REQ-098：PWA —— manifest + 主题色 + iOS Safari「添加到主屏幕」适配。
        资源一律根绝对路径（BUG-009 约定）：/manifest.webmanifest、/art/pwa/…。
        主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 hardcode-allow: PWA 主题色注释 -->
@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/art/pwa/apple-touch-icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="太初" />
+  <meta name="apple-mobile-web-app-title" content="命理太初" />
   <!-- BUG-009：脚本必须用根绝对路径 /vendor/...（不能用相对 ./vendor/...）。
        分享链接直达页路径为 /mbti/share/{token}，相对路径会被浏览器解析为
        /mbti/share/vendor/... → SPA fallback 回退 index.html（text/html 被当 JS 执行）
@@ -199,7 +199,7 @@ function isGuestSharePageName(p) {
 }
 // ===== REQ-092：新用户建档强制门禁（登录账号 0 档案 → 强制先新建档案） =====
 // 触发条件（一律以 GET /cases 实时校验为准）：新注册 / 删光全部 / 无档案存量账号 = 0 档即强制；
-// ≥1 档案 → 放行。强制期全部功能入口（含 landing、各 HUB、功能设置、太初先生等不依赖档案的
+// ≥1 档案 → 放行。强制期全部功能入口（含 landing、各 HUB、功能设置、王先生等不依赖档案的
 // 功能也一并拦截）重定向到新建档案 onboarding；仅放行 onboarding/auth 与分享帮填访客页
 // （/case/share、/mbti/share 未登录访客不受门禁影响）。
 // 状态机：null=本会话未决（未登录 / 尚未校验），true=0 档强制中，false=≥1 档放行。
@@ -1065,8 +1065,6 @@ function App() {
       module: module,
       /* REQ-064：仅登录显示「档案管理」入口 */
       loggedIn: !!token,
-      /* REQ-116：Q 版动画跟随「太初先生」开关（agent_enabled 关 → 不渲染；与 banner「对坐谈心」同一开关源） */
-      agentEnabled: tcSet.agent_enabled !== false,
       onNavigate: navigate
     }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
@@ -1182,7 +1180,7 @@ function App() {
       applySkin: applySkin,
       skin: skin
     }),
-    // REQ-076：太初先生 Agent 会话页（右上角图标入口进入）
+    // REQ-076：王先生 Agent 会话页（右上角图标入口进入）
     agent: /*#__PURE__*/React.createElement(AgentPage, {
       onNavigate: navigate
     })
@@ -1210,7 +1208,7 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, TC_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「太初」与右上角菜单/汉堡 之间，
+  }, TC_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理太初」与右上角菜单/汉堡 之间，
      用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
      banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
   tcSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
@@ -1221,7 +1219,7 @@ function App() {
     onPickModule: selectModule,
     onCases: () => navigate('cases'),
     onSettings: () => navigate('settings'),
-    /* REQ-076：太初先生 Agent 图标入口（agent_enabled 控制显隐） */
+    /* REQ-076：王先生 Agent 图标入口（agent_enabled 控制显隐） */
     onAgent: () => navigate('agent'),
     agentEnabled: tcSet.agent_enabled !== false,
     onCredits: () => navigate('credits'),

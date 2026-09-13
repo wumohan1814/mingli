@@ -46,7 +46,7 @@ DEFAULT_RESULTS_DIR = HERE / "results"
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(
         prog="run.py",
-        description="太初 · 离线记忆召回基准（不联网/不调 LLM/不碰生产库）")
+        description="命理太初 · 离线记忆召回基准（不联网/不调 LLM/不碰生产库）")
     ap.add_argument("--db-dir", default=None,
                     help="临时库目录（默认系统临时目录；必须在仓库外）")
     ap.add_argument("--tag", default=None, help="临时库文件名前缀（默认随机）")

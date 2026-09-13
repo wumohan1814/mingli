@@ -74,7 +74,7 @@
 
     /* REQ-071：Banner 正中「模块」下拉导航（三大模块分组直达功能页；未登录也显示，
        受限页由 BUG-002 拦截引导去登录）。居中：作为 .topbar（flex space-between）中列，
-       两侧留白相等 → 不遮挡左侧「太初」与右上角菜单/汉堡。 */
+       两侧留白相等 → 不遮挡左侧「命理太初」与右上角菜单/汉堡。 */
     .topbar-modnav{position:relative;display:flex;align-items:center;flex:none}
     .topbar-modnav .modnav-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
       font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;color:var(--skin-banner-ink);
@@ -131,98 +131,6 @@
     /* REQ-064：落地页主按钮下方「档案管理」透明小按钮（字号 13px < 主按钮 16px；仅登录渲染） */
     .landing-cases-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;flex:none;margin:14px auto 0;padding:6px 14px;font-size:13px;font-weight:500;line-height:1.5;background:transparent;border:1px solid transparent;border-radius:var(--radius-pill);color:var(--text-2);cursor:pointer;transition:color .15s,border-color .15s,opacity .15s}
     .landing-cases-btn:hover{color:var(--skin-accent);border-color:var(--border)}
-    /* ===== REQ-084：三大模块落地页 Q 版循环动画（静态单图 + CSS keyframes 合成） =====
-       素材：/art/module-mascot/{guoxue,xishi,mbti}-mascot.webp（美术素材表-第三轮 §0.4）；
-       整块可点击 → 太初先生会话（与右上角「对坐谈心」同一 navigate('agent') 入口，REQ-076）；
-       REQ-116：容器显隐跟随「太初先生」开关 agent_enabled —— JS 侧不渲染（见 LandingPage）；
-       容器位于正常文档流（主按钮上方），不遮挡主按钮与操作区。
-       2026-09-10：新增侧边定位模式 .landing-mascot--side（fixed 在左侧 nav-rail 底部），
-       三模块同步；sprite 尺寸按侧栏宽度等比缩小，保证不超出左侧区域。 */
-    .landing-mascot{display:block;position:relative;width:132px;min-height:132px;height:auto;margin:0 auto 20px;padding:0;border:none;background:transparent;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center}
-    /* 侧边定位：fixed 在左侧导航下方，与 nav-rail 左对齐，底部留出安全距离 */
-    .landing-mascot--side{position:fixed;left:0;bottom:24px;width:96px;height:96px;margin:0;z-index:43}
-    .landing-mascot--side .mascot-sprite{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.375);transform-origin:center center;width:256px!important;height:256px!important;margin:0!important}
-    .landing-mascot--side img{display:none}
-    .landing-mascot--side .lm-cap{display:none!important}
-    .landing-mascot--side .lm-fx{display:none}
-    .landing-mascot img{display:block;width:100%;height:auto;margin:0 auto;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
-    .landing-mascot .lm-cap{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--skin-accent);line-height:1.5;pointer-events:none}
-    .landing-mascot:hover img{filter:brightness(1.05)}
-    .landing-mascot:active img{filter:brightness(.95)}
-    /* 国学：打坐呼吸浮沉（上下 2–3px、周期 3–4s，取 3.4s / 3px） */
-    .anim-mascot.guoxue img{animation:mascotGuoxue 3.4s ease-in-out infinite}
-    @keyframes mascotGuoxue{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-    /* 西式：仰望星空微仰（轻微仰角 + 呼吸浮沉，周期 3.6s） */
-    .anim-mascot.xishi img{animation:mascotXishi 3.6s ease-in-out infinite}
-    @keyframes mascotXishi{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(-1.8deg) translateY(-2px)}}
-    /* MBTI：躺摇椅左右小角度摇晃（支点取椅脚底部，周期 3.2s） */
-    .anim-mascot.mbti img{animation:mascotMbti 3.2s ease-in-out infinite;transform-origin:50% 92%}
-    @keyframes mascotMbti{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-2.6deg)}75%{transform:rotate(2.6deg)}}
-    /* REQ-084⑤：低耗降级 —— 偏好减少动态效果时停止循环动画，仅显示静态主图 */
-    @media (prefers-reduced-motion:reduce){
-      .landing-mascot img{animation:none!important}
-      /* REQ-084：sprite 序列帧停帧显示第一帧（background-position 保持 0 0，不循环播放） */
-      .mascot-sprite.play{animation:none!important;background-position:0 0!important}
-    }
-    /* ===== REQ-084：序列帧 sprite sheet 播放器（sprite.ready=true 时启用；素材未回传本段不生效） =====
-       与上方 .anim-mascot 旧动画共存不冲突：sprite 模式下不渲染 <img>，旧 keyframes 只命中 img，
-       天然互斥；.mascot-sprite 为宽=高=sprite.width 的方形容器，background-size=width*cols ×
-       width*rows（每格恰好一帧），逐帧 keyframes 由 JS ensureSpriteKeyframes 按配置生成，
-       animation 经 --sprite-anim（含动画名/时长/steps(1) 逐帧跳变/infinite）注入，will-change 提示预优化 */
-    .lm-fx{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none}
-    .lm-fx>*{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;pointer-events:none;user-select:none;-webkit-user-drag:none}
-    .mascot-sprite{display:block;margin:0 auto;background-repeat:no-repeat;background-position:0 0;pointer-events:none;user-select:none;-webkit-user-drag:none}
-    .mascot-sprite.play{animation:var(--sprite-anim,none);will-change:background-position}
-    /* ===== REQ-084：互动元素（FX）路径动画 —— 纯氛围 · 不可点击 · 不遮挡
-       素材：art/taichu-pet/fx-*.webp（透明小图）；各元素从化身中心（= .lm-fx 中心，化身 256px 居中）
-       向周侧偏移做绕飞/落肩/漂浮/闪烁，时长 4~7s 循环；pointer-events:none 不挡点卡与导航按钮；
-       prefers-reduced-motion 下隐藏不打扰。 */
-    .lm-fx img{opacity:0;will-change:transform,opacity}
-    /* 国学：小鸟自右上飞入 → 化身肩侧停留微浮 → 飞走 */
-    .fx-fly-bird{width:46px;height:46px;left:58%;top:34%;animation:fxFlyBird 6.8s ease-in-out infinite}
-    @keyframes fxFlyBird{
-      0%{transform:translate(64px,-52px) rotate(-14deg) scale(.9);opacity:0}
-      14%{transform:translate(10px,4px) rotate(6deg);opacity:1}
-      26%{transform:translate(-4px,2px) rotate(-4deg);opacity:1}
-      40%{transform:translate(4px,6px) rotate(3deg);opacity:1}
-      52%{transform:translate(-2px,0) rotate(-2deg);opacity:1}
-      66%{transform:translate(6px,-4px) rotate(4deg);opacity:1}
-      80%{transform:translate(-4px,2px) rotate(-3deg);opacity:.95}
-      100%{transform:translate(66px,-48px) rotate(-12deg);opacity:0}
-    }
-    /* 国学：蝴蝶绕化身右上-左下环绕飞 */
-    .fx-fly-butterfly{width:36px;height:36px;left:42%;top:30%;animation:fxFlyButterfly 7.4s ease-in-out infinite}
-    @keyframes fxFlyButterfly{
-      0%{transform:translate(-64px,-40px) rotate(14deg) scale(.9);opacity:0}
-      16%{transform:translate(-6px,12px) rotate(-8deg);opacity:1}
-      28%{transform:translate(8px,-4px) rotate(10deg);opacity:1}
-      42%{transform:translate(-4px,-10px) rotate(-6deg);opacity:1}
-      56%{transform:translate(10px,6px) rotate(8deg);opacity:1}
-      70%{transform:translate(-8px,-2px) rotate(-10deg);opacity:1}
-      86%{transform:translate(4px,10px) rotate(6deg);opacity:.95}
-      100%{transform:translate(-60px,-36px) rotate(12deg);opacity:0}
-    }
-    /* 西式 / MBTI：星星漂浮 + 旋转 + 闪烁（两枚用不同时延错开） */
-    .fx-spin-star{width:32px;height:32px;left:38%;top:40%;animation:fxSpinStar 5.2s ease-in-out infinite}
-    @keyframes fxSpinStar{
-      0%,100%{transform:translate(-38px,-32px) rotate(0deg) scale(.75);opacity:0}
-      18%{opacity:.95}
-      40%{transform:translate(-56px,-44px) rotate(150deg) scale(1);opacity:.9}
-      62%{transform:translate(-26px,-52px) rotate(300deg) scale(.9);opacity:.85}
-      82%{transform:translate(-46px,-26px) rotate(360deg) scale(1);opacity:.8}
-    }
-    .fx-sparkle{width:24px;height:24px;left:60%;top:44%;animation-duration:4.4s;animation-delay:1s}
-    /* 西式：星座连线淡入淡出环绕（观星氛围） */
-    .fx-fade-constellation{width:54px;height:54px;left:52%;top:36%;animation:fxFadeConstellation 6.2s ease-in-out infinite}
-    @keyframes fxFadeConstellation{
-      0%,100%{opacity:0;transform:translate(-14px,-8px) scale(.85) rotate(-8deg)}
-      16%,74%{opacity:.9;transform:translate(6px,2px) scale(1) rotate(0deg)}
-      45%{opacity:.75;transform:translate(-2px,-6px) scale(.95) rotate(4deg)}
-    }
-    /* 低耗降级：FX 隐藏不打扰 */
-    @media (prefers-reduced-motion:reduce){
-      .lm-fx img{animation:none!important;opacity:0!important}
-    }
     .feature{border-left:3px solid var(--skin-accent)}
     .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-size:16px;cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .2s}
     .btn:active{transform:translateY(1px)}

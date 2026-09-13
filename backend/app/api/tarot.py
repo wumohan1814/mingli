@@ -41,11 +41,11 @@ router = APIRouter(prefix="/api", tags=["tarot"])
 TAROT_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "tarot.md"
 
 # Node /tarot 开放给本 API 的牌阵（REQ-122：现有 5 + 新增 14 全量放开，
-# 对应 vendored tarotSpreads + 太初覆盖层 taichu-tarot-spreads.mjs，pydantic 提前拦未知 key）
+# 对应 vendored tarotSpreads + 命理太初覆盖层 taichu-tarot-spreads.mjs，pydantic 提前拦未知 key）
 TAROT_SPREAD_TYPES = (
     # 现有 5
     "single", "three", "love", "career", "decision",
-    # 用户点名 4（celtic/horseshoe/hexagram 采太初覆盖层牌位，fourSeasons 为新增定义）
+    # 用户点名 4（celtic/horseshoe/hexagram 采命理太初覆盖层牌位，fourSeasons 为新增定义）
     "celtic", "horseshoe", "hexagram", "fourSeasons",
     # 直接开放的 vendored 10（牌位沿用 vendored 定义）
     "chakra", "year", "mindBodySpirit", "holyTriangle", "universal",

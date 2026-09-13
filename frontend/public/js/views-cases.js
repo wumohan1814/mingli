@@ -1775,7 +1775,7 @@ function CasesPage({
         非默认=空心可点，点击即 PATCH set_default 切换默认（stopPropagation 不触发行跳转） */
     /*#__PURE__*/React.createElement("span", {
       className: 'case-def-badge' + (c.isDefault ? '' : ' off'),
-      title: c.isDefault ? '默认档案（太初先生会话默认选中）' : '点击设为默认档案',
+      title: c.isDefault ? '默认档案（王先生会话默认选中）' : '点击设为默认档案',
       role: "button",
       onClick: e => {
         e.stopPropagation();

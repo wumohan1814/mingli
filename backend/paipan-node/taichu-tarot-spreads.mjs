@@ -1,7 +1,7 @@
 /**
- * 太初塔罗牌阵覆盖层（REQ-122）
+ * 命理太初塔罗牌阵覆盖层（REQ-122）
  *
- * 目标：不动 vendored mingyu-core（backend/paipan-node/vendor/）源码，按太初口径
+ * 目标：不动 vendored mingyu-core（backend/paipan-node/vendor/）源码，按命理太初口径
  * 就地覆盖/新增 `tarotSpreads` 中的牌阵定义。ESM 的 `export const tarotSpreads` 是
  * 共享对象引用，server.mjs 引入本层并调用 applyTaichuTarotSpreads(tarotSpreads) 后，
  * computeTarot / drawTarotSpread 读取到的即覆盖后的定义，立即生效。
@@ -56,7 +56,7 @@ export const TAICHU_TAROT_SPREADS = {
 };
 
 /**
- * 把太初牌阵定义就地写入传入的 tarotSpreads（ESM 共享对象引用）：
+ * 把命理太初牌阵定义就地写入传入的 tarotSpreads（ESM 共享对象引用）：
  * 新增 fourSeasons、覆盖 celtic/horseshoe/hexagram；不改动 vendored 文件。
  */
 export function applyTaichuTarotSpreads(tarotSpreads) {
