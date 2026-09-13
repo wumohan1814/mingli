@@ -523,6 +523,9 @@ async def interpret_divination(
     chart_summary = _case_chart_summary(db, div.case_id)  # case_id 为空 → None
     user_payload: dict = {"method": div.method, "result": div.result_json,
                           "chart_summary": chart_summary}
+    # 节137：从 seed_json 提取用户占问问题注入 prompt（有则围绕问题解读，无则给默认解释）
+    if isinstance(div.seed_json, dict) and div.seed_json.get("question"):
+        user_payload["question"] = div.seed_json["question"]
     if div.method == "liuren":
         template = body.liuren_template if (body and body.liuren_template) else "general"
         user_payload["liurenTemplate"] = template

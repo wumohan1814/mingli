@@ -135,19 +135,25 @@ def _attach_chart(case_id: int, chart_json: dict) -> None:
         session.close()
 
 
-def _make_divination(uid: int, *, case_id=None, method="liuyao", interpretation=None) -> int:
-    """直插一行 divinations（绕过 API，供 GET/interpret 用例准备数据）。"""
+def _make_divination(uid: int, *, case_id=None, method="liuyao", interpretation=None,
+                     seed=None) -> int:
+    """直插一行 divinations（绕过 API，供 GET/interpret 用例准备数据）。
+
+    seed 传 None 时用默认摇卦 seed（节137 用例可传含 question 的 seed）。
+    """
     from app.database import AnalyticsSession
     from app.models import Divination
 
+    if seed is None:
+        seed = {"customDate": "2024-05-12T08:30:00+08:00",
+                "options": {"method": "manual", "yaos": [6, 7, 8, 9, 7, 8]}}
     session = AnalyticsSession()
     try:
         row = Divination(
             user_id=uid,
             case_id=case_id,
             method=method,
-            seed_json={"customDate": "2024-05-12T08:30:00+08:00",
-                       "options": {"method": "manual", "yaos": [6, 7, 8, 9, 7, 8]}},
+            seed_json=seed,
             result_json={"originalName": "雷天大壮", "changedName": "火天大有",
                          "yaoArray": [6, 7, 8, 9, 7, 8]},
             interpretation_json=interpretation,
@@ -690,6 +696,49 @@ def test_api_divination_interpret_injects_chart_summary(divination_client, monke
     assert resp2.status_code == 200, resp2.text
     payload2 = json.loads(chat_calls2[0]["messages"][1]["content"])
     assert payload2["chart_summary"] is None
+
+
+def test_api_divination_interpret_injects_question(divination_client, monkeypatch):
+    """节137：seed_json.question 存在 → 注入 user_payload.question（并写进 explain prompt）；
+    seed_json 无 question → 不出现该键（不填问题回归不退化）；seed_json 为 None 不抛错。"""
+    uid = _new_user()
+    from app.credits.service import recharge
+    recharge(uid, 100, "free", note="pytest 预充")
+
+    # ① 有 question → 注入，且断卦 system prompt 声明了 question 键（节137 prompt 复核）
+    div_id = _make_divination(
+        uid,
+        seed={"question": "今年换工作合适吗",
+              "options": {"method": "manual", "yaos": [6, 7, 8, 9, 7, 8]}})
+    chat_calls: list = []
+    _fake_chat(monkeypatch, chat_calls)
+    resp = divination_client.post(f"/api/divinations/{div_id}/interpret",
+                                  headers=_auth_header(uid))
+    assert resp.status_code == 200, resp.text
+    messages = chat_calls[0]["messages"]
+    payload = json.loads(messages[1]["content"])
+    assert payload["question"] == "今年换工作合适吗"
+    assert '"question"' in messages[0]["content"]      # 公共段输入声明已含 question
+
+    # ② 无 question → user_payload 不出现 question 键（旧行为不变）
+    div_id2 = _make_divination(uid)
+    chat_calls2: list = []
+    _fake_chat(monkeypatch, chat_calls2)
+    resp2 = divination_client.post(f"/api/divinations/{div_id2}/interpret",
+                                   headers=_auth_header(uid))
+    assert resp2.status_code == 200, resp2.text
+    payload2 = json.loads(chat_calls2[0]["messages"][1]["content"])
+    assert "question" not in payload2
+
+    # ③ seed 为 None（历史行）→ 跳过注入，不抛错
+    div_id3 = _make_divination(uid, seed={})
+    chat_calls3: list = []
+    _fake_chat(monkeypatch, chat_calls3)
+    resp3 = divination_client.post(f"/api/divinations/{div_id3}/interpret",
+                                   headers=_auth_header(uid))
+    assert resp3.status_code == 200, resp3.text
+    payload3 = json.loads(chat_calls3[0]["messages"][1]["content"])
+    assert "question" not in payload3
 
 
 def test_api_divination_interpret_insufficient_balance(divination_client, monkeypatch):

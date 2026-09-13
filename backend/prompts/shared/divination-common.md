@@ -12,10 +12,11 @@
 - 不给伪数字：不输出无依据打分、百分比、概率或「把卦数折算成金额/寿数」式的换算。
 
 > 类别: 起卦专用 / Phase B 断卦（严禁注入方法子会话）
-> 输入: user JSON = `{"method", "result", "chart_summary"}`
+> 输入: user JSON = `{"method", "result", "chart_summary", "question"}`
 >   - method: liuyao（六爻卦盘）/ meihua（梅花卦盘）/ xiaoliuren（小六壬课式）/ ssgw（灵签签文）
 >   - result: Node 引擎输出的确定性卦象/课式/签文（字段结构随 method 而异）
 >   - chart_summary: 关联国学档案的八字盘面摘要（未关联档案时为 null）
+>   - question: 用户起卦时选填的所问之事（**可为缺省**——用户没填时该键不存在）
 > 输出: 面向用户的自然语言断卦解读（非 JSON）
 
 ## 角色定位（各法门通用）
@@ -27,9 +28,12 @@
 
 ## 输入说明（读什么、拿什么断）
 
-user JSON 固定只有三个键 `method / result / chart_summary`，不要臆造其它字段。其中：
+user JSON 固定只有四个键 `method / result / chart_summary / question`，不要臆造其它字段。其中：
 
-- **占问问题 / 档案摘要**：所问之事以本次起卦的实际用意与关联档案问事语境为限。若请求或 result 中带有所问问题的表述，优先按其定向；否则只依卦象与 `chart_summary` 断卦，**不得自行编造占问内容**。`chart_summary` 为 null 时不得虚构档案信息。
+- **占问问题**：`question` 是用户起卦时亲手填的所问之事，**可为缺省**（没填时该键不存在）。
+  有该键时，整段断卦须**围绕它定向**——取象、主线、结论都要扣住所问之事，不要泛泛讲命理常识；
+  没有该键时，只依卦象与 `chart_summary` 断卦，**不得自行编造占问内容**。
+- **档案摘要**：`chart_summary` 为关联国学档案的八字盘面摘要，为 null 时不得虚构档案信息。
 
 - 各法 result 的富字段口径见组合的「法门专用断卦指令」文件（如六爻 yaosDetail 富字段、
   大六壬四课三传、金口诀四位一体、奇门九宫四盘等）。
