@@ -549,16 +549,23 @@ def test_api_tarot_draw_node_error_502(tarot_client, monkeypatch):
 
 
 def test_api_tarot_draw_bad_spread_type_400(tarot_client, monkeypatch):
-    """spread_type 不在开放五牌阵（如 celtic Node 支持但本 API 不开放）→ 400，不触达 Node。"""
+    """spread_type 不在开放牌阵清单（`app/api/tarot.py` 的 TAROT_SPREAD_TYPES /
+    TarotDrawRequest.spread_type 的 Literal）→ 400（code 1001 参数错误），不触达 Node。
+
+    节146 修正（陈旧用例）：原用例拿 `celtic` 当"非法牌阵"，但 REQ-122 已把
+    `celtic/horseshoe/hexagram/fourSeasons` 等 14 个牌阵全量放开 → 该断言早已失效
+    （实测返回 200）。此处改用**确实不在清单内**的 `"notASpread"`，恢复用例本意。
+    """
     import app.api.tarot as tarot_mod
 
     uid = _new_user()
     calls: list = []
     _fake_node_post(monkeypatch, tarot_mod, payload=SAMPLE_TAROT_DRAW, calls=calls)
     resp = tarot_client.post("/api/tarot/draw",
-                             json={"spread_type": "celtic"},
+                             json={"spread_type": "notASpread"},
                              headers=_auth_header(uid))
     assert resp.status_code == 400, resp.text
+    assert resp.json()["code"] == 1001, resp.text
     assert calls == []
     assert _event_rows("tarot_draw", uid) == []
 
