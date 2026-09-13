@@ -93,6 +93,7 @@
 
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
+import { randomInt } from 'node:crypto';
 
 // ---------------------------------------------------------------------------
 // 一次性加载（进程常驻，以下库加载一次后为所有请求复用）
@@ -125,37 +126,39 @@ import { calculateBirthChartBundle } from 'mingyu-core';
 import { calculateWuyunLiuqi } from 'mingyu-core/wuyun-liuqi';
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { calculateZodiacYearFortune, getYearTaiSui } from './vendor/mingyu-core/dist/zodiac/index.js';
-import { generateLiuyao } from './vendor/mingyu-core/dist/divination/algorithms/liuyao.js';
-import { generateMeihua } from './vendor/mingyu-core/dist/divination/algorithms/meihua/index.js';
-import { generateXiaoliuren } from './vendor/mingyu-core/dist/divination/algorithms/xiaoliuren.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
-import { drawTarotSpread, tarotSpreads } from './vendor/mingyu-core/dist/divination/tarot.js';
-import { applyMingliTarotSpreads } from './mingli-tarot-spreads.mjs';
-import { drawLenormandSpread, LENORMAND_SPREADS } from './vendor/mingyu-core/dist/divination/algorithms/lenormand.js';
 import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
 import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
 import { generateAlmanacSelection } from './vendor/mingyu-core/dist/divination/algorithms/almanac.js';
 import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
 import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
-// 节148 样板开关：小六壬自研内核（paipan-core）。
-//   MINGLI_PAIPAN_CORE_XIAOLIUREN=on → /divination 的小六壬走自研内核；默认 off → 走
-//   vendored mingyu-core（正式替换归属节155，本节只证明管线可切换）。
-//   约定见 paipan-core/README.md §5（MINGLI_PAIPAN_CORE_<能力大写>）。
+// 节155：六爻 / 梅花 / 小六壬已整体切换到自研内核（paipan-core）。
+//   起卦/装卦/断卦要素与课式全部自研（对拍门禁 100% 通过，见 paipan-core/tools/compare）；
+//   vendor 的 generateLiuyao / generateMeihua / generateXiaoliuren 已下线。
+import { generateLiuyaoCore } from './paipan-core/src/capabilities/liuyao/index.js';
+import { generateMeihuaCore } from './paipan-core/src/capabilities/meihua/index.js';
 import { generateXiaoliurenCore } from './paipan-core/src/capabilities/xiaoliuren/index.js';
 
-const USE_CORE_XIAOLIUREN = process.env.MINGLI_PAIPAN_CORE_XIAOLIUREN === 'on';
+// 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
+//   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
+//   产品口径：凯尔特十字/七张马蹄/六芒星/四牌四季）；抽牌 = drawTarotSpreadCore /
+//   drawLenormandSpreadCore（种子化随机，同 seed 可复现；缺 seed 由 ensureSeed 注入）。
+//   mingli-tarot-spreads.mjs 的 monkey-patch 覆盖机制随之退役（内核牌阵已是唯一来源）。
+import { drawTarotSpreadCore } from './paipan-core/src/capabilities/tarot/index.js';
+import { TAROT_SPREADS } from './paipan-core/src/rules/tarot.js';
+import { drawLenormandSpreadCore } from './paipan-core/src/capabilities/lenormand/index.js';
+import { LENORMAND_SPREADS } from './paipan-core/src/rules/lenormand.js';
 
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
 // ---------------------------------------------------------------------------
 
-// REQ-122：命理塔罗牌阵覆盖层 —— 新增 fourSeasons + 覆盖 celtic/horseshoe/hexagram 牌位
-// （ESM 共享对象就地写入，computeTarot / drawTarotSpread 立即生效；不动 vendored 文件）
-applyMingliTarotSpreads(tarotSpreads);
+// （节157：REQ-122 的 mingli-tarot-spreads 覆盖层已退役——内核牌阵表 TAROT_SPREADS
+//   即为唯一来源，含四牌四季/凯尔特十字/七张马蹄/六芒星产品口径，见上方 import 注释）
 
 /* ---------- /ziwei：紫微排盘（对齐 ziwei.cjs 的 main()） ---------- */
 
@@ -377,24 +380,31 @@ function computeDivination(input) {
   let almanacCustomLabel = ''; // REQ-121：自定义事项文本（topic=='custom'）随 result.customTopicLabel 返回
   switch (method) {
     case 'liuyao':
-      // 时间起卦默认（customDate 省略用当前时间）；options 可带手工爻值/铜钱记录
-      raw = generateLiuyao(customDate, input.options);
+      // 时间起卦默认（customDate 省略用当前时间）；options 可带手工爻值/铜钱记录。
+      // 节155：自研内核不接受缺省时间（确定性纪律），此处显式回落「当前时间」保持旧行为一致。
+      raw = generateLiuyaoCore({
+        customDate: customDate === undefined ? new Date() : customDate,
+        options: (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
+          ? input.options : {},
+      });
       break;
     case 'meihua':
-      // settings 即报数等起卦设置（缺省 {} → 时间起卦）
-      raw = generateMeihua(customDate, input.settings || {});
+      // settings 即报数等起卦设置（缺省 {} → 时间起卦）；同上回落当前时间
+      raw = generateMeihuaCore({
+        customDate: customDate === undefined ? new Date() : customDate,
+        settings: (input.settings && typeof input.settings === 'object' && !Array.isArray(input.settings))
+          ? input.settings : {},
+      });
       break;
     case 'xiaoliuren': {
-      // 时间起课；params 内 customDate 同样允许字符串
+      // 时间起课；params 内 customDate 同样允许字符串。节155 已切换自研内核：
+      // 内核不接受缺省时间（确定性纪律），此处显式回落「当前时间」保持旧行为一致。
       const params = (input.params && typeof input.params === 'object' && !Array.isArray(input.params))
         ? { ...input.params }
         : {};
       params.customDate = toCustomDate(params.customDate);
-      // 节148：自研内核不接受缺省时间（确定性纪律，见 paipan-core README §3），
-      // 此处显式回落「当前时间」以保持与旧实现「缺 customDate 静默用当前时间」一致
-      // （开关默认 off，生产行为零变化）。
       if (params.customDate === undefined) params.customDate = new Date();
-      raw = USE_CORE_XIAOLIUREN ? generateXiaoliurenCore(params) : generateXiaoliuren(params);
+      raw = generateXiaoliurenCore(params);
       break;
     }
     case 'liuren':
@@ -561,7 +571,7 @@ function computeDivination(input) {
       const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
         ? input.options
         : {};
-      raw = drawLenormandSpread(spreadType, options);
+      raw = drawLenormandSpreadCore({ spreadType, options: ensureSeed(options) });
       break;
     }
     default:
@@ -642,6 +652,18 @@ function computeDivination(input) {
 
 /* ---------- /tarot：塔罗抽牌（vendored mingyu-core divination/tarot.js） ---------- */
 
+// 节157：自研内核要求确定性输入（缺 seed 抛 PaipanInputError）；对无 seed/replay/逐张样本/
+// 手工录入的随机请求注入 crypto 强随机种子，保持「随机抽牌」体验不变，同时让内核路径可用
+// （vendor 路径同样受益：显式 seed 走同一套种子化随机，行为无感变化）。
+function ensureSeed(options) {
+  if (!options || typeof options !== 'object' || Array.isArray(options)) return options;
+  if (options.seed === undefined && options.replay === undefined
+      && !Array.isArray(options.interactiveSamples) && !Array.isArray(options.manualCardIds)) {
+    return { ...options, seed: randomInt(0, 2 ** 31) };
+  }
+  return options;
+}
+
 function computeTarot(input) {
   // 必填校验：input 非对象 / spreadType 非字符串（缺省 'single'）→ 客户端错误
   if (!input || typeof input !== 'object' || Array.isArray(input)
@@ -651,14 +673,15 @@ function computeTarot(input) {
   const spreadType = (typeof input.spreadType === 'string' && input.spreadType.trim())
     ? input.spreadType.trim()
     : 'single';
-  if (!(spreadType in tarotSpreads)) {
+  if (!(spreadType in TAROT_SPREADS)) {
     throw Object.assign(new Error(`Unknown tarot spread type: ${spreadType}`), { clientError: true });
   }
-  // options 原样透传：seed/replay 确定性重放、interactiveSamples 逐张样本、question 占问方向等
+  // options 原样透传：seed/replay 确定性重放、interactiveSamples 逐张样本、question 占问方向等；
+  // 缺 seed 时注入（节157，见 ensureSeed）；内核缺 seed 抛错，注入后同 seed 可复现
   const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
     ? input.options
     : {};
-  return stripInternal(drawTarotSpread(spreadType, options));
+  return stripInternal(drawTarotSpreadCore({ spreadType, options: ensureSeed(options) }));
 }
 
 /* ---------- /astrology：星座星盘（vendored mingyu-core astrolabe + astrolabe-scope） ---------- */
