@@ -12,7 +12,7 @@
  * 用法：node frontend/scripts/smoke-check.js
  * 退出码：0 = 全部通过，1 = 有错误
  */
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
@@ -115,8 +115,20 @@ const criticalGlobals = [
   { name: 'UI_COPY / ML_COPY', pattern: /ML_COPY\s*=|window\.ML_COPY/, desc: '全局文案表' },
 ];
 
+// 节110 已把业务脚本从 index.html 拆到 public/js/ —— 全局函数的归属文件随之变化。
+// 只搜 index.html 会把「已拆走」误判成「缺失」（原 toast() 恒红即此因，见 99_状态/已知问题.md）。
+// 因此关键全局的检查覆盖「index.html + 拆出的全部 js」，并按文件名排序保证输出确定性。
+const JS_DIR = join(ROOT, 'public', 'js');
+const jsCorpus = readdirSync(JS_DIR)
+  .filter((f) => f.endsWith('.js'))
+  .sort()
+  .map((f) => readFileSync(join(JS_DIR, f), 'utf8'))
+  .join('\n');
+
 for (const g of criticalGlobals) {
-  if (g.pattern.test(html)) pass(`${g.name} — ${g.desc}`);
+  const inHtml = g.pattern.test(html);
+  const inJs = g.pattern.test(jsCorpus);
+  if (inHtml || inJs) pass(`${g.name} — ${g.desc}${inHtml ? '' : '（在 public/js/ 中）'}`);
   else fail(`缺失 ${g.name} — ${g.desc}`);
 }
 
