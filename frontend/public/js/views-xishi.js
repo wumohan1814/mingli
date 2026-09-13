@@ -190,7 +190,7 @@ const TAROT_SPREAD_GROUPS = [{
   ids: ['fourSeasons', 'year']
 }];
 /* 后端塔罗牌名 → 前端 TAROT_DECK 卡面映射（个别译名差异） */
-const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔' };
+const TAROT_NAME_ALIAS = { '女皇': '皇后', '塔': '高塔', '权杖侍者': '权杖侍从', '圣杯侍者': '圣杯侍从', '宝剑侍者': '宝剑侍从', '钱币侍者': '钱币侍从' };
 const TAROT_SUIT_COLOR = { major: 'var(--tc-suit-major)', wands: 'var(--tc-suit-wands)', cups: 'var(--tc-suit-cups)', swords: 'var(--tc-suit-swords)', pentacles: 'var(--tc-suit-pentacles)' };
 function tarotDeckMatch(name) {
   if (!name) return null;
