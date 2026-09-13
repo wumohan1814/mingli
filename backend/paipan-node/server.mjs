@@ -123,16 +123,12 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 // 占星/七政/五运六气走 npm mingyu-core@0.2.1；
 // 奇门终身局走本地 vendor 0.2.2 构建产物（calculateQimenLifetime，npm 0.2.1 无此函数）。
 import { calculateBirthChartBundle } from 'mingyu-core';
-import { calculateWuyunLiuqi } from 'mingyu-core/wuyun-liuqi';
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { calculateZodiacYearFortune, getYearTaiSui } from './vendor/mingyu-core/dist/zodiac/index.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';
 import { generateAstrolabe } from './vendor/mingyu-core/dist/divination/algorithms/astrolabe.js';
 import { buildAstrolabeFullScopeContexts, buildAstrolabeScopeContext } from './vendor/mingyu-core/dist/divination/astrolabe-scope.js';
-import { generateAlmanacSelection } from './vendor/mingyu-core/dist/divination/algorithms/almanac.js';
 import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
 import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
@@ -142,6 +138,17 @@ import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jings
 import { generateLiuyaoCore } from './paipan-core/src/capabilities/liuyao/index.js';
 import { generateMeihuaCore } from './paipan-core/src/capabilities/meihua/index.js';
 import { generateXiaoliurenCore } from './paipan-core/src/capabilities/xiaoliuren/index.js';
+
+// 节152：五运六气已切换到自研内核（对拍 20916/20916 含 60 甲子全覆盖 + 1900–2199
+//   300 年全量核对零不一致）；vendor 的 calculateWuyunLiuqi 已下线。
+import { calculateWuyunLiuqiCore } from './paipan-core/src/capabilities/wuyun/index.js';
+
+// 节156：观音灵签 / 黄历择日 / 生肖流年已切换到自研内核（对拍 ssgw 238/238、
+//   almanac 2882/2882、zodiac 3672/3672 全 100%）；vendor 的 drawRandomSign /
+//   generateAlmanacSelection / calculateZodiacYearFortune / getYearTaiSui 已下线。
+import { drawRandomSignCore } from './paipan-core/src/capabilities/ssgw/index.js';
+import { generateAlmanacSelectionCore } from './paipan-core/src/capabilities/almanac/index.js';
+import { calculateZodiacYearFortuneCore, getYearTaiSuiCore } from './paipan-core/src/capabilities/zodiac/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -262,8 +269,9 @@ async function computeExtra(input) {
   const currentYear = new Date().getFullYear();
   let wuyun = null;
   try {
-    const birth = calculateWuyunLiuqi({ year: input.year });
-    const current = calculateWuyunLiuqi({ year: currentYear });
+    // 节152：自研内核（对拍 100% 后切换；vendor calculateWuyunLiuqi 已下线）
+    const birth = calculateWuyunLiuqiCore({ year: input.year });
+    const current = calculateWuyunLiuqiCore({ year: currentYear });
     wuyun = {
       birth_year: stripInternal(birth),
       current_year: stripInternal(current),
@@ -330,14 +338,14 @@ function computeZodiac(input) {
       || typeof input.zodiac !== 'string' || !input.zodiac.trim()) {
     throw Object.assign(new Error('Missing required input field: zodiac'), { clientError: true });
   }
-  // 纯确定性计算：{zodiac:"鼠", year:2026} → 流年干支/太岁/冲刑害破/贵人/行动信号；
-  // evidenceAnalysis/prompt 属引擎内部字段，stripInternal 后不外泄。
-  const raw = calculateZodiacYearFortune({ zodiac: input.zodiac, year: input.year });
+  // 纯确定性计算：{zodiac:"鼠", year:2026} → 流年干支/太岁/冲刑害破/贵人/行动信号。
+  // 节156：自研内核（对拍 3672/3672）；evidenceAnalysis 属内部字段，stripInternal 不外泄。
+  const raw = calculateZodiacYearFortuneCore({ zodiac: input.zodiac, year: input.year });
   const result = stripInternal(raw);
-  // 值年太岁星君名只出现在引擎 prompt 文本里（会被 stripInternal 剥离），
-  // 这里单独从 getYearTaiSui 取回并入响应，供前端「值年星君」卡展示。
+  // 值年太岁星君名（节156 内核自带 getYearTaiSuiCore，60 太岁表公网采源），
+  // 并入响应供前端「值年星君」卡展示。
   if (raw.yearGanZhi) {
-    result.taiSui = getYearTaiSui(raw.yearGanZhi);  // {yearBranch, star}
+    result.taiSui = getYearTaiSuiCore(raw.yearGanZhi);  // {yearBranch, star}
   }
   // BUG-003：贵人字段三层保障，保证最终输出「贵人」内容永远非空：
   //   ① 引擎 noble = 流年命中六合/三合贵人（非空即优先）；
@@ -483,7 +491,7 @@ function computeDivination(input) {
       if (Math.round((endMs - startMs) / 86400000) > 179) {
         throw Object.assign(new Error('黄历择日一次最多比较 180 天，请缩小日期范围'), { clientError: true });
       }
-      raw = generateAlmanacSelection(params);
+      raw = generateAlmanacSelectionCore(params);
       // 自定义事项文本（topic=='custom'）随 result.customTopicLabel 透传（仅展示/供深度解读
       // 引用；引擎只按通用「自定义事项」计算，custom 关键词为空，不参与计算）。
       if (typeof params.customTopicLabel === 'string' && params.customTopicLabel.trim()) {
@@ -552,11 +560,18 @@ function computeDivination(input) {
       break;
     }
     case 'ssgw': {
-      // 灵签随机抽签；options 可带 seed/replay 以确定性重放
+      // 灵签随机抽签；options 可带 seed/replay 以确定性重放。
+      // 节156：自研内核缺随机源抛错 → 缺 seed 由 ensureSeed 注入；ganzhi 需显式
+      // moment（旧实现取调用时刻）→ 缺省注入当前时刻保持展示口径。
       const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
         ? input.options
         : {};
-      raw = drawRandomSign(options);
+      raw = drawRandomSignCore({
+        ...ensureSeed(options),
+        // 内核 moment 解析接受 ISO 秒级（不含毫秒）；旧实现 ganzhi 取调用时刻，此处注入保持口径
+        moment: (options.moment !== undefined && options.moment !== null && options.moment !== '')
+          ? options.moment : new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+      });
       break;
     }
     case 'lenormand': {
