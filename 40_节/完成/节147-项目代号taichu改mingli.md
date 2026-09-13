@@ -25,7 +25,7 @@
 - [x] 5. `docker compose` 配置、`Caddyfile`、`Dockerfile`、`start.bat/sh`、`ops/deploy/*`、`standards/06` 全部同步；**线上迁移步骤已写进 `ops/deploy/README.md`（唯一清单，含第 0 步备份与回退）**
 - [x] 6. PWA：SW 缓存前缀改新名，**并保留对旧 `taichu-img*` 前缀的一次性回收**（节147 §四-3 的硬要求）
 - [x] 7. `standards/01`（命名约定）、`04`（设计令牌）、`06`（环境部署）与代码一致
-- [ ] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— 本项由用户在会话末尾执行后确认
+- [ ] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— ⚠️ **未完成**：Agent 两次尝试改名均被 Windows 拒绝（`The process cannot access the file because it is being used by another process`）。根因见下方「留痕 · 什么没测」，**命令已写在 `00_根/入口.md` 交接状态，由用户关闭占用后执行**
 
 ## 现状坐标（Agent 用）
 
@@ -123,6 +123,7 @@
 - **`--tc-*` 与 `--taichu-*` 是两个令牌族**：本节只改后者。若要合并，必须另立节并同步 `standards/04` + 全部皮肤
 - **改名的迁移顺序不可调换**：`备份 → GitHub 仓库改名 → 部署目录 → .env 键名 → DB 文件名与列名 → 起服务验证`。**`.env` 键名与 DB 文件名必须同一窗口内完成**，否则服务起不来（`.env` 不在仓库、无法随代码自动更新）
 - **本地存储键改名 = 现存用户一次强制登出 + 皮肤偏好重置**（节147 §四-1 已拍板：内测期不做兼容迁移）。后台同理需重新登录
+- **Windows 下「项目根目录改名」必须由人执行，不能交给会话内的 Agent**：只要目录里还有任何一个文件被打开（本会话的工作区、编辑器、静态服务器、同步工具都算），`Rename-Item` 就必然失败。**排期上要把这一步放在会话之外**，别指望 Agent 在会话里做完
 
 ## 控制点结果
 
@@ -154,7 +155,7 @@
 - **后端凭**：`pytest` 真实输出 —— `1 failed, 214 passed, 2126 warnings in 83.69s`；失败项原文 `AssertionError: 快照 chart.json 与当前排盘不一致，首个差异路径: <root>.western.summary.patterns[0]`（**改动前基线完全相同**）
 - **测试环境**：Windows 11 / Python 3.13.14（系统 Python）+ Node v24.16.0 / 模型 deepseek-v4-flash（@deepseek-ai/dsh）
 - **凭怎么产生的**：`cd backend && python -m pytest -q`（须 `danger-full-access`）；`node --check <file>`、`node frontend/scripts/precompile.js`、`node frontend/scripts/smoke-check.js`（工作目录 = 项目根）；DB 迁移 `python -c` 内联脚本（见本节「现状坐标」的迁移文件路径）
-- **什么没测**：① **真机走查全未做**（各页面渲染与六套皮肤、登录/切皮肤刷新后保持、建档、占卜扣费、王先生会话、后台登录调分、PWA 安装名）② **线上迁移未执行**（`.env` 改名 / `/opt/taichu`→`/opt/mingli` / DB 改名 / 0002 列迁移 / `recharge_codes` DROP 均未在服务器执行）③ **旧 SW 缓存回收未真机验证**（需老设备浏览器实测）④ Docker 镜像未本地构建验证（`docker compose config` 也未跑，本机无 Docker）
+- **什么没测**：① **真机走查全未做**（各页面渲染与六套皮肤、登录/切皮肤刷新后保持、建档、占卜扣费、王先生会话、后台登录调分、PWA 安装名）② **线上迁移未执行**（`.env` 改名 / `/opt/taichu`→`/opt/mingli` / DB 改名 / 0002 列迁移 / `recharge_codes` DROP 均未在服务器执行）③ **旧 SW 缓存回收未真机验证**（需老设备浏览器实测）④ Docker 镜像未本地构建验证（`docker compose config` 也未跑，本机无 Docker）⑤ **根目录物理改名未完成** —— 两次 `Rename-Item` 均报 `The process cannot access the file because it is being used by another process`。**根因**：Windows 下**目录内有任何文件被打开时该目录就不能改名**（不是权限问题，也不是本节的改动造成的）；实测占用者至少四类 —— 本会话的 DSH 工作区（`dsh web` 进程）、VS Code（若开着该文件夹）、**另一个会话遗留的 `python -m http.server 8080`（PID 31524，起于 2026-09-12）**、以及同步 `Vibecoding\` 的 Syncthing 两个进程。**Agent 未强杀这些进程**（`99_状态/已知问题.md` 明确禁止破坏其他会话的在制品）；命令已交给用户
 - **覆盖声明**：**证明了** —— 改名在源码与文档层完整、无悬挂引用（grep 断言 + 3 类例外逐条具名）、前端三套静态门禁全绿、后端 214 项回归全绿、CSS 令牌无悬空、本机 DB 迁移生效。**未证明** —— 真机视觉与交互正确性、线上迁移可行性、Docker 构建可用性、旧用户设备上的 SW 回收行为
 - **截图**：无（按 `99_状态/已知问题.md`「截图不是机制」，本节点未截图）
 
@@ -166,4 +167,4 @@
 
 ## 用户结论
 
-待用户确认（真机走查 + 线上迁移待执行；根目录物理改名由用户在会话末尾执行）
+**待你执行最后一步并确认**：① 关掉占用 `taichu\` 的进程（DSH 会话 / VS Code / 遗留的 `python -m http.server 8080` PID 31524 / Syncthing）后跑 `Rename-Item -LiteralPath .\taichu -NewName 'mingli'`（命令与校验见 `00_根/入口.md` 交接状态）② 在新路径 `Vibecoding\mingli\` 重开工作区后做统一真机走查 ③ 线上迁移按 `ops/deploy/README.md` 执行
