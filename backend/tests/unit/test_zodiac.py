@@ -118,13 +118,13 @@ def zodiac_node_server():
 
 
 def test_zodiac_raw_function_contract():
-    """vendored calculateZodiacYearFortune raw 契约：conflicts/yearGanZhi 等结构
-    齐全，且剥离前确实带 evidenceAnalysis/prompt 内部字段。"""
+    """节156 后：自研内核 calculateZodiacYearFortuneCore raw 契约：conflicts/yearGanZhi
+    等排盘字段齐全，产物干净（无 evidenceAnalysis/prompt 内部字段）。"""
     if NODE_BIN is None:
         pytest.skip("本地无 node，跳过生肖流年原函数契约测试")
     script = (
-        "import { calculateZodiacYearFortune } from './vendor/mingyu-core/dist/zodiac/index.js';\n"
-        "const r = calculateZodiacYearFortune({ zodiac: '鼠', year: 2026 });\n"
+        "import { calculateZodiacYearFortuneCore } from './paipan-core/src/capabilities/zodiac/index.js';\n"
+        "const r = calculateZodiacYearFortuneCore({ zodiac: '鼠', year: 2026 });\n"
         "console.log(JSON.stringify({ zodiac: r.zodiac, zodiacBranch: r.zodiacBranch,\n"
         "  yearGanZhi: r.yearGanZhi, yearBranch: r.yearBranch, noble: r.noble,\n"
         "  relation: r.relation, elementRelation: r.elementRelation, meeting: r.meeting,\n"
@@ -145,14 +145,13 @@ def test_zodiac_raw_function_contract():
     assert proc.returncode == 0, f"node 直调 zodiac 失败: {proc.stderr}"
     out = json.loads(proc.stdout.strip())
 
-    # 结构契约（对齐 vendor zodiac/index.js getZodiacYearFortune 返回）
+    # 结构契约（排盘字段与旧实现逐字段一致——对拍 3672/3672）
     assert out["zodiac"] == "鼠"
     assert out["zodiacBranch"] == "子"
     assert out["yearGanZhi"] == "丙午"      # 2026 = 丙午
     assert out["yearBranch"] == "午"
-    # 子午不合（无六合丑 / 三合申子辰命中）→ 引擎 noble 为空；BUG-003 修复后由
-    # vendor B2 确定性文案回填（优先级：引擎命中 > B2 回填 > server 天乙贵人兜底），
-    # 保证「贵人」卡永不为空。这里断言回填结果而非 None。
+    # 子午不合（无六合丑 / 三合申子辰命中）→ noble 回落固定串「三合：猴、龙；六合：牛」
+    # （与旧实现 BUG-003 修复后的回填文本一致，对拍字段级相等）
     assert out["noble"] == "三合：猴、龙；六合：牛"
     assert out["meeting"] is None
     assert out["relation"] == "生肖地支本气克年干五行"
@@ -161,16 +160,17 @@ def test_zodiac_raw_function_contract():
     assert isinstance(out["actionSignals"], list) and out["actionSignals"]
     assert isinstance(out["favorableRelations"], list)
     assert isinstance(out["riskRelations"], list)
-    assert out["evidenceGrade"] == "轻量"
-    assert out["interpretationBoundary"] == "仅限生肖与流年关系"
-    # 顶层 19 键 = 17 个可解释字段（含 zodiacWuxing + C1 relationCopy + C2 nobleDetail）+ evidenceAnalysis + prompt
-    assert len(out["keys"]) == 19
+    # 文案字段（自撰，与旧实现不同属预期）
+    assert out["evidenceGrade"] == "简版关系核验"
+    assert out["interpretationBoundary"] == "仅覆盖生肖年支与流年干支的固定关系"
+    # 顶层 17 键（含 zodiacWuxing + relationCopy + nobleDetail；无 evidenceAnalysis/prompt）
+    assert len(out["keys"]) == 17
     assert "zodiacWuxing" in out["keys"]
     assert "relationCopy" in out["keys"]
     assert "nobleDetail" in out["keys"]
-    # raw 结果确实带内部字段 → 证明 stripInternal 之前存在、之后需要剥离
-    assert out["hasEvidenceAnalysis"] is True
-    assert out["hasPrompt"] is True
+    # 节156：自研内核产物干净（stripInternal 幂等）
+    assert out["hasEvidenceAnalysis"] is False
+    assert out["hasPrompt"] is False
 
 
 def test_zodiac_node_endpoint_strips_internal(zodiac_node_server):
