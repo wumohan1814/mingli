@@ -1,6 +1,6 @@
 # 节147 · 项目代号 taichu→mingli（标识/环境变量/部署/根目录）
 
-状态：🟢 通过（代码/文档/本地库全部改完 + 门禁全绿；**最后一步「根目录物理改名」由用户在会话末尾执行**）｜ 强度：**大改** ｜ 日期：2026-09-13 拍板 → 2026-09-14 落地
+状态：🟢 通过（代码/文档/本地库全部改完 + 门禁全绿；**最后一步「根目录物理改名」已由用户执行，新路径下门禁与服务已复核** —— 见验收第 8 条）｜ 强度：**大改** ｜ 日期：2026-09-13 拍板 → 2026-09-14 落地 → 2026-09-14 第二轮新路径复核完毕
 
 ## 用户原话
 
@@ -25,7 +25,7 @@
 - [x] 5. `docker compose` 配置、`Caddyfile`、`Dockerfile`、`start.bat/sh`、`ops/deploy/*`、`standards/06` 全部同步；**线上迁移步骤已写进 `ops/deploy/README.md`（唯一清单，含第 0 步备份与回退）**
 - [x] 6. PWA：SW 缓存前缀改新名，**并保留对旧 `taichu-img*` 前缀的一次性回收**（节147 §四-3 的硬要求）
 - [x] 7. `standards/01`（命名约定）、`04`（设计令牌）、`06`（环境部署）与代码一致
-- [ ] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— ⚠️ **未完成**：Agent 两次尝试改名均被 Windows 拒绝（`The process cannot access the file because it is being used by another process`）。根因见下方「留痕 · 什么没测」，**命令已写在 `00_根/入口.md` 交接状态，由用户关闭占用后执行**
+- [x] 8. **根目录改名后新路径 `Vibecoding\mingli\` 下 git 状态干净连续、服务可起** —— ✅ **已完成（用户执行改名 → Agent 在新路径复核）**：`Vibecoding\taichu\` 已不存在；`git status` 干净、HEAD = `a79402d`；**服务可起**（`uvicorn` Application startup complete、`/api/health` → 200）；门禁 **1 failed / 218 passed**（唯一失败 = 已登记既存夹具漂移 `test_fixture_snapshot_anchor`）+ 前端 `precompile` exit=0；首页 200 / 46 KB（「命理」3 处、「太初」与 `taichu` 各 0、22 个脚本全 200）。⚠️ 「改根目录名」**结构上不可能由会话内的 Agent 完成**（Windows 目录占用，见下方「留痕 · 什么没测」与 `99_状态/已知问题.md`）——本条只因此才排到会话之外
 
 ## 现状坐标（Agent 用）
 
@@ -189,4 +189,4 @@
 
 ## 用户结论
 
-**待你执行最后一步并确认**：① 关掉占用 `taichu\` 的进程（DSH 会话 / VS Code / 遗留的 `python -m http.server 8080` PID 31524 / Syncthing）后跑 `Rename-Item -LiteralPath .\taichu -NewName 'mingli'`（命令与校验见 `00_根/入口.md` 交接状态）② 在新路径 `Vibecoding\mingli\` 重开工作区后做统一真机走查 ③ 线上迁移按 `ops/deploy/README.md` 执行
+**节147 已全部完成**（含最后一步「根目录改名」——你已执行，Agent 已在新路径复核门禁与服务，见上方验收第 8 条）。**剩 3 项在你手上**：① 真机统一走查（节137/139/141/145/146/147 合并一次；服务可起：`start.bat` → http://localhost:8000）② 线上迁移按 `ops/deploy/README.md`「节147 · 代号迁移步骤」执行 ③ **GitHub 仓库改名**（`deploy.sh` 与部署文档已是新地址，须早于服务器下次 `git pull`）。另：**新发现「真实域名与运营者联系方式仍留在 git 历史里」待你拍板** —— 三个修法与建议见 `99_状态/决策.md` 末行（本条属本节硬规矩的缺口，非节147 改动本体）。
