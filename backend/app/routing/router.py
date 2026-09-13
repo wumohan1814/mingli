@@ -12,7 +12,7 @@ ROUTE_TABLE = {
     "婚姻感情": {"main": ["ziwei"], "support": ["bazi-pattern"]},
     "事业财运": {"main": ["bazi-pattern", "bazi-dayun-liunian", "bazi-hunyin-caiyun"], "support": ["ziwei", "qizheng"]},
     "健康": {"main": ["wuyun-liuqi"], "support": ["bazi-pattern"]},
-    "性格天赋": {"main": ["ziwei"], "support": ["xizhan"]},
+    "性格天赋": {"main": ["ziwei"], "support": ["bazi-pattern"]},
     "疑难一局": {"main": ["qimen-lifetime"], "support": []},
 }
 

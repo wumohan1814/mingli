@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""八字/九法起名契约测试（REQ-094 · /api/namer/name）。
+"""八字/八法起名契约测试（REQ-094 · /api/namer/name）。
 
 分层覆盖（LLM 均 mock，不真调外部）：
   1. 鉴权：缺 Authorization → 400（Header 必填校验）；非 Bearer / 非法令牌 → 401；

@@ -332,7 +332,7 @@ def test_cases_share_visitor_isolated_from_owner_data(share_client):
     names = [c["name"] for c in resp.json()["data"]["cases"]]
     assert "既有档案A" not in names and names == []
 
-    # 访客（未登录）触发其它能力（如排盘/九法合一建档入口 POST /api/cases）→ 需鉴权
+    # 访客（未登录）触发其它能力（如排盘/八法合一建档入口 POST /api/cases）→ 需鉴权
     resp = share_client.post("/api/cases", json={})
     assert resp.status_code in (400, 422), resp.text  # 未带鉴权即被挡在参数层
 

@@ -161,7 +161,7 @@
 
   <!-- ===================== I4 三功能 ×3 ===================== -->
 
-  <!-- 九法配对 pair -->
+  <!-- 八法配对 pair -->
   <symbol id="fn-pair" viewBox="0 0 100 100">
     <circle class="med" cx="50" cy="50" r="46"/><circle class="ring" cx="50" cy="50" r="42"/><circle class="ring2" cx="50" cy="50" r="38"/>
     <circle class="ico" cx="42" cy="50" r="14"/><circle class="ico" cx="58" cy="50" r="14"/>

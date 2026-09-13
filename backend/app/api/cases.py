@@ -325,9 +325,9 @@ async def list_cases(
                 "status": case.status.value if case.status else None,
                 "createdAt": case.created_at.isoformat() if case.created_at else None,
                 "hasReport": case.id in has_report_ids,
-                # 断前尘共 9 法，methodCount 为已产出非空结果的方法数（进度）
+                # 断前尘共 8 法（节139：西占已退出），methodCount 为已产出非空结果的方法数（进度）
                 "methodCount": method_counts.get(case.id, 0),
-                "totalMethods": 9,
+                "totalMethods": len(METHOD_KEYS),
                 "chartSummary": _list_chart_summary(chart_by_case.get(case.id)),
             }
         )
@@ -442,7 +442,8 @@ async def duan_qian_chen(
         user_id=user_id,
         type=JobType.duan_qian_chen,
         status=JobStatus.pending,
-        total=9,
+        # 节139：进度分母改为注册表长度（西占退出后 9→8），不再硬编码
+        total=len(METHOD_KEYS),
         completed=0,
     )
     db.add(job)
@@ -760,7 +761,7 @@ async def archive(
     return {"code": 0, "message": "ok", "data": data}
 
 
-# --- 九法逐法解读（REQ-126）---
+# --- 逐法解读（REQ-126；节139：九法→八法）---
 def _aggregate_method_readings(rows: list[MethodResult]) -> tuple[list[dict], list[str]]:
     """把某 case 的 method_results 行按 method_key 聚合为逐法解读（纯读库，零 LLM）。
 
@@ -813,8 +814,8 @@ async def get_case_readings(
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """九法逐法解读聚合（REQ-126，纯读库零 LLM）：返回该 case 全部 method_results
-    按 method_key 聚合的逐法解读，供 9 法内部 tab 展示。
+    """逐法解读聚合（REQ-126，纯读库零 LLM）：返回该 case 全部 method_results
+    按 method_key 聚合的逐法解读，供逐法解读 tab 展示（节139 起为 8 法）。
 
     契约（data）：
       methods[]：每法一条（顺序 = METHOD_KEYS 注册表）

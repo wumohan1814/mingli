@@ -11,7 +11,7 @@
 最后直接查临时 analytics 库做落库断言（DB 为唯一事实源），覆盖端到端闭环。
 
 零真实 DeepSeek 调用：按 Phase 4 既定纪律，monkeypatch 三处模块级 `chat`：
-  - app.methods.base.chat            （9 法分析，analyze_method 内部调用点）
+  - app.methods.base.chat            （8 法分析，analyze_method 内部调用点）
   - app.validation.validator.chat     （断前尘逐法校验，validate 内部调用点）
   - app.api.cases.chat                （修正对话，revise 内部调用点）
 fake_chat 按最后一条 user 消息 JSON 的内容分派三条链路（分析/校验/对话），
@@ -186,13 +186,13 @@ def test_full_main_flow(e2e_client):
     assert data["degradedMethods"] == [], f"完整盘不应降级: {data['degradedMethods']}"
     assert data["chart"]["dayMaster"], "chart.dayMaster 应存在"
 
-    # 4) duan-qian-chen：202 + 后台 9 法串行分析 + 逐法校验；同步轮询到 succeeded
+    # 4) duan-qian-chen：202 + 后台 8 法串行分析 + 逐法校验；同步轮询到 succeeded
     resp = client.post(f"/api/cases/{case_id}/duan-qian-chen", headers=headers)
     assert resp.status_code == 202, resp.text
     dqc_job_id = resp.json()["data"]["jobId"]
     dqc_data = _wait_job(client, headers, dqc_job_id)
     assert dqc_data["status"] == "succeeded", f"断前尘任务失败: {dqc_data}"
-    assert dqc_data["total"] == 9
+    assert dqc_data["total"] == 8
     dqc_result = dqc_data["result"]
     assert dqc_result and dqc_result.get("propositions"), (
         f"断前尘问卷 propositions 应为非空: {dqc_result}"
@@ -264,7 +264,7 @@ def test_full_main_flow(e2e_client):
             .filter_by(case_id=case_id, user_id=user_id, phase=Phase.duan_qian_chen)
             .all()
         )
-        assert len(dqc_rows) == 9, f"断前尘 9 法结果应全部落库: {len(dqc_rows)}"
+        assert len(dqc_rows) == 8, f"断前尘 8 法结果应全部落库: {len(dqc_rows)}"
         assert all(r.result_json for r in dqc_rows), "断前尘各行 result_json 不应为空"
         assert all(r.validation_json is not None for r in dqc_rows), (
             "断前尘各行 validation_json 不应为空"

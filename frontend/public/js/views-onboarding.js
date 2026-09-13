@@ -297,7 +297,7 @@ function OnboardingPage({
   for (let d = 1; d <= 31; d++) DAYS.push(String(d));
   const HOURS = [];
   for (let h = 0; h <= 23; h++) HOURS.push(String(h));
-  // REQ-067：档案与九法合一解耦 —— 建档表单默认值（含选填「档案名」；空表单供清空后连建）
+  // REQ-067：档案与八法合一解耦 —— 建档表单默认值（含选填「档案名」；空表单供清空后连建）
   const blankForm = () => ({
     // REQ-067：档案名（选填）—— 建档后 PATCH 写入；留空则由前端按「未命名档案」展示
     name: '',
@@ -432,8 +432,8 @@ function OnboardingPage({
     ...form,
     true_solar_time: e.target.checked
   });
-  // REQ-067：档案与九法合一解耦 —— 「开始排盘」仅 = 建档 + 确定性非 LLM 排盘（不再自动进入
-  // waiting/断前尘/预测链路），盘面生成后入档案查看；九法合一等深度解读由各模块另行衔接。
+  // REQ-067：档案与八法合一解耦 —— 「开始排盘」仅 = 建档 + 确定性非 LLM 排盘（不再自动进入
+  // waiting/断前尘/预测链路），盘面生成后入档案查看；八法合一等深度解读由各模块另行衔接。
   // mode='go'：保存后按 returnTo 回跳模块或进档案；mode='next'：保存当前档案、清空表单继续建下一个。
   const saveCase = async mode => {
     setLoading(true);
@@ -540,7 +540,7 @@ function OnboardingPage({
             caseId
           });
         } else if (returnTo === 'nine') {
-          // REQ-068：九法合一选档案页内新建 → 回跳选档案并预选该档案（由用户自行决定查看/跑预测）
+          // REQ-068：八法合一选档案页内新建 → 回跳选档案并预选该档案（由用户自行决定查看/跑预测）
           onNavigate('nine-pick', {
             caseId
           });

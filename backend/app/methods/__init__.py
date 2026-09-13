@@ -8,14 +8,15 @@
 import importlib.util
 from pathlib import Path
 
-# 9 个方法的注册顺序（与 slicer / 路由表 / mingli SKILL.md §0 对齐）
+# 8 个方法的注册顺序（与 slicer / 路由表 / mingli SKILL.md §0 对齐）
+# 节139：xizhan（西式占星）已摘出本注册表——西占属「西式占卜」大模块，
+# 不进国学九法→八法综合流水线；其 analyzer 目录与 prompt 保留（可能复用）。
 METHOD_KEYS = [
     "bazi-pattern",
     "bazi-dayun-liunian",
     "bazi-shensha-nayin",
     "bazi-hunyin-caiyun",
     "ziwei",
-    "xizhan",
     "qizheng",
     "qimen-lifetime",
     "wuyun-liuqi",

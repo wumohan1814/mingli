@@ -88,6 +88,7 @@ PROMPT_FILES = {
     "bazi-shensha-nayin": "method-prompts/bazi-shensha-nayin.md",
     "bazi-hunyin-caiyun": "method-prompts/bazi-hunyin-caiyun.md",
     "ziwei": "method-prompts/ziwei.md",
+    # 节139：xizhan 已摘出八法流水线，但提示词文件保留且仍可从后台热改/回滚
     "xizhan": "method-prompts/xizhan.md",
     "qizheng": "method-prompts/qizheng.md",
     "qimen-lifetime": "method-prompts/qimen-lifetime.md",
@@ -122,7 +123,7 @@ PROMPT_FILES = {
     # agent（2，REQ-076：太初先生主角色 prompt + 开场白话术；均用户不可改、后台可热改）
     "agent_master": "agent/master.md",
     "agent_greeting": "agent/greeting.md",
-    # namer（1，REQ-094：八字/九法起名 master）
+    # namer（1，REQ-094：八字/八法起名 master）
     "namer_master": "namer/master.md",
 }
 # key → 中文分类（按所在目录；前端列表分组展示）

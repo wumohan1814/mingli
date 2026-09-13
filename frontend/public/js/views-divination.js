@@ -1,4 +1,4 @@
-﻿// 占卜域视图（节110 阶段3）：临时起卦 DivinationPage + 六爻/梅花/小六壬/六壬/金口诀/奇门/文王圣卦 各结果视图与抽卡动画 + HEX_*/LIUQIN_*/LIUSHEN_*/TERMS_* 卦辞常量 + 起卦工具(pad2/todayStr/nowShichen/artFxEls/shuffleArr/yaosPartsOf 等)
+// 占卜域视图（节110 阶段3）：临时起卦 DivinationPage + 六爻/梅花/小六壬/六壬/金口诀/奇门/文王圣卦 各结果视图与抽卡动画 + HEX_*/LIUQIN_*/LIUSHEN_*/TERMS_* 卦辞常量 + 起卦工具(pad2/todayStr/nowShichen/artFxEls/shuffleArr/yaosPartsOf 等)
 // 加载于 views-cases.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 /* ---------- 临时起卦 ---------- */
@@ -522,7 +522,7 @@ function DivJinkoujueView(res) {
 }
 /* REQ-120：奇门时家局盘 —— 九宫四盘（九星/八门/八神/天地盘干）+ 定局信息 + 格局
    （基础标签/经典格局/复合格局）+ 反证（空亡/特殊时辰/风险宫位/凶格）+ 应期 + 方位
-   （引擎确定性字段，免费展示；与 9 法「奇门终身局」命盘类区分） */
+   （引擎确定性字段，免费展示；与八法「奇门终身局」命盘类区分） */
 function DivQimenView(res) {
   const items = [];
   const gz = (res && typeof res === 'object' && res.ganzhi) || {};

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""八字/九法起名 API（REQ-094 · POST /api/namer/name）。
+"""八字/八法起名 API（REQ-094 · POST /api/namer/name）。
 
 交互契约：用户选一个**已排盘**的档案 + 姓氏（必填）+ 起名方向（选填）→ 后端
 读取该档案八字画像 → LLM 依五行喜忌起名（名字部分**不含姓氏 1~2 字**）。
@@ -255,7 +255,7 @@ async def generate_name(
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """八字/九法起名（LLM 可选付费，即时扣费）：归属校验 → 未排盘 400 → 预检余额
+    """八字/八法起名（LLM 可选付费，即时扣费）：归属校验 → 未排盘 400 → 预检余额
     → chat（json_mode）→ 字数兜底 → 成功扣费（ref=naming）；LLM 失败 502 不扣费。"""
     user_id = get_user_id_from_token(authorization)
 
