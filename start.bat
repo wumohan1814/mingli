@@ -1,11 +1,11 @@
 @echo off
 echo ============================================
-echo   Taichu - Mingli H5 Dev Launcher
+echo   Mingli - Mingli H5 Dev Launcher
 echo ============================================
 
 echo.
 echo Starting backend (FastAPI serves frontend + API on :8000)...
-start "taichu" cmd /c "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+start "mingli" cmd /c "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
 echo.
 echo ============================================

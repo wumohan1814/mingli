@@ -1,8 +1,8 @@
 """后台管理 API（prefix=/admin）。
 
 数据源约定：
-  - 报表 / 登录 / 审计 → taichu_ops（OpsSession，运维库）
-  - 用户档案查询      → taichu_analytics（AnalyticsSession，业务库）
+  - 报表 / 登录 / 审计 → mingli_ops（OpsSession，运维库）
+  - 用户档案查询      → mingli_analytics（AnalyticsSession，业务库）
   - 提示词            → 直接读/写 backend/prompts/**/*.md（33 个文件类 prompt：
                         method-prompts 9 / shared 3 / interpret 14 / pair 4 /
                         agent 2 / namer 1）；每次写前先落
@@ -12,7 +12,7 @@
 才能写提示词（PUT / rollback）。
 
 Agent 运维工具端点（REQ-050，/admin/agent/*）：OpenClaw Agent 经既有 bb3a.mingli.example.com
-接入点直调后台 API。鉴权用 Agent 专用静态 token（require_agent，TAICHU_AGENT_TOKEN），
+接入点直调后台 API。鉴权用 Agent 专用静态 token（require_agent，MINGLI_AGENT_TOKEN），
 与 admin 账号密码 / admin JWT 完全独立（互不可用）。写动作（余额调整/重置密码/重置 case）
 审计：admin_user_id=0 + detail 前缀 "[agent]"，与人工 admin 审计区分；高风险端点响应
 data 内带 requires_confirmation=true 标记（确认交互由 OpenClaw/用户侧完成，本端只标记）。
@@ -784,7 +784,7 @@ def manual_credit(
 # --- 路由：运维动作（换 key / 重置密码 / 重置档案，operator+） ---
 # backend/.env：router.py 位于 backend/app/admin/，parents[2] = backend
 ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
-_ENV_KEY_NAME = "TAICHU_LLM_API_KEY"
+_ENV_KEY_NAME = "MINGLI_LLM_API_KEY"
 
 
 @router.post("/ops/llm-key")
@@ -793,7 +793,7 @@ def change_llm_key(
     admin: dict = Depends(require_role("operator")),
     db: Session = Depends(get_ops_db),
 ):
-    """更换 LLM API key（operator+）：改写 backend/.env 的 TAICHU_LLM_API_KEY 行。
+    """更换 LLM API key（operator+）：改写 backend/.env 的 MINGLI_LLM_API_KEY 行。
 
     audit 的 detail 不含 key 明文（只记“已更换”）；settings.llm_api_key 是启动时
     快照，改动需**重启后端**才生效（MVP 接受）。
@@ -972,7 +972,7 @@ def delete_user(
       原级联序列中的该表已移除）→ refresh_tokens → login_attempts（按 username 匹配，
       表无 user_id 列）→ users。
     注：本代码库暂无 register_limits 表（任务清单中的预留项），无需删除。
-    feedback 库（taichu_feedback）Feedback 按 user_id 同删（跨库无 FK，best-effort）；
+    feedback 库（mingli_feedback）Feedback 按 user_id 同删（跨库无 FK，best-effort）；
     ops 库 events.user_id 无 FK、为埋点历史，保留不删。
     用户不存在抛 1002。事务顺序：业务库删除并 commit → feedback 库 → 审计库 commit。
     """
@@ -1028,7 +1028,7 @@ def delete_user(
 # Agent 运维工具端点（REQ-050，/admin/agent/*）
 #
 # OpenClaw Agent 经既有 bb3a.mingli.example.com 通道直调后台 API。鉴权用 require_agent
-# （TAICHU_AGENT_TOKEN，独立于 admin 账号密码/admin JWT——两套 token 互不可用）。
+# （MINGLI_AGENT_TOKEN，独立于 admin 账号密码/admin JWT——两套 token 互不可用）。
 # 查看类端点与 /admin/* 对应端点返回同构；写端点复用 /admin/* 相同业务逻辑，
 # 审计约定：admin_user_id=0（约定值 = Agent/系统调用，区别于人工 admin id）+
 # detail 前缀 "[agent]"（如 "[agent] 余额调整 user_id=..."），与人工审计区分。
@@ -1576,7 +1576,7 @@ def delete_asset(
 # =========================================================================== #
 # 运营配置（REQ-085，/admin/config/*）
 #
-# system_configs 表（业务库 taichu_analytics，见 models.analytics.SystemConfig：
+# system_configs 表（业务库 mingli_analytics，见 models.analytics.SystemConfig：
 # key PK / value / description / updated_by / updated_at）存后台可动态改的运营配置，
 # 种子键（recharge_rate / free_credit_on_register）由 database.ensure_schema 幂等
 # 初始化（首启取 config 默认 / env 覆盖值落库）。运行时读取点每次查表、无启动缓存，

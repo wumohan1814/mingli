@@ -8,7 +8,7 @@
 import importlib.util
 from pathlib import Path
 
-# 8 个方法的注册顺序（与 slicer / 路由表 / mingli SKILL.md §0 对齐）
+# 8 个方法的注册顺序（与 slicer / 路由表 / mingli-reference SKILL.md §0 对齐）
 # 节139：xizhan（西式占星）已摘出本注册表——西占属「西式占卜」大模块，
 # 不进国学九法→八法综合流水线；其 analyzer 目录与 prompt 保留（可能复用）。
 METHOD_KEYS = [
@@ -26,7 +26,7 @@ METHOD_KEYS = [
 def _load(key: str):
     """按文件路径加载 `<key>/analyzer.py`，返回其 `analyze` 协程。"""
     path = Path(__file__).parent / key / "analyzer.py"
-    spec = importlib.util.spec_from_file_location(f"taichu_method_{key.replace('-', '_')}", path)
+    spec = importlib.util.spec_from_file_location(f"mingli_method_{key.replace('-', '_')}", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod.analyze

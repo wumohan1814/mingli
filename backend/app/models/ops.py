@@ -1,6 +1,6 @@
-"""运维库 ORM 模型（taichu_ops）：埋点 / 后台 / 错误上报。
+"""运维库 ORM 模型（mingli_ops）：埋点 / 后台 / 错误上报。
 
-与业务库（taichu_analytics）分离，便于单独备份/清理。
+与业务库（mingli_analytics）分离，便于单独备份/清理。
 """
 from datetime import datetime
 from sqlalchemy import Column, Float, Integer, String, Text, DateTime, JSON, Index

@@ -3,9 +3,9 @@
 
 DB 隔离原理：pydantic-settings 中**环境变量优先级高于 env_file**，因此只要在任何
 `app.*` 被 import 之前（本文件为 tests/ 首个被 pytest 加载的模块）写入
-TAICHU_DB_PATH / TAICHU_FEEDBACK_DB_PATH / TAICHU_OPS_DB_PATH，之后才 import
+MINGLI_DB_PATH / MINGLI_FEEDBACK_DB_PATH / MINGLI_OPS_DB_PATH，之后才 import
 app.database 的模块（app.models / app.jobs.orchestrator 等）拿到的就是临时库，
-绝不触碰真实 backend/data/taichu_analytics.db / taichu_ops.db。
+绝不触碰真实 backend/data/mingli_analytics.db / mingli_ops.db。
 
 编排回归夹具：
   - orchestration_env（session）：在临时 analytics/ops 库建表 + ensure_schema()
@@ -26,13 +26,13 @@ from pathlib import Path
 import pytest
 
 # 顶层、任何 app import 之前写入临时库路径（session 级临时目录，全部测试共用）
-_TMP_ROOT = Path(tempfile.mkdtemp(prefix="taichu_pytest_"))
-os.environ["TAICHU_DB_PATH"] = str(_TMP_ROOT / "analytics.db")
-os.environ["TAICHU_FEEDBACK_DB_PATH"] = str(_TMP_ROOT / "feedback.fb")
-os.environ["TAICHU_OPS_DB_PATH"] = str(_TMP_ROOT / "ops.db")
+_TMP_ROOT = Path(tempfile.mkdtemp(prefix="mingli_pytest_"))
+os.environ["MINGLI_DB_PATH"] = str(_TMP_ROOT / "analytics.db")
+os.environ["MINGLI_FEEDBACK_DB_PATH"] = str(_TMP_ROOT / "feedback.fb")
+os.environ["MINGLI_OPS_DB_PATH"] = str(_TMP_ROOT / "ops.db")
 # 节141：公开注册默认关闭（生产口径）；测试需用 /api/auth/register 造数 → 此处显式打开。
 # 环境变量优先级高于 env_file，且必须早于任何 app.* import（pydantic-settings 单例）。
-os.environ["TAICHU_ALLOW_PUBLIC_REGISTER"] = "true"
+os.environ["MINGLI_ALLOW_PUBLIC_REGISTER"] = "true"
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 CHART_JSON_PATH = FIXTURES_DIR / "chart.json"

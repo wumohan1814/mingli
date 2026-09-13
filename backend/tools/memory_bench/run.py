@@ -94,7 +94,7 @@ class Probe:
 
     def _on_sql(self, conn, cursor, statement, parameters, context, executemany):
         # 只统计 analytics 引擎上的语句 = 召回自身的 SQL 条数
-        # （埋点写 taichu_ops 走另一个引擎，不计入）
+        # （埋点写 mingli_ops 走另一个引擎，不计入）
         self.sql_calls += 1
 
     def reset(self) -> None:
@@ -520,7 +520,7 @@ def _render_markdown(result: dict) -> str:
     add("```")
     add("- Python：`%s`；SQLite：`%s`" % (meta["python"], meta["sqlite"]))
     add("- 本次库文件：`%s`（运行结束已按 `--keep` 语义清理，此处仅留痕）"
-        % meta["db_env"]["TAICHU_DB_PATH"])
+        % meta["db_env"]["MINGLI_DB_PATH"])
 
     add("\n## 3. 语料规模\n")
     add("| 项 | 值 |\n|---|---|")

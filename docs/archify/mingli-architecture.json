@@ -3,10 +3,10 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "命理太初 · 多流派 AI 命理 H5 系统架构",
-    "output": "taichu-architecture.html",
+    "output": "mingli-architecture.html",
     "quality_profile": "showcase",
     "repository": {
-      "url": "https://github.com/wumohan1814/taichu.git",
+      "url": "https://github.com/wumohan1814/mingli.git",
       "revision": "27b214042e91568180e7c35a82641cc56e311758"
     },
     "views": [
@@ -24,9 +24,9 @@
     { "id": "paipan-engine", "type": "backend", "label": "排盘引擎", "sublabel": "确定性计算 · 零 LLM", "pos": [1080, 470], "size": [170, 62], "tag": "engine / slicer / scorer" },
     { "id": "paipan-node", "type": "backend", "label": "Node 22 排盘服务", "sublabel": ":9317 · iztro / mingyu-core", "pos": [1080, 150], "size": [170, 62], "tag": "subprocess 降级" },
     { "id": "llm", "type": "cloud", "label": "DeepSeek API", "sublabel": "deepseek-v4-flash", "pos": [1290, 470], "size": [140, 62], "tag": "OpenAI 兼容" },
-    { "id": "db-analytics", "type": "database", "label": "taichu_analytics.db", "sublabel": "业务 · 档案 · 积分", "pos": [820, 680], "size": [170, 62] },
-    { "id": "db-feedback", "type": "database", "label": "taichu_feedback.db", "sublabel": "质询收集", "pos": [1080, 680], "size": [170, 62] },
-    { "id": "db-ops", "type": "database", "label": "taichu_ops.db", "sublabel": "埋点 · 后台 · 错误", "pos": [1290, 680], "size": [140, 62] }
+    { "id": "db-analytics", "type": "database", "label": "mingli_analytics.db", "sublabel": "业务 · 档案 · 积分", "pos": [820, 680], "size": [170, 62] },
+    { "id": "db-feedback", "type": "database", "label": "mingli_feedback.db", "sublabel": "质询收集", "pos": [1080, 680], "size": [170, 62] },
+    { "id": "db-ops", "type": "database", "label": "mingli_ops.db", "sublabel": "埋点 · 后台 · 错误", "pos": [1290, 680], "size": [140, 62] }
   ],
   "boundaries": [
     { "kind": "region", "label": "Docker 单镜像容器 web（模块化单体）", "wraps": ["fastapi", "orchestrator", "methods", "paipan-engine", "paipan-node"] },

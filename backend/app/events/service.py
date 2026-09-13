@@ -1,4 +1,4 @@
-"""埋点写入服务（taichu_ops.events）。
+"""埋点写入服务（mingli_ops.events）。
 
 埋点写库失败只记日志、不抛异常、绝不阻断业务。
 """
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def record_event(event_name: str, *, user_id=None, case_id=None, session_id=None,
                  props=None, ip=None, user_agent=None) -> None:
-    """同步写一条埋点到 taichu_ops.events。失败静默。"""
+    """同步写一条埋点到 mingli_ops.events。失败静默。"""
     try:
         session = OpsSession()
         try:

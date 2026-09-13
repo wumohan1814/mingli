@@ -1529,10 +1529,10 @@ function CasesPage({
         phone: data.phone != null ? data.phone : (phone || null),
         email: data.email != null ? data.email : (email || null)
       } : x));
-      toast(TC_COPY.ui.toast['case-edit-ok']);
+      toast(ML_COPY.ui.toast['case-edit-ok']);
       setEditTarget(null);
     } catch (e) {
-      toast(e.message || TC_COPY.ui.toast['case-edit-fail']);
+      toast(e.message || ML_COPY.ui.toast['case-edit-fail']);
     } finally {
       setEditBusy(false);
     }
@@ -1551,7 +1551,7 @@ function CasesPage({
     if (!renameTarget) return;
     const name = String(renameValue || '').trim();
     if (!name) {
-      toast(TC_COPY.ui.toast['case-name-required']);
+      toast(ML_COPY.ui.toast['case-name-required']);
       return;
     }
     setRenameBusy(true);
@@ -1568,10 +1568,10 @@ function CasesPage({
         ...x,
         name: savedName
       } : x));
-      toast(TC_COPY.ui.toast['case-rename-ok']);
+      toast(ML_COPY.ui.toast['case-rename-ok']);
       setRenameTarget(null);
     } catch (e) {
-      toast(e.message || TC_COPY.ui.toast['case-rename-fail']);
+      toast(e.message || ML_COPY.ui.toast['case-rename-fail']);
     } finally {
       setRenameBusy(false);
     }
@@ -1599,7 +1599,7 @@ function CasesPage({
         }
         return next;
       });
-      toast(wasDefault && caseList.length > 1 ? TC_COPY.ui.toast['case-deleted-with-default'] : TC_COPY.ui.toast['case-deleted']);
+      toast(wasDefault && caseList.length > 1 ? ML_COPY.ui.toast['case-deleted-with-default'] : ML_COPY.ui.toast['case-deleted']);
       // REQ-092：删光全部档案（当前列表只剩被删这一条）→ 重校验触发强制建档门禁：
       // 0 档 → 立即强制进入新建档案（与「新注册/无档案存量账号」同一口径）
       if (caseList.length === 1) {
@@ -1616,7 +1616,7 @@ function CasesPage({
   const setCaseDefault = async c => {
     if (!c || c.caseId == null) return;
     if (c.isDefault) {
-      toast(TC_COPY.ui.toast['case-already-default']);
+      toast(ML_COPY.ui.toast['case-already-default']);
       return;
     }
     try {
@@ -1628,10 +1628,10 @@ function CasesPage({
       });
       // 双信封约定：code:0 视为成功；HTTP 错误已由 api() 抛异常
       if (res && res.code != null && res.code !== 0) throw new Error(res.message || '设置失败');
-      toast(TC_COPY.ui.toast['case-set-default-ok']);
+      toast(ML_COPY.ui.toast['case-set-default-ok']);
       load();
     } catch (e) {
-      toast(e.message || TC_COPY.ui.toast['case-set-default-fail']);
+      toast(e.message || ML_COPY.ui.toast['case-set-default-fail']);
     }
   };
   if (loading) {
@@ -2546,7 +2546,7 @@ function PredictPage({
       const d = (rr && rr.data) || rr || {};
       setReadings(d);
     } catch (e) {
-      setReadingsErr((e && e.message) || TC_COPY.ui.hub['readings-load-fail']);
+      setReadingsErr((e && e.message) || ML_COPY.ui.hub['readings-load-fail']);
     } finally {
       setReadingsLoading(false);
     }
@@ -2597,7 +2597,7 @@ function PredictPage({
     } else if (!rows || !rows.length) {
       body = /*#__PURE__*/React.createElement("div", {
         className: "card"
-      }, TC_COPY.ui.hub['readings-empty']);
+      }, ML_COPY.ui.hub['readings-empty']);
     } else {
       const cards = rows.map(r => {
         const conclusions = Array.isArray(r.conclusions) ? r.conclusions : [];
@@ -2605,7 +2605,7 @@ function PredictPage({
         const degradedThis = degraded.indexOf(r.method_key) >= 0;
         const badge = /*#__PURE__*/React.createElement("span", {
           className: "rd-badge" + (r.phase === 'duan-qian-chen' ? ' dqc' : '')
-        }, r.phase === 'prediction' ? TC_COPY.ui.hub['readings-phase-prediction'] : TC_COPY.ui.hub['readings-phase-dqc']);
+        }, r.phase === 'prediction' ? ML_COPY.ui.hub['readings-phase-prediction'] : ML_COPY.ui.hub['readings-phase-dqc']);
         const items = [];
         if (degradedThis) {
           items.push(/*#__PURE__*/React.createElement("div", {
@@ -2613,7 +2613,7 @@ function PredictPage({
             className: "rd-degraded"
           }, /*#__PURE__*/React.createElement("span", {
             className: "dg-tag"
-          }, TC_COPY.ui.hub['readings-degraded']), '该法尚未生成解读'));
+          }, ML_COPY.ui.hub['readings-degraded']), '该法尚未生成解读'));
         } else if (conclusions.length) {
           conclusions.forEach((c, i) => {
             const dir = c.direction === '吉' ? 'ji' : c.direction === '凶' ? 'xiong' : 'ping';
@@ -2652,7 +2652,7 @@ function PredictPage({
           items.push(/*#__PURE__*/React.createElement("div", {
             key: 'e',
             className: "rd-empty"
-          }, TC_COPY.ui.hub['readings-empty']));
+          }, ML_COPY.ui.hub['readings-empty']));
         }
         return /*#__PURE__*/React.createElement("div", {
           key: r.method_key,
@@ -2675,7 +2675,7 @@ function PredictPage({
           className: "rd-name"
         }, nm), /*#__PURE__*/React.createElement("span", {
           className: "rd-badge dqc"
-        }, TC_COPY.ui.hub['readings-degraded'])), /*#__PURE__*/React.createElement("div", {
+        }, ML_COPY.ui.hub['readings-degraded'])), /*#__PURE__*/React.createElement("div", {
           className: "rd-degraded"
         }, '该法尚未生成解读')));
       });
@@ -2685,7 +2685,7 @@ function PredictPage({
       className: "card"
     }, /*#__PURE__*/React.createElement("div", {
       className: "section-title"
-    }, TC_COPY.ui.hub['readings-title']), body);
+    }, ML_COPY.ui.hub['readings-title']), body);
   };
   const tabBar = /*#__PURE__*/React.createElement("div", {
     className: "readings-tabs",
@@ -2697,14 +2697,14 @@ function PredictPage({
     onClick: function () {
       switchTab('all');
     }
-  }, TC_COPY.ui.hub['readings-tab-all']), /*#__PURE__*/React.createElement("button", {
+  }, ML_COPY.ui.hub['readings-tab-all']), /*#__PURE__*/React.createElement("button", {
     key: "methods",
     type: "button",
     className: "rt-tab" + (tab === 'methods' ? ' on' : ''),
     onClick: function () {
       switchTab('methods');
     }
-  }, TC_COPY.ui.hub['readings-tab-methods']));
+  }, ML_COPY.ui.hub['readings-tab-methods']));
   if (errored) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -2963,7 +2963,7 @@ function RevisePage({
             const jd = job.data || job;
             if (jd.status === 'succeeded') break;
             if (jd.status === 'failed') {
-              toast(TC_COPY.ui.toast['case-reinterpret-fail']);
+              toast(ML_COPY.ui.toast['case-reinterpret-fail']);
               break;
             }
           } catch (e) {

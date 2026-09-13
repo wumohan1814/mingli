@@ -106,7 +106,7 @@ function AlmanacPage({
     }
     const cid = String(c.caseId);
     if (participants.some(function (p) { return p.caseId === cid; })) {
-      toast(TC_COPY.ui.toast['guoxue-participant-duplicate']);
+      toast(ML_COPY.ui.toast['guoxue-participant-duplicate']);
       return;
     }
     try {
@@ -117,7 +117,7 @@ function AlmanacPage({
       const m = inp.birth_month != null ? String(inp.birth_month) : '';
       const dd = inp.birth_day != null ? String(inp.birth_day) : '';
       if (!y || !m || !dd) {
-        toast(fmtTpl(TC_COPY.ui.toast['guoxue-case-birth-missing'], { name: (c.name && String(c.name).trim()) || c.caseId }));
+        toast(fmtTpl(ML_COPY.ui.toast['guoxue-case-birth-missing'], { name: (c.name && String(c.name).trim()) || c.caseId }));
         return;
       }
       setParticipants(prev => prev.concat([{
@@ -130,7 +130,7 @@ function AlmanacPage({
         timeIndex: hourToShichen(inp.birth_hour)
       }]));
     } catch (e) {
-      toast((e && e.message) || TC_COPY.ui.toast['guoxue-case-load-fail']);
+      toast((e && e.message) || ML_COPY.ui.toast['guoxue-case-load-fail']);
     }
   };
   const toggleHours = function (date) {
@@ -138,17 +138,17 @@ function AlmanacPage({
   };
   const rangeValid = function () {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
-      toast(TC_COPY.ui.toast['guoxue-date-range-required']);
+      toast(ML_COPY.ui.toast['guoxue-date-range-required']);
       return false;
     }
     const s = new Date(startDate + 'T00:00:00+08:00').getTime();
     const e = new Date(endDate + 'T00:00:00+08:00').getTime();
     if (isNaN(s) || isNaN(e) || e < s) {
-      toast(TC_COPY.ui.toast['guoxue-end-before-start']);
+      toast(ML_COPY.ui.toast['guoxue-end-before-start']);
       return false;
     }
     if (Math.round((e - s) / 86400000) > ALMANAC_MAX_DAYS - 1) {
-      toast(TC_COPY.ui.toast['guoxue-range-too-long-180']);
+      toast(ML_COPY.ui.toast['guoxue-range-too-long-180']);
       return false;
     }
     return true;
@@ -158,15 +158,15 @@ function AlmanacPage({
       const p = participants[i];
       const y = Number(p.year), m = Number(p.month), d = Number(p.day);
       if (!/^\d{4}$/.test(String(p.year).trim()) || y < 1900 || y > 2100) {
-        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-year-range'], { n: i + 1 }));
+        toast(fmtTpl(ML_COPY.ui.toast['guoxue-participant-year-range'], { n: i + 1 }));
         return false;
       }
       if (!/^\d{1,2}$/.test(String(p.month).trim()) || m < 1 || m > 12) {
-        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-month-range'], { n: i + 1 }));
+        toast(fmtTpl(ML_COPY.ui.toast['guoxue-participant-month-range'], { n: i + 1 }));
         return false;
       }
       if (!/^\d{1,2}$/.test(String(p.day).trim()) || d < 1 || d > 31) {
-        toast(fmtTpl(TC_COPY.ui.toast['guoxue-participant-day-range'], { n: i + 1 }));
+        toast(fmtTpl(ML_COPY.ui.toast['guoxue-participant-day-range'], { n: i + 1 }));
         return false;
       }
     }
@@ -387,7 +387,7 @@ function AlmanacPage({
         React.createElement('div', { className: 'alm-constr' }, A.group_summary),
         partLine ? React.createElement('div', { className: 'alm-constr', style: { color: 'var(--text-2)' } }, '参与人：' + partLine) : null,
         sortedDays.map(dayCard),
-        React.createElement(TCTermRow, { key: 'tc', method: 'almanac', label: '本盘名词', items: almNouns, chipClass: 'alm-tag' }),
+        React.createElement(MLTermRow, { key: 'tc', method: 'almanac', label: '本盘名词', items: almNouns, chipClass: 'alm-tag' }),
         constr.length ? React.createElement('div', { className: 'alm-constr' }, '说明：' + constr.join('\n')) : null,
         React.createElement('div', { className: 'alm-disc' }, A.disclaimer)));
   }
@@ -508,16 +508,16 @@ function TaiyiPage({
     if (scope === 'year') {
       const y = Number(year);
       if (!/^\d{1,4}$/.test(String(year).trim()) || !Number.isInteger(y) || y < 1 || y > 9999) {
-        toast(TC_COPY.ui.toast['guoxue-taiyi-year-range']);
+        toast(ML_COPY.ui.toast['guoxue-taiyi-year-range']);
         return false;
       }
     } else {
       if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-        toast(TC_COPY.ui.toast['guoxue-date-required']);
+        toast(ML_COPY.ui.toast['guoxue-date-required']);
         return false;
       }
       if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-        toast(TC_COPY.ui.toast['guoxue-shichen-required']);
+        toast(ML_COPY.ui.toast['guoxue-shichen-required']);
         return false;
       }
     }
@@ -650,7 +650,7 @@ function TaiyiPage({
           React.createElement('div', { className: 'tp-val' }, c.val),
           c.sub ? React.createElement('div', { className: 'tp-sub' }, c.sub) : null);
       })),
-      React.createElement(TCTermRow, { key: 'tc-pos', method: 'taiyi', items: [A.pos_taiyi, A.pos_wenchang, A.pos_shiJi, A.pos_jiShen] })));
+      React.createElement(MLTermRow, { key: 'tc-pos', method: 'taiyi', items: [A.pos_taiyi, A.pos_wenchang, A.pos_shiJi, A.pos_jiShen] })));
     kids.push(React.createElement('div', { key: 'count', className: 'card', style: { marginTop: 10 } },
       React.createElement('div', { className: 'section-title' }, A.count_title),
       React.createElement('div', { className: 'ty-count-grid' }, countCells.map(function (c, i) {
@@ -660,7 +660,7 @@ function TaiyiPage({
             c.nat ? React.createElement('span', { className: 'tc-nat' }, c.nat) : null),
           React.createElement('div', { className: 'tc-sub' }, c.sub));
       })),
-      React.createElement(TCTermRow, { key: 'tc-count', method: 'taiyi', items: [A.side_lord, A.side_guest, A.side_set] })));
+      React.createElement(MLTermRow, { key: 'tc-count', method: 'taiyi', items: [A.side_lord, A.side_guest, A.side_set] })));
     if (result.tacticGuidance) {
       kids.push(React.createElement('div', { key: 'tac', className: 'ty-tactic' },
         React.createElement('div', { className: 'tt-cap' }, A.tactic_title),
@@ -699,7 +699,7 @@ function TaiyiPage({
     kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
-    kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'taiyi' }));
+    kids.push(React.createElement(MLTermPanel, { key: 'tcpanel', method: 'taiyi' }));
     // REQ-134：付费操作区独立分层（按钮全宽一行 + 说明独立块，不再并排挤压）
     kids.push(React.createElement('div', { key: 'payzone', className: 'op-zone' },
       React.createElement('button', {
@@ -835,16 +835,16 @@ function HuangjiPage({
     if (mode === 'year') {
       const y = Number(year);
       if (!/^-?\d{1,6}$/.test(String(year).trim()) || !Number.isInteger(y) || y === 0 || y < -67017 || y > 9999) {
-        toast(TC_COPY.ui.toast['guoxue-huangji-year-range']);
+        toast(ML_COPY.ui.toast['guoxue-huangji-year-range']);
         return false;
       }
     } else {
       if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-        toast(TC_COPY.ui.toast['guoxue-date-required']);
+        toast(ML_COPY.ui.toast['guoxue-date-required']);
         return false;
       }
       if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-        toast(TC_COPY.ui.toast['guoxue-shichen-required']);
+        toast(ML_COPY.ui.toast['guoxue-shichen-required']);
         return false;
       }
     }
@@ -959,7 +959,7 @@ function HuangjiPage({
       kids.push(React.createElement('div', { key: 'cycle', className: 'card', style: { marginTop: 10 } },
         React.createElement('div', { className: 'section-title' }, A.cycle_title),
         React.createElement('div', { className: 'hj-cycle' }, cycleCells),
-        React.createElement(TCTermRow, { key: 'tc-cycle', method: 'huangji', items: [A.cycle_yuan, A.cycle_hui, A.cycle_yun, A.cycle_shi, A.layer_annual, A.layer_yun, A.title] })));
+        React.createElement(MLTermRow, { key: 'tc-cycle', method: 'huangji', items: [A.cycle_yuan, A.cycle_hui, A.cycle_yun, A.cycle_shi, A.layer_annual, A.layer_yun, A.title] })));
     }
     // 卦变层级
     if (hex && typeof hex === 'object') {
@@ -1049,7 +1049,7 @@ function HuangjiPage({
     kids.push(React.createElement('div', { key: 'free', className: 'alm-free' },
       React.createElement('div', { className: 'af-title' }, A.free_reading_title),
       React.createElement('div', { className: 'af-txt' }, freeTxt)));
-    kids.push(React.createElement(TCTermPanel, { key: 'tcpanel', method: 'huangji' }));
+    kids.push(React.createElement(MLTermPanel, { key: 'tcpanel', method: 'huangji' }));
     // REQ-134：付费操作区独立分层（按钮全宽一行 + 说明独立块，不再并排挤压）
     kids.push(React.createElement('div', { key: 'payzone', className: 'op-zone' },
       React.createElement('button', {

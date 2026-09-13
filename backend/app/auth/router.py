@@ -151,7 +151,7 @@ async def register(
 ):
     """注册新用户（图形验证码 + IP/设备指纹双维度限流）
 
-    节141：**公开注册默认关闭**（内测白名单制）。`TAICHU_ALLOW_PUBLIC_REGISTER=false`
+    节141：**公开注册默认关闭**（内测白名单制）。`MINGLI_ALLOW_PUBLIC_REGISTER=false`
     （默认）时本端点一律 403 + `ERR_FORBIDDEN`，新账号只能由后台「新增 C 端用户」创建；
     **不物理删除端点**，测试环境把开关置 true 即可继续造数（零测试返工）。
     """

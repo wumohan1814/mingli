@@ -1,6 +1,6 @@
 # method-prompts/ — 方法提示词
 
-文件名必须与 method key **逐字一致**（mingli `SKILL.md` §0 注册表）：
+文件名必须与 method key **逐字一致**（mingli-reference `SKILL.md` §0 注册表）：
 
 `bazi-pattern.md` ｜ `bazi-dayun-liunian.md` ｜ `bazi-shensha-nayin.md` ｜ `ziwei.md` ｜
 `xizhan.md` ｜ `qizheng.md` ｜ `qimen-lifetime.md` ｜ `wuyun-liuqi.md`

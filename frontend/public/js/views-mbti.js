@@ -10,8 +10,8 @@ function MbtiHubPage({
   applySkin
 }) {
   const cards = [{
-    name: TC_COPY.ui.hub['mbti-name'],
-    sub: TC_COPY.ui.hub['mbti-sub'],
+    name: ML_COPY.ui.hub['mbti-name'],
+    sub: ML_COPY.ui.hub['mbti-sub'],
     bar: 'var(--skin-accent)',
     ico: 'spark',
     to: () => {
@@ -26,7 +26,7 @@ function MbtiHubPage({
   }, React.createElement(Icon, {
     name: 'spark',
     size: 22
-  }), TC_COPY.ui.module_hub.mbti_title), React.createElement('div', {
+  }), ML_COPY.ui.module_hub.mbti_title), React.createElement('div', {
     className: 'hub-grid'
   }, cards.map((c, i) => React.createElement('div', {
     key: i,
@@ -411,7 +411,7 @@ function MbtiPage({
   };
   // —— 结果页：16 型宫格（仅当前结果，点其它类型提示敬请期待）——
   const typeGrid = (t) => el('div', {className: 'mbti-grid', style: {marginTop: 10}}, ALL_TYPES.map(x =>
-    el('div', {key: x, className: 'mbti-cell' + (x === t ? ' cur' : ''), onClick: () => { if (x !== t) toast(TC_COPY.ui.toast['mbti-other-types-coming-soon']); }}, x)));
+    el('div', {key: x, className: 'mbti-cell' + (x === t ? ' cur' : ''), onClick: () => { if (x !== t) toast(ML_COPY.ui.toast['mbti-other-types-coming-soon']); }}, x)));
   // —— REQ-056④：分享测试链接 —— 不再顶部常驻，仅在「勾选档案后的操作区」展示
   // （仍复用 shareResult / copyShare / shareUrl / shareErr / shareLoading 原逻辑）。
   const shareZone = el('div', {style: {display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%'}},
@@ -590,9 +590,9 @@ function MbtiSharePage({
   onNavigate
 }) {
   const el = React.createElement;
-  // REQ-066④：分享表单命理太初 UI —— share_taichu_ui 开 → 答题表单内显示命理太初 logo、登录注册与免责提示；
+  // REQ-066④：分享表单命理太初 UI —— share_mingli_ui 开 → 答题表单内显示命理太初 logo、登录注册与免责提示；
   // 关 → 仅表单（填完仅保存结果；访客会话隔离与受限页拦截由 BUG-011 / BUG-002 负责）。
-  const shareUiOn = TC_SETTINGS.share_taichu_ui !== false;
+  const shareUiOn = ML_SETTINGS.share_mingli_ui !== false;
   const shareBrand = shareUiOn ? el('div', {className: 'tc-share-brand'},
     el('div', {className: 'tc-share-brand-head'},
       el(Icon, {name: 'spark', size: 18}),

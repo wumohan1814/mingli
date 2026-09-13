@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""余额核心服务（taichu_analytics 库：credit_accounts / credit_transactions）。
+"""余额核心服务（mingli_analytics 库：credit_accounts / credit_transactions）。
 
 换算：**1 存储单位 = 1000 tokens**，扣费 = `ceil(tokens / 1000)`（向上取整）；
 展示口径：**余额 ¥ = balance ÷ 10**（1 元 = 10 存储单位 = 10,000 tokens）。
@@ -11,7 +11,7 @@ session 纪律：
     commit）外，各函数**函数内自开/关 AnalyticsSession**；
   - 写操作成功 `session.commit()`，异常 `session.rollback()` 后重抛，最后
     `session.close()`；
-  - `manual` 除业务库（AnalyticsSession）入账外，审计日志写 **运维库**（taichu_ops，
+  - `manual` 除业务库（AnalyticsSession）入账外，审计日志写 **运维库**（mingli_ops，
     OpsSession）。
 
 业务规则：

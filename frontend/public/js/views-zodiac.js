@@ -117,7 +117,7 @@ function PairRelIcon({
    与星座 REQ-083 同机制：以「当前档案生肖（出生属相，对应地支）× 其余 11 生肖」给固定匹配分值
    + 静态说明（12×11）。分值用地支关系基础规则：六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、
    其余=3.0（换算成百分/星级展示参考星座宫格样式）。
-   文案（T4 生肖 132×3 对「分值 + 说明」）从 window.TC_PAIRS 查表（frontend/public/data/pairs.js，
+   文案（T4 生肖 132×3 对「分值 + 说明」）从 window.ML_PAIRS 查表（frontend/public/data/pairs.js，
    文案轮次交付物，更新时只替换该文件；键 = 生肖单字名 self/other，如 鼠_牛）。分值沿用下方确定性
    地支规则换算（与 T4 JSON 分值逐一一致，已验证），故展示逻辑不需改动；查表失败时优雅降级为兜底说明
    （不报错）。本模块展示纯前端固定数据（免费、零请求、非双人生辰合盘）。 */
@@ -168,12 +168,12 @@ function zodiacRelCode(a, b) {
   if (s === 2) return zdPairHit(CHONG_PAIRS, a, b) ? '相冲' : '相刑';
   return '中性';
 }
-/* 说明正文：从 window.TC_PAIRS 查表（self=当前生肖单字名、other=对方；kind 映射 shengxiao_love /
+/* 说明正文：从 window.ML_PAIRS 查表（self=当前生肖单字名、other=对方；kind 映射 shengxiao_love /
    shengxiao_friend / shengxiao_boss）。查表失败 → 兜底说明（优雅降级，不报错） */
 const REL_TEXT_FALLBACK = UI_COPY.zodiac['rel-text-fallback'];
 function zodiacRelText(kind, mine, other) {
   const key = kind === 'friend' ? 'shengxiao_friend' : kind === 'boss' ? 'shengxiao_boss' : 'shengxiao_love';
-  const mod = window.TC_PAIRS && window.TC_PAIRS[key];
+  const mod = window.ML_PAIRS && window.ML_PAIRS[key];
   const pairs = mod && Array.isArray(mod.pairs) ? mod.pairs : null;
   if (pairs) {
     for (let i = 0; i < pairs.length; i++) {
@@ -521,7 +521,7 @@ function ZodiacPage({
       } catch (e) {/* 回查失败按无出生年处理 */}
     }
     if (!Number.isFinite(by) || by < 1900 || by > 2200) {
-      toast(TC_COPY.ui.toast['zodiac-birth-year-missing']);
+      toast(ML_COPY.ui.toast['zodiac-birth-year-missing']);
       return;
     }
     const idx = ((by - 4) % 12 + 12) % 12;

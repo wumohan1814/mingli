@@ -1,6 +1,6 @@
 """LLM 客户端：DeepSeek 官方 API（OpenAI 兼容）chat/completions。
 
-- API Key 唯一来源：settings.llm_api_key（TAICHU_LLM_API_KEY，从环境变量 / backend/.env 读入）。
+- API Key 唯一来源：settings.llm_api_key（MINGLI_LLM_API_KEY，从环境变量 / backend/.env 读入）。
   本模块与全项目代码零硬编码 key。
 - 可重试错误（超时 / 429 / 5xx / 连接错误）按 settings.llm_max_retries 指数退避重试；
   4xx（401 鉴权、400 参数、404 模型不存在等）不重试，直接抛 LLMError。
@@ -99,7 +99,7 @@ async def chat(
     {"content": str, "usage": {"prompt_tokens": int, "completion_tokens": int, "total_tokens": int}, "model": str}
     """
     if not settings.llm_api_key:
-        raise LLMError("未配置 TAICHU_LLM_API_KEY")
+        raise LLMError("未配置 MINGLI_LLM_API_KEY")
 
     api_key = settings.llm_api_key
     base_url = settings.llm_base_url.rstrip("/")

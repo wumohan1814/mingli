@@ -35,11 +35,11 @@
  * ===================================================================== */
 'use strict';
 
-const CACHE_PREFIX = 'taichu-img-';
+const CACHE_PREFIX = 'mingli-img-';
 const CACHE_VERSION = 'v1';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;        // 图片缓存本体
-const META_CACHE_NAME = 'taichu-img-meta-v1';           // LRU 账本独立缓存
-const META_KEY = '/__taichu_sw_meta__';                 // 账本条目 key（绝对路径，不会与真实素材冲突）
+const META_CACHE_NAME = 'mingli-img-meta-v1';           // LRU 账本独立缓存
+const META_KEY = '/__mingli_sw_meta__';                 // 账本条目 key（绝对路径，不会与真实素材冲突）
 
 const MAX_BYTES = 50 * 1024 * 1024;                     // 容量上限 50MB
 const REFRESH_MIN_MS = 6 * 60 * 60 * 1000;              // 同 URL 后台更新节流：≥6h 一次
@@ -172,7 +172,11 @@ self.addEventListener('activate', (event) => {
     const keys = await caches.keys();
     await Promise.all(keys.map((k) => {
       const stale = k !== CACHE_NAME && k !== META_CACHE_NAME &&
-        (k.indexOf(CACHE_PREFIX) === 0 || k.indexOf('taichu-img-meta-') === 0);
+        (k.indexOf(CACHE_PREFIX) === 0 || k.indexOf('mingli-img-meta-') === 0 ||
+         // 节147：项目代号改名后的一次性旧缓存回收 —— 老设备上仍留有旧前缀的
+         // 图片缓存与 LRU 账本（新代码不再写入该前缀，故这里只回收、不重建）。
+         // 保留到旧用户全部升级完成后可删（最迟不早于本节上线后一个大版本）。
+         k.indexOf('taichu-img-') === 0 || k.indexOf('taichu-img-meta-') === 0);
       return stale ? caches.delete(k) : null;
     }));
     await self.clients.claim();

@@ -9,7 +9,7 @@
 | `backend/` | FastAPI 模块化单体后端（`app/` 下 9 个方法模块、异步任务、档案 / 反馈 / 合规等）；依赖声明于 `pyproject.toml`，测试在 `backend/tests/` |
 | `frontend/` | 前端：**实际生效**的是免构建的 `public/index.html`（CDN React + Babel Standalone，已本地化到 `public/vendor/`）；`src/` 为旧 Vite + TS 参考源码，不参与运行 |
 | `docs/` | 参考文档库：`standards/` 实例层规范、`adr/` 决策原文、`runbooks/` 运维手册（详见 `docs/README.md`） |
-| `reference/` | 参考仓库（mingli skill、排盘引擎等第三方资料，只读不并入） |
+| `reference/` | 参考仓库（mingli-reference skill、排盘引擎等第三方资料，只读不并入） |
 
 ## 跑测试
 

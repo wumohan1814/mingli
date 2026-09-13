@@ -1,6 +1,6 @@
 # profile/ — 模块 7：用户档案模块
 
-读写**用户分析库**（MVP：SQLite `taichu_analytics`），按 `user_id` 逻辑隔离。
+读写**用户分析库**（MVP：SQLite `mingli_analytics`），按 `user_id` 逻辑隔离。
 
 ## 职责
 

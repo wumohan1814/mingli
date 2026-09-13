@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "taichu-backend"
+name = "mingli-backend"
 version = "0.1.0"
 description = "命理太初 · 命理 H5 后端（模块化单体 MVP）"
 requires-python = ">=3.11"

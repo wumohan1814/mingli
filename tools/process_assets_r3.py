@@ -5,7 +5,7 @@ Logo 一张：墨青满版 -> 擦右下水印 -> resize 192/512/180 + maskable51
 import os, sys
 from PIL import Image, ImageDraw, ImageChops, ImageFilter
 
-ART = r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art"
+ART = r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art"
 MM = os.path.join(ART, "module-mascot")
 PWA = os.path.join(ART, "pwa")
 

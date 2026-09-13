@@ -16,19 +16,19 @@
 
 ```bash
 # 1. 拉代码（需先配好 GitHub 部署密钥，见下）
-git clone git@github.com:wumohan1814/taichu.git /opt/taichu/app
+git clone git@github.com:wumohan1814/mingli.git /opt/mingli/app
 
 # 2. 一键部署
-cd /opt/taichu/app
+cd /opt/mingli/app
 bash ops/deploy/deploy.sh
 ```
 
-`deploy.sh` 首次会交互式让你填 `TAICHU_LLM_API_KEY`，并自动生成强随机 `TAICHU_JWT_SECRET` 写入 `.env`。
+`deploy.sh` 首次会交互式让你填 `MINGLI_LLM_API_KEY`，并自动生成强随机 `MINGLI_JWT_SECRET` 写入 `.env`。
 
 ## 后续更新
 
 ```bash
-cd /opt/taichu/app
+cd /opt/mingli/app
 git pull
 docker compose up -d --build
 ```
@@ -39,7 +39,7 @@ docker compose up -d --build
 # 配置 crontab 每日 3 点备份
 crontab -e
 # 加入：
-0 3 * * * /bin/bash /opt/taichu/app/ops/deploy/backup.sh
+0 3 * * * /bin/bash /opt/mingli/app/ops/deploy/backup.sh
 ```
 
 ## 前置条件
@@ -95,3 +95,90 @@ nameservers:
 ### 4. SSH 已改为密钥登录
 
 服务器已禁用密码登录（`PasswordAuthentication no` + `PermitRootLogin prohibit-password`），仅可用本地私钥 `~/.ssh/<你的私钥文件>` 登录。改回密码登录需谨慎（弱密码有被爆破风险）。
+
+> ⚠️ **该私钥文件名未随节147 改名**：它同时存在于服务器 `~/.ssh/` 与本地 `~/.ssh/`，
+> 改名要两边同步 + 改 `~/.ssh/config`，做错会直接失去登录通道。要改名请按下方
+> 「节147 迁移 · 可选：SSH 私钥改名」走。
+
+---
+
+## 节147 · 代号 `taichu`→`mingli` 的线上迁移步骤
+
+> **本节是唯一迁移清单**。代码侧已全部改完（env 前缀 / DB 文件名 / 目录 / 镜像 / 卷 / docker 网络 /
+> 前端本地存储键 / DB 列名），**线上还没动** —— 按下面顺序做，每步都能回退。
+
+### 第 0 步 · 备份（必做，不可跳过）
+
+```bash
+bash /opt/taichu/app/ops/deploy/backup.sh        # 数据 + 配置快照
+ls -l /opt/taichu/backup/                        # 确认产物存在且非空
+```
+
+### 第 1 步 · 仓库改名（GitHub 侧）
+
+本仓库地址已改为 `git@github.com:wumohan1814/mingli.git`。请在 GitHub 上把仓库改名
+（旧名会自动 301 重定向，但**部署脚本用的是新地址**，所以改名必须在服务器 `git pull` 前完成）。
+
+### 第 2 步 · 部署目录改名
+
+```bash
+cd /opt && git -C taichu status --short   # 确认工作区干净（有在制品先处理）
+docker compose -f taichu/app/docker-compose.yml down
+mv /opt/taichu /opt/mingli
+```
+
+`backup.sh` 里的 `DATA_DIR` / `BACKUP_DIR` 已指向 `/opt/mingli/...`，无需手改。
+
+### 第 3 步 · `.env` 逐键改名（**最容易漏的一步**）
+
+`.env` 不在仓库里，**旧键名在新代码下全部失效**（`env_prefix` 已改为 `MINGLI_`）。
+逐键把 `TAICHU_` 换成 `MINGLI_`，核对清单以 `.env.example` 为唯一来源：
+
+```bash
+cd /opt/mingli/app
+sed -i 's/^TAICHU_/MINGLI_/' .env
+grep -c '^MINGLI_' .env          # 应与 .env.example 的键数一致
+grep '^TAICHU_' .env             # 必须为空
+```
+
+⚠️ 同时**删掉节146 遗留的金数据键**（`*_JINSHUJU_*`，已整组废弃）。
+
+### 第 4 步 · 数据库文件名 + 列名
+
+```bash
+cd /opt/mingli/data
+mv taichu_analytics.db mingli_analytics.db
+mv taichu_feedback.db  mingli_feedback.db
+mv taichu_ops.db       mingli_ops.db
+
+# 列改名（幂等：重复执行会报 no such column，说明已改过，可忽略）
+sqlite3 mingli_analytics.db < /opt/mingli/app/data/migrations/analytics/0002_rename_share_mingli_ui.sql
+# 节146 遗留：充值码表（若上次部署没执行过）
+sqlite3 mingli_analytics.db < /opt/mingli/app/data/migrations/analytics/0001_drop_recharge_codes.sql
+```
+
+### 第 5 步 · 起服务 + 验证链
+
+```bash
+cd /opt/mingli/app
+docker compose up -d --build
+docker compose ps                                     # web / caddy 均 healthy
+curl -s https://mingli.example.com/api/health                 # {"status":"ok",...}
+curl -sI https://mingli.example.com/ | head -1                # 200
+docker compose logs --tail=50 web                     # 无循环重启、无 KeyError
+```
+
+`docker-compose.yml` 的**服务名 / 网络名 / 卷名 / 宿主路径**已改为 `mingli`，`down` + `up` 一次即生效。
+
+### 例外两项（**有意不改**，见 `40_节/完成/节147-*.md`）
+
+| 项 | 现值 | 为什么不改 | 若要改 |
+|---|---|---|---|
+| 线上域名 | `mingli.example.com`、`bb3a.mingli.example.com` | 已注册 + DNS 生效 + Let's Encrypt 在跑；节142 拍板本实例只是发布/内容载体，不是官方托管服务 → 改名零收益、有中断窗口 | 注册新域名 → A 记录指 `<你的服务器 IP>` → 改 `Caddyfile` 两处 → `docker compose restart caddy` 让它重签证书 |
+| SSH 私钥文件名 | `~/.ssh/<你的私钥文件>` | 服务端与本地各一份，改名要同步 + 改 `~/.ssh/config`；做错失去登录通道 | **先保一条可用会话**：`cp ~/.ssh/<你的私钥文件> ~/.ssh/<你的私钥文件>` → 新开一个会话验证能登录 → 再改 `~/.ssh/config` 与服务器 `authorized_keys`/文件名 → 最后删旧文件 |
+
+### 回退
+
+代码回退：`git reset --hard <节147 之前的 commit>` + 把 `.env` 键名改回 `TAICHU_`、
+DB 文件改回 `taichu_*.db`、跑 `0002_rollback_rename_share_mingli_ui.sql`。
+**注意：回退不会自动发生** —— 数据库文件名与列名必须手工还原。

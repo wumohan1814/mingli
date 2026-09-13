@@ -36,7 +36,7 @@
 
 ## 快速启动（详细见 00_根/导航.md）
 
-- 后端：`pip install -e "backend[dev]"` → 配置 `backend/.env`（`TAICHU_LLM_API_KEY`）→ `cd backend && python -m uvicorn app.main:app --port 8000`
+- 后端：`pip install -e "backend[dev]"` → 配置 `backend/.env`（`MINGLI_LLM_API_KEY`）→ `cd backend && python -m uvicorn app.main:app --port 8000`
 - 前端：无需构建（免构建 CDN React，FastAPI 在 8000 直接托管 `frontend/public/`）
 - Node 排盘：`backend/paipan-node/`（:9317，自动降级）
 - 访问：http://localhost:8000（H5）· /docs（Swagger）
@@ -48,7 +48,7 @@
 |---|---|
 | Python | 3.13（`backend/pyproject.toml` 要求 >=3.11） |
 | Node.js | 22+（仅排盘引擎子进程需要；全程无需 npm install） |
-| LLM key | 只放 `backend/.env` 的 `TAICHU_LLM_API_KEY`，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
+| LLM key | 只放 `backend/.env` 的 `MINGLI_LLM_API_KEY`，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
 
 > 架构一句话：Python 3.13 + FastAPI 模块化单体，单端口 8000 同时服务 `/api` 与前端静态；SQLite 三库（分析 / 反馈 / 运维，`data/*.db`，git 忽略）。
 

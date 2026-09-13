@@ -13,26 +13,26 @@ function LandingPage({
   const MODS = {
     guoxue: {
       icon: 'nine',
-      title: TC_COPY.ui.module_hub.guoxue_title,
-      subtitle: TC_COPY.ui.module_hub.guoxue_desc,
-      intro: TC_COPY.ui.landing.value_1_desc,
-      cta: TC_COPY.ui.module_hub.enter_guoxue,
+      title: ML_COPY.ui.module_hub.guoxue_title,
+      subtitle: ML_COPY.ui.module_hub.guoxue_desc,
+      intro: ML_COPY.ui.landing.value_1_desc,
+      cta: ML_COPY.ui.module_hub.enter_guoxue,
       to: 'guoxue-hub'
     },
     xishi: {
       icon: 'orbit',
-      title: TC_COPY.ui.module_hub.western_title,
-      subtitle: TC_COPY.ui.module_hub.western_desc,
-      intro: TC_COPY.ui.landing['xishi-intro'],
-      cta: TC_COPY.ui.module_hub.enter_western,
+      title: ML_COPY.ui.module_hub.western_title,
+      subtitle: ML_COPY.ui.module_hub.western_desc,
+      intro: ML_COPY.ui.landing['xishi-intro'],
+      cta: ML_COPY.ui.module_hub.enter_western,
       to: 'xishi-hub'
     },
     mbti: {
       icon: 'spark',
-      title: TC_COPY.ui.module_hub.mbti_title,
-      subtitle: TC_COPY.ui.module_hub.mbti_desc,
-      intro: TC_COPY.ui.landing['mbti-intro'],
-      cta: TC_COPY.ui.module_hub.enter_mbti,
+      title: ML_COPY.ui.module_hub.mbti_title,
+      subtitle: ML_COPY.ui.module_hub.mbti_desc,
+      intro: ML_COPY.ui.landing['mbti-intro'],
+      cta: ML_COPY.ui.module_hub.enter_mbti,
       to: 'mbti-hub'
     }
   };
@@ -76,7 +76,7 @@ function LandingPage({
     className: "landing-cases-btn",
     type: "button",
     onClick: () => onNavigate('cases')
-  }, TC_COPY.ui.buttons.manage_cases)));
+  }, ML_COPY.ui.buttons.manage_cases)));
 }
 
 // —— 余额系统组件（沿用国学皮肤令牌，不新增配色）——
@@ -107,7 +107,7 @@ function CreditBalance({
   }, []);
   if (loading) return /*#__PURE__*/React.createElement("div", {
     className: "credit-pill skeleton",
-    "aria-label": TC_COPY.ui.balance.loading
+    "aria-label": ML_COPY.ui.balance.loading
   });
   const neg = balance == null || Number(balance) <= 0;
   // 节146：充值入口已随付款充值链路整条拆除（不再有「充值」链接可隐藏，也无到账轮询）——
@@ -119,13 +119,13 @@ function CreditBalance({
     role: "button",
     tabIndex: 0,
     onClick: onClick,
-    title: neg ? TC_COPY.ui.balance.insufficient : TC_COPY.ui.balance['view-detail']
+    title: neg ? ML_COPY.ui.balance.insufficient : ML_COPY.ui.balance['view-detail']
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "spark",
     size: 14
   }), /*#__PURE__*/React.createElement("span", {
     className: "pill-bal"
-  }, TC_COPY.ui.balance.label, " ¥", balance == null ? '—' : (Number(balance) / CREDIT_YUAN_RATE).toFixed(2))));
+  }, ML_COPY.ui.balance.label, " ¥", balance == null ? '—' : (Number(balance) / CREDIT_YUAN_RATE).toFixed(2))));
 }
 
 
@@ -185,7 +185,7 @@ function BannerBalance({
   const Tag = onClick ? 'button' : 'span';
   const tagProps = {
     className: 'topbar-balance' + (onClick ? '' : ' static'),
-    title: fmtTpl(TC_COPY.ui.balance['title-format'], { rate: CREDIT_YUAN_RATE }) + (onClick ? TC_COPY.ui.balance['view-detail-suffix'] : '')
+    title: fmtTpl(ML_COPY.ui.balance['title-format'], { rate: CREDIT_YUAN_RATE }) + (onClick ? ML_COPY.ui.balance['view-detail-suffix'] : '')
   };
   if (onClick) {
     tagProps.type = 'button';
@@ -193,7 +193,7 @@ function BannerBalance({
   }
   return React.createElement(Tag, tagProps, React.createElement("span", {
     className: "tb-k"
-  }, TC_COPY.ui.balance.label), React.createElement("span", {
+  }, ML_COPY.ui.balance.label), React.createElement("span", {
     className: "tb-sym"
   }, "¥"), txt);
 }
@@ -241,9 +241,9 @@ function payBadge(enabled) {
   return React.createElement("span", {
     key: 'paybadge',
     className: 'pay-badge' + (ok ? '' : ' warn'),
-    title: ok ? TC_COPY.ui.balance['pay-hint'] : TC_COPY.ui.balance['pay-insufficient'],
-    "aria-label": ok ? TC_COPY.ui.balance['pay-badge-ok'] : TC_COPY.ui.balance['pay-badge-warn']
-  }, TC_COPY.ui.balance['pay-badge']);
+    title: ok ? ML_COPY.ui.balance['pay-hint'] : ML_COPY.ui.balance['pay-insufficient'],
+    "aria-label": ok ? ML_COPY.ui.balance['pay-badge-ok'] : ML_COPY.ui.balance['pay-badge-warn']
+  }, ML_COPY.ui.balance['pay-badge']);
 }
 
 // REQ-087：右上角菜单面板最顶部「余额 ¥X」（仅登录、点开菜单即见；点击进余额消耗明细）。
@@ -284,7 +284,7 @@ function MenuBalance({
     type: "button",
     className: 'menu-item menu-balance' + (neg ? ' warn' : ''),
     role: "menuitem",
-    title: (neg ? TC_COPY.ui.balance['insufficient-view-detail'] : TC_COPY.ui.balance['view-detail']),
+    title: (neg ? ML_COPY.ui.balance['insufficient-view-detail'] : ML_COPY.ui.balance['view-detail']),
     onClick: function () {
       if (onClick) onClick();
     }
@@ -293,7 +293,7 @@ function MenuBalance({
     style: {
       background: 'var(--gold-500)'
     }
-  }), TC_COPY.ui.balance.label, " ", /*#__PURE__*/React.createElement("span", {
+  }), ML_COPY.ui.balance.label, " ", /*#__PURE__*/React.createElement("span", {
     className: "mb-val"
   }, "¥", txt));
 }
@@ -329,7 +329,7 @@ function CreditInsufficientModal({
 // 交互：选两份不同档案（GET /cases）→ 关系类型单选（恋爱/朋友/家人/同事/其他）→ 可选自由关注点
 // → POST /api/pair/analyze（module 由入口带入）→ 展示 interpretation。
 // 缺数据档案由后端 400 detail 直接展示（提示先生成，不自动生成）；余额不足走既有 5002 → creditInsuffHandler。
-// REQ-128 阶段5：meta 四套与关系类型表迁入 TC_COPY.ui.pair（文案总表统一管理）
+// REQ-128 阶段5：meta 四套与关系类型表迁入 ML_COPY.ui.pair（文案总表统一管理）
 const PAIR_MODULE_META = UI_COPY.pair.meta;
 // relations 数组同时作按钮文案与提交值（与 views-zodiac PAIR_REL_ICONS 键一致），值不变仅改来源
 const PAIR_RELATIONS = UI_COPY.pair.relations;
@@ -392,7 +392,7 @@ function PairModal({
     const v = e.target.value;
     const other = which === 'a' ? bId : aId;
     if (v && other && String(v) === String(other)) {
-      toast(TC_COPY.ui.toast['pair-cases-must-differ-pick-another']);
+      toast(ML_COPY.ui.toast['pair-cases-must-differ-pick-another']);
       if (which === 'a') setAId('');else setBId('');
       return;
     }
@@ -408,20 +408,20 @@ function PairModal({
   const submit = async () => {
     if (busy) return;
     if (!aId) {
-      toast(TC_COPY.ui.toast['pair-case-a-required']);
+      toast(ML_COPY.ui.toast['pair-case-a-required']);
       return;
     }
     if (!bId) {
-      toast(TC_COPY.ui.toast['pair-case-b-required']);
+      toast(ML_COPY.ui.toast['pair-case-b-required']);
       return;
     }
     if (String(aId) === String(bId)) {
-      toast(TC_COPY.ui.toast['pair-cases-must-differ']);
+      toast(ML_COPY.ui.toast['pair-cases-must-differ']);
       return;
     }
     let relation = rel;
     if (!relation) {
-      toast(TC_COPY.ui.toast['pair-rel-type-required']);
+      toast(ML_COPY.ui.toast['pair-rel-type-required']);
       return;
     }
     if (relation === '其他') {
@@ -813,17 +813,17 @@ const MODULE_HUB = {
 };
 const RAIL_MODS = [{
   id: 'guoxue',
-  label: TC_COPY.ui.nav.guoxue,
+  label: ML_COPY.ui.nav.guoxue,
   color: 'var(--jade-500)',
   icon: 'nine'
 }, {
   id: 'xishi',
-  label: TC_COPY.ui.nav.xishi,
+  label: ML_COPY.ui.nav.xishi,
   color: 'var(--tc-amethyst)',
   icon: 'orbit'
 }, {
   id: 'mbti',
-  label: TC_COPY.ui.nav.mbti,
+  label: ML_COPY.ui.nav.mbti,
   color: 'var(--tc-indigo)',
   icon: 'spark'
 }];
@@ -835,7 +835,7 @@ function NavRail({
 }) {
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav-rail",
-    "aria-label": TC_COPY.ui.nav['module-aria']
+    "aria-label": ML_COPY.ui.nav['module-aria']
   }, RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
     key: m.id,
     className: module === m.id ? 'active expanded' : '',
@@ -858,54 +858,54 @@ function NavRail({
 // 星座→astrology / 塔罗→tarot / 雷诺曼→lenormand / MBTI→mbti。
 // item: {label, page, module, skin} —— module 同步左侧 bg/落地面板，skin 与 HUB 卡片跳转口径一致。
 const MOD_NAV_GROUPS = [{
-  title: TC_COPY.ui.nav.guoxue,
+  title: ML_COPY.ui.nav.guoxue,
   color: 'var(--jade-500)',
   // REQ-126：国学组按 4 张场景大卡同步（① 命盘·八法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
   items: [{
-    label: TC_COPY.ui.nav['item-nine-pick'],
+    label: ML_COPY.ui.nav['item-nine-pick'],
     page: 'nine-pick',
     module: 'guoxue',
     skin: 'guoxue'
   }, {
-    label: TC_COPY.ui.nav['item-divination'],
+    label: ML_COPY.ui.nav['item-divination'],
     page: 'divination',
     module: 'guoxue',
     skin: 'guoxue'
   }, {
-    label: TC_COPY.ui.nav['item-tools'],
+    label: ML_COPY.ui.nav['item-tools'],
     page: 'guoxue-tools',
     module: 'guoxue',
     skin: 'guoxue'
   }, {
-    label: TC_COPY.ui.nav['item-zodiac'],
+    label: ML_COPY.ui.nav['item-zodiac'],
     page: 'zodiac',
     module: 'guoxue',
     skin: 'guoxue'
   }]
 }, {
-  title: TC_COPY.ui.nav.xishi,
+  title: ML_COPY.ui.nav.xishi,
   color: 'var(--tc-amethyst)',
   items: [{
-    label: TC_COPY.ui.nav['item-astrology'],
+    label: ML_COPY.ui.nav['item-astrology'],
     page: 'astrology',
     module: 'xishi',
     skin: 'xingzuo'
   }, {
-    label: TC_COPY.ui.nav['item-tarot'],
+    label: ML_COPY.ui.nav['item-tarot'],
     page: 'tarot',
     module: 'xishi',
     skin: 'tarot'
   }, {
-    label: TC_COPY.ui.nav['item-lenormand'],
+    label: ML_COPY.ui.nav['item-lenormand'],
     page: 'lenormand',
     module: 'xishi',
     skin: 'tarot'
   }]
 }, {
-  title: TC_COPY.ui.nav.mbti,
+  title: ML_COPY.ui.nav.mbti,
   color: 'var(--tc-indigo)',
   items: [{
-    label: TC_COPY.ui.nav['item-mbti'],
+    label: ML_COPY.ui.nav['item-mbti'],
     page: 'mbti',
     module: 'mbti',
     skin: 'mbti'
@@ -945,14 +945,14 @@ function TopbarModNav({
     onClick: () => setOpen(o => !o),
     "aria-haspopup": "menu",
     "aria-expanded": open ? 'true' : 'false',
-    "aria-label": TC_COPY.ui.nav['module-aria']
-  }, TC_COPY.ui.nav.module, /*#__PURE__*/React.createElement("span", {
+    "aria-label": ML_COPY.ui.nav['module-aria']
+  }, ML_COPY.ui.nav.module, /*#__PURE__*/React.createElement("span", {
     className: "caret",
     "aria-hidden": "true"
   })), open && /*#__PURE__*/React.createElement("div", {
     className: "modnav-drop",
     role: "menu",
-    "aria-label": TC_COPY.ui.nav['all-modules-aria']
+    "aria-label": ML_COPY.ui.nav['all-modules-aria']
   }, MOD_NAV_GROUPS.map(g => /*#__PURE__*/React.createElement("div", {
     key: g.title,
     className: "modnav-group"
@@ -1055,7 +1055,7 @@ function TopbarMenu({
   }, /*#__PURE__*/React.createElement("button", {
     className: "menu-login-btn",
     onClick: onAuth
-  }, TC_COPY.ui.menu['login-register']));
+  }, ML_COPY.ui.menu['login-register']));
   // REQ-087：已登录 → 余额（¥，余额÷汇率换算）不再直接显示在 Banner，移入右上角菜单面板最顶部；点击进余额明细
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
@@ -1065,14 +1065,14 @@ function TopbarMenu({
   agentEnabled && /*#__PURE__*/React.createElement("button", {
     className: "agent-top-text",
     type: "button",
-    title: TC_COPY.ui.agent.name,
-    "aria-label": TC_COPY.ui.agent.name,
+    title: ML_COPY.ui.agent.name,
+    "aria-label": ML_COPY.ui.agent.name,
     onClick: onAgent
-  }, TC_COPY.ui.agent.talk), /*#__PURE__*/React.createElement("button", {
+  }, ML_COPY.ui.agent.talk), /*#__PURE__*/React.createElement("button", {
     className: "menu-btn",
     type: "button",
     onClick: () => setOpen(o => !o),
-    "aria-label": open ? TC_COPY.ui.menu.close : TC_COPY.ui.menu.open,
+    "aria-label": open ? ML_COPY.ui.menu.close : ML_COPY.ui.menu.open,
     "aria-expanded": open ? 'true' : 'false'
   }, /*#__PURE__*/React.createElement("span", {
     className: "bars"
@@ -1118,7 +1118,7 @@ function TopbarMenu({
     style: {
       background: 'var(--ink-500)'
     }
-  }), TC_COPY.ui.menu.settings), /*#__PURE__*/React.createElement("button", {
+  }), ML_COPY.ui.menu.settings), /*#__PURE__*/React.createElement("button", {
     className: "menu-item",
     role: "menuitem",
     onClick: () => {
@@ -1130,7 +1130,7 @@ function TopbarMenu({
     style: {
       background: 'var(--jade-500)'
     }
-  }), TC_COPY.ui.menu.cases), /* PWA：「安装到桌面」常驻菜单项（永不消失；点击按状态机分派：a 可安装→prompt / b 已安装→提示 / c 其他→浏览器菜单手动安装指引） */
+  }), ML_COPY.ui.menu.cases), /* PWA：「安装到桌面」常驻菜单项（永不消失；点击按状态机分派：a 可安装→prompt / b 已安装→提示 / c 其他→浏览器菜单手动安装指引） */
   /*#__PURE__*/React.createElement("button", {
     className: pwaState === 'ready' ? 'menu-item install-ready' : pwaState === 'installed' ? 'menu-item install-done' : 'menu-item',
     role: "menuitem",
@@ -1236,7 +1236,7 @@ function SettingsPage({
       switchRow('anim_enabled', UI_COPY.home['set-anim'], UI_COPY.home['set-anim-desc'], settings.anim_enabled),
       dmRow,
       switchRow('banner_dropdown', UI_COPY.home['set-banner'], UI_COPY.home['set-banner-desc'], settings.banner_dropdown),
-      switchRow('share_taichu_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_taichu_ui),
+      switchRow('share_mingli_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_mingli_ui),
       switchRow('bg_enabled', UI_COPY.home['set-bg'], UI_COPY.home['set-bg-desc'], settings.bg_enabled),
       switchRow('card_images', UI_COPY.home['set-card-images'], UI_COPY.home['set-card-images-desc'], settings.card_images),
       switchRow('agent_enabled', UI_COPY.home['set-agent'], UI_COPY.home['set-agent-desc'], settings.agent_enabled),

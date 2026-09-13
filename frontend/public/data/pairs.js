@@ -6,7 +6,7 @@
  *     （星座 12×11 各 132 对；self/other 用「白羊座…双鱼座」全名）
  *   - T4_shengxiao_love.json / T4_shengxiao_friend.json / T4_shengxiao_boss.json
  *     （生肖 12×11 各 132 对；self/other 用「鼠…猪」单字名）
- * 结构：window.TC_PAIRS = { "<kind>": { module, dim, score_scale, score_note, pairs: [...] }, ... }
+ * 结构：window.ML_PAIRS = { "<kind>": { module, dim, score_scale, score_note, pairs: [...] }, ... }
  *   pairs 元素 = { self, other, score, text }：
  *     self   = 当前档案侧（星座全名 / 生肖单字名）
  *     other  = 对方
@@ -17,7 +17,7 @@
  *   self=当前档案名、other=对方 查表渲染「分值 + 说明文字」；不要在 index.html 内硬编码正文。
  * 编码：UTF-8（中文原样，ensure_ascii=False）。
  * ============================================================================ */
-window.TC_PAIRS = {
+window.ML_PAIRS = {
   "zodiac_love": {
  "module": "zodiac_love",
  "dim": "12x11",
@@ -4821,4 +4821,4 @@ window.TC_PAIRS = {
 };
 
 // 节135：桥接到 CONTENT 正文数据统一入口（物理文件位置与文案轮次替换流程不变；i18n 阶段按语言版本挂载）
-if (typeof CONTENT !== 'undefined' && !CONTENT.pairs) CONTENT.pairs = window.TC_PAIRS;
+if (typeof CONTENT !== 'undefined' && !CONTENT.pairs) CONTENT.pairs = window.ML_PAIRS;

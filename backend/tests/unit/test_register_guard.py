@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""节141：公开注册开关契约测试（`TAICHU_ALLOW_PUBLIC_REGISTER`）。
+"""节141：公开注册开关契约测试（`MINGLI_ALLOW_PUBLIC_REGISTER`）。
 
 覆盖：
   - 开关关闭（生产默认）→ `POST /api/auth/register` **403 + code 2003**，

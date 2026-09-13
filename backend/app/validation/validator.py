@@ -118,7 +118,7 @@ async def validate(method_result: dict, slice_data: dict | None = None) -> dict:
             "validated": False,
             "model": settings.llm_validation_model,
             "validations": [],
-            "reason": "校验已关闭（TAICHU_VALIDATION_ENABLED=false）",
+            "reason": "校验已关闭（MINGLI_VALIDATION_ENABLED=false）",
         }
 
     propositions = method_result.get("past_propositions") if isinstance(method_result, dict) else None

@@ -52,19 +52,19 @@
 |---|---|---|
 | 后端 | Python 3.13 + FastAPI | 单进程单端口 **8000**，同时服务 `/api` 与前端静态文件 |
 | 前端 | 免构建 CDN React 18（**JSX 已预编译为普通 JS，无 Babel 实时转译**） | 权威入口 `frontend/public/index.html`（节110 解耦后 = **入口壳 ~1,380 行** + `js/*.js` + `css/*.css`）；旧 Vite+TS 源码已归档 `_archive/前端-vite-ts-参考实现/` |
-| 数据库 | SQLite（三库） | `taichu_analytics` / `taichu_feedback` / `taichu_ops`，位于 `data/*.db` |
+| 数据库 | SQLite（三库） | `mingli_analytics` / `mingli_feedback` / `mingli_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
-| LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走 `backend/.env` 的 `TAICHU_LLM_API_KEY` |
+| LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走 `backend/.env` 的 `MINGLI_LLM_API_KEY` |
 | 部署 | Docker 单镜像（Python+Node 双运行时）+ Caddy | `mingli.example.com`；`docker-compose.yml` |
 
 ### 目录结构
 
 ```
-taichu/
+mingli/
 ├── backend/
 │   ├── app/                      # FastAPI 应用主体
 │   │   ├── main.py               # 应用入口、路由注册、lifespan、静态托管
-│   │   ├── config.py             # pydantic-settings 配置（env 前缀 TAICHU_）
+│   │   ├── config.py             # pydantic-settings 配置（env 前缀 MINGLI_）
 │   │   ├── database.py           # 三库引擎 + Session + 轻量迁移 + FTS5
 │   │   ├── errors.py             # 统一错误码与 BizError
 │   │   ├── middleware.py         # API 请求埋点中间件
@@ -159,7 +159,7 @@ taichu/
 4. `_recover_orphan_jobs()` 把残留 pending/running 的 job 置为 failed。
 5. 启动记忆抽取 worker（`memory_worker_loop` 协程）。
 6. 拉起常驻排盘 Node 服务（`paipan-node/server.mjs`，PID 记录）。
-7. （**节146 已删除**：原「配置了 `TAICHU_JINSHUJU_ACCESS_TOKEN` 则启动 APScheduler 金数据充值轮询」——充值链路整条拆除，lifespan 不再挂任何定时任务）
+7. （**节146 已删除**：原「配置了 `jinshuju_access_token` 则启动 APScheduler 金数据充值轮询」——充值链路整条拆除，lifespan 不再挂任何定时任务）
 8. **关停**：cancel 记忆 worker、terminate Node 排盘进程。
 
 ### 请求处理流程
@@ -309,7 +309,7 @@ async def analyze(phase, slice_data, user_question="", calibration_feedback=None
 - prefix `/admin`，JWT（type=admin）鉴权，角色 admin/operator/viewer。
 - 报表 / 登录 / 审计 → ops 库；用户档案 → analytics 库。
 - 提示词管理：读写 `backend/prompts/**/*.md`，写前落 `PromptVersion` 快照。
-- Agent 运维端点（`/admin/agent/*`）：独立静态 token（`TAICHU_AGENT_TOKEN`），余额调整/重置密码/重置 case。
+- Agent 运维端点（`/admin/agent/*`）：独立静态 token（`MINGLI_AGENT_TOKEN`），余额调整/重置密码/重置 case。
 
 ---
 
@@ -319,9 +319,9 @@ async def analyze(phase, slice_data, user_question="", calibration_feedback=None
 
 | 库 | 引擎 | 说明 |
 |---|---|---|
-| `taichu_analytics.db` | `analytics_engine` | 业务主库：用户/档案/盘面/方法结果/任务/对话/余额 |
-| `taichu_feedback.db` | `feedback_engine` | 跨用户质疑库：反馈 / 反馈汇总 |
-| `taichu_ops.db` | `ops_engine` | 运维库：埋点事件 / 后台账号 / 审计 / 错误上报 / 提示词版本 / 素材槽 |
+| `mingli_analytics.db` | `analytics_engine` | 业务主库：用户/档案/盘面/方法结果/任务/对话/余额 |
+| `mingli_feedback.db` | `feedback_engine` | 跨用户质疑库：反馈 / 反馈汇总 |
+| `mingli_ops.db` | `ops_engine` | 运维库：埋点事件 / 后台账号 / 审计 / 错误上报 / 提示词版本 / 素材槽 |
 
 SQLite 配置：WAL 模式 + busy_timeout 10s + foreign_keys ON（并发写安全）。
 
@@ -400,7 +400,7 @@ SQLite 配置：WAL 模式 + busy_timeout 10s + foreign_keys ON（并发写安�
 | `app` | `main.py` | FastAPI 实例，挂载所有路由 + 静态文件 + 中间件 |
 | `lifespan(app)` | `main.py` | 异步上下文管理器，启动/关停生命周期 |
 | `SPAStaticFiles` | `main.py` | 继承 StaticFiles，404 回退 index.html（SPA 虚拟路由） |
-| `Settings` | `config.py` | pydantic-settings，env 前缀 `TAICHU_`，加载 `.env` |
+| `Settings` | `config.py` | pydantic-settings，env 前缀 `MINGLI_`，加载 `.env` |
 | `BizError` | `errors.py` | 业务异常，带 code/message/detail，全局转 JSON 信封 |
 
 ### 排盘
@@ -593,28 +593,28 @@ main.py
 
 ## 9. 配置与运行
 
-### 环境变量（`.env`，前缀 `TAICHU_`）
+### 环境变量（`.env`，前缀 `MINGLI_`）
 
 | 变量 | 默认值 | 说明 |
 |---|---|---|
-| `TAICHU_LLM_API_KEY` | "" | **必填** DeepSeek API Key，严禁硬编码 |
-| `TAICHU_LLM_BASE_URL` | https://api.deepseek.com | LLM API base |
-| `TAICHU_LLM_MODEL` | deepseek-v4-flash | 解读主模型 |
-| `TAICHU_LLM_TIMEOUT` | 180.0 | LLM 超时（秒） |
-| `TAICHU_LLM_MAX_RETRIES` | 1 | 重试次数 |
-| `TAICHU_LLM_TEMPERATURE` | 0.3 | 采样温度 |
-| `TAICHU_LLM_MAX_TOKENS` | 12000 | method 输出上限 |
-| `TAICHU_JWT_SECRET` | change-me... | JWT 密钥（生产改随机 32 字节） |
-| `TAICHU_FREE_CREDIT` | 220 | 注册赠送余额（存储单位） |
-| `TAICHU_RECHARGE_RATE` | 10.0 | 1 元 = N 存储单位 |
-| ~~`TAICHU_JINSHUJU_ACCESS_TOKEN`~~ / ~~`TAICHU_JINSHUJU_ALLOW_MOCK`~~ | —— | **节146 已整组删除**（`jinshuju_*` 9 项配置与对应 env 全部移除） |
-| `TAICHU_AGENT_TOKEN` | "" | Agent 运维 token（空=禁用 /admin/agent/*） |
-| `TAICHU_PAIPAN_NODE_URL` | http://127.0.0.1:9317 | 常驻排盘 Node 服务地址 |
-| `TAICHU_PAIPAN_MAX_CONCURRENCY` | 3 | 排盘并发上限 |
-| `TAICHU_LLM_MAX_CONCURRENCY` | 3 | 单用户 method 并发上限 |
-| `TAICHU_LLM_GLOBAL_MAX_CONCURRENCY` | 100 | 全局 method 并发兜底 |
-| `TAICHU_DB_PATH` | data/taichu_analytics.db | 分析库路径 |
-| `TAICHU_CORS_ORIGINS` | localhost:5173 | CORS 允许源 |
+| `MINGLI_LLM_API_KEY` | "" | **必填** DeepSeek API Key，严禁硬编码 |
+| `MINGLI_LLM_BASE_URL` | https://api.deepseek.com | LLM API base |
+| `MINGLI_LLM_MODEL` | deepseek-v4-flash | 解读主模型 |
+| `MINGLI_LLM_TIMEOUT` | 180.0 | LLM 超时（秒） |
+| `MINGLI_LLM_MAX_RETRIES` | 1 | 重试次数 |
+| `MINGLI_LLM_TEMPERATURE` | 0.3 | 采样温度 |
+| `MINGLI_LLM_MAX_TOKENS` | 12000 | method 输出上限 |
+| `MINGLI_JWT_SECRET` | change-me... | JWT 密钥（生产改随机 32 字节） |
+| `MINGLI_FREE_CREDIT` | 220 | 注册赠送余额（存储单位） |
+| `MINGLI_RECHARGE_RATE` | 10.0 | 1 元 = N 存储单位 |
+| ~~`jinshuju_access_token`~~ / ~~`jinshuju_allow_mock`~~ | —— | **节146 已整组删除**（`jinshuju_*` 9 项配置与对应 env 全部移除） |
+| `MINGLI_AGENT_TOKEN` | "" | Agent 运维 token（空=禁用 /admin/agent/*） |
+| `MINGLI_PAIPAN_NODE_URL` | http://127.0.0.1:9317 | 常驻排盘 Node 服务地址 |
+| `MINGLI_PAIPAN_MAX_CONCURRENCY` | 3 | 排盘并发上限 |
+| `MINGLI_LLM_MAX_CONCURRENCY` | 3 | 单用户 method 并发上限 |
+| `MINGLI_LLM_GLOBAL_MAX_CONCURRENCY` | 100 | 全局 method 并发兜底 |
+| `MINGLI_DB_PATH` | data/mingli_analytics.db | 分析库路径 |
+| `MINGLI_CORS_ORIGINS` | localhost:5173 | CORS 允许源 |
 
 ### 本地启动
 
@@ -627,7 +627,7 @@ pip install -e "backend[dev]"
 # 2. 配置环境变量
 cd backend
 copy ..\.env.example .env        # Windows
-# 编辑 .env，填入 TAICHU_LLM_API_KEY
+# 编辑 .env，填入 MINGLI_LLM_API_KEY
 
 # 3. 启动
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -651,7 +651,7 @@ python -m pytest -q
 docker-compose up -d
 ```
 
-- `web` 服务：Python+Node 双运行时镜像，挂载 `/opt/taichu/data` 持久化 SQLite。
+- `web` 服务：Python+Node 双运行时镜像，挂载 `/opt/mingli/data` 持久化 SQLite。
 - `caddy` 服务：HTTPS 反代到 web（172.28.0.10:8000）。
 
 ---
@@ -675,9 +675,9 @@ docker-compose up -d
 
 ### 安全红线
 
-- LLM API Key 只允许来自 `TAICHU_LLM_API_KEY` 环境变量 / `backend/.env`，**严禁硬编码**。
+- LLM API Key 只允许来自 `MINGLI_LLM_API_KEY` 环境变量 / `backend/.env`，**严禁硬编码**。
 - JWT 密钥生产环境必须改随机 32 字节。
-- ~~金数据 `TAICHU_JINSHUJU_ALLOW_MOCK` 生产环境必须设 false。~~ **节146 已拆除该链路，红线随之作废**（无支付、无 allow_mock 配置）。
+- ~~金数据 `jinshuju_allow_mock` 生产环境必须设 false。~~ **节146 已拆除该链路，红线随之作废**（无支付、无 allow_mock 配置）。
 
 ### 前端红线
 

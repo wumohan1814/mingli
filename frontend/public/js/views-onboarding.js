@@ -11,7 +11,7 @@ function AuthPage({
   // 节141：**公开注册已关闭**（内测白名单制，新账号只能由开发者经后台创建）。
   // 本页从此只剩登录表单：原注册分支（确认密码 / 图形验证码 / 协议勾选）、
   // 「没有账号？去注册」切换入口、验证码拉取与注册赠送提示全部移除。
-  // 后端 POST /api/auth/register 同步加了开关防护（TAICHU_ALLOW_PUBLIC_REGISTER，默认 false）。
+  // 后端 POST /api/auth/register 同步加了开关防护（MINGLI_ALLOW_PUBLIC_REGISTER，默认 false）。
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
@@ -30,8 +30,8 @@ function AuthPage({
       // 注意：auth 接口返回裸 {access_token, refresh_token}，非 {code,data} 信封
       token = res.access_token || res.data && res.data.access_token;
       refreshToken = res.refresh_token || res.data && res.data.refresh_token;
-      localStorage.setItem('taichu_token', token || '');
-      localStorage.setItem('taichu_refresh_token', refreshToken || '');
+      localStorage.setItem('mingli_token', token || '');
+      localStorage.setItem('mingli_refresh_token', refreshToken || '');
       // REQ-092：登录成功 → 先实时校验档案数（0 档 → forceOnboarding=true，下方受限落页
       // 会被 App navigate 守卫统一重定向到新建档案；≥1 档 → 正常回跳 / 进入档案列表）
       await checkCaseGate();
@@ -44,7 +44,7 @@ function AuthPage({
         onNavigate('cases'); // 登录成功 → 进入档案列表（可从中新建或继续档案）
       }
     } catch (e) {
-      setError(e && e.message || TC_COPY.ui.error['request-failed']);
+      setError(e && e.message || ML_COPY.ui.error['request-failed']);
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ function AuthPage({
     className: "card"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "title"
-  }, TC_COPY.ui.buttons.login), error && /*#__PURE__*/React.createElement("div", {
+  }, ML_COPY.ui.buttons.login), error && /*#__PURE__*/React.createElement("div", {
     className: "error",
     style: {
       marginBottom: 12
@@ -65,27 +65,27 @@ function AuthPage({
   }, /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "auth-user"
-  }, TC_COPY.ui.auth['phone-label']), /*#__PURE__*/React.createElement("input", {
+  }, ML_COPY.ui.auth['phone-label']), /*#__PURE__*/React.createElement("input", {
     id: "auth-user",
     className: "input",
     type: "tel",
     inputMode: "numeric",
     value: username,
     onChange: e => setUsername(e.target.value),
-    placeholder: TC_COPY.ui.auth['phone-placeholder'],
+    placeholder: ML_COPY.ui.auth['phone-placeholder'],
     maxLength: 11,
     required: true,
     autoComplete: "tel"
   }), /*#__PURE__*/React.createElement("label", {
     className: "label",
     htmlFor: "auth-pass"
-  }, TC_COPY.ui.auth['password-label']), /*#__PURE__*/React.createElement("input", {
+  }, ML_COPY.ui.auth['password-label']), /*#__PURE__*/React.createElement("input", {
     id: "auth-pass",
     className: "input",
     type: "password",
     value: password,
     onChange: e => setPassword(e.target.value),
-    placeholder: TC_COPY.ui.auth['password-placeholder'],
+    placeholder: ML_COPY.ui.auth['password-placeholder'],
     required: true,
     minLength: 6
   }), /*#__PURE__*/React.createElement("button", {
@@ -95,7 +95,7 @@ function AuthPage({
     style: {
       marginTop: 16
     }
-  }, loading ? TC_COPY.ui.tips.processing : TC_COPY.ui.buttons.login)), /*#__PURE__*/React.createElement("div", {
+  }, loading ? ML_COPY.ui.tips.processing : ML_COPY.ui.buttons.login)), /*#__PURE__*/React.createElement("div", {
     className: "auth-internal-tip",
     style: {
       marginTop: 16,
@@ -108,7 +108,7 @@ function AuthPage({
       lineHeight: 1.7,
       textAlign: 'center'
     }
-  }, TC_COPY.ui.auth['internal-only-tip'])));
+  }, ML_COPY.ui.auth['internal-only-tip'])));
 }
 
 function OnboardingPage({
@@ -150,7 +150,7 @@ function OnboardingPage({
   const [form, setForm] = useState(() => {
     const base = blankForm();
     try {
-      const saved = localStorage.getItem('taichu_onboarding_form');
+      const saved = localStorage.getItem('mingli_onboarding_form');
       if (saved) {
         const obj = JSON.parse(saved);
         if (obj && typeof obj === 'object') {
@@ -196,7 +196,7 @@ function OnboardingPage({
   // 表单防丢失：建档成功进入 waiting 前，form 每次变化都写入 localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('taichu_onboarding_form', JSON.stringify(form));
+      localStorage.setItem('mingli_onboarding_form', JSON.stringify(form));
     } catch (e) {/* 忽略 */}
   }, [form]);
   const cityNames = form.birth_province && reg[form.birth_province] ? Object.keys(reg[form.birth_province]) : [];
@@ -352,7 +352,7 @@ function OnboardingPage({
         method: 'POST'
       });
       try {
-        localStorage.removeItem('taichu_onboarding_form');
+        localStorage.removeItem('mingli_onboarding_form');
       } catch (e) {/* 忽略 */}
       if (mode === 'next') {
         // 「新建下一个档案」：保存当前并继续建下一个 —— 清空表单留在建档页

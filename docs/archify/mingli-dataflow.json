@@ -3,7 +3,7 @@
   "diagram_type": "dataflow",
   "meta": {
     "title": "命理太初 · 档案数据流与三库落库",
-    "output": "taichu-dataflow.html",
+    "output": "mingli-dataflow.html",
     "quality_profile": "showcase",
     "viewBox": [1280, 880],
     "views": [
@@ -31,8 +31,8 @@
     { "id": "api", "type": "backend", "label": "REST 网关", "sublabel": "middleware 埋点 · 轮询", "stage": 3, "row": 2 },
     { "id": "report", "type": "frontend", "label": "H5 报告", "sublabel": "REST 投影 · 分享", "stage": 3, "row": 3 },
     { "id": "credits", "type": "database", "label": "积分账本", "sublabel": "逐法扣费流水", "stage": 3, "row": 4 },
-    { "id": "feedback", "type": "database", "label": "taichu_feedback.db", "sublabel": "质询收集", "stage": 3, "row": 5 },
-    { "id": "ops", "type": "database", "label": "taichu_ops.db", "sublabel": "埋点 / 事件 / 错误", "stage": 3, "row": 6 }
+    { "id": "feedback", "type": "database", "label": "mingli_feedback.db", "sublabel": "质询收集", "stage": 3, "row": 5 },
+    { "id": "ops", "type": "database", "label": "mingli_ops.db", "sublabel": "埋点 / 事件 / 错误", "stage": 3, "row": 6 }
   ],
   "flows": [
     { "from": "birth", "to": "engine", "label": "出生信息", "variant": "emphasis" },

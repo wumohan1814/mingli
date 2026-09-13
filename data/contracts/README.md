@@ -5,7 +5,7 @@
 | 文件（待建） | 来源 |
 |---|---|
 | `chart.sample.json` | `paipan.py` 产出（唯一事实源结构） |
-| `method-result.sample.json` | `method-result v2`（mingli `SKILL.md` §3） |
+| `method-result.sample.json` | `method-result v2`（mingli-reference `SKILL.md` §3） |
 | `calibration-record.sample.json` | `校准记录.json`（`score.py` 读取格式） |
 | `validation.sample.json` | `<key>.validation.json` 结构 |
 

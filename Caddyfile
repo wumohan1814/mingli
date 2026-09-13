@@ -3,6 +3,12 @@
 # 节113：静态资源（js/css/data/vendor/art/tarot/lenormand）改由 Caddy 用 file_server 直出，
 #       不再经 Python web 进程（此前实测约 79% 请求是静态）；其余（/api、/admin、/、index.html 等）
 #       仍反代到 web:8000。
+#
+# ⚠️ 域名属「部署者自填」，不是项目代号（节147）：
+#   下面的 mingli.example.com / bb3a.mingli.example.com 是**运营实例已注册并生效的域名**（DNS + Let's Encrypt
+#   证书都在跑），因此**未随项目代号 taichu→mingli 改名** —— 改它要重新注册域名 + 改 DNS +
+#   重签证书，且会有一个线上中断窗口，收益为零（节142 已拍板：本实例只是发布/内容载体，
+#   不是"官方托管服务"）。第三方自部署时把这两处换成自己的域名即可。
 mingli.example.com {
     encode gzip zstd
 

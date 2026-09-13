@@ -9,7 +9,7 @@ import os
 import sys
 from PIL import Image, ImageChops
 
-ROOT = r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art"
+ROOT = r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art"
 
 
 def whitekey_rgba(im, tol_inner=5, tol_outer=34):
@@ -112,23 +112,23 @@ def process_one(src, subdir, base, tw, th, limit_kb,
 
 BATCH = [
     # #2 签条
-    {"src": r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art\ssgw\Isolated_product_asset__transp_2026-09-07T18-22-09.png",
+    {"src": r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art\ssgw\Isolated_product_asset__transp_2026-09-07T18-22-09.png",
      "subdir": "ssgw", "base": "ssgw-stick", "tw": 90, "th": 360, "limit_kb": 150,
      "mode": "transparent", "remove_wm": False},
     # #3 塔罗牌背
-    {"src": r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art\card-back\card-back-tarot_raw.png",
+    {"src": r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art\card-back\card-back-tarot_raw.png",
      "subdir": "card-back", "base": "card-back-tarot", "tw": 480, "th": 800, "limit_kb": 300,
      "mode": "opaque", "remove_wm": True},
     # #4 雷诺曼牌背
-    {"src": r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art\card-back\card-back-lenormand_raw.png",
+    {"src": r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art\card-back\card-back-lenormand_raw.png",
      "subdir": "card-back", "base": "card-back-lenormand", "tw": 480, "th": 800, "limit_kb": 300,
      "mode": "opaque", "remove_wm": True},
     # #5 铜钱字面
-    {"src": r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art\liuyao\Isolated_product_asset__transp_2026-09-07T18-22-30.png",
+    {"src": r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art\liuyao\Isolated_product_asset__transp_2026-09-07T18-22-30.png",
      "subdir": "liuyao", "base": "coin-face", "tw": 192, "th": 192, "limit_kb": 200,
      "mode": "transparent", "remove_wm": False},
     # #6 铜钱图案面
-    {"src": r"C:\Users\wumoh\Documents\Vibecoding\taichu\frontend\public\art\liuyao\Isolated_product_asset__transp_2026-09-07T18-22-28.png",
+    {"src": r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art\liuyao\Isolated_product_asset__transp_2026-09-07T18-22-28.png",
      "subdir": "liuyao", "base": "coin-back", "tw": 192, "th": 192, "limit_kb": 200,
      "mode": "transparent", "remove_wm": False},
 ]

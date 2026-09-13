@@ -41,7 +41,7 @@ router = APIRouter(prefix="/api", tags=["tarot"])
 TAROT_PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "interpret" / "tarot.md"
 
 # Node /tarot 开放给本 API 的牌阵（REQ-122：现有 5 + 新增 14 全量放开，
-# 对应 vendored tarotSpreads + 命理太初覆盖层 taichu-tarot-spreads.mjs，pydantic 提前拦未知 key）
+# 对应 vendored tarotSpreads + 命理太初覆盖层 mingli-tarot-spreads.mjs，pydantic 提前拦未知 key）
 TAROT_SPREAD_TYPES = (
     # 现有 5
     "single", "three", "love", "career", "decision",

@@ -7,15 +7,15 @@
 
 - **key 存哪**：明文存于 `backend/.env`（本地文件，已被根 `.gitignore` 的 `.env` 规则忽略，**不进版本库**）。
 - **key 怎么读**：FastAPI 启动时 cwd 为 `backend`（`start.sh`/`start.bat` 均先 `cd backend`），
-  pydantic-settings 以 `TAICHU_` 前缀 + `env_file=".env"` 读入 `Settings`，最终落在
+  pydantic-settings 以 `MINGLI_` 前缀 + `env_file=".env"` 读入 `Settings`，最终落在
   `settings.llm_api_key` 单点。
 - **零硬编码**：全项目 `.py` 源码 / `.env.example` / README 中无真实 key 字面量；真实 key 唯一出现在
   `backend/.env`（该文件被 git 忽略）。
 - **接入层**：`backend/app/llm/client.py` 的 `chat()` 用 `httpx.AsyncClient` 调
   `{llm_base_url}/chat/completions`，带 `Authorization: Bearer`；无 key 时抛
-  `LLMError("未配置 TAICHU_LLM_API_KEY")`。
-- **现有环境变量键**（`backend/.env` 内）：`TAICHU_DB_PATH`、`TAICHU_FEEDBACK_DB_PATH` 与
-  新增 `TAICHU_LLM_*` 同文件共存，便于从 backend 目录独立启动。
+  `LLMError("未配置 MINGLI_LLM_API_KEY")`。
+- **现有环境变量键**（`backend/.env` 内）：`MINGLI_DB_PATH`、`MINGLI_FEEDBACK_DB_PATH` 与
+  新增 `MINGLI_LLM_*` 同文件共存，便于从 backend 目录独立启动。
 
 ## 2. 已留的升级空间（未来怎么改、改哪里）
 
@@ -26,11 +26,11 @@ key 来源已**统一收敛**在 `backend/app/config.py` 的 `llm_api_key` 一�
 **`backend/app/llm/client.py` 不用改一行**。
 
 ### 2.2 provider / 模型档位可配置
-- `TAICHU_LLM_BASE_URL` 配置化：切换成任何 OpenAI 兼容协议的 provider 只改环境变量，不改代码。
-- `TAICHU_LLM_MODEL` 配置化：MVP 用 `deepseek-v4-flash`，想升级更强档位只改环境变量。
+- `MINGLI_LLM_BASE_URL` 配置化：切换成任何 OpenAI 兼容协议的 provider 只改环境变量，不改代码。
+- `MINGLI_LLM_MODEL` 配置化：MVP 用 `deepseek-v4-flash`，想升级更强档位只改环境变量。
 
 ### 2.3 校验模型与主模型分离
-`TAICHU_LLM_VALIDATION_MODEL`（默认同主模型档位）与 `TAICHU_LLM_MODEL` 独立配置，
+`MINGLI_LLM_VALIDATION_MODEL`（默认同主模型档位）与 `MINGLI_LLM_MODEL` 独立配置，
 后续按 ADR-0002 把断前尘校验切到更便宜的模型并单独计量时，
 改环境变量即可，校验/编排代码只读各自配置，互不耦合。
 

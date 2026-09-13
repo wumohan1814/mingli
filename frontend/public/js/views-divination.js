@@ -49,13 +49,13 @@ const DIVIN_METHODS = [{
 // REQ-126：起卦列表按起课类型 3 分区（摇卦报数 / 时辰起局 / 速断抽签），顺序与分组为已拍板口径
 const DIVIN_GROUP_META = [{
   key: 'yao',
-  title: TC_COPY.ui.hub['divin-group-yao']
+  title: ML_COPY.ui.hub['divin-group-yao']
 }, {
   key: 'shi',
-  title: TC_COPY.ui.hub['divin-group-shi']
+  title: ML_COPY.ui.hub['divin-group-shi']
 }, {
   key: 'su',
-  title: TC_COPY.ui.hub['divin-group-su']
+  title: ML_COPY.ui.hub['divin-group-su']
 }];
 
 const DIVIN_API_METHOD = { sign: 'ssgw' };
@@ -331,7 +331,7 @@ function DivLiurenView(res) {
   if (guaTi.length || pTags.length) {
     const tags = [].concat(pTags, guaTi).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
     items.push(React.createElement('div', { key: 'gt-h', className: 'lr-sec' }, UI_COPY.divination['dlr-keti']),
-      React.createElement(TCTermRow, { key: 'gt', method: 'liuren', items: tags, chipClass: 'lr-tag' }));
+      React.createElement(MLTermRow, { key: 'gt', method: 'liuren', items: tags, chipClass: 'lr-tag' }));
     const rules = Array.isArray(res.classicalRules) ? res.classicalRules : [];
     if (rules.length) {
       const ruleEls = rules.map(function (r, i) {
@@ -373,14 +373,14 @@ function DivLiurenView(res) {
       return k + (line ? '：' + line : '') + (v.description ? '（' + v.description + '）' : '');
     };
     items.push(React.createElement('div', { key: 'tj-h', className: 'lr-sec' }, UI_COPY.divination['dlr-tianjiang-sec']),
-      React.createElement(TCTermRow, { key: 'tj', method: 'liuren', items: tjpKeys, chipClass: 'lr-tag', matchOf: function (k) { return k; }, textOf: tjpText }));
+      React.createElement(MLTermRow, { key: 'tj', method: 'liuren', items: tjpKeys, chipClass: 'lr-tag', matchOf: function (k) { return k; }, textOf: tjpText }));
   }
 
   // 神煞
   const ss = Array.isArray(res.shenShaSummary) ? res.shenShaSummary : [];
   if (ss.length) {
     items.push(React.createElement('div', { key: 'ss-h', className: 'lr-sec' }, UI_COPY.divination['dlr-shensha']),
-      React.createElement(TCTermRow, { key: 'ss', method: 'liuren', items: ss, chipClass: 'lr-tag' }),
+      React.createElement(MLTermRow, { key: 'ss', method: 'liuren', items: ss, chipClass: 'lr-tag' }),
       React.createElement('div', { key: 'ss-n', className: 'lr-note' }, UI_COPY.divination['dlr-shensha-note']));
   }
 
@@ -440,7 +440,7 @@ function DivJinkoujueView(res) {
   if (rows.length) {
     items.push(React.createElement('div', { key: 'four-h', className: 'jk-sec' }, UI_COPY.divination['jk-siwei']),
       React.createElement('div', { key: 'four', className: 'jk-four' }, rows),
-      React.createElement(TCTermRow, { key: 'four-tc', method: 'jinkoujue', items: jkNounNames, chipClass: 'jk-tag' }));
+      React.createElement(MLTermRow, { key: 'four-tc', method: 'jinkoujue', items: jkNounNames, chipClass: 'jk-tag' }));
   }
 
   // 阴阳发用
@@ -467,7 +467,7 @@ function DivJinkoujueView(res) {
     });
     items.push(React.createElement('div', { key: 'mv-h', className: 'jk-sec' }, UI_COPY.divination['jk-wudong-sandong']),
       React.createElement('div', { key: 'mv', className: 'jk-mv-wrap' }, mvEls),
-      React.createElement(TCTermRow, { key: 'mv-tc', method: 'jinkoujue', items: mv.map(function (m2) { return m2.name; }).filter(Boolean), chipClass: 'jk-tag' }),
+      React.createElement(MLTermRow, { key: 'mv-tc', method: 'jinkoujue', items: mv.map(function (m2) { return m2.name; }).filter(Boolean), chipClass: 'jk-tag' }),
       React.createElement('div', { key: 'mv-n', className: 'jk-note' }, '动名须结合所问与用位综合体会，不按动名直接定现实结果。'));
   }
 
@@ -557,7 +557,7 @@ function DivQimenView(res) {
     const voidSet = {};
     (Array.isArray(res.voidPalaces) ? res.voidPalaces : []).forEach(function (v) { if (v) voidSet[v.palace] = true; });
     const horseGong = (res.horseStar && res.horseStar.palace != null) ? res.horseStar.palace : null;
-    // REQ-128：九宫四盘渲染出的星/门/神名 + 值符值使，供内嵌白话卡标签（去重交给 TCTermRow）
+    // REQ-128：九宫四盘渲染出的星/门/神名 + 值符值使，供内嵌白话卡标签（去重交给 MLTermRow）
     const qmNounNames = [];
     gongs.forEach(function (g) {
       if (!g) return;
@@ -593,7 +593,7 @@ function DivQimenView(res) {
     items.push(React.createElement('div', { key: 'grid-h', className: 'qm-sec' }, UI_COPY.divination['qm-jiugong-sipan']),
       React.createElement('div', { key: 'grid', className: 'qm-grid' }, cellEls),
       React.createElement('div', { key: 'grid-n', className: 'qm-note' }, '每格：宫名·方位·五行 / 天盘星干（随星） / 地盘干·门 / 八神；值符、值使、空亡、马星以角标标出。'),
-      React.createElement(TCTermRow, { key: 'grid-tc', method: 'qimen', items: qmNounNames, chipClass: 'qm-tag' }));
+      React.createElement(MLTermRow, { key: 'grid-tc', method: 'qimen', items: qmNounNames, chipClass: 'qm-tag' }));
   }
 
   // 格局：基础标签 + 标签白话
@@ -601,7 +601,7 @@ function DivQimenView(res) {
   const details = Array.isArray(res.patternDetails) ? res.patternDetails : [];
   if (tags.length) {
     items.push(React.createElement('div', { key: 'pt-h', className: 'qm-sec' }, UI_COPY.divination['qm-geju-jichu']),
-      React.createElement(TCTermRow, { key: 'pt', method: 'qimen', items: tags, chipClass: 'qm-tag' }),
+      React.createElement(MLTermRow, { key: 'pt', method: 'qimen', items: tags, chipClass: 'qm-tag' }),
       details.length ? React.createElement('ul', { key: 'pd', className: 'qm-list' },
         details.map(function (d, i) { return React.createElement('li', { key: i }, (d.tag || '') + '：' + (d.summary || '')); })) : null);
   }
@@ -820,17 +820,17 @@ function FreeCard(title, blocks, opts) {
   return React.createElement('div', { className: 'free-card' }, kids);
 }
 /* ---------- REQ-128 阶段 0：名词白话卡（6 方法） ----------
-   数据源：frontend/public/data/term-cards.js（window.TC_TERM_CARDS，文案组第四轮交付物，更新只替换该文件）。
+   数据源：frontend/public/data/term-cards.js（window.ML_TERM_CARDS，文案组第四轮交付物，更新只替换该文件）。
    交互对齐 REQ-073/107 折叠风格：
-   - TCTermRow：把结果页渲染出的名词包成可点击标签（命中卡片的加下划线/高亮提示可点），
+   - MLTermRow：把结果页渲染出的名词包成可点击标签（命中卡片的加下划线/高亮提示可点），
      点击展开该词白话卡（term + plain）；未命中卡片的名词照常渲染（不可点）。
-   - TCTermPanel：「名词释义」兜底折叠面板（复用 FreeCard foldCard），列出本方法全部卡（term → 点击展开 plain）。
+   - MLTermPanel：「名词释义」兜底折叠面板（复用 FreeCard foldCard），列出本方法全部卡（term → 点击展开 plain）。
    匹配容错（稳妥口径）：① 文本与 term 精确相等；② term 长度≥2 且文本包含 term；
    ③ 文本长度≥2 且 term 包含文本（覆盖「天蓬」↔「天蓬星」、干支前缀「甲子·天蓬星」、
    「青龙」↔「青龙（黄道）」、「三交课」↔「三交」等变体）；单字 term（如 元/会/运/世）只走精确匹配防误命中。
    均为独立函数组件（自带 useState），避免在父级渲染函数里按条件增减 hooks 破坏钩子顺序（同 REQ-107 约定）。 */
-function tcCardMap(method) {
-  const all = (typeof window !== 'undefined' && window.TC_TERM_CARDS) || {};
+function mlCardMap(method) {
+  const all = (typeof window !== 'undefined' && window.ML_TERM_CARDS) || {};
   const list = (all && all[method]) || [];
   const map = {};
   list.forEach(function (c) {
@@ -838,7 +838,7 @@ function tcCardMap(method) {
   });
   return map;
 }
-function tcFindCard(map, text) {
+function mlFindCard(map, text) {
   if (!map || text == null) return null;
   const t = String(text).trim();
   if (!t) return null;
@@ -871,7 +871,7 @@ function tcFindCard(map, text) {
   }
   return best3;
 }
-function TCTermChip({ method, card, text, className, open, onClick }) {
+function MLTermChip({ method, card, text, className, open, onClick }) {
   const kids = [text];
   if (card) kids.push(React.createElement('span', { key: 'ch', className: 'tc-chev' }, open ? '▾' : '▸'));
   return React.createElement('span', {
@@ -882,20 +882,20 @@ function TCTermChip({ method, card, text, className, open, onClick }) {
     'aria-expanded': card ? (open ? 'true' : 'false') : undefined
   }, kids);
 }
-function TCTermRow({ method, label, items, chipClass, matchOf, textOf }) {
+function MLTermRow({ method, label, items, chipClass, matchOf, textOf }) {
   const [openKey, setOpenKey] = useState(null);
-  const map = tcCardMap(method);
+  const map = mlCardMap(method);
   const chips = [];
   const seen = {};
   (Array.isArray(items) ? items : []).forEach(function (it, i) {
     const matchText = matchOf ? matchOf(it) : (it == null ? '' : String(it));
     const txt = textOf ? textOf(it) : (it == null ? '' : String(it));
     if (!matchText || !txt) return;
-    const card = tcFindCard(map, matchText);
+    const card = mlFindCard(map, matchText);
     const dedupeKey = card ? card.key : matchText;
     if (seen[dedupeKey]) return; // 同一名词/同一卡片只留一枚标签
     seen[dedupeKey] = true;
-    chips.push(React.createElement(TCTermChip, {
+    chips.push(React.createElement(MLTermChip, {
       key: i,
       method: method,
       card: card,
@@ -915,8 +915,8 @@ function TCTermRow({ method, label, items, chipClass, matchOf, textOf }) {
     label ? React.createElement('span', { key: 'cap', className: 'tc-cap' }, label) : null,
     chips, body);
 }
-function TCTermPanel({ method }) {
-  const map = tcCardMap(method);
+function MLTermPanel({ method }) {
+  const map = mlCardMap(method);
   const keys = Object.keys(map);
   if (!keys.length) return null;
   const blocks = keys.map(function (k) {
@@ -1239,7 +1239,7 @@ function LiurenFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('课理解读（免费）', blocks),
-    React.createElement(TCTermPanel, { method: 'liuren' }),
+    React.createElement(MLTermPanel, { method: 'liuren' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -1308,7 +1308,7 @@ function JinkoujueFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('课理解读（免费）', blocks),
-    React.createElement(TCTermPanel, { method: 'jinkoujue' }),
+    React.createElement(MLTermPanel, { method: 'jinkoujue' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统课理生成，依据《六壬神课金口诀古本》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -1396,7 +1396,7 @@ function QimenFreeReading(res) {
   }
   return React.createElement(React.Fragment, null,
     FreeCard('局理解读（免费）', blocks),
-    React.createElement(TCTermPanel, { method: 'qimen' }),
+    React.createElement(MLTermPanel, { method: 'qimen' }),
     React.createElement('div', { style: { fontSize: 12, color: 'var(--text-3)', lineHeight: 1.7, marginTop: 8 } },
       '以上内容由传统局理生成，依据《烟波钓叟歌》《御定奇门宝鉴》《奇门遁甲秘籍大全》，属趋势参考与娱乐范畴，不构成任何现实建议；请理性看待，重大决策请依据现实信息。'));
 }
@@ -1421,15 +1421,15 @@ const xlrPalaceName = function (m, d, h) { return XLR_PALACE_ORDER[(((m - 1) + (
 
 /* =====================================================================
    REQ-061：占卜动效与翻牌交互（统一机制）
-   - 读取钩子：tcShouldPlayAnim()=REQ-066①「动画与抽卡模拟」；tcShouldShowCards()=REQ-066⑥「牌面图片显示」
+   - 读取钩子：mlShouldPlayAnim()=REQ-066①「动画与抽卡模拟」；mlShouldShowCards()=REQ-066⑥「牌面图片显示」
    - 动效阶段 state 机：各演出组件内部 ph 只描述"演出到哪一步"，取数/落库仍走既有 doCast/draw/load
    - 结果一致性：观音灵签/六爻 = 前端先定结果 + replay 固定（REQ-069 同契约）；
      梅花/小六壬 = 取数先行（演出的卦名/落宫一律取自后端结果，不本地复制引擎）；
      塔罗/雷诺曼 = 取数先行，数据藏于牌背，翻牌时揭示
    - 全部器物为占位/程序化 CSS；素材接入点见上方注释的 --art-* 变量槽
    ===================================================================== */
-const tcShouldPlayAnim = function () { return TC_SETTINGS.anim_enabled !== false; };
-const tcShouldShowCards = function () { return TC_SETTINGS.card_images !== false; };
+const mlShouldPlayAnim = function () { return ML_SETTINGS.anim_enabled !== false; };
+const mlShouldShowCards = function () { return ML_SETTINGS.card_images !== false; };
 const artFxEls = function (n) {
   const els = [];
   for (let i = 0; i < n; i++) {
@@ -1883,7 +1883,7 @@ function MeihuaCastStage(props) {
    梅花：随机起卦三步（上卦八卦之一 / 下卦八卦之一 / 动爻 1-6），铜钱翻动为演出、
      数值程序随机预取（1乾 2兑 3离 4震 5巽 6坎 7艮 8坤），与后端 settings.method='random'
      + replay 确定性重放契约一致（见 REQ-069 手动通道同一契约）。
-   动画开关（REQ-066① tcShouldPlayAnim）关 → 点击直接落定结果，不播翻动动画。 */
+   动画开关（REQ-066① mlShouldPlayAnim）关 → 点击直接落定结果，不播翻动动画。 */
 // 八卦名 · 来自 CONTENT 基础名词表（节135）
 const MH_TRIG_NAMES = CONTENT.basics.baguaTrigrams;
 const SHAKE_TOSS_MS = 640;   // 铜钱翻动动画时长
@@ -2303,11 +2303,11 @@ function DivinationPage({
   // 校验时间字段（timeDate/shichen 必填）—— 自动/手动共用
   const timeValid = function () {
     if (typeof timeDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(timeDate)) {
-      toast(TC_COPY.ui.toast['divin-date-required']);
+      toast(ML_COPY.ui.toast['divin-date-required']);
       return false;
     }
     if (!(typeof shichen === 'number' && shichen >= 0 && shichen < SHICHEN_ARR.length)) {
-      toast(TC_COPY.ui.toast['divin-shichen-required']);
+      toast(ML_COPY.ui.toast['divin-shichen-required']);
       return false;
     }
     return true;
@@ -2360,13 +2360,13 @@ function DivinationPage({
   // REQ-119：金口诀起课参数校验（指定地分须为十二地支之一；数字起课须为正整数）
   const jkValid = function () {
     if (jkMethod === 'branch' && !SHICHEN_ARR.some(function (s) { return s.n === jkBranch; })) {
-      toast(TC_COPY.ui.toast['divin-difen-required']);
+      toast(ML_COPY.ui.toast['divin-difen-required']);
       return false;
     }
     if (jkMethod === 'number') {
       const n = Number(jkNumber);
       if (!Number.isInteger(n) || n < 1) {
-        toast(TC_COPY.ui.toast['divin-number-min-1']);
+        toast(ML_COPY.ui.toast['divin-number-min-1']);
         return false;
       }
     }
@@ -2445,7 +2445,7 @@ function DivinationPage({
   // REQ-066②：默认模式按功能设置 default_mode —— manual=默认手动录入入口 / auto=自动起卦（现状）/ both=并行不预设（保留上次所选）
   const resetManualState = function () {
     setQOpen(false); // REQ-105：每次进入起卦界面，占问问题输入默认折叠
-    setAskMode(tcAskNextDefault(askMode));
+    setAskMode(mlAskNextDefault(askMode));
     setYaoPick(blankYaoRows());
     setSignNo(null);
     setXlrWay('nums');
@@ -2466,7 +2466,7 @@ function DivinationPage({
   };
   const openAsk = x => {
     if (x.todo) {
-      toast(fmtTpl(TC_COPY.ui.toast['divin-method-coming-soon'], { name: x.name }));
+      toast(fmtTpl(ML_COPY.ui.toast['divin-method-coming-soon'], { name: x.name }));
       return;
     }
     if (loading) return;
@@ -2497,7 +2497,7 @@ function DivinationPage({
     setAsking(false);
     // REQ-118/119/120：大六壬、金口诀、奇门时家起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
     if (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') { run(); return; }
-    if (!tcShouldPlayAnim()) { run(); return; }
+    if (!mlShouldPlayAnim()) { run(); return; }
     if (method === 'sign') {
       // 清掉上一次结果，避免签筒等待期残留旧签文
       setData(null);
@@ -2535,12 +2535,12 @@ function DivinationPage({
     const q = qText;
     if (method === 'liuyao' || method === 'meihua') {
       if (!yaoPick || yaoPick.length !== 6 || yaoPick.some(function (r) { return r.yang == null; })) {
-        toast(TC_COPY.ui.toast['divin-liuyao-six-yao-required']);
+        toast(ML_COPY.ui.toast['divin-liuyao-six-yao-required']);
         return;
       }
       const movingCount = yaoPick.filter(function (r) { return r.mv; }).length;
       if (method === 'meihua' && movingCount !== 1) {
-        toast(TC_COPY.ui.toast['divin-meihua-one-dongyao']);
+        toast(ML_COPY.ui.toast['divin-meihua-one-dongyao']);
         return;
       }
       if (isTimeMethod && !timeValid()) return;
@@ -2551,7 +2551,7 @@ function DivinationPage({
         const upper = mhTrigramIdx(yaoPick.slice(3, 6));
         const lower = mhTrigramIdx(yaoPick.slice(0, 3));
         if (!upper || !lower) {
-          toast(TC_COPY.ui.toast['divin-liuyao-invalid']);
+          toast(ML_COPY.ui.toast['divin-liuyao-invalid']);
           return;
         }
         const mvIdx = yaoPick.findIndex(function (r) { return r.mv; }); // 0..5
@@ -2570,7 +2570,7 @@ function DivinationPage({
       doCast(seed, meta);
     } else if (method === 'sign') {
       if (!(signNo >= 1 && signNo <= SSGW_POOL_SIZE)) {
-        toast(fmtTpl(TC_COPY.ui.toast['divin-guanyin-sign-range'], { max: SSGW_POOL_SIZE }));
+        toast(fmtTpl(ML_COPY.ui.toast['divin-guanyin-sign-range'], { max: SSGW_POOL_SIZE }));
         return;
       }
       setAsking(false);
@@ -2588,17 +2588,17 @@ function DivinationPage({
         const M = Number(xlrM);
         const D = Number(xlrD);
         if (!Number.isInteger(M) || M < 1 || M > 12) {
-          toast(TC_COPY.ui.toast['divin-xiaoliuren-month-range']);
+          toast(ML_COPY.ui.toast['divin-xiaoliuren-month-range']);
           return;
         }
         if (!Number.isInteger(D) || D < 1 || D > 30) {
-          toast(TC_COPY.ui.toast['divin-xiaoliuren-day-range']);
+          toast(ML_COPY.ui.toast['divin-xiaoliuren-day-range']);
           return;
         }
         expected = xlrPalaceName(M, D, shichen + 1);
       } else {
         if (!(xlrPalace >= 0 && xlrPalace < XLR_PALACE_ORDER.length)) {
-          toast(TC_COPY.ui.toast['divin-xiaoliuren-palace-required']);
+          toast(ML_COPY.ui.toast['divin-xiaoliuren-palace-required']);
           return;
         }
         expected = XLR_PALACE_ORDER[xlrPalace];
@@ -2826,7 +2826,7 @@ function DivinationPage({
   }
   // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
   // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
-  const modeSwitch = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? null : (TC_SETTINGS.default_mode === 'both'
+  const modeSwitch = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? null : (ML_SETTINGS.default_mode === 'both'
     ? React.createElement('div', { className: 'mode-switch' },
         React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
         React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
