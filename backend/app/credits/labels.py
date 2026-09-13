@@ -22,8 +22,8 @@ app/api/cases.py、app/api/divination.py、app/api/tarot.py、app/api/astrology.
   divination_focus:{id}:{focus} 六爻焦点详解（REQ-075，按 divinations.method 区分）
   tarot:{id}                    塔罗解读（tarot_readings 无 case_id 列，档案名恒空）
   astrology:{id}                星座本命解读
-  agent:{user_id}               太初先生对话（无档案，闲聊）
-  agent:{user_id}:{case_id}     太初先生对话（选了默认档案，可反查档案名）
+  agent:{user_id}               王先生对话（无档案，闲聊）
+  agent:{user_id}:{case_id}     王先生对话（选了默认档案，可反查档案名）
   serial:{serial}               历史充值流水（type=recharge）。**节146 充值链路已拆除**，
                                 该标签映射**保留**：库里已有 type=recharge 历史行，
                                 删映射会让余额明细页出现裸 ref（节146 保留白名单）
@@ -130,7 +130,7 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
       - divination_focus:{id}:{focus} → 「六爻焦点详解」（REQ-075，仅六爻）；
       - tarot:{id} → 「塔罗解读」；
       - astrology:{id} → 「星座本命解读」；
-      - agent:{user_id}[:{case_id}] → 「太初先生对话」（REQ-076，选档案时 case_id
+      - agent:{user_id}[:{case_id}] → 「王先生对话」（REQ-076，选档案时 case_id
         可反查档案名，见 label_case_map）；
       - query:{case_id}:{method} → 「单法直问·{法}」（单法直问为 prediction 单法分析）；
       - type=consume 且 ref 无法识别 → 「消耗」。
@@ -163,7 +163,7 @@ def ref_label(ref, tx_type, *, job_type=None, divination_method=None) -> str:
     if kind == "astrology":
         return "星座本命解读"
     if kind == "agent":
-        return "太初先生对话"
+        return "王先生对话"
     if kind == "serial":
         return "充值"  # serial ref 只出现在 recharge 流水
     return "消耗"
@@ -180,7 +180,7 @@ def label_case_map(session, rows) -> dict[int, dict]:
       - revise/query  → ref 内 case_id → cases.name；
       - divination:{id} / divination_focus:{id}:{focus} → divinations.case_id（可空）
         → cases.name（REQ-075 六爻焦点详解同 divinations 反查）；
-      - agent:{user_id}:{case_id} → ref 内 case_id → cases.name（REQ-076 太初先生
+      - agent:{user_id}:{case_id} → ref 内 case_id → cases.name（REQ-076 王先生
         对话；agent:{user_id} 无档案 → case_name 恒 None）；
       - astrology:{id} → astrology_readings.case_id（可空）→ cases.name；
       - tarot:{id}   → tarot_readings **无 case_id 列**，档案名恒 None；

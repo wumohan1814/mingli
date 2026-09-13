@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>太初 · 后台管理</title>
+  <title>命理太初 · 后台管理</title>
   <script src="/vendor/react.production.min.js"></script>
   <script src="/vendor/react-dom.production.min.js"></script>
   <style>
@@ -261,7 +261,7 @@ const EVENT_NAME_ZH = {
   astrology_interpret: '星座解读',
   mbti_score: 'MBTI判型',
   case_share_fill: '分享帮填',
-  agent_message: '太初先生对话',
+  agent_message: '王先生对话',
   pair_analysis: '配对解析',
   zodiac_match: '星座恋爱关系',
   manual_input: '手动输入',
@@ -299,7 +299,7 @@ const PROMPT_KEY_ZH = {
   xishi: '西式配对',
   mbti: 'MBTI 配对',
   bazi: '八字配对',
-  agent_master: '太初先生',
+  agent_master: '王先生',
   agent_greeting: '开场白话术',
   namer_master: '起名大师'
 };
@@ -476,7 +476,7 @@ function LoginPage({
     onSubmit: submit
   }, /*#__PURE__*/React.createElement("div", {
     className: "login-brand"
-  }, "太初 · 后台管理"), /*#__PURE__*/React.createElement("p", {
+  }, "命理太初 · 后台管理"), /*#__PURE__*/React.createElement("p", {
     className: "login-sub"
   }, "管理端仅限授权账号登录"), error && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
@@ -1398,7 +1398,7 @@ function UsersSection() {
 }
 
 /* ============ 提示词管理 ============ */
-const PROMPT_CATEGORY_ORDER = ['方法', '校验/追问', '解读', '配对', '太初先生', '起名'];
+const PROMPT_CATEGORY_ORDER = ['方法', '校验/追问', '解读', '配对', '王先生', '起名'];
 function PromptsSection() {
   const [items, setItems] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -1572,7 +1572,7 @@ function PromptsSection() {
     className: "page-title"
   }, "提示词"), /*#__PURE__*/React.createElement("p", {
     className: "page-desc"
-  }, "查看与编辑系统提示词（方法 9 / 校验·追问 3 / 解读 14 / 配对 4 / 太初先生 2 / 起名 1，共 33 个）。保存后立即生效于新请求；每次保存自动生成版本快照，可查看历史并回滚。"), errored && /*#__PURE__*/React.createElement("div", {
+  }, "查看与编辑系统提示词（方法 9 / 校验·追问 3 / 解读 14 / 配对 4 / 王先生 2 / 起名 1，共 33 个）。保存后立即生效于新请求；每次保存自动生成版本快照，可查看历史并回滚。"), errored && /*#__PURE__*/React.createElement("div", {
     className: "error-box"
   }, errored), loadingList && /*#__PURE__*/React.createElement("p", {
     className: "hint"
@@ -1925,7 +1925,7 @@ const ASSET_CATALOG = [{
   ]
 }, {
   kind: 'agent',
-  title: '太初先生会话背景（5 槽）',
+  title: '王先生会话背景（5 槽）',
   desc: 'agent-1…agent-5：每次进入会话 / 对话中每 10 分钟从已填充槽随机抽取 1 张；空白槽不参与抽取，全部空白回退默认样式（REQ-059⑥）。',
   slots: [1, 2, 3, 4, 5].map(function (n) {
     return { key: 'agent-' + n, label: '会话背景 ' + n };
@@ -2421,7 +2421,7 @@ function App() {
     className: "topbar"
   }, /*#__PURE__*/React.createElement("span", {
     className: "brand"
-  }, "太初", /*#__PURE__*/React.createElement("span", {
+  }, "命理太初", /*#__PURE__*/React.createElement("span", {
     className: "dot"
   }, "·"), /*#__PURE__*/React.createElement("span", {
     className: "sub"

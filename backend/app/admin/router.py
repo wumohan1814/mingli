@@ -119,7 +119,7 @@ PROMPT_FILES = {
     "xishi": "pair/xishi.md",
     "mbti": "pair/mbti.md",
     "bazi": "pair/bazi.md",
-    # agent（2，REQ-076：太初先生主角色 prompt + 开场白话术；均用户不可改、后台可热改）
+    # agent（2，REQ-076：王先生主角色 prompt + 开场白话术；均用户不可改、后台可热改）
     "agent_master": "agent/master.md",
     "agent_greeting": "agent/greeting.md",
     # namer（1，REQ-094：八字/八法起名 master）
@@ -131,7 +131,7 @@ _CATEGORY_BY_PROMPT_DIR = {
     "shared": "校验/追问",
     "interpret": "解读",
     "pair": "配对",
-    "agent": "太初先生",
+    "agent": "王先生",
 }
 PROMPT_CATEGORY = {
     # divination_common 虽位于 shared/ 目录，但它是断卦解读公共段，后台分类归「解读」
@@ -187,8 +187,8 @@ EVENT_NAME_ZH = {
     "astrology_interpret": "星座解读",
     "mbti_score": "MBTI判型",
     "case_share_fill": "分享帮填",
-    # REQ-076：太初先生 Agent 对话
-    "agent_message": "太初先生对话",
+    # REQ-076：王先生 Agent 对话
+    "agent_message": "王先生对话",
     # REQ-078：埋点补全（配对解析 / 星座恋爱关系 / 手动输入 / 素材上传）
     "pair_analysis": "配对解析",
     "zodiac_match": "星座恋爱关系",

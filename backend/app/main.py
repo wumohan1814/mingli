@@ -1,4 +1,4 @@
-"""太初 · 命理 H5 后端（FastAPI 模块化单体 MVP）"""
+"""命理太初 · 命理 H5 后端（FastAPI 模块化单体 MVP）"""
 import asyncio
 import logging
 import subprocess
@@ -158,7 +158,7 @@ from app.events.router import router as events_router
 from app.middleware import api_metrics_middleware
 
 app = FastAPI(
-    title="太初 API",
+    title="命理太初 API",
     description="多流派命理综合 H5 后端",
     version="0.1.0",
     lifespan=lifespan,

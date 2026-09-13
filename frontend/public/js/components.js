@@ -1,4 +1,4 @@
-// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher/spriteKfName/ensureSpriteKeyframes；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
+// 通用件 + 共享工具（节110 阶段2 拆出）：toast/svgEl/buildOrbit/setOrbitProgress/DisclaimerFooter/Icon/ModalBase/SkinSwitcher；阶段3 共享西洋盘面：SIGN_SYM/PLANET_SYM/ASTRO_SCOPE_CN/astroNorm/AstroWheel/AstroSummaryChips/AstroNatalPanel
 // 加载于 vendor+data（React/ReactDOM/TC_COPY）之后、主脚本之前；全局作用域，须早于 views 加载
 
 // 全局轻提示
@@ -16,7 +16,7 @@ function toast(msg) {
   t._tm = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// 模板字符串替换：fmtTpl('你好，{name}', { name: '太初' }) → '你好，太初'
+// 模板字符串替换：fmtTpl('你好，{name}', { name: '命理太初' }) → '你好，命理太初'
 // 节136 阶段C 从 views-xishi.js 上移到全局，供所有模块使用
 function fmtTpl(t, kv) {
   return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {
@@ -447,29 +447,6 @@ function SkinSwitcher({
     disabled: !it.enabled,
     onClick: () => it.enabled ? onPick(it.id) : toast(TC_COPY.ui.skin['unavailable-toast'])
   }, it.name)));
-}
-
-// REQ-084：序列帧 sprite sheet 播放器 —— 依据 sprite 配置（cols/rows/frames/width）生成逐帧
-// keyframes：第 k 帧位于第 floor(k/cols) 行、第 k%cols 列；background-position 以 sprite.width
-// 的像素偏移逐帧跳变（每段 steps(1) 保持当前帧、段末跳下一帧），100% 回第一帧实现无缝循环。
-// 同名 keyframes 只注入一次；素材回传后仅改 MODS 配置即可，无需改 CSS/JS。
-function spriteKfName(s) {
-  return 'mascotSpritePlay_' + s.cols + 'x' + s.rows + '_' + s.frames;
-}
-function ensureSpriteKeyframes(s) {
-  const name = spriteKfName(s);
-  if (document.getElementById('kf-' + name)) return name;
-  const stops = [];
-  for (let k = 0; k < s.frames; k++) {
-    const pct = (k * 100 / s.frames).toFixed(4);
-    stops.push(pct + '%{background-position:' + (-(k % s.cols) * s.width) + 'px ' + (-Math.floor(k / s.cols) * s.width) + 'px}');
-  }
-  stops.push('100%{background-position:0 0}');
-  const st = document.createElement('style');
-  st.id = 'kf-' + name;
-  st.textContent = '@keyframes ' + name + '{' + stops.join('') + '}';
-  (document.head || document.documentElement).appendChild(st);
-  return name;
 }
 
 // REQ-039 ②③：星盘 scope → 中文名（仅展示用；未收录的 scope 原样显示）

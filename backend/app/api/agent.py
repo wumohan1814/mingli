@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""太初先生 Agent 会话 API（REQ-076，prefix=/api/agent）：固定 session 对话。
+"""王先生 Agent 会话 API（REQ-076，prefix=/api/agent）：固定 session 对话。
 
-「太初先生」是太初 C 端对话大师（非 REQ-050 运维 Agent）：
+「王先生」是命理太初 C 端对话大师（非 REQ-050 运维 Agent）：
   ① 固定 session 对话；会话顶部下拉选默认档案（仅本人档案）；未选档案可闲聊，
      咨询档案相关内容先提示选档案（该提示逻辑在 prompts/agent/master.md 角色 prompt
      内约束，本文件只负责数据注入与编排）。
-  ② 可就所选档案详细咨询 + 日常闲聊开导；计费 = 每来回（用户一问 + 先生一回）
+  ② 可就所选档案详细咨询 + 日常闲聊开导；计费 = 每来回（用户一问 + 王先生一回）
      按 LLM 实际 token 扣余额（ceil 存储单位、1 存储单位=1000 tokens，同 interpret，
      开启不预扣——先 check_balance 预检、LLM 成功后按实际 total_tokens 即时
      consume）。System Prompt 用户不可改、后台可配置（走 REQ-048 热改+回滚，
@@ -81,7 +81,7 @@ def _load_prompt(path: Path, what: str) -> str:
 
 
 def _load_master_prompt() -> str:
-    return _load_prompt(MASTER_PROMPT_PATH, "太初先生")
+    return _load_prompt(MASTER_PROMPT_PATH, "王先生")
 
 
 def _load_greeting_prompt() -> str:
@@ -105,8 +105,8 @@ def _get_owned_case(db: Session, case_id: int, user_id: int) -> Case:
 def _case_context(db: Session, case: Case) -> dict:
     """档案上下文：姓名/性别/出生信息 + chart/bazi 摘要（_case_chart_summary 同款逻辑）。
 
-    注入为独立 system 段（json 文本），供先生结合所选档案给指引；未排盘
-    （无 chart 行）时 chartSummary 为 None，先生以姓名/出生信息闲聊开导。
+    注入为独立 system 段（json 文本），供王先生结合所选档案给指引；未排盘
+    （无 chart 行）时 chartSummary 为 None，王先生以姓名/出生信息闲聊开导。
     """
     inp = case.input_json if isinstance(case.input_json, dict) else {}
     return {
@@ -225,14 +225,14 @@ async def agent_chat(
     # ⑤ 计费预检：余额不足抛 BizError 5002（全局处理器转 502 信封），不放行 LLM
     check_balance(user_id)
 
-    # ⑥ LLM 先生应答（非 json_mode 取自然语言文本，对齐 interpret/revise）
+    # ⑥ LLM 王先生应答（非 json_mode 取自然语言文本，对齐 interpret/revise）
     try:
         resp = await chat(messages, json_mode=False)
     except (LLMError, ValueError) as exc:
         # LLM 失败：记日志 + 502，不扣费不落库（不吞成假文案）
-        logger.warning("太初先生 LLM 调用失败 user_id=%s case_id=%s error=%s",
+        logger.warning("王先生 LLM 调用失败 user_id=%s case_id=%s error=%s",
                        user_id, case_id, exc)
-        raise _err(502, "太初先生暂不可用，请稍后重试")
+        raise _err(502, "王先生暂不可用，请稍后重试")
 
     content = resp["content"]
     total_tokens = int(resp["usage"]["total_tokens"] or 0)
@@ -244,7 +244,7 @@ async def agent_chat(
     try:
         consume(user_id, total_tokens, ref=ref)
     except Exception as exc:
-        logger.error("太初先生扣费失败 user_id=%s tokens=%s ref=%s error=%s",
+        logger.error("王先生扣费失败 user_id=%s tokens=%s ref=%s error=%s",
                      user_id, total_tokens, ref, exc)
 
     # ⑧ 落库：user 消息（tokens=None）+ assistant 消息（tokens=本轮 total_tokens）

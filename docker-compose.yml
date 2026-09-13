@@ -1,4 +1,4 @@
-# 太初 · 部署编排（web 单体 + Caddy HTTPS 反代）
+# 命理太初 · 部署编排（web 单体 + Caddy HTTPS 反代）
 services:
   web:
     build: .

@@ -1479,7 +1479,7 @@ function ArtCardFront(props) {
 }
 function ArtCardBack(props) {
   return React.createElement('div', { className: 'fc-side fc-back' + (props.kind === 'leno' ? ' leno' : ' taro') },
-    React.createElement('span', { className: 'back-mark' }, '太初'));
+    React.createElement('span', { className: 'back-mark' }, '命理太初'));
 }
 
 /* ---------------- 观音灵签：可交互签筒舞台 ----------------

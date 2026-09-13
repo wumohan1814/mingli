@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* 太初自研 — 其余流派排盘（占星/七政四余/五运六气/奇门终身局，基于 mingyu-core）。
+/* 命理太初自研 — 其余流派排盘（占星/七政四余/五运六气/奇门终身局，基于 mingyu-core）。
  *
  * 从 stdin 读 JSON：
  *   {"year":1990,"month":5,"day":12,"hour":14,"minute":30,"gender":"male",
