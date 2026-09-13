@@ -146,6 +146,71 @@ const CAPABILITIES = {
     toLegacyInput: (input) => ({ year: input.year }),
     toCoreInput: (input) => ({ year: input.year }),
   },
+  qimen: {
+    fixtures: 'qimen.json',
+    legacy: { module: 'divination/algorithms/qimen/index.js', exportName: 'generateQimen' },
+    core: { module: 'src/capabilities/qimen/index.js', exportName: 'generateQimenCore' },
+    toLegacyInput: (input) => [toDate(input.customDate), input.qimenMethod || 'zhuanpan', input.scope || 'hour', input.qimenJuMethod || 'chaibu'],
+    toCoreInput: (input) => ({ customDate: input.customDate, qimenMethod: input.qimenMethod || 'zhuanpan', scope: input.scope || 'hour', qimenJuMethod: input.qimenJuMethod || 'chaibu' }),
+  },
+  liuren: {
+    fixtures: 'liuren.json',
+    legacy: { module: 'divination/algorithms/liuren/index.js', exportName: 'generateLiuren' },
+    core: { module: 'src/capabilities/liuren/index.js', exportName: 'generateLiurenCore' },
+    toLegacyInput: (input) => [toDate(input.customDate)],
+    toCoreInput: (input) => ({ customDate: input.customDate }),
+  },
+  jinkoujue: {
+    fixtures: 'jinkoujue.json',
+    legacy: { module: 'divination/algorithms/jinkoujue.js', exportName: 'generateJinkoujue' },
+    core: { module: 'src/capabilities/jinkoujue/index.js', exportName: 'generateJinkoujueCore' },
+    toLegacyInput: (input) => [input.params || {}],
+    toCoreInput: (input) => input.params || {},
+  },
+  taiyi: {
+    fixtures: 'taiyi.json',
+    legacy: { module: 'taiyi/index.js', exportName: 'generateTaiyi' },
+    core: { module: 'src/capabilities/taiyi/index.js', exportName: 'generateTaiyiCore' },
+    toLegacyInput: (input) => {
+      if (input.scope === 'year') return { scope: 'year', year: input.year };
+      return { scope: input.scope || 'year', date: toDate(input.customDate) };
+    },
+    toCoreInput: (input) => input,
+  },
+  huangji: {
+    fixtures: 'huangji.json',
+    legacy: { module: 'huangji-jingshi/index.js', exportName: 'calculateHuangjiJingshi' },
+    core: { module: 'src/capabilities/huangji/index.js', exportName: 'calculateHuangjiJingshiCore' },
+    toLegacyInput: (input) => {
+      if (input.mode === 'datetime') return { date: toDate(input.customDate) };
+      return { year: input.year };
+    },
+    toCoreInput: (input) => input,
+  },
+  'qimen-lifetime': {
+    fixtures: 'qimen-lifetime.json',
+    legacy: { module: 'divination/algorithms/qimen/index.js', exportName: 'calculateQimenLifetime' },
+    core: { module: 'src/capabilities/qimen-lifetime/index.js', exportName: 'calculateQimenLifetimeCore' },
+    toLegacyInput: (input) => ({
+      birthDateTime: input.birthDateTime,
+      timeZoneId: input.timeZoneId || 'Asia/Shanghai',
+      location: input.location || { longitude: input.longitude, latitude: input.latitude, locationName: input.birthplace || '' },
+      calendarType: 'solar',
+      timeStandard: input.timeStandard || 'civil',
+      method: input.method || 'zhuanpan',
+      juMethod: input.juMethod || 'chaibu',
+    }),
+    toCoreInput: (input) => input,
+  },
+  qizheng: {
+    fixtures: 'qizheng.json',
+    // 旧实现 = npm 适配器（calculateBirthChartBundle 只取 qizheng 分支）
+    legacyModule: 'tools/compare/legacy-qizheng.mjs',
+    legacy: { module: 'tools/compare/legacy-qizheng.mjs', exportName: 'generateQizhengLegacy' },
+    core: { module: 'src/capabilities/qizheng/index.js', exportName: 'generateQizhengCore' },
+    toLegacyInput: (input) => input,
+    toCoreInput: (input) => input,
+  },
 };
 
 /** 夹具 input 里的 ISO 字符串转 Date（旧实现只认 Date 的能力用）。 */
@@ -300,12 +365,13 @@ async function main() {
           legacyStripped = entry.stripped;
         } else {
           const legacyArgs = spec.toLegacyInput ? spec.toLegacyInput(fixture.input) : fixture.input;
-          const legacyRaw = Array.isArray(legacyArgs) ? legacyRun(...legacyArgs) : legacyRun(legacyArgs);
+          // await 兼容异步旧实现（如 qizheng 的 calculateBirthChartBundle）；同步函数 await 为无操作
+          const legacyRaw = await (Array.isArray(legacyArgs) ? legacyRun(...legacyArgs) : legacyRun(legacyArgs));
           legacyStripped = stripInternal(legacyRaw);
         }
         const coreFn = await loadExport(path.join(CORE_ROOT, spec.core.module), spec.core.exportName);
         const coreArgs = spec.toCoreInput ? spec.toCoreInput(fixture.input) : fixture.input;
-        const coreRaw = Array.isArray(coreArgs) ? coreFn(...coreArgs) : coreFn(coreArgs);
+        const coreRaw = await (Array.isArray(coreArgs) ? coreFn(...coreArgs) : coreFn(coreArgs));
         coreStripped = stripInternal(coreRaw);
       } catch (err) {
         failedFixtures.push({ name: fixture.name, reason: `运行异常: ${err && err.message ? err.message : String(err)}` });
