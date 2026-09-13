@@ -1,0 +1,2150 @@
+{
+  "capability": "xiaoliuren",
+  "defaultKeyFields": [
+    "method",
+    "methodLabel",
+    "lunarMonth",
+    "lunarDay",
+    "isLeapMonth",
+    "hourIndex",
+    "hourLabel",
+    "ganzhi.year",
+    "ganzhi.month",
+    "ganzhi.day",
+    "ganzhi.hour",
+    "calculation.lunarMonth",
+    "calculation.lunarDay",
+    "calculation.hourNumber",
+    "calculation.monthSeed",
+    "calculation.daySeed",
+    "calculation.hourSeed",
+    "calculation.monthPalaceIndex",
+    "calculation.dayPalaceIndex",
+    "calculation.hourPalaceIndex",
+    "calculation.dayBoundary",
+    "calculation.leapMonthRule",
+    "sequence.month.name",
+    "sequence.month.index",
+    "sequence.month.verse",
+    "sequence.day.name",
+    "sequence.day.index",
+    "sequence.day.verse",
+    "sequence.hour.name",
+    "sequence.hour.index",
+    "sequence.hour.verse",
+    "palaceOrder[0].name",
+    "palaceOrder[0].index",
+    "palaceOrder[0].verse",
+    "palaceOrder[1].name",
+    "palaceOrder[1].index",
+    "palaceOrder[1].verse",
+    "palaceOrder[2].name",
+    "palaceOrder[2].index",
+    "palaceOrder[2].verse",
+    "palaceOrder[3].name",
+    "palaceOrder[3].index",
+    "palaceOrder[3].verse",
+    "palaceOrder[4].name",
+    "palaceOrder[4].index",
+    "palaceOrder[4].verse",
+    "palaceOrder[5].name",
+    "palaceOrder[5].index",
+    "palaceOrder[5].verse",
+    "primary.name",
+    "primary.index",
+    "primary.verse"
+  ],
+  "note": "golden 快照：旧实现（vendored 第三方引擎）输出经 stripInternal 归一化后的结果。不含时间戳，保证可重复 diff。",
+  "fixtures": {
+    "required-01-辰时-基准": {
+      "input": {
+        "customDate": "1990-05-12T07:30:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 4,
+        "lunarDay": 18,
+        "isLeapMonth": false,
+        "hourIndex": 4,
+        "hourLabel": "辰时",
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "丁丑",
+          "hour": "甲辰"
+        },
+        "calculation": {
+          "lunarMonth": 4,
+          "lunarDay": 18,
+          "hourNumber": 5,
+          "monthSeed": 4,
+          "daySeed": 21,
+          "hourSeed": 25,
+          "monthPalaceIndex": 3,
+          "dayPalaceIndex": 2,
+          "hourPalaceIndex": 0,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "day": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          "hour": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "大安",
+          "index": 0,
+          "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-05-11T23:30:00.000Z",
+          "inputHash": "5ce72c33e577e3c3",
+          "resultId": "xiaoliuren:09f76875d2423a03"
+        }
+      }
+    },
+    "required-02-早子时": {
+      "input": {
+        "customDate": "1986-07-01T00:20:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 5,
+        "lunarDay": 25,
+        "isLeapMonth": false,
+        "hourIndex": 0,
+        "hourLabel": "早子时",
+        "ganzhi": {
+          "year": "丙寅",
+          "month": "甲午",
+          "day": "丙午",
+          "hour": "戊子"
+        },
+        "calculation": {
+          "lunarMonth": 5,
+          "lunarDay": 25,
+          "hourNumber": 1,
+          "monthSeed": 5,
+          "daySeed": 29,
+          "hourSeed": 29,
+          "monthPalaceIndex": 4,
+          "dayPalaceIndex": 4,
+          "hourPalaceIndex": 4,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "day": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "hour": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "小吉",
+          "index": 4,
+          "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1986-06-30T16:20:00.000Z",
+          "inputHash": "e7a41a1b81f8b1b8",
+          "resultId": "xiaoliuren:6037a48743092382"
+        }
+      }
+    },
+    "required-03-晚子时-春节": {
+      "input": {
+        "customDate": "2000-02-05T23:40:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 1,
+        "lunarDay": 1,
+        "isLeapMonth": false,
+        "hourIndex": 12,
+        "hourLabel": "晚子时",
+        "ganzhi": {
+          "year": "庚辰",
+          "month": "戊寅",
+          "day": "甲午",
+          "hour": "甲子"
+        },
+        "calculation": {
+          "lunarMonth": 1,
+          "lunarDay": 1,
+          "hourNumber": 1,
+          "monthSeed": 1,
+          "daySeed": 1,
+          "hourSeed": 1,
+          "monthPalaceIndex": 0,
+          "dayPalaceIndex": 0,
+          "hourPalaceIndex": 0,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "day": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "hour": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "大安",
+          "index": 0,
+          "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2000-02-05T15:40:00.000Z",
+          "inputHash": "52570e24db297195",
+          "resultId": "xiaoliuren:d4b55cc71efbd037"
+        }
+      }
+    },
+    "required-04-元旦午时": {
+      "input": {
+        "customDate": "2024-01-01T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 11,
+        "lunarDay": 20,
+        "isLeapMonth": false,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "癸卯",
+          "month": "甲子",
+          "day": "甲子",
+          "hour": "庚午"
+        },
+        "calculation": {
+          "lunarMonth": 11,
+          "lunarDay": 20,
+          "hourNumber": 7,
+          "monthSeed": 11,
+          "daySeed": 30,
+          "hourSeed": 36,
+          "monthPalaceIndex": 4,
+          "dayPalaceIndex": 5,
+          "hourPalaceIndex": 5,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "day": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "hour": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "空亡",
+          "index": 5,
+          "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2024-01-01T04:00:00.000Z",
+          "inputHash": "fa79e1a8aa655690",
+          "resultId": "xiaoliuren:374ccf7c3ae4b593"
+        }
+      }
+    },
+    "required-05-申时-六十年代": {
+      "input": {
+        "customDate": "1960-06-15T15:20:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 5,
+        "lunarDay": 22,
+        "isLeapMonth": false,
+        "hourIndex": 8,
+        "hourLabel": "申时",
+        "ganzhi": {
+          "year": "庚子",
+          "month": "壬午",
+          "day": "甲戌",
+          "hour": "壬申"
+        },
+        "calculation": {
+          "lunarMonth": 5,
+          "lunarDay": 22,
+          "hourNumber": 9,
+          "monthSeed": 5,
+          "daySeed": 26,
+          "hourSeed": 34,
+          "monthPalaceIndex": 4,
+          "dayPalaceIndex": 1,
+          "hourPalaceIndex": 3,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "day": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "hour": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "赤口",
+          "index": 3,
+          "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1960-06-15T07:20:00.000Z",
+          "inputHash": "a814d3406cd209c9",
+          "resultId": "xiaoliuren:e66992c680eb0ad7"
+        }
+      }
+    },
+    "required-06-丑时": {
+      "input": {
+        "customDate": "1995-10-01T01:10:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 8,
+        "lunarDay": 7,
+        "isLeapMonth": true,
+        "hourIndex": 1,
+        "hourLabel": "丑时",
+        "ganzhi": {
+          "year": "乙亥",
+          "month": "乙酉",
+          "day": "乙丑",
+          "hour": "丁丑"
+        },
+        "calculation": {
+          "lunarMonth": 8,
+          "lunarDay": 7,
+          "hourNumber": 2,
+          "monthSeed": 8,
+          "daySeed": 14,
+          "hourSeed": 15,
+          "monthPalaceIndex": 1,
+          "dayPalaceIndex": 1,
+          "hourPalaceIndex": 2,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "day": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "hour": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "速喜",
+          "index": 2,
+          "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1995-09-30T17:10:00.000Z",
+          "inputHash": "a6bfe2ba4391ec0d",
+          "resultId": "xiaoliuren:a5b725a6f0aee4ba"
+        }
+      }
+    },
+    "required-07-戌时": {
+      "input": {
+        "customDate": "2008-08-08T20:08:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 7,
+        "lunarDay": 8,
+        "isLeapMonth": false,
+        "hourIndex": 10,
+        "hourLabel": "戌时",
+        "ganzhi": {
+          "year": "戊子",
+          "month": "庚申",
+          "day": "庚辰",
+          "hour": "丙戌"
+        },
+        "calculation": {
+          "lunarMonth": 7,
+          "lunarDay": 8,
+          "hourNumber": 11,
+          "monthSeed": 7,
+          "daySeed": 14,
+          "hourSeed": 24,
+          "monthPalaceIndex": 0,
+          "dayPalaceIndex": 1,
+          "hourPalaceIndex": 5,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "day": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "hour": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "空亡",
+          "index": 5,
+          "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2008-08-08T12:08:00.000Z",
+          "inputHash": "ea3a4d911c235f3e",
+          "resultId": "xiaoliuren:3b3d5ad71a8a16dc"
+        }
+      }
+    },
+    "required-08-晚子时-月末": {
+      "input": {
+        "customDate": "1977-03-31T23:55:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 2,
+        "lunarDay": 12,
+        "isLeapMonth": false,
+        "hourIndex": 12,
+        "hourLabel": "晚子时",
+        "ganzhi": {
+          "year": "丁巳",
+          "month": "癸卯",
+          "day": "戊子",
+          "hour": "壬子"
+        },
+        "calculation": {
+          "lunarMonth": 2,
+          "lunarDay": 12,
+          "hourNumber": 1,
+          "monthSeed": 2,
+          "daySeed": 13,
+          "hourSeed": 13,
+          "monthPalaceIndex": 1,
+          "dayPalaceIndex": 0,
+          "hourPalaceIndex": 0,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "day": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "hour": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "大安",
+          "index": 0,
+          "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1977-03-31T15:55:00.000Z",
+          "inputHash": "fd06488833e873bc",
+          "resultId": "xiaoliuren:238d8163f4276f6e"
+        }
+      }
+    },
+    "required-09-卯时": {
+      "input": {
+        "customDate": "2012-05-24T05:45:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 4,
+        "lunarDay": 4,
+        "isLeapMonth": true,
+        "hourIndex": 3,
+        "hourLabel": "卯时",
+        "ganzhi": {
+          "year": "壬辰",
+          "month": "乙巳",
+          "day": "乙酉",
+          "hour": "己卯"
+        },
+        "calculation": {
+          "lunarMonth": 4,
+          "lunarDay": 4,
+          "hourNumber": 4,
+          "monthSeed": 4,
+          "daySeed": 7,
+          "hourSeed": 10,
+          "monthPalaceIndex": 3,
+          "dayPalaceIndex": 0,
+          "hourPalaceIndex": 3,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "day": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "hour": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "赤口",
+          "index": 3,
+          "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2012-05-23T21:45:00.000Z",
+          "inputHash": "421afdb114060ef3",
+          "resultId": "xiaoliuren:e034f6c655b64d30"
+        }
+      }
+    },
+    "required-10-巳时": {
+      "input": {
+        "customDate": "1990-06-23T09:15:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 5,
+        "lunarDay": 1,
+        "isLeapMonth": true,
+        "hourIndex": 5,
+        "hourLabel": "巳时",
+        "ganzhi": {
+          "year": "庚午",
+          "month": "壬午",
+          "day": "己未",
+          "hour": "己巳"
+        },
+        "calculation": {
+          "lunarMonth": 5,
+          "lunarDay": 1,
+          "hourNumber": 6,
+          "monthSeed": 5,
+          "daySeed": 5,
+          "hourSeed": 10,
+          "monthPalaceIndex": 4,
+          "dayPalaceIndex": 4,
+          "hourPalaceIndex": 3,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "day": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "hour": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "赤口",
+          "index": 3,
+          "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-06-23T01:15:00.000Z",
+          "inputHash": "fe605958fd5c2c78",
+          "resultId": "xiaoliuren:963d75bc15457c86"
+        }
+      }
+    },
+    "edge-11-立春精确时刻前-2000": {
+      "input": {
+        "customDate": "2000-02-04T20:30:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 29,
+        "isLeapMonth": false,
+        "hourIndex": 10,
+        "hourLabel": "戌时",
+        "ganzhi": {
+          "year": "己卯",
+          "month": "丁丑",
+          "day": "壬辰",
+          "hour": "庚戌"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 29,
+          "hourNumber": 11,
+          "monthSeed": 12,
+          "daySeed": 40,
+          "hourSeed": 50,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 3,
+          "hourPalaceIndex": 1,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "hour": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "留连",
+          "index": 1,
+          "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2000-02-04T12:30:00.000Z",
+          "inputHash": "36524294dba05acc",
+          "resultId": "xiaoliuren:3114713b81f4fce6"
+        }
+      }
+    },
+    "edge-12-立春精确时刻后-2000": {
+      "input": {
+        "customDate": "2000-02-04T20:41:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 29,
+        "isLeapMonth": false,
+        "hourIndex": 10,
+        "hourLabel": "戌时",
+        "ganzhi": {
+          "year": "庚辰",
+          "month": "戊寅",
+          "day": "壬辰",
+          "hour": "庚戌"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 29,
+          "hourNumber": 11,
+          "monthSeed": 12,
+          "daySeed": 40,
+          "hourSeed": 50,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 3,
+          "hourPalaceIndex": 1,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "hour": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "留连",
+          "index": 1,
+          "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2000-02-04T12:41:00.000Z",
+          "inputHash": "acf65ef00483cf55",
+          "resultId": "xiaoliuren:ebd04193ad925aba"
+        }
+      }
+    },
+    "edge-13-正月初一但在立春前-1990": {
+      "input": {
+        "customDate": "1990-01-27T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 1,
+        "lunarDay": 1,
+        "isLeapMonth": false,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "己巳",
+          "month": "丁丑",
+          "day": "壬辰",
+          "hour": "丙午"
+        },
+        "calculation": {
+          "lunarMonth": 1,
+          "lunarDay": 1,
+          "hourNumber": 7,
+          "monthSeed": 1,
+          "daySeed": 1,
+          "hourSeed": 7,
+          "monthPalaceIndex": 0,
+          "dayPalaceIndex": 0,
+          "hourPalaceIndex": 0,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "day": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "hour": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "大安",
+          "index": 0,
+          "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-01-27T04:00:00.000Z",
+          "inputHash": "22e86c41c5b5b25e",
+          "resultId": "xiaoliuren:05ab66b8766eff72"
+        }
+      }
+    },
+    "edge-14-立春前-除夕-2000": {
+      "input": {
+        "customDate": "2000-02-03T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 28,
+        "isLeapMonth": false,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "己卯",
+          "month": "丁丑",
+          "day": "辛卯",
+          "hour": "甲午"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 28,
+          "hourNumber": 7,
+          "monthSeed": 12,
+          "daySeed": 39,
+          "hourSeed": 45,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 2,
+          "hourPalaceIndex": 2,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          "hour": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "速喜",
+          "index": 2,
+          "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2000-02-03T04:00:00.000Z",
+          "inputHash": "16df990329234c7d",
+          "resultId": "xiaoliuren:14c76255d9fa85e2"
+        }
+      }
+    },
+    "edge-15-立春精确时刻后-2024": {
+      "input": {
+        "customDate": "2024-02-04T16:30:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 25,
+        "isLeapMonth": false,
+        "hourIndex": 8,
+        "hourLabel": "申时",
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丙寅",
+          "day": "戊戌",
+          "hour": "庚申"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 25,
+          "hourNumber": 9,
+          "monthSeed": 12,
+          "daySeed": 36,
+          "hourSeed": 44,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 5,
+          "hourPalaceIndex": 1,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "hour": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "留连",
+          "index": 1,
+          "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2024-02-04T08:30:00.000Z",
+          "inputHash": "f535c06926f0b0ba",
+          "resultId": "xiaoliuren:35476eeb05d53ef6"
+        }
+      }
+    },
+    "edge-16-闰二月": {
+      "input": {
+        "customDate": "2023-03-25T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 2,
+        "lunarDay": 4,
+        "isLeapMonth": true,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "癸卯",
+          "month": "乙卯",
+          "day": "壬午",
+          "hour": "丙午"
+        },
+        "calculation": {
+          "lunarMonth": 2,
+          "lunarDay": 4,
+          "hourNumber": 7,
+          "monthSeed": 2,
+          "daySeed": 5,
+          "hourSeed": 11,
+          "monthPalaceIndex": 1,
+          "dayPalaceIndex": 4,
+          "hourPalaceIndex": 4,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          "day": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "hour": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "小吉",
+          "index": 4,
+          "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2023-03-25T04:00:00.000Z",
+          "inputHash": "429390278d6560c2",
+          "resultId": "xiaoliuren:b5064d5ae0dbdc5a"
+        }
+      }
+    },
+    "edge-17-闰四月": {
+      "input": {
+        "customDate": "2020-05-25T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 4,
+        "lunarDay": 3,
+        "isLeapMonth": true,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "庚子",
+          "month": "辛巳",
+          "day": "戊辰",
+          "hour": "戊午"
+        },
+        "calculation": {
+          "lunarMonth": 4,
+          "lunarDay": 3,
+          "hourNumber": 7,
+          "monthSeed": 4,
+          "daySeed": 6,
+          "hourSeed": 12,
+          "monthPalaceIndex": 3,
+          "dayPalaceIndex": 5,
+          "hourPalaceIndex": 5,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "day": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "hour": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "空亡",
+          "index": 5,
+          "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2020-05-25T04:00:00.000Z",
+          "inputHash": "a09b1b3260e197a9",
+          "resultId": "xiaoliuren:18bc8c11e588dc02"
+        }
+      }
+    },
+    "edge-18-时辰边界-亥末子初": {
+      "input": {
+        "customDate": "1990-05-12T22:59:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 4,
+        "lunarDay": 18,
+        "isLeapMonth": false,
+        "hourIndex": 11,
+        "hourLabel": "亥时",
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "丁丑",
+          "hour": "辛亥"
+        },
+        "calculation": {
+          "lunarMonth": 4,
+          "lunarDay": 18,
+          "hourNumber": 12,
+          "monthSeed": 4,
+          "daySeed": 21,
+          "hourSeed": 32,
+          "monthPalaceIndex": 3,
+          "dayPalaceIndex": 2,
+          "hourPalaceIndex": 1,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "day": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          "hour": {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "留连",
+          "index": 1,
+          "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-05-12T14:59:00.000Z",
+          "inputHash": "803228a2153a6771",
+          "resultId": "xiaoliuren:3a32081a024287fd"
+        }
+      }
+    },
+    "edge-19-时辰边界-晚子时起点": {
+      "input": {
+        "customDate": "1990-05-12T23:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 4,
+        "lunarDay": 18,
+        "isLeapMonth": false,
+        "hourIndex": 12,
+        "hourLabel": "晚子时",
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "戊寅",
+          "hour": "壬子"
+        },
+        "calculation": {
+          "lunarMonth": 4,
+          "lunarDay": 18,
+          "hourNumber": 1,
+          "monthSeed": 4,
+          "daySeed": 21,
+          "hourSeed": 21,
+          "monthPalaceIndex": 3,
+          "dayPalaceIndex": 2,
+          "hourPalaceIndex": 2,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          "day": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          "hour": {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "速喜",
+          "index": 2,
+          "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-05-12T15:00:00.000Z",
+          "inputHash": "83fda90fb0694410",
+          "resultId": "xiaoliuren:0ea9137c9a5a1819"
+        }
+      }
+    },
+    "edge-20-世纪初-1900": {
+      "input": {
+        "customDate": "1900-01-01T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 1,
+        "isLeapMonth": false,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "己亥",
+          "month": "丙子",
+          "day": "甲戌",
+          "hour": "庚午"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 1,
+          "hourNumber": 7,
+          "monthSeed": 12,
+          "daySeed": 12,
+          "hourSeed": 18,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 5,
+          "hourPalaceIndex": 5,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "hour": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "空亡",
+          "index": 5,
+          "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1900-01-01T04:00:00.000Z",
+          "inputHash": "11c4a78d6ddebc00",
+          "resultId": "xiaoliuren:ad59a7aea132def3"
+        }
+      }
+    },
+    "edge-21-世纪末-2100": {
+      "input": {
+        "customDate": "2100-12-31T12:00:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 12,
+        "lunarDay": 1,
+        "isLeapMonth": false,
+        "hourIndex": 6,
+        "hourLabel": "午时",
+        "ganzhi": {
+          "year": "庚申",
+          "month": "戊子",
+          "day": "丁未",
+          "hour": "丙午"
+        },
+        "calculation": {
+          "lunarMonth": 12,
+          "lunarDay": 1,
+          "hourNumber": 7,
+          "monthSeed": 12,
+          "daySeed": 12,
+          "hourSeed": 18,
+          "monthPalaceIndex": 5,
+          "dayPalaceIndex": 5,
+          "hourPalaceIndex": 5,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "day": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          },
+          "hour": {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "空亡",
+          "index": 5,
+          "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "2100-12-31T04:00:00.000Z",
+          "inputHash": "19050bfc4a3ab64b",
+          "resultId": "xiaoliuren:5cd23508435478a1"
+        }
+      }
+    },
+    "edge-22-跨年晚子时": {
+      "input": {
+        "customDate": "1990-12-31T23:30:00+08:00"
+      },
+      "stripped": {
+        "method": "time",
+        "methodLabel": "时间起课",
+        "lunarMonth": 11,
+        "lunarDay": 15,
+        "isLeapMonth": false,
+        "hourIndex": 12,
+        "hourLabel": "晚子时",
+        "ganzhi": {
+          "year": "庚午",
+          "month": "戊子",
+          "day": "辛未",
+          "hour": "戊子"
+        },
+        "calculation": {
+          "lunarMonth": 11,
+          "lunarDay": 15,
+          "hourNumber": 1,
+          "monthSeed": 11,
+          "daySeed": 25,
+          "hourSeed": 25,
+          "monthPalaceIndex": 4,
+          "dayPalaceIndex": 0,
+          "hourPalaceIndex": 0,
+          "dayBoundary": "东八区民用日零点换日",
+          "leapMonthRule": "闰月沿用同名月序"
+        },
+        "sequence": {
+          "month": {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          "day": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          "hour": {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          }
+        },
+        "palaceOrder": [
+          {
+            "name": "大安",
+            "index": 0,
+            "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+          },
+          {
+            "name": "留连",
+            "index": 1,
+            "verse": "留连事难成，求谋日未明，官事凡宜缓，去者未回程，失物南方见，急讨方心称，更须防口舌，人口且平平。"
+          },
+          {
+            "name": "速喜",
+            "index": 2,
+            "verse": "速喜喜来临，求财向南行，失物申午未，逢人路上寻，官事有福德，病者无祸侵，田宅六畜吉，行人有信音。"
+          },
+          {
+            "name": "赤口",
+            "index": 3,
+            "verse": "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌，六畜多作怪，病者出西方，更须防咀咒，恐怕染瘟皇。"
+          },
+          {
+            "name": "小吉",
+            "index": 4,
+            "verse": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交关甚是强，凡事皆和合，病者叩穷苍。"
+          },
+          {
+            "name": "空亡",
+            "index": 5,
+            "verse": "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃，失物寻不见，官事有刑伤，病人逢暗鬼，祈解保安康。"
+          }
+        ],
+        "primary": {
+          "name": "大安",
+          "index": 0,
+          "verse": "大安事事昌，求财在坤方，失物去不远，宅舍保安康，行人身未动，病者主无妨，将军回田野，仔细更推详。"
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "xiaoliuren",
+          "calculatedAt": "1990-12-31T15:30:00.000Z",
+          "inputHash": "cb37dd14e4160ae7",
+          "resultId": "xiaoliuren:0cd95af16fecb99b"
+        }
+      }
+    }
+  }
+}

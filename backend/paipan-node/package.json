@@ -2,9 +2,9 @@
   "name": "mingli-paipan-node",
   "version": "1.0.0",
   "private": true,
-  "description": "命理排盘引擎的 Node 运行时：紫微 iztro@^2.5.0；占星/七政/五运六气 mingyu-core@^0.2.1；奇门终身局经 scripts/vendor 的 0.2.2 构建产物提供。",
+  "description": "命理排盘引擎的 Node 运行时：紫微 iztro@^2.5.0；占星/七政/五运六气 mingyu-core@0.2.1（节148 起钉死精确版本：^0.2.1 区间上游若以 AGPL 发新版会被 npm install 静默拉进，来源.md 硬约束）；奇门终身局经 scripts/vendor 的 0.2.2 构建产物提供（vendor 无 lockfile，勿覆盖其 LICENSE）。",
   "dependencies": {
     "iztro": "^2.5.0",
-    "mingyu-core": "^0.2.1"
+    "mingyu-core": "0.2.1"
   }
 }
