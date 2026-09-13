@@ -141,6 +141,14 @@ import { generateAlmanacSelection } from './vendor/mingyu-core/dist/divination/a
 import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
 import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
+// 节148 样板开关：小六壬自研内核（paipan-core）。
+//   MINGLI_PAIPAN_CORE_XIAOLIUREN=on → /divination 的小六壬走自研内核；默认 off → 走
+//   vendored mingyu-core（正式替换归属节155，本节只证明管线可切换）。
+//   约定见 paipan-core/README.md §5（MINGLI_PAIPAN_CORE_<能力大写>）。
+import { generateXiaoliurenCore } from './paipan-core/src/capabilities/xiaoliuren/index.js';
+
+const USE_CORE_XIAOLIUREN = process.env.MINGLI_PAIPAN_CORE_XIAOLIUREN === 'on';
+
 // ---------------------------------------------------------------------------
 // 排盘逻辑 —— 从 ziwei.cjs / extra.mjs 原样内联（不改动那两个文件）
 // ---------------------------------------------------------------------------
@@ -382,7 +390,11 @@ function computeDivination(input) {
         ? { ...input.params }
         : {};
       params.customDate = toCustomDate(params.customDate);
-      raw = generateXiaoliuren(params);
+      // 节148：自研内核不接受缺省时间（确定性纪律，见 paipan-core README §3），
+      // 此处显式回落「当前时间」以保持与旧实现「缺 customDate 静默用当前时间」一致
+      // （开关默认 off，生产行为零变化）。
+      if (params.customDate === undefined) params.customDate = new Date();
+      raw = USE_CORE_XIAOLIUREN ? generateXiaoliurenCore(params) : generateXiaoliuren(params);
       break;
     }
     case 'liuren':
