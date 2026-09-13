@@ -590,7 +590,7 @@ function MbtiSharePage({
   onNavigate
 }) {
   const el = React.createElement;
-  // REQ-066④：分享表单命理太初 UI —— share_mingli_ui 开 → 答题表单内显示命理太初 logo、登录注册与免责提示；
+  // REQ-066④：分享表单命理 UI —— share_mingli_ui 开 → 答题表单内显示命理 logo、登录注册与免责提示；
   // 关 → 仅表单（填完仅保存结果；访客会话隔离与受限页拦截由 BUG-011 / BUG-002 负责）。
   const shareUiOn = ML_SETTINGS.share_mingli_ui !== false;
   const shareBrand = shareUiOn ? el('div', {className: 'tc-share-brand'},
@@ -601,7 +601,7 @@ function MbtiSharePage({
     el('div', {className: 'tc-share-brand-note'}, UI_COPY.landing.disclaimer_short),
     el('div', {className: 'tc-share-brand-links'},
       el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('auth')}, UI_COPY.menu['login-register']),
-      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('landing')}, '了解命理太初'))) : null;
+      el('button', {type: 'button', className: 'btn btn-outline', onClick: () => onNavigate('landing')}, '了解命理'))) : null;
   const [caseName, setCaseName] = useState('');
   const [questions, setQuestions] = useState([]);
   const [idx, setIdx] = useState(0);

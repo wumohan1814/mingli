@@ -11,7 +11,7 @@
 鉴权：Bearer JWT（type=admin）。viewer 可读全部（含版本历史/版本全文）；operator+
 才能写提示词（PUT / rollback）。
 
-Agent 运维工具端点（REQ-050，/admin/agent/*）：OpenClaw Agent 经既有 bb3a.mingli.example.com
+Agent 运维工具端点（REQ-050，/admin/agent/*）：OpenClaw Agent 经既有 Agent 接入域名
 接入点直调后台 API。鉴权用 Agent 专用静态 token（require_agent，MINGLI_AGENT_TOKEN），
 与 admin 账号密码 / admin JWT 完全独立（互不可用）。写动作（余额调整/重置密码/重置 case）
 审计：admin_user_id=0 + detail 前缀 "[agent]"，与人工 admin 审计区分；高风险端点响应
@@ -1027,7 +1027,7 @@ def delete_user(
 # =========================================================================== #
 # Agent 运维工具端点（REQ-050，/admin/agent/*）
 #
-# OpenClaw Agent 经既有 bb3a.mingli.example.com 通道直调后台 API。鉴权用 require_agent
+# OpenClaw Agent 经既有 Agent 接入域名 通道直调后台 API。鉴权用 require_agent
 # （MINGLI_AGENT_TOKEN，独立于 admin 账号密码/admin JWT——两套 token 互不可用）。
 # 查看类端点与 /admin/* 对应端点返回同构；写端点复用 /admin/* 相同业务逻辑，
 # 审计约定：admin_user_id=0（约定值 = Agent/系统调用，区别于人工 admin id）+

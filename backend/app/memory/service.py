@@ -402,7 +402,7 @@ def _tag_hit_ratio(tags: list[str], query: str) -> float:
 
 
 # R3-2：从查询中提取可能匹配 tags 的关键词（2~6 字的中文/英文数字词块）。
-# 命理太初记忆的 tags 是 LLM 抽的"简短关键词"（2~5 个），典型如「财运」「性格」
+# 命理记忆的 tags 是 LLM 抽的"简短关键词"（2~5 个），典型如「财运」「性格」
 # 「事业」「婚姻」「健康」等。用纯正则切词，零依赖、零算力。
 _TAG_KEYWORD_RE = re.compile(r"[A-Za-z0-9\u4e00-\u9fff]+")
 
@@ -410,13 +410,13 @@ _TAG_KEYWORD_RE = re.compile(r"[A-Za-z0-9\u4e00-\u9fff]+")
 def _extract_tag_keywords(query: str) -> list[str]:
     """从查询中提取候选 tag 关键词。
 
-    命理太初记忆的 tags 是 LLM 抽的「简短关键词」（2~5 个，多为 2 字中文词，
+    命理记忆的 tags 是 LLM 抽的「简短关键词」（2~5 个，多为 2 字中文词，
     如「财运」「性格」「事业」「婚姻」）。tag 通道的核心是：query 里出现
     的词如果正好是某个 tag，那条记忆就是强相关。
 
     切分策略（零依赖、纯正则）：
     1. 先按非 [中文/字母/数字] 切成若干「连续块」
-    2. **纯中文块**：用 2 字滑窗切，每个 2 字片段都是候选 tag（命理太初 tags
+    2. **纯中文块**：用 2 字滑窗切，每个 2 字片段都是候选 tag（命理 tags
        绝大多数是 2 字词）；3 字词也保留（如「公务员」「金牛座」）
        —— 无意义组合（如「我今」「年财」）会在 Python 精确验证阶段被过滤掉
     3. **英文/数字/混合块**：整块保留（英文 tags 本身就是空格分隔的单词）
@@ -448,7 +448,7 @@ def _extract_tag_keywords(query: str) -> list[str]:
         has_alpha = any('a' <= ch <= 'z' or 'A' <= ch <= 'Z' for ch in chunk)
 
         if has_chinese and not has_alpha:
-            # 纯中文块 → 2 字滑窗优先（命理太初 tags 绝大多数是 2 字词），
+            # 纯中文块 → 2 字滑窗优先（命理 tags 绝大多数是 2 字词），
             # 3 字滑窗作为补充（覆盖三字 tag 如「公务员」「金牛座」）。
             # 2 字先加，保证核心短词不被长词挤掉上限。
             n = len(chunk)

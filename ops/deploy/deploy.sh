@@ -1,5 +1,5 @@
 #!/bin/bash
-# 命理太初 · 服务器一键部署脚本（在服务器上执行）
+# 命理 · 服务器一键部署脚本（在服务器上执行）
 # 用法：bash ops/deploy/deploy.sh
 set -e
 
@@ -36,5 +36,5 @@ docker compose up -d --build
 echo "==> [4/4] 完成"
 docker compose ps
 echo ""
-echo "访问: https://mingli.example.com"
+echo "访问: https://${MINGLI_SITE_DOMAIN:-<你的域名>}"
 echo "日志: docker compose logs -f web"

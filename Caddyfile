@@ -4,12 +4,12 @@
 #       不再经 Python web 进程（此前实测约 79% 请求是静态）；其余（/api、/admin、/、index.html 等）
 #       仍反代到 web:8000。
 #
-# ⚠️ 域名属「部署者自填」，不是项目代号（节147）：
-#   下面的 mingli.example.com / bb3a.mingli.example.com 是**运营实例已注册并生效的域名**（DNS + Let's Encrypt
-#   证书都在跑），因此**未随项目代号 taichu→mingli 改名** —— 改它要重新注册域名 + 改 DNS +
-#   重签证书，且会有一个线上中断窗口，收益为零（节142 已拍板：本实例只是发布/内容载体，
-#   不是"官方托管服务"）。第三方自部署时把这两处换成自己的域名即可。
-mingli.example.com {
+# ── 站点域名：**可配置项，真实域名不入库**（节147，用户 2026-09-14 定） ──────────────
+#   `{$MINGLI_SITE_DOMAIN}` 由环境变量注入（docker-compose 从 `.env` 透传；`.env` 已被
+#   .gitignore 排除）。**未配置时 Caddy 会直接启动失败** —— 这是有意的：宁可启动就报错，
+#   也不要拿一个占位域名去申请 Let's Encrypt 证书（会撞速率限制且签不出有效证书）。
+#   本机 / 线上的实际值只存在于各自的 `.env`，仓库里任何地方都不写真实域名。
+{$MINGLI_SITE_DOMAIN} {
     encode gzip zstd
 
     # 静态资源直服：文件名尚无内容 hash → 用 1h max-age + ETag 复验（不上 immutable）。
@@ -26,15 +26,8 @@ mingli.example.com {
     }
 }
 
-# OpenClaw 接入点：公网可访问（随机子域 + 配对 token 保护），回程走 Tailscale 隧道
-# 上游用 Tailscale IP + 显式 SNI（容器内无法解析 MagicDNS 域名）
-bb3a.mingli.example.com {
-    reverse_proxy https://<你的 Tailscale IP>:443 {
-        transport http {
-            tls_insecure_skip_verify
-            tls_server_name <你的 Tailscale 主机名>
-        }
-        header_up Host {http.request.host}
-        header_up X-Forwarded-Proto {scheme}
-    }
-}
+# 可选附加站点（例如自建的 Agent 接入点）：默认 import 一份**空文件**，对任何部署都无影响。
+# 需要时：cp ops/deploy/caddy-extra.example ops/deploy/caddy-extra.caddy（改成自己的域名）→
+#         在 .env 里设 MINGLI_CADDY_EXTRA=./ops/deploy/caddy-extra.caddy
+# ⚠️ ops/deploy/caddy-extra.caddy 已被 .gitignore 排除 —— 填进去的真实域名不会进仓库。
+import /etc/caddy/extra.caddy

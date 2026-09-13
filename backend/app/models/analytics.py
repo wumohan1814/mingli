@@ -408,7 +408,7 @@ class UserSetting(Base):
     anim_enabled = Column(Boolean, default=True)        # ①动画与抽卡模拟
     default_mode = Column(String(16), default="auto")   # ②占卜界面默认模式：manual|auto|both
     banner_dropdown = Column(Boolean, default=False)    # ③Banner 模块下拉导航
-    share_mingli_ui = Column(Boolean, default=True)     # ④分享表单命理太初 UI
+    share_mingli_ui = Column(Boolean, default=True)     # ④分享表单命理 UI
     bg_enabled = Column(Boolean, default=True)          # ⑤背景图显示
     card_images = Column(Boolean, default=True)         # ⑥牌面图片显示
     agent_enabled = Column(Boolean, default=True)       # ⑦王先生 Agent

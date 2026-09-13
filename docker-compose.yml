@@ -1,4 +1,4 @@
-# 命理太初 · 部署编排（web 单体 + Caddy HTTPS 反代）
+# 命理 · 部署编排（web 单体 + Caddy HTTPS 反代）
 services:
   web:
     build: .
@@ -37,8 +37,14 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    # 节147：站点域名是可配置项 —— 真实域名只存在于未入库的 .env，仓库里不写
+    environment:
+      MINGLI_SITE_DOMAIN: ${MINGLI_SITE_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # 可选附加站点：默认挂仓库里的空文件（等于不启用）；要启用就在 .env 里
+      # 设 MINGLI_CADDY_EXTRA=./ops/deploy/caddy-extra.caddy（该文件被 .gitignore 排除）
+      - ${MINGLI_CADDY_EXTRA:-./ops/deploy/caddy-extra.empty}:/etc/caddy/extra.caddy:ro
       # 节113：静态资源由 Caddy 直服，只读挂载 frontend/public（勿挂整个仓库）
       - ./frontend/public:/srv/static:ro
       - caddy_data:/data

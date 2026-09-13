@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""命理太初排盘引擎（app.paipan.engine）——从 reference/mingli-reference/scripts/paipan.py 逐字移植的胶水层。
+"""命理排盘引擎（app.paipan.engine）——从 reference/mingli-reference/scripts/paipan.py 逐字移植的胶水层。
 
 把公历出生信息排成 chart dict（唯一事实源）。**排盘是历法算术，全部由本模块产出，
 LLM 只做解读、禁止重算。**

@@ -1,0 +1,24 @@
+# 附加站点示例（节147 抽出）：自建 Agent 接入点 —— OpenClaw 等经公网入口直调后台 API。
+#
+# 用法（三步）：
+#   1) cp ops/deploy/caddy-extra.example ops/deploy/caddy-extra.caddy
+#   2) 把下面的 agent.example.com / <隧道对端 IP> / <Tailscale 主机名> 换成你自己的值
+#   3) 在 .env 里设 MINGLI_CADDY_EXTRA=./ops/deploy/caddy-extra.caddy，然后
+#      docker compose up -d --force-recreate caddy
+#
+# ⚠️ ops/deploy/caddy-extra.caddy 已被 .gitignore 排除 —— 你填进去的真实域名与内网地址
+#    **不会**进 git，开源/推送都不会带出去。请不要把它改成 tracked 文件。
+#
+# 说明（原 `bb3a` 那套的设计，保留作参考）：
+#   公网可访问（随机子域 + 配对 token 保护），回程走 Tailscale 隧道；
+#   上游用 Tailscale IP + 显式 SNI（容器内无法解析 MagicDNS 域名，故用 IP + SNI）。
+agent.example.com {
+    reverse_proxy https://<隧道对端 IP>:443 {
+        transport http {
+            tls_insecure_skip_verify
+            tls_server_name <Tailscale 主机名>
+        }
+        header_up Host {http.request.host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

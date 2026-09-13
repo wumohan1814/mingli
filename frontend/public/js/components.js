@@ -16,7 +16,7 @@ function toast(msg) {
   t._tm = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// 模板字符串替换：fmtTpl('你好，{name}', { name: '命理太初' }) → '你好，命理太初'
+// 模板字符串替换：fmtTpl('你好，{name}', { name: '命理' }) → '你好，命理'
 // 节136 阶段C 从 views-xishi.js 上移到全局，供所有模块使用
 function fmtTpl(t, kv) {
   return String(t == null ? '' : t).replace(/\{(\w+)\}/g, function (_, k) {

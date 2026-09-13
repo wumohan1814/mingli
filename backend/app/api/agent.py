@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """王先生 Agent 会话 API（REQ-076，prefix=/api/agent）：固定 session 对话。
 
-「王先生」是命理太初 C 端对话大师（非 REQ-050 运维 Agent）：
+「王先生」是命理 C 端对话大师（非 REQ-050 运维 Agent）：
   ① 固定 session 对话；会话顶部下拉选默认档案（仅本人档案）；未选档案可闲聊，
      咨询档案相关内容先提示选档案（该提示逻辑在 prompts/agent/master.md 角色 prompt
      内约束，本文件只负责数据注入与编排）。

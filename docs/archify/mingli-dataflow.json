@@ -2,7 +2,7 @@
   "schema_version": 1,
   "diagram_type": "dataflow",
   "meta": {
-    "title": "命理太初 · 档案数据流与三库落库",
+    "title": "命理 · 档案数据流与三库落库",
     "output": "mingli-dataflow.html",
     "quality_profile": "showcase",
     "viewBox": [1280, 880],

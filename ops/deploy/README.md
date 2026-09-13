@@ -1,6 +1,6 @@
 # ops/deploy · 部署说明
 
-命理太初线上部署采用「**模块化单体 Docker 镜像 + Caddy HTTPS 反代 + SQLite 持久卷**」。
+命理线上部署采用「**模块化单体 Docker 镜像 + Caddy HTTPS 反代 + SQLite 持久卷**」。
 
 ## 文件
 
@@ -44,7 +44,7 @@ crontab -e
 
 ## 前置条件
 
-1. 域名 `mingli.example.com` 的 A 记录指向服务器 IP。
+1. **站点域名**（`.env` 的 `MINGLI_SITE_DOMAIN`）的 A 记录指向服务器 IP —— 域名是**可配置项**，仓库里不写真实值（见下方「站点域名怎么配」）。
 2. 服务器安全组放行 80 / 443（HTTPS）、22（SSH）。
 3. GitHub 部署密钥已加到仓库（只读 Deploy Key），服务器 `~/.ssh/config` 已配置指向该密钥。
 4. 服务器已装 Docker + Docker Compose（`curl -fsSL https://get.docker.com | sh`）。
@@ -68,37 +68,56 @@ nameservers:
 
 **同时已关 sshd 的 UseDNS**（`/etc/ssh/sshd_config` 加 `UseDNS no`），避免 SSH 反向解析卡顿。
 
-### 2. OpenClaw 接入点 `bb3a.mingli.example.com`（公网可访问 + 回程走 Tailscale）
+### 2. OpenClaw 接入点（**可选附加站点**，域名自填）
 
 **目标**：客户端在公网（**不开 Tailscale**）也能连杭州 OpenClaw；杭州 OpenClaw 本体不暴露公网。
 
-- 架构：客户端 → 公网 `bb3a.mingli.example.com`（DNS 指向公网 IP `<你的服务器 IP>`）→ 新加坡 Caddy → Tailscale 隧道 → 杭州 serve（`<你的 Tailscale IP>:443`）→ OpenClaw（loopback）。
-- **Caddy 上游必须用 Tailscale IP + 显式 SNI**（不能用 MagicDNS 域名，因为 Docker 容器内无法解析 `.ts.net`）：
-  ```caddyfile
-  bb3a.mingli.example.com {
-      reverse_proxy https://<你的 Tailscale IP>:443 {
-          transport http {
-              tls_insecure_skip_verify
-              tls_server_name <你的 Tailscale 主机名>
-          }
-          header_up Host {http.request.host}
-          header_up X-Forwarded-Proto {scheme}
-      }
-  }
-  ```
-- 访问控制 = 随机子域 `bb3a` + OpenClaw 配对 token（双重保护）。**⚠️ 此入口公网可达，token 泄露即远程控制风险，勿移除配对 token。**
+**它不是主站**，所以节147 起从 `Caddyfile` 抽成了**可选附加站点**：仓库里只放一个示例，
+你填好的那份被 `.gitignore` 排除，**真实域名与内网地址不会进仓库**（开源/推送都不带出去）。
+
+怎么启用（三步）：
+
+```bash
+cd /opt/mingli/app
+cp ops/deploy/caddy-extra.example ops/deploy/caddy-extra.caddy
+$EDITOR ops/deploy/caddy-extra.caddy      # 填自己的域名 / <隧道对端 IP> / <Tailscale 主机名>
+echo 'MINGLI_CADDY_EXTRA=./ops/deploy/caddy-extra.caddy' >> .env
+docker compose up -d --force-recreate caddy
+```
+
+- 架构：客户端 → 公网接入域名（DNS 指向服务器公网 IP）→ 新加坡 Caddy → Tailscale 隧道 → 杭州 serve → OpenClaw（loopback）。完整 Caddyfile 片段见 `ops/deploy/caddy-extra.example`。
+- **Caddy 上游必须用 Tailscale IP + 显式 SNI**（不能用 MagicDNS 域名，因为 Docker 容器内无法解析 `.ts.net`）—— 示例里已写好。
+- 访问控制 = 随机子域 + OpenClaw 配对 token（双重保护）。**⚠️ 此入口公网可达，token 泄露即远程控制风险，勿移除配对 token。**
+- ⚠️ **`git reset --hard` 不会删掉 `caddy-extra.caddy`**（未跟踪文件），所以它能在多次部署间存活；但别对它跑 `git clean`。
 
 ### 3. 证书续期
 
-`bb3a.mingli.example.com` 的 DNS 指向公网 IP `<你的服务器 IP>`，Let's Encrypt HTTP-01 续期**正常**，无需特殊处理。
+两个站点（主站 + 可选的附加站点）都由 Caddy 自动经 Let's Encrypt HTTP-01 续期，只要各自域名的 A 记录仍指向本服务器即可，**无需特殊处理**。
+
+> 到期前想确认：`docker compose logs --tail=200 caddy | grep -i -E 'certificate|renew'`。
 
 ### 4. SSH 已改为密钥登录
 
-服务器已禁用密码登录（`PasswordAuthentication no` + `PermitRootLogin prohibit-password`），仅可用本地私钥 `~/.ssh/<你的私钥文件>` 登录。改回密码登录需谨慎（弱密码有被爆破风险）。
+服务器已禁用密码登录（`PasswordAuthentication no` + `PermitRootLogin prohibit-password`），仅可用本地私钥登录（文件名见你的 `~/.ssh/config`；仓库里按 `<你的私钥文件>` 占位，不写真实文件名）。改回密码登录需谨慎（弱密码有被爆破风险）。
 
-> ⚠️ **该私钥文件名未随节147 改名**：它同时存在于服务器 `~/.ssh/` 与本地 `~/.ssh/`，
-> 改名要两边同步 + 改 `~/.ssh/config`，做错会直接失去登录通道。要改名请按下方
-> 「节147 迁移 · 可选：SSH 私钥改名」走。
+> ⚠️ **私钥文件在两个地方各有一份**（服务器 `~/.ssh/` 与本地 `~/.ssh/`），改名要两边同步 + 改 `~/.ssh/config`，
+> 做错会直接失去登录通道 —— 所以**仓库里只写占位名**，要改名请按最下方「可选：SSH 私钥改名」走。
+
+---
+
+## 站点域名怎么配（节147：**可配置项**）
+
+用户 2026-09-14 定：**域名是部署配置，不是项目标识**；并且**真实域名不进开源仓库**（否则一开源就把自己的域名暴露了）。
+
+| 项 | 位置 | 说明 |
+|---|---|---|
+| 主站域名 | `.env` 的 `MINGLI_SITE_DOMAIN` | 必填。`docker-compose.yml` 把它透传给 caddy 容器，`Caddyfile` 用 `{$MINGLI_SITE_DOMAIN}` 取。**未配置时 Caddy 直接启动失败**（有意为之：不让占位域名去申请证书） |
+| 可选附加站点 | `.env` 的 `MINGLI_CADDY_EXTRA` + `ops/deploy/caddy-extra.caddy` | 不设 = 挂仓库里的空文件，等于不启用 |
+| 仓库里的值 | `.env.example` | **一律占位**（`mingli.example.com` / `agent.example.com`） |
+| 本机 / 线上真实值 | 各自的 `.env` | `.env` 已被 `.gitignore` 排除，**永不入库** |
+
+**开源前自检**：`git grep -n -i -E '你的域名|你的服务器 IP'` 应为空；
+`.env` / `ops/deploy/caddy-extra.caddy` / `docs/未公开/` 都不在 git 里。
 
 ---
 
@@ -143,6 +162,15 @@ grep '^TAICHU_' .env             # 必须为空
 
 ⚠️ 同时**删掉节146 遗留的金数据键**（`*_JINSHUJU_*`，已整组废弃）。
 
+⚠️🔴 **并补上一个新键 —— 不补 Caddy 起不来**（`Caddyfile` 已改为从环境变量取域名）：
+
+```bash
+echo 'MINGLI_SITE_DOMAIN=<你的真实域名>' >> /opt/mingli/app/.env
+docker compose config >/dev/null && echo 'compose 配置可解析'
+```
+
+需要那个可选 Agent 接入点的话，按上方「OpenClaw 接入点（可选附加站点）」三步一并做掉。
+
 ### 第 4 步 · 数据库文件名 + 列名
 
 ```bash
@@ -163,19 +191,23 @@ sqlite3 mingli_analytics.db < /opt/mingli/app/data/migrations/analytics/0001_dro
 cd /opt/mingli/app
 docker compose up -d --build
 docker compose ps                                     # web / caddy 均 healthy
-curl -s https://mingli.example.com/api/health                 # {"status":"ok",...}
-curl -sI https://mingli.example.com/ | head -1                # 200
+curl -s https://<你的域名>/api/health                 # {"status":"ok",...}
+curl -sI https://<你的域名>/ | head -1                # 200
 docker compose logs --tail=50 web                     # 无循环重启、无 KeyError
 ```
 
 `docker-compose.yml` 的**服务名 / 网络名 / 卷名 / 宿主路径**已改为 `mingli`，`down` + `up` 一次即生效。
 
-### 例外两项（**有意不改**，见 `40_节/完成/节147-*.md`）
+### 个人基础设施（**不进仓库**，各有各的规矩）
 
-| 项 | 现值 | 为什么不改 | 若要改 |
+| 项 | 现状 | 为什么 | 要动它时 |
 |---|---|---|---|
-| 线上域名 | `mingli.example.com`、`bb3a.mingli.example.com` | 已注册 + DNS 生效 + Let's Encrypt 在跑；节142 拍板本实例只是发布/内容载体，不是官方托管服务 → 改名零收益、有中断窗口 | 注册新域名 → A 记录指 `<你的服务器 IP>` → 改 `Caddyfile` 两处 → `docker compose restart caddy` 让它重签证书 |
-| SSH 私钥文件名 | `~/.ssh/<你的私钥文件>` | 服务端与本地各一份，改名要同步 + 改 `~/.ssh/config`；做错失去登录通道 | **先保一条可用会话**：`cp ~/.ssh/<你的私钥文件> ~/.ssh/<你的私钥文件>` → 新开一个会话验证能登录 → 再改 `~/.ssh/config` 与服务器 `authorized_keys`/文件名 → 最后删旧文件 |
+| 站点域名 | **已改为可配置项**：值在 `.env` 的 `MINGLI_SITE_DOMAIN`，仓库里只有占位 | 用户 2026-09-14：域名是部署配置、不是项目标识；且一开源就会把自己的域名暴露出去 | 换域名 = 改 `.env` 一处 + A 记录 + `docker compose up -d --force-recreate caddy`（Caddy 自动重签证书） |
+| 可选附加站点 | 值在 `.env` 的 `MINGLI_CADDY_EXTRA` + 未入库的 `ops/deploy/caddy-extra.caddy` | 同上（含内网 IP / Tailscale 主机名等**更敏感**的信息） | 见上方「OpenClaw 接入点（可选附加站点）」 |
+| SSH 私钥文件名 | 仓库里按 `<你的私钥文件>` 占位，真实名只在你的 `~/.ssh/config` | 服务端与本地各一份，改名要两边同步；做错失去登录通道 | **先保一条可用会话**：`cp ~/.ssh/<旧> ~/.ssh/<新>` → 新开一个会话验证能登录 → 再改 `~/.ssh/config` 与服务器 `authorized_keys`/文件名 → 最后删旧文件 |
+
+> 本节的口径：**凡是能定位到你个人的东西（域名 / 公网 IP / 内网 IP / 私钥名 / 真实姓名与联系方式），
+> 一律不进仓库**，只出现在 `.env`、`.gitignore` 覆盖的本地文件、或 `docs/未公开/`。
 
 ### 回退
 

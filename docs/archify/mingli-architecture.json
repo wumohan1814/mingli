@@ -2,7 +2,7 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "命理太初 · 多流派 AI 命理 H5 系统架构",
+    "title": "命理 · 多流派 AI 解读 H5 系统架构",
     "output": "mingli-architecture.html",
     "quality_profile": "showcase",
     "repository": {
@@ -17,7 +17,7 @@
   },
   "components": [
     { "id": "user", "type": "external", "label": "用户浏览器", "sublabel": "React 18 H5", "pos": [60, 420], "size": [150, 66] },
-    { "id": "caddy", "type": "security", "label": "Caddy 反向代理", "sublabel": "mingli.example.com · HTTPS", "pos": [300, 420], "size": [150, 66], "tag": "gzip / zstd" },
+    { "id": "caddy", "type": "security", "label": "Caddy 反向代理", "sublabel": "站点域名 · HTTPS", "pos": [300, 420], "size": [150, 66], "tag": "gzip / zstd" },
     { "id": "fastapi", "type": "backend", "label": "FastAPI 模块化单体", "sublabel": ":8000 · REST + /admin + 静态", "pos": [540, 420], "size": [190, 70], "tag": "Python 3.13" },
     { "id": "orchestrator", "type": "backend", "label": "任务编排器", "sublabel": "断前尘 / 预测 · 3 并发", "pos": [820, 300], "size": [190, 62], "tag": "ADR-0005" },
     { "id": "methods", "type": "backend", "label": "9 法方法模块", "sublabel": "method-result v2 契约", "pos": [820, 470], "size": [190, 62], "tag": "analyzer ×9" },
@@ -48,6 +48,6 @@
     { "dot": "cyan", "title": "入口与托管", "items": ["Caddy 自动 HTTPS 证书 + gzip/zstd 压缩", "FastAPI 单端口 8000 同时服务 /api + 前端静态", "SPA 404 回退 index.html（/api /admin 除外）"] },
     { "dot": "emerald", "title": "排盘与成本红线", "items": ["排盘 / 校准打分 = 确定性计算，零 LLM", "Node 22 常驻服务 :9317，失败自动降级 subprocess", "仅解读 / 校验 / 修正对话调 LLM，逐法扣费"] },
     { "dot": "violet", "title": "数据与后台", "items": ["SQLite 三库隔离业务 / 质询 / 运维", "档案 chart.json 全量落库为唯一事实源", "后台 /admin 独立 JWT + 角色 + audit"] },
-    { "dot": "rose", "title": "外部与运维", "items": ["节146：无任何收款渠道（余额由后台开号赠送 / 人工调分）", "OpenClaw 接入点 bb3a.mingli.example.com → Tailscale 隧道", "JWT HS256：访问牌 30min + 刷新牌 7d"] }
+    { "dot": "rose", "title": "外部与运维", "items": ["节146：无任何收款渠道（余额由后台开号赠送 / 人工调分）", "OpenClaw 接入点（可选，域名自填）→ Tailscale 隧道", "JWT HS256：访问牌 30min + 刷新牌 7d"] }
   ]
 }

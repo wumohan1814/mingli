@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mingli-backend"
 version = "0.1.0"
-description = "命理太初 · 命理 H5 后端（模块化单体 MVP）"
+description = "命理 H5 后端（模块化单体 MVP）"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",
