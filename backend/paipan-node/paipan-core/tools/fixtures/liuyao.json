@@ -1,0 +1,741 @@
+{
+  "capability": "liuyao",
+  "note": "对拍夹具（节155 六爻）。defaultKeyFields = 关键排盘字段（门禁对象，必须 100% 一致）。input.customDate 一律带 +08:00 显式偏移，保证与进程本地时区无关。起卦方式一律为**显式起卦**：options.yaos（手工爻值 6/7/8/9）或 options.method='coins' + options.coinThrows（手摇铜钱）。理由见 notes 第 1 条。",
+  "defaultKeyFields": [
+    "originalName",
+    "changedName",
+    "interName",
+    "yaoArray",
+    "changingYaos",
+    "sixGods",
+    "sixRelatives",
+    "najiaDizhi",
+    "wuxing",
+    "worldAndResponse",
+    "voidBranches",
+    "palace.name",
+    "palace.wuxing",
+    "palaceStage",
+    "ganzhi.year",
+    "ganzhi.month",
+    "ganzhi.day",
+    "ganzhi.hour",
+    "specialPattern",
+    "isChaotic",
+    "hexagramRelations.original",
+    "hexagramRelations.changed",
+    "hexagramRelations.transition",
+    "fanfuRelations.labels",
+    "sanxingInYaos",
+    "yaosDetail[0].position",
+    "yaosDetail[0].rawValue",
+    "yaosDetail[0].yaoType",
+    "yaosDetail[0].isChanging",
+    "yaosDetail[0].changeType",
+    "yaosDetail[0].sixGod",
+    "yaosDetail[0].sixRelative",
+    "yaosDetail[0].najiaDizhi",
+    "yaosDetail[0].wuxing",
+    "yaosDetail[0].isWorld",
+    "yaosDetail[0].isResponse",
+    "yaosDetail[0].isVoid",
+    "yaosDetail[0].isDayClash",
+    "yaosDetail[0].isMonthBreak",
+    "yaosDetail[0].seasonState",
+    "yaosDetail[0].changeDirection",
+    "yaosDetail[0].changeRelation",
+    "yaosDetail[0].changeRelations",
+    "yaosDetail[0].shiErGong",
+    "yaosDetail[1].position",
+    "yaosDetail[1].rawValue",
+    "yaosDetail[1].yaoType",
+    "yaosDetail[1].isChanging",
+    "yaosDetail[1].changeType",
+    "yaosDetail[1].sixGod",
+    "yaosDetail[1].sixRelative",
+    "yaosDetail[1].najiaDizhi",
+    "yaosDetail[1].wuxing",
+    "yaosDetail[1].isWorld",
+    "yaosDetail[1].isResponse",
+    "yaosDetail[1].isVoid",
+    "yaosDetail[1].isDayClash",
+    "yaosDetail[1].isMonthBreak",
+    "yaosDetail[1].seasonState",
+    "yaosDetail[1].changeDirection",
+    "yaosDetail[1].changeRelation",
+    "yaosDetail[1].changeRelations",
+    "yaosDetail[1].shiErGong",
+    "yaosDetail[2].position",
+    "yaosDetail[2].rawValue",
+    "yaosDetail[2].yaoType",
+    "yaosDetail[2].isChanging",
+    "yaosDetail[2].changeType",
+    "yaosDetail[2].sixGod",
+    "yaosDetail[2].sixRelative",
+    "yaosDetail[2].najiaDizhi",
+    "yaosDetail[2].wuxing",
+    "yaosDetail[2].isWorld",
+    "yaosDetail[2].isResponse",
+    "yaosDetail[2].isVoid",
+    "yaosDetail[2].isDayClash",
+    "yaosDetail[2].isMonthBreak",
+    "yaosDetail[2].seasonState",
+    "yaosDetail[2].changeDirection",
+    "yaosDetail[2].changeRelation",
+    "yaosDetail[2].changeRelations",
+    "yaosDetail[2].shiErGong",
+    "yaosDetail[3].position",
+    "yaosDetail[3].rawValue",
+    "yaosDetail[3].yaoType",
+    "yaosDetail[3].isChanging",
+    "yaosDetail[3].changeType",
+    "yaosDetail[3].sixGod",
+    "yaosDetail[3].sixRelative",
+    "yaosDetail[3].najiaDizhi",
+    "yaosDetail[3].wuxing",
+    "yaosDetail[3].isWorld",
+    "yaosDetail[3].isResponse",
+    "yaosDetail[3].isVoid",
+    "yaosDetail[3].isDayClash",
+    "yaosDetail[3].isMonthBreak",
+    "yaosDetail[3].seasonState",
+    "yaosDetail[3].changeDirection",
+    "yaosDetail[3].changeRelation",
+    "yaosDetail[3].changeRelations",
+    "yaosDetail[3].shiErGong",
+    "yaosDetail[4].position",
+    "yaosDetail[4].rawValue",
+    "yaosDetail[4].yaoType",
+    "yaosDetail[4].isChanging",
+    "yaosDetail[4].changeType",
+    "yaosDetail[4].sixGod",
+    "yaosDetail[4].sixRelative",
+    "yaosDetail[4].najiaDizhi",
+    "yaosDetail[4].wuxing",
+    "yaosDetail[4].isWorld",
+    "yaosDetail[4].isResponse",
+    "yaosDetail[4].isVoid",
+    "yaosDetail[4].isDayClash",
+    "yaosDetail[4].isMonthBreak",
+    "yaosDetail[4].seasonState",
+    "yaosDetail[4].changeDirection",
+    "yaosDetail[4].changeRelation",
+    "yaosDetail[4].changeRelations",
+    "yaosDetail[4].shiErGong",
+    "yaosDetail[5].position",
+    "yaosDetail[5].rawValue",
+    "yaosDetail[5].yaoType",
+    "yaosDetail[5].isChanging",
+    "yaosDetail[5].changeType",
+    "yaosDetail[5].sixGod",
+    "yaosDetail[5].sixRelative",
+    "yaosDetail[5].najiaDizhi",
+    "yaosDetail[5].wuxing",
+    "yaosDetail[5].isWorld",
+    "yaosDetail[5].isResponse",
+    "yaosDetail[5].isVoid",
+    "yaosDetail[5].isDayClash",
+    "yaosDetail[5].isMonthBreak",
+    "yaosDetail[5].seasonState",
+    "yaosDetail[5].changeDirection",
+    "yaosDetail[5].changeRelation",
+    "yaosDetail[5].changeRelations",
+    "yaosDetail[5].shiErGong"
+  ],
+  "notes": [
+    "【起卦方式】夹具一律用显式起卦（options.yaos 或 method='coins' + coinThrows），不用 options 缺省的「时间起卦」。原因：旧实现的时间起卦由一段带种子的**伪随机序列**（meta.random.seed = '时间起卦:<epochMs>'）决定六爻，本内核零随机（README §6 确定性纪律），改用公开的「梅花易数·年月日时起卦法」推爻，故时间起卦的 yaoArray/卦名/变卦必然与旧实现不同——这是**有意分歧**，已在 src/capabilities/liuyao/index.js 文件头与 src/rules/liuyao.js 的「已知差异」中登记。显式起卦路径下的关键字段实测 100% 一致。",
+    "【代表性】覆盖：跨年代（1900 清末 / 1955 / 1960s / 1984 / 1990s / 1999 跨年 / 2000 世纪之交 / 2005 / 2023–2024 / 2033 远端）、早晚子时（00:30 早子、23:30 与 23:40 与 23:50 与 23:59 晚子）、节气立春精确时刻前后 10 分钟内成对（2000-02-04 20:30 与 20:41）、闰月（2023 闰二月）、月末/年末/跨年、时辰边界、多动爻组合（1/2/3/6 动爻）、乾卦用九/坤卦用六/全动卦/静卦、以及 3 条手工铜钱记录（method='coins'）。",
+    "【关键字段选择】只放**排盘计算字段**（卦名/卦象符号/纳甲地支/六亲/六神/世应/空亡/五行/旺衰/十二宫/变爻关系/干支/爻值等确定性盘面事实）。以下字段**不进关键字段**、只作信息性差异（README §3.2 第 4 条），逐条列出：yaosDetail[].isSanxing（旧实现「三刑成局」判据无法归纳 —— 卦支 未巳卯丑亥酉 报恃势之刑，而 卯丑亥丑亥酉 不报，两者都含丑；同源的 sanxingType 已进关键字段且 100% 一致）、guaShen（卦身，5 轮黑盒穷举未能复现旧实现判据）、hiddenSpirits（伏神明细与 interactionEffect 文案）、sanheWithDay/sanheWithMonth（三合判据未能复现）、yaosDetail[].isRuMu/isYueMu/isRiMu（入墓三标记：旧实现判定分支未归纳出规则）、specialAdvice/chaoticReason/fanfuRelations[].description（旧实现文案措辞，本内核自撰）、meta.*（自研 engineVersion/inputHash/resultId/calculatedAt）、generation.coinThrows（本内核零随机，时间模式为空数组）、timestamp 与 evidenceAnalysis（内部字段，被 stripInternal 剥离且本内核不产出）。",
+    "【已知旧实现怪癖，本内核已复刻】specialPattern 取值 = 静卦 / 全动卦 / 乾卦用九 / 坤卦用六；isChaotic 仅「全动卦」为 true（乾卦用九、坤卦用六 反而不记）；空亡 = ZHI[(日支索引−日干索引+10)%12] 与其 +1 位（如 戊寅→申酉、癸卯→辰巳）；六神起神按 甲乙青龙/丙丁朱雀/戊勾陈/己螣蛇/庚辛白虎/壬癸玄武；时支序 = floor((小时+1)/2)%12（奇点小时取下一时辰，01:30=丑、13:30=未）；六冲卦 10 卦（八纯 + 雷天大壮 + 天雷无妄）、六合卦 8 卦；hexagramRelations.changed/transition 仅在**有动爻**时给值。"
+  ],
+  "fixtures": [
+    {
+      "name": "required-01-1900-qingmo",
+      "note": "清末（1900 年代）：农历与干支算法的早期分支",
+      "input": {
+        "customDate": "1900-06-15T08:30:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            8,
+            7,
+            8,
+            7,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-02-1960s",
+      "note": "1960 年代：单动爻（老阳在初爻）",
+      "input": {
+        "customDate": "1968-04-20T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            9,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-03-1990s",
+      "note": "1990 年代：上爻动",
+      "input": {
+        "customDate": "1993-09-09T10:00:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-04-2000s",
+      "note": "2000 年代：乾为天静卦（六爻皆静 → 静卦）",
+      "input": {
+        "customDate": "2005-11-25T16:45:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            7,
+            7,
+            7,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-05-2020s",
+      "note": "2020 年代：单动爻（老阳在五爻）",
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            7,
+            8,
+            8,
+            9,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-06-early-zi",
+      "note": "早子时 00:30（换日口径最易错）",
+      "input": {
+        "customDate": "1990-05-12T00:30:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            8,
+            7,
+            8,
+            7,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-07-late-zi",
+      "note": "晚子时 23:30（应换到次日干支）",
+      "input": {
+        "customDate": "1990-05-12T23:30:00+08:00",
+        "options": {
+          "yaos": [
+            6,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-08-late-zi-month-end",
+      "note": "月末 23:40 晚子时",
+      "input": {
+        "customDate": "2000-02-05T23:40:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            9,
+            8,
+            7,
+            7,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-09-lichun-before",
+      "note": "立春精确时刻前 10 分钟内（年/月干支应仍为旧值）",
+      "input": {
+        "customDate": "2000-02-04T20:30:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            7,
+            8,
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "name": "required-10-lichun-after",
+      "note": "立春精确时刻后 1 分钟（年/月干支应换新值）",
+      "input": {
+        "customDate": "2000-02-04T20:41:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            7,
+            8,
+            8,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-01-leap-month",
+      "note": "闰二月（2023 闰二月）内",
+      "input": {
+        "customDate": "2023-03-25T09:15:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            8,
+            8,
+            8,
+            9,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-02-year-end-late-zi",
+      "note": "跨年晚子时 23:50（1999→2000）",
+      "input": {
+        "customDate": "1999-12-31T23:50:00+08:00",
+        "options": {
+          "yaos": [
+            9,
+            9,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-03-century-start",
+      "note": "世纪之交整点",
+      "input": {
+        "customDate": "2000-01-01T00:00:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            7,
+            7,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-04-hour-boundary-just-after-zi",
+      "note": "1984 立春当日 23:59（晚子时 + 节气叠加）",
+      "input": {
+        "customDate": "1984-02-04T23:59:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-05-wu-hour",
+      "note": "远期末端（2033）跨年晚子时",
+      "input": {
+        "customDate": "2033-12-31T23:50:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            9,
+            9,
+            8,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "edge-06-mid-century",
+      "note": "1955 年中：老阴在初爻",
+      "input": {
+        "customDate": "1955-07-07T12:00:00+08:00",
+        "options": {
+          "yaos": [
+            6,
+            7,
+            7,
+            7,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-01-two-changing",
+      "note": "两动爻（2、4 爻）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            9,
+            8,
+            9,
+            8,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-02-three-changing",
+      "note": "三动爻（1、3、5 爻）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            9,
+            8,
+            6,
+            7,
+            9,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-03-all-moving",
+      "note": "六爻全动且为乾为天 → 乾卦用九 + 乱动卦",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            9,
+            9,
+            9,
+            9,
+            9,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-04-all-moving-kun",
+      "note": "六爻全动且为坤为地 → 坤卦用六（不记乱动）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-05-all-moving-other",
+      "note": "六爻全动但非八纯卦 → 全动卦",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            6,
+            9,
+            6,
+            9,
+            6,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-06-static",
+      "note": "六爻皆静（静卦）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            7,
+            8,
+            7,
+            8,
+            7,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-07-returning-advance",
+      "note": "两动爻（1、2 爻）：覆盖化进神/化退神判定",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            9,
+            9,
+            7,
+            7,
+            7,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "name": "move-08-sixth-changing",
+      "note": "上爻动（应爻动）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "yaos": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "name": "coins-01-explicit",
+      "note": "手工铜钱记录：合计 8/7/8/8/9/8（单动爻五爻）",
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "options": {
+          "method": "coins",
+          "coinThrows": [
+            {
+              "coins": [
+                2,
+                3,
+                3
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                3,
+                2,
+                2
+              ],
+              "total": 7
+            },
+            {
+              "coins": [
+                3,
+                3,
+                2
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                3,
+                2,
+                3
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                3,
+                3,
+                3
+              ],
+              "total": 9
+            },
+            {
+              "coins": [
+                3,
+                3,
+                2
+              ],
+              "total": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "coins-02-all-static",
+      "note": "手工铜钱记录：合计 8/8/7/8/7/7（六爻皆静）",
+      "input": {
+        "customDate": "1990-05-12T07:30:00+08:00",
+        "options": {
+          "method": "coins",
+          "coinThrows": [
+            {
+              "coins": [
+                2,
+                3,
+                3
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                3,
+                2,
+                3
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                2,
+                3,
+                2
+              ],
+              "total": 7
+            },
+            {
+              "coins": [
+                2,
+                3,
+                3
+              ],
+              "total": 8
+            },
+            {
+              "coins": [
+                2,
+                2,
+                3
+              ],
+              "total": 7
+            },
+            {
+              "coins": [
+                2,
+                2,
+                3
+              ],
+              "total": 7
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "coins-03-all-moving",
+      "note": "手工铜钱记录：前三爻全老阳、后三爻全老阴（六爻全动）",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "options": {
+          "method": "coins",
+          "coinThrows": [
+            {
+              "coins": [
+                3,
+                3,
+                3
+              ],
+              "total": 9
+            },
+            {
+              "coins": [
+                3,
+                3,
+                3
+              ],
+              "total": 9
+            },
+            {
+              "coins": [
+                3,
+                3,
+                3
+              ],
+              "total": 9
+            },
+            {
+              "coins": [
+                2,
+                2,
+                2
+              ],
+              "total": 6
+            },
+            {
+              "coins": [
+                2,
+                2,
+                2
+              ],
+              "total": 6
+            },
+            {
+              "coins": [
+                2,
+                2,
+                2
+              ],
+              "total": 6
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
