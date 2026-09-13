@@ -1,0 +1,304 @@
+{
+  "capability": "meihua",
+  "note": "对拍夹具（节155 梅花易数）。defaultKeyFields = 关键排盘字段（门禁对象，必须 100% 一致）。input.customDate 一律带 +08:00 显式偏移；input.settings 为起卦设置（缺省 = 时间起卦；{method:\"number\",number:N} = 报数起卦）。",
+  "defaultKeyFields": [
+    "originalName",
+    "changedName",
+    "interName",
+    "tiGua.name",
+    "tiGua.element",
+    "tiGua.nature",
+    "yongGua.name",
+    "yongGua.element",
+    "yongGua.nature",
+    "changedTiGua.name",
+    "changedTiGua.element",
+    "changedTiGua.nature",
+    "changedYongGua.name",
+    "changedYongGua.element",
+    "changedYongGua.nature",
+    "interTiGua.name",
+    "interTiGua.element",
+    "interTiGua.nature",
+    "interYongGua.name",
+    "interYongGua.element",
+    "interYongGua.nature",
+    "mainHexagram.name",
+    "mainHexagram.symbol",
+    "mainHexagram.upper",
+    "mainHexagram.lower",
+    "changedHexagram.name",
+    "changedHexagram.symbol",
+    "changedHexagram.upper",
+    "changedHexagram.lower",
+    "interHexagram.name",
+    "interHexagram.symbol",
+    "interHexagram.upper",
+    "interHexagram.lower",
+    "movingYao.position",
+    "movingYao.description",
+    "movingYao.yaoName",
+    "analysis.season",
+    "analysis.monthBranch",
+    "analysis.monthElement",
+    "analysis.tiYongRelation",
+    "analysis.tiSeasonState",
+    "analysis.yongSeasonState",
+    "analysis.inter1Relation",
+    "analysis.inter2Relation",
+    "analysis.changedRelation",
+    "analysis.changedTiYongRelation",
+    "analysis.tiYongRaw",
+    "analysis.tiYongSeasonEvaluation",
+    "analysis.timelineTrend.trend",
+    "analysis.timelineTrend.summary",
+    "ganzhi.year",
+    "ganzhi.month",
+    "ganzhi.day",
+    "ganzhi.hour",
+    "yaosDetail[0].position",
+    "yaosDetail[0].yaoType",
+    "yaosDetail[0].isChanging",
+    "yaosDetail[0].tiYong",
+    "yaosDetail[1].position",
+    "yaosDetail[1].yaoType",
+    "yaosDetail[1].isChanging",
+    "yaosDetail[1].tiYong",
+    "yaosDetail[2].position",
+    "yaosDetail[2].yaoType",
+    "yaosDetail[2].isChanging",
+    "yaosDetail[2].tiYong",
+    "yaosDetail[3].position",
+    "yaosDetail[3].yaoType",
+    "yaosDetail[3].isChanging",
+    "yaosDetail[3].tiYong",
+    "yaosDetail[4].position",
+    "yaosDetail[4].yaoType",
+    "yaosDetail[4].isChanging",
+    "yaosDetail[4].tiYong",
+    "yaosDetail[5].position",
+    "yaosDetail[5].yaoType",
+    "yaosDetail[5].isChanging",
+    "yaosDetail[5].tiYong",
+    "calculation.method",
+    "calculation.methodKey",
+    "calculation.yearZhi",
+    "calculation.yearZhiIndex",
+    "calculation.month",
+    "calculation.day",
+    "calculation.timeZhi",
+    "calculation.timeZhiIndex",
+    "calculation.upperTrigramIndex",
+    "calculation.lowerTrigramIndex",
+    "calculation.movingYaoIndex"
+  ],
+  "notes": [
+    "【起卦口径】时间起卦（年月日时起卦法）：上卦序=(年支序+农曆月+农曆日)%8||8、下卦序=(+时支序)%8||8、动爻=(+时支序)%6||6（八卦序 1..8 = 乾兑离震巽坎艮坤）。**关键实测点**：起卦公式里的「年支序」取**农曆年干支**（正月初一换年，lunar-typescript getYearInGanZhi()），而输出 ganzhi.year 用**立春精确时刻换年**（getYearInGanZhiExact()）——两者在立春与正月初一之间会相差一年，boundary-0x 夹具专测这一点。",
+    "【报数起卦】settings 唯一合法键为 number（单个安全正整数）：上卦序=number%8||8、下卦序=(number+时支序)%8||8、动爻=(number+时支序)%6||6。旧实现不支持两数/三数报数。",
+    "【随机起卦有意不支持】旧实现支持 settings.method=\"random\" + seed/replay，本内核**零随机**（README §6），一律抛 PaipanInputError(\"random_mode_unsupported\")，故夹具不含随机用例（已在能力文件头登记为有意分歧）。",
+    "【关键字段选择】只放确定性盘面事实（卦名/卦象符号/上下卦/体用互变卦/动爻/五行关系/旺衰/季节/四柱/起卦参数/逐爻阴阳与体用）。以下字段**不进关键字段**、只作信息性差异：mainHexagram.description 与三卦的 yaoCi/movingYaoCi/yongCi（旧实现为《周易》**节选缩写**，本内核用公网采源的完整原文，见 src/rules/zhouyi-texts.js；实证见 tools/_probe/out/probe-mh-a-FINDINGS.md §7.3）、analysis.yingQi（自撰应期白话）、meta.*（自研 engineVersion/inputHash/resultId）、timestamp。",
+    "【代表性】覆盖跨年代（1900/1955/1968/1984/1990s/1999 跨年/2000/2005/2023–2024/2033）、早晚子时（00:30、22:30、23:30、23:40、23:50、23:59）、立春精确时刻前后 10 分钟内成对（2000-02-04 20:30/20:41 与 2024-02-04 16:00/16:30）、立春与正月初一之间的年界分歧窗口（4 条）、闰月（2023 闰二月）、未时退化结构（时支序=8 ⇒ 主卦必为八纯卦、体用恒比和、逐爻体用全「体」）、报数起卦 5 条（含 2^53-1 边界）。"
+  ],
+  "fixtures": [
+    {
+      "name": "required-01-1900-qingmo",
+      "input": {
+        "customDate": "1900-06-15T08:30:00+08:00"
+      }
+    },
+    {
+      "name": "required-02-1960s",
+      "input": {
+        "customDate": "1968-04-20T14:20:00+08:00"
+      }
+    },
+    {
+      "name": "required-03-1990s",
+      "input": {
+        "customDate": "1993-09-09T10:00:00+08:00"
+      }
+    },
+    {
+      "name": "required-04-2000s",
+      "input": {
+        "customDate": "2005-11-25T16:45:00+08:00"
+      }
+    },
+    {
+      "name": "required-05-2020s",
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00"
+      }
+    },
+    {
+      "name": "required-06-early-zi",
+      "input": {
+        "customDate": "1990-05-12T00:30:00+08:00"
+      }
+    },
+    {
+      "name": "required-07-late-zi",
+      "input": {
+        "customDate": "1990-05-12T23:30:00+08:00"
+      }
+    },
+    {
+      "name": "required-08-late-zi-month-end",
+      "input": {
+        "customDate": "2000-02-05T23:40:00+08:00"
+      }
+    },
+    {
+      "name": "required-09-lichun-before",
+      "input": {
+        "customDate": "2000-02-04T20:30:00+08:00"
+      }
+    },
+    {
+      "name": "required-10-lichun-after",
+      "input": {
+        "customDate": "2000-02-04T20:41:00+08:00"
+      }
+    },
+    {
+      "name": "edge-01-leap-month",
+      "input": {
+        "customDate": "2023-03-25T09:15:00+08:00"
+      }
+    },
+    {
+      "name": "edge-02-year-end-late-zi",
+      "input": {
+        "customDate": "1999-12-31T23:50:00+08:00"
+      }
+    },
+    {
+      "name": "edge-03-century-start",
+      "input": {
+        "customDate": "2000-01-01T00:00:00+08:00"
+      }
+    },
+    {
+      "name": "edge-04-lichun-day-late-zi",
+      "input": {
+        "customDate": "1984-02-04T23:59:00+08:00"
+      }
+    },
+    {
+      "name": "edge-05-far-future",
+      "input": {
+        "customDate": "2033-12-31T23:50:00+08:00"
+      }
+    },
+    {
+      "name": "edge-06-mid-century",
+      "input": {
+        "customDate": "1955-07-07T12:00:00+08:00"
+      }
+    },
+    {
+      "name": "boundary-01-after-lichun-before-cny",
+      "input": {
+        "customDate": "2024-02-05T09:16:00+08:00"
+      }
+    },
+    {
+      "name": "boundary-02-after-lichun-before-cny2",
+      "input": {
+        "customDate": "2024-02-06T14:16:00+08:00"
+      }
+    },
+    {
+      "name": "boundary-03-before-lichun-after-cny",
+      "input": {
+        "customDate": "2023-01-25T12:00:00+08:00"
+      }
+    },
+    {
+      "name": "boundary-04-lichun-exact-before",
+      "input": {
+        "customDate": "2024-02-04T16:00:00+08:00"
+      }
+    },
+    {
+      "name": "boundary-05-lichun-exact-after",
+      "input": {
+        "customDate": "2024-02-04T16:30:00+08:00"
+      }
+    },
+    {
+      "name": "hour-01-wei-pure",
+      "input": {
+        "customDate": "2024-06-01T13:30:00+08:00"
+      }
+    },
+    {
+      "name": "hour-02-wei-pure2",
+      "input": {
+        "customDate": "2024-06-01T14:30:00+08:00"
+      }
+    },
+    {
+      "name": "hour-03-zi-early",
+      "input": {
+        "customDate": "2024-06-01T00:30:00+08:00"
+      }
+    },
+    {
+      "name": "hour-04-hai-late",
+      "input": {
+        "customDate": "2024-06-01T22:30:00+08:00"
+      }
+    },
+    {
+      "name": "number-01",
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 78
+        }
+      }
+    },
+    {
+      "name": "number-02",
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 100
+        }
+      }
+    },
+    {
+      "name": "number-03",
+      "input": {
+        "customDate": "2000-02-05T20:00:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 16
+        }
+      }
+    },
+    {
+      "name": "number-04-large",
+      "input": {
+        "customDate": "1990-05-12T07:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 9007199254740991
+        }
+      }
+    },
+    {
+      "name": "number-05-small",
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 1
+        }
+      }
+    }
+  ]
+}

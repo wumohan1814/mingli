@@ -1,0 +1,5507 @@
+{
+  "capability": "meihua",
+  "defaultKeyFields": [
+    "originalName",
+    "changedName",
+    "interName",
+    "tiGua.name",
+    "tiGua.element",
+    "tiGua.nature",
+    "yongGua.name",
+    "yongGua.element",
+    "yongGua.nature",
+    "changedTiGua.name",
+    "changedTiGua.element",
+    "changedTiGua.nature",
+    "changedYongGua.name",
+    "changedYongGua.element",
+    "changedYongGua.nature",
+    "interTiGua.name",
+    "interTiGua.element",
+    "interTiGua.nature",
+    "interYongGua.name",
+    "interYongGua.element",
+    "interYongGua.nature",
+    "mainHexagram.name",
+    "mainHexagram.symbol",
+    "mainHexagram.upper",
+    "mainHexagram.lower",
+    "changedHexagram.name",
+    "changedHexagram.symbol",
+    "changedHexagram.upper",
+    "changedHexagram.lower",
+    "interHexagram.name",
+    "interHexagram.symbol",
+    "interHexagram.upper",
+    "interHexagram.lower",
+    "movingYao.position",
+    "movingYao.description",
+    "movingYao.yaoName",
+    "analysis.season",
+    "analysis.monthBranch",
+    "analysis.monthElement",
+    "analysis.tiYongRelation",
+    "analysis.tiSeasonState",
+    "analysis.yongSeasonState",
+    "analysis.inter1Relation",
+    "analysis.inter2Relation",
+    "analysis.changedRelation",
+    "analysis.changedTiYongRelation",
+    "analysis.tiYongRaw",
+    "analysis.tiYongSeasonEvaluation",
+    "analysis.timelineTrend.trend",
+    "analysis.timelineTrend.summary",
+    "ganzhi.year",
+    "ganzhi.month",
+    "ganzhi.day",
+    "ganzhi.hour",
+    "yaosDetail[0].position",
+    "yaosDetail[0].yaoType",
+    "yaosDetail[0].isChanging",
+    "yaosDetail[0].tiYong",
+    "yaosDetail[1].position",
+    "yaosDetail[1].yaoType",
+    "yaosDetail[1].isChanging",
+    "yaosDetail[1].tiYong",
+    "yaosDetail[2].position",
+    "yaosDetail[2].yaoType",
+    "yaosDetail[2].isChanging",
+    "yaosDetail[2].tiYong",
+    "yaosDetail[3].position",
+    "yaosDetail[3].yaoType",
+    "yaosDetail[3].isChanging",
+    "yaosDetail[3].tiYong",
+    "yaosDetail[4].position",
+    "yaosDetail[4].yaoType",
+    "yaosDetail[4].isChanging",
+    "yaosDetail[4].tiYong",
+    "yaosDetail[5].position",
+    "yaosDetail[5].yaoType",
+    "yaosDetail[5].isChanging",
+    "yaosDetail[5].tiYong",
+    "calculation.method",
+    "calculation.methodKey",
+    "calculation.yearZhi",
+    "calculation.yearZhiIndex",
+    "calculation.month",
+    "calculation.day",
+    "calculation.timeZhi",
+    "calculation.timeZhiIndex",
+    "calculation.upperTrigramIndex",
+    "calculation.lowerTrigramIndex",
+    "calculation.movingYaoIndex"
+  ],
+  "note": "golden 快照：旧实现（vendored 第三方引擎）输出经 stripInternal 归一化后的结果。不含时间戳，保证可重复 diff。",
+  "fixtures": {
+    "required-01-1900-qingmo": {
+      "input": {
+        "customDate": "1900-06-15T08:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "天水讼",
+        "changedName": "泽水困",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "天水讼",
+          "symbol": "☰☵",
+          "upper": "乾",
+          "lower": "坎",
+          "description": "有孚，窒惕，中吉",
+          "yaoCi": [
+            "不永所事，小有言，终吉",
+            "不克讼，归而逋",
+            "食旧德，贞厉，终吉",
+            "不克讼，复即命渝",
+            "讼，元吉",
+            "或锡之鞶带，终朝三褫之"
+          ],
+          "movingYaoCi": "或锡之鞶带，终朝三褫之"
+        },
+        "changedHexagram": {
+          "name": "泽水困",
+          "symbol": "☱☵",
+          "upper": "兑",
+          "lower": "坎",
+          "description": "亨，贞，大人吉",
+          "yaoCi": [
+            "臀困于株木，入于幽谷",
+            "困于酒食，朱绂方来",
+            "困于石，据于蒺藜",
+            "来徐徐，困于金车",
+            "劓刖，困于赤绂",
+            "困于葛藟，于臲卼"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "午",
+          "monthElement": "火",
+          "tiYongRelation": "用生体",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "死",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体生用互",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "用生体",
+          "tiYongSeasonEvaluation": "用生体，略得外力照拂，助力虽浅亦可受益",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为7，只作取数来源旁证，不换算绝对日期",
+            "用生体，外部条件对体卦有生扶，可观察助力实际出现时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚子",
+          "month": "壬午",
+          "day": "己未",
+          "hour": "戊辰"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "子",
+          "yearZhiIndex": 1,
+          "month": 5,
+          "day": 19,
+          "timeZhi": "辰",
+          "timeZhiIndex": 5,
+          "upperTrigramIndex": 1,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1900-06-15T00:30:00.000Z",
+          "inputHash": "db3ca2e9071c5717",
+          "resultId": "meihua:4af2bab9130fcadb"
+        }
+      }
+    },
+    "required-02-1960s": {
+      "input": {
+        "customDate": "1968-04-20T14:20:00+08:00"
+      },
+      "stripped": {
+        "originalName": "离为火",
+        "changedName": "火山旅",
+        "interName": "泽风大过",
+        "tiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "yongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "离为火",
+          "symbol": "☲☲",
+          "upper": "离",
+          "lower": "离",
+          "description": "利贞，亨，畜牝牛吉",
+          "yaoCi": [
+            "履错然，敬之无咎",
+            "黄离，元吉",
+            "日昃之离，不鼓缶而歌，则大耋之嗟，凶",
+            "突如其来如，焚如，死如，弃如",
+            "出涕沱若，戚嗟若，吉",
+            "王用出征，有嘉折首，获匪其丑，无咎"
+          ],
+          "movingYaoCi": "履错然，敬之无咎"
+        },
+        "changedHexagram": {
+          "name": "火山旅",
+          "symbol": "☲☶",
+          "upper": "离",
+          "lower": "艮",
+          "description": "小亨，旅贞吉",
+          "yaoCi": [
+            "旅琐琐，斯其所取灾",
+            "旅即次，怀其资",
+            "旅焚其次，丧其童仆",
+            "旅于处，得其资斧",
+            "射雉一矢亡",
+            "鸟焚其巢，旅人先笑后号咷"
+          ]
+        },
+        "interHexagram": {
+          "name": "泽风大过",
+          "symbol": "☱☴",
+          "upper": "兑",
+          "lower": "巽",
+          "description": "栋桡，利有攸往",
+          "yaoCi": [
+            "藉用白茅，无咎",
+            "枯杨生稊，老夫得其女妻",
+            "栋桡，凶",
+            "栋隆，吉",
+            "枯杨生华，老妇得其士夫",
+            "过涉灭顶，凶"
+          ]
+        },
+        "movingYao": {
+          "position": 1,
+          "description": "第1爻动",
+          "yaoName": "初爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "辰",
+          "monthElement": "土",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "休",
+          "yongSeasonState": "休",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "用互生原体",
+          "changedRelation": "体生用",
+          "changedTiYongRelation": "体生用",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "先顺后阻",
+            "summary": "起步顺遂得利，中后程克泄交加阻力渐显，防后继乏力"
+          },
+          "yingQi": [
+            "初爻动，先观察事情刚开始或基层条件的变化",
+            "上下卦数和为6，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "戊申",
+          "month": "丙辰",
+          "day": "庚申",
+          "hour": "癸未"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "申",
+          "yearZhiIndex": 9,
+          "month": 3,
+          "day": 23,
+          "timeZhi": "未",
+          "timeZhiIndex": 8,
+          "upperTrigramIndex": 3,
+          "lowerTrigramIndex": 3,
+          "movingYaoIndex": 1
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1968-04-20T06:20:00.000Z",
+          "inputHash": "61bb3fb65df5a090",
+          "resultId": "meihua:5fb592fba401c8b3"
+        }
+      }
+    },
+    "required-03-1990s": {
+      "input": {
+        "customDate": "1993-09-09T10:00:00+08:00"
+      },
+      "stripped": {
+        "originalName": "地水师",
+        "changedName": "雷水解",
+        "interName": "地雷复",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "地水师",
+          "symbol": "☷☵",
+          "upper": "坤",
+          "lower": "坎",
+          "description": "贞，丈人吉，无咎",
+          "yaoCi": [
+            "师出以律，否臧凶",
+            "在师中吉，无咎",
+            "师或舆尸，凶",
+            "师左次，无咎",
+            "田有禽，利执言",
+            "大君有命，开国承家"
+          ],
+          "movingYaoCi": "师左次，无咎"
+        },
+        "changedHexagram": {
+          "name": "雷水解",
+          "symbol": "☳☵",
+          "upper": "震",
+          "lower": "坎",
+          "description": "利西南，无所往",
+          "yaoCi": [
+            "无咎",
+            "田获三狐，得黄矢",
+            "负且乘，致寇至",
+            "解而拇，朋至斯孚",
+            "君子维有解，吉",
+            "公用射隼于高墉之上"
+          ]
+        },
+        "interHexagram": {
+          "name": "地雷复",
+          "symbol": "☷☳",
+          "upper": "坤",
+          "lower": "震",
+          "description": "亨，出入无疾",
+          "yaoCi": [
+            "不远复，无祗悔",
+            "休复，吉",
+            "频复，厉，无咎",
+            "中行独复",
+            "敦复，无悔",
+            "迷复，凶"
+          ]
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "秋",
+          "monthBranch": "酉",
+          "monthElement": "金",
+          "tiYongRelation": "用克体",
+          "tiSeasonState": "相",
+          "yongSeasonState": "休",
+          "inter1Relation": "原体生体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体生用",
+          "changedTiYongRelation": "体生用",
+          "tiYongRaw": "用克体",
+          "tiYongSeasonEvaluation": "体旺用衰，受克有惊无险，难伤大体",
+          "timelineTrend": {
+            "trend": "始终受制",
+            "summary": "初中终重重受克泄制约，阻力严峻，大宜退守蓄力"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为14，只作取数来源旁证，不换算绝对日期",
+            "用克体，外部事项对体卦形成压力，须先观察阻力是否缓解",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "癸酉",
+          "month": "辛酉",
+          "day": "癸巳",
+          "hour": "丁巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "酉",
+          "yearZhiIndex": 10,
+          "month": 7,
+          "day": 23,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "upperTrigramIndex": 8,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1993-09-09T02:00:00.000Z",
+          "inputHash": "81c63c9f85a29c3e",
+          "resultId": "meihua:0ee55efc2f9e5310"
+        }
+      }
+    },
+    "required-04-2000s": {
+      "input": {
+        "customDate": "2005-11-25T16:45:00+08:00"
+      },
+      "stripped": {
+        "originalName": "雷风恒",
+        "changedName": "泽风大过",
+        "interName": "泽天夬",
+        "tiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "yongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "changedTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedYongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "interYongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "mainHexagram": {
+          "name": "雷风恒",
+          "symbol": "☳☴",
+          "upper": "震",
+          "lower": "巽",
+          "description": "亨，无咎，利贞",
+          "yaoCi": [
+            "浚恒，贞凶",
+            "悔亡",
+            "不恒其德，或承之羞",
+            "田无禽",
+            "恒其德，贞，妇人吉",
+            "振恒，凶"
+          ],
+          "movingYaoCi": "恒其德，贞，妇人吉"
+        },
+        "changedHexagram": {
+          "name": "泽风大过",
+          "symbol": "☱☴",
+          "upper": "兑",
+          "lower": "巽",
+          "description": "栋桡，利有攸往",
+          "yaoCi": [
+            "藉用白茅，无咎",
+            "枯杨生稊，老夫得其女妻",
+            "栋桡，凶",
+            "栋隆，吉",
+            "枯杨生华，老妇得其士夫",
+            "过涉灭顶，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "泽天夬",
+          "symbol": "☱☰",
+          "upper": "兑",
+          "lower": "乾",
+          "description": "扬于王庭，孚号有厉",
+          "yaoCi": [
+            "壮于前趾，往不胜",
+            "惕号，莫夜有戎",
+            "壮于頄，有凶",
+            "臀无肤，其行次且",
+            "苋陆夬夬，中行无咎",
+            "无号，终有凶"
+          ]
+        },
+        "movingYao": {
+          "position": 5,
+          "description": "第5爻动",
+          "yaoName": "五爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "亥",
+          "monthElement": "水",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "相",
+          "yongSeasonState": "相",
+          "inter1Relation": "体互克原体",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "用克体",
+          "changedTiYongRelation": "用克体",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "先顺后阻",
+            "summary": "起步顺遂得利，中后程克泄交加阻力渐显，防后继乏力"
+          },
+          "yingQi": [
+            "五爻动，先观察核心决策与主导条件的变化",
+            "上下卦数和为9，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "乙酉",
+          "month": "丁亥",
+          "day": "癸丑",
+          "hour": "庚申"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "酉",
+          "yearZhiIndex": 10,
+          "month": 10,
+          "day": 24,
+          "timeZhi": "申",
+          "timeZhiIndex": 9,
+          "upperTrigramIndex": 4,
+          "lowerTrigramIndex": 5,
+          "movingYaoIndex": 5
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2005-11-25T08:45:00.000Z",
+          "inputHash": "fe5e720b176fd5f4",
+          "resultId": "meihua:dd708d953df5e86a"
+        }
+      }
+    },
+    "required-05-2020s": {
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风火家人",
+        "changedName": "风山渐",
+        "interName": "火水未济",
+        "tiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "yongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "mainHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ],
+          "movingYaoCi": "闲有家，悔亡"
+        },
+        "changedHexagram": {
+          "name": "风山渐",
+          "symbol": "☴☶",
+          "upper": "巽",
+          "lower": "艮",
+          "description": "女归吉，利贞",
+          "yaoCi": [
+            "鸿渐于干，小子厉",
+            "鸿渐于磐，饮食衎衎",
+            "鸿渐于陆，夫征不复",
+            "鸿渐于木，或得其桷",
+            "鸿渐于陵，妇三岁不孕",
+            "鸿渐于陆，其羽可用为仪"
+          ]
+        },
+        "interHexagram": {
+          "name": "火水未济",
+          "symbol": "☲☵",
+          "upper": "离",
+          "lower": "坎",
+          "description": "亨，小狐汔济，濡其尾",
+          "yaoCi": [
+            "濡其尾，吝",
+            "曳其轮，贞吉",
+            "未济，征凶，利涉大川",
+            "贞吉，悔亡，震用伐鬼方，三年有赏于大国",
+            "贞吉，无悔，君子之光，有孚吉",
+            "有孚于饮酒，无咎，濡其首，有孚失是"
+          ]
+        },
+        "movingYao": {
+          "position": 1,
+          "description": "第1爻动",
+          "yaoName": "初爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "卯",
+          "monthElement": "木",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "旺",
+          "yongSeasonState": "相",
+          "inter1Relation": "原体生体互",
+          "inter2Relation": "用互生原体",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "初爻动，先观察事情刚开始或基层条件的变化",
+            "上下卦数和为8，只作取数来源旁证，不换算绝对日期",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丁卯",
+          "day": "戊寅",
+          "hour": "丁巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 2,
+          "day": 6,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 3,
+          "movingYaoIndex": 1
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-03-15T02:30:00.000Z",
+          "inputHash": "46f7b50f773f0b6d",
+          "resultId": "meihua:5ea13d3bccbef6c2"
+        }
+      }
+    },
+    "required-06-early-zi": {
+      "input": {
+        "customDate": "1990-05-12T00:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风水涣",
+        "changedName": "坎为水",
+        "interName": "山雷颐",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "mainHexagram": {
+          "name": "风水涣",
+          "symbol": "☴☵",
+          "upper": "巽",
+          "lower": "坎",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "用拯马壮，吉",
+            "涣奔其机，悔亡",
+            "涣其躬，无悔",
+            "涣其群，元吉",
+            "涣汗其大号",
+            "涣其血去逖出"
+          ],
+          "movingYaoCi": "涣其血去逖出"
+        },
+        "changedHexagram": {
+          "name": "坎为水",
+          "symbol": "☵☵",
+          "upper": "坎",
+          "lower": "坎",
+          "description": "习坎，有孚，维心亨",
+          "yaoCi": [
+            "习坎，入于坎窞，凶",
+            "坎有险，求小得",
+            "来之坎坎，险且枕，入于坎窞，勿用",
+            "樽酒簋贰，用缶，纳约自牖，终无咎",
+            "坎不盈，祗既平，无咎",
+            "系用徽纆，寘于丛棘，三岁不得，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "山雷颐",
+          "symbol": "☶☳",
+          "upper": "艮",
+          "lower": "震",
+          "description": "贞吉，观颐",
+          "yaoCi": [
+            "舍尔灵龟，观我朵颐",
+            "颠颐，拂经",
+            "拂颐，贞凶",
+            "颠颐，吉",
+            "拂经，居贞吉",
+            "由颐，厉吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "休",
+          "inter1Relation": "原体生体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "先难后易",
+            "summary": "初始受制或多周折，中后程得生助转顺，终成吉局"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为11，只作取数来源旁证，不换算绝对日期",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "丁丑",
+          "hour": "庚子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "午",
+          "yearZhiIndex": 7,
+          "month": 4,
+          "day": 18,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1990-05-11T16:30:00.000Z",
+          "inputHash": "099b41a006952bf8",
+          "resultId": "meihua:99b6444a7d022a9f"
+        }
+      }
+    },
+    "required-07-late-zi": {
+      "input": {
+        "customDate": "1990-05-12T23:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风水涣",
+        "changedName": "坎为水",
+        "interName": "山雷颐",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "mainHexagram": {
+          "name": "风水涣",
+          "symbol": "☴☵",
+          "upper": "巽",
+          "lower": "坎",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "用拯马壮，吉",
+            "涣奔其机，悔亡",
+            "涣其躬，无悔",
+            "涣其群，元吉",
+            "涣汗其大号",
+            "涣其血去逖出"
+          ],
+          "movingYaoCi": "涣其血去逖出"
+        },
+        "changedHexagram": {
+          "name": "坎为水",
+          "symbol": "☵☵",
+          "upper": "坎",
+          "lower": "坎",
+          "description": "习坎，有孚，维心亨",
+          "yaoCi": [
+            "习坎，入于坎窞，凶",
+            "坎有险，求小得",
+            "来之坎坎，险且枕，入于坎窞，勿用",
+            "樽酒簋贰，用缶，纳约自牖，终无咎",
+            "坎不盈，祗既平，无咎",
+            "系用徽纆，寘于丛棘，三岁不得，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "山雷颐",
+          "symbol": "☶☳",
+          "upper": "艮",
+          "lower": "震",
+          "description": "贞吉，观颐",
+          "yaoCi": [
+            "舍尔灵龟，观我朵颐",
+            "颠颐，拂经",
+            "拂颐，贞凶",
+            "颠颐，吉",
+            "拂经，居贞吉",
+            "由颐，厉吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "休",
+          "inter1Relation": "原体生体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "先难后易",
+            "summary": "初始受制或多周折，中后程得生助转顺，终成吉局"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为11，只作取数来源旁证，不换算绝对日期",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "戊寅",
+          "hour": "壬子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "午",
+          "yearZhiIndex": 7,
+          "month": 4,
+          "day": 18,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1990-05-12T15:30:00.000Z",
+          "inputHash": "b6cb58f7584fa074",
+          "resultId": "meihua:beb78588276a0721"
+        }
+      }
+    },
+    "required-08-late-zi-month-end": {
+      "input": {
+        "customDate": "2000-02-05T23:40:00+08:00"
+      },
+      "stripped": {
+        "originalName": "山地剥",
+        "changedName": "山水蒙",
+        "interName": "坤为地",
+        "tiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "yongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ],
+          "movingYaoCi": "剥床以辨，蔑贞凶"
+        },
+        "changedHexagram": {
+          "name": "山水蒙",
+          "symbol": "☶☵",
+          "upper": "艮",
+          "lower": "坎",
+          "description": "亨，匪我求童蒙",
+          "yaoCi": [
+            "发蒙，利用刑人",
+            "包蒙吉，纳妇吉",
+            "勿用取女，见金夫",
+            "困蒙，吝",
+            "童蒙，吉",
+            "击蒙，不利为寇"
+          ]
+        },
+        "interHexagram": {
+          "name": "坤为地",
+          "symbol": "☷☷",
+          "upper": "坤",
+          "lower": "坤",
+          "description": "元亨，利牝马之贞",
+          "yaoCi": [
+            "履霜，坚冰至",
+            "直方大，不习无不利",
+            "含章可贞，或从王事，无成有终",
+            "括囊，无咎无誉",
+            "黄裳，元吉",
+            "龙战于野，其血玄黄"
+          ],
+          "yongCi": "利永贞"
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "死",
+          "yongSeasonState": "死",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互与原体比和",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为15，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚辰",
+          "month": "戊寅",
+          "day": "甲午",
+          "hour": "甲子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 1,
+          "day": 1,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 7,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2000-02-05T15:40:00.000Z",
+          "inputHash": "52570e24db297195",
+          "resultId": "meihua:aebff34dd1746218"
+        }
+      }
+    },
+    "required-09-lichun-before": {
+      "input": {
+        "customDate": "2000-02-04T20:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风地观",
+        "changedName": "风水涣",
+        "interName": "山地剥",
+        "tiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "yongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "风地观",
+          "symbol": "☴☷",
+          "upper": "巽",
+          "lower": "坤",
+          "description": "盥而不荐，有孚颙若",
+          "yaoCi": [
+            "童观，小人无咎",
+            "窥观，利女贞",
+            "观我生，进退",
+            "观国之光，利用宾于王",
+            "观我生，君子无咎",
+            "观其生，君子无咎"
+          ],
+          "movingYaoCi": "窥观，利女贞"
+        },
+        "changedHexagram": {
+          "name": "风水涣",
+          "symbol": "☴☵",
+          "upper": "巽",
+          "lower": "坎",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "用拯马壮，吉",
+            "涣奔其机，悔亡",
+            "涣其躬，无悔",
+            "涣其群，元吉",
+            "涣汗其大号",
+            "涣其血去逖出"
+          ]
+        },
+        "interHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ]
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "丑",
+          "monthElement": "土",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "旺",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体虽克用但自身气衰，勉力支撑，防劳而少功",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为13，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "己卯",
+          "month": "丁丑",
+          "day": "壬辰",
+          "hour": "庚戌"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 29,
+          "timeZhi": "戌",
+          "timeZhiIndex": 11,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2000-02-04T12:30:00.000Z",
+          "inputHash": "36524294dba05acc",
+          "resultId": "meihua:a1d0f92cbbbd5f49"
+        }
+      }
+    },
+    "required-10-lichun-after": {
+      "input": {
+        "customDate": "2000-02-04T20:41:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风地观",
+        "changedName": "风水涣",
+        "interName": "山地剥",
+        "tiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "yongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "风地观",
+          "symbol": "☴☷",
+          "upper": "巽",
+          "lower": "坤",
+          "description": "盥而不荐，有孚颙若",
+          "yaoCi": [
+            "童观，小人无咎",
+            "窥观，利女贞",
+            "观我生，进退",
+            "观国之光，利用宾于王",
+            "观我生，君子无咎",
+            "观其生，君子无咎"
+          ],
+          "movingYaoCi": "窥观，利女贞"
+        },
+        "changedHexagram": {
+          "name": "风水涣",
+          "symbol": "☴☵",
+          "upper": "巽",
+          "lower": "坎",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "用拯马壮，吉",
+            "涣奔其机，悔亡",
+            "涣其躬，无悔",
+            "涣其群，元吉",
+            "涣汗其大号",
+            "涣其血去逖出"
+          ]
+        },
+        "interHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ]
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "旺",
+          "yongSeasonState": "死",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体旺克用，胜任其事，主导局势，操之在我",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为13，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚辰",
+          "month": "戊寅",
+          "day": "壬辰",
+          "hour": "庚戌"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 29,
+          "timeZhi": "戌",
+          "timeZhiIndex": 11,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2000-02-04T12:41:00.000Z",
+          "inputHash": "acf65ef00483cf55",
+          "resultId": "meihua:50b130c5edd1f629"
+        }
+      }
+    },
+    "edge-01-leap-month": {
+      "input": {
+        "customDate": "2023-03-25T09:15:00+08:00"
+      },
+      "stripped": {
+        "originalName": "泽地萃",
+        "changedName": "水地比",
+        "interName": "风山渐",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "泽地萃",
+          "symbol": "☱☷",
+          "upper": "兑",
+          "lower": "坤",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "有孚不终，乃乱乃萃",
+            "引吉无咎",
+            "萃如嗟如，无攸利",
+            "大吉，无咎",
+            "萃有位，无咎",
+            "赍咨涕洟，无咎"
+          ],
+          "movingYaoCi": "大吉，无咎"
+        },
+        "changedHexagram": {
+          "name": "水地比",
+          "symbol": "☵☷",
+          "upper": "坎",
+          "lower": "坤",
+          "description": "吉，原筮，元永贞，无咎",
+          "yaoCi": [
+            "有孚比之，无咎",
+            "比之自内，贞吉",
+            "比之匪人",
+            "外比之，贞吉",
+            "显比，王用三驱",
+            "比之无首，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "风山渐",
+          "symbol": "☴☶",
+          "upper": "巽",
+          "lower": "艮",
+          "description": "女归吉，利贞",
+          "yaoCi": [
+            "鸿渐于干，小子厉",
+            "鸿渐于磐，饮食衎衎",
+            "鸿渐于陆，夫征不复",
+            "鸿渐于木，或得其桷",
+            "鸿渐于陵，妇三岁不孕",
+            "鸿渐于陆，其羽可用为仪"
+          ]
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "卯",
+          "monthElement": "木",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "死",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为10，只作取数来源旁证，不换算绝对日期",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "癸卯",
+          "month": "乙卯",
+          "day": "壬午",
+          "hour": "乙巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 2,
+          "day": 4,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2023-03-25T01:15:00.000Z",
+          "inputHash": "544fa2f820967456",
+          "resultId": "meihua:54d687f2ded9b5b8"
+        }
+      }
+    },
+    "edge-02-year-end-late-zi": {
+      "input": {
+        "customDate": "1999-12-31T23:50:00+08:00"
+      },
+      "stripped": {
+        "originalName": "山地剥",
+        "changedName": "火地晋",
+        "interName": "坤为地",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ],
+          "movingYaoCi": "剥床以肤，凶"
+        },
+        "changedHexagram": {
+          "name": "火地晋",
+          "symbol": "☲☷",
+          "upper": "离",
+          "lower": "坤",
+          "description": "康侯用锡马蕃庶",
+          "yaoCi": [
+            "晋如摧如，贞吉",
+            "晋如愁如，贞吉",
+            "众允，悔亡",
+            "晋如鼫鼠，贞厉",
+            "悔亡，失得勿恤",
+            "晋其角，维用伐邑"
+          ]
+        },
+        "interHexagram": {
+          "name": "坤为地",
+          "symbol": "☷☷",
+          "upper": "坤",
+          "lower": "坤",
+          "description": "元亨，利牝马之贞",
+          "yaoCi": [
+            "履霜，坚冰至",
+            "直方大，不习无不利",
+            "含章可贞，或从王事，无成有终",
+            "括囊，无咎无誉",
+            "黄裳，元吉",
+            "龙战于野，其血玄黄"
+          ],
+          "yongCi": "利永贞"
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "子",
+          "monthElement": "水",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互与原体比和",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为15，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "己卯",
+          "month": "丙子",
+          "day": "戊午",
+          "hour": "壬子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 11,
+          "day": 24,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 7,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1999-12-31T15:50:00.000Z",
+          "inputHash": "dbfdeb839fedacc2",
+          "resultId": "meihua:110fe21c9d7b4176"
+        }
+      }
+    },
+    "edge-03-century-start": {
+      "input": {
+        "customDate": "2000-01-01T00:00:00+08:00"
+      },
+      "stripped": {
+        "originalName": "地天泰",
+        "changedName": "水天需",
+        "interName": "雷泽归妹",
+        "tiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "yongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "mainHexagram": {
+          "name": "地天泰",
+          "symbol": "☷☰",
+          "upper": "坤",
+          "lower": "乾",
+          "description": "小往大来，吉亨",
+          "yaoCi": [
+            "拔茅茹以其汇，征吉",
+            "包荒，用冯河，不遐遗，朋亡，得尚于中行",
+            "无平不陂，无往不复，艰贞无咎",
+            "翩翩，不富以其邻，不戒以孚",
+            "帝乙归妹，以祉元吉",
+            "城复于隍，勿用师"
+          ],
+          "movingYaoCi": "帝乙归妹，以祉元吉"
+        },
+        "changedHexagram": {
+          "name": "水天需",
+          "symbol": "☵☰",
+          "upper": "坎",
+          "lower": "乾",
+          "description": "有孚，光亨，贞吉",
+          "yaoCi": [
+            "需于郊，利用恒，无咎",
+            "需于沙，小有言，终吉",
+            "需于泥，致寇至",
+            "需于血，出自穴",
+            "需于酒食，贞吉",
+            "入于穴，有不速之客三人来"
+          ]
+        },
+        "interHexagram": {
+          "name": "雷泽归妹",
+          "symbol": "☳☱",
+          "upper": "震",
+          "lower": "兑",
+          "description": "征凶，无攸利",
+          "yaoCi": [
+            "归妹以娣",
+            "眇能视，利幽人之贞",
+            "归妹以须",
+            "归妹愆期",
+            "帝乙归妹",
+            "女承筐无实"
+          ]
+        },
+        "movingYao": {
+          "position": 5,
+          "description": "第5爻动",
+          "yaoName": "五爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "子",
+          "monthElement": "水",
+          "tiYongRelation": "用生体",
+          "tiSeasonState": "休",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "体生用",
+          "changedTiYongRelation": "体生用",
+          "tiYongRaw": "用生体",
+          "tiYongSeasonEvaluation": "用生体，略得外力照拂，助力虽浅亦可受益",
+          "timelineTrend": {
+            "trend": "先顺后阻",
+            "summary": "起步顺遂得利，中后程克泄交加阻力渐显，防后继乏力"
+          },
+          "yingQi": [
+            "五爻动，先观察核心决策与主导条件的变化",
+            "上下卦数和为9，只作取数来源旁证，不换算绝对日期",
+            "用生体，外部条件对体卦有生扶，可观察助力实际出现时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "己卯",
+          "month": "丙子",
+          "day": "戊午",
+          "hour": "壬子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 11,
+          "day": 25,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 8,
+          "lowerTrigramIndex": 1,
+          "movingYaoIndex": 5
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1999-12-31T16:00:00.000Z",
+          "inputHash": "68356746c3ca2a35",
+          "resultId": "meihua:9ca8cff33f394d07"
+        }
+      }
+    },
+    "edge-04-lichun-day-late-zi": {
+      "input": {
+        "customDate": "1984-02-04T23:59:00+08:00"
+      },
+      "stripped": {
+        "originalName": "风水涣",
+        "changedName": "坎为水",
+        "interName": "山雷颐",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "mainHexagram": {
+          "name": "风水涣",
+          "symbol": "☴☵",
+          "upper": "巽",
+          "lower": "坎",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "用拯马壮，吉",
+            "涣奔其机，悔亡",
+            "涣其躬，无悔",
+            "涣其群，元吉",
+            "涣汗其大号",
+            "涣其血去逖出"
+          ],
+          "movingYaoCi": "涣其血去逖出"
+        },
+        "changedHexagram": {
+          "name": "坎为水",
+          "symbol": "☵☵",
+          "upper": "坎",
+          "lower": "坎",
+          "description": "习坎，有孚，维心亨",
+          "yaoCi": [
+            "习坎，入于坎窞，凶",
+            "坎有险，求小得",
+            "来之坎坎，险且枕，入于坎窞，勿用",
+            "樽酒簋贰，用缶，纳约自牖，终无咎",
+            "坎不盈，祗既平，无咎",
+            "系用徽纆，寘于丛棘，三岁不得，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "山雷颐",
+          "symbol": "☶☳",
+          "upper": "艮",
+          "lower": "震",
+          "description": "贞吉，观颐",
+          "yaoCi": [
+            "舍尔灵龟，观我朵颐",
+            "颠颐，拂经",
+            "拂颐，贞凶",
+            "颠颐，吉",
+            "拂经，居贞吉",
+            "由颐，厉吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "休",
+          "yongSeasonState": "旺",
+          "inter1Relation": "原体生体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "先难后易",
+            "summary": "初始受制或多周折，中后程得生助转顺，终成吉局"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为11，只作取数来源旁证，不换算绝对日期",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲子",
+          "month": "丙寅",
+          "day": "己巳",
+          "hour": "甲子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "子",
+          "yearZhiIndex": 1,
+          "month": 1,
+          "day": 3,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 5,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1984-02-04T15:59:00.000Z",
+          "inputHash": "1c6c6a256d475882",
+          "resultId": "meihua:6fc97a79e5fc3dd8"
+        }
+      }
+    },
+    "edge-05-far-future": {
+      "input": {
+        "customDate": "2033-12-31T23:50:00+08:00"
+      },
+      "stripped": {
+        "originalName": "山地剥",
+        "changedName": "坤为地",
+        "interName": "坤为地",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ],
+          "movingYaoCi": "硕果不食，君子得舆"
+        },
+        "changedHexagram": {
+          "name": "坤为地",
+          "symbol": "☷☷",
+          "upper": "坤",
+          "lower": "坤",
+          "description": "元亨，利牝马之贞",
+          "yaoCi": [
+            "履霜，坚冰至",
+            "直方大，不习无不利",
+            "含章可贞，或从王事，无成有终",
+            "括囊，无咎无誉",
+            "黄裳，元吉",
+            "龙战于野，其血玄黄"
+          ],
+          "yongCi": "利永贞"
+        },
+        "interHexagram": {
+          "name": "坤为地",
+          "symbol": "☷☷",
+          "upper": "坤",
+          "lower": "坤",
+          "description": "元亨，利牝马之贞",
+          "yaoCi": [
+            "履霜，坚冰至",
+            "直方大，不习无不利",
+            "含章可贞，或从王事，无成有终",
+            "括囊，无咎无誉",
+            "黄裳，元吉",
+            "龙战于野，其血玄黄"
+          ],
+          "yongCi": "利永贞"
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "子",
+          "monthElement": "水",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互与原体比和",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为15，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "癸丑",
+          "month": "甲子",
+          "day": "丁巳",
+          "hour": "庚子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "丑",
+          "yearZhiIndex": 2,
+          "month": 11,
+          "day": 10,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 7,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2033-12-31T15:50:00.000Z",
+          "inputHash": "43b04142ca046669",
+          "resultId": "meihua:c887f8c8801efa14"
+        }
+      }
+    },
+    "edge-06-mid-century": {
+      "input": {
+        "customDate": "1955-07-07T12:00:00+08:00"
+      },
+      "stripped": {
+        "originalName": "山水蒙",
+        "changedName": "山地剥",
+        "interName": "地雷复",
+        "tiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "yongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "changedYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "mainHexagram": {
+          "name": "山水蒙",
+          "symbol": "☶☵",
+          "upper": "艮",
+          "lower": "坎",
+          "description": "亨，匪我求童蒙",
+          "yaoCi": [
+            "发蒙，利用刑人",
+            "包蒙吉，纳妇吉",
+            "勿用取女，见金夫",
+            "困蒙，吝",
+            "童蒙，吉",
+            "击蒙，不利为寇"
+          ],
+          "movingYaoCi": "包蒙吉，纳妇吉"
+        },
+        "changedHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ]
+        },
+        "interHexagram": {
+          "name": "地雷复",
+          "symbol": "☷☳",
+          "upper": "坤",
+          "lower": "震",
+          "description": "亨，出入无疾",
+          "yaoCi": [
+            "不远复，无祗悔",
+            "休复，吉",
+            "频复，厉，无咎",
+            "中行独复",
+            "敦复，无悔",
+            "迷复，凶"
+          ]
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "午",
+          "monthElement": "火",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "相",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体旺克用，胜任其事，主导局势，操之在我",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为13，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "乙未",
+          "month": "壬午",
+          "day": "己巳",
+          "hour": "庚午"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "未",
+          "yearZhiIndex": 8,
+          "month": 5,
+          "day": 18,
+          "timeZhi": "午",
+          "timeZhiIndex": 7,
+          "upperTrigramIndex": 7,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1955-07-07T04:00:00.000Z",
+          "inputHash": "584204d6b52d8b47",
+          "resultId": "meihua:e77e03dfd3fead52"
+        }
+      }
+    },
+    "boundary-01-after-lichun-before-cny": {
+      "input": {
+        "customDate": "2024-02-05T09:16:00+08:00"
+      },
+      "stripped": {
+        "originalName": "泽地萃",
+        "changedName": "天地否",
+        "interName": "风山渐",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "interTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "泽地萃",
+          "symbol": "☱☷",
+          "upper": "兑",
+          "lower": "坤",
+          "description": "亨，王假有庙",
+          "yaoCi": [
+            "有孚不终，乃乱乃萃",
+            "引吉无咎",
+            "萃如嗟如，无攸利",
+            "大吉，无咎",
+            "萃有位，无咎",
+            "赍咨涕洟，无咎"
+          ],
+          "movingYaoCi": "赍咨涕洟，无咎"
+        },
+        "changedHexagram": {
+          "name": "天地否",
+          "symbol": "☰☷",
+          "upper": "乾",
+          "lower": "坤",
+          "description": "否之匪人，不利君子贞",
+          "yaoCi": [
+            "拔茅茹以其汇，贞吉亨",
+            "包承，小人吉，大人否亨",
+            "包羞",
+            "有命无咎，畴离祉",
+            "休否，大人吉",
+            "倾否，先否后喜"
+          ]
+        },
+        "interHexagram": {
+          "name": "风山渐",
+          "symbol": "☴☶",
+          "upper": "巽",
+          "lower": "艮",
+          "description": "女归吉，利贞",
+          "yaoCi": [
+            "鸿渐于干，小子厉",
+            "鸿渐于磐，饮食衎衎",
+            "鸿渐于陆，夫征不复",
+            "鸿渐于木，或得其桷",
+            "鸿渐于陵，妇三岁不孕",
+            "鸿渐于陆，其羽可用为仪"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "死",
+          "yongSeasonState": "囚",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体生用",
+          "changedTiYongRelation": "体生用",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "始终受制",
+            "summary": "初中终重重受克泄制约，阻力严峻，大宜退守蓄力"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为10，只作取数来源旁证，不换算绝对日期",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丙寅",
+          "day": "己亥",
+          "hour": "己巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 26,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-02-05T01:16:00.000Z",
+          "inputHash": "7089bfc94cbe95f3",
+          "resultId": "meihua:94def93228df9f3a"
+        }
+      }
+    },
+    "boundary-02-after-lichun-before-cny2": {
+      "input": {
+        "customDate": "2024-02-06T14:16:00+08:00"
+      },
+      "stripped": {
+        "originalName": "离为火",
+        "changedName": "火雷噬嗑",
+        "interName": "泽风大过",
+        "tiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "yongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "离为火",
+          "symbol": "☲☲",
+          "upper": "离",
+          "lower": "离",
+          "description": "利贞，亨，畜牝牛吉",
+          "yaoCi": [
+            "履错然，敬之无咎",
+            "黄离，元吉",
+            "日昃之离，不鼓缶而歌，则大耋之嗟，凶",
+            "突如其来如，焚如，死如，弃如",
+            "出涕沱若，戚嗟若，吉",
+            "王用出征，有嘉折首，获匪其丑，无咎"
+          ],
+          "movingYaoCi": "日昃之离，不鼓缶而歌，则大耋之嗟，凶"
+        },
+        "changedHexagram": {
+          "name": "火雷噬嗑",
+          "symbol": "☲☳",
+          "upper": "离",
+          "lower": "震",
+          "description": "亨，利用狱",
+          "yaoCi": [
+            "屦校灭趾，无咎",
+            "噬肤灭鼻，无咎",
+            "噬腊肉，遇毒",
+            "噬干胏，得金矢",
+            "噬干肉，得黄金",
+            "何校灭耳，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "泽风大过",
+          "symbol": "☱☴",
+          "upper": "兑",
+          "lower": "巽",
+          "description": "栋桡，利有攸往",
+          "yaoCi": [
+            "藉用白茅，无咎",
+            "枯杨生稊，老夫得其女妻",
+            "栋桡，凶",
+            "栋隆，吉",
+            "枯杨生华，老妇得其士夫",
+            "过涉灭顶，凶"
+          ]
+        },
+        "movingYao": {
+          "position": 3,
+          "description": "第3爻动",
+          "yaoName": "三爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "相",
+          "yongSeasonState": "相",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "用互生原体",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "三爻动，先观察由内向外过渡时的变化",
+            "上下卦数和为6，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丙寅",
+          "day": "庚子",
+          "hour": "癸未"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 27,
+          "timeZhi": "未",
+          "timeZhiIndex": 8,
+          "upperTrigramIndex": 3,
+          "lowerTrigramIndex": 3,
+          "movingYaoIndex": 3
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-02-06T06:16:00.000Z",
+          "inputHash": "edeef5169b3f69cd",
+          "resultId": "meihua:bb1dd8c898d954da"
+        }
+      }
+    },
+    "boundary-03-before-lichun-after-cny": {
+      "input": {
+        "customDate": "2023-01-25T12:00:00+08:00"
+      },
+      "stripped": {
+        "originalName": "天地否",
+        "changedName": "风地观",
+        "interName": "风山渐",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "interTiGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "天地否",
+          "symbol": "☰☷",
+          "upper": "乾",
+          "lower": "坤",
+          "description": "否之匪人，不利君子贞",
+          "yaoCi": [
+            "拔茅茹以其汇，贞吉亨",
+            "包承，小人吉，大人否亨",
+            "包羞",
+            "有命无咎，畴离祉",
+            "休否，大人吉",
+            "倾否，先否后喜"
+          ],
+          "movingYaoCi": "有命无咎，畴离祉"
+        },
+        "changedHexagram": {
+          "name": "风地观",
+          "symbol": "☴☷",
+          "upper": "巽",
+          "lower": "坤",
+          "description": "盥而不荐，有孚颙若",
+          "yaoCi": [
+            "童观，小人无咎",
+            "窥观，利女贞",
+            "观我生，进退",
+            "观国之光，利用宾于王",
+            "观我生，君子无咎",
+            "观其生，君子无咎"
+          ]
+        },
+        "interHexagram": {
+          "name": "风山渐",
+          "symbol": "☴☶",
+          "upper": "巽",
+          "lower": "艮",
+          "description": "女归吉，利贞",
+          "yaoCi": [
+            "鸿渐于干，小子厉",
+            "鸿渐于磐，饮食衎衎",
+            "鸿渐于陆，夫征不复",
+            "鸿渐于木，或得其桷",
+            "鸿渐于陵，妇三岁不孕",
+            "鸿渐于陆，其羽可用为仪"
+          ]
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "丑",
+          "monthElement": "土",
+          "tiYongRelation": "体生用",
+          "tiSeasonState": "旺",
+          "yongSeasonState": "相",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "用克体",
+          "changedTiYongRelation": "用克体",
+          "tiYongRaw": "体生用",
+          "tiYongSeasonEvaluation": "体生于用，泄我元气，防过度付出或破耗消耗",
+          "timelineTrend": {
+            "trend": "始终受制",
+            "summary": "初中终重重受克泄制约，阻力严峻，大宜退守蓄力"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为9，只作取数来源旁证，不换算绝对日期",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "壬寅",
+          "month": "癸丑",
+          "day": "癸未",
+          "hour": "戊午"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 1,
+          "day": 4,
+          "timeZhi": "午",
+          "timeZhiIndex": 7,
+          "upperTrigramIndex": 1,
+          "lowerTrigramIndex": 8,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2023-01-25T04:00:00.000Z",
+          "inputHash": "fca422c1eda1c009",
+          "resultId": "meihua:53623828c2713af6"
+        }
+      }
+    },
+    "boundary-04-lichun-exact-before": {
+      "input": {
+        "customDate": "2024-02-04T16:00:00+08:00"
+      },
+      "stripped": {
+        "originalName": "天泽履",
+        "changedName": "天雷无妄",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "interYongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "mainHexagram": {
+          "name": "天泽履",
+          "symbol": "☰☱",
+          "upper": "乾",
+          "lower": "兑",
+          "description": "履虎尾，不咥人，亨",
+          "yaoCi": [
+            "素履，往无咎",
+            "履道坦坦，幽人贞吉",
+            "眇能视，跛能履",
+            "履虎尾，愬愬终吉",
+            "夬履，贞厉",
+            "视履考祥，其旋元吉"
+          ],
+          "movingYaoCi": "履道坦坦，幽人贞吉"
+        },
+        "changedHexagram": {
+          "name": "天雷无妄",
+          "symbol": "☰☳",
+          "upper": "乾",
+          "lower": "震",
+          "description": "元亨利贞",
+          "yaoCi": [
+            "无妄，往吉",
+            "不耕获，不菑畬",
+            "无妄之灾",
+            "可贞，无咎",
+            "无妄之疾，勿药有喜",
+            "无妄，行有眚"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "冬",
+          "monthBranch": "丑",
+          "monthElement": "土",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "相",
+          "yongSeasonState": "相",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为3，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "癸卯",
+          "month": "乙丑",
+          "day": "戊戌",
+          "hour": "庚申"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 25,
+          "timeZhi": "申",
+          "timeZhiIndex": 9,
+          "upperTrigramIndex": 1,
+          "lowerTrigramIndex": 2,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-02-04T08:00:00.000Z",
+          "inputHash": "e75b2c036e06918e",
+          "resultId": "meihua:d6d7694832492d5c"
+        }
+      }
+    },
+    "boundary-05-lichun-exact-after": {
+      "input": {
+        "customDate": "2024-02-04T16:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "天泽履",
+        "changedName": "天雷无妄",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "interYongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "mainHexagram": {
+          "name": "天泽履",
+          "symbol": "☰☱",
+          "upper": "乾",
+          "lower": "兑",
+          "description": "履虎尾，不咥人，亨",
+          "yaoCi": [
+            "素履，往无咎",
+            "履道坦坦，幽人贞吉",
+            "眇能视，跛能履",
+            "履虎尾，愬愬终吉",
+            "夬履，贞厉",
+            "视履考祥，其旋元吉"
+          ],
+          "movingYaoCi": "履道坦坦，幽人贞吉"
+        },
+        "changedHexagram": {
+          "name": "天雷无妄",
+          "symbol": "☰☳",
+          "upper": "乾",
+          "lower": "震",
+          "description": "元亨利贞",
+          "yaoCi": [
+            "无妄，往吉",
+            "不耕获，不菑畬",
+            "无妄之灾",
+            "可贞，无咎",
+            "无妄之疾，勿药有喜",
+            "无妄，行有眚"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 2,
+          "description": "第2爻动",
+          "yaoName": "二爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "囚",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "用互克原体",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "二爻动，先观察内部配合与近端条件的变化",
+            "上下卦数和为3，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丙寅",
+          "day": "戊戌",
+          "hour": "庚申"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "卯",
+          "yearZhiIndex": 4,
+          "month": 12,
+          "day": 25,
+          "timeZhi": "申",
+          "timeZhiIndex": 9,
+          "upperTrigramIndex": 1,
+          "lowerTrigramIndex": 2,
+          "movingYaoIndex": 2
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-02-04T08:30:00.000Z",
+          "inputHash": "f535c06926f0b0ba",
+          "resultId": "meihua:c17934cd3851e219"
+        }
+      }
+    },
+    "hour-01-wei-pure": {
+      "input": {
+        "customDate": "2024-06-01T13:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "兑为泽",
+        "changedName": "天泽履",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedYongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "兑为泽",
+          "symbol": "☱☱",
+          "upper": "兑",
+          "lower": "兑",
+          "description": "亨，利贞",
+          "yaoCi": [
+            "和兑，吉",
+            "孚兑，吉，悔亡",
+            "来兑，凶",
+            "商兑，未宁，介疾有喜",
+            "孚于剥，有厉",
+            "引兑"
+          ],
+          "movingYaoCi": "引兑"
+        },
+        "changedHexagram": {
+          "name": "天泽履",
+          "symbol": "☰☱",
+          "upper": "乾",
+          "lower": "兑",
+          "description": "履虎尾，不咥人，亨",
+          "yaoCi": [
+            "素履，往无咎",
+            "履道坦坦，幽人贞吉",
+            "眇能视，跛能履",
+            "履虎尾，愬愬终吉",
+            "夬履，贞厉",
+            "视履考祥，其旋元吉"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "死",
+          "yongSeasonState": "死",
+          "inter1Relation": "体互克原体",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为4，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "己巳",
+          "day": "丙申",
+          "hour": "乙未"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 4,
+          "day": 25,
+          "timeZhi": "未",
+          "timeZhiIndex": 8,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 2,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-06-01T05:30:00.000Z",
+          "inputHash": "24397c79bf524e9b",
+          "resultId": "meihua:c4935daad182c398"
+        }
+      }
+    },
+    "hour-02-wei-pure2": {
+      "input": {
+        "customDate": "2024-06-01T14:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "兑为泽",
+        "changedName": "天泽履",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedYongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "兑为泽",
+          "symbol": "☱☱",
+          "upper": "兑",
+          "lower": "兑",
+          "description": "亨，利贞",
+          "yaoCi": [
+            "和兑，吉",
+            "孚兑，吉，悔亡",
+            "来兑，凶",
+            "商兑，未宁，介疾有喜",
+            "孚于剥，有厉",
+            "引兑"
+          ],
+          "movingYaoCi": "引兑"
+        },
+        "changedHexagram": {
+          "name": "天泽履",
+          "symbol": "☰☱",
+          "upper": "乾",
+          "lower": "兑",
+          "description": "履虎尾，不咥人，亨",
+          "yaoCi": [
+            "素履，往无咎",
+            "履道坦坦，幽人贞吉",
+            "眇能视，跛能履",
+            "履虎尾，愬愬终吉",
+            "夬履，贞厉",
+            "视履考祥，其旋元吉"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "死",
+          "yongSeasonState": "死",
+          "inter1Relation": "体互克原体",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为4，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "己巳",
+          "day": "丙申",
+          "hour": "乙未"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 4,
+          "day": 25,
+          "timeZhi": "未",
+          "timeZhiIndex": 8,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 2,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-06-01T06:30:00.000Z",
+          "inputHash": "663b75e9b8c1d4fc",
+          "resultId": "meihua:28cde477320f09a5"
+        }
+      }
+    },
+    "hour-03-zi-early": {
+      "input": {
+        "customDate": "2024-06-01T00:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "泽火革",
+        "changedName": "雷火丰",
+        "interName": "天风姤",
+        "tiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "interYongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "mainHexagram": {
+          "name": "泽火革",
+          "symbol": "☱☲",
+          "upper": "兑",
+          "lower": "离",
+          "description": "己日乃孚，元亨利贞",
+          "yaoCi": [
+            "巩用黄牛之革",
+            "己日乃革之，征吉",
+            "征凶，贞厉",
+            "悔亡，有孚改命",
+            "大人虎变，未占有孚",
+            "君子豹变，小人革面"
+          ],
+          "movingYaoCi": "大人虎变，未占有孚"
+        },
+        "changedHexagram": {
+          "name": "雷火丰",
+          "symbol": "☳☲",
+          "upper": "震",
+          "lower": "离",
+          "description": "亨，王假之",
+          "yaoCi": [
+            "遇其配主，虽旬无咎",
+            "丰其蔀，日中见斗",
+            "丰其沛，日中见沬",
+            "丰其蔀，日中见斗，遇其夷主",
+            "来章，有庆誉",
+            "丰其屋，蔀其家"
+          ]
+        },
+        "interHexagram": {
+          "name": "天风姤",
+          "symbol": "☰☴",
+          "upper": "乾",
+          "lower": "巽",
+          "description": "女壮，勿用取女",
+          "yaoCi": [
+            "系于金柅，贞吉",
+            "包有鱼，无咎",
+            "臀无肤，其行次且",
+            "包无鱼，起凶",
+            "以杞包瓜",
+            "姤其角，吝"
+          ]
+        },
+        "movingYao": {
+          "position": 5,
+          "description": "第5爻动",
+          "yaoName": "五爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "旺",
+          "yongSeasonState": "死",
+          "inter1Relation": "体互生原体",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体旺克用，胜任其事，主导局势，操之在我",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "五爻动，先观察核心决策与主导条件的变化",
+            "上下卦数和为5，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "己巳",
+          "day": "丙申",
+          "hour": "戊子"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 4,
+          "day": 25,
+          "timeZhi": "子",
+          "timeZhiIndex": 1,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 3,
+          "movingYaoIndex": 5
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-05-31T16:30:00.000Z",
+          "inputHash": "9d92cac46feaf340",
+          "resultId": "meihua:5552cb507d944d8b"
+        }
+      }
+    },
+    "hour-04-hai-late": {
+      "input": {
+        "customDate": "2024-06-01T22:30:00+08:00"
+      },
+      "stripped": {
+        "originalName": "泽水困",
+        "changedName": "坎为水",
+        "interName": "风火家人",
+        "tiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "yongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedTiGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "mainHexagram": {
+          "name": "泽水困",
+          "symbol": "☱☵",
+          "upper": "兑",
+          "lower": "坎",
+          "description": "亨，贞，大人吉",
+          "yaoCi": [
+            "臀困于株木，入于幽谷",
+            "困于酒食，朱绂方来",
+            "困于石，据于蒺藜",
+            "来徐徐，困于金车",
+            "劓刖，困于赤绂",
+            "困于葛藟，于臲卼"
+          ],
+          "movingYaoCi": "来徐徐，困于金车"
+        },
+        "changedHexagram": {
+          "name": "坎为水",
+          "symbol": "☵☵",
+          "upper": "坎",
+          "lower": "坎",
+          "description": "习坎，有孚，维心亨",
+          "yaoCi": [
+            "习坎，入于坎窞，凶",
+            "坎有险，求小得",
+            "来之坎坎，险且枕，入于坎窞，勿用",
+            "樽酒簋贰，用缶，纳约自牖，终无咎",
+            "坎不盈，祗既平，无咎",
+            "系用徽纆，寘于丛棘，三岁不得，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "风火家人",
+          "symbol": "☴☲",
+          "upper": "巽",
+          "lower": "离",
+          "description": "利女贞",
+          "yaoCi": [
+            "闲有家，悔亡",
+            "无攸遂，在中馈",
+            "家人嗃嗃，悔厉吉",
+            "富家，大吉",
+            "王假有家，勿恤",
+            "有孚威如，终吉"
+          ]
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "用生体",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "死",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体生用互",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "用生体",
+          "tiYongSeasonEvaluation": "用生体，略得外力照拂，助力虽浅亦可受益",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为8，只作取数来源旁证，不换算绝对日期",
+            "用生体，外部条件对体卦有生扶，可观察助力实际出现时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "己巳",
+          "day": "丙申",
+          "hour": "己亥"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "年月日时起卦法",
+          "methodKey": "time",
+          "yearZhi": "辰",
+          "yearZhiIndex": 5,
+          "month": 4,
+          "day": 25,
+          "timeZhi": "亥",
+          "timeZhiIndex": 12,
+          "upperTrigramIndex": 2,
+          "lowerTrigramIndex": 6,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-06-01T14:30:00.000Z",
+          "inputHash": "a225751ea5fa859a",
+          "resultId": "meihua:6c5b058aa3bc923d"
+        }
+      }
+    },
+    "number-01": {
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 78
+        }
+      },
+      "stripped": {
+        "originalName": "水雷屯",
+        "changedName": "风雷益",
+        "interName": "山地剥",
+        "tiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "yongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "changedTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "changedYongGua": {
+          "name": "巽",
+          "element": "木",
+          "nature": "风"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "mainHexagram": {
+          "name": "水雷屯",
+          "symbol": "☵☳",
+          "upper": "坎",
+          "lower": "震",
+          "description": "元亨利贞，勿用有攸往",
+          "yaoCi": [
+            "磐桓，利居贞",
+            "屯如邅如，乘马班如",
+            "即鹿无虞",
+            "乘马班如，求婚媾",
+            "屯其膏，小贞吉",
+            "乘马班如，泣血涟如"
+          ],
+          "movingYaoCi": "乘马班如，泣血涟如"
+        },
+        "changedHexagram": {
+          "name": "风雷益",
+          "symbol": "☴☳",
+          "upper": "巽",
+          "lower": "震",
+          "description": "利有攸往，利涉大川",
+          "yaoCi": [
+            "利用为大作，元吉",
+            "或益之十朋之龟",
+            "益之用凶事，无咎",
+            "中行告公从",
+            "有孚惠心，勿问元吉",
+            "莫益之，或击之"
+          ]
+        },
+        "interHexagram": {
+          "name": "山地剥",
+          "symbol": "☶☷",
+          "upper": "艮",
+          "lower": "坤",
+          "description": "不利有攸往",
+          "yaoCi": [
+            "剥床以足，蔑贞凶",
+            "剥床以辨，蔑贞凶",
+            "剥之，无咎",
+            "剥床以肤，凶",
+            "贯鱼，以宫人宠",
+            "硕果不食，君子得舆"
+          ]
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "卯",
+          "monthElement": "木",
+          "tiYongRelation": "用生体",
+          "tiSeasonState": "旺",
+          "yongSeasonState": "休",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "用生体",
+          "tiYongSeasonEvaluation": "用生体，略得外力照拂，助力虽浅亦可受益",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为10，只作取数来源旁证，不换算绝对日期",
+            "用生体，外部条件对体卦有生扶，可观察助力实际出现时的进展",
+            "体卦旺相，应期快于常规"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丁卯",
+          "day": "戊寅",
+          "hour": "丁巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "数字起卦法",
+          "methodKey": "number",
+          "number": 78,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "totalWithTime": 84,
+          "upperTrigramIndex": 6,
+          "lowerTrigramIndex": 4,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-03-15T02:30:00.000Z",
+          "inputHash": "68a798dfdd9ac0b5",
+          "resultId": "meihua:ff920325c47707f2"
+        }
+      }
+    },
+    "number-02": {
+      "input": {
+        "customDate": "2024-03-15T10:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 100
+        }
+      },
+      "stripped": {
+        "originalName": "雷泽归妹",
+        "changedName": "地泽临",
+        "interName": "水火既济",
+        "tiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "yongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "changedTiGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "changedYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interTiGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "interYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "mainHexagram": {
+          "name": "雷泽归妹",
+          "symbol": "☳☱",
+          "upper": "震",
+          "lower": "兑",
+          "description": "征凶，无攸利",
+          "yaoCi": [
+            "归妹以娣",
+            "眇能视，利幽人之贞",
+            "归妹以须",
+            "归妹愆期",
+            "帝乙归妹",
+            "女承筐无实"
+          ],
+          "movingYaoCi": "归妹愆期"
+        },
+        "changedHexagram": {
+          "name": "地泽临",
+          "symbol": "☷☱",
+          "upper": "坤",
+          "lower": "兑",
+          "description": "元亨利贞，至于八月有凶",
+          "yaoCi": [
+            "咸临，贞吉",
+            "咸临，吉，无不利",
+            "甘临，无攸利",
+            "至临，无咎",
+            "知临，大君之宜，吉",
+            "敦临，吉，无咎"
+          ]
+        },
+        "interHexagram": {
+          "name": "水火既济",
+          "symbol": "☵☲",
+          "upper": "坎",
+          "lower": "离",
+          "description": "亨小，利贞",
+          "yaoCi": [
+            "曳其轮，濡其尾，无咎",
+            "妇丧其茀，勿逐，七日得",
+            "高宗伐鬼方，三年克之",
+            "繻有衣袽，终日戒",
+            "东邻杀牛，不如西邻之禴祭，实受其福",
+            "濡其首，厉"
+          ]
+        },
+        "movingYao": {
+          "position": 4,
+          "description": "第4爻动",
+          "yaoName": "四爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "卯",
+          "monthElement": "木",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "囚",
+          "yongSeasonState": "旺",
+          "inter1Relation": "体互克原体",
+          "inter2Relation": "原体生用互",
+          "changedRelation": "用生体",
+          "changedTiYongRelation": "用生体",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体虽克用但自身气衰，勉力支撑，防劳而少功",
+          "timelineTrend": {
+            "trend": "中途多阻",
+            "summary": "起步与结局尚可，惟中途互卦见克制，过程中须防突发变故"
+          },
+          "yingQi": [
+            "四爻动，先观察外部环境开始介入时的变化",
+            "上下卦数和为6，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "甲辰",
+          "month": "丁卯",
+          "day": "戊寅",
+          "hour": "丁巳"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "数字起卦法",
+          "methodKey": "number",
+          "number": 100,
+          "timeZhi": "巳",
+          "timeZhiIndex": 6,
+          "totalWithTime": 106,
+          "upperTrigramIndex": 4,
+          "lowerTrigramIndex": 2,
+          "movingYaoIndex": 4
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2024-03-15T02:30:00.000Z",
+          "inputHash": "c4e1244874897e83",
+          "resultId": "meihua:4050fb7b8b501c2d"
+        }
+      }
+    },
+    "number-03": {
+      "input": {
+        "customDate": "2000-02-05T20:00:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 16
+        }
+      },
+      "stripped": {
+        "originalName": "地火明夷",
+        "changedName": "地雷复",
+        "interName": "雷水解",
+        "tiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "yongGua": {
+          "name": "离",
+          "element": "火",
+          "nature": "火"
+        },
+        "changedTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "changedYongGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "interYongGua": {
+          "name": "坎",
+          "element": "水",
+          "nature": "水"
+        },
+        "mainHexagram": {
+          "name": "地火明夷",
+          "symbol": "☷☲",
+          "upper": "坤",
+          "lower": "离",
+          "description": "利艰贞",
+          "yaoCi": [
+            "明夷于飞，垂其翼",
+            "明夷，夷于左股",
+            "明夷于南狩",
+            "入于左腹，获明夷之心",
+            "箕子之明夷，利贞",
+            "不明晦，初登于天"
+          ],
+          "movingYaoCi": "明夷于南狩"
+        },
+        "changedHexagram": {
+          "name": "地雷复",
+          "symbol": "☷☳",
+          "upper": "坤",
+          "lower": "震",
+          "description": "亨，出入无疾",
+          "yaoCi": [
+            "不远复，无祗悔",
+            "休复，吉",
+            "频复，厉，无咎",
+            "中行独复",
+            "敦复，无悔",
+            "迷复，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "雷水解",
+          "symbol": "☳☵",
+          "upper": "震",
+          "lower": "坎",
+          "description": "利西南，无所往",
+          "yaoCi": [
+            "无咎",
+            "田获三狐，得黄矢",
+            "负且乘，致寇至",
+            "解而拇，朋至斯孚",
+            "君子维有解，吉",
+            "公用射隼于高墉之上"
+          ]
+        },
+        "movingYao": {
+          "position": 3,
+          "description": "第3爻动",
+          "yaoName": "三爻"
+        },
+        "analysis": {
+          "season": "春",
+          "monthBranch": "寅",
+          "monthElement": "木",
+          "tiYongRelation": "用生体",
+          "tiSeasonState": "死",
+          "yongSeasonState": "相",
+          "inter1Relation": "体互克原体",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "用克体",
+          "changedTiYongRelation": "用克体",
+          "tiYongRaw": "用生体",
+          "tiYongSeasonEvaluation": "用旺生体，外力生扶充沛，贵人相助，大吉之象",
+          "timelineTrend": {
+            "trend": "先顺后阻",
+            "summary": "起步顺遂得利，中后程克泄交加阻力渐显，防后继乏力"
+          },
+          "yingQi": [
+            "三爻动，先观察由内向外过渡时的变化",
+            "上下卦数和为11，只作取数来源旁证，不换算绝对日期",
+            "用生体，外部条件对体卦有生扶，可观察助力实际出现时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚辰",
+          "month": "戊寅",
+          "day": "癸巳",
+          "hour": "壬戌"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "数字起卦法",
+          "methodKey": "number",
+          "number": 16,
+          "timeZhi": "戌",
+          "timeZhiIndex": 11,
+          "totalWithTime": 27,
+          "upperTrigramIndex": 8,
+          "lowerTrigramIndex": 3,
+          "movingYaoIndex": 3
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2000-02-05T12:00:00.000Z",
+          "inputHash": "cf1fd1d22d920d89",
+          "resultId": "meihua:b43c5f6ed2bb83c2"
+        }
+      }
+    },
+    "number-04-large": {
+      "input": {
+        "customDate": "1990-05-12T07:30:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 9007199254740991
+        }
+      },
+      "stripped": {
+        "originalName": "山雷颐",
+        "changedName": "地雷复",
+        "interName": "坤为地",
+        "tiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "yongGua": {
+          "name": "艮",
+          "element": "土",
+          "nature": "山"
+        },
+        "changedTiGua": {
+          "name": "震",
+          "element": "木",
+          "nature": "雷"
+        },
+        "changedYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interTiGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "interYongGua": {
+          "name": "坤",
+          "element": "土",
+          "nature": "地"
+        },
+        "mainHexagram": {
+          "name": "山雷颐",
+          "symbol": "☶☳",
+          "upper": "艮",
+          "lower": "震",
+          "description": "贞吉，观颐",
+          "yaoCi": [
+            "舍尔灵龟，观我朵颐",
+            "颠颐，拂经",
+            "拂颐，贞凶",
+            "颠颐，吉",
+            "拂经，居贞吉",
+            "由颐，厉吉"
+          ],
+          "movingYaoCi": "由颐，厉吉"
+        },
+        "changedHexagram": {
+          "name": "地雷复",
+          "symbol": "☷☳",
+          "upper": "坤",
+          "lower": "震",
+          "description": "亨，出入无疾",
+          "yaoCi": [
+            "不远复，无祗悔",
+            "休复，吉",
+            "频复，厉，无咎",
+            "中行独复",
+            "敦复，无悔",
+            "迷复，凶"
+          ]
+        },
+        "interHexagram": {
+          "name": "坤为地",
+          "symbol": "☷☷",
+          "upper": "坤",
+          "lower": "坤",
+          "description": "元亨，利牝马之贞",
+          "yaoCi": [
+            "履霜，坚冰至",
+            "直方大，不习无不利",
+            "含章可贞，或从王事，无成有终",
+            "括囊，无咎无誉",
+            "黄裳，元吉",
+            "龙战于野，其血玄黄"
+          ],
+          "yongCi": "利永贞"
+        },
+        "movingYao": {
+          "position": 6,
+          "description": "第6爻动",
+          "yaoName": "上爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "巳",
+          "monthElement": "火",
+          "tiYongRelation": "体克用",
+          "tiSeasonState": "休",
+          "yongSeasonState": "相",
+          "inter1Relation": "原体克体互",
+          "inter2Relation": "原体克用互",
+          "changedRelation": "体克用",
+          "changedTiYongRelation": "体克用",
+          "tiYongRaw": "体克用",
+          "tiYongSeasonEvaluation": "体虽克用但自身气衰，勉力支撑，防劳而少功",
+          "timelineTrend": {
+            "trend": "平稳演进",
+            "summary": "体用互变各有所制，局势循序渐进，随事态应时权变"
+          },
+          "yingQi": [
+            "上爻动，先观察事情末端、退出或重新定局的变化",
+            "上下卦数和为11，只作取数来源旁证，不换算绝对日期",
+            "体克用，体卦能够制约事项，但须核验投入和消耗是否可承受",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "庚午",
+          "month": "辛巳",
+          "day": "丁丑",
+          "hour": "甲辰"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 5,
+            "yaoType": "阴",
+            "isChanging": false,
+            "tiYong": "用"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "用"
+          }
+        ],
+        "calculation": {
+          "method": "数字起卦法",
+          "methodKey": "number",
+          "number": 9007199254740991,
+          "timeZhi": "辰",
+          "timeZhiIndex": 5,
+          "totalWithTime": 9007199254740996,
+          "upperTrigramIndex": 7,
+          "lowerTrigramIndex": 4,
+          "movingYaoIndex": 6
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "1990-05-11T23:30:00.000Z",
+          "inputHash": "71c9513b29a738d2",
+          "resultId": "meihua:6960de33d4aff26c"
+        }
+      }
+    },
+    "number-05-small": {
+      "input": {
+        "customDate": "2023-06-08T14:20:00+08:00",
+        "settings": {
+          "method": "number",
+          "number": 1
+        }
+      },
+      "stripped": {
+        "originalName": "乾为天",
+        "changedName": "天泽履",
+        "interName": "乾为天",
+        "tiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "yongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "changedYongGua": {
+          "name": "兑",
+          "element": "金",
+          "nature": "泽"
+        },
+        "interTiGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "interYongGua": {
+          "name": "乾",
+          "element": "金",
+          "nature": "天"
+        },
+        "mainHexagram": {
+          "name": "乾为天",
+          "symbol": "☰☰",
+          "upper": "乾",
+          "lower": "乾",
+          "description": "元亨利贞",
+          "yaoCi": [
+            "潜龙勿用",
+            "见龙在田，利见大人",
+            "君子终日乾乾，夕惕若厉，无咎",
+            "或跃在渊，无咎",
+            "飞龙在天，利见大人",
+            "亢龙有悔"
+          ],
+          "movingYaoCi": "君子终日乾乾，夕惕若厉，无咎",
+          "yongCi": "见群龙无首，吉"
+        },
+        "changedHexagram": {
+          "name": "天泽履",
+          "symbol": "☰☱",
+          "upper": "乾",
+          "lower": "兑",
+          "description": "履虎尾，不咥人，亨",
+          "yaoCi": [
+            "素履，往无咎",
+            "履道坦坦，幽人贞吉",
+            "眇能视，跛能履",
+            "履虎尾，愬愬终吉",
+            "夬履，贞厉",
+            "视履考祥，其旋元吉"
+          ]
+        },
+        "interHexagram": {
+          "name": "乾为天",
+          "symbol": "☰☰",
+          "upper": "乾",
+          "lower": "乾",
+          "description": "元亨利贞",
+          "yaoCi": [
+            "潜龙勿用",
+            "见龙在田，利见大人",
+            "君子终日乾乾，夕惕若厉，无咎",
+            "或跃在渊，无咎",
+            "飞龙在天，利见大人",
+            "亢龙有悔"
+          ],
+          "yongCi": "见群龙无首，吉"
+        },
+        "movingYao": {
+          "position": 3,
+          "description": "第3爻动",
+          "yaoName": "三爻"
+        },
+        "analysis": {
+          "season": "夏",
+          "monthBranch": "午",
+          "monthElement": "火",
+          "tiYongRelation": "体用比和",
+          "tiSeasonState": "死",
+          "yongSeasonState": "死",
+          "inter1Relation": "体互与原体比和",
+          "inter2Relation": "用互与原体比和",
+          "changedRelation": "体用比和",
+          "changedTiYongRelation": "体用比和",
+          "tiYongRaw": "比和",
+          "tiYongSeasonEvaluation": "体用比和，同声相应，百事顺遂无逆",
+          "timelineTrend": {
+            "trend": "始末顺畅",
+            "summary": "事之初中终三阶段皆得生扶比和，全盘通畅无大碍"
+          },
+          "yingQi": [
+            "三爻动，先观察由内向外过渡时的变化",
+            "上下卦数和为2，只作取数来源旁证，不换算绝对日期",
+            "体用比和，关系同气，可优先观察条件同步时的进展",
+            "体卦休囚，应期迟缓"
+          ]
+        },
+        "ganzhi": {
+          "year": "癸卯",
+          "month": "戊午",
+          "day": "丁酉",
+          "hour": "丁未"
+        },
+        "yaosDetail": [
+          {
+            "position": 1,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 2,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 3,
+            "yaoType": "阳",
+            "isChanging": true,
+            "tiYong": "体"
+          },
+          {
+            "position": 4,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 5,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          },
+          {
+            "position": 6,
+            "yaoType": "阳",
+            "isChanging": false,
+            "tiYong": "体"
+          }
+        ],
+        "calculation": {
+          "method": "数字起卦法",
+          "methodKey": "number",
+          "number": 1,
+          "timeZhi": "未",
+          "timeZhiIndex": 8,
+          "totalWithTime": 9,
+          "upperTrigramIndex": 1,
+          "lowerTrigramIndex": 1,
+          "movingYaoIndex": 3
+        },
+        "meta": {
+          "engineVersion": "0.2.2",
+          "schemaVersion": "1.0.0",
+          "algorithm": "meihua",
+          "calculatedAt": "2023-06-08T06:20:00.000Z",
+          "inputHash": "426ccb10c352a93d",
+          "resultId": "meihua:02db77857288635a"
+        }
+      }
+    }
+  }
+}
