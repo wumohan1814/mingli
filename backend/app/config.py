@@ -73,16 +73,8 @@ class Settings(BaseSettings):
     free_credit_on_register: int = Field(default=220, validation_alias="TAICHU_FREE_CREDIT")  # 新用户注册赠送余额（220 存储单位 = 22 元 = 22 万 tokens ≈ 9盘首跑 + 3次追问）
     recharge_rate: float = 10.0             # TAICHU_RECHARGE_RATE：1 元 = 10 存储单位（默认，后台 system_configs 可动态改）
 
-    # 金数据支付（充值表单 K4kgC7，小金商务助手；字段映射已锁定，见 docs/架构设计-支付系统-金数据.md §9.2）
-    jinshuju_form_url: str = "https://u2zi0lwm.jsjform.com/f/K4kgC7"   # 充值表单完整 URL（跳转地址）
-    jinshuju_form_token: str = "K4kgC7"                                # 表单 token（API 用）
-    jinshuju_access_token: str = ""          # TAICHU_JINSHUJU_ACCESS_TOKEN：个人 Access Token（敏感，只走 env/.env，默认空=不轮询）
-    jinshuju_api_base: str = "https://api.jinshuju.net/v1"             # 金数据开放 API v1 base
-    jinshuju_poll_interval: int = 300        # TAICHU_JINSHUJU_POLL_INTERVAL：轮询间隔（秒），默认 5 分钟
-    jinshuju_field_code: str = "field_1"     # 充值码字段
-    jinshuju_field_amount: str = "field_2"   # 商品档位字段（数组 [{name,number,price}]，取 number>0 的 price）
-    jinshuju_field_status: str = "field_3"   # 处理状态字段（预留回写「已处理」）
-    jinshuju_allow_mock: bool = True         # TAICHU_JINSHUJU_ALLOW_MOCK：自测允许 MOCK_PAY_SUCCESS；**生产设 false**
+    # 节146：金数据充值（jinshuju_* 9 项配置）已随付款充值链路整条拆除。
+    # 余额换算口径保留：credit_per_token / recharge_rate（见上）。
 
     # 限流
     login_max_failures: int = 5

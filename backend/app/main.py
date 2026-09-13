@@ -114,30 +114,8 @@ async def lifespan(app: FastAPI):
     except Exception:
         logger.warning("排盘常驻服务启动失败，将降级 subprocess 排盘", exc_info=True)
 
-    # 金数据充值 API 轮询（P2）：仅配置了 TAICHU_JINSHUJU_ACCESS_TOKEN 才启动，
-    # 避免未配置时空跑调 API 报错。coalesce + max_instances=1 防任务堆积。
-    scheduler = None
-    if settings.jinshuju_access_token:
-        from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-        from app.credits.poller import poll_and_recharge
-
-        scheduler = AsyncIOScheduler()
-        scheduler.add_job(
-            poll_and_recharge,
-            "interval",
-            seconds=settings.jinshuju_poll_interval,
-            id="jinshuju_poll",
-            coalesce=True,
-            max_instances=1,
-        )
-        scheduler.start()
-        logger.info(
-            "金数据充值轮询任务已启动 interval=%ss（配额内 12 次/小时）",
-            settings.jinshuju_poll_interval,
-        )
-    else:
-        logger.info("未配置 TAICHU_JINSHUJU_ACCESS_TOKEN，跳过金数据充值轮询")
+    # 节146：金数据充值轮询（jinshuju_poll）已随付款充值链路整条拆除——lifespan 不再挂任何
+    # 充值与到账轮询任务（余额/逐法扣费/后台调分保留，见 credits/service.py）。
 
     yield
 
@@ -150,10 +128,6 @@ async def lifespan(app: FastAPI):
         except asyncio.CancelledError:
             pass
         logger.info("记忆抽取 worker 协程已停止")
-
-    if scheduler is not None:
-        scheduler.shutdown(wait=False)
-        logger.info("金数据充值轮询任务已停止")
 
     if proc is not None:
         try:

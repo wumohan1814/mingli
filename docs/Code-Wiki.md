@@ -32,7 +32,7 @@
 | 产品形态 | H5 单页应用（免构建 CDN React） |
 | 核心能力 | 9 法命盘排盘 + 断前尘校验 + 多法综合预测 + 修正对话 |
 | 横向扩展 | 六爻/梅花/小六壬等临时起卦、塔罗、占星、MBTI、双人配对、起名 |
-| 变现 | 余额系统（按 LLM token 扣费）+ 金数据充值表单 |
+| 变现 | 余额系统（按 LLM token 扣费）；**节146 起无收款渠道**——新账号由后台开号赠送、余额由后台人工调分 |
 | AI 伙伴 | 太初先生 Agent（长期记忆 + 对话） |
 
 ### 核心设计理念
@@ -78,7 +78,7 @@ taichu/
 │   │   ├── routing/              # 阶段4 路由决策（零 LLM）
 │   │   ├── validation/           # 断前尘结果校验
 │   │   ├── compliance/           # 合规护栏（禁区词 / 免责声明）
-│   │   ├── credits/              # 余额系统（账户/流水/充值/轮询）
+│   │   ├── credits/              # 余额系统（账户/流水/扣费/标签；节146 已拆充值/轮询）
 │   │   ├── memory/               # AI 伙伴长期记忆
 │   │   ├── profile/              # 用户档案聚合
 │   │   ├── events/               # 埋点事件服务
@@ -159,8 +159,8 @@ taichu/
 4. `_recover_orphan_jobs()` 把残留 pending/running 的 job 置为 failed。
 5. 启动记忆抽取 worker（`memory_worker_loop` 协程）。
 6. 拉起常驻排盘 Node 服务（`paipan-node/server.mjs`，PID 记录）。
-7. 若配置了 `TAICHU_JINSHUJU_ACCESS_TOKEN`，启动 APScheduler 金数据充值轮询。
-8. **关停**：cancel 记忆 worker、stop scheduler、terminate Node 排盘进程。
+7. （**节146 已删除**：原「配置了 `TAICHU_JINSHUJU_ACCESS_TOKEN` 则启动 APScheduler 金数据充值轮询」——充值链路整条拆除，lifespan 不再挂任何定时任务）
+8. **关停**：cancel 记忆 worker、terminate Node 排盘进程。
 
 ### 请求处理流程
 
@@ -275,10 +275,10 @@ async def analyze(phase, slice_data, user_question="", calibration_feedback=None
 | 文件 | 职责 |
 |---|---|
 | `service.py` | 核心：`consume`（按 tokens 扣费，`delta = -ceil(tokens/1000)`）/ `recharge` / `check_balance` / `balance` / `transactions` / `manual_adjust`（后台元口径调整） |
-| `router.py` | 余额查询 / 流水 / 充值码核销 |
-| `codes.py` | 充值码生成与核销 |
-| `jinshuju.py` | 金数据充值表单 API 对接 |
-| `poller.py` | APScheduler 轮询金数据新提交，自动充值 |
+| `router.py` | 余额查询 / 流水（**节146：charge-code 端点已删除**） |
+| ~~`codes.py`~~ | ~~充值码生成与核销~~ **节146 已删除** |
+| ~~`jinshuju.py`~~ | ~~金数据充值表单 API 对接~~ **节146 已删除** |
+| ~~`poller.py`~~ | ~~APScheduler 轮询金数据新提交，自动充值~~ **节146 已删除** |
 | `labels.py` | 流水 ref → 中文标签映射（`METHOD_ZH` 等） |
 
 换算关系：**1 存储单位 = 1000 tokens**；**1 元 = 10 存储单位 = 10,000 tokens**。
@@ -344,7 +344,7 @@ SQLite 配置：WAL 模式 + busy_timeout 10s + foreign_keys ON（并发写安�
 | `RouteDecision` | route_decisions | 路由决策记录 |
 | `CreditAccount` | credit_accounts | 余额账户（balance / total_consumed / total_recharged） |
 | `CreditTransaction` | credit_transactions | 余额流水（delta / type / tokens / ref） |
-| `RechargeCode` | recharge_codes | 充值码（TC-XXXXXX，一次性） |
+| ~~`RechargeCode`~~ | ~~recharge_codes~~ | **节146 已删除模型并 DROP 表**（迁移 `data/migrations/analytics/0001_drop_recharge_codes.sql`） |
 | `SystemConfig` | system_configs | 动态系统配置（recharge_rate / free_credit_on_register） |
 | `Divination` | divinations | 临时起卦（method / seed_json / result_json / interpretation_json / focus_interpretations） |
 | `TarotReading` | tarot_readings | 塔罗抽牌记录 |
@@ -568,13 +568,13 @@ main.py
 | passlib[bcrypt] | 密码哈希（实际用 PBKDF2） | pip |
 | httpx | HTTP 客户端（LLM / Node 排盘） | pip |
 | lunar-python | 八字/大运/流年/神煞 | pip |
-| apscheduler | 金数据轮询定时任务 | pip |
+| apscheduler | **节146 后已无使用点**（原金数据轮询定时任务）；依赖暂留，`env_doctor` 仍校验其可导入 | pip |
 | pillow | 图片处理 | pip |
 | Node 22 | 排盘引擎子进程 | 系统 |
 | iztro (Node) | 紫微排盘 | paipan-node/node_modules |
 | mingyu-core (Node) | 占星/七政/奇门/五运六气/起卦 | paipan-node/vendor |
 | DeepSeek API | LLM 解读 | HTTPS |
-| 金数据 API | 充值表单 | HTTPS |
+| ~~金数据 API~~ | ~~充值表单~~ **节146 已整条拆除** | ~~HTTPS~~ |
 
 ### 提示词依赖
 
@@ -607,8 +607,7 @@ main.py
 | `TAICHU_JWT_SECRET` | change-me... | JWT 密钥（生产改随机 32 字节） |
 | `TAICHU_FREE_CREDIT` | 220 | 注册赠送余额（存储单位） |
 | `TAICHU_RECHARGE_RATE` | 10.0 | 1 元 = N 存储单位 |
-| `TAICHU_JINSHUJU_ACCESS_TOKEN` | "" | 金数据 token（空=不轮询） |
-| `TAICHU_JINSHUJU_ALLOW_MOCK` | true | 自测允许 mock 支付（生产 false） |
+| ~~`TAICHU_JINSHUJU_ACCESS_TOKEN`~~ / ~~`TAICHU_JINSHUJU_ALLOW_MOCK`~~ | —— | **节146 已整组删除**（`jinshuju_*` 9 项配置与对应 env 全部移除） |
 | `TAICHU_AGENT_TOKEN` | "" | Agent 运维 token（空=禁用 /admin/agent/*） |
 | `TAICHU_PAIPAN_NODE_URL` | http://127.0.0.1:9317 | 常驻排盘 Node 服务地址 |
 | `TAICHU_PAIPAN_MAX_CONCURRENCY` | 3 | 排盘并发上限 |
@@ -678,7 +677,7 @@ docker-compose up -d
 
 - LLM API Key 只允许来自 `TAICHU_LLM_API_KEY` 环境变量 / `backend/.env`，**严禁硬编码**。
 - JWT 密钥生产环境必须改随机 32 字节。
-- 金数据 `TAICHU_JINSHUJU_ALLOW_MOCK` 生产环境必须设 false。
+- ~~金数据 `TAICHU_JINSHUJU_ALLOW_MOCK` 生产环境必须设 false。~~ **节146 已拆除该链路，红线随之作废**（无支付、无 allow_mock 配置）。
 
 ### 前端红线
 

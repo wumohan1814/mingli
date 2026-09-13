@@ -253,126 +253,18 @@ function setPairAnalyzeOpener(fn) {
 function openPairAnalyze(opts) {
   if (pairAnalyzeOpener) pairAnalyzeOpener(opts || {});
 }
-// 充值链接：严禁前端硬编码；由后端/部署时注入 window.TAICHU_RECHARGE_URL。
-// 未注入时回退占位，保证按钮可点击不报错（待后端下发真实小鹅通链接）。
-const RECHARGE_FALLBACK = '/recharge';
-function getRechargeUrl() {
-  return typeof window !== 'undefined' && window.TAICHU_RECHARGE_URL || RECHARGE_FALLBACK;
-}
+// 节146：付款充值链路已整条拆除 —— 原「充值链接常量（RECHARGE_FALLBACK / getRechargeUrl）
+// + startRecharge() + 金数据到账轮询全套（RECHARGE_* 常量 / 定时器 / sessionStorage marker /
+// resumePendingRechargePoll）」与后端 POST /api/credits/charge-code 一并删除。
+// 余额查询、逐法扣费、余额↔积分换算、后台人工调分**不在本次范围**（保留）。
 
-// —— 充值（金数据表单）+ 到账轮询 ——
-// 后端 POST /api/credits/charge-code（需 JWT）→ {code:0, data:{code,url}}，url 即金数据充值表单；
-// GET /api/credits/balance → {code:0, data:{balance,...}}，用于轮询到账（到账并非实时，通常 1–5 分钟）。
-const RECHARGE_POLL_MS = 4000; // 每 4 秒查一次余额（3–5 秒区间）
-const RECHARGE_MAX_WAIT_MS = 10 * 60 * 1000; // 等待上限：10 分钟
-const RECHARGE_PENDING_KEY = 'taichu_pending_recharge';
-let rechargePollTimer = null;
-let rechargePollStartAt = 0;
-let rechargePreBalance = null;
-
-// 读当前余额（兼容双信封：data.balance 或顶层 balance）
+// 读当前余额（兼容双信封：data.balance 或顶层 balance）—— 余额胶囊与余额明细页共用，保留
 async function fetchCreditBalance() {
   const r = await api('/credits/balance');
   const b = r && r.data && r.data.balance != null ? r.data.balance : r ? r.balance : null;
   return b == null ? null : Number(b);
 }
 
-// 结束到账轮询并清掉「待确认充值」标记
-function stopRechargePoll() {
-  if (rechargePollTimer) {
-    clearInterval(rechargePollTimer);
-    rechargePollTimer = null;
-  }
-  try {
-    sessionStorage.removeItem(RECHARGE_PENDING_KEY);
-  } catch (e) {/* 忽略 */}
-}
-
-// 到账轮询：每 4 秒 GET /api/credits/balance；余额 > 充值前 → 到账提示；超过 10 分钟 → 放弃提示
-function startRechargePoll(preBalance, startAt) {
-  stopRechargePoll();
-  rechargePreBalance = preBalance == null ? null : Number(preBalance);
-  rechargePollStartAt = startAt || Date.now();
-  const tick = async () => {
-    if (Date.now() - rechargePollStartAt > RECHARGE_MAX_WAIT_MS) {
-      stopRechargePoll();
-      toast(TC_COPY.ui.balance['recharge-processing']);
-      return;
-    }
-    if (rechargePreBalance == null) return; // 未能取得充值前余额则只计时、不做增减判断
-    try {
-      const b = await fetchCreditBalance();
-      if (b != null && b > rechargePreBalance) {
-        stopRechargePoll();
-        toast(TC_COPY.ui.balance['recharge-ok']);
-      }
-    } catch (e) {/* 单次查询失败静默，下轮重试 */}
-  };
-  tick();
-  rechargePollTimer = setInterval(tick, RECHARGE_POLL_MS);
-}
-
-// 金数据表单整页跳转、用户返回本页（刷新/重开）后，凭 sessionStorage 标记续查到账
-function resumePendingRechargePoll() {
-  let marker = null;
-  try {
-    marker = JSON.parse(sessionStorage.getItem(RECHARGE_PENDING_KEY) || 'null');
-  } catch (e) {/* 忽略 */}
-  if (!marker) return;
-  if (marker.at && Date.now() - marker.at > RECHARGE_MAX_WAIT_MS) {
-    stopRechargePoll();
-    toast(TC_COPY.ui.balance['recharge-processing']);
-    return;
-  }
-  if (marker.pre != null) startRechargePoll(marker.pre, marker.at);
-}
-
-// 充值入口统一动作：POST /api/credits/charge-code 取 code+url → 记录充值前余额 → 打开金数据表单 → 轮询到账
-async function startRecharge() {
-  // 1) 记录充值前余额（失败不阻断充值流程）
-  let preBalance = null;
-  try {
-    preBalance = await fetchCreditBalance();
-  } catch (e) {/* 忽略 */}
-  // 2) 向后端换取本次充值 code 与金数据表单 url（双信封：code:0 时 data 内取值）
-  let payload = null;
-  try {
-    const res = await api('/credits/charge-code', {
-      method: 'POST'
-    });
-    payload = res && res.data || res || {};
-  } catch (e) {
-    toast(e && e.message ? e.message : TC_COPY.ui.balance['recharge-unavailable']);
-    return; // 失败态：仅提示，保持当前页面
-  }
-  const code = payload && payload.code != null ? payload.code : '';
-  const url = payload && payload.url ? payload.url : '';
-  if (!url) {
-    toast(TC_COPY.ui.balance['recharge-no-link']);
-    return;
-  }
-  // 3) 埋点
-  track('credit_recharge_start', {
-    code: String(code)
-  });
-  // 4) 记录「待确认充值」（sessionStorage：整页跳转后返回时据此续查，且 10 分钟窗口跨跳转保留）
-  try {
-    sessionStorage.setItem(RECHARGE_PENDING_KEY, JSON.stringify({
-      pre: preBalance,
-      at: Date.now()
-    }));
-  } catch (e) {/* 忽略 */}
-  // 5) 优先新标签打开表单（本页存活可持续轮询）；被拦截则同标签跳转，返回后由续查接管
-  const win = window.open(url, '_blank');
-  if (win) {
-    try {
-      win.opener = null;
-    } catch (e) {/* 忽略 */}
-    startRechargePoll(preBalance, Date.now());
-  } else {
-    window.location.href = url;
-  }
-}
 
 // 断前尘八法（轨道动画节点；节139：西占退出，节点名改为真实八法，原为 9 条装饰性名称）
 const DQC_METHODS = ['八字格局', '大运流年', '神煞纳音', '婚姻财运', '紫微斗数', '七政四余', '奇门终身', '五运六气'];
@@ -638,7 +530,8 @@ async function api(path, options = {}) {
   err.code = errBody && typeof errBody.code === 'number' ? errBody.code : null;
   err.status = r.status;
   err.payload = errBody;
-  // 统一拦截「余额不足」错误码，弹充值引导弹窗（由 App 注册 handler 渲染）
+  // 统一拦截「余额不足」错误码，弹余额不足提示弹窗（由 App 注册 handler 渲染；
+  // 节146 后不再引导充值——充值链路已拆除，弹窗保持中性提示）
   if (err.code === 5002 && creditInsuffHandler) creditInsuffHandler(errBody || {});
   throw err;
 }
@@ -997,7 +890,7 @@ function App() {
     }
     const isShare = parsed.page === 'mbti-share' || parsed.page === 'case-share';
     // BUG-011 + REQ-070：分享落地页（/mbti/share/{token}、/case/share/{token}）是公开免登录
-    // 入口 → 跳过本地 token 恢复：不进入「已登录自动进 cases」、不触发充值续查，内存会话保持空
+    // 入口 → 跳过本地 token 恢复：不进入「已登录自动进 cases」，内存会话保持空
     // （访客隔离）；localStorage 原样保留，离开分享页时再由 switchShareGuestSession 恢复。
     if (isShare) {
       token = '';
@@ -1011,7 +904,6 @@ function App() {
       token = saved;
       const savedR = localStorage.getItem('taichu_refresh_token');
       if (savedR) refreshToken = savedR;
-      resumePendingRechargePoll(); // 从金数据充值表单整页跳转返回后，续查到账
     }
     // REQ-080：深链/刷新直落模块功能页时同步模块与皮肤（口径同「模块下拉直达 / HUB 卡片」）
     const th = req080ThemeFor(parsed.page);

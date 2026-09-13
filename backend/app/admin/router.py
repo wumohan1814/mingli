@@ -55,7 +55,6 @@ from app.models import (
     Job,
     LoginAttempt,
     MethodResult,
-    RechargeCode,
     RefreshToken,
     RouteDecision,
     SystemConfig,
@@ -969,8 +968,8 @@ def delete_user(
     analytics 业务库删除范围（顺序不可乱，先子后父）：
       charts / method_results / calibrations / conversations / jobs /
       route_decisions（按该用户 cases 的 id 列表删）→ cases
-      → credit_transactions → credit_accounts → recharge_codes（user_id 有 FK，
-      不删会违反外键）→ refresh_tokens → login_attempts（按 username 匹配，
+      → credit_transactions → credit_accounts（节146：recharge_codes 表已 DROP，
+      原级联序列中的该表已移除）→ refresh_tokens → login_attempts（按 username 匹配，
       表无 user_id 列）→ users。
     注：本代码库暂无 register_limits 表（任务清单中的预留项），无需删除。
     feedback 库（taichu_feedback）Feedback 按 user_id 同删（跨库无 FK，best-effort）；
@@ -991,8 +990,8 @@ def delete_user(
         )
     # 2) cases 本身
     db.query(Case).filter_by(user_id=user_id).delete(synchronize_session=False)
-    # 3) 直接挂 users 的账户/流水/充值码/令牌（父键均为 users）
-    for model in (CreditTransaction, CreditAccount, RechargeCode, RefreshToken):
+    # 3) 直接挂 users 的账户/流水/令牌（父键均为 users；节146：recharge_codes 已摘除）
+    for model in (CreditTransaction, CreditAccount, RefreshToken):
         db.query(model).filter_by(user_id=user_id).delete(synchronize_session=False)
     # 4) login_attempts 按 username（该表只有 username 无 user_id）
     db.query(LoginAttempt).filter_by(username=username).delete(synchronize_session=False)
@@ -1581,8 +1580,8 @@ def delete_asset(
 # key PK / value / description / updated_by / updated_at）存后台可动态改的运营配置，
 # 种子键（recharge_rate / free_credit_on_register）由 database.ensure_schema 幂等
 # 初始化（首启取 config 默认 / env 覆盖值落库）。运行时读取点每次查表、无启动缓存，
-# PUT 后**立即生效无需重启**（recharge_rate 折算率的金数据充值读取点
-# app.credits.poller 已改为「查 system_configs，无则回退 settings」）。
+# PUT 后**立即生效无需重启**（节146 后 recharge_rate 只服务余额 ¥ 展示与换算，
+# 原金数据充值读取点 app.credits.poller 已整条拆除）。
 #
 # 写安全：PUT 只允许改白名单键（CONFIG_SPEC），按 key 类型校验 value，防任意键
 # 注入 / 脏值；GET 返回全量行。鉴权：viewer 可读、operator+ 可写（对齐提示词 /
@@ -1679,7 +1678,7 @@ def update_config(
     """更新运营配置（operator+，仅白名单键）：校验 → upsert system_configs 行
     （业务库）→ 审计 edit_config（运维库）。
 
-    写入即热生效：运行时读取点每次查表（如金数据轮询的 recharge_rate 折算率），
+    写入即热生效：运行时读取点每次查表（如 `recharge_rate` 余额 ¥ 折算率、`free_credit_on_register` 赠送量），
     无需重启。updated_by 记操作者（优先 admin 用户名，查不到回退 admin_id 字符串）。
     事务顺序：业务库 commit → 审计库 commit（沿袭 create_user 等既有模式）。
     """

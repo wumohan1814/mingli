@@ -191,7 +191,8 @@ function CreditBalance({
     "aria-label": TC_COPY.ui.balance.loading
   });
   const neg = balance == null || Number(balance) <= 0;
-  // 充值入口暂时隐藏（商户认证未完成）：仅保留余额胶囊展示与「查看余额明细」跳转，不再渲染「充值」链接
+  // 节146：充值入口已随付款充值链路整条拆除（不再有「充值」链接可隐藏，也无到账轮询）——
+  // 此处只保留余额胶囊展示与「查看余额明细」跳转
   return /*#__PURE__*/React.createElement("span", {
     className: "credit-balance-wrap"
   }, /*#__PURE__*/React.createElement("span", {
@@ -377,9 +378,7 @@ function MenuBalance({
     className: "mb-val"
   }, "¥", txt));
 }
-// 充值按钮组件已随充值入口一并隐藏（商户认证未完成）；恢复开放时按需重建：
-// 原实现为一个 btn btn-primary 的「充值」按钮（class 含 btn btn-primary，type=button），
-// onClick 缺省时调用 startRecharge()（charge-code 换金数据表单并轮询到账）。
+// 节146：原「充值按钮组件」占位注释已删除（付款充值链路整条拆除，不再恢复）。
 function CreditInsufficientModal({
   info,
   onClose
@@ -389,7 +388,7 @@ function CreditInsufficientModal({
   const nums = (String(detail).match(/\d+/g) || []).map(Number);
   const have = nums.length >= 2 ? nums[nums.length - 2] : null;
   const need = nums.length >= 2 ? nums[nums.length - 1] : null;
-  // 充值入口暂时隐藏：中性提示，不引导充值
+  // 节146：中性提示，不引导充值（充值链路已拆除）
   const body = need != null && have != null ? fmtTpl(UI_COPY.home['credit-need-have-tpl'], {
     need: (Number(need) / CREDIT_YUAN_RATE).toFixed(2),
     have: (Number(have) / CREDIT_YUAN_RATE).toFixed(2)
@@ -533,7 +532,7 @@ function PairModal({
         interpretation: (d && d.interpretation) || UI_COPY.pair['no-interpretation']
       });
     } catch (e) {
-      // 余额不足 5002：api() 已自动弹既有 creditInsuffHandler 充值引导，此处同文案展示
+      // 余额不足 5002：api() 已自动弹既有 creditInsuffHandler（节146 起为中性提示），此处同文案展示
       if (e && e.status === 401) {
         onClose();
         return;
@@ -703,7 +702,6 @@ function CreditTransactionsPage({
   }, []);
   const rate = Number(yuanRate) > 0 ? Number(yuanRate) : CREDIT_YUAN_RATE;
   const fmtYuan = pts => pts == null ? '—' : '¥' + (Number(pts) / rate).toFixed(2);
-  const enterBalance = useRef(null);
   const loadBalance = async () => {
     try {
       const r = await api('/credits/balance');
@@ -735,25 +733,6 @@ function CreditTransactionsPage({
     load(0, false);
   }, []);
 
-  // 从充值页返回后检测余额增加 → 到账提示
-  useEffect(() => {
-    enterBalance.current = balance;
-  }, [balance]);
-  useEffect(() => {
-    const onFocus = async () => {
-      try {
-        const r = await api('/credits/balance');
-        const b = r.data && r.data.balance != null ? r.data.balance : r.balance;
-        if (b != null && enterBalance.current != null && Number(b) > enterBalance.current) {
-          toast(TC_COPY.ui.balance['recharge-ok']);
-          setBalance(Number(b));
-          load(0, false);
-        }
-      } catch (_) {}
-    };
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
-  }, []);
   // REQ-063：后端流水每条已带中文 label（断前尘·八字格局 / 塔罗解读 / 追问 / 充值 等），
   // 列表直接取 it.label；typeText 仅作后端 label 缺失时的兜底，不再回退显示裸 ref / consume。
   const typeText = t => ({

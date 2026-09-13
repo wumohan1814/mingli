@@ -136,7 +136,7 @@ def ensure_schema() -> None:
     - divinations.focus_interpretations（REQ-075 六爻焦点详解缓存：老库补列，
       新库由 create_all 建全）
 
-    整张新表（如 credits 的 recharge_codes）不在此 ALTER：main.py lifespan 里
+    整张新表（如 agent_memories / case_share_links）不在此 ALTER：main.py lifespan 里
     `Base.metadata.create_all`（checkfirst=True）对老库/新库都幂等建缺表，本函数
     只需确保新模型已注册到 Base.metadata（app.models 被 import 即可）。
 

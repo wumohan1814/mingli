@@ -1,0 +1,17 @@
+-- 节146 · 拆除付款充值链路：物理删除充值码表
+-- 适用库：analytics（本地 backend/data/taichu_analytics.db；线上 /opt/taichu/data/taichu_analytics.db）
+-- 幂等：DROP TABLE IF EXISTS，可重复执行。
+--
+-- 执行前提（2026-09-14 已逐项核对，全仓无活引用）：
+--   ① 模型 app/models/analytics.py::RechargeCode 已删除（models/__init__.py 导入与 __all__ 同步移除）
+--   ② app/credits/codes.py（充值码生成/核销）已删除
+--   ③ app/credits/jinshuju.py + app/credits/poller.py（金数据客户端与轮询入账）已删除
+--   ④ 端点 POST /api/credits/charge-code 已删除；main.py lifespan 的 jinshuju_poll 定时任务已摘除
+--   ⑤ app/config.py 的 9 项 jinshuju_* 配置已删除
+--   ⑥ 后台删用户级联序列（admin/router.py）已移除该表
+--
+-- 用户拍板（2026-09-13）：选 B = 物理删除。充值从未真实开放，存量仅测试假数据。
+-- 保留白名单（**不许因此脚本误删**）：credit_accounts / credit_transactions（余额与逐法扣费）、
+--   system_configs.recharge_rate（余额 ¥ 换算）、labels.py 的 recharge / serial:{} 标签映射
+--   （库里已有 type=recharge 历史流水，删映射会让余额明细页出现裸 ref）。
+DROP TABLE IF EXISTS recharge_codes;

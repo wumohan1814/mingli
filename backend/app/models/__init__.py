@@ -2,7 +2,7 @@
 from app.models.analytics import (
     User, RefreshToken, LoginAttempt, Case, Chart,
     MethodResult, Calibration, Conversation, Job, RouteDecision,
-    CreditAccount, CreditTransaction, RechargeCode, SystemConfig,
+    CreditAccount, CreditTransaction, SystemConfig,
     RegisterLimit, Divination, TarotReading, AstrologyReading, MbtiResult,
     MbtiShareLink, PairReading, CaseShareLink, UserSetting,
     AgentMemory, AgentMemoryTask, AgentMessage,
@@ -21,7 +21,7 @@ from app.models.ops import (
 __all__ = [
     "User", "RefreshToken", "LoginAttempt", "Case", "Chart",
     "MethodResult", "Calibration", "Conversation", "Job", "RouteDecision",
-    "CreditAccount", "CreditTransaction", "RechargeCode", "SystemConfig",
+    "CreditAccount", "CreditTransaction", "SystemConfig",
     "RegisterLimit", "Divination", "TarotReading", "AstrologyReading", "MbtiResult",
     "MbtiShareLink", "PairReading", "CaseShareLink", "UserSetting",
     "AgentMemory", "AgentMemoryTask", "AgentMessage",

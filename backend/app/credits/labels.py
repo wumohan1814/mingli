@@ -13,8 +13,7 @@
   {label, case_name}，供 service.transactions 逐条附加。
 
 ref 现存格式（backend/app 逐法/即时扣费写死，见 app/jobs/orchestrator.py、
-app/api/cases.py、app/api/divination.py、app/api/tarot.py、app/api/astrology.py、
-app/credits/poller.py）：
+app/api/cases.py、app/api/divination.py、app/api/tarot.py、app/api/astrology.py）：
 
   job:{job_id}:{method_key}     断前尘/预测逐法扣费（前缀按 jobs.type 区分）
   revise:{case_id}              多轮修正/板块追问（追问）
@@ -25,7 +24,9 @@ app/credits/poller.py）：
   astrology:{id}                星座本命解读
   agent:{user_id}               太初先生对话（无档案，闲聊）
   agent:{user_id}:{case_id}     太初先生对话（选了默认档案，可反查档案名）
-  serial:{serial}               金数据充值（type=recharge 的流水）
+  serial:{serial}               历史充值流水（type=recharge）。**节146 充值链路已拆除**，
+                                该标签映射**保留**：库里已有 type=recharge 历史行，
+                                删映射会让余额明细页出现裸 ref（节146 保留白名单）
 """
 from __future__ import annotations
 

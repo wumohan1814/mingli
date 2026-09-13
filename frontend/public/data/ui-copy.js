@@ -593,10 +593,8 @@ window.TC_COPY = {
       'view-detail': '查看余额明细',
       'insufficient-view-detail': '余额不足，点击查看余额明细',
       'view-detail-suffix': ' · 点击查看余额明细',
-      'recharge-processing': '充值处理中，预计 1–5 分钟到账',
-      'recharge-ok': '充值成功，余额已到账',
-      'recharge-unavailable': '充值服务暂不可用，请稍后重试',
-      'recharge-no-link': '未获取到充值链接，请稍后重试',
+      /* 节146：4 条充值文案（recharge-processing / ok / unavailable / no-link）
+         已随付款充值链路拆除；余额展示/明细/不足提示文案全部保留。 */
       'title-format': '余额 = 存储单位 ÷ {rate}',
       'pay-hint': '按实际用量从余额扣除',
       'pay-insufficient': '余额不足，补足后可继续',
