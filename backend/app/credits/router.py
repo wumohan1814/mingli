@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-"""C 端余额 API：余额查询 / 流水分页 / 充值码生成（均需 JWT Bearer）。
+"""C 端余额 API：余额查询 / 流水分页（均需 JWT Bearer）。
 
 - GET  /api/credits/balance       → {code:0, message:"ok", data:{balance, balance_yuan, totalConsumed, totalRecharged}}
 - GET  /api/credits/transactions  → {code:0, message:"ok", data:{items, total}}（最新在前）
-- POST /api/credits/charge-code   → {code:0, message:"ok", data:{code, url}}（生成一次性充值码 + 金数据跳转 URL）
+
+节146：`POST /api/credits/charge-code`（一次性充值码 + 金数据跳转 URL）已随付款充值链路
+整条拆除；余额账户、逐法扣费、余额↔积分换算、后台人工调分**全部保留**。
 """
 from fastapi import APIRouter, Header
 
 from app.auth.router import get_user_id_from_token
-from app.config import settings
-from app.credits.codes import create_code
 from app.credits.service import balance, transactions
 from app.database import AnalyticsSession
 from app.models import CreditAccount, CreditTransaction
@@ -68,24 +68,3 @@ def get_transactions(
 
     return {"code": 0, "message": "ok", "data": {"items": items, "total": total}}
 
-
-@router.post("/charge-code")
-def create_charge_code(authorization: str = Header(...)):
-    """生成一次性充值码（绑定当前用户，默认 15 分钟有效），返回金数据充值表单跳转 URL。
-
-    前端拿到 url 后 302 跳转：{jinshuju_form_url}?code={code}（金数据预填充值码）。
-    """
-    user_id = get_user_id_from_token(authorization)
-    session = AnalyticsSession()
-    try:
-        code = create_code(session, user_id)
-    finally:
-        session.close()
-    return {
-        "code": 0,
-        "message": "ok",
-        "data": {
-            "code": code,
-            "url": f"{settings.jinshuju_form_url}?code={code}",
-        },
-    }
