@@ -956,13 +956,13 @@ function NavRail({
 }
 
 // REQ-071：Banner 正中「模块」下拉导航 —— 全部支持功能（按三大模块分组，仅标题）。
-// 直达页：九法合一→nine-pick / 生肖流年→zodiac / 临时起卦→divination /
+// 直达页：八法合一→nine-pick / 生肖流年→zodiac / 临时起卦→divination /
 // 星座→astrology / 塔罗→tarot / 雷诺曼→lenormand / MBTI→mbti。
 // item: {label, page, module, skin} —— module 同步左侧 bg/落地面板，skin 与 HUB 卡片跳转口径一致。
 const MOD_NAV_GROUPS = [{
   title: TC_COPY.ui.nav.guoxue,
   color: 'var(--jade-500)',
-  // REQ-126：国学组按 4 张场景大卡同步（① 命盘·九法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
+  // REQ-126：国学组按 4 张场景大卡同步（① 命盘·八法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
   items: [{
     label: TC_COPY.ui.nav['item-nine-pick'],
     page: 'nine-pick',

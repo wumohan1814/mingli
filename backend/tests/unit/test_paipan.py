@@ -49,13 +49,12 @@ TOP_KEYS = {
     "western", "qizheng", "qimen_lifetime", "wuyun_liuqi",
 }
 
-# 缺省 8 片（slicer.DEFAULT_METHODS）
+# 缺省 7 片（slicer.DEFAULT_METHODS；节139 摘除 xizhan）
 DEFAULT_SLICE_KEYS = [
     "bazi-pattern",
     "bazi-dayun-liunian",
     "bazi-shensha-nayin",
     "ziwei",
-    "xizhan",
     "qizheng",
     "qimen-lifetime",
     "wuyun-liuqi",
@@ -180,9 +179,10 @@ def test_paipan_invalid_gender():
         paipan(year=1990, month=5, day=12, hour=14, gender="x")
 
 
-def test_slice_chart_8_default(chart):
+def test_slice_chart_7_default(chart):
+    """节139：缺省切片 8→7（xizhan 摘出）；切片键序与 slicer.DEFAULT_METHODS 一致。"""
     slices = slice_chart(chart)
-    assert len(slices) == 8
+    assert len(slices) == 7
     assert list(slices.keys()) == DEFAULT_SLICE_KEYS
 
 

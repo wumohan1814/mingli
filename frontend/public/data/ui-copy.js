@@ -347,7 +347,7 @@ window.TC_COPY = {
       'name-ph': '请输入档案名称',
       'phone-ph': '请输入 11 位手机号',
       'email-ph': '请输入电子邮箱（需包含 @）',
-      'coord-missing-hint': '提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得九法完整推演。',
+      'coord-missing-hint': '提示：本次建档未提供经纬度，占星 / 七政 / 奇门 / 五运六气 已降级，建议补充后重新建档以获得完整推演。',
       'save-btn': '保存',
       'saving-btn': '保存中…',
       'unnamed': '未命名档案',
@@ -485,16 +485,16 @@ window.TC_COPY = {
       relName: { love: '恋爱', friend: '朋友', boss: '上下级' },
       modalTitle: { love: '恋爱关系 · 生肖匹配', friend: '朋友关系 · 生肖匹配', boss: '上下级关系 · 生肖匹配' },
       modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），配趋势参考说明（静态轻内容、免费、不扣余额）。',
-      modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「九法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
+      modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「八法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
     },
     // REQ-128 阶段5：配对解析弹窗（PairModal，views-home）—— guoxue/xishi/mbti/bazi 四模块共用；
     // meta 四套按 module 取用；relations 数组同时作按钮文案与提交值（与 zodiac PAIR_REL_ICONS 键一致）
     pair: {
       meta: {
-        guoxue: { title: '国学 · 九法配对', dataTxt: '双方排盘信息（九法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 九法合一」为该档案完成排盘（确定性计算、免费）' },
+        guoxue: { title: '国学 · 八法配对', dataTxt: '双方排盘信息（八法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 八法合一」为该档案完成排盘（确定性计算、免费）' },
         xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
         mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
-        bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「九法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
+        bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「八法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
       },
       relations: ['恋爱', '朋友', '家人', '同事', '其他'],
       sub: '选择两份档案，基于{data}，让 AI 解析两人的关系契合、相处模式与建议。',
@@ -528,15 +528,15 @@ window.TC_COPY = {
       'reason-default': '数据未生成',
       'guide-default': '在对应模块为该档案先生成所需数据'
     },
-    // REQ-093UI：九法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
+    // REQ-093UI：八法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
     // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）
     ninePickPair: {
       title: '双人合盘',
-      sub: '选择两份档案，由 AI 合参两人缘分与相处建议（付费 LLM，按实际用量扣余额 ¥）：「配对解析」基于双方排盘信息（九法合一数据）；「八字配对」基于双方八字排盘。',
+      sub: '选择两份档案，由 AI 合参两人缘分与相处建议（付费 LLM，按实际用量扣余额 ¥）：「配对解析」基于双方排盘信息（八法合一数据）；「八字配对」基于双方八字排盘。',
       btnGuoxue: '配对解析',
       btnBazi: '八字配对'
     },
-    // REQ-094UI：九法合一选档案页「起名」（选单一档案后可用 → POST /api/namer/name；
+    // REQ-094UI：八法合一选档案页「起名」（选单一档案后可用 → POST /api/namer/name；
     // 姓氏必填（≤2 字）+ 起名方向选填；未选档案 / 档案未排盘时按后端 400 detail 展示提示）
     namer: {
       btn: '起名',
@@ -643,8 +643,8 @@ window.TC_COPY = {
       'legal-privacy-href': '/legal/隐私政策.html'
     },
     hub: {
-      'guoxue-nine-name': '九法合一解读',
-      'guoxue-nine-sub': '选择档案 · 跑九法或查看/修改解读（八字·紫微·西占·七政·奇门·五运六气等 9 法综合）',
+      'guoxue-nine-name': '八法合一解读',
+      'guoxue-nine-sub': '选择档案 · 跑八法或查看/修改解读（八字·紫微·七政·奇门·五运六气等 8 法综合）',
       'guoxue-zodiac-name': '生肖流年',
       'guoxue-zodiac-sub': '犯太岁 · 值年星君 · 贵人',
       'guoxue-divination-name': '临时起卦',
@@ -655,14 +655,14 @@ window.TC_COPY = {
       'guoxue-taiyi-sub': '年/月/日/时四计七十二局 · 主客定算（免费确定性）',
       'guoxue-huangji-name': '皇极经世',
       'guoxue-huangji-sub': '元会运世 · 值年/月经/旬纬/日卦/时经卦（免费确定性）',
-      'guoxue-pair-name': '九法配对',
+      'guoxue-pair-name': '八法配对',
       'guoxue-pair-sub': '双人合盘 · 缘分与相处建议（付费 LLM，按实际用量扣余额）',
       'guoxue-bazi-name': '八字配对',
       'guoxue-bazi-sub': '双方八字排盘判相性（付费 LLM，按实际用量扣余额）',
       'guoxue-namer-name': '八字起名',
       'guoxue-namer-sub': '依档案八字五行喜用推荐名字（付费 LLM，按实际用量扣余额）',
-      /* REQ-126：国学 HUB 4 张场景大卡 + 择吉与时势新页 + 起卦分区 + 9 法解读 tab */
-      'guoxue-card-nine-name': '命盘·九法合一',
+      /* REQ-126：国学 HUB 4 张场景大卡 + 择吉与时势新页 + 起卦分区 + 8 法解读 tab（节139：九法→八法） */
+      'guoxue-card-nine-name': '命盘·八法合一',
       'guoxue-card-nine-sub': '看一生结构与阶段运势',
       'guoxue-card-divination-name': '问事·即时起卦',
       'guoxue-card-divination-sub': '当下这件事的走向',
@@ -673,8 +673,8 @@ window.TC_COPY = {
       'tools-namer-name': '八字起名',
       'tools-namer-sub': '依档案八字五行喜用推荐名字（付费 LLM，按实际用量扣余额）',
       'tools-pair-name': '双人配对',
-      'tools-pair-sub': '九法配对 / 八字配对（付费 LLM，按实际用量扣余额）',
-      'tools-pair-guoxue': '九法配对',
+      'tools-pair-sub': '八法配对 / 八字配对（付费 LLM，按实际用量扣余额）',
+      'tools-pair-guoxue': '八法配对',
       'tools-pair-bazi': '八字配对',
       'tools-shishi-name': '时势推演',
       'tools-shishi-sub': '皇极经世 / 太乙神数（免费确定性）',
@@ -684,13 +684,13 @@ window.TC_COPY = {
       'divin-group-shi': '时辰起局',
       'divin-group-su': '速断抽签',
       'readings-tab-all': '综合',
-      'readings-tab-methods': '九法解读',
-      'readings-title': '九法解读 · 逐法查看',
+      'readings-tab-methods': '八法解读',
+      'readings-title': '八法解读 · 逐法查看',
       'readings-phase-prediction': '预测',
       'readings-phase-dqc': '断前尘',
       'readings-degraded': '未生成',
       'readings-empty': '该档案暂无可展示的逐法解读内容',
-      'readings-load-fail': '九法解读加载失败',
+      'readings-load-fail': '八法解读加载失败',
       'xishi-astrology-name': '星座',
       'xishi-astrology-sub': '本命盘 · 行运 · 日返 · 次限',
       'xishi-tarot-name': '塔罗牌',
@@ -717,7 +717,7 @@ window.TC_COPY = {
       guoxue: '国学预测',
       xishi: '西式占卜',
       mbti: '心理测试',
-      'item-nine-pick': '命盘·九法合一',
+      'item-nine-pick': '命盘·八法合一',
       'item-zodiac': '生肖流年',
       'item-divination': '问事·即时起卦',
       'item-tools': '择吉与时势',
@@ -1009,18 +1009,18 @@ window.TC_COPY = {
       'start-btn': '开始测试',
       'share-btn': '生成分享链接'
     },
-    // REQ-128 阶段3：国学工具页（九法合一入口）UI 文案
+    // REQ-128 阶段3：国学工具页（八法合一入口）UI 文案
     guoxueTools: {
       // 状态标签
       'status-not-paipan': '未排盘',
-      'status-done': '九法已完成 · 已解读',
+      'status-done': '八法已完成 · 已解读',
       'status-generating': '预测生成中…',
       'status-calibrated': '已校准 · 待生成预测',
-      'status-duanqianchen': '九法已跑（断前尘完成）',
-      'status-running': '九法推演中…',
-      'status-progress-prefix': '九法进行中（',
-      'status-progress-suffix': '/9）',
-      'status-not-run': '未跑九法',
+      'status-duanqianchen': '八法已跑（断前尘完成）',
+      'status-running': '八法推演中…',
+      'status-progress-prefix': '八法进行中（',
+      'status-progress-suffix': '/8）',
+      'status-not-run': '未跑八法',
       // 错误提示
       'case-list-fail': '读取档案列表失败，请重试。',
       'case-loading': '正在读取档案列表…',
@@ -1028,26 +1028,26 @@ window.TC_COPY = {
       // 操作按钮
       'manage-case': '管理档案',
       'select-case-ph': '请选择档案',
-      'start-btn': '开始九法合一',
+      'start-btn': '开始八法合一',
       'view-btn': '查看 / 修改结果',
       // 标题
-      'title': '九法合一 · 选择档案',
+      'title': '八法合一 · 选择档案',
       'selected-label': '已选档案：',
       // 空状态与说明
-      'no-case': '暂无档案：请先建立一份出生档案并排盘（确定性计算、零 LLM），再回到这里发起九法合一；九法合一只针对所选档案，建档本身不启动九法流程。',
-      'already-run': '该档案已跑过九法：可点「查看 / 修改结果」进入结果查看（综合解读 + 校准记录/追问/重跑修改）；如校准或档案信息有更新，可再点「跑九法合一开始预测」重跑，沿用现有异步编排、幂等与断点续跑。',
-      'ready-text': '命盘已备，九法待启。先生将以此盘为基，综九家之言，解您所问',
-      'not-paipan': '该档案尚未排盘（无盘面数据）：请先到「管理档案」对该档案执行排盘（确定性计算、零 LLM）后，再回来发起九法合一。',
-      'select-first': '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑九法）与「跑九法合一开始预测」（未跑 / 续跑）两个操作。',
-      'cost-note': '九法合一汇聚九术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
-      'case-note': '档案是独立数据实体，九法合一只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已跑过的九法解读结果。',
+      'no-case': '暂无档案：请先建立一份出生档案并排盘（确定性计算、零 LLM），再回到这里发起八法合一；八法合一只针对所选档案，建档本身不启动八法流程。',
+      'already-run': '该档案已跑过八法：可点「查看 / 修改结果」进入结果查看（综合解读 + 校准记录/追问/重跑修改）；如校准或档案信息有更新，可再点「跑八法合一开始预测」重跑，沿用现有异步编排、幂等与断点续跑。',
+      'ready-text': '命盘已备，八法待启。先生将以此盘为基，综八家之言，解您所问',
+      'not-paipan': '该档案尚未排盘（无盘面数据）：请先到「管理档案」对该档案执行排盘（确定性计算、零 LLM）后，再回来发起八法合一。',
+      'select-first': '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑八法）与「跑八法合一开始预测」（未跑 / 续跑）两个操作。',
+      'cost-note': '八法合一汇聚八术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
+      'case-note': '档案是独立数据实体，八法合一只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已跑过的八法解读结果。',
       // REQ-128 阶段5：选档案页剩余结构文案（按钮 title / 步骤条 / 卡题 / 勾选说明）
       'title-no-paipan': '该档案尚未排盘，请先执行排盘',
-      'title-not-run': '该档案尚未跑过九法，请先点击「跑九法合一开始预测」',
+      'title-not-run': '该档案尚未跑过八法，请先点击「跑八法合一开始预测」',
       'step-1': '① 选择档案',
-      'step-2': '② 查看 / 修改结果 · 跑九法合一开始预测',
-      'pick-title': '选择档案 · 九法合一',
-      'pick-note': '勾选档案后不会自动启动九法流程：请在下方操作区选择「查看 / 修改结果」或「跑九法合一开始预测」。',
+      'step-2': '② 查看 / 修改结果 · 跑八法合一开始预测',
+      'pick-title': '选择档案 · 八法合一',
+      'pick-note': '勾选档案后不会自动启动八法流程：请在下方操作区选择「查看 / 修改结果」或「跑八法合一开始预测」。',
       // 工具名
       'case-prefix': '档案 ',
       // REQ-128 阶段5：档案下拉选项出生年后缀（NinePickPage）
@@ -1056,13 +1056,13 @@ window.TC_COPY = {
     // REQ-128 阶段4：首页（home）UI 文案
     home: {
       'hub-title': '探索',
-      'hub-subtitle': '九术同参 · 一以贯之',
+      'hub-subtitle': '八术同参 · 一以贯之',
       'case-entry': '我的档案',
       'divination-entry': '占卜问事',
       'xishi-entry': '西式塔罗',
       'mbti-entry': 'MBTI 测试',
       'guoxue-entry': '国学工具',
-      'nine-methods': '九法合一',
+      'nine-methods': '八法合一',
       'agent-entry': '太初先生',
       'zodiac-entry': '生肖星座',
       // 模块卡片
@@ -1311,7 +1311,7 @@ window.TC_COPY = {
       'name-fail-warn': '档案已保存，但命名失败，可稍后到档案管理重命名。',
       'save-ok-toast': '已保存，可继续新建',
       'chart-ok-toast': '盘面已生成，可入档案查看',
-      'free-note': '「开始排盘」仅作确定性计算生成盘面（免费、零 LLM，不进入断前尘/预测扣费链路）；盘面生成后可入档案查看，九法合一等深度解读请另行选择档案后启动。'
+      'free-note': '「开始排盘」仅作确定性计算生成盘面（免费、零 LLM，不进入断前尘/预测扣费链路）；盘面生成后可入档案查看，八法合一等深度解读请另行选择档案后启动。'
     },
     // REQ-128 阶段2：盘面标签（八字/紫微/占星等盘面上的 UI 标签）
     // 仅含界面标签，不含盘面数据值（干支/行星度数等为数据，不入本表）

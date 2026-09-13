@@ -89,7 +89,7 @@
     .pair-foot-eq .btn{flex:1 1 0;min-width:0;width:auto;padding:10px 18px;font-size:14px}
     /* REQ-108 / REQ-109：配对解析横屏大按键（功能标题 + 解释文字，整键可点）。
        星座（西式）入口位于「生成星盘」下方、本命盘上方；MBTI 入口置于页面底部操作区。
-       国学「配对解析 / 八字配对」入口（九法合一页 .pair-entry）保持原样，不随本样式改动。 */
+       国学「配对解析 / 八字配对」入口（八法合一页 .pair-entry）保持原样，不随本样式改动。 */
     .pair-big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;box-sizing:border-box;background:var(--skin-accent-soft);border:1px solid var(--skin-accent);border-radius:var(--radius-md);padding:16px 14px;margin:0 0 14px;cursor:pointer;color:inherit;font-family:inherit;text-align:center;transition:filter .15s ease,box-shadow .15s ease,transform .12s ease}
     .pair-big:hover{filter:brightness(1.03);box-shadow:0 6px 16px var(--tc-black-a12)}
     .pair-big:active{transform:translateY(1px)}
@@ -125,8 +125,8 @@
     .triple-arrow{flex:0 0 auto;border:none;background:var(--skin-accent-soft);color:var(--skin-accent);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .15s}
     .triple-arrow:active{filter:brightness(.9)}
 
-    /* ===== REQ-100：国学 HUB「九法配对 / 八字配对 / 档案起名」同一排 3 键 =====
-       与「九法合一 / 生肖流年 / 临时起卦」同层级同样式（hub-card），配 I4 图标
+    /* ===== REQ-100：国学 HUB「八法配对 / 八字配对 / 档案起名」同一排 3 键 =====
+       与「八法合一 / 生肖流年 / 临时起卦」同层级同样式（hub-card），配 I4 图标
        （fn-pair / fn-bazi / fn-name，引用 icon-sprite-i1-i4.svg，只引用不改动）。 */
     .hub-row{display:flex;gap:10px;margin-bottom:8px}
     .hub-row .hub-card{flex:1 1 0;min-width:0;flex-direction:column;align-items:center;text-align:center;padding:14px 10px;gap:8px}
@@ -670,7 +670,7 @@
 /* REQ-126：择吉与时势 新页 功能卡内动作按钮（双人配对 / 时势推演 各 2 枚子按钮） */
 .tools-actions{display:flex;gap:8px;margin-top:10px}
 .tools-actions .tools-act{flex:1 1 0;min-width:0;padding:9px 6px;font-size:13px;white-space:nowrap}
-/* REQ-126：PredictPage 9 法解读 tab（综合 / 九法解读）与逐法解读卡 */
+/* REQ-126：PredictPage 8 法解读 tab（综合 / 八法解读）与逐法解读卡 */
 .readings-tabs{display:flex;gap:8px;margin:0 0 12px}
 .readings-tabs .rt-tab{flex:1 1 0;padding:10px 6px;font-size:14px;font-weight:600;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:.14s}
 .readings-tabs .rt-tab.on{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}

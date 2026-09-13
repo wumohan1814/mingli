@@ -20,21 +20,23 @@ key → 字段映射（= mingli SKILL.md §0 注册表）：
     bazi-hunyin-caiyun  → {"input": ..., "bazi": chart.bazi(全量),
                             "timeline_20y": ...}
     ziwei               → {"ziwei": chart.ziwei}
-    xizhan              → {"western": chart.western}
     qizheng             → {"qizheng": chart.qizheng}
     qimen-lifetime      → {"qimen_lifetime": chart.qimen_lifetime}
     wuyun-liuqi         → {"wuyun_liuqi": chart.wuyun_liuqi}
+
+节139：`xizhan` 切片已摘除（西占退出九法→八法综合流水线）。chart.json 仍由排盘
+生成 `western` 字段（供档案详情「占星盘」tab 只读展示 + 西式占卜独立链路），
+只是不再切片进 LLM。
 """
 
 from __future__ import annotations
 
-# 8 个命盘类方法（缺省切片集；顺序同 mingli SKILL.md §0 注册表）
+# 7 个命盘类方法（缺省切片集；顺序同 mingli SKILL.md §0 注册表）
 DEFAULT_METHODS = [
     "bazi-pattern",
     "bazi-dayun-liunian",
     "bazi-shensha-nayin",
     "ziwei",
-    "xizhan",
     "qizheng",
     "qimen-lifetime",
     "wuyun-liuqi",
@@ -113,8 +115,6 @@ def build_fragment(key: str, chart: dict):
         }
     if key == "ziwei":
         return {"ziwei": chart.get("ziwei")}
-    if key == "xizhan":
-        return {"western": chart.get("western")}
     if key == "qizheng":
         return {"qizheng": chart.get("qizheng")}
     if key == "qimen-lifetime":
@@ -125,7 +125,7 @@ def build_fragment(key: str, chart: dict):
 
 
 def slice_chart(chart: dict, methods: list[str] | None = None) -> dict[str, dict]:
-    """把 chart 切成 `{key: fragment}`。缺省产出 8 个命盘类片段；
+    """把 chart 切成 `{key: fragment}`。缺省产出 7 个命盘类片段；
     `methods` 可显式指定（含 bazi-hunyin-caiyun 等专题片段）。
 
     未知 key 抛 ValueError。"""

@@ -1,11 +1,11 @@
-// 国学工具域视图（节110 阶段3）：九法合一 NinePickPage + 起名 NamerModal + 国学 HUB GuoxueHubPage + 择吉与时势 GuoxueToolsPage + 九法状态 nineRunState
+// 国学工具域视图（节110 阶段3）：八法合一 NinePickPage + 起名 NamerModal + 国学 HUB GuoxueHubPage + 择吉与时势 GuoxueToolsPage + 八法状态 nineRunState
 // 加载于 views-home.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
-/* ---------- REQ-068：九法合一 · 选择档案（档案与九法解耦后的九法入口） ---------- */
-// 档案「九法」状态（依赖 /cases 列表的 status / hasReport / methodCount）：
-//   view=true  已跑过九法 → 「查看 / 修改结果」可用（进入结果查看，含校准/追问/重跑修改链路）
+/* ---------- REQ-068：八法合一 · 选择档案（档案与八法解耦后的八法入口） ---------- */
+// 档案「八法」状态（依赖 /cases 列表的 status / hasReport / methodCount）：
+//   view=true  已跑过八法 → 「查看 / 修改结果」可用（进入结果查看，含校准/追问/重跑修改链路）
 //   go=false   未排盘（无 Chart 盘面，断前尘链路无法启动）→ 引导先去档案管理执行排盘
-// 档案是独立数据实体：九法合一只是一种使用方式，未跑九法不影响建档/排盘/档案查看。
+// 档案是独立数据实体：八法合一只是一种使用方式，未跑八法不影响建档/排盘/档案查看。
 function nineRunState(c) {
   const st = String(c && c.status || '');
   const mc = Number(c && c.methodCount) || 0;
@@ -167,8 +167,8 @@ function NinePickPage({
       onClick: () => onNavigate('cases')
     }, UI_COPY.guoxueTools['manage-case'])));
   } else {
-    // REQ-137：九法合一选档案改下拉（对齐生肖流年下拉样式：档案名/生日展示、选中即用）；
-    // 九法状态短标并入选项文本，选中后操作区展示完整状态与可用动作。
+    // REQ-137：八法合一选档案改下拉（对齐生肖流年下拉样式：档案名/生日展示、选中即用）；
+    // 八法状态短标并入选项文本，选中后操作区展示完整状态与可用动作。
     pickBody = el('select', {
       className: 'input',
       value: selId || '',
@@ -615,8 +615,8 @@ function GuoxueHubPage({
   onNavigate,
   applySkin
 }) {
-  // REQ-126：国学 HUB 改 4 张场景大卡（① 命盘·九法合一 / ② 问事·即时起卦 / ③ 择吉与时势 /
-  // ④ 生肖流年）。原 6 方法卡（黄历择日/太乙/皇极）与 REQ-100 同排 3 键（九法配对/八字配对/
+  // REQ-126：国学 HUB 改 4 张场景大卡（① 命盘·八法合一 / ② 问事·即时起卦 / ③ 择吉与时势 /
+  // ④ 生肖流年）。原 6 方法卡（黄历择日/太乙/皇极）与 REQ-100 同排 3 键（八法配对/八字配对/
   // 档案起名）收归 ③「择吉与时势」新页 GuoxueToolsPage（/guoxue/tools，需登录）。本 HUB 保持公开页。
   const cards = [{
     name: TC_COPY.ui.hub['guoxue-card-nine-name'],
@@ -676,7 +676,7 @@ function GuoxueHubPage({
 
 /* ---------- REQ-126：③ 择吉与时势 新页（/guoxue/tools，需登录） ----------
    4 功能卡：黄历择日（→almanac，免档案）/ 八字起名（复用 NamerModal）/
-   双人配对（九法配对 + 八字配对 → openPairAnalyze）/ 时势推演（皇极经世 + 太乙神数，均已实现）。
+   双人配对（八法配对 + 八字配对 → openPairAnalyze）/ 时势推演（皇极经世 + 太乙神数，均已实现）。
    「黄历免档案」仅指已登录下无需选档案；整页需登录（AUTH_REQUIRED_PAGES 含 guoxue-tools）。 */
 function GuoxueToolsPage({
   onNavigate,

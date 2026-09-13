@@ -404,7 +404,7 @@ function computeDivination(input) {
       break;
     }
     case 'qimen': {
-      // 奇门时家起局（REQ-120）：一事一占，时/日/月/年四家全做，与 9 法「奇门终身局
+      // 奇门时家起局（REQ-120）：一事一占，时/日/月/年四家全做，与八法「奇门终身局
       // qimen-lifetime」命盘类区分。参数契约（透传前端 seed 同名字段）：
       //   scope        hour 时家（默认）/ day 日家 / month 月家 / year 年家
       //   qimenMethod  zhuanpan 转盘（默认）/ feipan 飞盘

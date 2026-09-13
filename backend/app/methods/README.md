@@ -9,13 +9,17 @@
 | `bazi-dayun-liunian` | 大运流年 | `bazi.qi_yun` + `bazi.da_yun` + `timeline_20y` | lunar-python |
 | `bazi-shensha-nayin` | 神煞纳音 | `bazi.shensha` + 各柱纳音 | lunar-python |
 | `ziwei` | 紫微斗数 | `ziwei` | iztro (Node) |
-| `xizhan` | 西式占星 | `western` | mingyu-core (Node) |
 | `qizheng` | 七政四余 | `qizheng` | mingyu-core (Node) |
 | `qimen-lifetime` | 奇门终身局 | `qimen_lifetime` | mingyu-core vendor 0.2.2 (Node) |
 | `wuyun-liuqi` | 五运六气 | `wuyun_liuqi` | mingyu-core (Node) |
 | `bazi-hunyin-caiyun` | 八字专题（婚姻 / 财运 / 事业） | `bazi`（全量专题切片） | lunar-python |
 
-> 第 9 法 `bazi-hunyin-caiyun` 由 ADR-0003 纳入，**两阶段都参与**，是「事业运势」主钩子的主方法之一。
+> `bazi-hunyin-caiyun` 由 ADR-0003 纳入，**两阶段都参与**，是「事业运势」主钩子的主方法之一。
+>
+> **节139：`xizhan`（西式占星）已摘出本注册表** —— 西占属「西式占卜」大模块，不进
+> 「八法合一」综合流水线。其目录 `xizhan/` 与 `prompts/method-prompts/xizhan.md` 保留
+> （可能复用），但不再被 `METHOD_KEYS` 加载、不再切片、不再参与合成。`chart.json.western`
+> 仍由排盘生成（供档案详情「占星盘」tab 只读展示 + 西式占卜独立链路）。
 
 ## 统一流程
 
@@ -43,7 +47,7 @@
 
 - ✅ **校验归属与成本口径（原 P0）** → ADR-0002：校验抽为独立 `../validation/` 模块，
   **仅断前尘阶段**执行，用便宜模型单独计量。首跑成本口径修订为 ~23 次调用（≈15.5 次分析当量）。
-- ✅ **`bazi-hunyin-caiyun` 是否纳入（原 P1）** → ADR-0003：两阶段都纳入，成为常驻第 9 法。
+- ✅ **`bazi-hunyin-caiyun` 是否纳入（原 P1）** → ADR-0003：两阶段都纳入，成为常驻方法之一。
 
 ## 同源重复识别
 

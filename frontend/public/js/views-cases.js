@@ -1,4 +1,4 @@
-// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 9 法命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
+// 档案域视图（节110 阶段3）：档案列表 CasesPage + 建档弹窗 RenameModal/CaseContactModal/ShareFillModal + 解读流程 WaitingPage/CalibrationPage/PredictPage/RevisePage/TopicPage + 档案详情 ArchivePage + 命盘渲染（八字/紫微/西占/七政/奇门/五运六气 各 Plate + ChartView Tab 容器 + EmptyNote + 盘面工具 arr/val/joinArr）+ 分享帮填 CaseSharePage
 // 加载于 views-zodiac.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 // ===== 完整盘面组件（直接消费 archive 的 data.chart.data，零 LLM） =====
@@ -1183,7 +1183,7 @@ function ArchivePage({
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, UI_COPY.buttons.back_home)), /* REQ-090 v2：第二行「国学预测 / 西式占卜 / MBTI」三键并列且颜色一致，
-      携带当前档案直达对应模块（九法合一 / 塔罗 / MBTI 均带 caseId 预选当前档案） */
+      携带当前档案直达对应模块（八法合一 / 塔罗 / MBTI 均带 caseId 预选当前档案） */
   /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
@@ -1858,7 +1858,7 @@ function WaitingPage({
       buildOrbit('dqcPlate', DQC_METHODS);
       svg.dataset.built = '1';
     }
-    setOrbitProgress('dqcPlate', DQC_METHODS, progress, total || 9);
+    setOrbitProgress('dqcPlate', DQC_METHODS, progress, total || 8);
   }, [progress, total, errored, caseId]);
   const start = async () => {
     stop();
@@ -1940,7 +1940,7 @@ function WaitingPage({
     return stop;
   }, [caseId]);
   const pct = total > 0 ? Math.round(progress / total * 100) : 0;
-  const lit = Math.min(DQC_METHODS.length, Math.round(progress / (total || 9) * DQC_METHODS.length));
+  const lit = Math.min(DQC_METHODS.length, Math.round(progress / (total || 8) * DQC_METHODS.length));
   if (errored) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -1973,7 +1973,7 @@ function WaitingPage({
     className: "dqc-progress"
   }, progress, " / ", total), /*#__PURE__*/React.createElement("div", {
     className: "dqc-method"
-  }, status === 'succeeded' ? '九法推演完成' : '正在综合九流派推演'), /*#__PURE__*/React.createElement("div", {
+  }, status === 'succeeded' ? '八法推演完成' : '正在综合八流派推演'), /*#__PURE__*/React.createElement("div", {
     className: "dqc-bar"
   }, /*#__PURE__*/React.createElement("i", {
     style: {
@@ -2391,7 +2391,8 @@ function CalibrationPage({
     size: 15
   }), "修正")))));
 }
-// REQ-126：9 法 method_key → 中文名（degraded 法仅有 key，无后端 name；映射对齐 backend/app/credits/labels.py METHOD_ZH）
+// REQ-126：8 法 method_key → 中文名（degraded 法仅有 key，无后端 name；映射对齐 backend/app/credits/labels.py METHOD_ZH）
+// 节139：xizhan 条目保留——仅作历史读数/degraded 键的兜底显示，xizhan 已不在八法注册表内
 const REQ126_METHOD_KEY_ZH = {
   'bazi-pattern': '八字格局',
   'bazi-dayun-liunian': '大运流年',
@@ -2413,7 +2414,7 @@ function PredictPage({
   const [history, setHistory] = useState([]);
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
-  // REQ-126：9 法内部 tab（综合 / 九法解读，逐法数据源 GET /api/cases/{id}/readings，纯读库零 LLM）
+  // REQ-126：8 法内部 tab（综合 / 八法解读，逐法数据源 GET /api/cases/{id}/readings，纯读库零 LLM）
   const [tab, setTab] = useState('all');
   const [readings, setReadings] = useState(null);
   const [readingsLoading, setReadingsLoading] = useState(false);
@@ -2535,7 +2536,7 @@ function PredictPage({
       alive = false;
     };
   }, [caseId]);
-  // REQ-126：九法解读 tab —— 懒加载 readings（切到该 tab 才请求；纯读库零 LLM）
+  // REQ-126：八法解读 tab —— 懒加载 readings（切到该 tab 才请求；纯读库零 LLM）
   const loadReadings = async () => {
     if (readings || readingsLoading) return;
     setReadingsLoading(true);

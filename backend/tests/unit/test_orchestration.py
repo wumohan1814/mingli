@@ -6,14 +6,14 @@
   - `app.validation.validator.chat`（validate 内部使用的模块级 chat）
 二者替换为 fake 协程后，orchestrator（app.jobs.orchestrator）经 ANALYZERS /
 validate 到达的全部 LLM 调用均被拦截；`from app.llm import chat` 的导入方分别是
-base / validator 各自的模块命名空间，故 patch 两个模块属性即可覆盖 9 法分析 + 校验。
+base / validator 各自的模块命名空间，故 patch 两个模块属性即可覆盖 8 法分析 + 校验。
 
 覆盖（tests/README.md TDD 清单的编排部分）：
-  - 断前尘 9 法串行全成功落库 + 合成问卷（含 failed_methods==[]）
+  - 断前尘 8 法串行全成功落库 + 合成问卷（含 failed_methods==[]）
   - 预测：路由(1 条 RouteDecision) + total=5 并行 + 免责声明
-  - 缓存复用：同 case 二次断前尘零 LLM、9 行全 cached=True
+  - 缓存复用：同 case 二次断前尘零 LLM、8 行全 cached=True
   - 降级跳过：chart.degraded_methods 含 ziwei → 不产行、不调 LLM
-  - 单法失败不中止：ziwei 抛 LLMError → job 仍 succeeded、failed_methods 记 ziwei、其余 8 法落库
+  - 单法失败不中止：ziwei 抛 LLMError → job 仍 succeeded、failed_methods 记 ziwei、其余 7 法落库
 """
 from __future__ import annotations
 
@@ -151,35 +151,35 @@ def _dqc_rows(cid: int, uid: int) -> list[MethodResult]:
 
 
 # --------------------------------------------------------------------------- #
-# 1. 断前尘全链路：9 法成功
+# 1. 断前尘全链路：8 法成功
 # --------------------------------------------------------------------------- #
 async def test_duan_qian_chen_orchestration(paipan_case, monkeypatch):
     fake = FakeLLM()
     _patch_chat(monkeypatch, fake)
     uid, cid, _chart, _deg = paipan_case()
 
-    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=9)
+    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=8)
     await run_duan_qian_chen(job_id)
 
     job = _load_job(job_id)
     assert job.status == JobStatus.succeeded
-    assert job.completed == 9
+    assert job.completed == 8
     assert job.error is None
 
     rows = _dqc_rows(cid, uid)
-    assert len(rows) == 9, f"9 法均应落库，实际 {len(rows)} 行"
+    assert len(rows) == 8, f"8 法均应落库，实际 {len(rows)} 行"
     for row in rows:
         assert row.result_json, f"{row.method_key} result_json 不应为空"
         assert row.validation_json is not None, f"{row.method_key} validation_json 不应为空"
 
     rj = job.result_json
     assert rj is not None and rj.get("propositions"), "合成问卷 propositions 应为非空"
-    assert rj["method_count"] == 9
+    assert rj["method_count"] == 8
     assert rj["failed_methods"] == []
 
-    # 全 mock 链路核对：9 次 analyze + 9 次 validate
-    assert len(fake.analyze_calls) == 9
-    assert len(fake.validate_calls) == 9
+    # 全 mock 链路核对：8 次 analyze + 8 次 validate
+    assert len(fake.analyze_calls) == 8
+    assert len(fake.validate_calls) == 8
 
 
 # --------------------------------------------------------------------------- #
@@ -234,12 +234,12 @@ async def test_duan_qian_chen_cache_reuse(paipan_case, monkeypatch):
     _patch_chat(monkeypatch, fake)
     uid, cid, _chart, _deg = paipan_case()
 
-    first_job = _create_job(uid, cid, JobType.duan_qian_chen, total=9)
+    first_job = _create_job(uid, cid, JobType.duan_qian_chen, total=8)
     await run_duan_qian_chen(first_job)
     calls_after_first = (len(fake.analyze_calls), len(fake.validate_calls))
-    assert calls_after_first == (9, 9)
+    assert calls_after_first == (8, 8)
 
-    second_job = _create_job(uid, cid, JobType.duan_qian_chen, total=9)
+    second_job = _create_job(uid, cid, JobType.duan_qian_chen, total=8)
     await run_duan_qian_chen(second_job)
 
     # 第二次零 LLM：计数器不增长
@@ -248,11 +248,11 @@ async def test_duan_qian_chen_cache_reuse(paipan_case, monkeypatch):
 
     job2 = _load_job(second_job)
     assert job2.status == JobStatus.succeeded
-    assert job2.completed == 9
+    assert job2.completed == 8
 
     rows = _dqc_rows(cid, uid)
-    assert len(rows) == 9
-    assert all(r.cached for r in rows), "二次运行的 9 行应全部 cached==True"
+    assert len(rows) == 8
+    assert all(r.cached for r in rows), "二次运行的 8 行应全部 cached==True"
     for row in rows:
         assert row.result_json, "缓存行 result_json 应保留"
 
@@ -266,16 +266,16 @@ async def test_degraded_skip(paipan_case, monkeypatch):
     uid, cid, _chart, deg = paipan_case(degraded_methods=["ziwei"])
     assert "ziwei" in deg
 
-    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=9)
+    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=8)
     await run_duan_qian_chen(job_id)
 
     job = _load_job(job_id)
     assert job.status == JobStatus.succeeded
-    assert job.completed == 9  # 降级法只推进度不调 LLM
+    assert job.completed == 8  # 降级法只推进度不调 LLM
 
     rows = _dqc_rows(cid, uid)
     keys = [r.method_key for r in rows]
-    assert len(keys) == 8
+    assert len(keys) == 7
     assert "ziwei" not in keys
     assert "ziwei" not in fake.analyze_calls, "降级方法不应被 analyze 调用"
     assert "ziwei" not in fake.validate_calls
@@ -289,21 +289,21 @@ async def test_single_method_failure_not_abort(paipan_case, monkeypatch):
     _patch_chat(monkeypatch, fake)
     uid, cid, _chart, _deg = paipan_case()
 
-    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=9)
+    job_id = _create_job(uid, cid, JobType.duan_qian_chen, total=8)
     await run_duan_qian_chen(job_id)
 
     job = _load_job(job_id)
     assert job.status == JobStatus.succeeded, "单法失败不应使整体失败"
-    assert job.completed == 9
+    assert job.completed == 8
 
     rj = job.result_json
     assert rj is not None
     assert "ziwei" in (rj.get("failed_methods") or []), "failed_methods 应含 ziwei"
-    assert rj.get("method_count") == 8, "成功落库 8 法"
+    assert rj.get("method_count") == 7, "成功落库 7 法"
 
     rows = _dqc_rows(cid, uid)
     keys = [r.method_key for r in rows]
-    assert len(keys) == 8
+    assert len(keys) == 7
     assert "ziwei" not in keys
     assert "ziwei" in fake.analyze_calls, "ziwei 应被尝试调用过一次（然后失败）"
     assert "ziwei" not in fake.validate_calls

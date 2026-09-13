@@ -374,8 +374,8 @@ async function startRecharge() {
   }
 }
 
-// 断前尘九法（轨道动画节点）
-const DQC_METHODS = ['八字', '紫微斗数', '六爻', '奇门遁甲', '大六壬', '太乙神数', '七政四余', '铁板神数', '果老星宗'];
+// 断前尘八法（轨道动画节点；节139：西占退出，节点名改为真实八法，原为 9 条装饰性名称）
+const DQC_METHODS = ['八字格局', '大运流年', '神煞纳音', '婚姻财运', '紫微斗数', '七政四余', '奇门终身', '五运六气'];
 
 // 后端 report.trend / details[].direction 均为「吉/凶/平」，映射到现有 trend-* 样式、方向图标与文案
 const TREND_META = {
@@ -661,7 +661,7 @@ function logout() {
 //   /settings→settings  /login|/register→auth  /mbti/share/:token→mbti-share
 //   /case/share/:token→case-share
 // Hub 页以 pages dict 实际名为准：guoxue-hub/xishi-hub 落 /guoxue、/xishi（URL 不带 -hub 后缀）；
-// 九法合一页实际名 nine-pick → /jiufa；auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
+// 八法合一页实际名 nine-pick → /jiufa；auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
 // 反向 /register 亦反解为 auth。映射表外的工作流中间页（onboarding/waiting/calibration/predict/
 // revise/topic/credits）携带 caseId/topic/context 等长文本、刻意不做深链：pathFor 返回 null →
 // 只切换 React 视图、不写 URL 也不新增 history 条目（浏览器后退直达上一真实路径页）。

@@ -361,7 +361,6 @@ _METHOD_MARKERS = {
     "bazi-hunyin-caiyun": ["bazi"],
     # 非八字法：暂不提供标记（后续逐法添加）
     "ziwei": [],
-    "xizhan": [],
     "qizheng": [],
     "qimen-lifetime": [],
     "wuyun-liuqi": [],
@@ -400,7 +399,7 @@ def mark_chart(chart: dict[str, Any], methods: list[str] | None = None) -> dict[
                 if bazi_m is None:
                     bazi_m = _bazi_markers(chart)
                 markers["bazi"] = bazi_m
-            # 后续可扩展 ziwei / xizhan 等
+            # 后续可扩展 ziwei / qizheng 等（节139：xizhan 已摘出八法注册表）
 
         result[key] = markers
 
