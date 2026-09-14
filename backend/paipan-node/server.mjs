@@ -122,7 +122,6 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 // mingyu-core 是 ESM 包（type:module），直接 ESM import。
 // 占星/七政/五运六气走 npm mingyu-core@0.2.1；
 // 奇门终身局走本地 vendor 0.2.2 构建产物（calculateQimenLifetime，npm 0.2.1 无此函数）。
-import { calculateBirthChartBundle } from 'mingyu-core';
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
@@ -153,6 +152,9 @@ import { calculateZodiacYearFortuneCore, getYearTaiSuiCore } from './paipan-core
 //   已下线。星历地基 = astronomia@4.2.0（MIT）；fullScope 的 periodEvents 事件流
 //   暂以空容器 + not-implemented 标注（节151 已登记缺口）。
 import { generateAstrolabeCore, buildAstrolabeFullScopeContextsCore, buildAstrolabeScopeContextCore } from './paipan-core/src/capabilities/astrology/index.js';
+
+// 节152：七政四余已切换到自研内核（对拍 2489/2489 全 100%）；vendor bundle 全部下线。
+import { generateQizhengCore } from './paipan-core/src/capabilities/qizheng/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -263,8 +265,7 @@ async function computeExtra(input) {
   let western = null;
   let qizheng = null;
   try {
-    // 节151：western 改用自研内核（astronomia 星历，natal 对拍 2259/2259）；
-    // qizheng 仍走 vendor bundle（节152 替换）。
+    // 节151：western 用自研内核（astronomia 星历，natal 对拍 2259/2259）
     western = stripInternal(generateAstrolabeCore({
       name: input.name || '',
       gender,
@@ -279,8 +280,16 @@ async function computeExtra(input) {
       timezone: '8',
       useTrueSolarTime: Boolean(input.true_solar),
     }));
-    const bundle = await calculateBirthChartBundle(profile, { systems: ['qizheng'] });
-    qizheng = bundle.qizheng ? stripInternal(bundle.qizheng) : null;
+    // 节152：qizheng 已切换到自研内核（对拍 2489/2489 全 100%）；vendor bundle 全部下线
+    qizheng = stripInternal(generateQizhengCore({
+      name: input.name || '',
+      gender,
+      birthplace: input.birthplace || '',
+      year: input.year, month: input.month, day: input.day,
+      hour: input.hour, minute: input.minute || 0,
+      longitude: input.longitude, latitude: input.latitude,
+      true_solar: Boolean(input.true_solar),
+    }));
   } catch (e) {
     console.error(`[paipan_extra] astrolabe/qizheng 失败: ${e && e.message ? e.message : e}`);
   }

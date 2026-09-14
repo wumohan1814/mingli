@@ -1,0 +1,127 @@
+{
+  "capability": "qizheng",
+  "keyFieldsMode": "exact-structural",
+  "note": "七政四余星盘对拍夹具（节152）。input 形态与对拍适配器 legacy-qizheng.mjs 同源：{year,month,day,hour,minute,gender?,name?,birthplace?,longitude,latitude,true_solar?}。登记表 toLegacyInput/toCoreInput 已预接线，直接透传。",
+  "keyFieldsRationale": [
+    "【为什么不放原始浮点黄经 / 宿度】run-compare 的字段级门禁在默认 --float-tolerance=0 下对数字用严格相等（diff.js numbersEqual 用 ===）。",
+    "  自研星历（astronomia VSOP87/ELP2000-82B）与旧实现（astronomy-engine 2.1.19）是两套不同星历，天体黄经存在固有差：太阳 −20″、太阴 ±7″、其余行星 −7~−24″、罗睺/计都 ≤42″、月孛 ≤434″（探针 p3/p8）。",
+    "  任何原始浮点字段（stars[].tropicalLongitude / longitude / xiuDegree）都不可能逐位相等，故按节151 西洋星盘同款裁决：关键字段只放结构性确定字段（标识/宿/宫/庙旺/逆行/神煞），原始浮点只作信息性观察。",
+    "【为什么关键字段里含 stars[].retrograde】逆行用自研黄经变化率（中心差分 ±0.5 天）判定，14 条探针 × 7 政与旧实现 100% 一致（探针 p10）；月孛/紫炁恒 false、罗睺/计都不输出该键（两侧一致，比较层自动跳过）。",
+    "【为什么不含 aspects 数组】aspects 按 orb 升序排列，两套星历 ~20″ 的位置差足以让相邻相位下标错位（探针 p13 实测 aspects[i] 会因 0.005° 的 orb 差整体移位），且 actualAngle/orb/orbRatio 为浮点。按节151 同款裁决不纳入关键字段，只作信息性观察。",
+    "【ziqi 数值为何能逐位相等】紫炁是《七政算内篇》古法均速纯公式（237.038993° + 日数×360/10227.1792），与星历无关；探针 p14/p14b 逐位锁定了旧实现的归一化与进度算式，故 ziqi.tropicalLongitude / dailyMotionDegrees / cycleProgress / daysSinceZeroLongitude / daysUntilZeroLongitude 全部纳入关键字段且 100% 一致。",
+    "【命宫/身宫/命主公式】命宫 = (太阳宫 + 3 − 时支序) mod 12；身宫 = (太阴宫 + 3 + 时支序) mod 12；命主 = 命宫黄道宫的守宫主。14 条探针（换年份/性别/时辰/经纬度）全部命中（探针 p2/p4）。",
+    "【神煞取干支口径】天乙贵人按日干（晚子时 23:00 起换日取次日日干）；驿马/劫煞/咸池/华盖/孤辰/寡宿按年支（年干支按立春精确时刻换年）。14 条探针全部一致（探针 p2/p4/p10）。",
+    "【真太阳时开关】旧实现忽略 useTrueSolarTime（探针 p10：同输入开/关输出逐位一致），本内核同样忽略；保留 1 条 true_solar:true 夹具锁定该行为。"
+  ],
+  "defaultKeyFields": [
+    "mingGong",
+    "shenGong",
+    "mingZhu",
+    "stars[0].name", "stars[0].kind", "stars[0].xiu", "stars[0].sevenStar", "stars[0].signIndex", "stars[0].signBranch", "stars[0].palace", "stars[0].dignity", "stars[0].retrograde",
+    "stars[1].name", "stars[1].kind", "stars[1].xiu", "stars[1].sevenStar", "stars[1].signIndex", "stars[1].signBranch", "stars[1].palace", "stars[1].dignity", "stars[1].retrograde",
+    "stars[2].name", "stars[2].kind", "stars[2].xiu", "stars[2].sevenStar", "stars[2].signIndex", "stars[2].signBranch", "stars[2].palace", "stars[2].dignity", "stars[2].retrograde",
+    "stars[3].name", "stars[3].kind", "stars[3].xiu", "stars[3].sevenStar", "stars[3].signIndex", "stars[3].signBranch", "stars[3].palace", "stars[3].dignity", "stars[3].retrograde",
+    "stars[4].name", "stars[4].kind", "stars[4].xiu", "stars[4].sevenStar", "stars[4].signIndex", "stars[4].signBranch", "stars[4].palace", "stars[4].dignity", "stars[4].retrograde",
+    "stars[5].name", "stars[5].kind", "stars[5].xiu", "stars[5].sevenStar", "stars[5].signIndex", "stars[5].signBranch", "stars[5].palace", "stars[5].dignity", "stars[5].retrograde",
+    "stars[6].name", "stars[6].kind", "stars[6].xiu", "stars[6].sevenStar", "stars[6].signIndex", "stars[6].signBranch", "stars[6].palace", "stars[6].dignity", "stars[6].retrograde",
+    "stars[7].name", "stars[7].kind", "stars[7].xiu", "stars[7].sevenStar", "stars[7].signIndex", "stars[7].signBranch", "stars[7].palace", "stars[7].dignity",
+    "stars[8].name", "stars[8].kind", "stars[8].xiu", "stars[8].sevenStar", "stars[8].signIndex", "stars[8].signBranch", "stars[8].palace", "stars[8].dignity",
+    "stars[9].name", "stars[9].kind", "stars[9].xiu", "stars[9].sevenStar", "stars[9].signIndex", "stars[9].signBranch", "stars[9].palace", "stars[9].dignity", "stars[9].retrograde",
+    "stars[10].name", "stars[10].kind", "stars[10].xiu", "stars[10].sevenStar", "stars[10].signIndex", "stars[10].signBranch", "stars[10].palace", "stars[10].dignity", "stars[10].retrograde",
+    "twelvePalaces[0].signIndex", "twelvePalaces[1].signIndex", "twelvePalaces[2].signIndex", "twelvePalaces[3].signIndex", "twelvePalaces[4].signIndex", "twelvePalaces[5].signIndex", "twelvePalaces[6].signIndex", "twelvePalaces[7].signIndex", "twelvePalaces[8].signIndex", "twelvePalaces[9].signIndex", "twelvePalaces[10].signIndex", "twelvePalaces[11].signIndex",
+    "shensha[0].name", "shensha[0].value",
+    "shensha[1].name", "shensha[1].value",
+    "shensha[2].name", "shensha[2].value",
+    "shensha[3].name", "shensha[3].value",
+    "shensha[4].name", "shensha[4].value",
+    "shensha[5].name", "shensha[5].value",
+    "shensha[6].name", "shensha[6].value",
+    "ziqi.tropicalLongitude",
+    "ziqi.dailyMotionDegrees",
+    "ziqi.cycleProgress",
+    "ziqi.daysSinceZeroLongitude",
+    "ziqi.daysUntilZeroLongitude"
+  ],
+  "fixtures": [
+    {
+      "name": "1905-倫敦-跨世紀",
+      "input": { "name": "", "gender": "male", "birthplace": "倫敦", "year": 1905, "month": 3, "day": 15, "hour": 6, "minute": 20, "longitude": -0.1278, "latitude": 51.5074, "true_solar": false }
+    },
+    {
+      "name": "1935-北京-1930s",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1935, "month": 5, "day": 12, "hour": 7, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1950-巴黎-1950s",
+      "input": { "name": "", "gender": "male", "birthplace": "巴黎", "year": 1950, "month": 11, "day": 2, "hour": 21, "minute": 10, "longitude": 2.3522, "latitude": 48.8566, "true_solar": false }
+    },
+    {
+      "name": "1960-北京-閏年2月29晚子時",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1960, "month": 2, "day": 29, "hour": 23, "minute": 5, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1965-東京-1960s",
+      "input": { "name": "", "gender": "female", "birthplace": "東京", "year": 1965, "month": 7, "day": 4, "hour": 12, "minute": 0, "longitude": 139.6503, "latitude": 35.6762, "true_solar": false }
+    },
+    {
+      "name": "1970-上海-年末晚子時",
+      "input": { "name": "", "gender": "male", "birthplace": "上海", "year": 1970, "month": 12, "day": 31, "hour": 23, "minute": 55, "longitude": 121.4737, "latitude": 31.2304, "true_solar": false }
+    },
+    {
+      "name": "1980-北京-庚申年",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1980, "month": 3, "day": 10, "hour": 12, "minute": 0, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1990-北京-基準",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1990, "month": 5, "day": 12, "hour": 7, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1990-北京-早子時",
+      "input": { "name": "", "gender": "female", "birthplace": "北京", "year": 1990, "month": 5, "day": 12, "hour": 0, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1990-北京-晚子時",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1990, "month": 5, "day": 12, "hour": 23, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1990-北京-次日辰時",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1990, "month": 5, "day": 13, "hour": 7, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "2000-北京-閏四月",
+      "input": { "name": "", "gender": "female", "birthplace": "北京", "year": 2000, "month": 6, "day": 15, "hour": 3, "minute": 0, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "2000-赤道-千年零點",
+      "input": { "name": "", "gender": "male", "birthplace": "赤道", "year": 2000, "month": 1, "day": 1, "hour": 0, "minute": 0, "longitude": 0, "latitude": 0, "true_solar": false }
+    },
+    {
+      "name": "2005-悉尼-南半球",
+      "input": { "name": "", "gender": "female", "birthplace": "悉尼", "year": 2005, "month": 1, "day": 20, "hour": 11, "minute": 25, "longitude": 151.2093, "latitude": -33.8688, "true_solar": false }
+    },
+    {
+      "name": "2015-上海-申時",
+      "input": { "name": "", "gender": "male", "birthplace": "上海", "year": 2015, "month": 8, "day": 20, "hour": 15, "minute": 45, "longitude": 121.4737, "latitude": 31.2304, "true_solar": false }
+    },
+    {
+      "name": "2024-北京-立春當日16:26",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 2024, "month": 2, "day": 4, "hour": 16, "minute": 26, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "2024-北京-立春次日",
+      "input": { "name": "", "gender": "female", "birthplace": "北京", "year": 2024, "month": 2, "day": 5, "hour": 8, "minute": 0, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "2029-北京-水星逆行",
+      "input": { "name": "", "gender": "female", "birthplace": "北京", "year": 2029, "month": 2, "day": 14, "hour": 20, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": false }
+    },
+    {
+      "name": "1990-北京-真太陽時開關",
+      "input": { "name": "", "gender": "male", "birthplace": "北京", "year": 1990, "month": 5, "day": 12, "hour": 7, "minute": 30, "longitude": 116.4074, "latitude": 39.9042, "true_solar": true }
+    }
+  ],
+  "notes": [
+    "覆盖代表性：跨年代 1905–2029；早晚子时各 ≥1（1960-02-29 23:05、1990-05-12 00:30、1990-05-12 23:30、1970-12-31 23:55、2000-01-01 00:00）；节气边界对（2024-02-04 16:26 立春前 1 分钟 vs 2024-02-05 次日 → 年支换年、天乙贵人日干、神煞全部受检）；闰月（2000-06-15 闰四月）；月末/年末（1970-12-31、2000-01-01）；逆行（1990-05-12 辰星/镇星逆行、2029-02-14 水星逆行）；真太阳时开关（1990 true_solar:true 与基準逐位一致）。",
+    "信息性差异（不判失败，诚实列出）：(1) 原始浮点黄经/宿度（两套星历固有差，见 keyFieldsRationale）；(2) aspects 全量（顺序/数值浮点敏感）；(3) mansionBoundaries/mansionModel（旧实现宿界坐标与模型元数据，本内核不输出——宿界换算自研，不复制旧实现 Astronomy Engine 数值）；(4) stars[].sourceId/sourceLabel 与 ziqiModel 文案（本内核自撰，见 rules/qizheng.js 来源标注）。"
+  ]
+}
