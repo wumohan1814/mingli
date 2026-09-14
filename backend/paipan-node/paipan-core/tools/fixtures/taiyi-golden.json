@@ -1,0 +1,4468 @@
+{
+  "capability": "taiyi",
+  "defaultKeyFields": [
+    "scope",
+    "ganZhi",
+    "accumulatedValue",
+    "entryYears",
+    "yuan",
+    "ji",
+    "yinYang",
+    "bureau",
+    "taiyiPosition",
+    "taiyiPalace",
+    "taiyiGua",
+    "taiyiDir",
+    "wenChangPosition",
+    "wenChangPalace",
+    "shiJiPosition",
+    "shiJiPalace",
+    "jiShenPosition",
+    "jiShenPalace",
+    "lordCount",
+    "guestCount",
+    "setCount",
+    "countNatures.lord",
+    "countNatures.guest",
+    "countNatures.set",
+    "lordGeneral",
+    "lordAssistant",
+    "guestGeneral",
+    "guestAssistant",
+    "setGeneral",
+    "setAssistant",
+    "sixteenGods[0].branch",
+    "sixteenGods[0].god",
+    "sixteenGods[1].branch",
+    "sixteenGods[1].god",
+    "sixteenGods[2].branch",
+    "sixteenGods[2].god",
+    "sixteenGods[3].branch",
+    "sixteenGods[3].god",
+    "sixteenGods[4].branch",
+    "sixteenGods[4].god",
+    "sixteenGods[5].branch",
+    "sixteenGods[5].god",
+    "sixteenGods[6].branch",
+    "sixteenGods[6].god",
+    "sixteenGods[7].branch",
+    "sixteenGods[7].god",
+    "sixteenGods[8].branch",
+    "sixteenGods[8].god",
+    "sixteenGods[9].branch",
+    "sixteenGods[9].god",
+    "sixteenGods[10].branch",
+    "sixteenGods[10].god",
+    "sixteenGods[11].branch",
+    "sixteenGods[11].god",
+    "sixteenGods[12].branch",
+    "sixteenGods[12].god",
+    "sixteenGods[13].branch",
+    "sixteenGods[13].god",
+    "sixteenGods[14].branch",
+    "sixteenGods[14].god",
+    "sixteenGods[15].branch",
+    "sixteenGods[15].god"
+  ],
+  "note": "golden 快照：旧实现（vendored 第三方引擎）输出经 stripInternal 归一化后的结果。不含时间戳，保证可重复 diff。",
+  "fixtures": {
+    "year-1900-b1": {
+      "input": {
+        "scope": "year",
+        "year": 1900
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "庚子",
+        "dateTime": "1900-07-01 12:00",
+        "accumulatedValue": 10155817,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155817,
+        "entryYears": 217,
+        "yuan": 4,
+        "ji": 4,
+        "yinYang": "阳遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 7,
+        "guestCount": 13,
+        "setCount": 13,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂重阳",
+          "set": "杂重阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 13 为杂重阳。",
+          "定算 13 为杂重阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-1971-b72": {
+      "input": {
+        "scope": "year",
+        "year": 1971
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "辛亥",
+        "dateTime": "1971-07-01 12:00",
+        "accumulatedValue": 10155888,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155888,
+        "entryYears": 288,
+        "yuan": 4,
+        "ji": 5,
+        "yinYang": "阳遁",
+        "bureau": 72,
+        "taiyiPosition": "巽",
+        "taiyiPalace": 9,
+        "taiyiGua": "巽",
+        "taiyiDir": "东南",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "午",
+        "shiJiPalace": 2,
+        "jiShenPosition": "卯",
+        "jiShenPalace": 4,
+        "lordCount": 29,
+        "guestCount": 31,
+        "setCount": 9,
+        "countNatures": {
+          "lord": "次和",
+          "guest": "杂重阳",
+          "set": "纯阳"
+        },
+        "tacticGuidance": "主得和数算（次和），主方宜调和固本、守正求安；客算占强宜严加防备",
+        "lordGeneral": 9,
+        "lordAssistant": 7,
+        "guestGeneral": 1,
+        "guestAssistant": 3,
+        "setGeneral": 9,
+        "setAssistant": 7,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主大将与太乙同宫。",
+          "主算 29 为次和。",
+          "客算 31 为杂重阳。",
+          "定算 9 为纯阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-1972-b1": {
+      "input": {
+        "scope": "year",
+        "year": 1972
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "壬子",
+        "dateTime": "1972-07-01 12:00",
+        "accumulatedValue": 10155889,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155889,
+        "entryYears": 289,
+        "yuan": 5,
+        "ji": 5,
+        "yinYang": "阳遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 7,
+        "guestCount": 13,
+        "setCount": 13,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂重阳",
+          "set": "杂重阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 13 为杂重阳。",
+          "定算 13 为杂重阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-1990-b19": {
+      "input": {
+        "scope": "year",
+        "year": 1990
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "庚午",
+        "dateTime": "1990-07-01 12:00",
+        "accumulatedValue": 10155907,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155907,
+        "entryYears": 307,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 19,
+        "taiyiPosition": "子",
+        "taiyiPalace": 8,
+        "taiyiGua": "坎",
+        "taiyiDir": "北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "艮",
+        "shiJiPalace": 3,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 8,
+        "guestCount": 32,
+        "setCount": 14,
+        "countNatures": {
+          "lord": "杂阳",
+          "guest": "次和",
+          "set": "上和"
+        },
+        "tacticGuidance": "客得和数算（次和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 8,
+        "lordAssistant": 4,
+        "guestGeneral": 2,
+        "guestAssistant": 6,
+        "setGeneral": 4,
+        "setAssistant": 2,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主大将与太乙同宫。",
+          "主算 8 为杂阳。",
+          "客算 32 为次和。",
+          "定算 14 为上和。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-2000-b57": {
+      "input": {
+        "scope": "year",
+        "year": 2000
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "庚辰",
+        "dateTime": "2000-07-01 12:00",
+        "accumulatedValue": 10155917,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155917,
+        "entryYears": 317,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 29,
+        "taiyiPosition": "午",
+        "taiyiPalace": 2,
+        "taiyiGua": "离",
+        "taiyiDir": "南",
+        "wenChangPosition": "卯",
+        "wenChangPalace": 4,
+        "shiJiPosition": "未",
+        "shiJiPalace": 7,
+        "jiShenPosition": "戌",
+        "jiShenPalace": 1,
+        "lordCount": 13,
+        "guestCount": 39,
+        "setCount": 26,
+        "countNatures": {
+          "lord": "杂重阳",
+          "guest": "纯阳",
+          "set": "纯阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 3,
+        "lordAssistant": 9,
+        "guestGeneral": 9,
+        "guestAssistant": 7,
+        "setGeneral": 6,
+        "setAssistant": 8,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 13 为杂重阳。",
+          "客算 39 为纯阳。",
+          "定算 26 为纯阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-2024-b53": {
+      "input": {
+        "scope": "year",
+        "year": 2024
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "甲辰",
+        "dateTime": "2024-07-01 12:00",
+        "accumulatedValue": 10155941,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155941,
+        "entryYears": 341,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 53,
+        "taiyiPosition": "午",
+        "taiyiPalace": 2,
+        "taiyiGua": "离",
+        "taiyiDir": "南",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "亥",
+        "shiJiPalace": 8,
+        "jiShenPosition": "戌",
+        "jiShenPalace": 1,
+        "lordCount": 38,
+        "guestCount": 25,
+        "setCount": 14,
+        "countNatures": {
+          "lord": "下和",
+          "set": "上和"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 8,
+        "lordAssistant": 4,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 4,
+        "setAssistant": 2,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 38 为下和。",
+          "定算 14 为上和。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-2044-b1-entry1": {
+      "input": {
+        "scope": "year",
+        "year": 2044
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "甲子",
+        "dateTime": "2044-07-01 12:00",
+        "accumulatedValue": 10155961,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155961,
+        "entryYears": 1,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 7,
+        "guestCount": 13,
+        "setCount": 13,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂重阳",
+          "set": "杂重阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 13 为杂重阳。",
+          "定算 13 为杂重阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-243-entry360": {
+      "input": {
+        "scope": "year",
+        "year": 243
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "癸亥",
+        "dateTime": "243-07-01 12:00",
+        "accumulatedValue": 10154160,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10154160,
+        "entryYears": 360,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 72,
+        "taiyiPosition": "巽",
+        "taiyiPalace": 9,
+        "taiyiGua": "巽",
+        "taiyiDir": "东南",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "午",
+        "shiJiPalace": 2,
+        "jiShenPosition": "卯",
+        "jiShenPalace": 4,
+        "lordCount": 29,
+        "guestCount": 31,
+        "setCount": 9,
+        "countNatures": {
+          "lord": "次和",
+          "guest": "杂重阳",
+          "set": "纯阳"
+        },
+        "tacticGuidance": "主得和数算（次和），主方宜调和固本、守正求安；客算占强宜严加防备",
+        "lordGeneral": 9,
+        "lordAssistant": 7,
+        "guestGeneral": 1,
+        "guestAssistant": 3,
+        "setGeneral": 9,
+        "setAssistant": 7,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主大将与太乙同宫。",
+          "主算 29 为次和。",
+          "客算 31 为杂重阳。",
+          "定算 9 为纯阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-1-b46": {
+      "input": {
+        "scope": "year",
+        "year": 1
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "辛酉",
+        "dateTime": "1-07-01 12:00",
+        "accumulatedValue": 10153918,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10153918,
+        "entryYears": 118,
+        "yuan": 2,
+        "ji": 2,
+        "yinYang": "阳遁",
+        "bureau": 46,
+        "taiyiPosition": "巽",
+        "taiyiPalace": 9,
+        "taiyiGua": "巽",
+        "taiyiDir": "东南",
+        "wenChangPosition": "寅",
+        "wenChangPalace": 4,
+        "shiJiPosition": "乾",
+        "shiJiPalace": 1,
+        "jiShenPosition": "巳",
+        "jiShenPalace": 2,
+        "lordCount": 5,
+        "guestCount": 16,
+        "setCount": 29,
+        "countNatures": {
+          "guest": "下和",
+          "set": "次和"
+        },
+        "tacticGuidance": "客得和数算（下和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 6,
+        "guestAssistant": 8,
+        "setGeneral": 9,
+        "setAssistant": 7,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "客算 16 为下和。",
+          "定算 29 为次和。",
+          "主大将或主参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-9999-b36": {
+      "input": {
+        "scope": "year",
+        "year": 9999
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "己亥",
+        "dateTime": "9999-07-01 12:00",
+        "accumulatedValue": 10163916,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10163916,
+        "entryYears": 36,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 36,
+        "taiyiPosition": "卯",
+        "taiyiPalace": 4,
+        "taiyiGua": "震",
+        "taiyiDir": "东",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "午",
+        "shiJiPalace": 2,
+        "jiShenPosition": "卯",
+        "jiShenPalace": 4,
+        "lordCount": 25,
+        "guestCount": 27,
+        "setCount": 36,
+        "countNatures": {
+          "guest": "下和"
+        },
+        "tacticGuidance": "客得和数算（下和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 7,
+        "guestAssistant": 1,
+        "setGeneral": 6,
+        "setAssistant": 8,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "客算 27 为下和。",
+          "主大将或主参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-2100-b57": {
+      "input": {
+        "scope": "year",
+        "year": 2100
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "庚申",
+        "dateTime": "2100-07-01 12:00",
+        "accumulatedValue": 10156017,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10156017,
+        "entryYears": 57,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 57,
+        "taiyiPosition": "艮",
+        "taiyiPalace": 3,
+        "taiyiGua": "艮",
+        "taiyiDir": "东北",
+        "wenChangPosition": "戌",
+        "wenChangPalace": 1,
+        "shiJiPosition": "巳",
+        "shiJiPalace": 2,
+        "jiShenPosition": "午",
+        "jiShenPalace": 2,
+        "lordCount": 10,
+        "guestCount": 25,
+        "setCount": 10,
+        "countNatures": {},
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 1,
+        "lordAssistant": 3,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "year-1960-b61": {
+      "input": {
+        "scope": "year",
+        "year": 1960
+      },
+      "stripped": {
+        "scope": "year",
+        "ganZhi": "庚子",
+        "dateTime": "1960-07-01 12:00",
+        "accumulatedValue": 10155877,
+        "accumulatedLabel": "积年",
+        "accumulatedYears": 10155877,
+        "entryYears": 277,
+        "yuan": 4,
+        "ji": 5,
+        "yinYang": "阳遁",
+        "bureau": 61,
+        "taiyiPosition": "酉",
+        "taiyiPalace": 6,
+        "taiyiGua": "兑",
+        "taiyiDir": "西",
+        "wenChangPosition": "子",
+        "wenChangPalace": 8,
+        "shiJiPosition": "亥",
+        "shiJiPalace": 8,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 33,
+        "guestCount": 34,
+        "setCount": 34,
+        "countNatures": {
+          "lord": "纯阳",
+          "guest": "下和",
+          "set": "下和"
+        },
+        "tacticGuidance": "客得和数算（下和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 3,
+        "lordAssistant": 9,
+        "guestGeneral": 4,
+        "guestAssistant": 2,
+        "setGeneral": 4,
+        "setAssistant": 2,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 33 为纯阳。",
+          "客算 34 为下和。",
+          "定算 34 为下和。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-1990-05-b6": {
+      "input": {
+        "scope": "month",
+        "customDate": "1990-05-12T07:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "辛巳",
+        "dateTime": "1990-05-12 08:30",
+        "accumulatedValue": 121870878,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121870878,
+        "entryYears": 78,
+        "yuan": 2,
+        "ji": 2,
+        "yinYang": "阳遁",
+        "bureau": 6,
+        "taiyiPosition": "午",
+        "taiyiPalace": 2,
+        "taiyiGua": "离",
+        "taiyiDir": "南",
+        "wenChangPosition": "亥",
+        "wenChangPalace": 8,
+        "shiJiPosition": "辰",
+        "shiJiPalace": 9,
+        "jiShenPosition": "酉",
+        "jiShenPalace": 6,
+        "lordCount": 25,
+        "guestCount": 10,
+        "setCount": 12,
+        "countNatures": {
+          "set": "下和"
+        },
+        "tacticGuidance": "主算多于客算，利主不利客，守静固本为宜",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 2,
+        "setAssistant": 6,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "定算 12 为下和。",
+          "主大将或主参将居中宫。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-2000-立春前-20-30": {
+      "input": {
+        "scope": "month",
+        "customDate": "2000-02-04T20:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "丁丑",
+        "dateTime": "2000-02-04 20:30",
+        "accumulatedValue": 121870994,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121870994,
+        "entryYears": 194,
+        "yuan": 3,
+        "ji": 4,
+        "yinYang": "阳遁",
+        "bureau": 50,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "巳",
+        "wenChangPalace": 2,
+        "shiJiPosition": "午",
+        "shiJiPalace": 2,
+        "jiShenPosition": "丑",
+        "jiShenPalace": 3,
+        "lordCount": 16,
+        "guestCount": 15,
+        "setCount": 15,
+        "countNatures": {
+          "lord": "下和"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 6,
+        "lordAssistant": 8,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 16 为下和。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-2000-立春后-20-41": {
+      "input": {
+        "scope": "month",
+        "customDate": "2000-02-04T20:41:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "戊寅",
+        "dateTime": "2000-02-04 20:41",
+        "accumulatedValue": 121870994,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121870994,
+        "entryYears": 194,
+        "yuan": 3,
+        "ji": 4,
+        "yinYang": "阳遁",
+        "bureau": 50,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "巳",
+        "wenChangPalace": 2,
+        "shiJiPosition": "午",
+        "shiJiPalace": 2,
+        "jiShenPosition": "子",
+        "jiShenPalace": 8,
+        "lordCount": 16,
+        "guestCount": 15,
+        "setCount": 15,
+        "countNatures": {
+          "lord": "下和"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 6,
+        "lordAssistant": 8,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 16 为下和。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-2023-闰二月": {
+      "input": {
+        "scope": "month",
+        "customDate": "2023-03-25T12:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "乙卯",
+        "dateTime": "2023-03-25 12:00",
+        "accumulatedValue": 121871272,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121871272,
+        "entryYears": 112,
+        "yuan": 2,
+        "ji": 2,
+        "yinYang": "阳遁",
+        "bureau": 40,
+        "taiyiPosition": "坤",
+        "taiyiPalace": 7,
+        "taiyiGua": "坤",
+        "taiyiDir": "西南",
+        "wenChangPosition": "乾",
+        "wenChangPalace": 1,
+        "shiJiPosition": "丑",
+        "shiJiPalace": 3,
+        "jiShenPosition": "亥",
+        "jiShenPalace": 8,
+        "lordCount": 27,
+        "guestCount": 19,
+        "setCount": 12,
+        "countNatures": {
+          "lord": "下和",
+          "guest": "杂重阳",
+          "set": "下和"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 9,
+        "guestAssistant": 7,
+        "setGeneral": 2,
+        "setAssistant": 6,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主大将、客参将与太乙同宫。",
+          "主算 27 为下和。",
+          "客算 19 为杂重阳。",
+          "定算 12 为下和。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-1999-12-31-晚": {
+      "input": {
+        "scope": "month",
+        "customDate": "1999-12-31T23:55:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "丙子",
+        "dateTime": "1999-12-31 23:55",
+        "accumulatedValue": 121870993,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121870993,
+        "entryYears": 193,
+        "yuan": 3,
+        "ji": 4,
+        "yinYang": "阳遁",
+        "bureau": 49,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "巽",
+        "wenChangPalace": 9,
+        "shiJiPosition": "辰",
+        "shiJiPalace": 9,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 24,
+        "guestCount": 25,
+        "setCount": 25,
+        "countNatures": {
+          "lord": "杂重阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 4,
+        "lordAssistant": 2,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 24 为杂重阴。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-1986-07-DST": {
+      "input": {
+        "scope": "month",
+        "customDate": "1986-07-01T00:20:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "甲午",
+        "dateTime": "1986-07-01 01:20",
+        "accumulatedValue": 121870831,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121870831,
+        "entryYears": 31,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 31,
+        "taiyiPosition": "艮",
+        "taiyiPalace": 3,
+        "taiyiGua": "艮",
+        "taiyiDir": "东北",
+        "wenChangPosition": "巽",
+        "wenChangPalace": 9,
+        "shiJiPosition": "戌",
+        "shiJiPalace": 1,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 33,
+        "guestCount": 10,
+        "setCount": 34,
+        "countNatures": {
+          "lord": "纯阳",
+          "set": "下和"
+        },
+        "tacticGuidance": "主算多于客算，利主不利客，守静固本为宜",
+        "lordGeneral": 3,
+        "lordAssistant": 9,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 4,
+        "setAssistant": 2,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主大将与太乙同宫。",
+          "主算 33 为纯阳。",
+          "定算 34 为下和。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "month-2024-01": {
+      "input": {
+        "scope": "month",
+        "customDate": "2024-01-01T00:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "month",
+        "ganZhi": "甲子",
+        "dateTime": "2024-01-01 00:00",
+        "accumulatedValue": 121871281,
+        "accumulatedLabel": "积月",
+        "accumulatedYears": 121871281,
+        "entryYears": 121,
+        "yuan": 2,
+        "ji": 3,
+        "yinYang": "阳遁",
+        "bureau": 49,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "巽",
+        "wenChangPalace": 9,
+        "shiJiPosition": "辰",
+        "shiJiPalace": 9,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 24,
+        "guestCount": 25,
+        "setCount": 25,
+        "countNatures": {
+          "lord": "杂重阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 4,
+        "lordAssistant": 2,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 24 为杂重阴。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "day-1990-05-12-b2": {
+      "input": {
+        "scope": "day",
+        "customDate": "1990-05-12T07:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "day",
+        "ganZhi": "丁丑",
+        "dateTime": "1990-05-12 08:30",
+        "accumulatedValue": 708043754,
+        "accumulatedLabel": "积日",
+        "accumulatedYears": 708043754,
+        "entryYears": 74,
+        "yuan": 2,
+        "ji": 2,
+        "yinYang": "阳遁",
+        "bureau": 2,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "酉",
+        "wenChangPalace": 6,
+        "shiJiPosition": "戌",
+        "shiJiPalace": 1,
+        "jiShenPosition": "丑",
+        "jiShenPalace": 3,
+        "lordCount": 6,
+        "guestCount": 1,
+        "setCount": 1,
+        "countNatures": {
+          "lord": "纯阴",
+          "guest": "杂阴",
+          "set": "杂阴"
+        },
+        "tacticGuidance": "主算多于客算，利主不利客，守静固本为宜",
+        "lordGeneral": 6,
+        "lordAssistant": 8,
+        "guestGeneral": 1,
+        "guestAssistant": 3,
+        "setGeneral": 1,
+        "setAssistant": 3,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "掩：始击与太乙同宫，传统称客目掩太乙。",
+          "囚：客大将与太乙同宫。",
+          "主算 6 为纯阴。",
+          "客算 1 为杂阴。",
+          "定算 1 为杂阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "day-1990-05-12-晚子时-DST": {
+      "input": {
+        "scope": "day",
+        "customDate": "1990-05-12T22:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "day",
+        "ganZhi": "戊寅",
+        "dateTime": "1990-05-12 23:30",
+        "accumulatedValue": 708043755,
+        "accumulatedLabel": "积日",
+        "accumulatedYears": 708043755,
+        "entryYears": 75,
+        "yuan": 2,
+        "ji": 2,
+        "yinYang": "阳遁",
+        "bureau": 3,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "戌",
+        "wenChangPalace": 1,
+        "shiJiPosition": "亥",
+        "shiJiPalace": 8,
+        "jiShenPosition": "子",
+        "jiShenPalace": 8,
+        "lordCount": 1,
+        "guestCount": 40,
+        "setCount": 32,
+        "countNatures": {
+          "lord": "杂阴",
+          "set": "次和"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 1,
+        "lordAssistant": 3,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 2,
+        "setAssistant": 6,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：文昌、主大将与太乙同宫。",
+          "主算 1 为杂阴。",
+          "定算 32 为次和。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "day-1999-12-31-晚子时": {
+      "input": {
+        "scope": "day",
+        "customDate": "1999-12-31T23:55:00+08:00"
+      },
+      "stripped": {
+        "scope": "day",
+        "ganZhi": "戊午",
+        "dateTime": "1999-12-31 23:55",
+        "accumulatedValue": 708047275,
+        "accumulatedLabel": "积日",
+        "accumulatedYears": 708047275,
+        "entryYears": 355,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 67,
+        "taiyiPosition": "子",
+        "taiyiPalace": 8,
+        "taiyiGua": "坎",
+        "taiyiDir": "北",
+        "wenChangPosition": "巽",
+        "wenChangPalace": 9,
+        "shiJiPosition": "戌",
+        "shiJiPalace": 1,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 25,
+        "guestCount": 2,
+        "setCount": 26,
+        "countNatures": {
+          "guest": "纯阴",
+          "set": "纯阴"
+        },
+        "tacticGuidance": "主算多于客算，利主不利客，守静固本为宜",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 2,
+        "guestAssistant": 6,
+        "setGeneral": 6,
+        "setAssistant": 8,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "客算 2 为纯阴。",
+          "定算 26 为纯阴。",
+          "主大将或主参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "day-2000-02-29-闰日": {
+      "input": {
+        "scope": "day",
+        "customDate": "2000-02-29T12:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "day",
+        "ganZhi": "丁巳",
+        "dateTime": "2000-02-29 12:00",
+        "accumulatedValue": 708047334,
+        "accumulatedLabel": "积日",
+        "accumulatedYears": 708047334,
+        "entryYears": 54,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 54,
+        "taiyiPosition": "午",
+        "taiyiPalace": 2,
+        "taiyiGua": "离",
+        "taiyiDir": "南",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "子",
+        "shiJiPalace": 8,
+        "jiShenPosition": "酉",
+        "jiShenPalace": 6,
+        "lordCount": 38,
+        "guestCount": 24,
+        "setCount": 9,
+        "countNatures": {
+          "lord": "下和",
+          "guest": "杂重阴",
+          "set": "纯阳"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 8,
+        "lordAssistant": 4,
+        "guestGeneral": 4,
+        "guestAssistant": 2,
+        "setGeneral": 9,
+        "setAssistant": 7,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：客参将与太乙同宫。",
+          "主算 38 为下和。",
+          "客算 24 为杂重阴。",
+          "定算 9 为纯阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "day-2023-03-25-闰月": {
+      "input": {
+        "scope": "day",
+        "customDate": "2023-03-25T12:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "day",
+        "ganZhi": "壬午",
+        "dateTime": "2023-03-25 12:00",
+        "accumulatedValue": 708055759,
+        "accumulatedLabel": "积日",
+        "accumulatedYears": 708055759,
+        "entryYears": 199,
+        "yuan": 3,
+        "ji": 4,
+        "yinYang": "阳遁",
+        "bureau": 55,
+        "taiyiPosition": "艮",
+        "taiyiPalace": 3,
+        "taiyiGua": "艮",
+        "taiyiDir": "东北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "艮",
+        "shiJiPalace": 3,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 16,
+        "guestCount": 3,
+        "setCount": 22,
+        "countNatures": {
+          "lord": "下和",
+          "guest": "纯阳",
+          "set": "纯阴"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算不及难以妄动",
+        "lordGeneral": 6,
+        "lordAssistant": 8,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 2,
+        "setAssistant": 6,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "掩：始击与太乙同宫，传统称客目掩太乙。",
+          "囚：客大将与太乙同宫。",
+          "主算 16 为下和。",
+          "客算 3 为纯阳。",
+          "定算 22 为纯阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-05-12-辰": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-05-12T07:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "甲辰",
+        "dateTime": "1990-05-12 08:30",
+        "accumulatedValue": 8496525041,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496525041,
+        "entryYears": 161,
+        "yuan": 3,
+        "ji": 3,
+        "yinYang": "阳遁",
+        "bureau": 17,
+        "taiyiPosition": "坤",
+        "taiyiPalace": 7,
+        "taiyiGua": "坤",
+        "taiyiDir": "西南",
+        "wenChangPosition": "坤",
+        "wenChangPalace": 7,
+        "shiJiPosition": "亥",
+        "shiJiPalace": 8,
+        "jiShenPosition": "戌",
+        "jiShenPalace": 1,
+        "lordCount": 7,
+        "guestCount": 27,
+        "setCount": 16,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "下和",
+          "set": "下和"
+        },
+        "tacticGuidance": "客得和数算（下和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 7,
+        "guestAssistant": 1,
+        "setGeneral": 6,
+        "setAssistant": 8,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：文昌、主大将、客大将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 27 为下和。",
+          "定算 16 为下和。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-06-22-夏至后-阴遁": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-06-22T12:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "己未",
+        "dateTime": "1990-06-22 13:00",
+        "accumulatedValue": 8496525536,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496525536,
+        "entryYears": 296,
+        "yuan": 5,
+        "ji": 5,
+        "yinYang": "阴遁",
+        "bureau": 8,
+        "taiyiPosition": "艮",
+        "taiyiPalace": 3,
+        "taiyiGua": "艮",
+        "taiyiDir": "东北",
+        "wenChangPosition": "未",
+        "wenChangPalace": 7,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "丑",
+        "jiShenPalace": 3,
+        "lordCount": 1,
+        "guestCount": 7,
+        "setCount": 7,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂阴",
+          "set": "杂阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 1,
+        "lordAssistant": 3,
+        "guestGeneral": 7,
+        "guestAssistant": 1,
+        "setGeneral": 7,
+        "setAssistant": 1,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 1 为杂阴。",
+          "客算 7 为杂阴。",
+          "定算 7 为杂阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-12-22-冬至后-阳遁": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-12-22T12:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "甲午",
+        "dateTime": "1990-12-22 12:00",
+        "accumulatedValue": 8496527731,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496527731,
+        "entryYears": 331,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 43,
+        "taiyiPosition": "子",
+        "taiyiPalace": 8,
+        "taiyiGua": "坎",
+        "taiyiDir": "北",
+        "wenChangPosition": "子",
+        "wenChangPalace": 8,
+        "shiJiPosition": "巳",
+        "shiJiPalace": 2,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 8,
+        "guestCount": 17,
+        "setCount": 1,
+        "countNatures": {
+          "lord": "杂阳",
+          "guest": "阴中重阳",
+          "set": "杂阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 8,
+        "lordAssistant": 4,
+        "guestGeneral": 7,
+        "guestAssistant": 1,
+        "setGeneral": 1,
+        "setAssistant": 3,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：文昌、主大将与太乙同宫。",
+          "主算 8 为杂阳。",
+          "客算 17 为阴中重阳。",
+          "定算 1 为杂阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-12-22-00-30-阴遁": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-12-22T00:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "戊子",
+        "dateTime": "1990-12-22 00:30",
+        "accumulatedValue": 8496527725,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496527725,
+        "entryYears": 325,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阴遁",
+        "bureau": 37,
+        "taiyiPosition": "酉",
+        "taiyiPalace": 6,
+        "taiyiGua": "兑",
+        "taiyiDir": "西",
+        "wenChangPosition": "寅",
+        "wenChangPalace": 4,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 1,
+        "guestCount": 25,
+        "setCount": 3,
+        "countNatures": {
+          "lord": "杂阴",
+          "set": "纯阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 1,
+        "lordAssistant": 3,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 1 为杂阴。",
+          "定算 3 为纯阳。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-06-21-夏至前-1分钟": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-06-21T22:31:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "壬子",
+        "dateTime": "1990-06-21 23:31",
+        "accumulatedValue": 8496525529,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496525529,
+        "entryYears": 289,
+        "yuan": 5,
+        "ji": 5,
+        "yinYang": "阳遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 7,
+        "guestCount": 13,
+        "setCount": 13,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂重阳",
+          "set": "杂重阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 13 为杂重阳。",
+          "定算 13 为杂重阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-06-21-夏至后-1分钟": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-06-21T22:33:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "壬子",
+        "dateTime": "1990-06-21 23:33",
+        "accumulatedValue": 8496525529,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496525529,
+        "entryYears": 289,
+        "yuan": 5,
+        "ji": 5,
+        "yinYang": "阴遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "寅",
+        "wenChangPalace": 4,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "申",
+        "jiShenPalace": 6,
+        "lordCount": 5,
+        "guestCount": 29,
+        "setCount": 7,
+        "countNatures": {
+          "guest": "次和",
+          "set": "杂阴"
+        },
+        "tacticGuidance": "客得和数算（次和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 9,
+        "guestAssistant": 7,
+        "setGeneral": 7,
+        "setAssistant": 1,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "客算 29 为次和。",
+          "定算 7 为杂阴。",
+          "主大将或主参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1986-07-01-DST-阴遁": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1986-07-01T00:20:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "己丑",
+        "dateTime": "1986-07-01 01:20",
+        "accumulatedValue": 8496508106,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496508106,
+        "entryYears": 146,
+        "yuan": 3,
+        "ji": 3,
+        "yinYang": "阴遁",
+        "bureau": 2,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "卯",
+        "wenChangPalace": 4,
+        "shiJiPosition": "戌",
+        "shiJiPalace": 1,
+        "jiShenPosition": "未",
+        "jiShenPalace": 7,
+        "lordCount": 4,
+        "guestCount": 17,
+        "setCount": 1,
+        "countNatures": {
+          "lord": "杂阳",
+          "guest": "阴中重阳",
+          "set": "杂阴"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 4,
+        "lordAssistant": 2,
+        "guestGeneral": 7,
+        "guestAssistant": 1,
+        "setGeneral": 1,
+        "setAssistant": 3,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "掩：始击与太乙同宫，传统称客目掩太乙。",
+          "囚：客参将与太乙同宫。",
+          "主算 4 为杂阳。",
+          "客算 17 为阴中重阳。",
+          "定算 1 为杂阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-2026-09-14-阴遁": {
+      "input": {
+        "scope": "hour",
+        "customDate": "2026-09-14T09:09:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "癸巳",
+        "dateTime": "2026-09-14 09:09",
+        "accumulatedValue": 8496684330,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496684330,
+        "entryYears": 330,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阴遁",
+        "bureau": 42,
+        "taiyiPosition": "坤",
+        "taiyiPalace": 7,
+        "taiyiGua": "坤",
+        "taiyiDir": "西南",
+        "wenChangPosition": "巳",
+        "wenChangPalace": 2,
+        "shiJiPosition": "辰",
+        "shiJiPalace": 9,
+        "jiShenPosition": "卯",
+        "jiShenPalace": 4,
+        "lordCount": 25,
+        "guestCount": 34,
+        "setCount": 38,
+        "countNatures": {
+          "guest": "下和",
+          "set": "下和"
+        },
+        "tacticGuidance": "客得和数算（下和），客方重调停求和；主方势平可顺水推舟",
+        "lordGeneral": 5,
+        "lordAssistant": 5,
+        "guestGeneral": 4,
+        "guestAssistant": 2,
+        "setGeneral": 8,
+        "setAssistant": 4,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "客算 34 为下和。",
+          "定算 38 为下和。",
+          "主大将或主参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-1990-05-12-晚子时-DST": {
+      "input": {
+        "scope": "hour",
+        "customDate": "1990-05-12T22:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "壬子",
+        "dateTime": "1990-05-12 23:30",
+        "accumulatedValue": 8496525049,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496525049,
+        "entryYears": 169,
+        "yuan": 3,
+        "ji": 3,
+        "yinYang": "阳遁",
+        "bureau": 25,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "子",
+        "wenChangPalace": 8,
+        "shiJiPosition": "亥",
+        "shiJiPalace": 8,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 39,
+        "guestCount": 40,
+        "setCount": 40,
+        "countNatures": {
+          "lord": "纯阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 9,
+        "lordAssistant": 7,
+        "guestGeneral": 5,
+        "guestAssistant": 5,
+        "setGeneral": 5,
+        "setAssistant": 5,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 39 为纯阳。",
+          "客大将或客参将居中宫。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-2000-02-04-20-30": {
+      "input": {
+        "scope": "hour",
+        "customDate": "2000-02-04T20:30:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "庚戌",
+        "dateTime": "2000-02-04 20:30",
+        "accumulatedValue": 8496567707,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496567707,
+        "entryYears": 347,
+        "yuan": 5,
+        "ji": 6,
+        "yinYang": "阳遁",
+        "bureau": 59,
+        "taiyiPosition": "卯",
+        "taiyiPalace": 4,
+        "taiyiGua": "震",
+        "taiyiDir": "东",
+        "wenChangPosition": "乾",
+        "wenChangPalace": 1,
+        "shiJiPosition": "申",
+        "shiJiPalace": 6,
+        "jiShenPosition": "辰",
+        "jiShenPalace": 9,
+        "lordCount": 12,
+        "guestCount": 19,
+        "setCount": 28,
+        "countNatures": {
+          "lord": "下和",
+          "guest": "杂重阳",
+          "set": "杂重阴"
+        },
+        "tacticGuidance": "主得和数算（下和），主方宜调和固本、守正求安；客算占强宜严加防备",
+        "lordGeneral": 2,
+        "lordAssistant": 6,
+        "guestGeneral": 9,
+        "guestAssistant": 7,
+        "setGeneral": 8,
+        "setAssistant": 4,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "主算 12 为下和。",
+          "客算 19 为杂重阳。",
+          "定算 28 为杂重阴。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    },
+    "hour-2024-01-01-子时": {
+      "input": {
+        "scope": "hour",
+        "customDate": "2024-01-01T00:00:00+08:00"
+      },
+      "stripped": {
+        "scope": "hour",
+        "ganZhi": "甲子",
+        "dateTime": "2024-01-01 00:00",
+        "accumulatedValue": 8496672481,
+        "accumulatedLabel": "积时",
+        "accumulatedYears": 8496672481,
+        "entryYears": 1,
+        "yuan": 1,
+        "ji": 1,
+        "yinYang": "阳遁",
+        "bureau": 1,
+        "taiyiPosition": "乾",
+        "taiyiPalace": 1,
+        "taiyiGua": "乾",
+        "taiyiDir": "西北",
+        "wenChangPosition": "申",
+        "wenChangPalace": 6,
+        "shiJiPosition": "坤",
+        "shiJiPalace": 7,
+        "jiShenPosition": "寅",
+        "jiShenPalace": 4,
+        "lordCount": 7,
+        "guestCount": 13,
+        "setCount": 13,
+        "countNatures": {
+          "lord": "杂阴",
+          "guest": "杂重阳",
+          "set": "杂重阳"
+        },
+        "tacticGuidance": "客算多于主算，利客不利主，动谋求变有利",
+        "lordGeneral": 7,
+        "lordAssistant": 1,
+        "guestGeneral": 3,
+        "guestAssistant": 9,
+        "setGeneral": 3,
+        "setAssistant": 9,
+        "sixteenGods": [
+          {
+            "branch": "子",
+            "god": "地主"
+          },
+          {
+            "branch": "丑",
+            "god": "阳德"
+          },
+          {
+            "branch": "艮",
+            "god": "和德"
+          },
+          {
+            "branch": "寅",
+            "god": "吕申"
+          },
+          {
+            "branch": "卯",
+            "god": "高丛"
+          },
+          {
+            "branch": "辰",
+            "god": "太阳"
+          },
+          {
+            "branch": "巽",
+            "god": "大旲"
+          },
+          {
+            "branch": "巳",
+            "god": "大神"
+          },
+          {
+            "branch": "午",
+            "god": "大威"
+          },
+          {
+            "branch": "未",
+            "god": "天道"
+          },
+          {
+            "branch": "坤",
+            "god": "大武"
+          },
+          {
+            "branch": "申",
+            "god": "武德"
+          },
+          {
+            "branch": "酉",
+            "god": "太簇"
+          },
+          {
+            "branch": "戌",
+            "god": "阴主"
+          },
+          {
+            "branch": "乾",
+            "god": "阴德"
+          },
+          {
+            "branch": "亥",
+            "god": "大义"
+          }
+        ],
+        "judgments": [
+          "囚：主参将与太乙同宫。",
+          "主算 7 为杂阴。",
+          "客算 13 为杂重阳。",
+          "定算 13 为杂重阳。"
+        ],
+        "model": {
+          "id": "taiyi-four-calculations-72-table",
+          "name": "太乙四计七十二局基础盘",
+          "supportedScopes": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ],
+          "precision": "年计按积年起局；月、日、时计采用现代历法定位复现通行四计，时计按冬夏至分阴阳遁"
+        }
+      }
+    }
+  }
+}
