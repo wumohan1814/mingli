@@ -1,0 +1,433 @@
+{
+  "capability": "qimen-lifetime",
+  "defaultKeyFields": [
+    "schemaVersion",
+    "input.birthDateTime",
+    "input.timeZoneId",
+    "input.location.longitude",
+    "input.location.latitude",
+    "input.location.locationName",
+    "input.calendarType",
+    "input.timeStandard",
+    "input.method",
+    "input.juMethod",
+    "basis.calendar",
+    "basis.solarTerm",
+    "basis.timeStandard",
+    "basis.timeZoneUsed",
+    "basis.method",
+    "basis.juMethod",
+    "basis.stagePolicy.model",
+    "basis.stagePolicy.anchorRule",
+    "basis.stagePolicy.ageSystem",
+    "basis.stagePolicy.yearsPerStage",
+    "baseChart.method",
+    "baseChart.scope",
+    "baseChart.juMethod",
+    "baseChart.isYangDun",
+    "baseChart.juShu",
+    "baseChart.zhiFu",
+    "baseChart.zhiShi",
+    "baseChart.ganzhi.year",
+    "baseChart.ganzhi.month",
+    "baseChart.ganzhi.day",
+    "baseChart.ganzhi.hour",
+    "baseChart.timeInfo.solarTerm",
+    "baseChart.timeInfo.juTerm",
+    "baseChart.timeInfo.epoch",
+    "baseChart.timeInfo.fuTou",
+    "baseChart.timeInfo.fuTouDate",
+    "baseChart.timeInfo.chaoShenOrJieQi",
+    "baseChart.timeInfo.isZhiRun",
+    "baseChart.voidBranches",
+    "baseChart.voidPalaces",
+    "baseChart.horseStar",
+    "baseChart.specialConditions.isLiuJiaHour",
+    "baseChart.specialConditions.isLiuGuiHour",
+    "baseChart.specialConditions.isShiGanRuMu",
+    "baseChart.specialConditions.isWuBuYuShi",
+    "baseChart.jiuGongGe[0].gong",
+    "baseChart.jiuGongGe[0].name",
+    "baseChart.jiuGongGe[0].direction",
+    "baseChart.jiuGongGe[0].element",
+    "baseChart.jiuGongGe[0].tianPan.star",
+    "baseChart.jiuGongGe[0].tianPan.stem",
+    "baseChart.jiuGongGe[0].tianPan.companionStar",
+    "baseChart.jiuGongGe[0].tianPan.companionStem",
+    "baseChart.jiuGongGe[0].diPan.stem",
+    "baseChart.jiuGongGe[0].renPan.door",
+    "baseChart.jiuGongGe[0].shenPan.god",
+    "baseChart.jiuGongGe[1].gong",
+    "baseChart.jiuGongGe[1].name",
+    "baseChart.jiuGongGe[1].direction",
+    "baseChart.jiuGongGe[1].element",
+    "baseChart.jiuGongGe[1].tianPan.star",
+    "baseChart.jiuGongGe[1].tianPan.stem",
+    "baseChart.jiuGongGe[1].tianPan.companionStar",
+    "baseChart.jiuGongGe[1].tianPan.companionStem",
+    "baseChart.jiuGongGe[1].diPan.stem",
+    "baseChart.jiuGongGe[1].renPan.door",
+    "baseChart.jiuGongGe[1].shenPan.god",
+    "baseChart.jiuGongGe[2].gong",
+    "baseChart.jiuGongGe[2].name",
+    "baseChart.jiuGongGe[2].direction",
+    "baseChart.jiuGongGe[2].element",
+    "baseChart.jiuGongGe[2].tianPan.star",
+    "baseChart.jiuGongGe[2].tianPan.stem",
+    "baseChart.jiuGongGe[2].tianPan.companionStar",
+    "baseChart.jiuGongGe[2].tianPan.companionStem",
+    "baseChart.jiuGongGe[2].diPan.stem",
+    "baseChart.jiuGongGe[2].renPan.door",
+    "baseChart.jiuGongGe[2].shenPan.god",
+    "baseChart.jiuGongGe[3].gong",
+    "baseChart.jiuGongGe[3].name",
+    "baseChart.jiuGongGe[3].direction",
+    "baseChart.jiuGongGe[3].element",
+    "baseChart.jiuGongGe[3].tianPan.star",
+    "baseChart.jiuGongGe[3].tianPan.stem",
+    "baseChart.jiuGongGe[3].tianPan.companionStar",
+    "baseChart.jiuGongGe[3].tianPan.companionStem",
+    "baseChart.jiuGongGe[3].diPan.stem",
+    "baseChart.jiuGongGe[3].renPan.door",
+    "baseChart.jiuGongGe[3].shenPan.god",
+    "baseChart.jiuGongGe[4].gong",
+    "baseChart.jiuGongGe[4].name",
+    "baseChart.jiuGongGe[4].direction",
+    "baseChart.jiuGongGe[4].element",
+    "baseChart.jiuGongGe[4].tianPan.star",
+    "baseChart.jiuGongGe[4].tianPan.stem",
+    "baseChart.jiuGongGe[4].tianPan.companionStar",
+    "baseChart.jiuGongGe[4].tianPan.companionStem",
+    "baseChart.jiuGongGe[4].diPan.stem",
+    "baseChart.jiuGongGe[4].renPan.door",
+    "baseChart.jiuGongGe[4].shenPan.god",
+    "baseChart.jiuGongGe[5].gong",
+    "baseChart.jiuGongGe[5].name",
+    "baseChart.jiuGongGe[5].direction",
+    "baseChart.jiuGongGe[5].element",
+    "baseChart.jiuGongGe[5].tianPan.star",
+    "baseChart.jiuGongGe[5].tianPan.stem",
+    "baseChart.jiuGongGe[5].tianPan.companionStar",
+    "baseChart.jiuGongGe[5].tianPan.companionStem",
+    "baseChart.jiuGongGe[5].diPan.stem",
+    "baseChart.jiuGongGe[5].renPan.door",
+    "baseChart.jiuGongGe[5].shenPan.god",
+    "baseChart.jiuGongGe[6].gong",
+    "baseChart.jiuGongGe[6].name",
+    "baseChart.jiuGongGe[6].direction",
+    "baseChart.jiuGongGe[6].element",
+    "baseChart.jiuGongGe[6].tianPan.star",
+    "baseChart.jiuGongGe[6].tianPan.stem",
+    "baseChart.jiuGongGe[6].tianPan.companionStar",
+    "baseChart.jiuGongGe[6].tianPan.companionStem",
+    "baseChart.jiuGongGe[6].diPan.stem",
+    "baseChart.jiuGongGe[6].renPan.door",
+    "baseChart.jiuGongGe[6].shenPan.god",
+    "baseChart.jiuGongGe[7].gong",
+    "baseChart.jiuGongGe[7].name",
+    "baseChart.jiuGongGe[7].direction",
+    "baseChart.jiuGongGe[7].element",
+    "baseChart.jiuGongGe[7].tianPan.star",
+    "baseChart.jiuGongGe[7].tianPan.stem",
+    "baseChart.jiuGongGe[7].tianPan.companionStar",
+    "baseChart.jiuGongGe[7].tianPan.companionStem",
+    "baseChart.jiuGongGe[7].diPan.stem",
+    "baseChart.jiuGongGe[7].renPan.door",
+    "baseChart.jiuGongGe[7].shenPan.god",
+    "baseChart.jiuGongGe[8].gong",
+    "baseChart.jiuGongGe[8].name",
+    "baseChart.jiuGongGe[8].direction",
+    "baseChart.jiuGongGe[8].element",
+    "baseChart.jiuGongGe[8].tianPan.star",
+    "baseChart.jiuGongGe[8].tianPan.stem",
+    "baseChart.jiuGongGe[8].tianPan.companionStar",
+    "baseChart.jiuGongGe[8].tianPan.companionStem",
+    "baseChart.jiuGongGe[8].diPan.stem",
+    "baseChart.jiuGongGe[8].renPan.door",
+    "baseChart.jiuGongGe[8].shenPan.god",
+    "personalMarkers[0].markerType",
+    "personalMarkers[0].value",
+    "personalMarkers[0].palace",
+    "personalMarkers[0].palaceName",
+    "personalMarkers[0].layer",
+    "personalMarkers[1].markerType",
+    "personalMarkers[1].value",
+    "personalMarkers[1].palace",
+    "personalMarkers[1].palaceName",
+    "personalMarkers[1].layer",
+    "personalMarkers[2].markerType",
+    "personalMarkers[2].value",
+    "personalMarkers[2].palace",
+    "personalMarkers[2].palaceName",
+    "personalMarkers[2].layer",
+    "personalMarkers[3].markerType",
+    "personalMarkers[3].value",
+    "personalMarkers[3].palace",
+    "personalMarkers[3].palaceName",
+    "personalMarkers[3].layer",
+    "personalMarkers[4].markerType",
+    "personalMarkers[4].value",
+    "personalMarkers[4].palace",
+    "personalMarkers[4].palaceName",
+    "personalMarkers[4].layer",
+    "personalMarkers[5].markerType",
+    "personalMarkers[5].value",
+    "personalMarkers[5].palace",
+    "personalMarkers[5].palaceName",
+    "personalMarkers[5].layer",
+    "personalMarkers[6].markerType",
+    "personalMarkers[6].value",
+    "personalMarkers[6].palace",
+    "personalMarkers[6].palaceName",
+    "personalMarkers[6].layer",
+    "personalMarkers[7].markerType",
+    "personalMarkers[7].value",
+    "personalMarkers[7].palace",
+    "personalMarkers[7].palaceName",
+    "personalMarkers[7].layer",
+    "personalMarkers[8].markerType",
+    "personalMarkers[8].value",
+    "personalMarkers[8].palace",
+    "personalMarkers[8].palaceName",
+    "personalMarkers[8].layer",
+    "personalMarkers[9].markerType",
+    "personalMarkers[9].value",
+    "personalMarkers[9].palace",
+    "personalMarkers[9].palaceName",
+    "personalMarkers[9].layer",
+    "stages[0].stageIndex",
+    "stages[0].title",
+    "stages[0].ageStart",
+    "stages[0].ageEnd",
+    "stages[0].calendarStart",
+    "stages[0].calendarEnd",
+    "stages[0].dominantPalaces",
+    "stages[0].associatedMarkers",
+    "stages[0].stageTheme",
+    "stages[0].limitations",
+    "stages[1].stageIndex",
+    "stages[1].title",
+    "stages[1].ageStart",
+    "stages[1].ageEnd",
+    "stages[1].calendarStart",
+    "stages[1].calendarEnd",
+    "stages[1].dominantPalaces",
+    "stages[1].associatedMarkers",
+    "stages[1].stageTheme",
+    "stages[1].limitations",
+    "stages[2].stageIndex",
+    "stages[2].title",
+    "stages[2].ageStart",
+    "stages[2].ageEnd",
+    "stages[2].calendarStart",
+    "stages[2].calendarEnd",
+    "stages[2].dominantPalaces",
+    "stages[2].associatedMarkers",
+    "stages[2].stageTheme",
+    "stages[2].limitations",
+    "stages[3].stageIndex",
+    "stages[3].title",
+    "stages[3].ageStart",
+    "stages[3].ageEnd",
+    "stages[3].calendarStart",
+    "stages[3].calendarEnd",
+    "stages[3].dominantPalaces",
+    "stages[3].associatedMarkers",
+    "stages[3].stageTheme",
+    "stages[3].limitations",
+    "topicCandidates[0].topic",
+    "topicCandidates[0].topicName",
+    "topicCandidates[1].topic",
+    "topicCandidates[1].topicName",
+    "topicCandidates[2].topic",
+    "topicCandidates[2].topicName",
+    "topicCandidates[3].topic",
+    "topicCandidates[3].topicName",
+    "topicCandidates[4].topic",
+    "topicCandidates[4].topicName",
+    "topicCandidates[5].topic",
+    "topicCandidates[5].topicName",
+    "topicCandidates[6].topic",
+    "topicCandidates[6].topicName",
+    "topicCandidates[7].topic",
+    "topicCandidates[7].topicName",
+    "topicCandidates[8].topic",
+    "topicCandidates[8].topicName"
+  ],
+  "fixtures": [
+    {
+      "name": "anchor-dst-1990-0512-0730",
+      "input": {
+        "birthDateTime": "1990-05-12T07:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "birthplace": "杭州"
+      }
+    },
+    {
+      "name": "late-zi-dst-1990-0512-2330",
+      "input": {
+        "birthDateTime": "1990-05-12T23:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "early-zi-dst-1990-0512-0030",
+      "input": {
+        "birthDateTime": "1990-05-12T00:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "jia-zi-late-2000-0808-2345",
+      "input": {
+        "birthDateTime": "2000-08-08T23:45:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "zhirun-noop-2000-0808-2345",
+      "input": {
+        "birthDateTime": "2000-08-08T23:45:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "juMethod": "zhirun"
+      }
+    },
+    {
+      "name": "anchor-modern-2024-0615-1030",
+      "input": {
+        "birthDateTime": "2024-06-15T10:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "late-zi-2024-0615-2330",
+      "input": {
+        "birthDateTime": "2024-06-15T23:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "zhirun-2024-0615-2330",
+      "input": {
+        "birthDateTime": "2024-06-15T23:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "juMethod": "zhirun"
+      }
+    },
+    {
+      "name": "winter-1984-0115-1420",
+      "input": {
+        "birthDateTime": "1984-01-15T14:20:00",
+        "longitude": 116.4,
+        "latitude": 39.9,
+        "birthplace": "北京"
+      }
+    },
+    {
+      "name": "yin-fuyin-2000-0808-2145",
+      "input": {
+        "birthDateTime": "2000-08-08T21:45:00",
+        "longitude": 121.5,
+        "latitude": 31.2
+      }
+    },
+    {
+      "name": "dawn-1975-1130-0510",
+      "input": {
+        "birthDateTime": "1975-11-30T05:10:00",
+        "longitude": 87.6,
+        "latitude": 43.8
+      }
+    },
+    {
+      "name": "era-1900-0615-1030",
+      "input": {
+        "birthDateTime": "1900-06-15T10:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "era-1960-0615-1030",
+      "input": {
+        "birthDateTime": "1960-06-15T10:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "era-1990-mz-0615-1030",
+      "input": {
+        "birthDateTime": "1990-06-15T10:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "era-2020-leap-0229-1000",
+      "input": {
+        "birthDateTime": "2020-02-29T10:00:00",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    },
+    {
+      "name": "feipan-1990-0512-0730",
+      "input": {
+        "birthDateTime": "1990-05-12T07:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "method": "feipan"
+      }
+    },
+    {
+      "name": "feipan-yin-2024-0615-1030",
+      "input": {
+        "birthDateTime": "2024-06-15T10:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "method": "feipan"
+      }
+    },
+    {
+      "name": "tz-utc-1990-0512-0730",
+      "input": {
+        "birthDateTime": "1990-05-12T07:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "timeZoneId": "UTC"
+      }
+    },
+    {
+      "name": "tz-tokyo-1990-0512-0730",
+      "input": {
+        "birthDateTime": "1990-05-12T07:30:00",
+        "longitude": 120.12,
+        "latitude": 30.28,
+        "timeZoneId": "Asia/Tokyo"
+      }
+    },
+    {
+      "name": "date-only-1990-0512",
+      "input": {
+        "birthDateTime": "1990-05-12",
+        "longitude": 120.12,
+        "latitude": 30.28
+      }
+    }
+  ],
+  "notes": [
+    "门禁策略（同节153 qimen 裁决）：释义层/白话文案不进门禁——包括 baseChart.classicPatterns/patternTags/patternDetails/palaceInsights/stemRelations/patternCombos/directions/yingQi、seasonality 白话、specialConditions.description、timeInfo.juMethodNote、personalMarkers.traditionalSignificance、stages.supportFacts/constraintFacts、topicCandidates.primaryPalaces/secondaryPalaces/basis/patternSummary。",
+    "口径来源：黑盒探针 tools/_probe/qimen-lifetime/（不读 vendor 源码）。关键口径：birthDateTime 按 timeZoneId 挂钟（Asia/Shanghai 1901 前 LMT +8.095278、1986-1991 夏令时 1988 起始 04-17）转 epoch，再按东八区 +08:00 挂钟起局；baseChart=时家拆补/置闰；晚子时(23:00)后拆补符头从次日寻（2000-08-08T23:45 → 己亥@2000-08-09 中元）；置闰挂下一节气并按下一节气阴阳遁取局；值符宫=5（天禽）时省略值符星标记；甲干渲染「甲(遁X)」；四柱分限 0-16/17-32/33-48/49-80，起点=出生日（转换后挂钟小时∈[0,7] 减 1 天）。",
+    "夹具避让：所有日期避开二十四节气交节日（lunar-typescript getJieQiTable 只给日期、旧实现精确到时刻，见节153 已知口径）。",
+    "golden 来源：--save-golden 由旧实现（vendored 引擎）输出 stripInternal 后生成。"
+  ]
+}
