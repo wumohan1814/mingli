@@ -13,7 +13,7 @@
   "basis": {
     "type": "雷诺曼体系（公有领域 Petit Lenormand）＋ 西式牌卡读法 ＋ 节117 确定性预判标记层 ＋ C6 牌义",
     "classics": [
-      {"book": "Petit Lenormand（小雷诺曼体系，公有领域）", "chapter": "36 牌序与核心意象（待联网确认公有领域 URL）", "url": "https://zh.wikisource.org/wiki/（雷诺曼，待复验）", "collected_at": "2026-09-14"}
+      {"book": "Petit Lenormand（小雷诺曼体系，公有领域）", "chapter": "36 牌序与核心意象（传统卡义，公有领域体系）", "url": "https://learnlenormand.com/petit-lenormand-card-meanings/；https://petitlenormand.com/eng/encyclopedia/36-cards/", "collected_at": "2026-09-14"}
     ]
   },
   "meta": {
