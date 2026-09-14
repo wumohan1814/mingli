@@ -122,8 +122,11 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 // mingyu-core 是 ESM 包（type:module），直接 ESM import。
 // 占星/七政/五运六气走 npm mingyu-core@0.2.1；
 // 奇门终身局走本地 vendor 0.2.2 构建产物（calculateQimenLifetime，npm 0.2.1 无此函数）。
-import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
+// 节154：奇门终身局已切换到自研内核（对拍 5040/5040 全 100%）；vendor 0.2.2 该函数已下线。
+import { calculateQimenLifetimeCore } from './paipan-core/src/capabilities/qimen-lifetime/index.js';
+
+// 节153：金口诀已切换到自研内核（对拍 6210/6210 全 100%）；vendor generateJinkoujue 已下线。
+import { generateJinkoujueCore } from './paipan-core/src/capabilities/jinkoujue/index.js';
 
 // 节155：六爻 / 梅花 / 小六壬已整体切换到自研内核（paipan-core）。
 //   起卦/装卦/断卦要素与课式全部自研（对拍门禁 100% 通过，见 paipan-core/tools/compare）；
@@ -318,8 +321,9 @@ async function computeExtra(input) {
 
   let qimen = null;
   try {
+    // 节154：自研内核（对拍 5040/5040 全 100%）；vendor calculateQimenLifetime 已下线。
     const birthIso = `${input.year}-${String(input.month).padStart(2, '0')}-${String(input.day).padStart(2, '0')}T${String(input.hour).padStart(2, '0')}:${String(input.minute || 0).padStart(2, '0')}:00`;
-    const qi = calculateQimenLifetime({
+    const qi = calculateQimenLifetimeCore({
       birthDateTime: birthIso,
       timeZoneId: 'Asia/Shanghai',
       location: {
@@ -459,14 +463,14 @@ function computeDivination(input) {
     case 'jinkoujue': {
       // 金口诀起课（REQ-119）：地分起课 → 四位一体（人元/贵神/将神/地分）+ 阴阳发用 +
       // 五动三动；确定性零 LLM。params 原样透传引擎，起课方式四选一（time 时间起课 /
-      // branch 指定地分 / number 数字起课 / random 随机起课），branch 传 params.branch、
-      // number 传 params.number，random 无 seed/replay 时引擎以系统安全随机数取地分
-      // （确定性重放可传 seed/replay）。customDate 即前端所选 日期+时辰 组装的东八区 ISO。
+      // branch 指定地分 / number 数字起课 / random 随机起课）。
+      // 节153：已切换到自研内核（对拍 6210/6210 全 100%）。
       const params = (input.params && typeof input.params === 'object' && !Array.isArray(input.params))
         ? { ...input.params }
         : {};
       params.customDate = toCustomDate(params.customDate);
-      raw = generateJinkoujue(params);
+      if (params.customDate === undefined) params.customDate = new Date();
+      raw = generateJinkoujueCore(params);
       break;
     }
     case 'qimen': {
