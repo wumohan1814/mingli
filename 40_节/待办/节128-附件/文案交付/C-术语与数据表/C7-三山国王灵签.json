@@ -1,0 +1,232 @@
+{
+  "id": "C7-ssgw-lingsign",
+  "batch": "C",
+  "category": "data",
+  "title": "三山国王灵签 92 签（签诗采集 + 解签自写）",
+  "target_path": "backend/data/divination/ssgw-data/signs-full.js（待接入）",
+  "meta": {
+    "version": "0.2",
+    "coverage": "签诗已采集 1–20（来源 yidocs 录文，2026-09-14 采集）；解签自写 1–20；21–92 为骨架（pending_poem）。⚠️ 全部 92 签的『签号→签诗』映射尚未经权威底本核验（见 data_quality_note），当前 1–20 亦仅代表单一来源映射。",
+    "source_discipline": "签诗＝传统庙宇文本，公网可查；本批自公网采集并标注来源 URL 与 collected_at，待逐签核对多源一致性。解签＝本产品自写现代白话，绝不照抄任何站点现代解签文案（原 mingyu interpretation.js 43KB 属现代创作，已依规弃用重寫）。",
+    "redline": "甲·不打分：不输出吉凶总分/百分比/匹配度；签中上上/中平/下下只作气偏标签非定论。禁巴纳姆：解签每句须指回签诗具体意象＋绑定所问。不越界：不替医疗/投资/婚恋/司法决定。",
+    "data_quality_note": "⚠️ 重大数据质量风险：本次（2026-09-14）联网复检发现，三山国王灵签的『签号→签诗』映射在多个来源间严重不一致——至少 yidocs / set.baidu（1–41 详解）/ fyqyw（1–60、1–42 两套）/ 东陇网 四套映射互有冲突，且同一签的签诗用字亦异文（如第一签『鬼贼不敢欺』vs『鬼神不敢欺』、『好事莫嫌疑』vs『好事莫嫌迟』）。其中东陇网录文存在明显签号错位（如将『武後生太子登基』标第一签、『唐天子游鳳凰山』标第二签，与多数来源相反），不可直采。结论：21–92 不能依据冲突网页硬填（违反『来源链干净、不大概填空』纪律）。正确处置＝由用户/父 Agent 指定一部权威底本（庙方善本、或维基文库/中国哲学书电子化计划扫描件），据此统一校勘后再逐签回填。当前 1–20（yidocs 映射）同样需在该底本下复核，差异记入 data_variant。本件已交付完整 schema＋自写解签规则＋采集 SOP，待权威底本即可一次性补满。"
+  },
+  "schema": {
+    "sign_fields": ["id", "ordinal", "title", "level", "poem", "interpretation", "collected_at", "source", "status"],
+    "interpretation_rules": [
+      "签诗为意象引子，不是判决书。",
+      "上上/中平/下下只作气偏『顺/平/需谨慎』标签，非定论。",
+      "每句须指回签诗具体意象＋绑定所问议题（禁巴纳姆）。",
+      "同签对不同事读法不同，必先定问事再解。",
+      "不输出吉凶总分/百分比/匹配度（守甲·不打分）。",
+      "应期只给阶段，不给精确日。",
+      "不替决定、不越界（医疗/投资/婚恋判决/司法）。",
+      "语气贴合太初星象式高级感：沉静、克制、可感知。"
+    ],
+    "poem_collection_sop": [
+      "取公网公有领域 三山国王灵签 文本，标注来源 URL 与 collected_at。",
+      "多源交叉核对：用字异文以庙方/维基文库为准，差异记入 data_variant。",
+      "仅采签诗本体与签题，不采任何现代白话解签（解签一律自写）。",
+      "逐签回填 poem/title/level（level 以源标注为准，待核对）。",
+      "92 签齐后跑一致性校验（序号连续、每签四句完整）。"
+    ]
+  },
+  "signs": [
+    {
+      "id": 1, "ordinal": "第一签", "title": "潘仁美摘印", "level": "待核对",
+      "poem": ["敕降奉行时", "鬼贼不敢欺", "黄金我助你", "好事莫嫌疑"],
+      "interpretation": "本签以『奉命而行、邪祟不侵』为象，整体气偏顺。若问事业，当前有依凭、宜按规程推进，不必自乱；若问人际，小人退散、贵人暗助。值得留意：好事宜趁势，毋拖延。不写定论、不评分。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 2, "ordinal": "第二签", "title": "武后称帝", "level": "待核对",
+      "poem": ["国泰民安乐", "官清民自安", "路上来往人", "乡村处处乐"],
+      "interpretation": "以『时清人和、四境安恬』为象，气偏平顺。问家宅与环境，氛围和顺、宜安居；问事业，大局稳、可从容布局。提醒：安中藏进，不必躁动。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 3, "ordinal": "第三签", "title": "郭子仪拜寿", "level": "待核对",
+      "poem": ["父子一家门", "富贵永长春", "贵人相接引", "家庆贺东君"],
+      "interpretation": "以『家门团圆、贵人相引』为象，气偏顺。问家庭/人伦，和乐可期中；问谋求，得人助、宜借势。提醒：顺境惜缘，莫外求过切。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 4, "ordinal": "第四签", "title": "杨志代天巡按·乾隆君游苏州", "level": "待核对",
+      "poem": ["天子驾行程", "鬼贼在两傍", "将军手按剑", "吏卒不敢横"],
+      "interpretation": "以『奉公巡视、威仪自持』为象，气偏平。问行事，宜持正、不徇私；问是非，旁有扰而主位稳。提醒：持矩则邪不敢近，毋因外声乱方寸。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 5, "ordinal": "第五签", "title": "五雷扣坟·三娘教子", "level": "待核对",
+      "poem": ["封候得意回", "龙门第一科", "展开龙虎榜", "平地一声雷"],
+      "interpretation": "以『平地起雷、榜上有名』为象，气偏奋发。问功名/学业，时机将启、宜尽力；问谋求，有声名之兆。提醒：雷动在一刻，平日之积乃其本。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 6, "ordinal": "第六签", "title": "管仲佐桓公·承周天子命代楚", "level": "待核对",
+      "poem": ["齐楚并相量", "何事去请兵", "不如家里坐", "谁能谁不能"],
+      "interpretation": "以『量力而止、毋妄兴动』为象，气偏守。问争竞，宜审势、不轻启衅；问进取，外援未必可靠。提醒：坐镇家中者，常常比远求更稳。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 7, "ordinal": "第七签", "title": "吕蒙正拜佛·杨延昭归天", "level": "待核对",
+      "poem": ["神道不可扬", "早来一炉香", "专心来请我", "便是不非常"],
+      "interpretation": "以『诚心自感、不事张扬』为象，气偏内守。问祈愿/心事，贵在专诚而非铺排排场；问人际，低调者得庇护。提醒：非常之机，常藏在寻常的诚意里。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 8, "ordinal": "第八签", "title": "王双福戏游赛龙舟·朱买臣妻", "level": "待核对",
+      "poem": ["飞禽无故道", "终日门前吵", "照管门前路", "凡事军勿闹"],
+      "interpretation": "以『门前喧嚣、宜静守』为象，气偏需谨慎。问环境，外扰多、宜收拾门户；问口舌，是非起于近旁。提醒：门前路自己照管，外闹不值得奉陪。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 9, "ordinal": "第九签", "title": "朱买臣上京得中·码头收水", "level": "待核对",
+      "poem": ["平心去待人", "前程吉利兴", "但看三五后", "自有贵人迎"],
+      "interpretation": "以『平心待人、贵人在后』为象，气偏渐顺。问人际，宽厚自有回响；问时机，三五之期后转圜。提醒：不必急在一时，稳步者后得迎。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 10, "ordinal": "第十签", "title": "商珠托梦·吕蒙正拜佛", "level": "待核对",
+      "poem": ["看宣一卷经", "请佛做证明", "密殃时负民", "宅舍保安宁"],
+      "interpretation": "以『心存清正、宅舍自安』为象，气偏平。问家宅，安顿心神则境安；问疑惧，暗昧将散。提醒：安宁不在外求，在己心有凭。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 11, "ordinal": "第十一签", "title": "陈庆元和番·后得夫妻团圆", "level": "待核对",
+      "poem": ["封书寄来时", "必免说东西", "幕道君不信", "此事得人疑"],
+      "interpretation": "以『音书将至、宜慎言』为象，气偏待明。问音信/文书，消息将近但措辞当慎；问信任，无故生疑则误。提醒：话留三分，事过自清。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 12, "ordinal": "第十二签", "title": "六月雪·云英设计克害", "level": "待核对",
+      "poem": ["地里有黄金", "寸针亦难寻", "若能寻得见", "铁锤磨成针"],
+      "interpretation": "以『宝在眼前、贵在恒心』为象，气偏需耐心。问谋求，价值近在但须磨功夫；问困境，久磨方得。提醒：黄金不拒寸针，怕的是半途而废。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 13, "ordinal": "第十三签", "title": "张生跳墙·朱细玉将男假女", "level": "待核对",
+      "poem": ["贤人骑驿马", "将军号出来", "停待四更后", "衙门大展开"],
+      "interpretation": "以『时机将启、待时而行』为象，气偏待发。问行事，已有铺排、宜候其熟；问机遇，四更之后门自开。提醒：未到时勿抢先，到了时勿犹豫。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 14, "ordinal": "第十四签", "title": "吕蒙正清宴·秦世美回家", "level": "待核对",
+      "poem": ["时运未兴时", "鬼贼在东西", "求名并求利", "求官各来迟"],
+      "interpretation": "以『时运未兴、宜蛰伏』为象，气偏需谨慎。问谋求，当前未逢其会、缓则为上；问是非，旁有扰。提醒：运未至时，守比进稳。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 15, "ordinal": "第十五签", "title": "吕蒙正抛绣球", "level": "待核对",
+      "poem": ["君家喜有期", "残花发旧枝", "前缘皆注定", "好事莫嫌疑"],
+      "interpretation": "以『旧枝复发、喜期将至』为象，气偏顺。问姻缘/故交，旧缘有新机；问谋求，前定者将成。提醒：残花非尽谢，逢春自开。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 16, "ordinal": "第十六签", "title": "秦世美裁腰", "level": "待核对",
+      "poem": ["王法本无亲", "欲害世间民", "蛇头并鼠尾", "为祸及双亲"],
+      "interpretation": "以『法不可枉、祸延亲族』为象，气偏凶警示。问行事，勿恃势欺人、因果及身；问是非，小人近则累亲。提醒：蛇头鼠尾之局，避之为上。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 17, "ordinal": "第十七签", "title": "蒋兴哥失约·引陈商上楼", "level": "待核对",
+      "poem": ["当初共君约", "至今从情怯", "回家各相量", "万病皆有药"],
+      "interpretation": "以『旧约未践、宜沟通』为象，气偏和解。问人际/纠葛，回去好好谈、症结可解；问心结，万病有药在诚意。提醒：怯者久拖成疾，谈则药到。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 18, "ordinal": "第十八签", "title": "蒋兴哥休妻", "level": "待核对",
+      "poem": ["劝君休过径", "山高步难行", "凡事君请忍", "迟疑运未兴"],
+      "interpretation": "以『路险宜忍、运未兴』为象，气偏需谨慎。问进取，当前山高步艰、缓行为宜；问争执，忍一刻省百忧。提醒：运未兴时，忍即是进。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 19, "ordinal": "第十九签", "title": "吕蒙正得中回乡", "level": "待核对",
+      "poem": ["福禄命中生", "求成便得成", "婚姻功名就", "宅舍保安宁"],
+      "interpretation": "以『福禄自来、所求皆遂』为象，气偏顺成。问谋求/功名/姻缘，当前逢其会、宜把握；问家宅，安宁可保。提醒：成时乘势，莫让疑心误好局。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {
+      "id": 20, "ordinal": "第二十签", "title": "金花捷报·二世郎君二世娘", "level": "待核对",
+      "poem": ["鸡报五更风", "太阳渐出来", "欲进前程路", "天气暗朦朧"],
+      "interpretation": "以『破晓将明、路尚朦胧』为象，气偏渐明。问前程，曙光已动、宜整装待发；问迷惘，暗朧是过渡非尽头。提醒：鸡既报更，天必亮，只待你举步。",
+      "collected_at": "2026-09-14", "source": "公网公有领域（yidocs 录文）", "status": "collected_poem_written"
+    },
+    {"id": 21, "ordinal": "第二十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 22, "ordinal": "第二十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 23, "ordinal": "第二十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 24, "ordinal": "第二十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 25, "ordinal": "第二十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 26, "ordinal": "第二十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 27, "ordinal": "第二十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 28, "ordinal": "第二十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 29, "ordinal": "第二十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 30, "ordinal": "第三十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 31, "ordinal": "第三十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 32, "ordinal": "第三十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 33, "ordinal": "第三十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 34, "ordinal": "第三十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 35, "ordinal": "第三十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 36, "ordinal": "第三十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 37, "ordinal": "第三十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 38, "ordinal": "第三十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 39, "ordinal": "第三十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 40, "ordinal": "第四十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 41, "ordinal": "第四十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 42, "ordinal": "第四十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 43, "ordinal": "第四十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 44, "ordinal": "第四十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 45, "ordinal": "第四十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 46, "ordinal": "第四十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 47, "ordinal": "第四十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 48, "ordinal": "第四十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 49, "ordinal": "第四十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 50, "ordinal": "第五十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 51, "ordinal": "第五十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 52, "ordinal": "第五十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 53, "ordinal": "第五十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 54, "ordinal": "第五十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 55, "ordinal": "第五十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 56, "ordinal": "第五十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 57, "ordinal": "第五十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 58, "ordinal": "第五十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 59, "ordinal": "第五十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 60, "ordinal": "第六十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 61, "ordinal": "第六十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 62, "ordinal": "第六十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 63, "ordinal": "第六十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 64, "ordinal": "第六十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 65, "ordinal": "第六十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 66, "ordinal": "第六十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 67, "ordinal": "第六十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 68, "ordinal": "第六十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 69, "ordinal": "第六十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 70, "ordinal": "第七十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 71, "ordinal": "第七十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 72, "ordinal": "第七十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 73, "ordinal": "第七十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 74, "ordinal": "第七十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 75, "ordinal": "第七十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 76, "ordinal": "第七十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 77, "ordinal": "第七十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 78, "ordinal": "第七十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 79, "ordinal": "第七十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 80, "ordinal": "第八十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 81, "ordinal": "第八十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 82, "ordinal": "第八十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 83, "ordinal": "第八十三签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 84, "ordinal": "第八十四签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 85, "ordinal": "第八十五签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 86, "ordinal": "第八十六签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 87, "ordinal": "第八十七签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 88, "ordinal": "第八十八签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 89, "ordinal": "第八十九签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 90, "ordinal": "第九十签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 91, "ordinal": "第九十一签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"},
+    {"id": 92, "ordinal": "第九十二签", "title": "待采集", "level": "待采集核对", "poem": ["（待联网逐签采集核对，不伪填）"], "interpretation": "待按解签自写规则补写", "collected_at": "", "source": "", "status": "pending_poem"}
+  ],
+  "meta_tail": {
+    "generated_by": "文案 Agent（Claude，2026-09-14）",
+    "self_check": "签诗 1–20 自公网公有领域采集（yidocs 录文），标注采集日与来源；21–92 未伪填、标 pending_poem。解签 1–20 全部自写，未抄任何现代解签文案。无数字评分；签中等级只作气偏标签非定论；禁巴纳姆（解签每句指回签诗意象＋绑定所问）；不越界（医疗/投资/婚恋/司法）。来源异文已记入 data_quality_note，待逐签校勘。"
+  }
+}

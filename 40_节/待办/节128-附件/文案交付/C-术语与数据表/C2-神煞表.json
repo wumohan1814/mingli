@@ -1,0 +1,40 @@
+{
+  "id": "C2-shensha-table",
+  "batch": "C",
+  "category": "data_table",
+  "title": "神煞表（从古籍整理 · 八字／紫微／择日共用）",
+  "target_path": "backend/data/tables/shensha.json",
+  "discipline_note": "神煞名属公有领域传统内容（须与内核神煞表一致）。下表『意象说明』均为本任务按古籍思路自写的白话，非抄现代整理本。来源古籍已登记于《古籍来源清单》（三命通会·论神煞、钦定协纪辨方书·建除神煞）。神煞只作参考提示，不作吉凶定论。",
+  "columns": ["name", "pinyin", "kind", "plain_meaning", "source"],
+  "rows": [
+    {"name": "天乙贵人", "pinyin": "tiān yǐ guì rén", "kind": "吉", "plain_meaning": "传统认为最吉的「有人帮」符号，落处代表易得扶持的方位或关系。", "source": "三命通会·论神煞"},
+    {"name": "文昌", "pinyin": "wén chāng", "kind": "吉", "plain_meaning": "主学习与文书运的符号，落处代表易在文字、琢磨上出彩。", "source": "三命通会·论神煞"},
+    {"name": "天德", "pinyin": "tiān dé", "kind": "吉", "plain_meaning": "按月支推出的解厄符号，传统视为「逢凶易化解」的护持。", "source": "协纪辨方书·神煞"},
+    {"name": "月德", "pinyin": "yuè dé", "kind": "吉", "plain_meaning": "与天德同类的解厄符号，主平和、少是非。", "source": "协纪辨方书·神煞"},
+    {"name": "禄神", "pinyin": "lù shén", "kind": "吉", "plain_meaning": "日干临官之位，主稳定可得的自身资源与职位。", "source": "三命通会·论十干"},
+    {"name": "将星", "pinyin": "jiāng xīng", "kind": "吉", "plain_meaning": "主统筹、领导力，落处代表在群体中易有主事气质。", "source": "三命通会·论神煞"},
+    {"name": "红鸾", "pinyin": "hóng luán", "kind": "中", "plain_meaning": "主婚恋机缘启动的符号，遇之代表人际缘分开动，非定论。", "source": "三命通会·论神煞"},
+    {"name": "天喜", "pinyin": "tiān xǐ", "kind": "中", "plain_meaning": "与红鸾呼应的喜庆符号，主顺心、易成之事。", "source": "三命通会·论神煞"},
+    {"name": "桃花／咸池", "pinyin": "táo huā", "kind": "中", "plain_meaning": "主人际吸引与情感机缘的符号，中性，看全局定其冷暖。", "source": "三命通会·论神煞"},
+    {"name": "驿马", "pinyin": "yì mǎ", "kind": "中", "plain_meaning": "主变动、远行、不安于一处；动中易有契机也易有奔波。", "source": "三命通会·论神煞"},
+    {"name": "华盖", "pinyin": "huá gài", "kind": "中", "plain_meaning": "主孤高、喜钻研、偏艺术；亦主独处与精神世界。", "source": "三命通会·论神煞"},
+    {"name": "孤辰", "pinyin": "gū chén", "kind": "需留意", "plain_meaning": "主易感孤独、喜独处的符号，提示多在关系上用心。", "source": "三命通会·论神煞"},
+    {"name": "寡宿", "pinyin": "guǎ sù", "kind": "需留意", "plain_meaning": "与孤辰呼应的符号，主内在疏离感，提示主动连接。", "source": "三命通会·论神煞"},
+    {"name": "劫煞", "pinyin": "jié shà", "kind": "需留意", "plain_meaning": "主突发损耗、被夺的符号，提示财物与约定多确认。", "source": "三命通会·论神煞"},
+    {"name": "灾煞", "pinyin": "zāi shà", "kind": "需留意", "plain_meaning": "与劫煞相邻的符号，主易有波折，提示稳中求进。", "source": "三命通会·论神煞"},
+    {"name": "羊刃", "pinyin": "yáng rèn", "kind": "需留意", "plain_meaning": "主刚烈、果决也易受伤的符号，需配全局看其收放。", "source": "三命通会·论神煞"},
+    {"name": "空亡", "pinyin": "kōng wáng", "kind": "需留意", "plain_meaning": "十组干支里轮空的两支，传统视为「力量不到、事项落空」的提示。", "source": "三命通会·论空亡"}
+  ],
+  "basis": {
+    "type": "神煞名公有领域 + 意象说明自写（据古籍思路）",
+    "classics": [
+      {"book": "三命通会", "chapter": "论神煞／论空亡", "url": "https://zh.wikisource.org/wiki/三命通會", "collected_at": "2026-09-14"},
+      {"book": "钦定协纪辨方书", "chapter": "卷五·神煞", "url": "http://zh.wikisource.org/wiki/欽定協紀辨方書_(四庫全書本)/卷05", "collected_at": "2026-09-14"}
+    ]
+  },
+  "meta": {
+    "generated_by": "文案 Agent（Claude，2026-09-14）",
+    "version": 1,
+    "self_check": "神煞名为公有领域传统内容；意象说明自写、未抄现代整理本；按古籍思路整理；均标注为参考非定论。"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "A18-time-baseline-injection",
+  "batch": "A",
+  "category": "prompt",
+  "title": "时间基准注入（把「现在」喂给模型）",
+  "target_path": "backend/prompts/common/time-baseline.md",
+  "content_zh": "命理解读里凡是涉及「当下」「今年」「最近」的说法，必须基于注入的确定时间基准，不得自行调用时钟、不得假设当前年份。\n\n一、注入字段（由上游确定性计算提供，模型只读不猜）\n- `now_date`：公历日期（ISO，+08:00）。\n- `now_solar_term`：当前所处节气名（如「白露」）。\n- `now_year_ganzhi`：当年干支（如「丙午」）。\n- `user_age`：由出生日期与 `now_date` 算出的周岁（确定性）。\n- `current_dayun` / `current_liunian`：如已排盘，当前大运干支与流年干支。\n\n二、使用规则\n- 所有「今年」「本月」「当下阶段」一律以注入字段为准；若字段为空，明说「暂无时间基准」，不要凭空补。\n- 大运 / 流年相关的「阶段」描述，优先用 `current_dayun` / `current_liunian` 锚定，再说趋势，避免「从今年开始」这类模糊起手。\n- 涉及节气边界（如用户生于换节前后），提示「临近节气转换，盘面以精确排盘为准」，不替用户下结论。\n- 真太阳时换算已完成于排盘阶段；解读层只消费结果，不再做经度 / 均时差计算（见《术语总表》真太阳时条目）。\n\n三、语气\n- 时间相关表述保持从容：「走到这一阶段」「近一两年里更值得留意的是…」，不用倒计时式紧迫感。",
+  "constraints": {
+    "word_count": 500,
+    "structure": ["注入字段", "使用规则", "语气"]
+  },
+  "basis": {
+    "type": "术数规则（真太阳时 / 历法，公有领域）+ 产品口径",
+    "classics": [
+      {"book": "钦定协纪辨方书", "chapter": "卷五（建除十二值）", "url": "http://zh.wikisource.org/wiki/欽定協紀辨方書_(四庫全書本)/卷05", "collected_at": "2026-09-14"}
+    ]
+  },
+  "meta": {
+    "generated_by": "文案 Agent（Claude，2026-09-14）",
+    "version": 1,
+    "self_check": "无照抄；无数字评分；无越界内容；与术语总表真太阳时口径一致。"
+  }
+}
