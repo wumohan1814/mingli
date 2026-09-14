@@ -164,7 +164,11 @@ const CAPABILITIES = {
     fixtures: 'jinkoujue.json',
     legacy: { module: 'divination/algorithms/jinkoujue.js', exportName: 'generateJinkoujue' },
     core: { module: 'src/capabilities/jinkoujue/index.js', exportName: 'generateJinkoujueCore' },
-    toLegacyInput: (input) => [input.params || {}],
+    toLegacyInput: (input) => {
+      const params = (input.params && typeof input.params === 'object' && !Array.isArray(input.params)) ? { ...input.params } : {};
+      if (params.customDate !== undefined) params.customDate = toDate(params.customDate); // 旧实现只收 Date
+      return [params];
+    },
     toCoreInput: (input) => input.params || {},
   },
   taiyi: {
