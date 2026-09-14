@@ -316,20 +316,20 @@ def divination_node_server():
 
 
 def test_divination_raw_functions_contract():
-    """节155 后：liuyao/meihua/xiaoliuren 已切换自研内核，ssgw 仍为 vendored（节156 替换）——raw 契约测试。"""
+    """节155/156 后：liuyao/meihua/xiaoliuren/ssgw 均已切换自研内核——raw 契约测试。"""
     if NODE_BIN is None:
         pytest.skip("本地无 node，跳过起卦原函数契约测试")
     script = (
         "import { generateLiuyaoCore } from './paipan-core/src/capabilities/liuyao/index.js';\n"
         "import { generateMeihuaCore } from './paipan-core/src/capabilities/meihua/index.js';\n"
         "import { generateXiaoliurenCore } from './paipan-core/src/capabilities/xiaoliuren/index.js';\n"
-        "import { drawRandomSign } from './vendor/mingyu-core/dist/divination/algorithms/ssgw.js';\n"
+        "import { drawRandomSignCore } from './paipan-core/src/capabilities/ssgw/index.js';\n"
         "const liuyao = generateLiuyaoCore({ customDate: new Date('2024-05-12T08:30:00+08:00'),\n"
         "  options: { method: 'manual', yaos: [6,7,8,9,7,8] } });\n"
         "const meihua = generateMeihuaCore({ customDate: new Date('2024-05-12T08:30:00+08:00'),\n"
         "  settings: { method: 'number', number: 123 } });\n"
         "const xiaoliuren = generateXiaoliurenCore({ customDate: new Date('2024-05-12T08:30:00+08:00') });\n"
-        "const ssgw = drawRandomSign(new Date('2024-05-12T08:30:00+08:00'), { seed: 'ssgw-test-1' });\n"
+        "const ssgw = drawRandomSignCore({ seed: 'ssgw-test-1' });\n"
         "console.log(JSON.stringify({\n"
         "  liuyao: { originalName: liuyao.originalName, changedName: liuyao.changedName,\n"
         "    yaoArray: liuyao.yaoArray, hasPalace: !!liuyao.palace,\n"
