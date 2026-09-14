@@ -126,8 +126,6 @@ import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/alg
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { generateTaiyi } from './vendor/mingyu-core/dist/taiyi/index.js';
-import { calculateHuangjiJingshi } from './vendor/mingyu-core/dist/huangji-jingshi/index.js';
 
 // 节155：六爻 / 梅花 / 小六壬已整体切换到自研内核（paipan-core）。
 //   起卦/装卦/断卦要素与课式全部自研（对拍门禁 100% 通过，见 paipan-core/tools/compare）；
@@ -155,6 +153,12 @@ import { generateAstrolabeCore, buildAstrolabeFullScopeContextsCore, buildAstrol
 
 // 节152：七政四余已切换到自研内核（对拍 2489/2489 全 100%）；vendor bundle 全部下线。
 import { generateQizhengCore } from './paipan-core/src/capabilities/qizheng/index.js';
+
+// 节154：太乙神数 / 皇极经世已切换到自研内核（对拍 taiyi 2170/2170、huangji 4092/4092
+//   全 100%）；vendor 的 generateTaiyi / calculateHuangjiJingshi 已下线。证据链由内核
+//   evidenceAnalysis 自带（server 投影读取，见 computeDivination）。
+import { generateTaiyiCore } from './paipan-core/src/capabilities/taiyi/index.js';
+import { calculateHuangjiJingshiCore } from './paipan-core/src/capabilities/huangji/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -547,13 +551,13 @@ function computeDivination(input) {
         if (!Number.isInteger(year) || year < 1 || year > 9999) {
           throw Object.assign(new Error('太乙年家需要提供公历年份（1-9999 整数）'), { clientError: true });
         }
-        raw = generateTaiyi({ scope: 'year', year });
+        raw = generateTaiyiCore({ scope: 'year', year });
       } else {
         const d = toCustomDate(params.customDate !== undefined ? params.customDate : input.customDate);
         if (d === undefined) {
           throw Object.assign(new Error('太乙月/日/时家需要提供日期时间（customDate）'), { clientError: true });
         }
-        raw = generateTaiyi({ scope, date: d });
+        raw = generateTaiyiCore({ scope, date: d });
       }
       break;
     }
@@ -577,13 +581,13 @@ function computeDivination(input) {
         if (!Number.isSafeInteger(year) || year === 0 || year < -67017) {
           throw Object.assign(new Error('皇极经世值年模式需要提供公元整数年份（无公元 0 年、不早于公元前 67017 年）'), { clientError: true });
         }
-        raw = calculateHuangjiJingshi({ year });
+        raw = calculateHuangjiJingshiCore({ year });
       } else {
         const d = toCustomDate(params.customDate !== undefined ? params.customDate : input.customDate);
         if (d === undefined) {
           throw Object.assign(new Error('皇极经世年月日时模式需要提供日期时间（customDate）'), { clientError: true });
         }
-        raw = calculateHuangjiJingshi({ date: d });
+        raw = calculateHuangjiJingshiCore({ date: d });
       }
       break;
     }
