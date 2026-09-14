@@ -125,7 +125,6 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
-import { generateQimen } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
 
 // 节155：六爻 / 梅花 / 小六壬已整体切换到自研内核（paipan-core）。
 //   起卦/装卦/断卦要素与课式全部自研（对拍门禁 100% 通过，见 paipan-core/tools/compare）；
@@ -159,6 +158,9 @@ import { generateQizhengCore } from './paipan-core/src/capabilities/qizheng/inde
 //   evidenceAnalysis 自带（server 投影读取，见 computeDivination）。
 import { generateTaiyiCore } from './paipan-core/src/capabilities/taiyi/index.js';
 import { calculateHuangjiJingshiCore } from './paipan-core/src/capabilities/huangji/index.js';
+
+// 节153：奇门时家已切换到自研内核（对拍 1972/1972 全 100%）；vendor generateQimen 已下线。
+import { generateQimenCore } from './paipan-core/src/capabilities/qimen/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -466,13 +468,8 @@ function computeDivination(input) {
       break;
     }
     case 'qimen': {
-      // 奇门时家起局（REQ-120）：一事一占，时/日/月/年四家全做，与八法「奇门终身局
-      // qimen-lifetime」命盘类区分。参数契约（透传前端 seed 同名字段）：
-      //   scope        hour 时家（默认）/ day 日家 / month 月家 / year 年家
-      //   qimenMethod  zhuanpan 转盘（默认）/ feipan 飞盘
-      //   qimenJuMethod chaibu 拆补（默认）/ zhirun 置闰（仅时家/日家生效，月家/年家
-      //                引擎固定用月家/年家定局法）
-      // customDate 即前端所选 日期+时辰 组装的东八区 ISO（缺省用当前时间）。
+      // 奇门时家起局（REQ-120）：一事一占，时/日/月/年四家全做。
+      // 节153：已切换到自研内核（对拍 1972/1972 全 100%）。
       const scope = (typeof input.scope === 'string' && input.scope.trim()) ? input.scope.trim() : 'hour';
       if (!['hour', 'day', 'month', 'year'].includes(scope)) {
         throw Object.assign(new Error(`Unknown qimen scope: ${scope}`), { clientError: true });
@@ -487,7 +484,10 @@ function computeDivination(input) {
       if (!['chaibu', 'zhirun'].includes(qimenJuMethod)) {
         throw Object.assign(new Error(`Unknown qimen juMethod: ${qimenJuMethod}`), { clientError: true });
       }
-      raw = generateQimen(customDate, qimenMethod, scope, qimenJuMethod);
+      raw = generateQimenCore({
+        customDate: customDate === undefined ? new Date() : customDate,
+        qimenMethod, scope, qimenJuMethod,
+      });
       break;
     }
     case 'almanac': {

@@ -121,25 +121,77 @@
   "fixtures": [
     {
       "name": "anchor-2024-06-15-1030",
-      "input": {
-        "customDate": "2024-06-15T10:30:00+08:00"
-      }
+      "input": { "customDate": "2024-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
     },
     {
       "name": "zhirun-2024-01-01-1030",
-      "input": {
-        "customDate": "2024-01-01T10:30:00+08:00",
-        "qimenJuMethod": "zhirun"
-      }
+      "input": { "customDate": "2024-01-01T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "zhirun" }
     },
     {
       "name": "yin-2024-08-15-1030",
-      "input": {
-        "customDate": "2024-08-15T10:30:00+08:00"
-      }
+      "input": { "customDate": "2024-08-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "feipan-2024-06-15-1030",
+      "input": { "customDate": "2024-06-15T10:30:00+08:00", "qimenMethod": "feipan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "feipan-zhirun-2024-01-01-1030",
+      "input": { "customDate": "2024-01-01T10:30:00+08:00", "qimenMethod": "feipan", "scope": "hour", "qimenJuMethod": "zhirun" }
+    },
+    {
+      "name": "scope-day-2024-06-15-1030",
+      "input": { "customDate": "2024-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "day", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "scope-month-2024-06-15-1030",
+      "input": { "customDate": "2024-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "month", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "scope-year-2024-06-15-1030",
+      "input": { "customDate": "2024-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "year", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "early-zi-2024-06-15-0030",
+      "input": { "customDate": "2024-06-15T00:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "late-zi-2024-06-15-2330",
+      "input": { "customDate": "2024-06-15T23:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "leap-month-2023-03-25-1030",
+      "input": { "customDate": "2023-03-25T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "era-1900-06-15-1030",
+      "input": { "customDate": "1900-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "era-1960-06-15-1030",
+      "input": { "customDate": "1960-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "era-1990-06-15-1030",
+      "input": { "customDate": "1990-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "era-2020-06-15-1030",
+      "input": { "customDate": "2020-06-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "chaibu" }
+    },
+    {
+      "name": "zhirun-2024-02-15-1030",
+      "input": { "customDate": "2024-02-15T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "zhirun" }
+    },
+    {
+      "name": "zhirun-2024-01-21-1030",
+      "input": { "customDate": "2024-01-21T10:30:00+08:00", "qimenMethod": "zhuanpan", "scope": "hour", "qimenJuMethod": "zhirun" }
     }
   ],
   "notes": [
-    "qimen 首轮探路夹具（父节手写）"
+    "关键字段策略：只对拍盘面结构 + 定局/符使/四柱/板面九宫四盘（116 字段）；释义层（patternTags/classicPatterns 等）与 seasonality 白话、月相、*Evidence 审计树不进门禁（见节153简报 §5）。",
+    "已知差异（信息性）：① 节气交节边界 minute 级口径——lunar-typescript 的 getJieQiTable 只给日期、旧实现精确到时刻，故夹具时刻一律避开交节日 ±30 分钟；② chaoShenOrJieQi 旧实现按日期比较（正授日按日期判），本夹具避开符头日=交节日的正授日；③ 置闰 isZhiRun 恒为 false（旧实现罕见『超神闰局』窗口除外，本夹具不含该类日期）；④ voidBranches/voidPalaces/horseStar/specialConditions/seasonality 结构字段未列入 defaultKeyFields（如需纳入门禁须另轮核对）。",
+    "口径来源：2024-06-15 10:30 锚点（阳遁6局·上元·天柱·惊门）+ 全年置闰扫描 + 月局/年局扫描 + specialConditions 逐时辰扫描（见 tools/_probe/qimen/ 探针）。",
+    "golden 来源：--save-golden 时由旧实现（vendored 引擎）输出 stripInternal 后生成；释义层自撰，与 golden 只做信息性对比。"
   ]
 }
