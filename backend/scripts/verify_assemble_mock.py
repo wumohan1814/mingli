@@ -100,7 +100,9 @@ async def main() -> int:
     base_mod.chat = fake_chat  # 打桩
     chart = json.loads((BACKEND / "tests" / "fixtures" / "chart.json").read_text(encoding="utf-8"))
     slices = slice_chart(chart, methods=METHODS)
+    phases = ["duan-qian-chen", "prediction"]
     failures = 0
+    total = 0
 
     for method in METHODS:
         prompt = load_prompt(method)
@@ -113,28 +115,33 @@ async def main() -> int:
             for p in problems:
                 print(f"[FAIL] {method}: {p}")
             failures += 1
-        # 跑全链路（打桩 chat）
-        try:
-            result = await analyze_method(method, "prediction", slices[method],
-                                          user_question="看看事业运")
-            if result is None:
-                print(f"[FAIL] {method}: analyze_method 返回 None（slice 空或 prompt 缺失）")
+        for phase in phases:
+            total += 1
+            try:
+                result = await analyze_method(method, phase, slices[method],
+                                              user_question="看看事业运")
+                if result is None:
+                    print(f"[FAIL] {method}/{phase}: analyze_method 返回 None（slice 空或 prompt 缺失）")
+                    failures += 1
+                    continue
+                assert result["method"] == method, f"{method}: method 键被覆盖"
+                assert result["phase"] == phase, f"{method}: phase 键错误"
+                assert isinstance(result["past_propositions"], list) and result["past_propositions"], \
+                    f"{method}/{phase}: past_propositions 应为非空数组"
+                if phase == "prediction":
+                    assert isinstance(result["conclusions"], list) and result["conclusions"], \
+                        f"{method}/{phase}: conclusions 应为非空数组"
+                else:
+                    assert result["conclusions"] == [], f"{method}/duan-qian-chen: conclusions 应为空数组"
+                print(f"[PASS] {method}/{phase}: prompt {len(prompt)} 字符 · 全链路 method-result v2 合法")
+            except Exception as exc:  # noqa: BLE001
+                print(f"[FAIL] {method}/{phase}: 全链路异常 {type(exc).__name__}: {exc}")
                 failures += 1
-                continue
-            assert result["method"] == method, f"{method}: method 键被覆盖"
-            assert result["phase"] == "prediction", f"{method}: phase 键错误"
-            assert isinstance(result["conclusions"], list) and result["conclusions"], \
-                f"{method}: conclusions 应为非空数组"
-            assert isinstance(result["past_propositions"], list), f"{method}: past_propositions 应为数组"
-            print(f"[PASS] {method}: prompt {len(prompt)} 字符 · 全链路 method-result v2 合法")
-        except Exception as exc:  # noqa: BLE001
-            print(f"[FAIL] {method}: 全链路异常 {type(exc).__name__}: {exc}")
-            failures += 1
 
     if failures:
-        print(f"\n结果：{len(METHODS) - failures}/{len(METHODS)} 通过，{failures} 失败")
+        print(f"\n结果：{total - failures}/{total} 通过（{len(METHODS)} 法 × {len(phases)} 阶段），{failures} 失败")
         return 1
-    print(f"\n结果：{len(METHODS)}/{len(METHODS)} 全部通过（mock，未调真实 LLM）")
+    print(f"\n结果：{total}/{total} 全部通过（{len(METHODS)} 法 × {len(phases)} 阶段，mock，未调真实 LLM）")
     return 0
 
 
