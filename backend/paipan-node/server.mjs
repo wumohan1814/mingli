@@ -123,7 +123,6 @@ const astro = loadAstro(); // { bySolar, ... } —— 紫微排盘入口
 // 占星/七政/五运六气走 npm mingyu-core@0.2.1；
 // 奇门终身局走本地 vendor 0.2.2 构建产物（calculateQimenLifetime，npm 0.2.1 无此函数）。
 import { calculateQimenLifetime } from './vendor/mingyu-core/dist/divination/algorithms/qimen/index.js';
-import { generateLiuren } from './vendor/mingyu-core/dist/divination/algorithms/liuren/index.js';
 import { generateJinkoujue } from './vendor/mingyu-core/dist/divination/algorithms/jinkoujue.js';
 
 // 节155：六爻 / 梅花 / 小六壬已整体切换到自研内核（paipan-core）。
@@ -161,6 +160,9 @@ import { calculateHuangjiJingshiCore } from './paipan-core/src/capabilities/huan
 
 // 节153：奇门时家已切换到自研内核（对拍 1972/1972 全 100%）；vendor generateQimen 已下线。
 import { generateQimenCore } from './paipan-core/src/capabilities/qimen/index.js';
+
+// 节153：大六壬已切换到自研内核（对拍 1190/1190 全 100%）；vendor generateLiuren 已下线。
+import { generateLiurenCore } from './paipan-core/src/capabilities/liuren/index.js';
 
 // 节157：塔罗 / 雷诺曼已整体切换到自研内核（paipan-core）。
 //   牌阵表 = 内核 rules 的 TAROT_SPREADS / LENORMAND_SPREADS（唯一来源，含命理覆盖层
@@ -451,8 +453,8 @@ function computeDivination(input) {
     }
     case 'liuren':
       // 大六壬时辰起课（REQ-118）：月将加时起天地盘，四课三传断吉凶；确定性零 LLM。
-      // customDate 即前端所选 日期+时辰 组装的东八区 ISO（缺省用当前时间）。
-      raw = generateLiuren(customDate);
+      // 节153：已切换到自研内核（对拍 1190/1190 全 100%）。
+      raw = generateLiurenCore({ customDate: customDate === undefined ? new Date() : customDate });
       break;
     case 'jinkoujue': {
       // 金口诀起课（REQ-119）：地分起课 → 四位一体（人元/贵神/将神/地分）+ 阴阳发用 +

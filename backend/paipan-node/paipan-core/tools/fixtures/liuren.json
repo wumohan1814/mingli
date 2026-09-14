@@ -1,0 +1,183 @@
+{
+  "capability": "liuren",
+  "defaultKeyFields": [
+    "ganzhi.year",
+    "ganzhi.month",
+    "ganzhi.day",
+    "ganzhi.hour",
+    "dayNight",
+    "monthLeader",
+    "divinationBranch",
+    "noblemanBranch",
+    "noblemanGroundBranch",
+    "xunKong",
+    "transmissionRule",
+    "transmissionPattern",
+    "earthlyPlate[0]",
+    "heavenlyPlate[0]",
+    "earthlyPlate[1]",
+    "heavenlyPlate[1]",
+    "earthlyPlate[2]",
+    "heavenlyPlate[2]",
+    "earthlyPlate[3]",
+    "heavenlyPlate[3]",
+    "earthlyPlate[4]",
+    "heavenlyPlate[4]",
+    "earthlyPlate[5]",
+    "heavenlyPlate[5]",
+    "earthlyPlate[6]",
+    "heavenlyPlate[6]",
+    "earthlyPlate[7]",
+    "heavenlyPlate[7]",
+    "earthlyPlate[8]",
+    "heavenlyPlate[8]",
+    "earthlyPlate[9]",
+    "heavenlyPlate[9]",
+    "earthlyPlate[10]",
+    "heavenlyPlate[10]",
+    "earthlyPlate[11]",
+    "heavenlyPlate[11]",
+    "fourLessons[0].name",
+    "fourLessons[0].upper",
+    "fourLessons[0].lower",
+    "fourLessons[0].god",
+    "fourLessons[1].name",
+    "fourLessons[1].upper",
+    "fourLessons[1].lower",
+    "fourLessons[1].god",
+    "fourLessons[2].name",
+    "fourLessons[2].upper",
+    "fourLessons[2].lower",
+    "fourLessons[2].god",
+    "fourLessons[3].name",
+    "fourLessons[3].upper",
+    "fourLessons[3].lower",
+    "fourLessons[3].god",
+    "threeTransmissions[0].stage",
+    "threeTransmissions[0].branch",
+    "threeTransmissions[0].god",
+    "threeTransmissions[0].wuxing",
+    "threeTransmissions[0].seasonState",
+    "threeTransmissions[0].isVoid",
+    "threeTransmissions[1].stage",
+    "threeTransmissions[1].branch",
+    "threeTransmissions[1].god",
+    "threeTransmissions[1].wuxing",
+    "threeTransmissions[1].seasonState",
+    "threeTransmissions[1].isVoid",
+    "threeTransmissions[2].stage",
+    "threeTransmissions[2].branch",
+    "threeTransmissions[2].god",
+    "threeTransmissions[2].wuxing",
+    "threeTransmissions[2].seasonState",
+    "threeTransmissions[2].isVoid"
+  ],
+  "fixtures": [
+    {
+      "name": "lr-01",
+      "input": {
+        "customDate": "2024-06-15T10:30:00+08:00"
+      }
+    },
+    {
+      "name": "lr-02",
+      "input": {
+        "customDate": "1990-05-12T07:30:00+08:00"
+      }
+    },
+    {
+      "name": "lr-03",
+      "input": {
+        "customDate": "1960-08-08T15:20:00+08:00"
+      }
+    },
+    {
+      "name": "lr-04",
+      "input": {
+        "customDate": "2000-02-05T23:40:00+08:00"
+      }
+    },
+    {
+      "name": "lr-05",
+      "input": {
+        "customDate": "1986-07-01T00:20:00+08:00"
+      }
+    },
+    {
+      "name": "lr-06",
+      "input": {
+        "customDate": "1900-01-15T09:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-07",
+      "input": {
+        "customDate": "2023-03-25T13:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-08",
+      "input": {
+        "customDate": "2010-12-22T12:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-09",
+      "input": {
+        "customDate": "1995-10-01T01:10:00+08:00"
+      }
+    },
+    {
+      "name": "lr-10",
+      "input": {
+        "customDate": "1977-03-31T23:55:00+08:00"
+      }
+    },
+    {
+      "name": "lr-11",
+      "input": {
+        "customDate": "2008-08-08T20:08:00+08:00"
+      }
+    },
+    {
+      "name": "lr-12",
+      "input": {
+        "customDate": "2012-05-24T05:45:00+08:00"
+      }
+    },
+    {
+      "name": "lr-13",
+      "input": {
+        "customDate": "2026-01-01T11:30:00+08:00"
+      }
+    },
+    {
+      "name": "lr-14",
+      "input": {
+        "customDate": "1949-10-01T15:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-15",
+      "input": {
+        "customDate": "1990-01-27T06:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-16",
+      "input": {
+        "customDate": "2024-06-21T04:00:00+08:00"
+      }
+    },
+    {
+      "name": "lr-17",
+      "input": {
+        "customDate": "2024-06-21T10:00:00+08:00"
+      }
+    }
+  ],
+  "notes": [
+    "liuren 夹具（父节手写）：跨年代/早晚子时/节气边界/闰月/夏至交节前后；涉害敏感案例若对拍不一致将按内核头部注释排除并登记",
+    "guaTi 课体标签 = 释义层（能力文件头登记，不进门禁）；xunKong 公式已修"
+  ]
+}
