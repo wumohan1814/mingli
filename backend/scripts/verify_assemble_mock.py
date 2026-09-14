@@ -28,6 +28,10 @@ METHODS = [
     "bazi-dayun-liunian",
     "bazi-shensha-nayin",
     "bazi-hunyin-caiyun",
+    "ziwei",
+    "qizheng",
+    "qimen-lifetime",
+    "wuyun-liuqi",
 ]
 
 # 底座接入必备段（v2 文件必须包含）
