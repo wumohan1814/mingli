@@ -104,8 +104,16 @@ def _natal_chart(chart_json) -> dict | None:
 
 
 def _get_mbti(case: Case, db: Session) -> dict:
-    """该档案的 MBTI：档案主人类型 + 该型五栏文案 type_info + 判型记录列表
-    （不含 answers_json 全量，控制体积；type_info 从 mbti/data/types.json 实时取）"""
+    """该档案的人格（大五）数据（节125 起两条账分开）：
+
+    - mbti_type / type_info：档案里「人格类型」= 用户认定过的值（自填或保存），
+      语义为「用户认定」，不再是平台判型结果；type_info 从 types.json 实时取。
+    - source：来源语义（零 DDL 推导）—— case.mbti_type 存在且与某条判型记录同型
+      → "mapped"（由大五参考换算并保存）；否则有类型但无同型记录 → "manual"
+      （用户自填）；无类型 → None。
+    - scores：最近一条判型记录的 OCEAN 五维（平台产出，0–100）；无记录 → None。
+    - results：判型记录列表（不含 answers_json 全量）。
+    """
     results = (
         db.query(MbtiResult)
         .filter_by(case_id=case.id)
@@ -115,9 +123,17 @@ def _get_mbti(case: Case, db: Session) -> dict:
     # type_info 同 GET /api/mbti/results/{id} 口径：类型大小写不敏感、取五栏文案
     mbti_type = (case.mbti_type or "").strip().upper()
     type_info = load_types().get(mbti_type) or {} if mbti_type else {}
+    # 来源语义（节125 零 DDL 推导，非新增列）：有同型判型记录 → 由大五换算并保存；
+    # 仅手输（无同型记录）→ 用户自填。
+    source = None
+    if mbti_type:
+        source = "mapped" if any((r.type or "").strip().upper() == mbti_type for r in results) else "manual"
+    latest_scores = results[0].scores_json if results else None
     return {
         "mbti_type": case.mbti_type,
         "type_info": type_info,
+        "source": source,
+        "scores": latest_scores,
         "results": [
             {
                 "id": r.id,
