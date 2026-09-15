@@ -39,7 +39,7 @@ window.ML_COPY = {
       disclaimer_short: '命理所载皆为文化趋势参考，仅供自我觉察，不构成任何决策建议。',
       // REQ-128 阶段1 新增（框架层落地页；命名小写+连字符）：
       'xishi-intro': '从本命星盘、行运推演，到塔罗牌阵与雷诺曼小牌——AI 以符号与意象为语，陪你梳理情绪、看清关系与当下的每一个抉择。',
-      'mbti-intro': '通过 16 型人格框架，梳理你的能量来源、信息偏好与决策方式。逐题作答，AI 将结合你的选择给出专属类型画像与解读。'
+      'mbti-intro': '基于 IPIP 大五人格量表（OCEAN），从开放性、尽责性、外向性、宜人性与情绪稳定性五个维度，认识自己与世界相处的方式。'
     },
     module_hub: {
       guoxue_title: '国学预测',
@@ -357,8 +357,14 @@ window.ML_COPY = {
       'generated-prefix': ' · 生成于 ',
       // MBTI 记录卡
       'mbti-card-title': '心理测试',
-      'mbti-type-label': 'MBTI 类型',
+      'mbti-type-label': '人格类型取向',
       'mbti-personality-label': '人格类型',
+      // 节125：档案「人格类型」行的来源语义 + OCEAN 五维（平台产出）
+      'mbti-source-label': '来源',
+      'mbti-source-mapped': '由大五参考换算并保存',
+      'mbti-source-manual': '用户自填',
+      'mbti-source-unknown': '用户认定',
+      'mbti-ocean-title': '五维画像（大五人格）',
       'mbti-tap-detail': '点击查看详情',
       'mbti-no-detail': '暂无详情',
       'mbti-collapse': '收起详情',
@@ -403,7 +409,7 @@ window.ML_COPY = {
       'save-fail-retry': '修改失败，请重试。',
       'delete-no-id': '该记录缺少编号，无法删除。',
       'delete-confirm-astro': '确认删除这条星盘记录？删除后不可恢复。',
-      'delete-confirm-mbti': '确认删除这条 MBTI 判型记录？删除后不可恢复。',
+      'delete-confirm-mbti': '确认删除这条人格测试记录？删除后不可恢复。',
       'delete-fail': '删除失败',
       'delete-ok': '已删除',
       'delete-fail-retry': '删除失败，请重试。'
@@ -494,7 +500,7 @@ window.ML_COPY = {
       meta: {
         guoxue: { title: '国学 · 八法配对', dataTxt: '双方排盘信息（八法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 八法合一」为该档案完成排盘（确定性计算、免费）' },
         xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
-        mbti: { title: '心理测试 · 配对解析', dataTxt: '双方 MBTI 人格信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
+        mbti: { title: '心理测试 · 配对解析', dataTxt: '双方大五人格维度信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
         bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「八法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
       },
       relations: ['恋爱', '朋友', '家人', '同事', '其他'],
@@ -679,7 +685,7 @@ window.ML_COPY = {
       'xishi-more-sub': '敬请期待',
       'coming-soon-toast': '该模块敬请期待',
       'mbti-name': '人格测试',
-      'mbti-sub': '16 型人格测评 · 60 题 · 判型结果写入档案'
+      'mbti-sub': '大五人格（OCEAN）测评 · 五个维度 · 结果可保存入档案'
     },
     menu: {
       /* 节141：公开注册已关闭 → 顶栏入口只写「登录」（原「登录 / 注册」） */
@@ -958,7 +964,7 @@ window.ML_COPY = {
       'spread-year': '年运十二牌',
       'spread-twelve-houses': '十二宫'
     },
-    // REQ-128 阶段3：MBTI 心理测试页 UI 文案
+    // REQ-128 阶段3：MBTI 心理测试页 UI 文案（节124 大五重写后扩展）
     // 仅含界面标签；题目/类型描述等正文数据不入本表
     mbti: {
       // 分类标签
@@ -970,7 +976,9 @@ window.ML_COPY = {
       // 错误提示
       'qbank-empty': '题库为空',
       'qbank-load-fail': '题库加载失败，请重试。',
+      'qbank-loading': '题库加载中…',
       'case-load-fail': '档案列表加载失败，请重试。',
+      'case-loading': '档案列表加载中…',
       'info-load-fail': '类型文案加载失败，请重试。',
       'no-info': '该类型暂无详细文案',
       'no-test': '该档案还没有已完成的测试，请先开始测试。',
@@ -983,10 +991,49 @@ window.ML_COPY = {
       'link-copied': '链接已复制',
       'link-copy-manual': '请在弹窗中手动复制链接',
       'loading': '加载中…',
+      'scoring': '判型中…',
       // 标题
       'share-link-title': '分享测试链接',
       'start-btn': '开始测试',
-      'share-btn': '生成分享链接'
+      'share-btn': '生成分享链接',
+      // 节124：答题阶段
+      'scale-default': ['非常不准确', '不太不准确', '适中', '比较准确', '非常准确'],
+      'q-subtitle': '大五人格（OCEAN）测评 · {n} 题 · 按实际情况作答',
+      'answer-note': '按你当前的实际情况描述自己，而不是你希望自己未来成为的样子。回答将被保密，本测试共 {n} 题，请不要遗漏。',
+      'progress-restored': '已恢复上次答题进度',
+      'case-select-note': '测试结果可写入所选档案。勾选档案后不会自动进入答题或结果页，请从下方操作区选择「开始测试」或「查看已完成测试结果」（已测档案才显示）。',
+      'case-op-note': '请先勾选上方一份档案：勾选后停留本操作区，可点「开始测试」答题；已测档案可再点「查看已完成测试结果」回看结果（不自动进入）。',
+      'view-existing': '查看已完成测试结果',
+      'share-note': '生成该档案专属链接：他人免登录填写后，档案当前测试结果将更新为最新填写内容，各次填写保留可回看。',
+      // 节124：结果页（大五五维 + 四字母对照换算）
+      'result-title': '你的人格画像',
+      'result-sub': '大五人格（OCEAN）结果 · 基于 IPIP 大五人格量表（公有领域）',
+      'dim-title': '五维画像',
+      'dim-note': '本图表示你在本量表各维度上的得分，不是你在人群中的排名。',
+      'band-low': '偏低',
+      'band-mid': '适中',
+      'band-high': '偏高',
+      'mapped-label': '类型倾向对照',
+      'mapped-note': '四字母类型由大五五维对照换算而来，仅供了解参考，不是测评结果。',
+      'boundary-note': '≈ 表示该维度落在中间地带，对照参考的把握较弱（T–F、J–P 两维尤甚）。',
+      'multi-type': '你的画像介于多型之间',
+      'adopt-ask': '按大五参考换算是 {type} —— 要保存为你的类型吗？',
+      'adopt-btn': '保存为我的类型',
+      'adopted': '已保存为你的类型',
+      'adopt-saved-toast': '已保存为你的类型',
+      'adopt-fail': '保存失败，请重试。',
+      'manual-tag': '用户自填',
+      'manual-entry': '我已知道类型，直接输入',
+      'manual-no-info': '（手动输入类型，暂无详细文案）',
+      'manual-no-scores': '手动输入类型（未答题），暂无五维数据',
+      'grid-title': '选择你的人格类型',
+      'grid-note': '选择与你最接近的类型，将作为你认定的人格类型保存到档案（16 型枚举）。',
+      'type-grid-title': '16 型人格总览',
+      'type-grid-note': '四字母类型仅为参考对照；点击其它类型可了解对应画像。',
+      // 节122 §3.2：全站唯一出现 MBTI 商标的地方（非关联声明 + 权利人官方致谢句）
+      'ocean-footnote': '本结果由 IPIP 大五人格量表（公有领域）计算得出；四字母类型为基于已发表相关研究的对照换算，与 The Myers-Briggs Company 的 MBTI® 测评无任何关联、未经其认证或授权。\nMyers-Briggs Type Indicator, Myers-Briggs, MBTI, Step I, Step II, Step III, the MBTI logo, and The Myers-Briggs Company logo are trademarks or registered trademarks of Myers & Briggs Foundation in the United States and other countries.',
+      // 配对解析入口（REQ-109）
+      'pair-sub': '选择两份已完成人格测试的档案，基于双方大五人格维度信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）'
     },
     // REQ-128 阶段3：国学工具页（八法合一入口）UI 文案
     guoxueTools: {
@@ -1039,7 +1086,7 @@ window.ML_COPY = {
       'case-entry': '我的档案',
       'divination-entry': '占卜问事',
       'xishi-entry': '西式塔罗',
-      'mbti-entry': 'MBTI 测试',
+      'mbti-entry': '人格测试',
       'guoxue-entry': '国学工具',
       'nine-methods': '八法合一',
       'agent-entry': '王先生',

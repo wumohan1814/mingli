@@ -942,6 +942,40 @@ function ArchivePage({
     });
     return out;
   })();
+  // 节125：档案「人格类型」行的来源语义（后端 archive._get_mbti 零 DDL 推导）：
+  // mapped = 由大五参考换算并保存；manual = 用户自填；有类型但无同型记录之外的兜底。
+  const mbtiSourceTxt = mbtiInfo && mbtiInfo.source === 'mapped'
+    ? UI_COPY.caseDetail['mbti-source-mapped']
+    : mbtiInfo && mbtiInfo.source === 'manual'
+      ? UI_COPY.caseDetail['mbti-source-manual']
+      : UI_COPY.caseDetail['mbti-source-unknown'];
+  // 节125：OCEAN 五维（平台产出）—— 来自最近一次判型记录 scores_json
+  const mbtiScores = mbtiInfo && mbtiInfo.scores && typeof mbtiInfo.scores === 'object' ? mbtiInfo.scores : null;
+  const OCEAN_ROWS = [['O', '开放性'], ['C', '尽责性'], ['E', '外向性'], ['A', '宜人性'], ['N', '神经质']];
+  const oceanRows = mbtiScores && OCEAN_ROWS.some(d => mbtiScores[d[0]] != null) && R('div', {
+    style: {
+      marginTop: 10
+    }
+  }, R('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginBottom: 4
+    }
+  }, UI_COPY.caseDetail['mbti-ocean-title']), R('div', {
+    className: 'mbti-tbl'
+  }, OCEAN_ROWS.map(d => R('div', {
+    key: d[0],
+    className: 'mbti-tbl-row'
+  }, R('span', {
+    className: 'k'
+  }, d[1]), R('span', {
+    className: 'v',
+    style: {
+      fontWeight: 400,
+      fontSize: 13
+    }
+  }, mbtiScores[d[0]] != null ? Math.round(Number(mbtiScores[d[0]])) : '—')))));
   const mbtiCard = mbtiInfo && (mbtiInfo.mbti_type || mbtiRecords.length > 0) && R('div', {
     className: 'card'
   }, R('div', {
@@ -968,7 +1002,17 @@ function ArchivePage({
     className: 'k'
   }, UI_COPY.caseDetail['mbti-personality-label']), R('span', {
     className: 'v'
-  }, mbtiAlias || '—'))), R('div', {
+  }, mbtiAlias || '—')), R('div', {
+    className: 'mbti-tbl-row'
+  }, R('span', {
+    className: 'k'
+  }, UI_COPY.caseDetail['mbti-source-label']), R('span', {
+    className: 'v',
+    style: {
+      fontWeight: 400,
+      fontSize: 13
+    }
+  }, mbtiSourceTxt))), oceanRows, R('div', {
     style: {
       display: 'flex',
       alignItems: 'center',

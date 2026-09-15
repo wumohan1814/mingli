@@ -12,8 +12,11 @@
   3. Python 端点契约（TestClient，真实 FastAPI app + 临时库）：
      - GET /api/mbti/questions：公开免鉴权，返回 scale + 300 题；
      - POST /api/mbti/score：body {case_id, answers}（value 1–5），
-       落库 mbti_results + 回写 case.mbti_type + mbti_score 埋点，
-       返回 {id, type, scores(OCEAN), boundaries} + 零扣费；
+       落库 mbti_results + mbti_score 埋点，返回 {id, type, scores(OCEAN),
+       boundaries} + 零扣费；**不回写 case.mbti_type**（节125：档案类型只存
+       用户认定过的值，走 POST /api/mbti/save-type）；
+     - POST /api/mbti/save-type：把用户认定类型写入 case.mbti_type
+       （16 型枚举、大小写不敏感、他人档案 404、非法类型 400）；
      - GET /api/mbti/results/{id}：返回含 boundaries（从 scores 重算）。
 
 本文件没有任何 LLM / Node 依赖。依赖 conftest 的会话级临时库（orchestration_env）。
@@ -358,8 +361,9 @@ def test_api_questions_public_and_shape(mbti_client):
 
 # ------------------------------------------------------------ 端点：判型落库 ----
 def test_api_score_success_persists_and_events(mbti_client):
-    """POST /api/mbti/score：全高 → ENFJ；落库 mbti_results + 回写
-    case.mbti_type + mbti_score 埋点；返回 {id, type, scores(OCEAN), boundaries}；零扣费。"""
+    """POST /api/mbti/score：全高 → ENFJ；落库 mbti_results + mbti_score 埋点；
+    返回 {id, type, scores(OCEAN), boundaries}；零扣费；
+    节125 起**不回写 case.mbti_type**（判型只是建议，档案类型由 save-type 决定）。"""
     uid = _new_user()
     cid = _new_case(uid)
     answers = _extreme_answers(high=True)
@@ -383,9 +387,9 @@ def test_api_score_success_persists_and_events(mbti_client):
     assert row.answers_json == answers
     assert set(row.scores_json.keys()) == set(BIG5_DIMS)
 
-    # 档案 mbti_type 回写
+    # 档案 mbti_type 不回写（节125：判型只是建议，用户点「保存」才写入）
     case = _case_row(cid)
-    assert case.mbti_type == "ENFJ"
+    assert case.mbti_type is None
 
     # 埋点 + 零扣费
     rows = _event_rows("mbti_score", uid)
@@ -463,6 +467,75 @@ def test_api_score_case_isolation_404(mbti_client):
     assert _credit_rows(uid) == []
 
 
+# ------------------------------------------------------------ 端点：保存认定类型（节125）----
+def test_api_save_type_success(mbti_client):
+    """POST /api/mbti/save-type：用户认定类型写入 case.mbti_type（大小写不敏感、
+    16 型枚举）；不落 mbti_results、不写埋点、零扣费。"""
+    uid = _new_user()
+    cid = _new_case(uid)
+    auth = _auth_header(uid)
+
+    # 先判型（不回写档案类型）
+    mbti_client.post("/api/mbti/score",
+                     json={"case_id": cid, "answers": _extreme_answers(True)},
+                     headers=auth)
+    assert _case_row(cid).mbti_type is None
+
+    # 保存（小写输入 → 大写落库）
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": cid, "type": "intp"},
+                            headers=auth)
+    assert resp.status_code == 200, resp.text
+    data = resp.json()["data"]
+    assert data["case_id"] == cid
+    assert data["type"] == "INTP"
+    assert _case_row(cid).mbti_type == "INTP"
+
+    # 覆盖保存（可换认定）
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": cid, "type": "ENFJ"},
+                            headers=auth)
+    assert resp.status_code == 200
+    assert _case_row(cid).mbti_type == "ENFJ"
+
+    # 不落 mbti_results、不写埋点、零扣费
+    from app.database import AnalyticsSession
+    from app.models import MbtiResult
+    session = AnalyticsSession()
+    try:
+        assert session.query(MbtiResult).filter_by(case_id=cid).count() == 1  # 仅判型那 1 条
+    finally:
+        session.close()
+    assert len(_event_rows("mbti_score", uid)) == 1  # 仅判型那次埋点，保存不埋
+    assert _credit_rows(uid) == []
+
+
+def test_api_save_type_validation(mbti_client):
+    """POST /api/mbti/save-type：非法类型 400；他人档案 / 不存在 404；缺鉴权 400。"""
+    uid = _new_user()
+    cid = _new_case(uid)
+    other = _new_user()
+    other_cid = _new_case(other)
+    auth = _auth_header(uid)
+
+    # 非法类型（非 16 型枚举）
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": cid, "type": "XXXX"},
+                            headers=auth)
+    assert resp.status_code == 400
+    assert "未知人格类型" in resp.json()["message"]
+    assert _case_row(cid).mbti_type is None
+
+    # 他人档案 / 不存在
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": other_cid, "type": "INTP"},
+                            headers=auth)
+    assert resp.status_code == 404
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": 999999, "type": "INTP"},
+                            headers=auth)
+    assert resp.status_code == 404
+
+    # 缺鉴权
+    resp = mbti_client.post("/api/mbti/save-type", json={"case_id": cid, "type": "INTP"})
+    assert resp.status_code == 400
+
+
 # ------------------------------------------------------------ 端点：结果复看 ----
 def test_api_results_get_with_boundaries(mbti_client):
     """GET /api/mbti/results/{id}：本人返回含 boundaries（从 scores 重算）。"""
@@ -525,7 +598,8 @@ def test_api_result_delete(mbti_client):
     session = AnalyticsSession()
     try:
         case = session.query(Case).filter_by(id=cid).first()
-        assert case.mbti_type == "ENFJ"
+        # 节125：判型本就不写档案类型；删除历史行更不回写
+        assert case.mbti_type is None
     finally:
         session.close()
 
@@ -589,7 +663,8 @@ def test_api_share_landing_public(mbti_client):
 
 
 def test_api_share_score_no_writeback(mbti_client):
-    """免登录判型：主人先判型回写档案类型，他人经分享填写 → 存历史记录但不回写档案。"""
+    """免登录判型：主人先判型（节125：不回写档案），他人经分享填写 → 存历史记录
+    且同样不回写档案；档案类型只由 save-type 决定。"""
     uid = _new_user()
     cid = _new_case_named(uid)
     auth = _auth_header(uid)
@@ -598,7 +673,7 @@ def test_api_share_score_no_writeback(mbti_client):
                              json={"case_id": cid, "answers": _extreme_answers(True)},
                              headers=auth)
     assert owner.json()["data"]["type"] == "ENFJ"
-    assert _case_row(cid).mbti_type == "ENFJ"
+    assert _case_row(cid).mbti_type is None  # 节125：判型不写档案类型
 
     token = mbti_client.post("/api/mbti/share", json={"case_id": cid},
                              headers=auth).json()["data"]["token"]
@@ -612,7 +687,7 @@ def test_api_share_score_no_writeback(mbti_client):
     row1 = _result_row(d1["id"])
     assert row1.user_id == uid
     assert row1.type == "ISTP"
-    assert _case_row(cid).mbti_type == "ENFJ"  # 不回写
+    assert _case_row(cid).mbti_type is None  # 分享填写也不回写
 
     events = _event_rows("mbti_score", uid)
     assert len(events) == 2

@@ -201,10 +201,16 @@ def _load_xishi_profile(db: Session, case: Case) -> dict:
 
 
 def _load_mbti_profile(db: Session, case: Case) -> dict:
-    """MBTI：case.mbti_type 优先、回退 MbtiResult 最近 type；scores 取该型最近结果。
+    """人格（大五）配对取数（节125：配对解析改用大五五维，四字母只作展示）。
 
-    分享填写记录（POST /api/mbti/share/{token}/score）不回写 case.mbti_type，
-    故这里按「档案主人类型」过滤匹配结果行，避免把他人测评分当主人的。
+    - scores：最近一条 MbtiResult 的 scores_json（OCEAN 五维 0–100，平台产出，
+      信息量最大、有信度依据）——供提示词做大五五维合参。
+    - type：case.mbti_type（用户认定值）优先，回退最近一条判型记录的类型，仅作展示。
+    - 没有任何测试记录、档案也没有认定类型 → 400 提示先生成（不自动生成）。
+
+    分享填写记录（POST /api/mbti/share/{token}/score）同样落 MbtiResult，故
+    最近一条可能来自他人；score 与 type 展示口径都按「最新一次测量」即可，
+    由提示词明确「以五维得分为主、类型仅参考」。
     """
     rows = (
         db.query(MbtiResult)
@@ -212,21 +218,16 @@ def _load_mbti_profile(db: Session, case: Case) -> dict:
         .order_by(MbtiResult.id.desc())
         .all()
     )
+    latest = rows[0] if rows else None
     mbti_type = (case.mbti_type or "").strip().upper()
+    if not mbti_type and latest is not None:
+        mbti_type = (latest.type or "").strip().upper()
     if not mbti_type:
-        for row in rows:
-            if row.type and row.type.strip():
-                mbti_type = row.type.strip().upper()
-                break
-    if not mbti_type:
-        raise _err(400, f"该档案未测 MBTI，请先生成后再配对解析（case {case.id}）")
+        raise _err(400, f"该档案未完成人格测试，请先生成后再配对解析（case {case.id}）")
 
-    matched = next(
-        (r for r in rows if (r.type or "").strip().upper() == mbti_type), None
-    )
     return {
         "type": mbti_type,
-        "scores": matched.scores_json if matched is not None else None,
+        "scores": latest.scores_json if latest is not None else None,  # OCEAN 五维
         "type_info": load_types().get(mbti_type) or {},
     }
 

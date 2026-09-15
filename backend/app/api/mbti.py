@@ -14,10 +14,18 @@
                                   case_id 必填（须为本人档案，非本人/不存在 404）：
                                   调 mbti.scoring.score 纯代码计大五五维并映射四字母
                                   得 {scores, mapped_type, boundaries}，落 mbti_results
-                                  表（带 case_id）并回写 case.mbti_type = mapped_type，
-                                  再写 mbti_score 埋点（props={type, case_id}），
-                                  返回 {id, type, scores, boundaries}。
+                                  表（带 case_id）并写 mbti_score 埋点
+                                  （props={type, case_id}），返回 {id, type, scores,
+                                  boundaries}。**不回写 case.mbti_type**（节125：档案
+                                  里的人格类型只存用户认定过的值；判型只是建议，用户
+                                  点「保存」走 POST /api/mbti/save-type 才写入）。
                                   答案缺失/结构非法/某维度未作答 → 400 参数错误。
+  - POST /api/mbti/save-type      鉴权（Bearer token）：body {case_id, type}，
+                                  case_id 须为本人档案（否则 404），type 为 16 型枚举
+                                  （大小写不敏感，非法 400）：把用户认定的人格类型写入
+                                  case.mbti_type（节125：档案里那一行的语义 = 用户
+                                  自填/认定，不再由判型自动写入）。零落库外写、零 LLM、
+                                  零扣费；返回 {case_id, type}。
   - GET  /api/mbti/results/{id}   鉴权：按 id+user_id 隔离取记录（查不到 404），
                                   返回 {id, case_id, type, scores, boundaries,
                                   type_info}，type_info 从 mbti/data/types.json
@@ -134,6 +142,11 @@ class ShareScoreRequest(BaseModel):
     )
 
 
+class SaveTypeRequest(BaseModel):
+    case_id: int = Field(description="国学档案 id（认定类型将写入该档案 case.mbti_type）")
+    type: str = Field(description="用户认定的人格类型（16 型枚举，大小写不敏感，如 INTP）")
+
+
 # --- 路由 ---
 @router.get("/mbti/questions")
 def get_mbti_questions():
@@ -169,9 +182,11 @@ def score_mbti(
     db: Session = Depends(get_analytics_db),
 ):
     """判型（纯代码，免费，落库）：校验 case 归属 → scoring.score →
-    落 mbti_results 表（带 case_id）+ 回写 case.mbti_type + mbti_score 埋点。
+    落 mbti_results 表（带 case_id）+ mbti_score 埋点。
 
     零 LLM 零扣费：判型为本地计数，无 chat 调用、无余额扣减。
+    ⚠️ 节125 起**不回写 case.mbti_type**：判型只是「参考换算」建议，
+    档案里的人格类型只存用户认定过的值（用户点保存走 POST /mbti/save-type）。
     """
     user_id = get_user_id_from_token(authorization)
 
@@ -186,8 +201,9 @@ def score_mbti(
     except ValueError as exc:
         raise _err(400, str(exc))
 
-    # ③ 落库（免费持久化，供 GET /results/{id} 只读复看）+ 回写档案类型，
-    #    同一次 db commit 保证原子（case.mbti_type 与结果行要么都在要么都不在）
+    # ③ 落库（免费持久化，供 GET /results/{id} 只读复看）。判型结果行保留，
+    #    但**不写 case.mbti_type**（节125：平台算出的四字母只是建议，档案类型
+    #    只由用户「保存 / 自填」决定，走 POST /mbti/save-type）。
     row = MbtiResult(
         user_id=user_id,
         case_id=body.case_id,
@@ -196,7 +212,6 @@ def score_mbti(
         type=result["mapped_type"],
     )
     db.add(row)
-    case.mbti_type = result["mapped_type"]
     db.commit()
     db.refresh(row)
 
@@ -209,6 +224,36 @@ def score_mbti(
                      "type": row.type,
                      "scores": row.scores_json,
                      "boundaries": result["boundaries"]}}
+
+
+@router.post("/mbti/save-type")
+def save_mbti_type(
+    body: SaveTypeRequest,
+    authorization: str = Header(...),
+    db: Session = Depends(get_analytics_db),
+):
+    """保存用户认定的人格类型（节125）：把 case.mbti_type 写成用户「保存 / 自填」
+    的类型。case_id 须本人档案（404）；type 限 16 型枚举（大小写不敏感，非法 400）。
+    零新增表、零 LLM、零扣费；不校验是否做过测试（用户可手输认定）。
+    """
+    user_id = get_user_id_from_token(authorization)
+
+    # ① case 归属校验（id+user_id 隔离，非本人/不存在 → 404）
+    case = db.query(Case).filter_by(id=body.case_id, user_id=user_id).first()
+    if case is None:
+        raise _err(404, "档案不存在")
+
+    # ② 类型校验：限 16 型枚举（节125 用户裁决：手输限枚举、不做自由文本）
+    upper_type = (body.type or "").strip().upper()
+    if upper_type not in load_types():
+        raise _err(400, "未知人格类型: " + body.type)
+
+    # ③ 写入档案（用户认定的值，语义 = 用户自填/保存）
+    case.mbti_type = upper_type
+    db.commit()
+
+    return {"code": 0, "message": "ok",
+            "data": {"case_id": case.id, "type": case.mbti_type}}
 
 
 # --- REQ-047：免登录分享 + 历史记录 ---

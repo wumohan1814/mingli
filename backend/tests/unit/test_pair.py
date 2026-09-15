@@ -11,7 +11,7 @@
   2. 三模块数据源：
      - guoxue 无 chart → 400「未排盘…请先生成」；
      - xishi 有 AstrologyReading(natal) → profile 为 natal 摘要；无 reading → 400「未生成星盘」；
-     - mbti case.mbti_type 优先（type_info 从 types.json 实时取）；无类型无结果 → 400「未测 MBTI」；
+     - mbti case.mbti_type 优先（type_info 从 types.json 实时取）；无类型无记录 → 400「未完成人格测试…请先生成」；
   3. 归属/参数校验：非本人档案 404（隔离在计费/LLM 之前）；module 白名单外 400；
      relation_type 为空 400；
   4. 计费语义：余额不足 → HTTP 502 + code 5002 且不放行 LLM；LLM 失败 → 502
@@ -309,7 +309,9 @@ def test_pair_xishi_success_natal_profile(pair_client, monkeypatch):
 
 
 def test_pair_mbti_success_case_type(pair_client, monkeypatch):
-    """mbti：profile 用 case.mbti_type（无 MbtiResult 行也可），type_info 从 types.json 取。"""
+    """mbti：profile 的 type 用 case.mbti_type（无 MbtiResult 行也可）；
+    type_info 从 types.json 取；scores 无记录时为 None（节125：配对以五维为主，
+    无五维则如实缺失）。"""
     uid = _new_user()
     cid1 = _new_case(uid, mbti_type="INTJ")
     cid2 = _new_case(uid, mbti_type="ENFP")
@@ -330,7 +332,56 @@ def test_pair_mbti_success_case_type(pair_client, monkeypatch):
     pa, pb = user_payload["person_a"]["profile"], user_payload["person_b"]["profile"]
     assert pa["type"] == "INTJ" and pb["type"] == "ENFP"
     assert pa["type_info"]["alias"] and pb["type_info"]["alias"]  # 评语已实时取到
+    assert pa["scores"] is None and pb["scores"] is None  # 无判型记录 → 五维缺失如实为 null
     assert _pair_rows(uid)[0].module == "mbti"
+
+
+def test_pair_mbti_success_ocean_scores(pair_client, monkeypatch):
+    """节125：mbti 配对改用大五五维 —— 档案有判型记录时，profile.scores 为
+    OCEAN 五维（0–100）并喂进提示词；case.mbti_type 未保存也不阻塞（回退最近类型）；
+    另一档案仅 case.mbti_type（无记录）→ type 展示可用、scores 如实为 null。"""
+    uid = _new_user()
+    cid1 = _new_case(uid)
+    cid2 = _new_case(uid, mbti_type="ISTP")
+    # 为档案一造一条判型记录（全高 → ENFJ / 五维全 100）
+    from app.database import AnalyticsSession
+    from app.models import MbtiResult
+    session = AnalyticsSession()
+    try:
+        row = MbtiResult(user_id=uid, case_id=cid1,
+                         answers_json=[{"question_id": 1, "value": 5}],
+                         scores_json={"N": 100.0, "E": 100.0, "O": 100.0, "A": 100.0, "C": 100.0},
+                         type="ENFJ")
+        session.add(row)
+        session.commit()
+        session.refresh(row)
+    finally:
+        session.close()
+    from app.credits.service import recharge
+    recharge(uid, 100, "free", note="pytest 预充")
+
+    calls: list = []
+    _fake_chat(monkeypatch, calls)
+    resp = pair_client.post(
+        "/api/pair/analyze",
+        json={"case_id_1": cid1, "case_id_2": cid2,
+              "relation_type": "同事", "module": "mbti"},
+        headers=_auth_header(uid),
+    )
+    assert resp.status_code == 200, resp.text
+
+    user_payload = json.loads(calls[0]["messages"][1]["content"])
+    pa = user_payload["person_a"]["profile"]
+    pb = user_payload["person_b"]["profile"]
+    # 档案一无 case.mbti_type → 回退最近判型类型作展示；五维从最近记录取
+    assert pa["type"] == "ENFJ"
+    assert pa["scores"] == {"N": 100.0, "E": 100.0, "O": 100.0, "A": 100.0, "C": 100.0}
+    # 档案二仅 case.mbti_type（无判型记录）→ 类型展示可用、五维如实为 null
+    assert pb["type"] == "ISTP"
+    assert pb["scores"] is None
+    # 提示词已切换为五维口径
+    system = calls[0]["messages"][0]["content"]
+    assert "OCEAN" in system and "五维对照" in system
 
 
 def test_pair_bazi_success_full_chain(pair_client, monkeypatch):
@@ -449,7 +500,7 @@ def test_pair_missing_data_400_not_auto_generate(pair_client, monkeypatch):
         headers=auth,
     )
     assert resp.status_code == 400, resp.text
-    assert "未测 MBTI" in resp.json()["message"] and "请先生成" in resp.json()["message"]
+    assert "未完成人格测试" in resp.json()["message"] and "请先生成" in resp.json()["message"]
 
     assert calls == []            # 未调 LLM
     assert _consume_rows(uid) == []
