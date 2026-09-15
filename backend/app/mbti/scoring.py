@@ -32,6 +32,14 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 QUESTIONS_PATH = DATA_DIR / "questions.json"
+QUESTIONS_120_PATH = DATA_DIR / "questions-120.json"
+
+# 题库版本 → 数据文件名（120 = IPIP-NEO-120 官方普通话译本，questions-120.json）
+QUESTION_FILES: dict[str, Path] = {
+    "300": QUESTIONS_PATH,
+    "120": QUESTIONS_120_PATH,
+}
+VALID_VERSIONS: tuple[str, ...] = ("300", "120")
 
 # 大五五维
 DIMS = ("N", "E", "O", "A", "C")
@@ -53,24 +61,29 @@ BOUNDARY_THRESHOLD = 0.3
 # z 维度分的缩放：归一分 0–100，以 50 为中心、25 为半幅 → z_dim ∈ [-2, +2]
 Z_SCALE = 25.0
 
-_questions_cache: list[dict] | None = None
+_questions_cache: dict[str, list[dict] | None] = {"300": None, "120": None}
 
 
-def load_questions() -> list[dict]:
-    """读取题库 questions.json（进程内缓存）；文件缺失/为空视为配置错误。"""
+def load_questions(version: str = "300") -> list[dict]:
+    """读取指定版本题库（默认 "300" = IPIP-NEO-300 questions.json；
+    "120" = IPIP-NEO-120 官方普通话译本 questions-120.json），按版本独立进程内缓存；
+    文件缺失/为空视为配置错误。非法 version 抛 ValueError("未知题库版本: ...")。"""
     global _questions_cache
-    if _questions_cache is None:
+    if version not in QUESTION_FILES:
+        raise ValueError(f"未知题库版本: {version}")
+    if _questions_cache.get(version) is None:
+        path = QUESTION_FILES[version]
         try:
-            data = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8"))
         except OSError as exc:
-            raise RuntimeError(f"大五题库缺失或不可读: {QUESTIONS_PATH}") from exc
+            raise RuntimeError(f"大五题库缺失或不可读: {path}") from exc
         except json.JSONDecodeError as exc:
-            raise RuntimeError(f"大五题库 JSON 解析失败: {QUESTIONS_PATH}") from exc
+            raise RuntimeError(f"大五题库 JSON 解析失败: {path}") from exc
         questions = data.get("questions")
         if not isinstance(questions, list) or not questions:
-            raise RuntimeError(f"大五题库为空: {QUESTIONS_PATH}")
-        _questions_cache = list(questions)
-    return list(_questions_cache)
+            raise RuntimeError(f"大五题库为空: {path}")
+        _questions_cache[version] = list(questions)
+    return list(_questions_cache[version])
 
 
 def _coerce_qid(value) -> int | None:
@@ -84,8 +97,11 @@ def _coerce_qid(value) -> int | None:
     return None
 
 
-def score(answers) -> dict:
+def score(answers, version: str = "300") -> dict:
     """逐题答案计大五五维分并映射四字母。
+
+    version: "300"（IPIP-NEO-300）或 "120"（IPIP-NEO-120 官方普通话译本），
+    非法 version 抛 ValueError("未知题库版本: ...")。
 
     返回 {scores, mapped_type, boundaries}。
     非法输入抛 ValueError（message 面向调用方友好）：
@@ -94,7 +110,7 @@ def score(answers) -> dict:
         同一题重复作答；
       - 作答未覆盖全部五个维度。
     """
-    questions = load_questions()
+    questions = load_questions(version)
     q_index: dict = {q["id"]: q for q in questions}
 
     # 每维原始得分累加（含反向翻转）+ 该维作答题数

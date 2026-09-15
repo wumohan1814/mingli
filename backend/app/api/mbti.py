@@ -3,22 +3,27 @@
 """MBTI 人格测试 API 路由（横向扩展 Phase D2 · 人格测试）。
 
 契约（全部纯代码，零 LLM、零扣费、无 interpret 付费点）：
-  - GET  /api/mbti/questions      题库公开，无需鉴权：返回 {code:0, data:{scale,
-                                  questions}}，scale 为 5 档李克特文案，questions
-                                  直接读 mbti/data/questions.json（IPIP-NEO-300
-                                  中文题库，300 题，每题 {id,dim,facet,text,reverse}）。
+  - GET  /api/mbti/questions?version=300|120     题库公开，无需鉴权：返回
+                                  {code:0, data:{scale, questions}}，scale 为
+                                  5 档李克特文案；version=300（默认）读
+                                  mbti/data/questions.json（IPIP-NEO-300，
+                                  300 题，每题 {id,dim,facet,text,reverse}），
+                                  version=120 读 questions-120.json（IPIP-NEO-120
+                                  官方普通话译本，120 题）；非法 version → 400。
   - GET  /api/mbti/types/{type}   16 型文案公开，无需鉴权（前端手动输入类型时取
                                   五栏详解，BUG-005）：type 大小写不敏感（转大写
                                   匹配），非法类型 400；零落库零 LLM 零扣费。
-  - POST /api/mbti/score          鉴权（Bearer token）：body {case_id, answers}，
-                                  case_id 必填（须为本人档案，非本人/不存在 404）：
-                                  调 mbti.scoring.score 纯代码计大五五维并映射四字母
-                                  得 {scores, mapped_type, boundaries}，落 mbti_results
-                                  表（带 case_id）并写 mbti_score 埋点
-                                  （props={type, case_id}），返回 {id, type, scores,
-                                  boundaries}。**不回写 case.mbti_type**（节125：档案
-                                  里的人格类型只存用户认定过的值；判型只是建议，用户
-                                  点「保存」走 POST /api/mbti/save-type 才写入）。
+  - POST /api/mbti/score          鉴权（Bearer token）：body {case_id, answers,
+                                  version?}，case_id 必填（须为本人档案，
+                                  非本人/不存在 404）：调 mbti.scoring.score 纯代码
+                                  计大五五维并映射四字母得 {scores, mapped_type,
+                                  boundaries}（version 默认 "300"，可传 "120"，
+                                  非法 version → 400），落 mbti_results 表（带
+                                  case_id）并写 mbti_score 埋点（props={type,
+                                  case_id}），返回 {id, type, scores, boundaries}。
+                                  **不回写 case.mbti_type**（节125：档案里的人格
+                                  类型只存用户认定过的值；判型只是建议，用户点「保存」
+                                  走 POST /api/mbti/save-type 才写入）。
                                   答案缺失/结构非法/某维度未作答 → 400 参数错误。
   - POST /api/mbti/save-type      鉴权（Bearer token）：body {case_id, type}，
                                   case_id 须为本人档案（否则 404），type 为 16 型枚举
@@ -46,10 +51,13 @@
                                   分享链接（幂等，已有则复用 token），返回
                                   {token, url:"/mbti/share/"+token}（相对路径）。
   - GET  /api/mbti/share/{token}  免登录（REQ-047①）：按 token 取分享链接
-                                  （无效/不存在 404），返回 {case_name, questions}，
+                                  （无效/不存在 404），返回 {case_name, scale,
+                                   questions}（?version=300|120，默认 300，
+                                   非法 → 400），供他人仅答 MBTI、不建 case
+                                   不触其它模块。，
                                   供他人仅答 MBTI、不建 case 不触其它模块。
   - POST /api/mbti/share/{token}/score
-                                  免登录：body {answers}：判型（ValueError→400）
+                                  免登录：body {answers, version?}：判型（ValueError→400，非法 version 亦 400）
                                   后作为一条历史记录存入该档案（user_id=档案主人，
                                   不回写 case.mbti_type），写 mbti_score 埋点
                                   （props={type, case_id, source:"share"}），
@@ -72,7 +80,7 @@ from app.auth.router import get_user_id_from_token
 from app.database import get_analytics_db
 from app.events.service import record_event
 from app.mbti import scoring
-from app.mbti.scoring import load_questions, map_to_mbti
+from app.mbti.scoring import QUESTION_FILES, load_questions, map_to_mbti
 from app.models import Case, MbtiResult, MbtiShareLink
 
 logger = logging.getLogger(__name__)
@@ -88,6 +96,12 @@ _types_cache: dict | None = None
 def _err(status: int, detail: str) -> HTTPException:
     """统一错误构造（本文件新增端点统一使用）"""
     return HTTPException(status_code=status, detail=detail)
+
+
+def _require_version(version: str) -> None:
+    """题库版本校验：仅 "300" / "120" 合法，其余 400（message 与 scoring 一致）。"""
+    if version not in QUESTION_FILES:
+        raise _err(400, "未知题库版本: " + version)
 
 
 def load_types() -> dict:
@@ -130,6 +144,7 @@ class ScoreRequest(BaseModel):
         description="逐题答案：[{\"question_id\":1,\"value\":4}, ...]；"
                     "value 为 1–5（非常不准确→非常准确）；需覆盖 N/E/O/A/C 五个维度",
     )
+    version: str = Field(default="300", description="题库版本：\"300\"（IPIP-NEO-300）或 \"120\"（IPIP-NEO-120 官方普通话译本），非法 → 400")
 
 
 class ShareRequest(BaseModel):
@@ -140,6 +155,7 @@ class ShareScoreRequest(BaseModel):
     answers: List[Dict[str, Any]] = Field(
         description="逐题答案（同 POST /api/mbti/score 的 answers 契约）",
     )
+    version: str = Field(default="300", description="题库版本：\"300\"（IPIP-NEO-300）或 \"120\"（IPIP-NEO-120 官方普通话译本），非法 → 400")
 
 
 class SaveTypeRequest(BaseModel):
@@ -149,15 +165,16 @@ class SaveTypeRequest(BaseModel):
 
 # --- 路由 ---
 @router.get("/mbti/questions")
-def get_mbti_questions():
-    """题库（公开，无需鉴权）：返回 IPIP-NEO-300 中文题库（300 题，5 点李克特）。
-
-    返回 {scale: [5档选项文案], questions: [{id,dim,facet,text,reverse}]}。
-    """
-    raw = json.loads((MBTI_DATA_DIR / "questions.json").read_text(encoding="utf-8"))
+def get_mbti_questions(version: str = "300"):
+    """题库（公开，无需鉴权）：返回对应版本题库（?version=300 或 120，默认 300），
+    5 点李克特 scale + 逐题 {id,dim,facet,text,reverse}。
+    version=300 → IPIP-NEO-300（questions.json）；version=120 → IPIP-NEO-120
+    官方普通话译本（questions-120.json）；非法 version → 400。"""
+    _require_version(version)
+    raw = json.loads(QUESTION_FILES[version].read_text(encoding="utf-8"))
     return {"code": 0, "message": "ok", "data": {
         "scale": raw.get("scale", []),
-        "questions": load_questions(),
+        "questions": load_questions(version),
     }}
 
 
@@ -195,9 +212,10 @@ def score_mbti(
     if case is None:
         raise _err(404, "档案不存在")
 
-    # ② 判型（纯代码）：非法答案（缺失/结构错/题目不存在/维度不全）→ 400
+    # ② 判型（纯代码）：非法答案（缺失/结构错/题目不存在/维度不全）→ 400；
+    #    非法 version → 400（scoring.score 抛 ValueError）
     try:
-        result = scoring.score(body.answers)
+        result = scoring.score(body.answers, version=body.version)
     except ValueError as exc:
         raise _err(400, str(exc))
 
@@ -290,21 +308,23 @@ def create_mbti_share_link(
 @router.get("/mbti/share/{token}")
 def get_mbti_share_landing(
     token: str,
+    version: str = "300",
     db: Session = Depends(get_analytics_db),
 ):
     """免登录分享落地页数据（REQ-047①）：按 token 取绑定档案（无效/不存在 404），
-    返回 case_name（供“为 TA 填写”展示）+ 公开题库。仅答 MBTI，不建 case、
-    不触其它模块；纯只读零落库零扣费。"""
+    返回 case_name（供“为 TA 填写”展示）+ 公开题库（?version=300 或 120，默认 300，
+    非法 → 400）。仅答 MBTI，不建 case、不触其它模块；纯只读零落库零扣费。"""
+    _require_version(version)
     link = _get_share_link(db, token)
     case = db.query(Case).filter_by(id=link.case_id).first()
     if case is None:
         raise _err(404, "分享链接不存在或已失效")
 
-    raw = json.loads((MBTI_DATA_DIR / "questions.json").read_text(encoding="utf-8"))
+    raw = json.loads(QUESTION_FILES[version].read_text(encoding="utf-8"))
     return {"code": 0, "message": "ok", "data": {
         "case_name": case.name,
         "scale": raw.get("scale", []),
-        "questions": load_questions(),
+        "questions": load_questions(version),
     }}
 
 
@@ -314,18 +334,18 @@ def score_mbti_via_share(
     body: ShareScoreRequest,
     db: Session = Depends(get_analytics_db),
 ):
-    """免登录判型（REQ-047②）：按 token 找档案 → scoring.score（ValueError→400）
-    → 作为一条历史记录存入该档案（user_id=档案主人 case.user_id，**不回写**
-    case.mbti_type，填写人可能是他人，不覆盖主人结果）→ mbti_score 埋点
-    （props={type, case_id, source:"share"}）。零 LLM 零扣费。"""
+    """免登录判型（REQ-047②）：按 token 找档案 → scoring.score（ValueError→400，
+    非法 version 亦 400）→ 作为一条历史记录存入该档案（user_id=档案主人
+    case.user_id，**不回写** case.mbti_type，填写人可能是他人，不覆盖主人结果）→
+    mbti_score 埋点（props={type, case_id, source:"share"}）。零 LLM 零扣费。"""
     link = _get_share_link(db, token)
     case = db.query(Case).filter_by(id=link.case_id).first()
     if case is None:
         raise _err(404, "分享链接不存在或已失效")
 
-    # 判型（纯代码）：非法答案 → 400
+    # 判型（纯代码）：非法答案 / 非法版本 → 400
     try:
-        result = scoring.score(body.answers)
+        result = scoring.score(body.answers, version=body.version)
     except ValueError as exc:
         raise _err(400, str(exc))
 

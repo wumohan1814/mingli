@@ -25,8 +25,8 @@ const OCEAN_DIMS = [
 const TYPE_PAIRS = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
 // 五栏文案（节122 §7.3-⑤ 暂缓处置：别名与五栏文案先保留；档案页 ArchivePage 亦复用）
 const MBTI_FIELDS = [['strengths', '优势'], ['blindspots', '盲点'], ['career', '职场'], ['relationships', '关系'], ['growth', '成长建议']];
-// 答题进度 localStorage 键（按档案隔离；节124：300 题防刷新丢失）
-const mbtiProgressKey = caseId => 'mingli_mbti_progress_' + (caseId == null ? 'none' : String(caseId));
+// 答题进度 localStorage 键（按档案 + 题库版本隔离；节124：防刷新丢失；120/300 版进度互不覆盖）
+const mbtiProgressKey = (caseId, version) => 'mingli_mbti_progress_' + (version || '300') + '_' + (caseId == null ? 'none' : String(caseId));
 function MbtiPage({
   onNavigate,
   initCaseId
@@ -55,6 +55,8 @@ function MbtiPage({
   // REQ-056 v3：选档案阶段与答题阶段分离 —— 勾选档案后一律停留在「选档案 + 操作区」，
   // 点「开始测试」才进入答题；「查看已完成类型」为显式按钮，点击才进结果页。
   const [started, setStarted] = useState(false); // false=选档案阶段（勾选档案后展示操作区）
+  // 题库版本：120=快速版（IPIP-NEO-120 官方普通话译本，约 8 分钟）/ 300=完整版（IPIP-NEO-300，约 20 分钟）
+  const [version, setVersion] = useState('120');
   // REQ-056①：档案卡片「已测类型 / 未测试」。GET /api/cases 列表项当前不含
   // mbti_type，故前端按 caseId 并行 GET /mbti/results?case_id= 取「最近一条判型」作为
   // 已测类型（与「查看已完成结果」展示口径一致：他人经分享填写的最新记录同样算作已测）；
@@ -67,12 +69,12 @@ function MbtiPage({
   const [shareLoading, setShareLoading] = useState(false);
   const [shareErr, setShareErr] = useState('');
   const total = questions && questions.length ? questions.length : 0;
-  // —— 拉取题库（GET /api/mbti/questions：{scale, questions}）——
-  const load = async () => {
+  // —— 拉取题库（GET /api/mbti/questions?version=：{scale, questions}，按所选版本）——
+  const load = async v => {
     setQLoading(true);
     setQErrored('');
     try {
-      const res = await api('/mbti/questions');
+      const res = await api('/mbti/questions?version=' + encodeURIComponent(v || '300'));
       const d = res && res.data || res || {};
       const list = d.questions || [];
       if (!list.length) throw new Error(UI_COPY.mbti['qbank-empty']);
@@ -140,7 +142,7 @@ function MbtiPage({
     probeTypes(caseList);
   }, [view, started, caseList, caseLoading]);
   useEffect(() => {
-    load();
+    // 题库改为点「开始测试」时才按所选版本拉取（选档案阶段不需要题库，见 startQuiz）
     loadCases();
   }, []);
   // caseId 变更时串档清理（分享链接/旧结果/旧文案归零；切档案后进度不串用）
@@ -158,20 +160,20 @@ function MbtiPage({
     setInfoErr('');
     setScoreErr('');
   }, [caseId]);
-  // —— 答题进度：localStorage 存取（节124，300 题防丢失；按档案隔离）——
-  const saveProgress = (cId, i, ans) => {
+  // —— 答题进度：localStorage 存取（节124，防丢失；按档案 + 版本隔离）——
+  const saveProgress = (cId, v, i, ans) => {
     try {
-      localStorage.setItem(mbtiProgressKey(cId), JSON.stringify({ idx: i, answers: ans }));
+      localStorage.setItem(mbtiProgressKey(cId, v), JSON.stringify({ idx: i, answers: ans }));
     } catch (e) {/* localStorage 不可用时静默降级 */}
   };
-  const clearProgress = cId => {
+  const clearProgress = (cId, v) => {
     try {
-      localStorage.removeItem(mbtiProgressKey(cId));
+      localStorage.removeItem(mbtiProgressKey(cId, v));
     } catch (e) {/* 忽略 */}
   };
-  const restoreProgress = cId => {
+  const restoreProgress = (cId, v) => {
     try {
-      const raw = localStorage.getItem(mbtiProgressKey(cId));
+      const raw = localStorage.getItem(mbtiProgressKey(cId, v));
       if (!raw) return null;
       const p = JSON.parse(raw);
       if (!p || !Array.isArray(p.answers) || typeof p.idx !== 'number') return null;
@@ -240,6 +242,7 @@ function MbtiPage({
         method: 'POST',
         body: JSON.stringify({
           case_id: Number(caseId),
+          version: version,
           answers: list
         })
       });
@@ -253,7 +256,7 @@ function MbtiPage({
       setInfoLoading(false);
       setInfoErr('');
       setView('result');
-      clearProgress(caseId); // 答完即清进度
+      clearProgress(caseId, version); // 答完即清进度
       if (d.id) fetchInfo(d.id);
     } catch (e) {
       setScoreErr(e && e.message || UI_COPY.mbti['score-fail']);
@@ -296,21 +299,30 @@ function MbtiPage({
     const next = answers.slice();
     next[idx] = {question_id: q.id, value: value};
     setAnswers(next);
-    saveProgress(caseId, idx + 1, next);
+    saveProgress(caseId, version, idx + 1, next);
     if (idx + 1 < total) setIdx(idx + 1); else submitScore(next);
   };
-  // —— 进入答题：尝试恢复上次进度（节124，300 题防丢失）——
+  // —— 进入答题：点「开始测试」才按所选版本拉题库；进度在题库就绪后由 effect 恢复 ——
   const startQuiz = () => {
     setStarted(true);
     setScoreErr('');
     if (caseId == null) return;
-    const p = restoreProgress(caseId);
-    if (p && Array.isArray(p.answers) && p.answers.length > 0 && p.answers.length <= total) {
+    load(version);
+  };
+  // —— 答题进度恢复：题库（按所选版本）就绪后，恢复该 (档案, 版本) 的 localStorage 进度 ——
+  const restoredKey = useRef(null);
+  useEffect(() => {
+    if (!started || caseId == null || !questions.length) return;
+    const key = String(caseId) + ':' + version;
+    if (restoredKey.current === key) return;
+    restoredKey.current = key;
+    const p = restoreProgress(caseId, version);
+    if (p && Array.isArray(p.answers) && p.answers.length > 0 && p.answers.length <= questions.length) {
       setAnswers(p.answers);
-      setIdx(Math.min(p.idx || 0, total - 1));
+      setIdx(Math.min(p.idx || 0, questions.length - 1));
       toast(UI_COPY.mbti['progress-restored']);
     }
-  };
+  }, [started, caseId, version, questions]);
   // —— 重新测试：清空答案/结果/进度 ——
   const reset = () => {
     setView('quiz');
@@ -327,7 +339,7 @@ function MbtiPage({
     setShareUrl(null);
     setShareLoading(false);
     setShareErr('');
-    if (caseId != null) clearProgress(caseId);
+    if (caseId != null) clearProgress(caseId, version);
   };
   // —— 回到选档案阶段（更换档案 / 选择其它档案）——
   const pickAnother = () => {
@@ -335,6 +347,7 @@ function MbtiPage({
     setStarted(false);
     setCaseId(null);
     checkedCase.current = null;
+    restoredKey.current = null; // 重新选档案后，同 (档案, 版本) 也要能再次恢复进度
     setIdx(0);
     setAnswers([]);
     setResult(null);
@@ -461,8 +474,9 @@ function MbtiPage({
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('quiz')}, '返回答题')) : qErrored ? el('div', {className: 'back-row'},
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => {
           setView('quiz');
-          load();
-        }}, '返回重试题库')) : null);
+          if (started) load(version);
+        }}, '返回重试题库')) : el('div', {className: 'back-row'},
+        el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('quiz')}, '返回')));
   } else if (view === 'result' && result) {
     const t = result.type || '';
     const letters = lettersOf(t);
@@ -518,19 +532,8 @@ function MbtiPage({
         el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => onNavigate('landing')}, UI_COPY.buttons.back_home)));
   } else {
     // —— 阶段 1：答题 ——
-    if (qLoading) {
-      body = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px'}}, UI_COPY.mbti['qbank-loading']);
-    } else if (qErrored) {
-      body = el('div', {className: 'card failed-box'},
-        el('div', {className: 'section-title'}, '题库加载失败'),
-        el('div', {className: 'error'}, qErrored),
-        el('div', {className: 'back-row', style: {justifyContent: 'center'}},
-          el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: load}, UI_COPY.buttons.retry),
-          el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, UI_COPY.mbti['manual-entry'])));
-    } else if (!cur) {
-      body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, UI_COPY.mbti['qbank-empty']));
-    } else if (!started || !caseId) {
-      // 选档案阶段：判型结果可写入所选档案（保存类型时）；勾选档案后停留本阶段
+    if (!started || !caseId) {
+      // 选档案阶段（含版本选择器）：未开始前不需要题库，先展示档案选择与操作区
       let gate = null;
       if (caseLoading) {
         gate = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '24px 16px'}}, UI_COPY.mbti['case-loading']);
@@ -552,6 +555,11 @@ function MbtiPage({
         const selCase = caseId != null ? (caseList.find(c => Number(c.caseId) === Number(caseId)) || null) : null;
         const selNm = selCase ? (selCase.name || '档案 ' + selCase.caseId) : '';
         const selTval = selCase ? caseTypeOf(selCase) : '';
+        // 版本选择器：选版本后点「开始测试」才按所选版本拉题库（紧凑 chip，复用 .chip/.on + 皮肤令牌）
+        const versionSelector = el('div', {style: {display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center', margin: '0 0 12px'}},
+          el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, '测试版本'),
+          el('button', {type: 'button', className: 'chip' + (version === '120' ? ' on' : ''), onClick: () => setVersion('120')}, '快速版 120 题（约 8 分钟）'),
+          el('button', {type: 'button', className: 'chip' + (version === '300' ? ' on' : ''), onClick: () => setVersion('300')}, '完整版 300 题（约 20 分钟）'));
         gate = el(React.Fragment, null,
           el('div', {className: 'card'},
             el('div', {className: 'section-title'}, '选择档案 · 心理测试'),
@@ -586,6 +594,7 @@ function MbtiPage({
                 el('div', {style: {fontSize: 11, color: 'var(--text-3)', lineHeight: 1.6, width: '100%'}},
                   UI_COPY.mbti['share-note'])))
               : el('div', {style: {fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 10}}, UI_COPY.mbti['case-op-note']),
+            versionSelector,
             el('div', {className: 'back-row', style: {justifyContent: 'center', margin: 0}},
               el('button', {className: 'btn btn-primary', style: {width: 'auto'}, disabled: !selCase, title: selCase ? '' : '请先勾选档案', onClick: startQuiz}, UI_COPY.buttons.start_quiz),
               selTval ? el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: viewExisting}, UI_COPY.mbti['view-existing']) : null,
@@ -597,6 +606,17 @@ function MbtiPage({
               el('span', {className: 'pb-sub'}, UI_COPY.mbti['pair-sub']))));
       }
       body = gate;
+    } else if (qLoading) {
+      body = el('div', {className: 'card', style: {textAlign: 'center', color: 'var(--text-2)', padding: '28px 16px'}}, UI_COPY.mbti['qbank-loading']);
+    } else if (qErrored) {
+      body = el('div', {className: 'card failed-box'},
+        el('div', {className: 'section-title'}, '题库加载失败'),
+        el('div', {className: 'error'}, qErrored),
+        el('div', {className: 'back-row', style: {justifyContent: 'center'}},
+          el('button', {className: 'btn btn-primary', style: {width: 'auto'}, onClick: () => load(version)}, UI_COPY.buttons.retry),
+          el('button', {className: 'btn btn-outline', style: {width: 'auto'}, onClick: () => setView('grid')}, UI_COPY.mbti['manual-entry'])));
+    } else if (!cur) {
+      body = el('div', {className: 'card failed-box'}, el('div', {className: 'section-title'}, UI_COPY.mbti['qbank-empty']));
     } else {
       const answered = Math.min(answers.length, total);
       const pct = total ? Math.round(answered / total * 100) : 0;
@@ -619,7 +639,7 @@ function MbtiPage({
               setIdx(0);
               setAnswers([]);
               setScoreErr('');
-              if (caseId != null) clearProgress(caseId);
+              if (caseId != null) clearProgress(caseId, version);
             }}, '重新开始'))),
         scoreErr ? el('div', {className: 'card failed-box', style: {margin: '10px 0 0'}},
           el('div', {className: 'section-title'}, '判型失败'),
@@ -632,7 +652,7 @@ function MbtiPage({
   }
   return el('div', {className: 'container'},
     el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' 人格测试'),
-    el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, fmtTpl(UI_COPY.mbti['q-subtitle'], {n: total})),
+    el('div', {style: {fontSize: 12, color: 'var(--text-3)', marginBottom: 4}}, fmtTpl(UI_COPY.mbti['q-subtitle'], {n: total || (version === '120' ? 120 : 300)})),
     body);
 }
 
@@ -661,6 +681,7 @@ function MbtiSharePage({
   const [result, setResult] = useState(null); // {type, scores, boundaries}
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState('');
+  const [version, setVersion] = useState('120'); // 题库版本：120=快速版 / 300=完整版
   const total = questions && questions.length ? questions.length : 0;
   const tk = token && String(token).trim() ? String(token).trim() : '';
   const base = tk ? '/mbti/share/' + encodeURIComponent(tk) : null;
@@ -675,7 +696,7 @@ function MbtiSharePage({
       setLoading(true);
       setErrored('');
       try {
-        const res = await api(base, {noAuth: true});
+        const res = await api(base + '?version=' + encodeURIComponent(version), {noAuth: true});
         const d = res && res.data || res || {};
         const list = d.questions || [];
         if (!list.length) throw new Error('题库为空');
@@ -693,7 +714,7 @@ function MbtiSharePage({
     return () => {
       alive = false;
     };
-  }, [tk]);
+  }, [tk, version]);
   const submitShare = async list => {
     if (!list || !total || list.length !== total) return;
     setScoring(true);
@@ -702,7 +723,8 @@ function MbtiSharePage({
         method: 'POST',
         noAuth: true,
         body: JSON.stringify({
-          answers: list
+          answers: list,
+          version: version
         })
       });
       const d = res && res.data || res || {};
@@ -737,6 +759,20 @@ function MbtiSharePage({
     setResult(null);
     setErrored('');
   };
+  // —— 版本选择：切换即清空当前作答，并按新版本重拉题库 ——
+  const chooseVersion = v => {
+    if (v === version) return;
+    setIdx(0);
+    setAnswers([]);
+    setScoring(false);
+    setResult(null);
+    setErrored('');
+    setVersion(v);
+  };
+  const versionSelector = tk && !result ? el('div', {className: 'card', style: {padding: '12px 16px', margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center'}},
+    el('span', {style: {fontSize: 12, color: 'var(--text-2)', fontWeight: 600}}, '测试版本'),
+    el('button', {type: 'button', className: 'chip' + (version === '120' ? ' on' : ''), onClick: () => chooseVersion('120')}, '快速版 120 题（约 8 分钟）'),
+    el('button', {type: 'button', className: 'chip' + (version === '300' ? ' on' : ''), onClick: () => chooseVersion('300')}, '完整版 300 题（约 20 分钟）')) : null;
   let body;
   if (!tk) {
     body = el('div', {className: 'card failed-box'},
@@ -825,6 +861,7 @@ function MbtiSharePage({
   return el('div', {className: 'container'},
     el('div', {className: 'hub-title'}, el(Icon, {name: 'spark', size: 22}), ' 人格测试'),
     caseName && !result ? el('div', {style: {fontSize: 13, color: 'var(--text-2)', marginBottom: 2}}, '为「' + caseName + '」填写心理测试') : null,
+    versionSelector,
     inForm && shareUiOn ? el('div', {className: 'card', style: {padding: '14px 20px 10px', margin: '12px 0 0'}}, shareBrand) : null,
     body);
 }

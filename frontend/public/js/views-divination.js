@@ -27,6 +27,12 @@ const DIVIN_METHODS = [{
   group: 'su',
   todo: false
 }, {
+  id: 'shengbei',
+  name: UI_COPY.divination['method-shengbei'],
+  desc: UI_COPY.divination['method-shengbei-desc'],
+  group: 'su',
+  todo: false
+}, {
   id: 'liuren',
   name: UI_COPY.divination['method-daliuren'],
   desc: UI_COPY.divination['method-daliuren-desc'],
@@ -58,7 +64,7 @@ const DIVIN_GROUP_META = [{
   title: ML_COPY.ui.hub['divin-group-su']
 }];
 
-const DIVIN_API_METHOD = { sign: 'ssgw' };
+const DIVIN_API_METHOD = { sign: 'ssgw', shengbei: 'shengbei' };
 // 爻位 / 12 时辰 · 来自 CONTENT 基础名词表（节135）
 const YAO_LABEL = CONTENT.basics.yaoLabel;
 /* REQ-055：梅花/小六壬 时间选项（12 时辰，date 默认今天、时辰默认当前） */
@@ -712,6 +718,38 @@ function DivSsgwView(res) {
   if (res.number != null && draw.poolSize) extra.push(UI_COPY.divination['gylq-qianchi'] + draw.poolSize + ' 支');
   if (draw.method) extra.push(UI_COPY.divination['gylq-chouqian-fangshi'] + String(draw.method));
   if (extra.length) items.push(React.createElement('div', { key: 'extra', style: { marginTop: 8, fontSize: 12, color: 'var(--text-3)' } }, extra.join(' · ')));
+  return React.createElement('div', null, items);
+}
+/* 节131：潮汕圣杯（掷筊）三态结果视图 —— 三态大字 + 短判 + 两杯落面 +
+   释义/文化说法（正文唯一来源 CONTENT.divination.shengbei，勿在视图内另造正文）。 */
+function DivShengbeiView(res) {
+  const sb = CONTENT.divination.shengbei || {};
+  const states = (sb.states && typeof sb.states === 'object') ? sb.states : {};
+  const state = (res && typeof res.state === 'string') ? res.state : '';
+  const info = states[state] || null;
+  const blocks = (res && Array.isArray(res.blocks)) ? res.blocks : [];
+  const items = [];
+  const bigName = (res && res.stateCn) ? String(res.stateCn) : (info && info.name ? info.name : '');
+  items.push(React.createElement('div', { key: 'head', style: { textAlign: 'center' } },
+    React.createElement('div', { className: 'ssgw-res-bigno' }, bigName),
+    info && info.short ? React.createElement('span', { className: 'rf-jixiong', style: { marginTop: 4 } }, info.short) : null));
+  if (blocks.length) {
+    const faceTxt = blocks.map(function (b) {
+      return (b && b.face === 'convex')
+        ? UI_COPY.divination['sb-face-convex-name']
+        : UI_COPY.divination['sb-face-flat-name'];
+    }).join(' · ');
+    items.push(React.createElement('div', { key: 'faces', className: 'ssgw-res-extra' },
+      UI_COPY.divination['sb-blocks-label'] + '：' + faceTxt));
+  }
+  if (info && info.meaning) items.push(React.createElement('div', { key: 'm', className: 'ssgw-res-free' },
+    React.createElement('div', { className: 'rf-title' }, UI_COPY.divination['sb-meaning-title']),
+    React.createElement('div', { className: 'rf-item' }, info.meaning)));
+  if (info && info.culture) items.push(React.createElement('div', { key: 'c', className: 'ssgw-res-free' },
+    React.createElement('div', { className: 'rf-title' }, UI_COPY.divination['sb-culture-title']),
+    React.createElement('div', { className: 'rf-item' }, info.culture)));
+  if (sb.rule) items.push(React.createElement('div', { key: 'rule', className: 'ssgw-res-echo', style: { marginTop: 10 } }, sb.rule));
+  if (sb.intro) items.push(React.createElement('div', { key: 'intro', className: 'ssgw-res-echo' }, sb.intro));
   return React.createElement('div', null, items);
 }
 
@@ -1414,6 +1452,18 @@ const mhTrigramIdx = function (r3) {
 /* 观音灵签签池（后端 ssgw-data 共 92 支，签号 1-92）；replay 样本把随机签固定在所选签号上 */
 const SSGW_POOL_SIZE = 92;
 const signReplaySample = function (n) { return (n - 0.5) / SSGW_POOL_SIZE; };
+/* 节131：潮汕圣杯（掷筊）—— 前端先定两杯落面（与 ssgw 同契约：replay 固定 →
+   落面与后端结果必然一致）。杯面判定口径与后端 shengbei-core 对齐：u < 0.5 → 平面(flat)，
+   ≥ 0.5 → 凸面(convex)；replay 样本取区间中点（0.25/0.75）保证边界稳定。 */
+const shengbeiReplaySamples = function (faces) {
+  return (faces || []).map(function (f) { return f === 'convex' ? 0.75 : 0.25; });
+};
+const shengbeiStateOf = function (faces) {
+  const c = (faces || []).filter(function (f) { return f === 'convex'; }).length;
+  if (c === 0) return 'xiao';  // 两平面 → 笑杯
+  if (c === 2) return 'yin';   // 两凸面 → 阴杯
+  return 'sheng';              // 一平一凸 → 圣杯
+};
 /* 小六壬六宫（与后端 XIAOLIUREN_PALACES 同序：大安/留连/速喜/赤口/小吉/空亡） */
 const XLR_PALACE_ORDER = ['大安', '留连', '速喜', '赤口', '小吉', UI_COPY.divination['qm-kongwang']];
 /* 按传统「月→日→时」顺数落宫：宫位索引=(月-1+日-1+时-1) mod 6（shichen 序数 1=子…12=亥） */
@@ -1621,6 +1671,82 @@ function SsgwTubeStage(props) {
   });
 }
 
+/* ---------------- 节131：潮汕圣杯（掷筊）—— 两杯落地演出 ----------------
+   进入即自动「掷杯」：两枚筊杯（复用 .coin 3D 翻面视觉）抛起翻转后先后落地，
+   逐枚揭示 平面/凸面，再由两面组合出三态（圣杯=一平一凸 / 笑杯=两平面 / 阴杯=两凸面）。
+   faces 为前端先定（replay 固定 → 落面与后端结果必然一致）；无摇动/点击交互，
+   演出结束 & 数据就绪后转既有结果布局。三态名/短判读取自 CONTENT（正文唯一来源）。 */
+function ShengbeiCastStage(props) {
+  const { faces, resultReady, failed, onFinish, onSkip } = props;
+  const [ph, setPh] = useState('toss'); // toss|landed|finish|out
+  const [shown, setShown] = useState(0); // 已揭示的杯数（0/1/2）
+  const doneRef = useRef(false);
+  const timersRef = useRef([]);
+  const later = function (fn, ms) { timersRef.current.push(setTimeout(fn, ms)); };
+  useEffect(function () {
+    return function () { timersRef.current.forEach(clearTimeout); };
+  }, []);
+  useEffect(function () {
+    // 自动演出时序：两杯先后翻转落地 → 逐枚揭示 → 三态落定
+    later(function () { setShown(1); }, 850);
+    later(function () { setShown(2); setPh('landed'); }, 1350);
+    later(function () { setPh('finish'); }, 1950);
+  }, []);
+  useEffect(function () {
+    if (doneRef.current) return;
+    if (failed) {
+      doneRef.current = true;
+      setPh('out');
+      later(function () { onFinish(); }, 300);
+      return;
+    }
+    if (ph === 'finish' && resultReady) {
+      doneRef.current = true;
+      setPh('out');
+      later(function () { onFinish(); }, 300);
+    }
+  }, [ph, resultReady, failed]);
+  const faceList = (Array.isArray(faces) && faces.length === 2) ? faces : ['flat', 'flat'];
+  const stateKey = shengbeiStateOf(faceList);
+  const sbData = (CONTENT.divination && CONTENT.divination.shengbei && CONTENT.divination.shengbei.states
+    && typeof CONTENT.divination.shengbei.states === 'object')
+    ? CONTENT.divination.shengbei.states : {};
+  const stInfo = sbData[stateKey] || {};
+  const blocks = faceList.map(function (f, i) {
+    const revealed = shown > i;
+    const cls = 'coin' + (revealed ? (f === 'convex' ? ' back' : '') : ' toss');
+    // 第二杯稍晚起跳（animationDelay 覆盖类上的 0s，纯时序差异不改视觉口径）
+    const c3dStyle = (revealed || i === 0) ? null : { animationDelay: '.12s' };
+    return React.createElement('div', { key: i, className: cls },
+      React.createElement('div', { className: 'c3d', style: c3dStyle },
+        React.createElement('div', { className: 'side s-a' }, UI_COPY.divination['sb-face-flat']),
+        React.createElement('div', { className: 'side s-b' }, UI_COPY.divination['sb-face-convex'])));
+  });
+  let banner = null;
+  if (ph === 'landed' || ph === 'finish') {
+    banner = React.createElement('div', { className: 'stage-banner' },
+      stInfo.name || stateKey,
+      React.createElement('small', null, stInfo.short || ''));
+  }
+  const waitLine = (ph === 'finish' && !resultReady)
+    ? React.createElement('div', { className: 'stage-wait' }, React.createElement('i', null), '掷筊结果生成中…')
+    : null;
+  const tipLine = React.createElement('div', { className: 'stage-tip' },
+    ph === 'finish' ? '掷杯完成 · 即将展示三态结果' : '默念所问之事，诚心掷杯；两杯落地，一掷定三态。');
+  const children = [
+    React.createElement('div', { key: 'zone', className: 'ly-coins', style: { marginTop: 40 } }, blocks),
+    banner,
+    waitLine,
+    tipLine
+  ];
+  return ArtStageFrame({
+    title: UI_COPY.divination['method-shengbei'],
+    sub: UI_COPY.divination['sb-stage-sub'],
+    skip: onSkip,
+    children: children
+  });
+}
+
 /* ---------------- 观音灵签：独立结果展示界面（REQ-081②） ----------------
    摇签/手动选签成功后进入全屏独立视图：大字「第 N 签」+ 签诗 + 免费签意
    + 付费「深度解读」入口；底部「重新起卦 / 返回」全宽并列大按钮。不再把
@@ -1684,7 +1810,7 @@ function SsgwResultScreen(props) {
    全宽并列大按钮。免费静态解读（REQ-055）+ 深度断卦付费入口 + 免责尾注（LIUYAO_DISCLAIMER
    现有常量）全部保留。 */
 function GuaResultScreen(props) {
-  const { kicker, sub, kids, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack, interpretLabel } = props;
+  const { kicker, sub, kids, interp, interpErr, interpLoading, payEnough, onInterpret, onRedo, onBack, interpretLabel, redoLabel, disclaimer } = props;
   const cardKids = kids.slice();
   cardKids.push(React.createElement('div', { key: 'pay', className: 'ssgw-res-pay' },
     React.createElement('div', { className: 'pay-hint' }, UI_COPY.divin.sign_pay_hint),
@@ -1694,7 +1820,8 @@ function GuaResultScreen(props) {
     interp ? React.createElement(React.Fragment, null,
       React.createElement('div', { className: 'interp-title' }, UI_COPY.divin.sign_interp_title),
       React.createElement('div', { className: 'interp-body' }, interp)) : null));
-  cardKids.push(React.createElement('div', { key: 'disc', className: 'ssgw-res-disc' }, LIUYAO_DISCLAIMER));
+  // 免责尾注：默认复用六爻常量；节131 shengbei 由调用方传本法的正文免责（CONTENT）
+  cardKids.push(React.createElement('div', { key: 'disc', className: 'ssgw-res-disc' }, disclaimer || LIUYAO_DISCLAIMER));
   return React.createElement('div', { className: 'ssgw-res-screen' },
     React.createElement('div', { className: 'ssgw-res-head' },
       React.createElement('div', { className: 'ssgw-res-kicker' }, kicker),
@@ -1702,7 +1829,7 @@ function GuaResultScreen(props) {
     React.createElement('div', { className: 'ssgw-res-scroll' },
       React.createElement('div', { className: 'ssgw-res-card' }, cardKids)),
     React.createElement('div', { className: 'ssgw-res-foot' },
-      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onRedo }, UI_COPY.buttons.redo_divination),
+      React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onRedo }, redoLabel || UI_COPY.buttons.redo_divination),
       React.createElement('button', { className: 'btn ssgw-res-ghost', onClick: onBack }, UI_COPY.buttons.back_options)));
 }
 
@@ -2272,6 +2399,8 @@ function DivinationPage({
   const [askMode, setAskMode] = useState('auto'); // 'auto' | 'manual'
   const [yaoPick, setYaoPick] = useState(function () { return blankYaoRows(); });
   const [signNo, setSignNo] = useState(null);
+  // 节131：潮汕圣杯 —— 本次已定的两杯落面（前端先定 → replay 固定 → 演出落面与后端一致）
+  const [sbFaces, setSbFaces] = useState(null);
   const [xlrWay, setXlrWay] = useState('nums'); // 'nums' | 'palace'
   const [xlrM, setXlrM] = useState('');
   const [xlrD, setXlrD] = useState('');
@@ -2279,7 +2408,7 @@ function DivinationPage({
   const [manLabel, setManLabel] = useState(''); // 本次录入方式（展示在结果上方）
   const [manWarn, setManWarn] = useState('');
   const [lastManual, setLastManual] = useState(null); // 手动发起失败后的重试凭据 {seed, meta}
-  // REQ-061：占卜动效演出阶段机（null=无演出；'ssgw'=签筒 / 'liuyao'=逐爻掷币 / 'meihua'=梅花环聚 / 'xiaoliuren'=掌诀走宫）
+  // REQ-061：占卜动效演出阶段机（null=无演出；'ssgw'=签筒 / 'liuyao'=逐爻掷币 / 'meihua'=梅花环聚 / 'xiaoliuren'=掌诀走宫 / 'shengbei'=两杯落地）
   const [animStage, setAnimStage] = useState(null);
   const [castYaos, setCastYaos] = useState(null); // 六爻动画用逐爻值（前端掷币预演 → options.yaos replay 固定）
   // REQ-118：大六壬断课模板（general/ganqing/shiye/caifu，随 interpret 请求体透传）
@@ -2455,6 +2584,7 @@ function DivinationPage({
     setAskMode(mlAskNextDefault(askMode));
     setYaoPick(blankYaoRows());
     setSignNo(null);
+    setSbFaces(null);
     setXlrWay('nums');
     setXlrM('');
     setXlrD('');
@@ -2505,6 +2635,20 @@ function DivinationPage({
     // REQ-118/119/120：大六壬、金口诀、奇门时家起课直接取数成课（无动效演出，与梅花/小六壬共用时间取数链路）
     if (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') { run(); return; }
     if (!mlShouldPlayAnim()) { run(); return; }
+    if (method === 'shengbei') {
+      // 节131：前端先定两杯落面 → 进入掷杯舞台；两杯翻转落地瞬间已 doCast（replay 固定该面）
+      setData(null);
+      setErrored('');
+      setInterp('');
+      setInterpErr('');
+      setFocusMap({});
+      setManLabel('');
+      const faces = [Math.random() < 0.5 ? 'flat' : 'convex', Math.random() < 0.5 ? 'flat' : 'convex'];
+      setSbFaces(faces);
+      setAnimStage('shengbei');
+      doCast(mkSeed({ options: { replay: shengbeiReplaySamples(faces) } }), null);
+      return;
+    }
     if (method === 'sign') {
       // 清掉上一次结果，避免签筒等待期残留旧签文
       setData(null);
@@ -2626,6 +2770,10 @@ function DivinationPage({
   // REQ-061：失败重试 —— 签筒/六爻动画路径仍固定本次结果（replay/yaos），其余沿用既有 run/手动凭据
   const retryAsk = function () {
     if (lastManual) { doCast(lastManual.seed, lastManual.meta); return; }
+    if (method === 'shengbei' && Array.isArray(sbFaces) && sbFaces.length === 2) {
+      doCast(mkSeed({ options: { replay: shengbeiReplaySamples(sbFaces) } }), null);
+      return;
+    }
     if (method === 'sign' && signNo >= 1 && signNo <= SSGW_POOL_SIZE) {
       doCast(mkSeed({ options: { replay: [signReplaySample(signNo)] } }), null);
       return;
@@ -2647,6 +2795,7 @@ function DivinationPage({
     else if (method === 'jinkoujue') view = DivJinkoujueView(result);
     else if (method === 'qimen') view = DivQimenView(result);
     else if (method === 'sign' || apiMethod === 'ssgw') view = DivSsgwView(result);
+    else if (method === 'shengbei') view = DivShengbeiView(result);
   }
   if (result != null && view == null) {
     view = React.createElement('pre', { style: { fontSize: 11, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: 'var(--text-2)' } }, JSON.stringify(result, null, 2));
@@ -2709,6 +2858,14 @@ function DivinationPage({
       onFinish: function () { setAnimStage(null); },
       onSkip: function () { setAnimStage(null); }
     });
+  } else if (animStage === 'shengbei') {
+    stageBody = React.createElement(ShengbeiCastStage, {
+      faces: (Array.isArray(sbFaces) && sbFaces.length === 2) ? sbFaces : ['flat', 'flat'],
+      resultReady: resultReady,
+      failed: castFailed,
+      onFinish: function () { setAnimStage(null); },
+      onSkip: function () { setAnimStage(null); }
+    });
   }
   let body = null;
   if (animStage) {
@@ -2732,12 +2889,13 @@ function DivinationPage({
   const toggleYmv = function (i) {
     setYaoPick(prev => prev.map(function (r, j) { return j === i ? { yang: r.yang, mv: !r.mv } : r; }));
   };
-  const autoLabel = method === 'sign' ? '自动抽签' : '自动起卦';
+  const autoLabel = method === 'sign' ? '自动抽签' : method === 'shengbei' ? '自动掷筊' : '自动起卦';
   const manualLabel = method === 'sign' ? '手动选签' : '手动录入结果';
   const filledYao = yaoPick.filter(function (r) { return r.yang != null; }).length;
   const movingYao = yaoPick.filter(function (r) { return r.mv; }).length;
   // REQ-118/119/120：大六壬、金口诀、奇门时家为纯时辰/方式起局（无手动录入通道），强制自动模式且不展示模式切换
-  const effectiveManual = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? false : (askMode === 'manual');
+  // 节131：潮汕圣杯为纯随机掷筊（无手动录入通道），同样强制自动模式
+  const effectiveManual = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen' || method === 'shengbei') ? false : (askMode === 'manual');
   let manualPanel = null;
   if (effectiveManual) {
     if (method === 'liuyao' || method === 'meihua') {
@@ -2833,7 +2991,7 @@ function DivinationPage({
   }
   // BUG-017：默认模式=auto/manual 时，手动/自动入口收起到「切换入口」（小字链接）而非默认双栏展示；
   // 仅 default_mode='both' 保留两入口并行双栏（REQ-066②）
-  const modeSwitch = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? null : (ML_SETTINGS.default_mode === 'both'
+  const modeSwitch = (method === 'liuren' || method === 'jinkoujue' || method === 'qimen' || method === 'shengbei') ? null : (ML_SETTINGS.default_mode === 'both'
     ? React.createElement('div', { className: 'mode-switch' },
         React.createElement('button', { type: 'button', className: askMode === 'auto' ? 'sel' : '', onClick: function () { setAskMode('auto'); } }, autoLabel),
         React.createElement('button', { type: 'button', className: askMode === 'manual' ? 'sel' : '', onClick: function () { setAskMode('manual'); } }, manualLabel))
@@ -2852,10 +3010,11 @@ function DivinationPage({
   const guaSub = method === 'liuyao' ? '本卦已成 · 六亲世应参断'
     : method === 'meihua' ? '本卦已成 · 体用生克察应'
       : method === 'xiaoliuren' ? '落宫已定 · 速断所问吉凶'
-        : method === 'liuren' ? '课式已起 · 四课三传参断'
-          : method === 'jinkoujue' ? '课式已起 · 四位一体参断'
-            : method === 'qimen' ? '局盘已成 · 九宫四盘参断'
-              : '卦象已成 · 心诚则灵';
+        : method === 'shengbei' ? '两杯已落 · 三态已示'
+          : method === 'liuren' ? '课式已起 · 四课三传参断'
+            : method === 'jinkoujue' ? '课式已起 · 四位一体参断'
+              : method === 'qimen' ? '局盘已成 · 九宫四盘参断'
+                : '卦象已成 · 心诚则灵';
   let guaKids = [];
   if (guaResultOn) {
     if (qText) guaKids.push(React.createElement('div', { key: 'q', className: 'ssgw-res-echo' }, '问题：', qText));
@@ -2942,7 +3101,7 @@ function DivinationPage({
     // REQ-105：起卦操作界面（原弹窗改内联面板）—— 进入默认不弹输入法/问题框；
     // 占问问题默认折叠，点击拟输入框展开填写（可留空直接起卦）
     asking ? React.createElement('div', { className: 'card divin-cast' },
-      React.createElement('div', { className: 'section-title' }, ((m && m.name) || apiMethod), ' · ' + (effectiveManual ? '手动录入实际结果' : (method === 'sign' ? '抽签' : '起卦'))),
+      React.createElement('div', { className: 'section-title' }, ((m && m.name) || apiMethod), ' · ' + (effectiveManual ? '手动录入实际结果' : (method === 'sign' ? '抽签' : method === 'shengbei' ? '掷筊' : '起卦'))),
       modeSwitch,
       qOpen
         ? React.createElement('div', { key: 'qo' },
@@ -3076,6 +3235,9 @@ function DivinationPage({
       interpLoading: interpLoading,
       payEnough: payEnough,
       interpretLabel: (method === 'liuren' || method === 'jinkoujue' || method === 'qimen') ? '深度断课（付费）' : undefined,
+      // 节131：潮汕圣杯 用本法文案（重新掷筊 + CONTENT 免责）
+      redoLabel: method === 'shengbei' ? UI_COPY.buttons.redo_shengbei : undefined,
+      disclaimer: method === 'shengbei' ? ((CONTENT.divination.shengbei || {}).disclaimer || undefined) : undefined,
       onInterpret: interpret,
       onRedo: function () {
         setData(null);

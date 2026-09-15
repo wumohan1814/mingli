@@ -24,6 +24,7 @@
   var methods = [
     // ---- L1 · 30 秒零学习（点一下就出结果）----
     { id: 'sign', name: '观音灵签', blurb: '心里有事抽一支，签文给个干脆指引', culture: ['中华'], play: ['抽签'], answer: ['问当下事'], level: 'L1', mins: '<1 分钟', pay: 'freemium', needCase: 'none', page: 'divination', params: { method: 'sign' } },
+    { id: 'shengbei', name: '潮汕圣杯', blurb: '掷筊问事，一掷得答', culture: ['中华'], play: ['掷筊'], answer: ['问当下事'], level: 'L1', mins: '<1 分钟', pay: 'freemium', needCase: 'none', page: 'divination', params: { method: 'shengbei' } },
     { id: 'tarot', name: '塔罗', blurb: '抽一张牌看此刻提示，或布牌阵看事件脉络', culture: ['西方'], play: ['抽牌'], answer: ['问当下事'], level: 'L2', mins: '1–5 分钟', pay: 'freemium', needCase: 'none', page: 'tarot' },
     { id: 'almanac', name: '黄历择日', blurb: '按事项挑吉日，宜忌冲煞时辰一目了然', culture: ['中华'], play: ['择日'], answer: ['择吉取名'], level: 'L1', mins: '即时', pay: 'free', needCase: 'none', page: 'almanac' },
     { id: 'zodiac', name: '生肖流年', blurb: '看你的生肖今年运势与宜忌', culture: ['中华'], play: ['流年'], answer: ['看流年'], level: 'L1', mins: '即时', pay: 'free', needCase: 'case', page: 'zodiac' },
@@ -88,6 +89,7 @@
     { key: 'random', title: '随手抽', sub: '抽张牌·签随便玩', icon: 'bulb',
       recs: [
         { methodId: 'sign', why: '观音灵签，一签一答' },
+        { methodId: 'shengbei', why: '潮汕圣杯，一掷问神' },
         { methodId: 'tarot', why: '塔罗单张，看此刻提示' },
         { methodId: 'lenormand', why: '雷诺曼单张，随手一抽' }
       ] }
@@ -96,7 +98,7 @@
   // 标签文案（explore 筛选条 / 卡片角标 chip）
   var tagMeta = {
     culture: { '中华': '中华', '西方': '西方', '心理': '心理', '印度源流': '印度源流' },
-    play: { '排盘': '生辰排盘', '摇卦': '摇卦起课', '抽牌': '抽牌', '抽签': '抽签', '择日': '择日工具', '问卷': '问卷', '流年': '流年', '合盘': '双人合盘' },
+    play: { '排盘': '生辰排盘', '摇卦': '摇卦起课', '抽牌': '抽牌', '抽签': '抽签', '掷筊': '掷筊', '择日': '择日工具', '问卷': '问卷', '流年': '流年', '合盘': '双人合盘' },
     answer: { '看一生格局': '看一生格局', '问当下事': '问当下事', '看流年': '看流年', '择吉取名': '择吉取名', '双人关系': '双人关系', '看自己': '看自己' },
     level: { L1: 'L1 秒懂', L2: 'L2 轻仪式', L3: 'L3 专业', L4: 'L4 合参' },
     pay: { free: '全免费', freemium: '免费起+付费深挖', paid: '付费' },
