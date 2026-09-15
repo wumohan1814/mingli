@@ -85,7 +85,8 @@ const API = '/api';
 const API_DEFAULT_TIMEOUT = 15000;
 let token = '';
 let refreshToken = '';
-// BUG-002: 需登录才能访问的页面白名单（landing/auth/guoxue-hub/xishi-hub 保持公开）
+// BUG-002: 需登录才能访问的页面白名单（landing/intent/explore 保持公开；节140 T3d 起旧 HUB 页名
+// 为 explore 别名，同样公开）
 const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick','agent','guoxue-tools'];
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
@@ -548,13 +549,14 @@ function logout() {
 
 // ===== REQ-080：真实子路径路由（history API · pathname ⇄ 页面 双向映射）=====
 // 映射口径见 docs/模块URL映射表-REQ080.md（2026-09-08 需求方确认）：
-//   /→landing  /guoxue→guoxue-hub  /xishi→xishi-hub  /mbti→mbti-hub（心理测试 Hub）
+//   /→landing  /explore→explore（节140 T3d 起 /guoxue·/xishi·/mbti 由后端 301 到 /explore?culture=…；
+//     页名 guoxue-hub/xishi-hub/mbti-hub 保留为 explore 别名，旧书签/工具页「返回」仍可达）
+//   /intent/:key→intent（节140 T3b 意图推荐页）
 //   /mbti/test→mbti（人格测试） /jiufa→nine-pick
 //   /zodiac→zodiac  /divination→divination  /astrology→astrology  /tarot→tarot
 //   /lenormand→lenormand  /cases→cases  /cases/:id→archive  /agent→agent
 //   /settings→settings  /login|/register→auth  /mbti/share/:token→mbti-share
 //   /case/share/:token→case-share
-// Hub 页以 pages dict 实际名为准：guoxue-hub/xishi-hub 落 /guoxue、/xishi（URL 不带 -hub 后缀）；
 // 八法合一页实际名 nine-pick → /jiufa；auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
 // 反向 /register 亦反解为 auth。映射表外的工作流中间页（onboarding/waiting/calibration/predict/
 // revise/topic/credits）携带 caseId/topic/context 等长文本、刻意不做深链：pathFor 返回 null →
@@ -1041,34 +1043,10 @@ function App() {
     setSkin(s);
     localStorage.setItem('mingli_skin', s);
   };
-  // 切换模块（左侧 NavRail + Banner 菜单共用）：只同步 module + 皮肤并「留在 landing 落地宣传页」，
-  // 不直接跳 HUB；落地页主按钮才负责进入对应 HUB / 测试页（onNavigate）。
-  const selectModule = id => {
-    const h = MODULE_HUB[id];
-    if (!h) return;
-    // BUG-011 + REQ-070：顶栏汉堡菜单/落地页切模块会离开分享落地页 → 先恢复本地会话（若有）
-    if (isGuestSharePageName(page)) switchShareGuestSession(false);
-    setModule(id);
-    applySkin(h.skin);
-    // REQ-092：0 档案强制建档期不允许落到公共落地页（任何入口都钉在新建档案）
-    if (forceOnboarding === true && token) {
-      setPage('onboarding');
-      setParams({});
-      return;
-    }
-    setPage('landing');
-    setParams({});
-  };
-  // REQ-071：Banner 正中「模块」下拉直达功能页 —— 先同步 module + 皮肤（与 HUB 卡片
-  // 跳转口径一致），再 navigate；未登录点受限页由 BUG-002 拦截引导去登录。
-  const goFeature = item => {
-    if (!item || !item.page) return;
-    // BUG-011 + REQ-070：离开分享落地页 → 先恢复本地会话（若有）
-    if (isGuestSharePageName(page)) switchShareGuestSession(false);
-    setModule(item.module || 'guoxue');
-    applySkin(item.skin || 'guoxue');
-    navigate(item.page);
-  };
+  // 节140 T3d：移除「模块切换」机制（左导航三键 / Banner 下拉 / 右上角菜单切模块均删除，
+  // 模块级皮肤随壳层拆除；工具页氛围皮肤仍由 REQ080_PAGE_THEME 深链 + SettingsPage 皮肤开关提供）。
+  // module state 保留：仅驱动运营背景图层 bg-{module} 与 REQ080_PAGE_THEME 深链皮肤。
+  // REQ-071：Banner「模块」下拉已删除；工具页直达入口收敛到首页意图卡 / 意图推荐页 / /explore。
   const pages = {
     landing: /*#__PURE__*/React.createElement(LandingPage, {
       module: module,
@@ -1082,7 +1060,23 @@ function App() {
       onNavigate: navigate
     }),
     explore: /*#__PURE__*/React.createElement(ExplorePage, {
-      onNavigate: navigate
+      onNavigate: navigate,
+      initialCulture: params.culture
+    }),
+    // 节140 T3d：旧三大 HUB 页名保留为「探索浏览器别名」——旧书签/工具页「返回」直达
+    // /explore 对应文化标签（后端对 /guoxue·/xishi·/mbti 做 301 见 main.py；这里兜底
+    // SPA 内部跳转，URL 不变但渲染 explore 视图，避免死链）
+    'guoxue-hub': /*#__PURE__*/React.createElement(ExplorePage, {
+      onNavigate: navigate,
+      initialCulture: '中华'
+    }),
+    'xishi-hub': /*#__PURE__*/React.createElement(ExplorePage, {
+      onNavigate: navigate,
+      initialCulture: '西方'
+    }),
+    'mbti-hub': /*#__PURE__*/React.createElement(ExplorePage, {
+      onNavigate: navigate,
+      initialCulture: '心理'
     }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
       onNavigate: navigate
@@ -1129,10 +1123,6 @@ function App() {
       caseId: params.caseId,
       onNavigate: navigate
     }),
-    'guoxue-hub': /*#__PURE__*/React.createElement(GuoxueHubPage, {
-      onNavigate: navigate,
-      applySkin: applySkin
-    }),
     'guoxue-tools': /*#__PURE__*/React.createElement(GuoxueToolsPage, {
       onNavigate: navigate,
       applySkin: applySkin
@@ -1140,10 +1130,6 @@ function App() {
     'nine-pick': /*#__PURE__*/React.createElement(NinePickPage, {
       caseId: params.caseId,
       onNavigate: navigate
-    }),
-    'xishi-hub': /*#__PURE__*/React.createElement(XishiHubPage, {
-      onNavigate: navigate,
-      applySkin: applySkin
     }),
     zodiac: /*#__PURE__*/React.createElement(ZodiacPage, {
       onNavigate: navigate
@@ -1170,10 +1156,6 @@ function App() {
     astrology: /*#__PURE__*/React.createElement(AstrologyPage, {
       onNavigate: navigate,
       initCaseId: params.caseId
-    }),
-    'mbti-hub': /*#__PURE__*/React.createElement(MbtiHubPage, {
-      onNavigate: navigate,
-      applySkin: applySkin
     }),
     mbti: /*#__PURE__*/React.createElement(MbtiPage, {
       onNavigate: navigate,
@@ -1226,15 +1208,11 @@ function App() {
     className: "dot"
   }, "·")), /*#__PURE__*/React.createElement("span", {
     className: "tagline"
-  }, ML_COPY.ui.brand.tagline)), /* REQ-071 + REQ-066③：正中「模块」下拉（在「命理」与右上角菜单/汉堡 之间，
-     用 flex 中列 + space-between 等距留白，不遮挡两侧）；是否展示由功能设置
-     banner_dropdown 控制（默认关 → 不渲染；开 → 常驻展示） */
-  mlSet.banner_dropdown && /*#__PURE__*/React.createElement(TopbarModNav, {
-    onGo: goFeature
-  }), /*#__PURE__*/React.createElement(TopbarMenu, {
+  }, ML_COPY.ui.brand.tagline)), /* 节140 T3d：Banner 正中「模块」下拉已删除（工具直达入口由 /explore 取代，
+     功能设置 banner_dropdown 键保留在库但不再渲染） */
+  /*#__PURE__*/React.createElement(TopbarMenu, {
     loggedIn: !!token,
     onAuth: () => navigate('auth'),
-    onPickModule: selectModule,
     onCases: () => navigate('cases'),
     onSettings: () => navigate('settings'),
     /* REQ-076：王先生 Agent 图标入口（agent_enabled 控制显隐） */
@@ -1249,10 +1227,7 @@ function App() {
     key: page,
     /* REQ-066①：anim_enabled 关 → 页面切换动画直接跳过（供 REQ-061 动效读取的现成一处） */
     style: mlSet.anim_enabled ? undefined : { animation: 'none' }
-  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), page === 'landing' && /*#__PURE__*/React.createElement(NavRail, {
-    module: module,
-    onSelect: selectModule
-  }), creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
+  }, pages[page] || pages.landing), /*#__PURE__*/React.createElement(DisclaimerFooter, null)), /* 节140 T3d：左导航三键（NavRail）已删除 */ creditModal && /*#__PURE__*/React.createElement(CreditInsufficientModal, {
     info: creditModal,
     onClose: () => setCreditModal(null)
   }), pairCfg && /*#__PURE__*/React.createElement(PairModal, {

@@ -7,10 +7,11 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from urllib.parse import quote
 
 from app import legal
 from app.config import settings
@@ -317,6 +318,26 @@ try:
     logger.info("素材上传目录静态托管: %s → /uploads", uploads_root_dir / "assets")
 except Exception:
     logger.warning("素材上传目录不可用，跳过 /uploads 静态托管", exc_info=True)
+
+# 节140 T3d：旧三大 HUB URL 301 重定向 → /explore 对应文化标签（用户拍板「重定向」）。
+# 旧书签/外链直达 /guoxue · /xishi · /mbti 时先落这里（**必须早于下方 "/" SPA 兜底挂载
+# 注册**——Starlette 按注册序匹配，挂载 "/" 在后会吞掉一切）；SPA 内部跳转旧 HUB 页名
+# 走前端别名渲染 ExplorePage（index.html）。culture 值经 quote 编码进 query，前端
+# ExplorePage 挂载时从 location.search 读取预选标签。
+_OLD_HUB_REDIRECTS = {
+    "/guoxue": "中华",
+    "/xishi": "西方",
+    "/mbti": "心理",
+}
+for _old_path, _cult in _OLD_HUB_REDIRECTS.items():
+    app.add_api_route(
+        _old_path,
+        lambda cult=_cult: RedirectResponse(
+            "/explore?culture=" + quote(cult), status_code=301
+        ),
+        methods=["GET"],
+        include_in_schema=False,
+    )
 
 # Serve frontend static files at root (after API routes)
 frontend_path = Path("../frontend/public")

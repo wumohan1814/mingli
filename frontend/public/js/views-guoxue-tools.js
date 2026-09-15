@@ -1,4 +1,5 @@
-// 国学工具域视图（节110 阶段3）：八法合一 NinePickPage + 起名 NamerModal + 国学 HUB GuoxueHubPage + 择吉与时势 GuoxueToolsPage + 八法状态 nineRunState
+// 国学工具域视图（节110 阶段3 / 节140 T3d 去 HUB）：八法合一 NinePickPage + 起名 NamerModal + 择吉与时势 GuoxueToolsPage + 八法状态 nineRunState
+// （节140 T3d：GuoxueHubPage 已删除，入口由首页意图卡 / /explore 提供）
 // 加载于 views-home.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 /* ---------- REQ-068：八法合一 · 选择档案（档案与八法解耦后的八法入口） ---------- */
@@ -610,69 +611,7 @@ function NamerModal({
   );
 }
 
-/* ---------- 国学预测 HUB ---------- */
-function GuoxueHubPage({
-  onNavigate,
-  applySkin
-}) {
-  // REQ-126：国学 HUB 改 4 张场景大卡（① 命盘·八法合一 / ② 问事·即时起卦 / ③ 择吉与时势 /
-  // ④ 生肖流年）。原 6 方法卡（黄历择日/太乙/皇极）与 REQ-100 同排 3 键（八法配对/八字配对/
-  // 档案起名）收归 ③「择吉与时势」新页 GuoxueToolsPage（/guoxue/tools，需登录）。本 HUB 保持公开页。
-  const cards = [{
-    name: ML_COPY.ui.hub['guoxue-card-nine-name'],
-    sub: ML_COPY.ui.hub['guoxue-card-nine-sub'],
-    bar: 'var(--skin-accent)',
-    ico: 'nine',
-    to: () => onNavigate('nine-pick')
-  }, {
-    name: ML_COPY.ui.hub['guoxue-card-divination-name'],
-    sub: ML_COPY.ui.hub['guoxue-card-divination-sub'],
-    bar: 'var(--gold-500)',
-    ico: 'orbit',
-    to: () => onNavigate('divination')
-  }, {
-    name: ML_COPY.ui.hub['guoxue-card-tools-name'],
-    sub: ML_COPY.ui.hub['guoxue-card-tools-sub'],
-    bar: 'var(--cinnabar)',
-    ico: 'calendar',
-    to: () => onNavigate('guoxue-tools')
-  }, {
-    name: ML_COPY.ui.hub['guoxue-zodiac-name'],
-    sub: ML_COPY.ui.hub['guoxue-zodiac-sub'],
-    bar: 'var(--cinnabar)',
-    ico: 'spark',
-    to: () => onNavigate('zodiac')
-  }];
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "nine",
-    size: 22
-  }), ML_COPY.ui.module_hub.guoxue_title), /*#__PURE__*/React.createElement("div", {
-    className: "hub-grid"
-  }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "hub-card",
-    onClick: () => c.to()
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "hc-bar",
-    style: {
-      background: c.bar
-    }
-  }), /*#__PURE__*/React.createElement(Icon, {
-    name: c.ico,
-    size: 28,
-    className: "hc-ico"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "hc-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hc-name"
-  }, c.name), /*#__PURE__*/React.createElement("div", {
-    className: "hc-sub"
-  }, c.sub))))));
-}
+/* ---------- 节140 T3d：GuoxueHubPage 已删除（入口由首页意图卡 / /explore 提供） ---------- */
 
 /* ---------- REQ-126：③ 择吉与时势 新页（/guoxue/tools，需登录） ----------
    4 功能卡：黄历择日（→almanac，免档案）/ 八字起名（复用 NamerModal）/
