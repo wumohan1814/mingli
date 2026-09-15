@@ -2240,11 +2240,18 @@ function ArtStageSkipNote() {
   return null;
 }
 function DivinationPage({
-  onNavigate
+  onNavigate,
+  initialMethod
 }) {
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
   const [method, setMethod] = useState('liuyao');
+  // 节140 T3b：意图推荐/目录深链支持 —— initialMethod 合法时直达对应起卦法
+  useEffect(() => {
+    if (!initialMethod) return;
+    const valid = DIVIN_METHODS.some(x => x.id === String(initialMethod).trim());
+    if (valid) setMethod(String(initialMethod).trim());
+  }, [initialMethod]);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errored, setErrored] = useState('');

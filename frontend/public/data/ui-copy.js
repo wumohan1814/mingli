@@ -41,6 +41,32 @@ window.ML_COPY = {
       'xishi-intro': '从本命星盘、行运推演，到塔罗牌阵与雷诺曼小牌——AI 以符号与意象为语，陪你梳理情绪、看清关系与当下的每一个抉择。',
       'mbti-intro': '基于 IPIP 大五人格量表（OCEAN），从开放性、尽责性、外向性、宜人性与情绪稳定性五个维度，认识自己与世界相处的方式。'
     },
+    // 节140 T3b：意图首页 / 意图推荐页 / explore 浏览器（界面标签；意图卡正文在 CONTENT.catalog）
+    intent: {
+      'hero-title': '你想问什么？',
+      'hero-sub': '选一个你此刻的念头，剩下的交给命理',
+      'recall-title': '接着看',
+      'recall-continue': '继续上次',
+      'recall-continue-sub': '回到最近一次解读',
+      'recall-mychart': '我的命盘',
+      'recall-mychart-sub': '打开默认档案的命盘',
+      'recall-annual': '本月流运',
+      'recall-annual-sub': '生肖流年快速看',
+      'recall-goto-create': '去建档',
+      'explore-entry': '探索全部方式',
+      'explore-sub': '按标签筛选全部占卜方式',
+      'explore-soon': '「探索全部方式」即将上线',
+      'rec-title': '为你推荐',
+      'rec-escape': '我自己挑方式',
+      'rec-escape-soon': '「探索全部方式」即将上线',
+      'intent-not-found': '这个入口不存在，请从首页重新选择。',
+      'back-home': '回到首页',
+      'filter-title': '筛选',
+      'filter-reset': '重置',
+      'no-match': '没有符合条件的方式，换个标签试试。',
+      'card-count': '共 {n} 种方式',
+      'go': '去看看'
+    },
     module_hub: {
       guoxue_title: '国学预测',
       guoxue_desc: '以八字、紫微等东方体系，梳理你当下的趋势脉络。',

@@ -565,6 +565,7 @@ const REQ080_PAGE_PATH = {
   'guoxue-tools': '/guoxue/tools',
   'xishi-hub': '/xishi',
   'mbti-hub': '/mbti',
+  'explore': '/explore',
   mbti: '/mbti/test',
   'nine-pick': '/jiufa',
   zodiac: '/zodiac',
@@ -583,6 +584,13 @@ const REQ080_PAGE_PATH = {
 // 动态段路径：URL ⇄ params 互转（:id / :token），一律 encodeURIComponent 编解码；
 // 参数缺失时回退到该模块列表页（/cases、/mbti/share、/case/share），避免 /undefined 死链。
 const REQ080_DYNAMIC = [{
+  page: 'intent',
+  param: 'key',
+  toUrl: v => v == null || v === '' ? '/' : '/intent/' + encodeURIComponent(v),
+  fromUrl: s => ({
+    key: decodeSeg(s)
+  })
+}, {
   page: 'archive',
   param: 'caseId',
   toUrl: v => v == null || v === '' ? '/cases' : '/cases/' + encodeURIComponent(v),
@@ -1068,6 +1076,14 @@ function App() {
       loggedIn: !!token,
       onNavigate: navigate
     }),
+    // 节140 T3b：意图推荐页（/intent/:key）与探索浏览器（/explore）公开页
+    intent: /*#__PURE__*/React.createElement(IntentPage, {
+      intentKey: params.key,
+      onNavigate: navigate
+    }),
+    explore: /*#__PURE__*/React.createElement(ExplorePage, {
+      onNavigate: navigate
+    }),
     auth: /*#__PURE__*/React.createElement(AuthPage, {
       onNavigate: navigate
     }),
@@ -1133,7 +1149,8 @@ function App() {
       onNavigate: navigate
     }),
     divination: /*#__PURE__*/React.createElement(DivinationPage, {
-      onNavigate: navigate
+      onNavigate: navigate,
+      initialMethod: params.method
     }),
     almanac: /*#__PURE__*/React.createElement(AlmanacPage, {
       onNavigate: navigate
