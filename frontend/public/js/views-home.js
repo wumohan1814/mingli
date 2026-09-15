@@ -1,4 +1,7 @@
-// 首页/导航/账户域视图（节110 阶段3）：首页 LandingPage + 积分 CreditBalance/BannerBalance/MenuBalance/CreditInsufficientModal + 配对 PairModal + 余额明细 CreditTransactionsPage + 导航 NavRail/TopbarModNav/TopbarMenu + 设置 SettingsPage
+// 首页/导航/账户域视图（节110 阶段3 / 节140 T3b-T3d 改版）：首页意图页 LandingPage + 意图推荐页
+// IntentPage + 探索浏览器 ExplorePage + 积分 CreditBalance/BannerBalance/MenuBalance/CreditInsufficientModal +
+// 配对 PairModal + 余额明细 CreditTransactionsPage + 右上角菜单 TopbarMenu + 设置 SettingsPage
+// （节140 T3d：NavRail 左导航三键 / TopbarModNav Banner 模块下拉 / MODULE_HUB 已整块删除，模块级皮肤随壳层拆除）
 // （usePaySufficient 亦被档案/解读域 views-cases.js 复用，故保持全局可见）
 // 加载于 views-onboarding.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
@@ -237,15 +240,26 @@ function IntentPage({
   }, ML_COPY.ui.intent['rec-escape'])));
 }
 
-// 探索全部方式（节140 T3c 基础版）：/explore —— 标签筛选 + 卡片墙（L1→L4 排序）
+// 探索全部方式（节140 T3c 基础版 + T3d）：/explore —— 标签筛选 + 卡片墙（L1→L4 排序）
+// initialCulture：预选文化标签（旧 HUB 别名 / 后端 301 的 ?culture= 查询参数 / 意图推荐页逃生舱）
 function ExplorePage({
-  onNavigate
+  onNavigate,
+  initialCulture
 }) {
   const el = React.createElement;
   const cat = (typeof CONTENT !== 'undefined' && CONTENT.catalog) || null;
   const methods = (cat && cat.methods) || [];
   const tagMeta = (cat && cat.tagMeta) || {};
-  const [cult, setCult] = useState([]);
+  // 预选文化：props 优先，其次 location.search 的 ?culture=（后端 301 落地后直达）
+  const qCulture = (() => {
+    try {
+      return new URLSearchParams(window.location.search).get('culture') || '';
+    } catch (e) {
+      return '';
+    }
+  })();
+  const preCult = (initialCulture && String(initialCulture).trim()) || qCulture || '';
+  const [cult, setCult] = useState(preCult ? [preCult] : []);
   const [play, setPlay] = useState([]);
   const [lvl, setLvl] = useState([]);
   const toggle = (arr, v) => arr.indexOf(v) >= 0 ? arr.filter(x => x !== v) : arr.concat(v);
@@ -1053,183 +1067,13 @@ function CreditTransactionsPage({
 }
 
 
-// ===== 横向扩展：左侧导航栏 + 各模块页面 =====
-const MODULE_HUB = {
-  guoxue: {
-    page: 'guoxue-hub',
-    skin: 'guoxue'
-  },
-  xishi: {
-    page: 'xishi-hub',
-    skin: 'xishi'
-  },
-  mbti: {
-    page: 'mbti-hub',
-    skin: 'mbti'
-  }
-};
-const RAIL_MODS = [{
-  id: 'guoxue',
-  label: ML_COPY.ui.nav.guoxue,
-  color: 'var(--jade-500)',
-  icon: 'nine'
-}, {
-  id: 'xishi',
-  label: ML_COPY.ui.nav.xishi,
-  color: 'var(--tc-amethyst)',
-  icon: 'orbit'
-}, {
-  id: 'mbti',
-  label: ML_COPY.ui.nav.mbti,
-  color: 'var(--tc-indigo)',
-  icon: 'spark'
-}];
-// REQ-064 v2：首页左侧导航恢复为 3 键（国学预测 / 西式占卜 / MBTI）；
-// 「档案管理」第 4 键已撤销，入口迁移至三大模块落地宣传页主按钮下方的透明小按钮（仅登录显示）。
-function NavRail({
-  module,
-  onSelect
-}) {
-  return /*#__PURE__*/React.createElement("nav", {
-    className: "nav-rail",
-    "aria-label": ML_COPY.ui.nav['module-aria']
-  }, RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
-    key: m.id,
-    className: module === m.id ? 'active expanded' : '',
-    style: {
-      background: m.color
-    },
-    onClick: () => onSelect(m.id),
-    "aria-pressed": module === m.id ? 'true' : 'false'
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: m.icon,
-    size: 20,
-    color: "var(--tc-white)"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "rail-label"
-  }, m.label))));
-}
+// ===== 节140 T3d：模块级壳层已拆除 =====
+// 原 NavRail（左导航三键）/ RAIL_MODS / MODULE_HUB / MOD_NAV_GROUPS / TopbarModNav（Banner
+// 模块下拉）已整块删除 —— 模块级皮肤随壳层移除（节140 护栏 1），工具页氛围皮肤保留：
+// 深链由 REQ080_PAGE_THEME 指定、手动切换在 SettingsPage 皮肤开关。工具直达入口收敛到
+// 首页意图卡 / 意图推荐页 / /explore；配对入口保留在各工具页内（工具页零改护栏）。
 
-// REQ-071：Banner 正中「模块」下拉导航 —— 全部支持功能（按三大模块分组，仅标题）。
-// 直达页：八法合一→nine-pick / 生肖流年→zodiac / 临时起卦→divination /
-// 星座→astrology / 塔罗→tarot / 雷诺曼→lenormand / MBTI→mbti。
-// item: {label, page, module, skin} —— module 同步左侧 bg/落地面板，skin 与 HUB 卡片跳转口径一致。
-const MOD_NAV_GROUPS = [{
-  title: ML_COPY.ui.nav.guoxue,
-  color: 'var(--jade-500)',
-  // REQ-126：国学组按 4 张场景大卡同步（① 命盘·八法合一 / ② 问事·即时起卦 / ③ 择吉与时势 / ④ 生肖流年）
-  items: [{
-    label: ML_COPY.ui.nav['item-nine-pick'],
-    page: 'nine-pick',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }, {
-    label: ML_COPY.ui.nav['item-divination'],
-    page: 'divination',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }, {
-    label: ML_COPY.ui.nav['item-tools'],
-    page: 'guoxue-tools',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }, {
-    label: ML_COPY.ui.nav['item-zodiac'],
-    page: 'zodiac',
-    module: 'guoxue',
-    skin: 'guoxue'
-  }]
-}, {
-  title: ML_COPY.ui.nav.xishi,
-  color: 'var(--tc-amethyst)',
-  items: [{
-    label: ML_COPY.ui.nav['item-astrology'],
-    page: 'astrology',
-    module: 'xishi',
-    skin: 'xingzuo'
-  }, {
-    label: ML_COPY.ui.nav['item-tarot'],
-    page: 'tarot',
-    module: 'xishi',
-    skin: 'tarot'
-  }, {
-    label: ML_COPY.ui.nav['item-lenormand'],
-    page: 'lenormand',
-    module: 'xishi',
-    skin: 'tarot'
-  }]
-}, {
-  title: ML_COPY.ui.nav.mbti,
-  color: 'var(--tc-indigo)',
-  items: [{
-    label: ML_COPY.ui.nav['item-mbti'],
-    page: 'mbti',
-    module: 'mbti',
-    skin: 'mbti'
-  }]
-}];
-// Banner 正中「模块」下拉按钮：点击弹出分组直达列表；点项即达对应功能页
-function TopbarModNav({
-  onGo
-}) {
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef(null);
-  useEffect(() => {
-    if (!open) return;
-    const onDown = e => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
-    };
-    const onKey = e => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
-  const go = item => {
-    setOpen(false);
-    onGo(item);
-  };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "topbar-modnav",
-    ref: wrapRef
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "modnav-btn",
-    type: "button",
-    onClick: () => setOpen(o => !o),
-    "aria-haspopup": "menu",
-    "aria-expanded": open ? 'true' : 'false',
-    "aria-label": ML_COPY.ui.nav['module-aria']
-  }, ML_COPY.ui.nav.module, /*#__PURE__*/React.createElement("span", {
-    className: "caret",
-    "aria-hidden": "true"
-  })), open && /*#__PURE__*/React.createElement("div", {
-    className: "modnav-drop",
-    role: "menu",
-    "aria-label": ML_COPY.ui.nav['all-modules-aria']
-  }, MOD_NAV_GROUPS.map(g => /*#__PURE__*/React.createElement("div", {
-    key: g.title,
-    className: "modnav-group"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modnav-group-title"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "mg-dot",
-    style: {
-      background: g.color
-    }
-  }), g.title), g.items.map(it => /*#__PURE__*/React.createElement("button", {
-    key: it.page,
-    className: "modnav-item",
-    role: "menuitem",
-    type: "button",
-    onClick: () => go(it)
-  }, it.label))))));
-}
-
-// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 汉堡按钮 + 下拉（余额¥置顶 + 切模块回落地页 / 功能设置 / 档案管理 / 安装到桌面 / 退出登录）
+// Banner 右上角菜单：未登录显示「登录 / 注册」；已登录显示 汉堡按钮 + 下拉（余额¥置顶 + 功能设置 / 档案管理 / 安装到桌面 / 退出登录）
 /* ---------- PWA：右上角菜单「安装到桌面」常驻按钮（配合已部署 manifest.webmanifest + sw.js） ---------- */
 // beforeinstallprompt 只在满足可安装条件时派发一次 → 模块级保存事件引用，点击时再 prompt()
 let deferredInstallPrompt = null;
@@ -1240,7 +1084,6 @@ function pwaStandalone() {
 function TopbarMenu({
   loggedIn,
   onAuth,
-  onPickModule,
   onCases,
   onSettings,
   onLogout,
@@ -1349,20 +1192,7 @@ function TopbarMenu({
       setOpen(false);
       onCredits && onCredits();
     }
-  }), RAIL_MODS.map(m => /*#__PURE__*/React.createElement("button", {
-    key: m.id,
-    className: "menu-item",
-    role: "menuitem",
-    onClick: () => {
-      setOpen(false);
-      onPickModule(m.id);
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "mi-dot",
-    style: {
-      background: m.color
-    }
-  }), m.label)), /* REQ-066：右上角菜单「功能设置」入口（菜单按钮名统一为「功能设置」）→ 设置页 */
+  }), /* REQ-066：右上角菜单「功能设置」入口（菜单按钮名统一为「功能设置」）→ 设置页 */
   /*#__PURE__*/React.createElement("button", {
     className: "menu-item",
     role: "menuitem",
@@ -1492,7 +1322,7 @@ function SettingsPage({
     React.createElement('div', { className: 'card tc-set-card' },
       switchRow('anim_enabled', UI_COPY.home['set-anim'], UI_COPY.home['set-anim-desc'], settings.anim_enabled),
       dmRow,
-      switchRow('banner_dropdown', UI_COPY.home['set-banner'], UI_COPY.home['set-banner-desc'], settings.banner_dropdown),
+      // 节140 T3d：Banner 模块下拉已删除 → banner_dropdown 开关随之移除（存量设置值留在库内，不再渲染）
       switchRow('share_mingli_ui', UI_COPY.home['set-share-ui'], UI_COPY.home['set-share-ui-desc'], settings.share_mingli_ui),
       switchRow('bg_enabled', UI_COPY.home['set-bg'], UI_COPY.home['set-bg-desc'], settings.bg_enabled),
       switchRow('card_images', UI_COPY.home['set-card-images'], UI_COPY.home['set-card-images-desc'], settings.card_images),

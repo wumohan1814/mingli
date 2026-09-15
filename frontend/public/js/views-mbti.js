@@ -1,4 +1,4 @@
-// 心理测试域视图（节110 阶段3 / 节124 大五重写）：心理 HUB MbtiHubPage + 人格测试 MbtiPage + 免登录分享 MbtiSharePage
+// 心理测试域视图（节110 阶段3 / 节124 大五重写 / 节140 T3d 去 HUB）：人格测试 MbtiPage + 免登录分享 MbtiSharePage
 // 节124（2026-09-14）：题库已由后端切换为 IPIP-NEO-300 大五人格（节123），本文件随之重写——
 //   ① 答题 UI 由「二选一」改为「5 点量表」（选项文案取 GET /api/mbti/questions 的 scale）
 //   ② 结果页 = 大五（OCEAN）五维条形图 + 四字母「类型倾向对照」（次级、带边界标注）+ 脚注免责
@@ -7,54 +7,7 @@
 //   ④ 答题进度存 localStorage（300 题防丢失，零后端存储）
 // （MBTI_FIELDS 常量亦被档案页 ArchivePage「档案内心理测试板块」复用，故保持全局可见）
 // 加载于 views-xishi.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
-
-/* ---------- 心理测试 HUB（REQ-112：与国学预测 / 西式占卜同级的 Hub 页） ---------- */
-// 点击首页「心理测试」进入；Hub 页仅聚合「人格测试」主功能入口（配对解析入口按 REQ-109
-// 保留在人格测试页底部操作区，不聚合于此；文案口径：模块名「心理测试」）。
-function MbtiHubPage({
-  onNavigate,
-  applySkin
-}) {
-  const cards = [{
-    name: ML_COPY.ui.hub['mbti-name'],
-    sub: ML_COPY.ui.hub['mbti-sub'],
-    bar: 'var(--skin-accent)',
-    ico: 'spark',
-    to: () => {
-      applySkin('mbti');
-      onNavigate('mbti');
-    }
-  }];
-  return React.createElement('div', {
-    className: 'container'
-  }, React.createElement('div', {
-    className: 'hub-title'
-  }, React.createElement(Icon, {
-    name: 'spark',
-    size: 22
-  }), ML_COPY.ui.module_hub.mbti_title), React.createElement('div', {
-    className: 'hub-grid'
-  }, cards.map((c, i) => React.createElement('div', {
-    key: i,
-    className: 'hub-card',
-    onClick: () => c.to()
-  }, React.createElement('span', {
-    className: 'hc-bar',
-    style: {
-      background: c.bar
-    }
-  }), React.createElement(Icon, {
-    name: c.ico,
-    size: 28,
-    className: 'hc-ico'
-  }), React.createElement('div', {
-    className: 'hc-body'
-  }, React.createElement('div', {
-    className: 'hc-name'
-  }, c.name), React.createElement('div', {
-    className: 'hc-sub'
-  }, c.sub))))));
-}
+// （节140 T3d：MbtiHubPage 已删除，入口由首页意图②/explore 提供）
 
 /* ---------- 人格测试（后端题库 /api/mbti/questions · 计分 /api/mbti/score ·
    保存类型 /api/mbti/save-type · 结果 /api/mbti/results） ---------- */

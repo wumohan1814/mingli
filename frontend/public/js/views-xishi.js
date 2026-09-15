@@ -1,76 +1,7 @@
-// 西式占卜域视图（节110 阶段3）：西式 HUB XishiHubPage + 塔罗 TarotPage + 雷诺曼 LenormandPage + 星座 AstrologyPage
+// 西式占卜域视图（节110 阶段3 / 节140 T3d 去 HUB）：塔罗 TarotPage + 雷诺曼 LenormandPage + 星座 AstrologyPage
 // （星座页依赖共享盘面，本轮已随「共享盘面→components.js」就绪）
 // 加载于 components.js/views-guoxue.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
-
-/* ---------- 西式占卜 HUB ---------- */
-function XishiHubPage({
-  onNavigate,
-  applySkin
-}) {
-  const cards = [{
-    name: ML_COPY.ui.hub['xishi-astrology-name'],
-    sub: ML_COPY.ui.hub['xishi-astrology-sub'],
-    bar: 'var(--tc-astro)',
-    ico: 'orbit',
-    to: () => {
-      applySkin('xingzuo');
-      onNavigate('astrology');
-    }
-  }, {
-    name: ML_COPY.ui.hub['xishi-tarot-name'],
-    sub: ML_COPY.ui.hub['xishi-tarot-sub'],
-    bar: 'var(--tc-amber)',
-    ico: 'spark',
-    to: () => {
-      applySkin('tarot');
-      onNavigate('tarot');
-    }
-  }, {
-    name: ML_COPY.ui.hub['xishi-lenormand-name'],
-    sub: ML_COPY.ui.hub['xishi-lenormand-sub'],
-    bar: 'var(--tc-amethyst)',
-    ico: 'nine',
-    to: () => {
-      applySkin('tarot');
-      onNavigate('lenormand');
-    }
-  }, {
-    name: ML_COPY.ui.hub['xishi-more-name'],
-    sub: ML_COPY.ui.hub['xishi-more-sub'],
-    bar: 'var(--tc-gray-dark)',
-    ico: 'flat',
-    disabled: true
-  }];
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hub-title"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "orbit",
-    size: 22
-  }), ML_COPY.ui.module_hub.western_title), /*#__PURE__*/React.createElement("div", {
-    className: "hub-grid"
-  }, cards.map((c, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: 'hub-card' + (c.disabled ? ' disabled' : ''),
-    onClick: () => c.disabled ? toast(ML_COPY.ui.hub['coming-soon-toast']) : c.to()
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "hc-bar",
-    style: {
-      background: c.bar
-    }
-  }), /*#__PURE__*/React.createElement(Icon, {
-    name: c.ico,
-    size: 28,
-    className: "hc-ico"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "hc-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hc-name"
-  }, c.name), /*#__PURE__*/React.createElement("div", {
-    className: "hc-sub"
-  }, c.sub))))));
-}
+// （节140 T3d：XishiHubPage 已删除，入口由首页意图卡 / /explore 提供）
 
 /* ---------- 塔罗牌（占位卡：空白+文字，美术后续补充） ---------- */
 // 节135：塔罗牌组数据已迁至正文数据总表 content/tarot/cards-zh.js
