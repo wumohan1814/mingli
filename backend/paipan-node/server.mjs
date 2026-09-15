@@ -144,6 +144,11 @@ import { calculateWuyunLiuqiCore } from './paipan-core/src/capabilities/wuyun/in
 //   generateAlmanacSelection / calculateZodiacYearFortune / getYearTaiSui 已下线。
 import { drawRandomSignCore } from './paipan-core/src/capabilities/ssgw/index.js';
 import { generateAlmanacSelectionCore } from './paipan-core/src/capabilities/almanac/index.js';
+
+// 节131：潮汕圣杯（掷筊）—— server.mjs 内的轻量确定性能力（纯函数模块，
+//   可独立 import 验证；不挂 paipan-core capabilities 目录，也不做对拍门禁，
+//   节131 范围仅 server.mjs + 单测式验证，见 shengbei-core.mjs 头部说明）。
+import { drawShengbeiCore } from './shengbei-core.mjs';
 import { calculateZodiacYearFortuneCore, getYearTaiSuiCore } from './paipan-core/src/capabilities/zodiac/index.js';
 
 // 节151：西洋占星已切换到自研内核（natal 对拍 2259/2259 全 100%）；vendor 的
@@ -610,6 +615,16 @@ function computeDivination(input) {
         moment: (options.moment !== undefined && options.moment !== null && options.moment !== '')
           ? options.moment : new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
       });
+      break;
+    }
+    case 'shengbei': {
+      // 节131：潮汕圣杯（掷筊）—— 一次掷两杯定三态（圣杯/笑杯/阴杯），确定性计算零 LLM。
+      // options 可带 seed/replay 确定性重放（前端演出用 replay=[u1,u2] 固定落面）；
+      // 缺 seed 由 ensureSeed 注入（crypto 强随机，保持「随机掷杯」体验）。
+      const options = (input.options && typeof input.options === 'object' && !Array.isArray(input.options))
+        ? input.options
+        : {};
+      raw = drawShengbeiCore(ensureSeed(options));
       break;
     }
     case 'lenormand': {

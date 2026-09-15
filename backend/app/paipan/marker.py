@@ -349,6 +349,372 @@ def _pillar_cn(pos: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# 紫微斗数标记
+# --------------------------------------------------------------------------- #
+
+# 四化简称 → 全称（sihua 里 mutagen 只有 禄/权/科/忌）
+_MUTAGEN_CN = {
+    "禄": "化禄",
+    "权": "化权",
+    "科": "化科",
+    "忌": "化忌",
+}
+
+
+def _ziwei_palace_by_branch(palaces: list, branch: str) -> dict | None:
+    """按地支在十二宫里找对应宫，返回该宫的关键信息；找不到返回 None。
+
+    命宫/身宫在顶层给的是地支（如 soul_palace="戌"），
+    palaces 里每宫有 earthly_branch，用分支匹配。
+    """
+    for p in palaces:
+        if not isinstance(p, dict):
+            continue
+        if p.get("earthly_branch") == branch:
+            major = p.get("major_stars")
+            major_list = [s for s in major if isinstance(s, str)] if isinstance(major, list) else []
+            return {
+                "name": p.get("name", ""),
+                "branch": branch,
+                "major_stars": major_list,
+                "is_empty": len(major_list) == 0,
+            }
+    return None
+
+
+def _ziwei_markers(chart: dict[str, Any]) -> dict[str, Any]:
+    """紫微斗数确定性标记：命宫/身宫主星与空宫、五行局、四化。
+
+    输出是"该看什么"的短事实（会被注入 LLM prompt）：
+      - life_palace / body_palace: {name, branch, major_stars, is_empty}
+      - five_elements_class: 五行局（如"土五局"）
+      - sihua: ["星曜化X·宫名", ...] 短描述列表
+    段缺失/为空 → 返回 {}。
+    """
+    ziwei = chart.get("ziwei") or {}
+    palaces = ziwei.get("palaces")
+    if not isinstance(palaces, list) or not palaces:
+        return {}
+
+    # 命宫：soul_palace 是地支；身宫：body_palace 是地支，兜底用 is_body_palace 标记
+    life = _ziwei_palace_by_branch(palaces, ziwei.get("soul_palace", ""))
+    body = _ziwei_palace_by_branch(palaces, ziwei.get("body_palace", ""))
+    if body is None:
+        for p in palaces:
+            if isinstance(p, dict) and p.get("is_body_palace"):
+                major = p.get("major_stars")
+                major_list = [s for s in major if isinstance(s, str)] if isinstance(major, list) else []
+                body = {
+                    "name": p.get("name", ""),
+                    "branch": p.get("earthly_branch", ""),
+                    "major_stars": major_list,
+                    "is_empty": len(major_list) == 0,
+                }
+                break
+
+    # 四化：顶层 sihua 是权威清单，转成"星曜化X·宫名"短描述
+    sihua: list[str] = []
+    for item in ziwei.get("sihua") or []:
+        if not isinstance(item, dict):
+            continue
+        star = item.get("star", "")
+        mutagen = item.get("mutagen", "")
+        palace = item.get("palace", "")
+        if not star or not mutagen:
+            continue
+        sihua.append(f"{star}{_MUTAGEN_CN.get(mutagen, mutagen)}·{palace}")
+
+    result: dict[str, Any] = {
+        "five_elements_class": ziwei.get("five_elements_class", ""),
+        "sihua": sihua,
+    }
+    if life is not None:
+        result["life_palace"] = life
+    if body is not None:
+        result["body_palace"] = body
+    return result
+
+
+# --------------------------------------------------------------------------- #
+# 七政四余标记
+# --------------------------------------------------------------------------- #
+
+# 庙旺落陷关键标记（dignity 值形如 "庙/乐"、"旺/喜"、"陷"、"平"、"—"）
+_QIZHENG_STRONG = ("庙", "旺")
+_QIZHENG_WEAK = ("陷",)
+
+
+def _qizheng_markers(chart: dict[str, Any]) -> dict[str, Any]:
+    """七政四余确定性标记：命主/身主、命宫落座、主要星曜强弱、重要相位。
+
+    输出（短事实）：
+      - ming_zhu / shen_zhu: 命主/身主（shenZhu 若存在才给）
+      - ming_gong: {palace, sign_branch}（十二宫首宫即命宫）
+      - key_stars: ["星名·庙旺标记·宫名·逆行", ...]（最多 5 条，庙/旺/陷或落命宫者优先）
+      - key_aspects: ["星1相位星2（紧密度）", ...]（最多 3 条，按紧密度排序）
+    段缺失/为空 → 返回 {}。
+    """
+    qizheng = chart.get("qizheng") or {}
+    if not qizheng:
+        return {}
+
+    result: dict[str, Any] = {}
+
+    ming_zhu = qizheng.get("mingZhu", "")
+    shen_zhu = qizheng.get("shenZhu", "")
+    if ming_zhu:
+        result["ming_zhu"] = ming_zhu
+    if shen_zhu:
+        result["shen_zhu"] = shen_zhu
+
+    twelve = qizheng.get("twelvePalaces")
+    if isinstance(twelve, list) and twelve and isinstance(twelve[0], dict):
+        result["ming_gong"] = {
+            "palace": twelve[0].get("palace", ""),
+            "sign_branch": twelve[0].get("signBranch", ""),
+        }
+
+    # 星曜强弱：庙/旺/陷标记，或落命宫的星，优先；最多 5 条
+    stars = qizheng.get("stars")
+    key_stars: list[str] = []
+    if isinstance(stars, list):
+        seen: set[str] = set()
+        for s in stars:
+            if not isinstance(s, dict):
+                continue
+            name = s.get("name", "")
+            if not name or name in seen:
+                continue
+            dignity = str(s.get("dignity", "") or "")
+            notable = any(k in dignity for k in _QIZHENG_STRONG) or any(
+                k in dignity for k in _QIZHENG_WEAK
+            )
+            in_ming = s.get("palace") == "命宫"
+            if not (notable or in_ming):
+                continue
+            parts = [name]
+            if dignity and dignity not in ("—", "平"):
+                parts.append(dignity)
+            if s.get("retrograde"):
+                parts.append("逆行")
+            if s.get("palace"):
+                parts.append(s["palace"])
+            key_stars.append("·".join(parts))
+            seen.add(name)
+            if len(key_stars) >= 5:
+                break
+    result["key_stars"] = key_stars
+
+    # 重要相位：按紧密度（紧密 < 中等 < 宽松）排序取前 3，保持原顺序兜底
+    aspects = qizheng.get("aspects")
+    key_aspects: list[str] = []
+    if isinstance(aspects, list):
+        rank = {"紧密": 0, "中等": 1, "宽松": 2}
+        ordered = sorted(
+            (a for a in aspects if isinstance(a, dict)),
+            key=lambda a: rank.get(a.get("closeness", ""), 3),
+        )
+        for a in ordered[:3]:
+            key_aspects.append(
+                f"{a.get('star1', '')}{a.get('type', '')}{a.get('star2', '')}"
+                f"（{a.get('closeness', '')}）"
+            )
+    result["key_aspects"] = key_aspects
+
+    return result
+
+
+# --------------------------------------------------------------------------- #
+# 奇门遁甲（终身盘）标记
+# --------------------------------------------------------------------------- #
+
+# 用神 markerType：命主相关的干支条目（年/月/日/时干支 + 天禽寄宫携干）
+_QIMEN_YONG_SHEN_TYPES = (
+    "yearStem",
+    "yearBranch",
+    "monthStem",
+    "monthBranch",
+    "dayStem",
+    "dayBranch",
+    "hourStem",
+    "hourBranch",
+    "companionStem",
+)
+
+
+def _qimen_markers(chart: dict[str, Any]) -> dict[str, Any]:
+    """奇门终身盘确定性标记：值符/值使落宫、用神年命落宫、特殊格局、空亡、局数。
+
+    输出（短事实）：
+      - zhi_fu / zhi_shi: {star|door, palace}（落宫取自 personalMarkers）
+      - yong_shen: [{markerType, value, palaceName, layer}, ...]（最多 6 条）
+      - patterns: ["格局名(吉/凶)", ...]（classicPatterns + patternTags + specialConditions，最多 6 条）
+      - void: {branches: [...], palaces: [...]}（空亡）
+      - ju: "阳遁N局" / "阴遁N局"
+    段缺失/为空 → 返回 {}。
+    """
+    qimen = chart.get("qimen_lifetime") or {}
+    base = qimen.get("baseChart")
+    if not isinstance(base, dict) or not base:
+        return {}
+
+    result: dict[str, Any] = {}
+
+    # 值符/值使落宫：personalMarkers 里的 zhiFuStar / zhiShiDoor 条目带 palaceName
+    markers_list = qimen.get("personalMarkers")
+    zhi_fu_palace = ""
+    zhi_shi_palace = ""
+    if isinstance(markers_list, list):
+        for m in markers_list:
+            if not isinstance(m, dict):
+                continue
+            mtype = m.get("markerType")
+            if mtype == "zhiFuStar" and m.get("palaceName"):
+                zhi_fu_palace = m["palaceName"]
+            elif mtype == "zhiShiDoor" and m.get("palaceName"):
+                zhi_shi_palace = m["palaceName"]
+
+    zhi_fu = base.get("zhiFu", "")
+    if zhi_fu:
+        result["zhi_fu"] = {"star": zhi_fu, "palace": zhi_fu_palace}
+    zhi_shi = base.get("zhiShi", "")
+    if zhi_shi:
+        result["zhi_shi"] = {"door": zhi_shi, "palace": zhi_shi_palace}
+
+    # 用神年命落宫（命主相关 markerType，最多 6 条）
+    yong_shen: list[dict] = []
+    if isinstance(markers_list, list):
+        for m in markers_list:
+            if not isinstance(m, dict):
+                continue
+            if m.get("markerType") not in _QIMEN_YONG_SHEN_TYPES:
+                continue
+            yong_shen.append(
+                {
+                    "markerType": m.get("markerType", ""),
+                    "value": m.get("value", ""),
+                    "palaceName": m.get("palaceName", ""),
+                    "layer": m.get("layer", ""),
+                }
+            )
+            if len(yong_shen) >= 6:
+                break
+    if yong_shen:
+        result["yong_shen"] = yong_shen
+
+    # 特殊格局：经典格局（名+吉/凶）→ patternTags → specialConditions，最多 6 条
+    patterns: list[str] = []
+    classic = base.get("classicPatterns")
+    if isinstance(classic, list):
+        for cp in classic:
+            if not isinstance(cp, dict):
+                continue
+            name = cp.get("name", "")
+            if not name:
+                continue
+            good_bad = "吉" if cp.get("type") == "good" else "凶"
+            patterns.append(f"{name}({good_bad})")
+            if len(patterns) >= 4:
+                break
+    tags = base.get("patternTags")
+    if isinstance(tags, list):
+        for t in tags:
+            if isinstance(t, str) and t:
+                patterns.append(t)
+            if len(patterns) >= 6:
+                break
+    special = base.get("specialConditions")
+    if isinstance(special, dict):
+        cond_names = {
+            "isLiuJiaHour": "六甲时",
+            "isLiuGuiHour": "六癸时",
+            "isShiGanRuMu": "时干入墓",
+            "isWuBuYuShi": "五不遇时",
+        }
+        for key, cn in cond_names.items():
+            if special.get(key):
+                patterns.append(cn)
+        if special.get("description"):
+            patterns.append(str(special["description"]))
+    if patterns:
+        result["patterns"] = patterns[:6]
+
+    # 空亡：空亡地支 + 空亡宫名
+    void: dict[str, list] = {}
+    vb = base.get("voidBranches")
+    if isinstance(vb, list) and vb:
+        void["branches"] = [b for b in vb if isinstance(b, str)]
+    vp = base.get("voidPalaces")
+    if isinstance(vp, list) and vp:
+        void["palaces"] = [
+            p.get("name", "") for p in vp if isinstance(p, dict) and p.get("name")
+        ]
+    if void:
+        result["void"] = void
+
+    # 局数：阳遁/阴遁 + 局数
+    is_yang = base.get("isYangDun")
+    ju_shu = base.get("juShu")
+    if ju_shu is not None:
+        result["ju"] = f"{'阳' if is_yang else '阴'}遁{ju_shu}局"
+
+    return result
+
+
+# --------------------------------------------------------------------------- #
+# 五运六气标记
+# --------------------------------------------------------------------------- #
+
+def _wuyun_year_summary(year_block: dict) -> dict:
+    """单个年份块（birth_year / current_year）→ 短标记。"""
+    out: dict[str, str] = {}
+    input_ = year_block.get("input") or {}
+    if input_.get("yearGanZhi"):
+        out["year_ganzhi"] = str(input_["yearGanZhi"])
+
+    am = year_block.get("annualMovement") or {}
+    if am.get("toneName"):
+        # 中运五音名（如"太商"），无则退回运名（如"金运"）
+        out["zhong_yun"] = str(am["toneName"])
+    elif am.get("name"):
+        out["zhong_yun"] = str(am["name"])
+    if am.get("strength"):
+        out["strength"] = str(am["strength"])
+
+    sitian = year_block.get("sitian") or {}
+    if sitian.get("name"):
+        out["si_tian"] = str(sitian["name"])
+
+    zaiquan = year_block.get("zaiquan") or {}
+    if zaiquan.get("name"):
+        out["zai_quan"] = str(zaiquan["name"])
+
+    return out
+
+
+def _wuyun_liuqi_markers(chart: dict[str, Any]) -> dict[str, Any]:
+    """五运六气确定性标记：出生年与当前年的年干支、中运、司天、在泉。
+
+    输出：
+      - birth: {year_ganzhi, zhong_yun, strength, si_tian, zai_quan}
+      - current: 同 birth
+    段缺失/为空 → 返回 {}。
+    """
+    wuyun = chart.get("wuyun_liuqi")
+    if not isinstance(wuyun, dict) or not wuyun:
+        return {}
+
+    result: dict[str, Any] = {}
+    birth = wuyun.get("birth_year")
+    current = wuyun.get("current_year")
+    if isinstance(birth, dict) and birth:
+        result["birth"] = _wuyun_year_summary(birth)
+    if isinstance(current, dict) and current:
+        result["current"] = _wuyun_year_summary(current)
+    return result
+
+
+# --------------------------------------------------------------------------- #
 # 主入口：按方法分发标记
 # --------------------------------------------------------------------------- #
 
@@ -359,11 +725,11 @@ _METHOD_MARKERS = {
     "bazi-dayun-liunian": ["bazi"],
     "bazi-shensha-nayin": ["bazi"],
     "bazi-hunyin-caiyun": ["bazi"],
-    # 非八字法：暂不提供标记（后续逐法添加）
-    "ziwei": [],
-    "qizheng": [],
-    "qimen-lifetime": [],
-    "wuyun-liuqi": [],
+    # 非八字法（节117 扩展）：各法一个专属标记类型
+    "ziwei": ["ziwei"],
+    "qizheng": ["qizheng"],
+    "qimen-lifetime": ["qimen"],
+    "wuyun-liuqi": ["wuyun_liuqi"],
 }
 
 
@@ -386,6 +752,10 @@ def mark_chart(chart: dict[str, Any], methods: list[str] | None = None) -> dict[
 
     # 预计算（避免重复计算）
     bazi_m = None
+    ziwei_m = None
+    qizheng_m = None
+    qimen_m = None
+    wuyun_m = None
 
     for key in target_methods:
         marker_types = _METHOD_MARKERS.get(key, [])
@@ -399,7 +769,22 @@ def mark_chart(chart: dict[str, Any], methods: list[str] | None = None) -> dict[
                 if bazi_m is None:
                     bazi_m = _bazi_markers(chart)
                 markers["bazi"] = bazi_m
-            # 后续可扩展 ziwei / qizheng 等（节139：xizhan 已摘出八法注册表）
+            elif mtype == "ziwei":
+                if ziwei_m is None:
+                    ziwei_m = _ziwei_markers(chart)
+                markers["ziwei"] = ziwei_m
+            elif mtype == "qizheng":
+                if qizheng_m is None:
+                    qizheng_m = _qizheng_markers(chart)
+                markers["qizheng"] = qizheng_m
+            elif mtype == "qimen":
+                if qimen_m is None:
+                    qimen_m = _qimen_markers(chart)
+                markers["qimen"] = qimen_m
+            elif mtype == "wuyun_liuqi":
+                if wuyun_m is None:
+                    wuyun_m = _wuyun_liuqi_markers(chart)
+                markers["wuyun_liuqi"] = wuyun_m
 
         result[key] = markers
 
