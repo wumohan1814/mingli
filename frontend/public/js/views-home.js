@@ -3,80 +3,337 @@
 // 加载于 views-onboarding.js 之后、主脚本之前；全局作用域，由 App pages 表按页名引用
 
 // ---- Pages ----
-// REQ-064 v2：三大模块落地宣传页 —— 主按钮下方「档案管理」透明小按钮（仅登录显示，点击进档案管理列表）
+// 节140 T3b：首页改版 —— LandingPage 改为「意图首页」：6 意图卡 + 回访区 + 探索全部方式。
+// 意图卡正文（标题/副标/推荐表）来自 CONTENT.catalog（节140 T3a 方法目录唯一事实源）；
+// 界面标签来自 ML_COPY.ui.intent。旧三模块落地页内容由节140 T3d 壳层拆除阶段清理。
+// 目录方法 → 导航：divination 带 method 参数 / pair 特殊到 nine-pick（其页内有两法配对入口）/
+// 其余直跳目标页。
+function goCatalogMethod(onNavigate, m) {
+  if (!m) return;
+  if (m.page === 'pair') {
+    onNavigate('nine-pick');
+    return;
+  }
+  onNavigate(m.page, m.params || {});
+}
 function LandingPage({
   module,
   onNavigate,
   loggedIn
 }) {
-  // 各模块的「落地宣传页」配置：主标题 / 副标题 / 简介 / 主按钮 → 对应 HUB 或测试页
-  const MODS = {
-    guoxue: {
-      icon: 'nine',
-      title: ML_COPY.ui.module_hub.guoxue_title,
-      subtitle: ML_COPY.ui.module_hub.guoxue_desc,
-      intro: ML_COPY.ui.landing.value_1_desc,
-      cta: ML_COPY.ui.module_hub.enter_guoxue,
-      to: 'guoxue-hub'
-    },
-    xishi: {
-      icon: 'orbit',
-      title: ML_COPY.ui.module_hub.western_title,
-      subtitle: ML_COPY.ui.module_hub.western_desc,
-      intro: ML_COPY.ui.landing['xishi-intro'],
-      cta: ML_COPY.ui.module_hub.enter_western,
-      to: 'xishi-hub'
-    },
-    mbti: {
-      icon: 'spark',
-      title: ML_COPY.ui.module_hub.mbti_title,
-      subtitle: ML_COPY.ui.module_hub.mbti_desc,
-      intro: ML_COPY.ui.landing['mbti-intro'],
-      cta: ML_COPY.ui.module_hub.enter_mbti,
-      to: 'mbti-hub'
-    }
-  };
-  const c = MODS[module] || MODS.guoxue;
-  // BUG-001：外层加 landing-hero 类，小屏媒体查询负责右移避开左侧导航栏按钮
-  return /*#__PURE__*/React.createElement("div", {
-    className: "container landing-hero"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card",
+  const el = React.createElement;
+  const cat = (typeof CONTENT !== 'undefined' && CONTENT.catalog) || null;
+  const intents = (cat && cat.intents) || [];
+  // 回访区数据：GET /api/cases（列表已含 hasReport / isDefault，见 cases.py list_cases）
+  const [caseList, setCaseList] = useState(null); // null=加载中 / [] = 无档案
+  useEffect(() => {
+    if (!loggedIn) return;
+    let alive = true;
+    (async () => {
+      try {
+        const r = await api('/cases');
+        if (alive) setCaseList((r && r.data && r.data.cases) || (r && r.cases) || []);
+      } catch (e) {
+        if (alive) setCaseList([]);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [loggedIn]);
+  const lastReport = caseList ? (caseList.find(c => c.hasReport) || null) : null;
+  const defCase = caseList ? (caseList.find(c => c.isDefault) || caseList[0] || null) : null;
+  const caseNm = c => (c && (c.name && String(c.name).trim())) || (c ? '档案 ' + c.caseId : '');
+  return el('div', {
+    className: 'container landing-hero'
+  }, el('div', {
+    className: 'card',
     style: {
       textAlign: 'center',
-      paddingTop: 32,
-      paddingBottom: 32
+      paddingTop: 26,
+      paddingBottom: 22
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, el('h1', {
+    className: 'title',
     style: {
-      color: 'var(--skin-accent)',
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: 10
+      fontSize: 24
     }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: c.icon,
-    size: 44
-  })), /*#__PURE__*/React.createElement("h1", {
-    className: "title"
-  }, c.title), /*#__PURE__*/React.createElement("p", {
-    className: "subtitle"
-  }, c.subtitle), /*#__PURE__*/React.createElement("p", {
+  }, ML_COPY.ui.intent['hero-title']), el('p', {
+    className: 'subtitle',
+    style: {
+      marginBottom: 18
+    }
+  }, ML_COPY.ui.intent['hero-sub']), el('div', {
+    className: 'intent-grid'
+  }, intents.map(it => el('div', {
+    key: it.key,
+    className: 'intent-card',
+    onClick: () => onNavigate('intent', {
+      key: it.key
+    })
+  }, el('div', {
+    className: 'intent-ico'
+  }, el(Icon, {
+    name: it.icon || 'spark',
+    size: 22
+  })), el('div', {
+    className: 'intent-title'
+  }, it.title), el('div', {
+    className: 'intent-sub'
+  }, it.sub)))), loggedIn && el('div', {
+    className: 'recall-zone'
+  }, el('div', {
+    className: 'recall-title'
+  }, ML_COPY.ui.intent['recall-title']), el('div', {
+    className: 'recall-grid'
+  }, el('button', {
+    type: 'button',
+    className: 'recall-item' + (lastReport ? '' : ' disabled'),
+    disabled: !lastReport,
+    onClick: () => lastReport && onNavigate('archive', {
+      caseId: lastReport.caseId
+    })
+  }, el('span', {
+    className: 'ri-ico'
+  }, '↩'), el('span', {
+    className: 'ri-body'
+  }, el('span', {
+    className: 'ri-name'
+  }, ML_COPY.ui.intent['recall-continue']), el('span', {
+    className: 'ri-sub'
+  }, lastReport ? caseNm(lastReport) : ML_COPY.ui.intent['recall-continue-sub']))), el('button', {
+    type: 'button',
+    className: 'recall-item',
+    onClick: () => defCase ? onNavigate('nine-pick', {
+      caseId: defCase.caseId
+    }) : onNavigate('onboarding', {
+      returnTo: 'landing'
+    })
+  }, el('span', {
+    className: 'ri-ico'
+  }, '☷'), el('span', {
+    className: 'ri-body'
+  }, el('span', {
+    className: 'ri-name'
+  }, ML_COPY.ui.intent['recall-mychart']), el('span', {
+    className: 'ri-sub'
+  }, defCase ? caseNm(defCase) : ML_COPY.ui.intent['recall-goto-create']))), el('button', {
+    type: 'button',
+    className: 'recall-item',
+    onClick: () => onNavigate('zodiac')
+  }, el('span', {
+    className: 'ri-ico'
+  }, '◔'), el('span', {
+    className: 'ri-body'
+  }, el('span', {
+    className: 'ri-name'
+  }, ML_COPY.ui.intent['recall-annual']), el('span', {
+    className: 'ri-sub'
+  }, ML_COPY.ui.intent['recall-annual-sub']))))), el('button', {
+    type: 'button',
+    className: 'btn btn-outline',
+    style: {
+      width: 'auto',
+      marginTop: 16
+    },
+    onClick: () => onNavigate('explore')
+  }, ML_COPY.ui.intent['explore-entry']), loggedIn && el('button', {
+    type: 'button',
+    className: 'landing-cases-btn',
+    onClick: () => onNavigate('cases')
+  }, ML_COPY.ui.buttons.manage_cases)));
+}
+
+// 意图推荐页（节140 T3b）：/intent/:key —— 意图 → 推荐方法（带理由）+「我自己挑方式」逃生舱
+function IntentPage({
+  intentKey,
+  onNavigate
+}) {
+  const el = React.createElement;
+  const cat = (typeof CONTENT !== 'undefined' && CONTENT.catalog) || null;
+  const intents = (cat && cat.intents) || [];
+  const methods = (cat && cat.methods) || [];
+  const it = intents.find(i => i.key === intentKey) || null;
+  if (!it) {
+    return el('div', {
+      className: 'container'
+    }, el('div', {
+      className: 'card failed-box'
+    }, el('div', {
+      className: 'section-title'
+    }, '入口不存在'), el('div', {
+      className: 'error'
+    }, ML_COPY.ui.intent['intent-not-found']), el('div', {
+      className: 'back-row',
+      style: {
+        justifyContent: 'center'
+      }
+    }, el('button', {
+      className: 'btn btn-primary',
+      style: {
+        width: 'auto'
+      },
+      onClick: () => onNavigate('landing')
+    }, ML_COPY.ui.intent['back-home']))));
+  }
+  const recs = (it.recs || []).map(r => {
+    const m = methods.find(x => x.id === r.methodId);
+    return m ? {
+      m: m,
+      why: r.why
+    } : null;
+  }).filter(Boolean);
+  return el('div', {
+    className: 'container'
+  }, el('div', {
+    className: 'intent-head'
+  }, el('button', {
+    type: 'button',
+    className: 'btn btn-outline btn-mini',
+    onClick: () => onNavigate('landing')
+  }, ML_COPY.ui.buttons.back_home), el('h1', {
+    className: 'title',
+    style: {
+      fontSize: 22,
+      margin: '10px 0 4px'
+    }
+  }, it.title), el('p', {
     style: {
       color: 'var(--text-2)',
       fontSize: 13,
-      lineHeight: 1.9,
-      marginBottom: 26
+      margin: 0
     }
-  }, c.intro), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    onClick: () => onNavigate(c.to)
-  }, c.cta), /* REQ-064：主按钮正下方「档案管理」透明小按钮（字号小于主按钮；仅登录显示；点击进档案管理列表） */
-  loggedIn && /*#__PURE__*/React.createElement("button", {
-    className: "landing-cases-btn",
-    type: "button",
-    onClick: () => onNavigate('cases')
-  }, ML_COPY.ui.buttons.manage_cases)));
+  }, it.sub)), el('div', {
+    className: 'section-title'
+  }, ML_COPY.ui.intent['rec-title']), recs.map(r => el('div', {
+    key: r.m.id,
+    className: 'card rec-card',
+    onClick: () => goCatalogMethod(onNavigate, r.m)
+  }, el('div', {
+    className: 'rec-main'
+  }, el('div', {
+    className: 'rec-name'
+  }, r.m.name), el('div', {
+    className: 'rec-chips'
+  }, el('span', {
+    className: 'chip'
+  }, r.m.level), el('span', {
+    className: 'chip'
+  }, r.m.mins))), el('div', {
+    className: 'rec-why'
+  }, r.why), el('div', {
+    className: 'rec-go'
+  }, ML_COPY.ui.intent['go']))), el('div', {
+    className: 'back-row',
+    style: {
+      justifyContent: 'center'
+    }
+  }, el('button', {
+    className: 'btn btn-outline',
+    style: {
+      width: 'auto'
+    },
+    onClick: () => onNavigate('explore')
+  }, ML_COPY.ui.intent['rec-escape'])));
+}
+
+// 探索全部方式（节140 T3c 基础版）：/explore —— 标签筛选 + 卡片墙（L1→L4 排序）
+function ExplorePage({
+  onNavigate
+}) {
+  const el = React.createElement;
+  const cat = (typeof CONTENT !== 'undefined' && CONTENT.catalog) || null;
+  const methods = (cat && cat.methods) || [];
+  const tagMeta = (cat && cat.tagMeta) || {};
+  const [cult, setCult] = useState([]);
+  const [play, setPlay] = useState([]);
+  const [lvl, setLvl] = useState([]);
+  const toggle = (arr, v) => arr.indexOf(v) >= 0 ? arr.filter(x => x !== v) : arr.concat(v);
+  const lv = l => ({
+    L1: 1,
+    L2: 2,
+    L3: 3,
+    L4: 4
+  }[l] || 9);
+  const shown = methods.filter(m =>
+    (!cult.length || cult.some(c => (m.culture || []).indexOf(c) >= 0)) &&
+    (!play.length || play.some(p => (m.play || []).indexOf(p) >= 0)) &&
+    (!lvl.length || lvl.indexOf(m.level) >= 0)
+  ).sort((a, b) => lv(a.level) - lv(b.level));
+  const chipRow = (title, keys, sel, setSel, getLabel) => el('div', {
+    className: 'exf-row'
+  }, el('span', {
+    className: 'exf-label'
+  }, title), el('div', {
+    className: 'exf-chips'
+  }, keys.map(k => el('button', {
+    type: 'button',
+    key: k,
+    className: 'chip' + (sel.indexOf(k) >= 0 ? ' on' : ''),
+    onClick: () => setSel(toggle(sel, k))
+  }, getLabel(k)))));
+  return el('div', {
+    className: 'container'
+  }, el('div', {
+    className: 'hub-title'
+  }, el(Icon, {
+    name: 'list',
+    size: 22
+  }), ' 探索全部方式'), el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      marginBottom: 8
+    }
+  }, ML_COPY.ui.intent['explore-sub']), el('div', {
+    className: 'card',
+    style: {
+      padding: '12px 14px'
+    }
+  }, chipRow('文化', Object.keys((tagMeta.culture) || {}), cult, setCult, k => (tagMeta.culture || {})[k]), chipRow('玩法', Object.keys((tagMeta.play) || {}), play, setPlay, k => (tagMeta.play || {})[k]), chipRow('难度', Object.keys((tagMeta.level) || {}), lvl, setLvl, k => (tagMeta.level || {})[k])), el('div', {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-3)',
+      margin: '8px 2px 6px'
+    }
+  }, fmtTpl(ML_COPY.ui.intent['card-count'], {
+    n: shown.length
+  })), shown.length ? el('div', {
+    className: 'exf-grid'
+  }, shown.map(m => el('div', {
+    key: m.id,
+    className: 'card exf-card',
+    onClick: () => goCatalogMethod(onNavigate, m)
+  }, el('div', {
+    className: 'exf-head'
+  }, el('span', {
+    className: 'exf-name'
+  }, m.name), el('span', {
+    className: 'exf-lvl'
+  }, m.level)), el('div', {
+    className: 'exf-culture'
+  }, (m.culture || []).map(c => el('span', {
+    key: c,
+    className: 'chip'
+  }, c))), el('div', {
+    className: 'exf-blurb'
+  }, m.blurb), el('div', {
+    className: 'exf-foot'
+  }, el('span', {
+    className: 'chip'
+  }, m.mins), el('span', {
+    className: 'chip'
+  }, (tagMeta.pay || {})[m.pay] || m.pay), el('span', {
+    className: 'chip'
+  }, (tagMeta.needCase || {})[m.needCase] || m.needCase))))) : el('div', {
+    className: 'card',
+    style: {
+      textAlign: 'center',
+      color: 'var(--text-3)',
+      fontSize: 13,
+      padding: '24px 12px'
+    }
+  }, ML_COPY.ui.intent['no-match']));
 }
 
 // —— 余额系统组件（沿用国学皮肤令牌，不新增配色）——

@@ -1431,3 +1431,46 @@
       .rd-item-in{opacity:1}
     }
   
+/* ---------- 节140 T3b：意图首页 / 意图推荐页 / 探索浏览器（只用既有令牌，散色零新增） ---------- */
+.intent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 auto;max-width:560px}
+.intent-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 10px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:transform .15s}
+.intent-card:hover{transform:translateY(-2px);border-color:var(--skin-accent)}
+.intent-ico{color:var(--skin-accent);margin-bottom:2px}
+.intent-title{font-size:15px;font-weight:700;color:var(--text-1)}
+.intent-sub{font-size:11px;color:var(--text-3);line-height:1.5}
+.recall-zone{margin-top:18px;text-align:left}
+.recall-title{font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:8px}
+.recall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.recall-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:left}
+.recall-item.disabled{opacity:.45;cursor:not-allowed}
+.ri-ico{font-size:16px;color:var(--skin-accent);flex:none}
+.ri-body{display:flex;flex-direction:column;min-width:0}
+.ri-name{font-size:13px;font-weight:700;color:var(--text-1)}
+.ri-sub{font-size:11px;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.intent-head{padding:6px 2px 4px}
+.chip{display:inline-block;font-size:11px;line-height:1;padding:4px 8px;border-radius:999px;border:1px solid var(--border);color:var(--text-2);background:var(--surface)}
+.chip.on{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+.rec-card{cursor:pointer;margin-bottom:10px;transition:transform .15s}
+.rec-card:hover{transform:translateY(-2px)}
+.rec-main{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rec-name{font-size:16px;font-weight:700;color:var(--text-1)}
+.rec-chips{display:flex;gap:6px}
+.rec-why{font-size:13px;color:var(--text-2);line-height:1.7;margin:8px 0 2px}
+.rec-go{font-size:12px;color:var(--skin-accent);font-weight:600}
+.exf-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.exf-row:last-child{margin-bottom:0}
+.exf-label{flex:none;font-size:12px;font-weight:700;color:var(--text-2);padding-top:4px;width:34px}
+.exf-chips{display:flex;flex-wrap:wrap;gap:6px}
+.exf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.exf-card{cursor:pointer;margin:0;transition:transform .15s}
+.exf-card:hover{transform:translateY(-2px)}
+.exf-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.exf-name{font-size:15px;font-weight:700;color:var(--text-1)}
+.exf-lvl{font-size:11px;color:var(--skin-accent);font-weight:700}
+.exf-culture{display:flex;gap:5px;margin:6px 0}
+.exf-blurb{font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:8px}
+.exf-foot{display:flex;flex-wrap:wrap;gap:5px}
+@media (max-width:520px){
+  .intent-grid{grid-template-columns:repeat(2,1fr)}
+  .recall-grid{grid-template-columns:1fr}
+}

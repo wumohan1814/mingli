@@ -66,7 +66,7 @@
         { methodId: 'bazi-pattern', why: '传统命理格局，看命局与用神' },
         { methodId: 'astrology', why: '星象性格原型，看本命星盘' }
       ] },
-    { key: 'pair', title: '我和 TA', sub: '关系·配对·缘分', icon: 'heart',
+    { key: 'pair', title: '我和 TA', sub: '关系·配对·缘分', icon: 'chat',
       recs: [
         { methodId: 'pair', why: '两份档案合参，看契合与相处之道' },
         { methodId: 'tarot', why: '关系牌阵，看两人当下互动' },
@@ -79,13 +79,13 @@
         { methodId: 'taiyi', why: '太乙神数推演大势' },
         { methodId: 'huangji', why: '皇极经世推演时势' }
       ] },
-    { key: 'fortune', title: '看流运', sub: '今年运势·流年', icon: 'trend',
+    { key: 'fortune', title: '看流运', sub: '今年运势·流年', icon: 'nine',
       recs: [
         { methodId: 'zodiac', why: '生肖流年，免费引流快速' },
         { methodId: 'nine-pick', why: '八法合一深度看一年运势' },
         { methodId: 'tarot', why: '年运十二牌阵' }
       ] },
-    { key: 'random', title: '随手抽', sub: '抽张牌·签随便玩', icon: 'card',
+    { key: 'random', title: '随手抽', sub: '抽张牌·签随便玩', icon: 'bulb',
       recs: [
         { methodId: 'sign', why: '观音灵签，一签一答' },
         { methodId: 'tarot', why: '塔罗单张，看此刻提示' },
