@@ -14,6 +14,10 @@ services:
       MINGLI_LLM_API_KEY: ${MINGLI_LLM_API_KEY}
       MINGLI_JWT_SECRET: ${MINGLI_JWT_SECRET}
       MINGLI_AGENT_TOKEN: ${MINGLI_AGENT_TOKEN:-}
+      # 合规文书运营主体（节147 续：缺失则 /legal/*.html 服务端渲染 500，fail closed）
+      MINGLI_OPERATOR_NAME: ${MINGLI_OPERATOR_NAME}
+      MINGLI_OPERATOR_CONTACT: ${MINGLI_OPERATOR_CONTACT}
+      MINGLI_OPERATOR_EMAIL: ${MINGLI_OPERATOR_EMAIL}
       # 节146：jinshuju_access_token / _ALLOW_MOCK 已随付款充值链路整条拆除
     dns:
       - 8.8.8.8
