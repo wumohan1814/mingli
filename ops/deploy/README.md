@@ -33,6 +33,13 @@ git pull
 docker compose up -d --build
 ```
 
+⚠️ **前端内容变更后必须 bump 缓存版本号**（节160 起）：Caddy 对静态资源（js/css/data）设了
+`Cache-Control: public, max-age=3600`（1 小时）——`index.html` / `admin.html` 里的静态引用带
+`?v=<数字>`（如 `/js/views-divination.js?v=160`），**改过任何前端文件（js/css/data/HTML）就把
+所有 `?v=` 的数字整体换成一个新值**（用新节号），否则客户端最多 1 小时内仍会拿到旧文件。
+改法：`node .tmp_pytest/cache_bust.js <新版本号>` 已随仓库记录（或手工全局替换 `?v=数字`）。
+后端/数据文件变更（questions-120.json、prompts、marker.py 等）不依赖 `?v=`，无需 bump。
+
 ## 每日备份
 
 ```bash
