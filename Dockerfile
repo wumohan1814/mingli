@@ -16,10 +16,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # 2a. 先复制「依赖清单」再装依赖（节113：层缓存只看清单，后端源码改动不再触发全量重装）
+# 节161 修复：paipan-core 有自己的依赖（lunar-typescript / astronomia，节151 引入），
+# 根 npm install 只装 iztro —— 不装 paipan-core 依赖会导致 server.mjs 静态 import 失败、
+# 整个排盘服务起不来（线上占卜/塔罗/紫微等全部 Node 方法不可用）。两个 npm install 分层缓存。
 COPY backend/pyproject.toml /app/backend/pyproject.toml
 COPY backend/paipan-node/package.json /app/backend/paipan-node/package.json
+COPY backend/paipan-node/paipan-core/package.json /app/backend/paipan-node/paipan-core/package.json
+COPY backend/paipan-node/paipan-core/package-lock.json /app/backend/paipan-node/paipan-core/package-lock.json
 RUN pip install --no-cache-dir /app/backend/
 RUN cd /app/backend/paipan-node && npm install --no-audit --no-fund
+RUN cd /app/backend/paipan-node/paipan-core && npm install --no-audit --no-fund
 
 # 2b. 复制后端源码与前端免构建静态文件（前端由 Caddy 直服 + FastAPI 兜底托管）
 COPY backend/ /app/backend/
