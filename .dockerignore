@@ -24,6 +24,7 @@ backend/tests/
 # vendored 依赖与本地产物（Docker 构建时 pip/npm 从源安装，不进上下文）
 backend/packages/
 backend/paipan-node/node_modules/
+backend/paipan-node/paipan-core/node_modules/
 backend/.venv/
 backend/.pytest_cache/
 backend/.pytest_tmp/
