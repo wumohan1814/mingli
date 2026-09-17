@@ -560,7 +560,28 @@ window.ML_COPY = {
       'list-fail': '档案列表加载失败，请重试。',
       'no-interpretation': '（暂无解读内容）',
       'reason-default': '数据未生成',
-      'guide-default': '在对应模块为该档案先生成所需数据'
+      'guide-default': '在对应模块为该档案先生成所需数据',
+      // 节161：统一配对选择器（PairChooserModal，views-home）—— 配对解析入口列出全部配对方式
+      chooser: {
+        title: '配对解析',
+        sub: '选一种配对方式，两份档案合参。',
+        'opt-guoxue': '八法配对',
+        'opt-guoxue-sub': '双人合盘 · 八法综合看缘分与相处',
+        'opt-bazi': '八字配对',
+        'opt-bazi-sub': '双方八字排盘判相性',
+        'opt-xishi': '星座配对',
+        'opt-xishi-sub': '双方本命星盘看性格原型',
+        'opt-mbti': '人格配对',
+        'opt-mbti-sub': '双方大五人格看相处模式',
+        'opt-zodiac': '生肖配对',
+        'opt-zodiac-sub': '生肖三合六合冲害 · 恋爱/朋友/上下级',
+        'zod-mine': '我的生肖',
+        'zod-kind': '关系',
+        'zod-go': '查看生肖配对',
+        'zod-back': '← 返回配对方式',
+        'zod-pick-hint': '先选你的生肖与想看的关系，再点「查看生肖配对」。',
+        'zod-result-title': '生肖配对 · {sign}（{branch}）'
+      }
     },
     // REQ-093UI：八法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
     // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）

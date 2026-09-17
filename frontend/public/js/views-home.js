@@ -9,12 +9,12 @@
 // 节140 T3b：首页改版 —— LandingPage 改为「意图首页」：6 意图卡 + 回访区 + 探索全部方式。
 // 意图卡正文（标题/副标/推荐表）来自 CONTENT.catalog（节140 T3a 方法目录唯一事实源）；
 // 界面标签来自 ML_COPY.ui.intent。旧三模块落地页内容由节140 T3d 壳层拆除阶段清理。
-// 目录方法 → 导航：divination 带 method 参数 / pair 特殊到 nine-pick（其页内有两法配对入口）/
+// 目录方法 → 导航：divination 带 method 参数 / pair 打开统一配对选择器（节161：列全部配对方式）/
 // 其余直跳目标页。
 function goCatalogMethod(onNavigate, m) {
   if (!m) return;
   if (m.page === 'pair') {
-    onNavigate('nine-pick');
+    openPairChooser();
     return;
   }
   onNavigate(m.page, m.params || {});
@@ -861,6 +861,101 @@ function PairModal({
     align: 'left',
     footer: footer
   }, hd, ...content.filter(Boolean));
+}
+
+// ===== 节161：统一配对选择器 —— 「配对解析 / 我和TA」列出全部配对方式 =====
+// 八法(guoxue) / 八字(bazi) / 星座(xishi) / 人格(mbti) 走 openPairAnalyze(module)；
+// 生肖走本弹窗内嵌的「生肖三关系」子流程（复用 views-zodiac 的 zodiacRelPairs 纯函数）。
+function PairChooserModal({
+  onClose
+}) {
+  const el = React.createElement;
+  const C = UI_COPY.pair.chooser || {};
+  const [stage, setStage] = useState('list'); // list | zod
+  const [zKind, setZKind] = useState('love'); // love | friend | boss
+  const [zIdx, setZIdx] = useState(-1); // 我的生肖下标（-1=未选）
+  const zodAnimals = (CONTENT.basics && CONTENT.basics.zodiacAnimals) || [];
+  const dizhi = (CONTENT.basics && CONTENT.basics.dizhi) || [];
+  const opts = [
+    { key: 'guoxue', icon: 'nine', name: C['opt-guoxue'], sub: C['opt-guoxue-sub'] },
+    { key: 'bazi', icon: 'nine', name: C['opt-bazi'], sub: C['opt-bazi-sub'] },
+    { key: 'xishi', icon: 'orbit', name: C['opt-xishi'], sub: C['opt-xishi-sub'] },
+    { key: 'mbti', icon: 'spark', name: C['opt-mbti'], sub: C['opt-mbti-sub'] },
+    { key: 'zodiac', icon: 'nine', name: C['opt-zodiac'], sub: C['opt-zodiac-sub'] }
+  ];
+  const kindCn = { love: '恋爱', friend: '朋友', boss: '上下级' };
+  const pickPair = function (m) {
+    onClose();
+    openPairAnalyze({ module: m });
+  };
+  const hd = el('div', { className: 'pair-hd' },
+    el('div', { className: 'pair-hd-title' },
+      el(Icon, { name: 'chat', size: 20, color: 'var(--skin-accent)' }),
+      stage === 'list' ? (C.title || '配对解析') : C['zod-back']),
+    el('button', { type: 'button', className: 'pair-x', onClick: onClose, title: UI_COPY.buttons.close }, '✕'));
+  let body = null;
+  if (stage === 'list') {
+    body = [
+      el('div', { key: 'sub', className: 'pair-sub' }, C.sub),
+      el('div', { key: 'opts', className: 'pair-chooser' },
+        opts.map(function (o) {
+          return el('div', {
+            key: o.key,
+            className: 'pc-opt',
+            onClick: function () { if (o.key === 'zodiac') setStage('zod'); else pickPair(o.key); }
+          },
+            el('div', { className: 'pc-ico' }, el(Icon, { name: o.icon, size: 20 })),
+            el('div', { className: 'pc-body' },
+              el('div', { className: 'pc-name' }, o.name),
+              el('div', { className: 'pc-sub' }, o.sub)),
+            el('div', { className: 'pc-go' }, '›'));
+        }))
+    ];
+  } else {
+    body = [
+      el('div', { key: 'hint', className: 'pair-sub' }, C['zod-pick-hint']),
+      el('div', { key: 'mine', className: 'pair-sec' },
+        el('div', { className: 'pair-sec-label' }, el('span', { className: 'ps-n' }, '我'), C['zod-mine']),
+        el('div', { className: 'zod-chip-row' },
+          zodAnimals.map(function (z, i) {
+            return el('button', {
+              key: i,
+              type: 'button',
+              className: 'zod-chip' + (zIdx === i ? ' sel' : ''),
+              onClick: function () { setZIdx(i); }
+            }, z);
+          }))),
+      el('div', { key: 'kind', className: 'pair-sec' },
+        el('div', { className: 'pair-sec-label' }, el('span', { className: 'ps-n' }, '②'), C['zod-kind']),
+        el('div', { className: 'pair-rel' },
+          ['love', 'friend', 'boss'].map(function (k) {
+            return el('button', {
+              key: k,
+              type: 'button',
+              className: 'btn btn-outline' + (zKind === k ? ' sel' : ''),
+              onClick: function () { setZKind(k); }
+            }, kindCn[k]);
+          }))),
+      zIdx >= 0 ? el('div', { key: 'res', className: 'zod-res' },
+        el('div', { className: 'interp-title' }, fmtTpl(C['zod-result-title'], { sign: zodAnimals[zIdx] || '', branch: dizhi[zIdx] || '' })),
+        zodiacRelPairs(zIdx, zKind).map(function (p) {
+          const n = p.score >= 5 ? 5 : p.score >= 4.5 ? 4 : p.score >= 3 ? 3 : 2;
+          const tagCls = p.code === '六合' || p.code === '三合' ? 'var(--skin-accent)' : p.code === '中性' ? 'var(--text-3)' : 'var(--cinnabar)';
+          return el('div', { key: p.sign, className: 'zod-cell' },
+            el('div', { className: 'zc-head' },
+              el('span', { className: 'zc-sign' }, p.sign + '（' + p.pct + '%）'),
+              el('span', { className: 'zc-code', style: { color: tagCls } }, p.code)),
+            el('div', { className: 'zc-star' }, '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n)),
+            el('div', { className: 'zc-txt' }, p.txt));
+        })) : null
+    ];
+  }
+  return el(ModalBase, {
+    onClose: onClose,
+    className: 'pair-modal',
+    scrollable: true,
+    align: 'left'
+  }, hd, ...body.filter(Boolean));
 }
 
 // 余额明细页
