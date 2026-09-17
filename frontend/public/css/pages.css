@@ -1456,3 +1456,23 @@
   .intent-grid{grid-template-columns:repeat(2,1fr)}
   .recall-grid{grid-template-columns:1fr}
 }
+
+/* ---------- 节161：统一配对选择器（PairChooserModal，views-home）—— 只用令牌，散色零新增 ---------- */
+.pair-chooser{display:flex;flex-direction:column;gap:10px}
+.pc-opt{display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:transform .15s}
+.pc-opt:hover{transform:translateY(-2px);border-color:var(--skin-accent)}
+.pc-ico{flex:none;width:34px;height:34px;color:var(--skin-accent)}
+.pc-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pc-name{font-size:15px;font-weight:700;color:var(--text-1)}
+.pc-sub{font-size:12px;color:var(--text-3);line-height:1.5}
+.pc-go{flex:none;font-size:20px;color:var(--text-3)}
+.zod-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.zod-chip{font-size:13px;line-height:1;padding:8px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer}
+.zod-chip.sel{background:var(--skin-accent);color:var(--skin-accent-ink);border-color:var(--skin-accent)}
+.zod-res{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.zod-cell{border:1px solid var(--border);background:var(--paper);border-radius:var(--radius-md);padding:10px 12px}
+.zc-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.zc-sign{font-size:14px;font-weight:700;color:var(--text-1)}
+.zc-code{font-size:12px;font-weight:700}
+.zc-star{font-size:12px;letter-spacing:1px;color:var(--gold-500);margin:2px 0}
+.zc-txt{font-size:12px;color:var(--text-2);line-height:1.6}
