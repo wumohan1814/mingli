@@ -2373,11 +2373,15 @@ function DivinationPage({
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
   const [method, setMethod] = useState('liuyao');
-  // 节140 T3b：意图推荐/目录深链支持 —— initialMethod 合法时直达对应起卦法
+  // 节140 T3b + 2026-09-16 真机走查修正：意图推荐/目录深链支持 —— initialMethod 合法时
+  // 直达对应起卦法的「操作面板」（原实现只 setMethod 落到「选择起卦方式」列表页，与塔罗/雷诺曼
+  // 的直跳体验不一致；改为复用 openAsk 打开面板。依赖刻意只留 initialMethod：组件按页重挂载，
+  // 首渲染闭包里的 openAsk 即正确行为，且避免面板被重复打开）
   useEffect(() => {
     if (!initialMethod) return;
-    const valid = DIVIN_METHODS.some(x => x.id === String(initialMethod).trim());
-    if (valid) setMethod(String(initialMethod).trim());
+    const m = DIVIN_METHODS.find(x => x.id === String(initialMethod).trim());
+    if (m) openAsk(m);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialMethod]);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);

@@ -135,27 +135,9 @@
     .hub-row .hub-card .hc-name{font-size:14.5px;line-height:1.35}
     .hub-row .hub-card .hc-sub{font-size:10.5px;line-height:1.5}
 
-    /* ===== 左侧导航栏 nav-rail（取代底部皮肤胶囊，§1） ===== */
-    /* BUG-001：不再垂直居中，改为贴近顶部 Banner 下缘（app-shell padding-top 58px → 留 6px 间隙） */
-    .nav-rail{position:fixed;left:0;top:64px;transform:none;display:flex;flex-direction:column;align-items:flex-start;gap:10px;z-index:42;padding:6px 0}
-    .nav-rail button{position:relative;border:none;border-radius:0 14px 14px 0;width:58px;padding:14px 6px;min-height:96px;cursor:pointer;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-      color:var(--tc-white);font-size:13px;font-weight:600;line-height:1.25;letter-spacing:1px;
-      transition:transform .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease,width .2s ease;
-      box-shadow:2px 2px 10px var(--tc-black-a18);filter:brightness(.82)}
-    .nav-rail button .rail-ico{width:22px;height:22px}
-    .nav-rail button:hover{filter:brightness(.95);width:66px}
-    .nav-rail button.active{width:74px;box-shadow:5px 4px 18px var(--tc-black-a32);filter:brightness(1.05)}
-    .nav-rail button .rail-label{writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap}
-    /* 选中模块时按钮展开：竖排窄条 → 横排长条（图标 + 横排文字） */
-    .nav-rail button.expanded{width:132px;min-height:56px;padding:10px 16px;flex-direction:row;justify-content:flex-start;gap:10px;
-      box-shadow:5px 4px 18px var(--tc-black-a32);filter:brightness(1.06)}
-    .nav-rail button.expanded:hover{width:132px}
-    .nav-rail button.expanded .rail-label{writing-mode:horizontal-tb;text-orientation:mixed;letter-spacing:1px}
-    /* BUG-001：手机小屏下落地宣传卡片右移错开，避开左侧 nav-rail（展开按钮宽 132px，留间隙） */
-    @media (max-width:480px){
-      .landing-hero{margin-left:150px;margin-right:auto}
-    }
+    /* ===== 左侧导航栏 nav-rail 已随节140 T3d 整块删除（组件 + 本段 CSS）——
+       不再给首页 .landing-hero 留「右移避开 nav-rail」的避让（2026-09-16 真机走查：残留的
+       @media 右推 150px 导致首页意图卡偏右、左半空，已一并清除） ===== */
 
     /* ===== HUB 入口卡（REQ-038：竖向单列 + 横向卡片） ===== */
     .hub-title{font-size:22px;font-weight:700;color:var(--text-1);margin:4px 0 14px;display:flex;align-items:center;gap:8px}
