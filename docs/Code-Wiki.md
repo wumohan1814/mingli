@@ -54,7 +54,7 @@
 | 前端 | 免构建 CDN React 18（**JSX 已预编译为普通 JS，无 Babel 实时转译**） | 权威入口 `frontend/public/index.html`（节110 解耦后 = **入口壳 ~1,380 行** + `js/*.js` + `css/*.css`）；旧 Vite+TS 源码已归档 `_archive/前端-vite-ts-参考实现/` |
 | 数据库 | SQLite（三库） | `mingli_analytics` / `mingli_feedback` / `mingli_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
-| LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走 `backend/.env` 的 `MINGLI_LLM_API_KEY` |
+| LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走系统环境变量 `MINGLI_LLM_API_KEY`（项目内零 key 文件） |
 | 部署 | Docker 单镜像（Python+Node 双运行时）+ Caddy | 站点域名（`MINGLI_SITE_DOMAIN`）；`docker-compose.yml` |
 
 ### 目录结构
@@ -597,7 +597,7 @@ main.py
 
 | 变量 | 默认值 | 说明 |
 |---|---|---|
-| `MINGLI_LLM_API_KEY` | "" | **必填** DeepSeek API Key，严禁硬编码 |
+| `MINGLI_LLM_API_KEY` | "" | **必填** DeepSeek API Key：**系统环境变量注入，项目内零 key 文件**（`.env` 不写该键），严禁硬编码 |
 | `MINGLI_LLM_BASE_URL` | https://api.deepseek.com | LLM API base |
 | `MINGLI_LLM_MODEL` | deepseek-v4-flash | 解读主模型 |
 | `MINGLI_LLM_TIMEOUT` | 180.0 | LLM 超时（秒） |
@@ -627,7 +627,8 @@ pip install -e "backend[dev]"
 # 2. 配置环境变量
 cd backend
 copy ..\.env.example .env        # Windows
-# 编辑 .env，填入 MINGLI_LLM_API_KEY
+# 编辑 .env 填其余项；LLM key 走系统环境变量：
+#   Windows: setx MINGLI_LLM_API_KEY "<你的 key>"    Linux: export MINGLI_LLM_API_KEY=...
 
 # 3. 启动
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -675,7 +676,9 @@ docker-compose up -d
 
 ### 安全红线
 
-- LLM API Key 只允许来自 `MINGLI_LLM_API_KEY` 环境变量 / `backend/.env`，**严禁硬编码**。
+- LLM API Key 只允许来自系统环境变量 `MINGLI_LLM_API_KEY`（**项目内零 key 文件**，`.env` 里不写该键），**严禁硬编码**。
+  - 后台运维端点 `POST /admin/ops/llm-key`（operator+）**自 2026-09-21 起不再接受写入（fail loud）**：
+    保留路由、只返回错误（`code=1003`，指引 `setx` / `export` 后重启），不写 `.env`（详见 `docs/API-Key安全与LLM接入说明.md` §1）。
 - JWT 密钥生产环境必须改随机 32 字节。
 - ~~金数据 `jinshuju_allow_mock` 生产环境必须设 false。~~ **节146 已拆除该链路，红线随之作废**（无支付、无 allow_mock 配置）。
 

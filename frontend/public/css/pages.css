@@ -916,6 +916,8 @@
        --art-ssgw-tube 观音签筒  → .tube-body / --art-ssgw-stick 签条 → .ssgw-stick
        --art-card-back-tarot 塔罗牌背 → .fc-back.taro / --art-card-back-lenormand 雷诺曼牌背 → .fc-back.leno
        --art-coin-face 铜钱字面 → .coin .s-a / --art-coin-back 铜钱背面 → .coin .s-b
+       --art-sb-flat 圣杯平面态 → .sb-cup.flat / --art-sb-convex 圣杯凸面态 → .sb-cup.convex
+       --art-sb-pair 圣杯组合小图（仅「圣杯」一平一凸显示）→ .sb-pair-mark
        --art-xlr-palm 掌诀底图 → .xlr-ring / --art-cast-bg 演出氛围底 → .stage-bg
        --art-mh-orbit 梅花能量环 → .mh-orb / --art-deal-pile 牌堆 → .deal-pile
        --art-ssgw-paper 笺纸纹理 → .ssgw-paper（结果区容器可选，本期仅预留槽位） */
@@ -1087,6 +1089,32 @@
       32%{transform:translateY(-44px) rotateY(252deg) rotateZ(24deg)}
       100%{transform:translateY(0) rotateY(720deg) rotateZ(0)}}
     .coin.back .c3d{transform:rotateY(180deg)}
+    /* ---- 节131：潮汕圣杯（掷筊）月牙形筊杯 · 独立样式（不复用也不改动上方 .coin 系列：
+       .coin 由六爻/摇卦共用，圣杯是月牙片、沿长轴翻滚，两者视觉口径不同）----
+       单枚显示 96×40（美术需求 §三），两态各用 --art-sb-* 图；缺令牌/加载失败时回退占位渐变
+       （兜底色取自既有 --tc-*，不新增散色）。 */
+    .sb-cups{perspective:360px}
+    .ly-coins .sb-cup{width:96px;height:40px;flex:none;position:relative;transform-style:preserve-3d;border-radius:9px}
+    /* ⚠️ 2026-09-22 修正（父会话 headless Chrome 像素实测）：落地态原来同时设了
+       background-color 与 1px border，且**没设 background-size** —— 实测结果是这个 96×40
+       盒子被渲染成**实心圆角矩形**（图像透明留白处全部露出兜底色），月牙轮廓根本看不出来
+       （与美术资产轮廓 IoU 实测 0.543，正确应为 ~0.98）。故落地态改为：不铺底色、不描边、
+       图等比铺满整盒（192×80 → 96×40 = 精确 0.5 倍，无形变）。
+       取舍已明确：若令牌存在但图片 404，该杯会**不可见**（形状正确优先于"色块托底"——
+       托底色会把月牙外侧填成方块，等于把美术的形也一起毁掉）；抛起态 .toss 仍有实心占位。 */
+    .ly-coins .sb-cup.flat{background-color:transparent;border:none;
+      background-image:var(--art-sb-flat,linear-gradient(168deg,var(--tc-cinnabar-alt) 0%,var(--cinnabar) 62%,var(--tc-red-sign) 100%));
+      background-size:100% 100%;background-position:center;background-repeat:no-repeat}
+    .ly-coins .sb-cup.convex{background-color:transparent;border:none;
+      background-image:var(--art-sb-convex,linear-gradient(168deg,var(--tc-foil-rim-deep) 0%,var(--tc-wood-1) 58%,var(--tc-wood-2) 100%));
+      background-size:100% 100%;background-position:center;background-repeat:no-repeat}
+    .ly-coins .sb-cup.toss{background-image:none;background-color:var(--tc-wood-rim-mid);border-color:var(--tc-wood-2)}
+    .ly-coins .sb-cup.toss{animation:sbToss .6s cubic-bezier(.34,.66,.5,1) both}
+    @keyframes sbToss{0%{transform:translateY(34px) rotateX(0deg) rotateZ(-16deg)}
+      32%{transform:translateY(-44px) rotateX(252deg) rotateZ(20deg)}
+      100%{transform:translateY(0) rotateX(720deg) rotateZ(0deg)}}
+    .sb-pair-mark{width:96px;height:40px;margin:10px auto 0;background-image:var(--art-sb-pair,none);
+      background-size:contain;background-position:center;background-repeat:no-repeat}
     .ly-rows{position:relative;display:flex;flex-direction:column-reverse;gap:9px;width:100%;margin-top:2px;padding:4px 2px}
     .ly-cast-row{display:flex;align-items:center;gap:10px;min-height:20px;opacity:.16;transition:opacity .18s ease}
     .ly-cast-row.casting{opacity:.5}

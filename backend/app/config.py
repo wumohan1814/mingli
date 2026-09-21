@@ -102,6 +102,14 @@ class Settings(BaseSettings):
     operator_contact: str = ""    # MINGLI_OPERATOR_CONTACT（联系方式）
     operator_email: str = ""      # MINGLI_OPERATOR_EMAIL（邮箱）
 
+    # 运行形态（渠道开关，2026-09-22 用户拍板：补「同源构建」地基）。
+    # 同一份代码支撑三种形态：web（默认，= 现状：账号/计费/分享/后台 admin、key 在服务端）
+    # / apk-local（APK 单机：无账号无计费无分享、用户自填 key、数据在本机）
+    # / apk-client（壳指向自部署服务器：能力跟随服务器）。
+    # ⚠️ 默认值必须是 web —— 缺省即现状，线上部署行为零变化。
+    # 能力清单唯一事实源在 app/runtime.py；兼容矩阵见 docs/standards/08。
+    runtime_mode: str = "web"                # MINGLI_RUNTIME_MODE
+
     host: str = "0.0.0.0"
     port: int = 8000
 

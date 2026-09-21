@@ -39,6 +39,16 @@
       --art-coin-face:url('/art/liuyao/coin-face.webp');
       --art-coin-back:url('/art/liuyao/coin-back.webp');
       --art-xlr-palm:url('/art/xiaoliuren/xiaoliuren-palm.webp'); /* REQ-106：小六壬掌诀底图 → .xlr-ring */
+      /* 节131：潮汕圣杯（掷筊）月牙形筊杯 —— 两态运行图 → .sb-cup.flat / .sb-cup.convex，
+         组合小图（选交）→ .sb-pair-mark（仅「圣杯」一平一凸时显示，笑杯/阴杯不显示）。
+         高密度写法：先写一行普通 url(...) 作为不支持 image-set() 时的回退值，
+         再用同一条令牌写 image-set（同属性写两遍 → 后者覆盖前者；前者本就不支持时自动保留，
+         支持时按屏密度择优）。基线 192×80 同时充当 2x，另附 @3x 供 DPR≥3 取用。 */
+      --art-sb-flat:url('/art/shengbei/shengbei-flat.webp');
+      --art-sb-flat:image-set(url('/art/shengbei/shengbei-flat.webp') 2x, url('/art/shengbei/shengbei-flat@3x.webp') 3x);
+      --art-sb-convex:url('/art/shengbei/shengbei-convex.webp');
+      --art-sb-convex:image-set(url('/art/shengbei/shengbei-convex.webp') 2x, url('/art/shengbei/shengbei-convex@3x.webp') 3x);
+      --art-sb-pair:url('/art/shengbei/shengbei-pair.webp');
 
       /* ============================================================
          节136 阶段A · standards/04 v1.2 令牌底座（只新增，零视觉变化）

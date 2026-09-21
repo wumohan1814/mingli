@@ -733,6 +733,11 @@ function DivShengbeiView(res) {
   items.push(React.createElement('div', { key: 'head', style: { textAlign: 'center' } },
     React.createElement('div', { className: 'ssgw-res-bigno' }, bigName),
     info && info.short ? React.createElement('span', { className: 'rf-jixiong', style: { marginTop: 4 } }, info.short) : null));
+  // 节131：圣杯专用组合小图（--art-sb-pair，一平一凸）——仅在 state==='sheng' 时显示；
+  // 笑杯（两平面）/阴杯（两凸面）与其它任何态都不显示（该图只表达「一平一凸」这一组合）。
+  if (state === 'sheng' && res && Array.isArray(res.blocks) && res.blocks.length === 2) {
+    items.push(React.createElement('div', { key: 'pairmk', className: 'sb-pair-mark', 'aria-hidden': 'true' }));
+  }
   if (blocks.length) {
     const faceTxt = blocks.map(function (b) {
       return (b && b.face === 'convex')
@@ -1671,9 +1676,17 @@ function SsgwTubeStage(props) {
   });
 }
 
+/* 节131：落地倾角（确定性·零随机源）——筊杯落地后带一点轻微倾斜与位置差，避免两枚完全一样。
+   系数按枚序固定（与 seed 无关，不影响 replay/三态判定）：倾角 ≤6°、基线上下偏移 ≤3px。 */
+const shengbeiTilt = function (i) {
+  const k = [3.4, -4.7][i % 2];
+  return { transform: 'rotateZ(' + k + 'deg) translateY(' + (i ? 3 : -2) + 'px)' };
+};
+
 /* ---------------- 节131：潮汕圣杯（掷筊）—— 两杯落地演出 ----------------
-   进入即自动「掷杯」：两枚筊杯（复用 .coin 3D 翻面视觉）抛起翻转后先后落地，
-   逐枚揭示 平面/凸面，再由两面组合出三态（圣杯=一平一凸 / 笑杯=两平面 / 阴杯=两凸面）。
+   进入即自动「掷杯」：两枚月牙形筊杯（.sb-cup，两态图 --art-sb-flat/--art-sb-convex）抛起后
+   沿长轴翻滚（rotateX，像翻跟斗落地，非硬币式左右翻面）、先后落定，再由两面组合出三态
+   （圣杯=一平一凸 / 笑杯=两平面 / 阴杯=两凸面）。落面由图形本身表达，块面上不再放文字标签。
    faces 为前端先定（replay 固定 → 落面与后端结果必然一致）；无摇动/点击交互，
    演出结束 & 数据就绪后转既有结果布局。三态名/短判读取自 CONTENT（正文唯一来源）。 */
 function ShengbeiCastStage(props) {
@@ -1714,13 +1727,10 @@ function ShengbeiCastStage(props) {
   const stInfo = sbData[stateKey] || {};
   const blocks = faceList.map(function (f, i) {
     const revealed = shown > i;
-    const cls = 'coin' + (revealed ? (f === 'convex' ? ' back' : '') : ' toss');
-    // 第二杯稍晚起跳（animationDelay 覆盖类上的 0s，纯时序差异不改视觉口径）
-    const c3dStyle = (revealed || i === 0) ? null : { animationDelay: '.12s' };
-    return React.createElement('div', { key: i, className: cls },
-      React.createElement('div', { className: 'c3d', style: c3dStyle },
-        React.createElement('div', { className: 'side s-a' }, UI_COPY.divination['sb-face-flat']),
-        React.createElement('div', { className: 'side s-b' }, UI_COPY.divination['sb-face-convex'])));
+    const cls = revealed ? ('sb-cup ' + (f === 'convex' ? 'convex' : 'flat')) : 'sb-cup toss';
+    // 落地态：倾角与基线差由 style 传（≤6°，非写死一值）；第二个未落地的杯延迟起跳（纯时序口径）
+    const style = revealed ? shengbeiTilt(i) : (i === 0 ? null : { animationDelay: '.12s' });
+    return React.createElement('div', { key: i, className: cls, style: style });
   });
   let banner = null;
   if (ph === 'landed' || ph === 'finish') {
@@ -1734,7 +1744,8 @@ function ShengbeiCastStage(props) {
   const tipLine = React.createElement('div', { className: 'stage-tip' },
     ph === 'finish' ? '掷杯完成 · 即将展示三态结果' : '默念所问之事，诚心掷杯；两杯落地，一掷定三态。');
   const children = [
-    React.createElement('div', { key: 'zone', className: 'ly-coins', style: { marginTop: 40 } }, blocks),
+    // 沿用舞台既有 .ly-coins 布局，仅追加圣杯专用透视容器类 .sb-cups（共享类本身不用改）
+    React.createElement('div', { key: 'zone', className: 'ly-coins sb-cups', style: { marginTop: 40 } }, blocks),
     banner,
     waitLine,
     tipLine

@@ -1,0 +1,23 @@
+# ============================================================
+# APK 模块（apk/）· 只忽略“生成物/构建产物”，绝不忽略源码
+# ============================================================
+
+# ---------- Gradle / IDE 构建产物 ----------
+build/
+.gradle/
+local.properties
+*.iml
+.idea/
+
+# ---------- 由 apk/tools/sync-assets.ps1 / sync-assets.sh 生成的 Python 副本 ----------
+# 它是 apk/pysrc（以及 backend/app、backend/prompts）的拷贝，属于生成物。
+# 改了源码请重新跑同步脚本，绝不提交本目录。
+app/src/main/python/
+
+# ---------- 由 apk/tools/sync-assets.ps1 / sync-assets.sh 生成的前端静态资源副本 ----------
+# 它是 frontend/public 的拷贝，属于生成物，绝不提交本目录。
+app/src/main/assets/web/
+
+# ---------- 由排盘打包脚本（build-paipan-bundle.mjs）生成的排盘 JS 包 ----------
+# 属于生成物，绝不提交本目录。
+app/src/main/assets/paipan/

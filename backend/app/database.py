@@ -2,6 +2,7 @@
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.config import settings
+from app.migrations import migrate_all
 from pathlib import Path
 
 Path(settings.db_path).parent.mkdir(parents=True, exist_ok=True)
@@ -143,6 +144,13 @@ def ensure_schema() -> None:
     SQLite 的 DDL 不支持 IF NOT EXISTS，故先 PRAGMA table_info 探测再 ALTER；
     用 engine.begin() 开显式事务，幂等（重复执行不报错）。
     create_all 之后调用，因此相关表必然已存在；若表缺失（空库）则直接跳过。
+
+    ⚠️ **本函数的补列清单自 2026-09-22 起冻结为「历史遗留」**：它只保留既有那批
+    ALTER 与种子（不改、不删，避免动到线上既有行为），**新增的结构变更一律走
+    `app/migrations/` 的版本化迁移链**（规范 `docs/standards/09-数据迁移与版本化.md`）。
+
+    函数末尾会执行版本化迁移链（三库：analytics / feedback / ops）：既有库在此被盖章为
+    基线版本；库版本高于代码版本时**抛出 MigrationError（fail loud）**，不静默启动。
     """
     with analytics_engine.begin() as conn:
         job_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(jobs)"))]
@@ -208,3 +216,15 @@ def ensure_schema() -> None:
             conn.execute(text("ALTER TABLE asset_slots ADD COLUMN opacity FLOAT"))
         if asset_cols and "mask_color" not in asset_cols:
             conn.execute(text("ALTER TABLE asset_slots ADD COLUMN mask_color VARCHAR(16)"))
+
+    # 版本化迁移链（节162 地基）：三库各自记账、各自事务。
+    # - 既有库/新库统一在此得到版本号（既有库 = 基线盖章）
+    # - 库版本高于代码版本 → MigrationError（fail loud，中断启动）
+    # ⚠️ 必须在上面的 create_all + 历史补列**之后**执行：基线版本的定义就是「它们跑完的现状」。
+    migrate_all(
+        [
+            ("analytics", settings.db_path),
+            ("feedback", settings.feedback_db_path),
+            ("ops", settings.ops_db_path),
+        ]
+    )

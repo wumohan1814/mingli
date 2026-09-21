@@ -782,7 +782,9 @@ def manual_credit(
 
 
 # --- 路由：运维动作（换 key / 重置密码 / 重置档案，operator+） ---
-# backend/.env：router.py 位于 backend/app/admin/，parents[2] = backend
+# backend/.env：router.py 位于 backend/app/admin/，parents[2] = backend。
+# 2026-09-21：LLM key 改为**系统环境变量**注入（MINGLI_LLM_API_KEY，优先级高于 .env），
+# 本常量仅作路径事实源保留（测试用它断言“不写 .env”），端点已不再写入该文件。
 ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
 _ENV_KEY_NAME = "MINGLI_LLM_API_KEY"
 
@@ -793,24 +795,24 @@ def change_llm_key(
     admin: dict = Depends(require_role("operator")),
     db: Session = Depends(get_ops_db),
 ):
-    """更换 LLM API key（operator+）：改写 backend/.env 的 MINGLI_LLM_API_KEY 行。
+    """更换 LLM API key（operator+）：**自 2026-09-21 起 fail loud，拒绝写入**。
 
-    audit 的 detail 不含 key 明文（只记“已更换”）；settings.llm_api_key 是启动时
-    快照，改动需**重启后端**才生效（MVP 接受）。
+    背景：key 已改为**系统环境变量**注入（`MINGLI_LLM_API_KEY`；pydantic-settings
+    源顺序决定环境变量优先级高于 `.env`）。原实现改写 `backend/.env` 有两个后果：
+      ① 项目内重新出现 key 文件——违反「项目内零 key 文件」红线；
+      ② 系统环境变量已设时**写进 .env 却不生效**（静默失败：运维以为换了 key 其实没换）。
+    故路由与请求体形状保持原样（不改前端调用方式），但不再落任何文件、直接报错。
+
+    正确处理（运维动作移到服务外）：
+      Windows：`setx MINGLI_LLM_API_KEY "<你的 key>"`（新开终端生效）
+      Linux：  `export MINGLI_LLM_API_KEY=...`（或 systemd `EnvironmentFile=`）→ 重启服务。
+
+    留痕：失败路径仍写 AdminAuditLog（沿用既有 action=change_llm_key 与 target 口径，
+    detail 不含 key 明文），且**先 commit 再抛错**，保证被拒绝的尝试可追溯。
     """
     key = req.api_key.strip()
     if not key or any(ch.isspace() for ch in key):
-        raise BizError(ERR_PARAM, "参数错误")
-
-    content = ENV_FILE.read_text(encoding="utf-8") if ENV_FILE.exists() else ""
-    pattern = re.compile(rf"(?m)^{re.escape(_ENV_KEY_NAME)}=.*$")
-    if pattern.search(content):
-        content = pattern.sub(f"{_ENV_KEY_NAME}={key}", content)
-    else:  # 文件缺失或尚无该行：追加到末尾
-        if content and not content.endswith("\n"):
-            content += "\n"
-        content += f"{_ENV_KEY_NAME}={key}\n"
-    ENV_FILE.write_text(content, encoding="utf-8")
+        raise BizError(ERR_PARAM, "参数错误")  # 形状校验沿用原契约（1001），拒绝前先校验
 
     db.add(
         AdminAuditLog(
@@ -818,11 +820,23 @@ def change_llm_key(
             action="change_llm_key",
             target_type="env",
             target_id=_ENV_KEY_NAME,
-            detail=f"已更换 {_ENV_KEY_NAME}（写入 backend/.env，重启后端生效）",
+            detail=(
+                f"拒绝更换 {_ENV_KEY_NAME}：本机已改为系统环境变量注入，"
+                "后台不再接受写入（未改动 backend/.env）"
+            ),
         )
     )
-    db.commit()
-    return {"code": 0, "message": "ok", "data": {"updated": True}}
+    db.commit()  # 先落审计再抛错：异常路径不留白
+
+    raise BizError(
+        ERR_CONFLICT,
+        "后台不再接受 LLM Key 写入",
+        detail=(
+            "本机已改为系统环境变量注入：请设置 MINGLI_LLM_API_KEY"
+            "（Windows: setx MINGLI_LLM_API_KEY \"<你的 key>\"；"
+            "Linux: export MINGLI_LLM_API_KEY=...）后重启服务；后台不再接受写入。"
+        ),
+    )
 
 
 @router.post("/ops/users/{user_id}/reset-password")

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>本地服务启动失败</title>
+    <style>
+        :root { color-scheme: light dark; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px 18px 40px;
+            font-family: -apple-system, "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #23262b;
+            background: #f6f7f9;
+            -webkit-text-size-adjust: 100%;
+        }
+        .card {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 14px;
+            padding: 22px 20px 26px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+        .badge {
+            display: inline-block;
+            font-size: 13px;
+            padding: 2px 10px;
+            border-radius: 999px;
+            color: #9a1b1b;
+            background: #fdecec;
+            border: 1px solid #f4c9c9;
+        }
+        h1 {
+            font-size: 21px;
+            margin: 12px 0 6px;
+            color: #9a1b1b;
+        }
+        p { margin: 10px 0; }
+        .muted { color: #6b7280; font-size: 14px; }
+        h2 {
+            font-size: 16px;
+            margin: 22px 0 6px;
+            color: #23262b;
+        }
+        ol, ul { margin: 6px 0 6px 20px; padding: 0; }
+        li { margin: 6px 0; }
+        code, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 13px;
+            background: #f2f3f5;
+            border: 1px solid #e4e6eb;
+            border-radius: 6px;
+            padding: 1px 6px;
+            word-break: break-all;
+        }
+        pre {
+            margin: 8px 0;
+            padding: 12px;
+            overflow-x: auto;
+            background: #1f2430;
+            color: #e6e8ee;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; color: inherit; }
+        .box {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e4e6eb;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        hr { border: none; border-top: 1px solid #eceef2; margin: 24px 0 14px; }
+        @media (prefers-color-scheme: dark) {
+            body { color: #e6e8ee; background: #16181d; }
+            .card { background: #1e2127; border-color: #2c313a; box-shadow: none; }
+            h1 { color: #ff9c9c; }
+            .badge { color: #ffb4b4; background: #3a1f1f; border-color: #5a2a2a; }
+            .muted { color: #9aa1ac; }
+            code, .mono { background: #262a31; border-color: #333944; }
+            .box { background: #22262d; border-color: #333944; color: #b4bac4; }
+            hr { border-top-color: #2c313a; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <span class="badge">POC-0 · 启动失败</span>
+    <h1>本地服务启动失败</h1>
+
+    <p>
+        应用里的 Python 本地服务没能在 <strong>20 秒</strong>内就绪，所以暂时打不开界面。
+        这个服务是打包在 APK 内部、只在手机本机上运行的 <code>127.0.0.1:8765</code>，
+        不需要联网，也不需要官方服务器。
+    </p>
+    <p class="muted">
+        也就是说：问题出在本机服务没能起来，不是网络问题、也不是官方服务停了。
+    </p>
+
+    <h2>先试这两步</h2>
+    <ol>
+        <li><strong>完全退出应用</strong>（在最近任务里把卡片划掉），然后从桌面图标重新打开，等几秒。</li>
+        <li>还是不行的话，<strong>卸载后重新安装</strong>这个 APK；新安装的第一次启动会解压 Python 运行环境，通常要慢几秒。</li>
+    </ol>
+
+    <h2>还是失败，就看日志</h2>
+    <p>手机用 USB 连电脑，开启「USB 调试」，在电脑上执行：</p>
+    <pre><code>adb logcat -s python.stdout python.stderr</code></pre>
+    <p class="muted">
+        重点看这两个标签：<code>python.stdout</code> 与 <code>python.stderr</code>。
+        它们分别是 Python 服务的正常输出和报错输出，启动失败的原因（缺少依赖、端口被占用、脚本报错）几乎都会出现在 <code>python.stderr</code> 里。
+    </p>
+    <p class="muted">
+        如果想连 Android 侧的报错一起看，可以改用：
+    </p>
+    <pre><code>adb logcat -s python.stdout python.stderr AndroidRuntime</code></pre>
+
+    <h2>常见原因</h2>
+    <ul>
+        <li>Python 运行环境解压尚未完成，或设备存储空间不足。</li>
+        <li>安装包里的 Python 服务文件缺失（例如打包前忘了同步资源）。</li>
+        <li>本机 <code>8765</code> 端口被占用（少数情况下会被系统或其他应用占用）。</li>
+        <li>安装的是不支持的 32 位 CPU 老设备：内置的 Python 3.13 只有 64 位版本。</li>
+    </ul>
+
+    <div class="box">
+        这个问题不会自动恢复，需要你手动重开或重装应用。排查时请以
+        <code>python.stderr</code> 的实际报错为准。
+    </div>
+
+    <hr>
+    <p class="muted">命理 · POC-0（内部测试版，仅调试用途）</p>
+</div>
+</body>
+</html>
