@@ -1,46 +1,37 @@
-# 命理 H5
+# 命理（mingli）
 
-> 多流派 AI 命理解读 H5：录入生辰 → 排盘 → 9 法解读（八字×4 / 紫微 / 西占 / 七政 / 奇门 / 五运六气）→ 断前尘校验 → 多流派 AI 综合解读，支持校准、追问、档案沉淀；另有西式占卜（星座/塔罗/雷诺曼）、MBTI、生肖流年等玩法；积分付费。
+> 多流派 AI 命理解读 H5 应用：录入生辰 → 排盘 → 多流派综合解读 → 断前尘校验 → 校准追问 → 档案沉淀。
+> 用大白话给不懂命理术语的普通用户提供解读，支持八字 / 紫微 / 西洋占星 / 七政四余 / 奇门 / 五运六气等流派，
+> 另有六爻 / 梅花易数 / 小六壬 / 塔罗 / 雷诺曼 / MBTI 大五等玩法。
 
-## 你怎么用（你只需要做两件事）
+---
 
-1. **说需求**——一句话（例：「破竹：{{你的需求}}」）；一堆想法就全倒出来，我来拆。
-2. **看产物拍板**——我给你真实页面 / 截图 / 地址，你说"可以"或"不对"。
+## 功能一览
 
-你不需要懂代码、看文件、判断技术方案；需求说清、产物拍板，剩下的交给 Agent 团队。
+| 模块 | 说明 |
+|---|---|
+| 命盘·八法合一 | 选档案 → 排盘 → 多法解读（八字格局 / 大运流年 / 神煞纳音 / 婚姻财运 + 紫微 + 七政 + 奇门终身局 + 五运六气）→ 断前尘 / 校准 / 追问 |
+| 即时起卦 | 六爻 / 梅花易数 / 小六壬 / 观音灵签 / 大六壬 / 金口诀 / 奇门时家 / 潮汕圣杯（掷筊） |
+| 择吉与时势 | 黄历择日 / 八字起名 / 双人配对 / 时势推演（太乙神数、皇极经世） |
+| 生肖流年 | 按档案生肖出流年（免费引流玩法） |
+| 星座 | 本命星盘 + 太阳/月亮/上升三格 + 三关系 + 深度解读 |
+| 塔罗 / 雷诺曼 | 78 张塔罗（19 种牌阵）、36 张雷诺曼（7 种牌阵），两段式取牌/读牌 |
+| MBTI / 大五人格 | 大五 OCEAN 测评（120 快速版 / 300 完整版）+ 四字母对照 + 档案绑定 |
+| 档案层 | 统一建档、档案管理、分享帮填（免登录代建） |
+| 王先生会话 | AI 陪伴「对坐谈心」：带档案上下文 + 跨会话长期记忆 |
+| 后台管理 | 报表 / 用户 / 余额调整 / Prompt 管理台 / 素材热更 |
 
-沟通也简单：讲「改了什么 → 对你有什么影响 → 需要你定什么」，每项待定都带默认建议。
+## 技术栈
 
-### 一轮「破竹」长这样
+- **后端**：Python 3.13 + FastAPI（模块化单体），单端口同时服务 `/api` 与前端静态资源
+- **数据库**：SQLite 三库（分析 / 反馈 / 运维），本地文件，零外部依赖
+- **排盘引擎**：
+  - 八字：Python 确定性计算
+  - 紫微 / 西洋占星 / 七政四余 / 奇门 / 五运六气 / 六爻 / 梅花 / 灵签等：Node.js 纯函数内核（`backend/paipan-node/paipan-core`，零 LLM、确定性、可对拍）
+- **前端**：免构建 CDN React（无需 npm install / Vite 构建）
+- **部署**：Docker Compose + Caddy（自动 HTTPS）
 
-1. 你说需求（一句话或一堆想法都行）。
-2. Agent 开工前先读规则（`../Ratoon-破竹/00_协议.md`）与状态入口（`00_根/入口.md`），拆任务、干活。
-3. 你看到真实产物（页面 / 截图 / 地址），说"可以"或"不对"。
-4. 不对就改；对了就留痕归档，进入下一轮。
-5. 每轮收尾留痕：决策进 `99_状态/`、迭代进 `40_节/`、凭进 `50_痕/`。
-
-### 你怎么验收（一言堂 · 破竹 v0.9+）
-
-- 我给你**真实环境地址**，你亲自打开、动手操作——**你看到、点到的就是结果**（不需要截图）。
-- 我说"完成了"不算数：前端以你亲眼看为准；后端我验完用大白话告诉你结论（"后端我验过了：X 正常、Y 通过"）。
-- 要存档（发人 / 交付单据）才说一声，我再截一张。
-- 版本对比用 Git 做底：你说「留底 / 撤销 / 看看上一版 / 就这版了」，我翻译成操作，**你不需要懂 Git**。
-
-## 项目规则（Agent 读）
-
-- 本项目的规则在 `../Ratoon-破竹/00_协议.md`（每轮开工先读）；项目状态入口 `00_根/入口.md`（每轮必读）。
-- 产品全貌：`00_根/全貌.md`；代码结构 / 契约 / 红线 / 启动：`00_根/导航.md`；已有件 / 设计值：`00_根/复用.md`；决策 / 已知问题：`99_状态/`；迭代历史：`40_节/`。
-- 运行层代码（backend / frontend / data / ops）只读不写；治理层文件（00_根 / 40_节 / 99_状态 / 50_痕）按协议维护。
-
-> 本 README 只回答「这是什么、怎么跑、怎么合作」；代码契约 / 红线 / 启动细节以 `00_根/导航.md` 为准。
-
-## 快速启动（详细见 00_根/导航.md）
-
-- 后端：`pip install -e "backend[dev]"` → 配置 `backend/.env`（`MINGLI_LLM_API_KEY`）→ `cd backend && python -m uvicorn app.main:app --port 8000`
-- 前端：无需构建（免构建 CDN React，FastAPI 在 8000 直接托管 `frontend/public/`）
-- Node 排盘：`backend/paipan-node/`（:9317，自动降级）
-- 访问：http://localhost:8000（H5）· /docs（Swagger）
-- 测试：`cd backend && python -m pytest -q`（danger-full-access 沙箱下）
+## 快速开始
 
 ### 环境前提
 
@@ -50,25 +41,76 @@
 | Node.js | 22+（仅排盘引擎子进程需要；全程无需 npm install） |
 | LLM key | 只放 `backend/.env` 的 `MINGLI_LLM_API_KEY`，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
 
-> 架构一句话：Python 3.13 + FastAPI 模块化单体，单端口 8000 同时服务 `/api` 与前端静态；SQLite 三库（分析 / 反馈 / 运维，`data/*.db`，git 忽略）。
+### 启动
 
-## 已验证能力
+```bash
+# 1. 安装后端依赖
+pip install -e "backend[dev]"
 
-| 能力 | 说明 |
+# 2. 配置环境变量
+cp .env.example .env        # 填入 MINGLI_LLM_API_KEY 等
+
+# 3. 启动后端（FastAPI 同时托管前端静态资源）
+cd backend && python -m uvicorn app.main:app --port 8000
+```
+
+访问：
+
+- 应用：http://localhost:8000
+- API 文档（Swagger）：http://localhost:8000/docs
+
+Node 排盘服务（可选，未启动时自动降级）：
+
+```bash
+cd backend/paipan-node && node server.mjs   # :9317
+```
+
+### 测试
+
+```bash
+cd backend && python -m pytest -q
+```
+
+## 环境变量
+
+复制 `.env.example` 为 `.env` 并修改。关键项：
+
+| 变量 | 说明 |
 |---|---|
-| 排盘确定性 | 多流派排盘为确定性计算、零 LLM（lunar-python + Node 引擎） |
-| 断前尘 | 历史回溯校验，降低预测幻觉 |
-| 校准 | 结果校验 / 校准链路 |
-| 9 法预测 | 八字×4 / 紫微 / 西占 / 七政 / 奇门 / 五运六气 AI 综合解读 |
-| 修正反馈 | 跨用户质疑反馈收集与后台归纳 |
-| 档案 | 用户分析档案落库与缓存复用 |
-| 异步 | 长任务 jobId + 轮询 |
-| 免构建前端 | CDN React 直接托管，无 npm install / Vite 构建 |
-| 扩展玩法 | 星座 / 塔罗 / 雷诺曼 / MBTI / 生肖流年（积分付费） |
+| `MINGLI_LLM_API_KEY` | DeepSeek 官方 API key（必填） |
+| `MINGLI_JWT_SECRET` | 随机密钥（`openssl rand -hex 32` 生成） |
+| `MINGLI_SITE_DOMAIN` | 站点域名（占位符 `mingli.example.com`，真实域名不入库） |
+| `MINGLI_OPERATOR_NAME/CONTACT/EMAIL` | 合规文书运营主体（`docs/legal/` 与 `frontend/public/legal/` 用 `{{OPERATOR_*}}` 占位符，服务端渲染时注入） |
 
-## 历史档案（已冻结）
+## 目录结构
 
-- 历史台账（需求表 / Bug管理表 / 快照）已冻结并**归档至 `_archive/台账冻结/`**（2026-09-11），不再更新；实时状态见 `00_根/入口.md` 与 `40_节/`。
-- 旧工程文档（架构设计、Code-Wiki、测试知识库、standards、adr 等）仍可按需查阅，见 `docs/README.md` 索引；`docs/API-Key安全与LLM接入说明.md`、`docs/standards/02-技术栈清单.md`、`docs/standards/03-接口与数据字典.md` 仍有效。
+```
+backend/                  # FastAPI 后端
+  app/                    # 业务模块（auth / cases / credits / admin / paipan…）
+  paipan-node/            # Node 排盘引擎（paipan-core 内核 + server.mjs）
+  prompts/                # 提示词（interpret / method-prompts / pair / agent）
+  tests/                  # pytest 测试
+frontend/public/          # 免构建前端（index.html + js/ + css/ + data/ + art/）
+data/                     # SQLite 数据库（git 忽略）与迁移脚本
+docs/                     # 工程文档 / 合规文书 / 标准规范
+ops/                      # 部署（docker-compose、Caddy、backup）
+tools/                    # 本地开发辅助脚本
+00_根/ 40_节/ 99_状态/    # 破竹框架的治理层（需求 / 迭代 / 状态）
+```
 
-> 本 README 于 2026-09-10 随「破竹」框架重构重写；此后不再作为工程细节的真相源（见上）。
+## 部署
+
+- `Dockerfile` + `docker-compose.yml`：单容器部署后端与 Node 排盘服务
+- `Caddyfile`：HTTPS 反向代理，域名用环境变量 `MINGLI_SITE_DOMAIN` 注入（真实域名只存在于 `.env`，不进仓库）
+- 详细流程见 `ops/deploy/README.md`
+
+## 免责声明
+
+本项目中的命理 / 占卜 / 心理测评内容仅供**娱乐与自我探索参考**，不构成任何医疗、法律、投资或人生决策建议。
+所有输出由 AI 生成，存在不确定性，请理性看待。
+
+## 许可证
+
+[MIT](./LICENSE)
+
+Copyright (c) 2026 wumohan

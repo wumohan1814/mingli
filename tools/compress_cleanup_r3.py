@@ -2,7 +2,7 @@
 import os, shutil
 from PIL import Image
 
-ART = r"C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art"
+ART = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "public", "art"))
 MM = os.path.join(ART, "module-mascot")
 PWA = os.path.join(ART, "pwa")
 DRAFT = os.path.join(ART, "_drafts_r3")

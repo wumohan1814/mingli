@@ -18,7 +18,7 @@
 
 ```powershell
 # 推荐显式指定解释器（python 3.13.14 / sqlite 3.50.4）
-$py = "C:\Users\wumoh\AppData\Local\Programs\Python\Python313\python.exe"
+$py = "python.exe"
 ```
 
 ### 跑基准
@@ -241,7 +241,7 @@ cd backend
 ### 消融测量（逐项归因）
 
 ```powershell
-$py = "C:\Users\wumoh\AppData\Local\Programs\Python\Python313\python.exe"
+$py = "python.exe"
 cd backend
 # ① 同进程跑 6 组配置 → 对比表 + 与「全关」的配对 McNemar（用于**召回**归因）
 & $py tools/memory_bench/ablation.py --repeat 3

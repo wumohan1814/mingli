@@ -5,12 +5,12 @@
   "created_at": "2026-09-11T10:12:43+00:00",
   "python": "3.13.14",
   "sqlite": "3.50.4",
-  "cwd": "C:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\backend\\tools\\memory_bench",
+  "cwd": "<仓库根>\\backend\\tools\\memory_bench",
   "git_rev": "bfdcfdff6eb4",
   "mode": "question",
   "k_arg": null,
   "repeat": 5,
-  "corpus_path": "C:\\Users\\wumoh\\Documents\\Vibecoding\\taichu\\backend\\tools\\memory_bench\\corpus.json",
+  "corpus_path": "<仓库根>\\backend\\tools\\memory_bench\\corpus.json",
   "corpus_meta": {
    "generator": "corpus_build.py",
    "n_users": 30,
@@ -31,11 +31,11 @@
   "seeded_facts": 585,
   "seeded_fts_rows": 585,
   "db_env": {
-   "TAICHU_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_56c6a4ec_analytics.db",
-   "TAICHU_FEEDBACK_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_56c6a4ec_feedback.db",
-   "TAICHU_OPS_DB_PATH": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e\\memory_bench_56c6a4ec_ops.db"
+   "TAICHU_DB_PATH": "<临时目录>\\dsh-VIBd1e\\memory_bench_56c6a4ec_analytics.db",
+   "TAICHU_FEEDBACK_DB_PATH": "<临时目录>\\dsh-VIBd1e\\memory_bench_56c6a4ec_feedback.db",
+   "TAICHU_OPS_DB_PATH": "<临时目录>\\dsh-VIBd1e\\memory_bench_56c6a4ec_ops.db"
   },
-  "db_dir": "C:\\Users\\wumoh\\AppData\\Local\\Temp\\dsh-VIBd1e",
+  "db_dir": "<临时目录>\\dsh-VIBd1e",
   "note": "离线基准：不联网、不调 LLM、不碰生产库；recall 走真实 recall_memories()"
  },
  "metrics": {
