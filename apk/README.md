@@ -132,7 +132,7 @@ apk\app\build\outputs\apk\debug\app-debug.apk
 | 路径 | 说明 |
 | --- | --- |
 | `app/src/main/java/com/mingli/apk/` | Kotlin 代码（界面、启动流程、排盘桥接口）。 |
-| `app/src/main/python/` | **生成物**：`apk/pysrc` 的拷贝，也是内置 Python 服务所在处。 |
+| `app/src/main/python/` | **生成物**：三层拼起来的 —— ① `apk/pysrc` 的自举服务与排盘桥（**平铺在根**，MainActivity 按顶层模块名取，别挪进子目录）② `backend/app/` → `python/app/` ③ `backend/prompts/` → `python/prompts/`。**②③ 的目录层级必须保留**：后端代码用的是绝对包导入（`from app.config import …`）与 `parents[2]/"prompts"` 这类相对定位，一旦压平就连 import 都过不了。 |
 | `app/src/main/assets/web/` | **生成物**：前端页面的拷贝。 |
 | `app/src/main/assets/paipan/` | **生成物**：排盘 JS 包。 |
 | `tools/sync-assets.ps1` / `tools/sync-assets.sh` | 同步脚本（Windows 用 `.ps1`，CI 用 `.sh`），负责把源码拷进上面这些目录。 |

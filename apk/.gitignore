@@ -21,3 +21,8 @@ app/src/main/assets/web/
 # ---------- 由排盘打包脚本（build-paipan-bundle.mjs）生成的排盘 JS 包 ----------
 # 属于生成物，绝不提交本目录。
 app/src/main/assets/paipan/
+
+# ---------- 构建日志（gradle ... | Tee-Object build-debug.log）----------
+# 构建产物+含本机绝对路径，不要提交。
+build-debug.log
+*.log
