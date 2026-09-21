@@ -3,7 +3,7 @@
 
 > 生成时间：2026-09-06（本 Session 更新版：性能优化 / 金数据支付接入 / 注册验证码之后）
 > 当前阶段：**Phase 1–7 + P1/P2 产品化扩展全部完成 + 线上已部署**；本 Session 追加完成：**网站性能优化（系统字体 / Caddy gzip·zstd / JSX 预编译）、金数据支付系统接入、注册图形验证码 + 确认密码、免费积分调至 220、充值 UI 暂时隐藏、docs 归档清理、admin 报表埋点中文映射**；**金数据商户认证未完成，支付闭环待用户自行验证**
-> 工作目录：C:\Users\wumoh\Documents\Vibecoding\taichu
+> 工作目录：<仓库根>
 
 > 本文件是「当前状态快照」。此前所有 session 的内容已全部完成交接，之后将从本 session 分叉继续。历史开发记录见 `docs/开发日志.md`。
 
@@ -109,7 +109,7 @@ login · reports/{metric} · users?q= · users/{id}/cases · users/{id}/cases/{c
 
 ### 本地
 ```bash
-cd C:\Users\wumoh\Documents\Vibecoding\taichu
+cd <仓库根>
 start.bat          # 或 cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 # 前端 http://localhost:8000 | API /docs | 后台 /admin.html
 ```

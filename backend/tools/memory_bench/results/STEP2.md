@@ -34,7 +34,7 @@ python tools/memory_bench/run.py --repeat 5 --label step2 \
     --markdown tools/memory_bench/results/BASELINE.md
 ```
 - Python：`3.13.14`；SQLite：`3.50.4`
-- 本次库文件：`C:\Users\wumoh\AppData\Local\Temp\dsh-1SG2X4\memory_bench_6b648225_analytics.db`（运行结束已按 `--keep` 语义清理，此处仅留痕）
+- 本次库文件：`<临时目录>\memory_bench_6b648225_analytics.db`（运行结束已按 `--keep` 语义清理，此处仅留痕）
 
 ## 3. 语料规模
 

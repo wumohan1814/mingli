@@ -5,7 +5,7 @@
 import os
 from PIL import Image, ImageChops
 
-ART = r'C:\Users\wumoh\Documents\Vibecoding\mingli\frontend\public\art'
+ART = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "public", "art"))
 RAW = os.path.join(ART, 'xiaoliuren', 'Isolated_circular_emblem_desig_2026-09-08T17-46-28.png')
 OUT_PNG = os.path.join(ART, 'xiaoliuren', 'xiaoliuren-palm.png')
 OUT_WEBP = os.path.join(ART, 'xiaoliuren', 'xiaoliuren-palm.webp')
