@@ -15,6 +15,7 @@ from urllib.parse import quote
 
 from app import legal
 from app.config import settings
+from app.version import APP_VERSION
 from app.database import (
     AnalyticsSession,
     Base,
@@ -161,6 +162,7 @@ from app.api.mbti import router as mbti_router
 from app.api.memory import router as memory_router
 from app.api.namer import router as namer_router
 from app.api.pair import router as pair_router
+from app.api.runtime import router as runtime_router
 from app.api.settings import router as settings_router
 from app.api.tarot import router as tarot_router
 from app.api.zodiac import router as zodiac_router
@@ -172,7 +174,7 @@ from app.middleware import api_metrics_middleware
 app = FastAPI(
     title="命理 API",
     description="多流派命理综合 H5 后端",
-    version="0.1.0",
+    version=APP_VERSION,
     lifespan=lifespan,
 )
 
@@ -201,6 +203,7 @@ app.include_router(astrology_router)
 app.include_router(mbti_router)
 app.include_router(pair_router)
 app.include_router(namer_router)
+app.include_router(runtime_router)   # 运行形态 + 版本契约（前端启动即读，无鉴权）
 app.include_router(settings_router)
 app.include_router(memory_router)
 app.include_router(credits_router)

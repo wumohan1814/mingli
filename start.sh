@@ -7,6 +7,7 @@
 echo "============================================"
 echo "命理 H5 启动"
 echo "============================================"
+[ -z "$MINGLI_LLM_API_KEY" ] && echo "⚠️ 未设置 LLM Key：确定性排盘可用，AI 解读不可用；设置方式见 docs/API-Key安全与LLM接入说明.md"
 echo ""
 echo "启动后端 (FastAPI + 前端静态文件 :8000)..."
 cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

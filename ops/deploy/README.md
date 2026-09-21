@@ -25,6 +25,15 @@ bash ops/deploy/deploy.sh
 
 `deploy.sh` 首次会交互式让你填 `MINGLI_LLM_API_KEY`，并自动生成强随机 `MINGLI_JWT_SECRET` 写入 `.env`。
 
+## 环境变量与 LLM Key（服务器侧）
+
+**key 不进仓库**这条规矩对服务器同样成立（本地开发机已改走系统环境变量，见 `docs/API-Key安全与LLM接入说明.md`）。服务器侧有**两种合法做法**：
+
+1. **服务器自己的 `.env`（推荐、最省事）**：`/opt/mingli/app/.env` 是**服务器本地文件、不在仓库里**，且被 `.gitignore` 的 `.env` 规则覆盖；`deploy.sh` 首次部署就是往它里面写（含 `MINGLI_LLM_API_KEY`）。
+2. **systemd `EnvironmentFile=` 或宿主机环境变量**：不想让 key 落在 app 目录时，把 key 写进 `/etc/mingli.env`（`chmod 600`）并由 systemd `EnvironmentFile=/etc/mingli.env` 注入；或 `export` 到启动 shell / 写宿主机 `/etc/environment`，由容器启动时继承。
+
+> ⚠️ **D 方案（Docker Compose 部署）下，`docker-compose.yml` 的 `${MINGLI_LLM_API_KEY}` 由宿主机环境变量插值**：`docker compose` 是**在宿主机上**解析 compose 文件的，`${...}` 取宿主机环境变量（并以项目目录的 `.env` 作为插值默认值，**shell 环境优先于 `.env`**）。所以上面两种做法都能生效；但**换 key 后必须让 compose 重新解析**——`docker compose up -d --force-recreate web`（只 `restart` 容器不会换 key）。
+
 ## 后续更新
 
 ```bash

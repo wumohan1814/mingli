@@ -1,0 +1,13 @@
+{
+  "name": "mingli-apk-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "命理 APK 构建期工具链（仅构建期依赖；不进 APK 运行时）。paipan JS 内核 → WebView IIFE bundle。",
+  "type": "module",
+  "scripts": {
+    "build:bundle": "node tools/build-paipan-bundle.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

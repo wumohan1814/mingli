@@ -39,7 +39,7 @@
 |---|---|
 | Python | 3.13（`backend/pyproject.toml` 要求 >=3.11） |
 | Node.js | 22+（仅排盘引擎子进程需要；全程无需 npm install） |
-| LLM key | 只放 `backend/.env` 的 `MINGLI_LLM_API_KEY`，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
+| LLM key | **系统环境变量注入（不再写入 `.env`）**：`MINGLI_LLM_API_KEY`，项目内零 key 文件，严禁硬编码（详见 `docs/API-Key安全与LLM接入说明.md`） |
 
 ### 启动
 
@@ -48,7 +48,9 @@
 pip install -e "backend[dev]"
 
 # 2. 配置环境变量
-cp .env.example .env        # 填入 MINGLI_LLM_API_KEY 等
+cp .env.example .env        # 其余配置项（数据库路径 / JWT / 域名等）
+# LLM key 走系统环境变量（用户级，新开终端生效）：
+#   Windows:  setx MINGLI_LLM_API_KEY "<你的 key>"      Linux:  export MINGLI_LLM_API_KEY=...
 
 # 3. 启动后端（FastAPI 同时托管前端静态资源）
 cd backend && python -m uvicorn app.main:app --port 8000
@@ -73,11 +75,11 @@ cd backend && python -m pytest -q
 
 ## 环境变量
 
-复制 `.env.example` 为 `.env` 并修改。关键项：
+复制 `.env.example` 为 `.env` 并修改（`.env` 只放非凭据配置）。关键项：
 
 | 变量 | 说明 |
 |---|---|
-| `MINGLI_LLM_API_KEY` | DeepSeek 官方 API key（必填） |
+| `MINGLI_LLM_API_KEY` | DeepSeek 官方 API key（必填）：**系统环境变量注入（不再写入 `.env`）**，设置见 `docs/API-Key安全与LLM接入说明.md` §1 |
 | `MINGLI_JWT_SECRET` | 随机密钥（`openssl rand -hex 32` 生成） |
 | `MINGLI_SITE_DOMAIN` | 站点域名（占位符 `mingli.example.com`，真实域名不入库） |
 | `MINGLI_OPERATOR_NAME/CONTACT/EMAIL` | 合规文书运营主体（`docs/legal/` 与 `frontend/public/legal/` 用 `{{OPERATOR_*}}` 占位符，服务端渲染时注入） |

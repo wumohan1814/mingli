@@ -33,6 +33,12 @@
        ui.<模块>.<动作|状态>，小写+连字符；既有 UI_COPY key 保持原名迁入，index.html 内以
        UI_COPY = ML_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
   <script src="/data/ui-copy.js?v=161"></script>
+  <!-- 2026-09-22：运行形态与能力读取入口（window.ML_RUNTIME；「同源构建」地基）。
+       数据文件 frontend/public/data/runtime.js，启动时读 GET /api/runtime（无鉴权，
+       登录前即可读）；**取不到就按 web 全能力兜底**（老部署/断网行为零变化）。
+       必须在 React 组件主脚本之前引入（登录页等要按能力决定渲染哪块）。
+       形态与版本兼容矩阵见 docs/standards/08-运行形态与版本契约.md。 -->
+  <script src="/data/runtime.js?v=161"></script>
   <script>
   // 节135：UI_COPY 兼容别名必须在数据文件（content/*.js）与业务文件（/js/*.js）之前就绪——
   // 它们的顶层常量（DIVIN_METHODS、PAIR_REL_ICONS、CONTENT 计算键等）加载时即解引用 UI_COPY；
