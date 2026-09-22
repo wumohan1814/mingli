@@ -105,6 +105,22 @@
 2. **⚠️ 本机 DeepSeek key 已失效（401）** + 如何区分 401 与「未配置」。
 3. **⚠️ 本机装 Android 工具链：官方源会卡死**（含可用的国内镜像与实测吞吐）。
 4. **⚠️ `frontend/public/` 是被 Caddy 直服的静态根**：临时验证文件放进去=立刻公网可见（本次踩到，已清理）。
+5. **⚠️ `.ps1` 丢 UTF-8 BOM 会变成"假语法错"**（PS 5.1 按 ANSI 解码 → 乱码 + `Unexpected token`，看着像语法问题）。
+6. **⚠️ APK 同步脚本的两个"静默丢文件"陷阱**（压平包层级 → 后端 import 全废；按目录名排 `data` → 4 份运行时 JSON 丢出包）。
+7. **⚠️ 本机 `Get-Content` 会少算行数**（同一文件 551 vs 618；数行用 `[System.IO.File]::ReadAllLines()`，判改动用 `git diff --stat`）。
+
+## 六之二、收尾追加（2026-09-22 晚，本节的第二批提交）
+
+| 项 | 内容 |
+|---|---|
+| **修掉「静默丢文件」两颗雷** | 同步脚本改为**保留包层级**（`backend/app → python/app`、`backend/prompts → python/prompts`，`pysrc` 仍平铺在根以保住 MainActivity 的 `getModule("apk_server")` 契约）；排除规则由「按目录名排 `data`」改为**按扩展名排数据库文件**，救回被丢掉的 4 份运行时 JSON（六爻爻辞 `app/data/liuyao_yaoci.json` + 3 份 MBTI 题库）。修前 `app.imy` 里后端**根本 import 不了** |
+| **BOM 事故（已修）** | 改 `.ps1` 时丢了 UTF-8 BOM → PS 5.1 按 CP936 解码 → 乱码 + 假语法错。已补回（头 3 字节 239/187/191）并独立复核 **PowerShell 解析 0 错误** |
+| **误入库的构建日志** | `apk/build-debug.log` 被我上一批提交带进去了（`.gitignore` 对已跟踪文件无效）→ `git rm --cached`（本地文件保留）+ 补 `*.log` 规则 |
+| **`apk/README.md`** | 目录说明更正为「pysrc 平铺 + `app/` + `prompts/`」三层结构，并写明**为什么不能压平** |
+| **拆包复核（最终态）** | `app.imy` **153 个文件条目 = 树内每一个文件**（pyc 92 / md 54 / json 4 / gitkeep 2 / 标记 1），含 `app/config.pyc`、`app/admin/router.pyc`、`app/methods/base.pyc`、`app/data/liuyao_yaoci.json`、三条 MBTI JSON、`prompts/**/*.md` 37 条；根本级孤立 `.pyc` = 0；`assets/web`：磁盘 294（含 2 个点文件）→ **进包 292**，双向差集为空（点文件不入包；已实测 APK 内 `assets/web` = 292、点文件 0） |
+| **🎉 CI 云端出包成功** | 推送后自动触发 `.github/workflows/apk.yml`（`apk-poc0`）—— **run #1 = completed / success**，产物 artifact `mingli-apk-poc0-debug`（保留 14 天）。即**本机与云端两条路都能出可安装 APK** |
+| **最终产物** | `apk/app/build/outputs/apk/debug/app-debug.apk` = **51.06 MB**（debug 签名，可直接装） |
+| **提交** | `eb7d5fd`（主体）+ `cbdf3b2`（收尾修正），均已推 `master`；工作区干净 |
 
 ## 七、待你决定 / 待你真机
 

@@ -127,6 +127,24 @@ apk\app\build\outputs\apk\debug\app-debug.apk
 | 警告 “unsupported compileSdkVersion 36” | 只是警告，`gradle.properties` 里已经压制（`android.suppressUnsupportedCompileSdk=36`），不用管。 |
 | 提示缺少 Python 服务相关文件 | 打包前忘了跑 `tools\sync-assets.ps1`，补跑一次再构建。 |
 
+## 怎么拿到能装的 APK（两条路，都已跑通）
+
+| 方式 | 怎么做 | 产物 |
+| --- | --- | --- |
+| **本机构建** | `. C:\AndroidDev\env.ps1` → `cd apk` → `powershell -File tools\sync-assets.ps1` → `gradle assembleDebug` | `apk/app/build/outputs/apk/debug/app-debug.apk`（约 **51 MB**） |
+| **GitHub 云端构建** | 推代码（改动 `apk/**` 会自动触发）或在仓库 Actions 页手动跑工作流 `apk-poc0` | 该次运行页面下方的 artifact **`mingli-apk-poc0-debug`**（保留 14 天） |
+
+> 两个包都是 **debug 签名**、内容同源，可直接传到手机安装。云端那条路的意义 = 本地没装 Android 工具链的人也能出包。
+> 首次云端运行已成功（2026-09-22）。
+
+## ⚠️ 改这个目录里的 `.ps1` 之前必读
+
+`tools/sync-assets.ps1` **必须带 UTF-8 BOM**（文件头 3 字节 = `239,187,191`）。本机执行它的是 **PowerShell 5.1**，
+没有 BOM 时它按 **ANSI(CP936)** 解码 → 中文全乱码、并在解析期报 `Unexpected token` / `string is missing the terminator`
+—— **看起来像语法错误，实际是编码问题**（2026-09-22 真踩过一次，排查花了一整轮）。
+复核方法：`[System.IO.File]::ReadAllBytes($p)[0..2]` 是否 `239,187,191`，以及
+`[System.Management.Automation.Language.Parser]::ParseFile($p,[ref]$null,[ref]$err)` 的错误数是否为 0。
+
 ## 目录说明
 
 | 路径 | 说明 |
