@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     llm_max_concurrency: int = 3                 # MINGLI_LLM_MAX_CONCURRENCY（单用户断前尘/预测 method 并发上限）
     llm_global_max_concurrency: int = 100        # MINGLI_LLM_GLOBAL_MAX_CONCURRENCY（全局 method 并发兜底，跨所有用户）
 
-    # JWT 鉴权（ADR-0008：HS256）——必填、无弱默认；生产由 ops/deploy/deploy.sh 生成强随机
+    # JWT 鉴权（ADR-0008：HS256）——必填、无弱默认；线上部署线已归档（2026-10-01 下线），
+    # 原有的生产强随机生成脚本见 _archive/部署-已下线/ops/deploy/deploy.sh
     jwt_secret: str
     access_token_ttl: int = 1800
     refresh_token_ttl: int = 604800
@@ -41,7 +42,8 @@ class Settings(BaseSettings):
         if v in weak or len(v) < 32:
             raise ValueError(
                 "MINGLI_JWT_SECRET 必须设为 ≥32 字符的随机值（禁止默认/占位字符串）。"
-                "本地：backend/.env 或根 .env；生产：ops/deploy/deploy.sh 自动生成。"
+                "本地：backend/.env 或根 .env；生产自部署：_archive/部署-已下线/ops/deploy/deploy.sh"
+                " 自动生成（部署线已于 2026-10-01 归档，见 _archive/部署-已下线/README.md）。"
             )
         return v
 

@@ -55,7 +55,7 @@
 | 数据库 | SQLite（三库） | `mingli_analytics` / `mingli_feedback` / `mingli_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
 | LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走系统环境变量 `MINGLI_LLM_API_KEY`（项目内零 key 文件） |
-| 部署 | Docker 单镜像（Python+Node 双运行时）+ Caddy | 站点域名（`MINGLI_SITE_DOMAIN`）；`docker-compose.yml` |
+| 部署 | **已下线（2026-10-01）**：历史为 Docker 单镜像（Python+Node 双运行时）+ Caddy | 线上实例已永久下线（服务器不再续费），部署件归档 `_archive/部署-已下线/`；现只保留**本地自用**（`start.bat` → http://localhost:8000，形态 `web`）与**单机 APK**（`apk/`，形态 `apk-local`，数据在设备本地） |
 
 ### 目录结构
 
@@ -100,8 +100,7 @@ mingli/
 │   └── （src/ 旧 Vite+TS 源码已归档 _archive/前端-vite-ts-参考实现/）
 ├── data/                         # 数据目录（migrations/schema/seeds，git 忽略 *.db）
 ├── docs/                         # 架构、ADR、标准、交接文档
-├── docker-compose.yml            # web + caddy 编排
-├── Dockerfile                    # Python 3.13 + Node 22 双运行时镜像
+├── _archive/部署-已下线/          # 部署件归档（Dockerfile / docker-compose.yml / Caddyfile / .dockerignore / ops/；线上实例已于 2026-10-01 下线）
 ├── .env.example                  # 环境变量模板
 └── README.md
 ```
@@ -646,7 +645,9 @@ cd backend
 python -m pytest -q
 ```
 
-### Docker 部署
+### 历史上线形态（已下线）
+
+> ⚠️ **线上实例已于 2026-10-01 永久下线**（服务器不再续费）：部署件（`Dockerfile` / `docker-compose.yml` / `Caddyfile` / `.dockerignore` / `ops/`）已归档到 `_archive/部署-已下线/`，**需要自部署时从归档取回**。以下为**历史上线形态**：
 
 ```bash
 docker-compose up -d
@@ -654,6 +655,16 @@ docker-compose up -d
 
 - `web` 服务：Python+Node 双运行时镜像，挂载 `/opt/mingli/data` 持久化 SQLite。
 - `caddy` 服务：HTTPS 反代到 web（172.28.0.10:8000）。
+
+### 本地怎么起（现行）
+
+```bash
+start.bat
+# 或
+cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+→ 前端 http://localhost:8000 ｜ API 文档 http://localhost:8000/docs ｜ 运行形态 `web`（本地自用；步骤见上方「本地启动」）。
 
 ---
 
