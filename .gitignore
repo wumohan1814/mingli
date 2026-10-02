@@ -16,6 +16,15 @@ frontend/dist/
 .env
 token.txt
 
+# 节166：单机形态的**运行时密钥**与**本地大模型配置**（由 apk/pysrc/apk_asgi.py 落盘）。
+# ⚠️ 这两样在 `HOME` 不可用时会把落点退到**当前工作目录**，所以在仓库根跑调试脚本
+#    时会掉进仓库里 —— 必须忽略，绝不能提交：
+#      jwt_secret = 签发 token 的 HS256 对称密钥（泄露 = 可伪造任意用户）
+#      llm.json   = 用户自填的大模型接口地址 / API Key / 型号
+#    （在 APK 里它们落在 <filesDir>，与仓库无关；这条规则专防「开发机上跑出来」的那份。）
+jwt_secret
+llm.json
+
 # 数据库（SQLite 本地文件，任何位置）
 *.db
 *.db-shm

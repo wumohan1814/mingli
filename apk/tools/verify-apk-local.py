@@ -77,6 +77,8 @@ def main() -> int:
             return 2
 
     fake_home = Path(tempfile.mkdtemp(prefix="mingli-apk-local-"))
+    # 记录「本次运行之前」仓库根有没有 jwt_secret / llm.json —— 判据 11 只查新增，不误伤使用者已有文件
+    _pre_existing = {n for n in ("jwt_secret", "llm.json") if (REPO_ROOT / n).exists()}
     print("临时 HOME = %s" % fake_home)
     print("=" * 70)
 
@@ -202,6 +204,17 @@ def main() -> int:
     thread.join(timeout=10)
     check(not thread.is_alive(), "uvicorn 已在后台线程内正常退出",
           "（信号处理器守卫有效，未因 signal only works in main thread 崩溃）")
+
+    # ---- 11) 敏感文件不能掉进仓库（回归护栏）----
+    # `apk_asgi.home_dir()` 在 `HOME` 不可用时会把落点退到 **当前工作目录**，于是
+    # 「忘了设 HOME」的调试运行会把 jwt_secret / llm.json 落进仓库（实测掉在仓库根过一次）。
+    # 本判据只查「本次运行有没有**新**落盘」——不误伤使用者自己已有的文件。
+    print("\n[11] 敏感文件没有掉进仓库（回归护栏）")
+    for name in ("jwt_secret", "llm.json"):
+        created = (REPO_ROOT / name).exists() and name not in _pre_existing
+        check(not created,
+              "仓库根没有被写出 %s" % name,
+              "**本脚本刚把它写进了仓库！检查 apk_asgi.home_dir() 的 HOME 回退逻辑**" if created else "")
 
     # ---- 汇总 ----
     if not args.keep:
