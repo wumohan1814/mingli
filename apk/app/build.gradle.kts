@@ -112,6 +112,24 @@ chaquopy {
             install("python-multipart") // 文件上传（后台上传素材）
             install("apscheduler")      // 定时任务
             install("pillow")           // 图片处理（Chaquopy 索引有 11.0.0 预编译包）
+            /*
+             * 🔴 `python-jose` —— **节166 真机事故的根因，务必保留**。
+             *
+             * `app/auth/router.py` 与 `app/admin/auth.py` 都在**模块级** `from jose import jwt`，
+             * 而 `app/main.py` 会 import 这两个模块 ⇒ **缺它 = `import app.main` 直接失败**
+             * ⇒ `apk_asgi` 起不来 ⇒ 退回纯标准库的 `apk_server`。
+             * 后果不是「报个错」而是**整个后端消失**：前端拿不到 `/api/runtime`，退回
+             * 「Web 版全能力」假设 → **弹出一个单机形态根本没有的登录页**（用户 2026-10-02 真机实测）。
+             *
+             * ⚠️ **为什么当初漏了**：桌面开发机上 `jose` 由系统 Python 提供，本地怎么跑都是绿的；
+             * 而「用改动前后的依赖清单对比来确认没有新增依赖」这种验证**结构上抓不到本来就漏的包**。
+             * 复现/复核方法：造一个只装本文件所列包的环境，跑
+             * `python -c "import app.main"` —— 会精确报出缺哪个（见 apk/tools/verify-apk-local.py 的判据 12）。
+             *
+             * ⚠️ 刻意**不带 `[cryptography]`**：JWT 只用 HS256，hmac/hashlib 足够；
+             * 而 `cryptography` 是 Rust 扩展、没有安卓 wheel（装不上）。
+             */
+            install("python-jose")
             // lunar-python（八字排盘，engine.py 的 `from lunar_python import Solar`）：
             //   PyPI 上**只有 sdist**，而 Chaquopy 的 pip 硬编码 `--only-binary :all:` → 拒收，
             //   实测报 `Could not find a version ... (from versions: none)`。

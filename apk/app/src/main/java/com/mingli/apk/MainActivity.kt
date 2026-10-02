@@ -141,6 +141,15 @@ class MainActivity : Activity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.loadsImagesAutomatically = true
+        // ⚠️ 节166 真机事故修复：**必须把 textZoom 钉在 100**。
+        //
+        // Android 14+（我们 targetSdk=36）起，WebView 会把**系统设置的字体大小**乘到网页文字上。
+        // 而本项目的顶栏是 `position:fixed`（components.css 的 `.topbar`），内容区用**固定 58px**
+        // 上边距给它让位；**顶栏高度却是随字号增长的**（padding 12px + 品牌字 18px 的行高）。
+        // 于是系统字体一旦调大（「大 / 特大」档很常见），顶栏高过 58px → **盖住下面的菜单**
+        // （用户 2026-10-02 真机实测：黑底「命理」大 banner 挡住登录 / 注册按钮）。
+        // ⚠️ **浏览器不会有这个问题**——所以本地怎么测都测不出来，只能靠真机。
+        settings.textZoom = 100
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.setSupportZoom(true)

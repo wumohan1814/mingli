@@ -15,6 +15,7 @@
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET  | `/api/health` | 就绪探针，MainActivity 用它判「Python 侧起来了」。200 恒返回（服务本身存活即 ok） |
+| GET  | `/api/runtime` | **运行形态 + 能力清单**（`mode="apk-local"`）。⚠️ **节166 补**：`docs/standards/08` §4 要求「APK 必须在自己的本地服务上暴露同样的 `/api/runtime`，使前端代码零分叉」——他是**兜底服务**，同样必须答，否则前端会退回「Web 版」假设、弹出登录页（那正是一个实测缺陷） |
 | GET  | `/api/paipan/ping` | **真实排盘**自检：固定输入跑 `/ziwei` + `/divination(qimen)`，证明整链通。成功 200 / 失败 503，都是 JSON |
 | GET  | `/api/paipan/routes` | bundle 暴露的路由清单 + 桥状态 |
 | POST | `/api/paipan/<route>` | **透传**：body 即 payload，`<route>` ∈ `/ziwei /extra /zodiac /tarot /astrology /divination`。与 Node 形态同路径同语义，前端可零改动切换 |
@@ -108,6 +109,28 @@ MIME_TYPES = {
 }
 
 _STARTED_AT = time.time()
+
+#: 单机形态（`apk-local`）能力清单的**降级副本**。
+#:
+#: 单一事实源是 `backend/app/runtime.py` 的 `capabilities()`（经 sync 落到 `python/app/runtime.py`），
+#: 本模块**优先 import 它**。但本模块的定位是「完整后端起不来时的兜底」—— 若 `app.*`
+#: 恰恰就是起不来的原因，那个 import 也会失败。此时必须仍有答案，否则前端会退回
+#: 「Web 版全能力」假设（那是 `runtime.js` 的既有兜底），于是**弹出一个单机形态根本没有的登录页**
+#: —— 这正是用户真机上实测到的缺陷（点「合参」被要求登录）。
+#:
+#: ⚠️ 改 `app/runtime.py` 里 `apk-local` 的取值时**必须同步这份副本**；
+#: `apk/tools/verify-apk-local.py` 有一条判据专门比对两者一致。
+FALLBACK_APK_LOCAL_CAPABILITIES = {
+    "auth": False,
+    "credits": False,
+    "share": False,
+    "admin": True,
+    "prompt_mgmt": True,
+    "asset_mgmt": True,
+    "byo_llm_key": True,
+    "events_report": False,
+    "paipan_local": True,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -232,6 +255,9 @@ class _Handler(BaseHTTPRequestHandler):
         if pathname == "/api/health":
             self._handle_health()
             return
+        if pathname == "/api/runtime":
+            self._handle_runtime()
+            return
         if pathname == "/api/paipan/ping":
             self._handle_ping()
             return
@@ -292,6 +318,38 @@ class _Handler(BaseHTTPRequestHandler):
         }
         self._send_json(200, payload)
 
+    def _handle_runtime(self) -> None:
+        """运行形态 + 能力清单（`docs/standards/08` §4：APK 的本地服务必须暴露同样的接口）。
+
+        优先从**单一事实源** `app/runtime.py` 取；`app.*` 起不来时用**降级副本**
+        （本模块的定位就是「完整后端起不来」，所以这条分支是真实会走到的，不是防御性摆设）。
+        信封与 FastAPI 侧一致：`{"code":0,"message":"ok","data":{...}}`。
+        """
+        mode = os.environ.get("MINGLI_RUNTIME_MODE") or "apk-local"
+        caps = None
+        source = "降级副本（app.runtime 不可用）"
+        try:  # 单一事实源：与 FastAPI 侧同一张表
+            from app.runtime import capabilities as _caps  # type: ignore
+            caps = _caps("apk-local")
+            source = "app.runtime.capabilities"
+        except Exception:  # noqa: BLE001 - app.* 起不来正是本服务的存在理由
+            caps = dict(FALLBACK_APK_LOCAL_CAPABILITIES)
+        payload = {
+            "code": 0,
+            "message": "ok",
+            "data": {
+                "mode": "apk-local",
+                "capabilities": caps,
+                "api_version": None,   # 兜底服务不承载业务 API，无契约版本可言
+                "app_version": None,
+                "served_by": SERVICE_NAME,
+                "capabilities_source": source,
+                "degraded": True,      # 明确告知：**本机完整后端没起来**，业务 API 不可用
+            },
+        }
+        _log("GET /api/runtime -> apk-local（能力来源：%s；degraded=True）" % source)
+        self._send_json(200, payload)
+
     def _handle_routes(self) -> None:
         self._send_json(
             200,
@@ -303,7 +361,6 @@ class _Handler(BaseHTTPRequestHandler):
                 "note": "POST 透传路径与 backend/paipan-node/server.mjs 的路由一一对应。",
             },
         )
-
     # -- API：真实排盘自检 ---------------------------------------------------
 
     def _handle_ping(self) -> None:

@@ -39,6 +39,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import shutil
 import socket
 import sys
@@ -68,9 +69,9 @@ def _free_port() -> int:
 
 
 def _token_exp_days(token: str):
-    """只做 base64 解码读 `exp` 来判断**有效期还剩几天**。
+    """只做 base64 解码读 `exp`，判断**有效期还剩几天**。
 
-    ⚠️ **不验签、不做任何信任判断** —— 这是本地验证脚本，只为断言「有效期足够长」。
+    ⚠️ **不验签、不做任何信任判断** —— 这是本地验证脚本，只为断言「有效期足够长」；
     真正的校验在服务端 `verify_access_token`。
     """
     try:
@@ -80,6 +81,63 @@ def _token_exp_days(token: str):
         return (float(payload["exp"]) - time.time()) / 86400.0
     except Exception:  # noqa: BLE001
         return None
+
+
+#: 顶层 import 名 → PyPI 分发名（**不一致的才需要登记**）
+_MODULE_TO_DIST = {
+    "PIL": "pillow",
+    "lunar_python": "lunar-python",
+    "python_multipart": "python-multipart",
+    "jose": "python-jose",
+}
+
+#: 由上面那些包**传递带入**、因而合法存在但不需要单列的模块。
+#: ⚠️ 新增依赖后若这里报红，**先确认它是不是某包的传递依赖**；是就加进来，不是就补进 build.gradle.kts。
+_TRANSITIVE_OK = {
+    "anyio", "click", "h11", "idna", "typing_extensions", "starlette", "certifi", "httpcore",
+    "tzlocal", "greenlet", "ecdsa", "rsa", "pyasn1", "certifi", "sniffio", "six",
+    "chaquopy_freetype", "chaquopy_libjpeg", "dotenv", "pygments", "brotli",
+}
+
+
+def _declared_pip_install_names() -> set:
+    """从 `apk/app/build.gradle.kts` 的 `pip { install("x") }` 读出包名（规范化为小写分发名）。"""
+    path = REPO_ROOT / "apk" / "app" / "build.gradle.kts"
+    text = path.read_text(encoding="utf-8")
+    names = set()
+    for match in re.finditer(r'install\(\s*"([^"]+)"\s*\)', text):
+        base = re.split(r"[<>=!~ ]", match.group(1).strip())[0].strip().lower()
+        if base:
+            names.add(base)
+    return names
+
+
+def _undeclared_third_party_modules(declared: set) -> set:
+    """把 `app.main` 真正 import 到的第三方顶层包，与「已声明 + 传递依赖」核对，返回缺失集合。
+
+    **这是本次真机事故的回归护栏**：`jose` 从未被声明，桌面靠系统 Python 跑得通，
+    而「改动前后清单对比」这种验证结构上抓不到它 —— 只有正向枚举能抓到。
+    """
+    baseline = set(sys.modules)
+    try:
+        import app.main  # noqa: F401,PLC0415 - 目的就是触发真实 import
+    except Exception as exc:  # noqa: BLE001
+        print("      （注：本机 import app.main 失败：%s: %s —— 判据按「无法枚举」处理）"
+              % (type(exc).__name__, exc))
+        return set()
+
+    found = set()
+    for name in sorted(set(sys.modules) - baseline):
+        module = sys.modules.get(name)
+        origin = getattr(module, "__file__", None) or ""
+        if "site-packages" not in origin and "dist-packages" not in origin:
+            continue
+        top = name.split(".")[0]
+        dist = _MODULE_TO_DIST.get(top, top).lower()
+        if dist in declared or top in _TRANSITIVE_OK:
+            continue
+        found.add(top)
+    return found
 
 
 def main() -> int:
@@ -239,6 +297,22 @@ def main() -> int:
         check(not created,
               "仓库根没有被写出 %s" % name,
               "**本脚本刚把它写进了仓库！检查 apk_asgi.home_dir() 的 HOME 回退逻辑**" if created else "")
+
+    # ---- 12) 依赖完整性（**防真机事故复发的关键判据**）----
+    # 背景（2026-10-02 真机事故）：`python-jose` 从未出现在 build.gradle.kts 的 pip 清单里，
+    # 而 `app/admin/auth.py` 在模块级 `from jose import jwt` ⇒ APK 里 `import app.main` 直接失败
+    # ⇒ `apk_asgi` 起不来 ⇒ 退回纯标准库服务 ⇒ 前端拿不到 /api/runtime、以为自己是 Web 版、
+    # **弹出单机形态根本没有的登录页**。
+    # ⚠️ 当初的验证方法为什么没抓到：靠「改动前后的依赖清单逐字节对比」——**结构上抓不到本来就漏的包**。
+    # 本判据改为**正向枚举**：把 `app.main` 真正 import 到的第三方顶层包，逐个核对是否已在清单/传递依赖里。
+    print("\n[12] 依赖完整性（app.main 用到的第三方包都必须在 APK 的 pip 清单里）")
+    declared = _declared_pip_install_names()
+    check(bool(declared), "能从 build.gradle.kts 解析出 pip 清单", "%d 个: %s"
+          % (len(declared), ", ".join(sorted(declared))))
+    missing = _undeclared_third_party_modules(declared)
+    check(not missing,
+          "app.main 的第三方依赖都已声明（无「桌面能跑、包里没有」的暗依赖）",
+          ("**缺这些包，真机上后端会起不来**：" + ", ".join(sorted(missing))) if missing else "")
 
     # ---- 汇总 ----
     if not args.keep:
