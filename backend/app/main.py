@@ -1,6 +1,7 @@
 """命理 H5 后端（FastAPI 模块化单体 MVP）"""
 import asyncio
 import logging
+import os
 import subprocess
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -345,6 +346,18 @@ for _old_path, _cult in _OLD_HUB_REDIRECTS.items():
     )
 
 # Serve frontend static files at root (after API routes)
-frontend_path = Path("../frontend/public")
+#
+# 节166（2026-10-02）：静态根**必须先看 `MINGLI_WEB_ROOT`**，再退回原来的相对路径。
+#
+# 为什么必须改：原实现是 `Path("../frontend/public")` —— 一个**按进程 cwd 解析的相对路径**，
+# 它对「cwd 恰好是 backend/」的本地自用形态有效，但对单机 APK **必然失效**：
+#   ① 安卓上进程 cwd 不可控（Chaquopy 下不是项目目录）；
+#   ② APK 把前端解包在 `<filesDir>/web`（由 MainActivity 从 assets/web 拷出），
+#      与 `../frontend/public` 无关。
+# 实测（`apk_asgi` 探针，cwd=仓库根）：不读该变量时 `/` 与 `/hecan` 都返回 **404**（应用白屏）。
+#
+# 兼容性：**缺省行为与改前逐字一致**（未设该变量时仍走 `../frontend/public`），
+# 故 web / 本地自用形态零变化。
+frontend_path = Path(os.environ.get("MINGLI_WEB_ROOT") or "../frontend/public")
 if frontend_path.exists():
     app.mount("/", SPAStaticFiles(directory=str(frontend_path), html=True), name="frontend")

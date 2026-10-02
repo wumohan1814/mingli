@@ -77,8 +77,60 @@ chaquopy {
     defaultConfig {
         version = "3.13"
         pip {
-            // POC-0 阶段刻意留空：不装 fastapi/pydantic，避免拖进 pydantic-core 自建 wheel 问题。
-            // 后续阶段在此加 install("fastapi") 等（届时必须同时显式指定 buildPython，见文件顶部说明）。
+            /*
+             * 节166 · P1 探针（2026-10-02，用户拍板走「降 pydantic v1」路线）。
+             *
+             * 为什么必须是这一套：Chaquopy 17 的 pip **硬编码 `--only-binary :all:`，sdist 永不编译**，
+             * 且只传一个 `--platform android_24_arm64_v8a`。所以「没安卓 wheel」= 构建期直接失败。
+             *   - pydantic-core（Rust）：官方索引 404、issue #1326 已关闭且从未产出 v2 wheel
+             *     → `pydantic>=2` 在 APK 里**不可用**
+             *   - pydantic 1.10.22 / SQLAlchemy 是 `py3-none-any` 纯 Python wheel → 可用
+             *   - `uvicorn[standard]` 必失败（uvloop / httptools / watchfiles 无纯 Python wheel）
+             *     → 只能 `install("uvicorn")`（纯 Python h11 兜底）
+             *
+             * 本套已在开发机 Python 3.13.14 上实测功能全通（BaseModel / @validator /
+             * FastAPI 路由 / response_model / 422 校验）。见 `40_节/待办/节166-…md` §二·结论。
+             *
+             * 刻意不装的（免背无用依赖与原生扩展风险）：
+             *   passlib[bcrypt]（auth 用的是 hashlib.pbkdf2_hmac，根本没被使用）
+             *   python-jose[cryptography]（JWT 只需 HS256，hmac/hashlib 足够）
+             *
+             * 先用最小可判定集探针；确认构建期解析通过后，再补 httpx / python-multipart /
+             * apscheduler / pillow / lunar-python（届时同样先核它们的 wheel 标签）。
+             */
+            install("pydantic==1.10.22")
+            install("fastapi<0.119")
+            install("uvicorn")
+            install("sqlalchemy")
+            // P1 第一批（2026-10-02）已在本机构建通过并落盘验证：
+            //   pydantic 1.10.22 / fastapi 0.118.3 / uvicorn 0.54.0 / sqlalchemy 2.1.1
+            //   ＋ starlette 0.48.0 / anyio 4.15.1 / click 8.5.0 / h11 0.16.0 / idna 3.20 / typing_extensions 4.16.0
+            //   全部落在 build/python/pip/debug/common/（纯 Python wheel 的 ABI 无关桶）
+            //   APK 51.06 MB → 58.20 MB
+            // 第二批：补齐后端运行期其余依赖，把「还有没有别的安卓 wheel 缺口」一次问清
+            install("httpx")            // LLM 客户端 / 排盘引擎 HTTP 调用
+            install("python-multipart") // 文件上传（后台上传素材）
+            install("apscheduler")      // 定时任务
+            install("pillow")           // 图片处理（Chaquopy 索引有 11.0.0 预编译包）
+            // lunar-python（八字排盘，engine.py 的 `from lunar_python import Solar`）：
+            //   PyPI 上**只有 sdist**，而 Chaquopy 的 pip 硬编码 `--only-binary :all:` → 拒收，
+            //   实测报 `Could not find a version ... (from versions: none)`。
+            //   它是**纯 Python**，故改为自建一个 `py3-none-any` wheel 随仓库提供（**无需 NDK/Rust**）。
+            //   生成命令（一次性、可复现，升级版本时照做）：
+            //     pip download lunar-python --no-deps -d tmp
+            //     pip wheel tmp/lunar_python-<ver>.tar.gz --no-deps -w apk/app/wheels
+            //   `wheels` 目录用绝对路径传，避免 Chaquopy 相对路径基准不明（实测基准与直觉不一致过）。
+            options("--find-links", file("wheels").absolutePath)
+            install("lunar-python==1.4.8")
+            /*
+             * ⚠️ `lunar-python` **暂不入 pip 列表**（2026-10-02 本机构建实测）：
+             *   `ERROR: Could not find a version that satisfies the requirement lunar-python (from versions: none)`
+             * 原因：它在 PyPI 上**只发 sdist（.tar.gz）、不发 wheel**，而 Chaquopy 的 pip 硬编码
+             *   `--only-binary :all:` → sdist 一律拒收，于是解析阶段直接失败（**不是**它有问题）。
+             * 它是**纯 Python**，所以出路是自建一个 `py3-none-any` wheel（**不需要 NDK/Rust**），
+             * 放到 `apk/wheels/` 再用 `options("--find-links", "wheels")` 引入——待做，见
+             * `40_节/待办/节166-…md`。
+             */
         }
     }
 }
