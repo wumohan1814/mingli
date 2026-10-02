@@ -303,13 +303,34 @@ class MainActivity : Activity() {
                 poller.isDaemon = true
                 poller.start()
 
-                // 自举服务是阻塞式 serve_forever()，占用本线程直到进程结束。
+                // 自举服务是阻塞式的，占用本线程直到进程结束。
+                //
+                // 节166：**优先跑完整后端**（apk_asgi → import app.main:app，静态 / API / admin
+                // 全部由 FastAPI 托管）；它起不来时**回退到 POC-0 的纯标准库服务**
+                // （apk_server：静态 + /api/paipan/*），保证「打开有页面、排盘可用」，不白屏。
+                //
+                // ⚠️ 回退只在 **import / 启动期抛异常**（依赖没装齐、import 失败、端口被占）时发生。
+                //    若 apk_asgi 起得来但**运行中**挂掉，callAttr 正常返回、循环 break，
+                //    不会二次尝试 apk_server —— 此时 8765 端口状态未知，重试更不可靠，
+                //    交给下面把 serviceStarted 置 false 让轮询线程立刻判失败。
                 serviceStarted.set(true)
-                try {
-                    Python.getInstance().getModule("apk_server").callAttr("main")
-                } catch (t: Throwable) {
-                    lastError = t
-                    Log.e(TAG, "apk_server.main() 启动失败", t)
+                val modules = listOf("apk_asgi", "apk_server")
+                var startedModule: String? = null
+                for (name in modules) {
+                    try {
+                        Log.i(TAG, "尝试启动自举服务：$name")
+                        Python.getInstance().getModule(name).callAttr("main")
+                        startedModule = name
+                        break
+                    } catch (t: Throwable) {
+                        lastError = t
+                        Log.e(TAG, "$name.main() 启动失败，尝试下一个", t)
+                    }
+                }
+                if (startedModule == null) {
+                    Log.e(TAG, "所有自举服务都启动失败：$modules")
+                } else {
+                    Log.i(TAG, "自举服务已退出：$startedModule")
                 }
                 // main() 返回 = 服务已退出，它不可能再就绪了；标记后唤醒轮询线程立刻判失败，
                 // 不必再干等满 20 秒。
