@@ -102,6 +102,11 @@ def home_dir() -> Path:
     **写进进程当前目录** —— 而安卓上 cwd 不可控、桌面上 cwd 可能是项目根，
     结果是配置散落在意料之外的位置、排查极难（当时 `jwt_secret` 被写进了仓库根）。
     建不出来才退回 cwd，且**大声告警**。
+
+    ⚠️ **`HOME` 完全未设置时同样退回 cwd，也**大声告警**（2026-10-02 补）**：
+    Windows **默认不设 `HOME`（用的是 `USERPROFILE`）**，所以这条**在桌面上是常态、不是罕见分支**
+    —— 它正是当初把密钥写进仓库根的那条路径。**桌面调试请显式设 `HOME`**
+    （`apk/tools/verify-apk-local.py` 就是这么做的：建临时目录并注入）。
     """
     home = os.environ.get("HOME")
     if home:
@@ -115,6 +120,10 @@ def home_dir() -> Path:
         except OSError as exc:
             _log("⚠️ HOME=%s 不可用且建不出来（%s: %s）→ **退回 cwd=%s**；"
                  "配置将落在当前目录，请检查！" % (home, type(exc).__name__, exc, Path.cwd()))
+    else:
+        _log("⚠️ 未设置 HOME → **退回 cwd=%s**；`jwt_secret` / `llm.json` / 三库都会落在"
+             "当前目录（在仓库里跑就会落进仓库 —— 已在 .gitignore 兜住，但请先设 HOME）"
+             % Path.cwd())
     return Path.cwd()
 
 
