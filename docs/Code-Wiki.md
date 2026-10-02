@@ -51,11 +51,11 @@
 | 层 | 技术 | 说明 |
 |---|---|---|
 | 后端 | Python 3.13 + FastAPI | 单进程单端口 **8000**，同时服务 `/api` 与前端静态文件 |
-| 前端 | 免构建 CDN React 18（**JSX 已预编译为普通 JS，无 Babel 实时转译**） | 权威入口 `frontend/public/index.html`（节110 解耦后 = **入口壳 ~1,380 行** + `js/*.js` + `css/*.css`）；旧 Vite+TS 源码已归档 `_archive/前端-vite-ts-参考实现/` |
+| 前端 | 免构建 CDN React 18（**JSX 已预编译为普通 JS，无 Babel 实时转译**） | 权威入口 `frontend/public/index.html`（节110 解耦后 = **入口壳 ~1,380 行** + `js/*.js` + `css/*.css`）；旧 Vite+TS 源码已移出本仓库（本地保留），不参与运行 |
 | 数据库 | SQLite（三库） | `mingli_analytics` / `mingli_feedback` / `mingli_ops`，位于 `data/*.db` |
 | 排盘 | lunar-python + Node 22 子进程 | 八字等走 lunar-python；紫微/占星/七政/奇门/五运六气走 `paipan-node/` |
 | LLM | DeepSeek（`deepseek-v4-flash`） | OpenAI 兼容；key 只走系统环境变量 `MINGLI_LLM_API_KEY`（项目内零 key 文件） |
-| 部署 | **已下线（2026-10-01）**：历史为 Docker 单镜像（Python+Node 双运行时）+ Caddy | 线上实例已永久下线（服务器不再续费），部署件归档 `_archive/部署-已下线/`；现只保留**本地自用**（`start.bat` → http://localhost:8000，形态 `web`）与**单机 APK**（`apk/`，形态 `apk-local`，数据在设备本地） |
+| 部署 | **已下线（2026-10-01）**：历史为 Docker 单镜像（Python+Node 双运行时）+ Caddy | 线上实例已永久下线（服务器不再续费），部署件已随下线移出本仓库（本地保留）；现只保留**本地自用**（`start.bat` → http://localhost:8000，形态 `web`）与**单机 APK**（`apk/`，形态 `apk-local`，数据在设备本地） |
 
 ### 目录结构
 
@@ -97,10 +97,9 @@ mingli/
 │   │   ├── js/                   # 解耦视图/组件（节110；已预编译普通 JS，禁写 JSX）
 │   │   ├── css/                  # tokens / components / pages
 │   │   └── vendor/               # 本地化 React / ReactDOM（Babel 已移除）
-│   └── （src/ 旧 Vite+TS 源码已归档 _archive/前端-vite-ts-参考实现/）
+│   └── （src/ 旧 Vite+TS 源码已移出本仓库，不参与运行）
 ├── data/                         # 数据目录（migrations/schema/seeds，git 忽略 *.db）
-├── docs/                         # 架构、ADR、标准、交接文档
-├── _archive/部署-已下线/          # 部署件归档（Dockerfile / docker-compose.yml / Caddyfile / .dockerignore / ops/；线上实例已于 2026-10-01 下线）
+├── docs/                         # 架构设计 / Code-Wiki / standards 规范 / legal 合规 / runbooks
 ├── .env.example                  # 环境变量模板
 └── README.md
 ```
@@ -647,7 +646,7 @@ python -m pytest -q
 
 ### 历史上线形态（已下线）
 
-> ⚠️ **线上实例已于 2026-10-01 永久下线**（服务器不再续费）：部署件（`Dockerfile` / `docker-compose.yml` / `Caddyfile` / `.dockerignore` / `ops/`）已归档到 `_archive/部署-已下线/`，**需要自部署时从归档取回**。以下为**历史上线形态**：
+> ⚠️ **线上实例已于 2026-10-01 永久下线**（服务器不再续费）：部署件（`Dockerfile` / `docker-compose.yml` / `Caddyfile` / `.dockerignore` / `ops/`）已随下线**移出本仓库**（本地保留）；重新自托管需自行按 FastAPI + Node 双运行时的要求编写。以下为**历史上线形态**：
 
 ```bash
 docker-compose up -d
@@ -695,7 +694,7 @@ cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ### 前端红线
 
-- 权威入口只有 `frontend/public/index.html`（+ `admin.html`）；旧 `frontend/src/`（Vite+TS）已归档 `_archive/前端-vite-ts-参考实现/`。
+- 权威入口只有 `frontend/public/index.html`（+ `admin.html`）；旧 `frontend/src/`（Vite+TS）已移出本仓库（本地保留），不参与运行。
 - 拆出的 `frontend/public/js/*.js` 只放**已预编译的普通 JS**，**禁止再写 JSX**（`precompile.js` 门禁会扫描并拒绝含 JSX 的文件）。
 - 静态资源必须根绝对路径 `/vendor/*`，禁止相对路径。
 - 改 JSX 后须跑 `node frontend/scripts/precompile.js`。
@@ -721,4 +720,4 @@ cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 | 0008 | JWT 算法采用 HS256 |
 | 0009 | 横向扩展技术路线 |
 
-详见 `docs/adr/`。
+ADR 速查索引见 `docs/架构设计.md` §0.2；ADR 原文已移出本仓库（本地保留）。
