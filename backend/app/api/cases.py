@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, validator
 from typing import Optional
 
 from app.database import get_analytics_db
@@ -169,7 +169,7 @@ class CaseContactFields(BaseModel):
     phone: Optional[str] = None
     email: Optional[str] = None
 
-    @field_validator("phone")
+    @validator("phone")
     @classmethod
     def _validate_phone(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
@@ -181,7 +181,7 @@ class CaseContactFields(BaseModel):
             raise ValueError("手机号须为 11 位数字")
         return v
 
-    @field_validator("email")
+    @validator("email")
     @classmethod
     def _validate_email(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
@@ -269,7 +269,7 @@ async def create_case(
     # input_json 仅落建档表单的出生/性别/主问等原字段
     case = Case(
         user_id=user_id,
-        input_json=req.model_dump(exclude={"phone", "email"}),
+        input_json=req.dict(exclude={"phone", "email"}),
         phone=req.phone,
         email=req.email,
         status=CaseStatus.created,
@@ -996,14 +996,14 @@ async def rename_case(
     user_id = get_user_id_from_token(authorization)
     case = _get_owned_case(db, case_id, user_id)
 
-    if "name" in req.model_fields_set:
+    if "name" in req.__fields_set__:
         case.name = req.name
-    if "phone" in req.model_fields_set:
+    if "phone" in req.__fields_set__:
         case.phone = req.phone
-    if "email" in req.model_fields_set:
+    if "email" in req.__fields_set__:
         case.email = req.email
     # REQ-113③：手动切换默认档案（先清后设，同一事务；同步 session 内的 case 对象）
-    if "set_default" in req.model_fields_set:
+    if "set_default" in req.__fields_set__:
         if req.set_default:
             db.query(Case).filter_by(user_id=user_id).update(
                 {"default": False}, synchronize_session=False

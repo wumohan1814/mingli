@@ -1,11 +1,14 @@
-"""应用配置（pydantic-settings，从环境变量/.env加载）"""
-from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings
+"""应用配置（pydantic v1 的 BaseSettings，从环境变量/.env 加载）"""
+from pydantic import Field, validator
+from pydantic import BaseSettings
 from pathlib import Path
 
 
 class Settings(BaseSettings):
-    model_config = {"env_prefix": "MINGLI_", "env_file": ".env", "extra": "ignore"}
+    class Config:
+        env_prefix = "MINGLI_"
+        env_file = ".env"
+        extra = "ignore"
 
     # 数据库
     db_path: str = str(Path("data/mingli_analytics.db"))
@@ -32,7 +35,7 @@ class Settings(BaseSettings):
     access_token_ttl: int = 1800
     refresh_token_ttl: int = 604800
 
-    @field_validator("jwt_secret")
+    @validator("jwt_secret")
     @classmethod
     def _require_strong_jwt_secret(cls, v: str) -> str:
         weak = {
@@ -50,7 +53,7 @@ class Settings(BaseSettings):
     # Agent 运维接入（REQ-050）：OpenClaw Agent 专用静态 token，独立于 admin 账号密码/JWT
     # key 只允许来自环境变量/backend/.env（MINGLI_AGENT_TOKEN），严禁硬编码进源码；
     # 空 = 禁用 /admin/agent/*（require_agent 一律 401 拒绝，防误开）
-    agent_api_token: str = Field(default="", validation_alias="MINGLI_AGENT_TOKEN")  # MINGLI_AGENT_TOKEN
+    agent_api_token: str = Field(default="", env="MINGLI_AGENT_TOKEN")  # MINGLI_AGENT_TOKEN
 
     # 成本闸门
     cost_gate_mode: str = "full"
@@ -72,7 +75,7 @@ class Settings(BaseSettings):
     # 新账号只能由后台「新增 C 端用户」创建；测试环境在 conftest 里置 true 以便造数。
     allow_public_register: bool = False     # MINGLI_ALLOW_PUBLIC_REGISTER
     # alias 使环境变量名为 MINGLI_FREE_CREDIT（与字段名 free_credit_on_register 不完全对应）
-    free_credit_on_register: int = Field(default=220, validation_alias="MINGLI_FREE_CREDIT")  # 新用户注册赠送余额（220 存储单位 = 22 元 = 22 万 tokens ≈ 9盘首跑 + 3次追问）
+    free_credit_on_register: int = Field(default=220, env="MINGLI_FREE_CREDIT")  # 新用户注册赠送余额（220 存储单位 = 22 元 = 22 万 tokens ≈ 9盘首跑 + 3次追问）
     recharge_rate: float = 10.0             # MINGLI_RECHARGE_RATE：1 元 = 10 存储单位（默认，后台 system_configs 可动态改）
 
     # 节146：金数据充值（jinshuju_* 9 项配置）已随付款充值链路整条拆除。

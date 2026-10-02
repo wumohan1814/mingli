@@ -229,7 +229,7 @@ def submit_case_via_share(
     case = Case(
         user_id=owner.id,
         name=name,
-        input_json=body.model_dump(exclude={"name", "phone", "email"}),
+        input_json=body.dict(exclude={"name", "phone", "email"}),
         phone=body.phone,
         email=body.email,
         status=CaseStatus.created,

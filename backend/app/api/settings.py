@@ -11,7 +11,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Header
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, validator
 from sqlalchemy.orm import Session
 
 from app.auth.router import get_user_id_from_token
@@ -60,8 +60,7 @@ class SettingsUpdateRequest(BaseModel):
     card_images: Optional[bool] = None        # ⑥牌面图片显示
     agent_enabled: Optional[bool] = None      # ⑦王先生 Agent
 
-    @field_validator("default_mode")
-    @classmethod
+    @validator("default_mode")
     def _validate_default_mode(cls, v: Optional[str]) -> Optional[str]:
         if v is not None and v not in _DEFAULT_MODE_VALUES:
             raise ValueError("default_mode 仅支持 manual/auto/both")
@@ -90,7 +89,7 @@ def put_settings(
     user_id = get_user_id_from_token(authorization)
 
     # 显式给出且非 null 的字段才算“要写”的字段
-    provided = [f for f in req.model_fields_set if getattr(req, f) is not None]
+    provided = [f for f in req.__fields_set__ if getattr(req, f) is not None]
     if not provided:
         # 空 body / 全 null：无更新语义。不建行（GET 同样不因读取落库），
         # 返回当前设置，避免一次误发的空 PUT 凭空建出一行纯默认记录。

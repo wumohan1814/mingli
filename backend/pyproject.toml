@@ -8,19 +8,36 @@ version = "0.1.0"
 description = "命理 H5 后端（模块化单体 MVP）"
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.115.0",
-    "uvicorn[standard]>=0.32.0",
+    # ---------------------------------------------------------------------
+    # 节166（2026-10-02，用户拍板）：为「完整后端能进安卓包」降到 pydantic v1。
+    #
+    # 为什么必须降：Chaquopy 的 pip **硬编码 `--only-binary :all:`（sdist 永不编译）**，
+    # 而 `pydantic>=2` 依赖 `pydantic-core`（Rust 扩展）——官方索引 `/pydantic-core/` 是 404，
+    # 上游 issue 已关闭且从未产出过安卓 wheel → `pydantic>=2` 在 APK 里**构建期直接失败**。
+    # `pydantic 1.10.22` 是 `py3-none-any` 纯 Python wheel，已在安卓包与本机双重实测通过。
+    #
+    # 代价（用户已知情并接受）：pydantic v1 已停止功能维护；FastAPI 0.119+ 起把 v1 标为
+    # deprecated，故 fastapi 钉在 <0.119。项目现存交付形态只剩「本地自用 + 单机 APK」，
+    # 已无多租户生产服务，故「跟上现代栈」的实际价值远小于「拿到一个能独立运行的应用」。
+    # 完整依据与实测证据见 `40_节/待办/节166-胖APK独立运行与本地大模型接入.md` §二·结论。
+    #
+    # 若将来上游为 pydantic-core 发布了 `android_24_arm64_v8a` wheel，可升回 v2
+    #（复查时**务必核 wheel 标签里的 API level**，否则解析会静默失败）。
+    # ---------------------------------------------------------------------
+    "fastapi>=0.115.0,<0.119.0",
+    "uvicorn>=0.32.0",              # ⚠️ 刻意不带 [standard]：uvloop / httptools / watchfiles 无纯 Python wheel
     "sqlalchemy>=2.0.0",
     "alembic>=1.14.0",
-    "pydantic>=2.0.0",
-    "pydantic-settings>=2.0.0",
-    "python-jose[cryptography]>=3.3.0",
-    "passlib[bcrypt]>=1.7.4",
+    "pydantic>=1.10.20,<2.0.0",     # v1 的 BaseSettings 在 pydantic 本体里 → 不再需要 pydantic-settings
+    "python-jose>=3.3.0",           # ⚠️ 刻意不带 [cryptography]：JWT 只用 HS256，hmac/hashlib 足够；cryptography 是 Rust 扩展且无安卓 wheel
     "httpx>=0.28.0",
-    "lunar-python>=1.4.8",
+    "lunar-python>=1.4.8",          # ⚠️ PyPI 上只发 sdist → APK 侧用自建 wheel（见 apk/app/wheels/）
     "python-multipart>=0.0.12",
     "apscheduler>=3.10.0",
     "pillow>=10.0.0",
+    # 已删除（节166，理由都是「根本没被使用」而非「装不上」）：
+    #   passlib[bcrypt] —— app/auth/router.py 用的是 hashlib.pbkdf2_hmac，全仓零 import
+    #   pydantic-settings —— v1 不需要
 ]
 
 [project.optional-dependencies]

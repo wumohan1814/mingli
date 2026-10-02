@@ -34,7 +34,7 @@ PYTHON_MIN = (3, 11)
 # 运行时必需 import（app 实际 import 到的顶层包）
 RUNTIME_MODULES = [
     "fastapi", "uvicorn", "sqlalchemy", "alembic", "pydantic",
-    "pydantic_settings", "jose", "cryptography", "httpx", "lunar_python",
+    "pydantic", "jose", "httpx", "lunar_python",
     "multipart", "apscheduler", "PIL",
 ]
 TEST_MODULES = ["pytest", "pytest_asyncio"]
