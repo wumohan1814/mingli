@@ -12,6 +12,7 @@ import logging
 import httpx
 
 from ..config import settings
+from ..runtime import capabilities
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,11 @@ async def chat(
     {"content": str, "usage": {"prompt_tokens": int, "completion_tokens": int, "total_tokens": int}, "model": str}
     """
     if not settings.llm_api_key:
+        # 节166：单机形态（`byo_llm_key`）下 Key 由**用户在应用内自填**，所以这条报错要
+        # 指路而不是报变量名 —— 它是所有 AI 解读入口的**单点**（每个调用方都把 LLMError
+        # 的 message 透传给用户），于是「未配置时的引导」只在这一处实现就够了。
+        if capabilities().get("byo_llm_key"):
+            raise LLMError("尚未配置大模型 API：请到「设置 · 大模型接入」填写接口地址与 API Key")
         raise LLMError("未配置 MINGLI_LLM_API_KEY")
 
     api_key = settings.llm_api_key

@@ -50,6 +50,18 @@ logger = logging.getLogger(__name__)
 #: 单机形态固定使用的本地用户名（只此一个，永不参与登录）
 LOCAL_USERNAME = "local"
 
+#: 本机 token 的有效期：**30 天**。
+#:
+#: **为什么不用 `settings.access_token_ttl`（默认 1800 秒 = 30 分钟）**：
+#: 单机形态**没有登录页** —— token 一过期，前端 `api()` 的 401 分支就会清 token
+#: 并跳登录页，而单机形态根本没有那个页面，等于**死路**（实测缺口）。
+#: 而一次断前尘 / 合参流程本身就可能跑几分钟，30 分钟的窗口在真实使用里会被跨过。
+#:
+#: 本机 token 也不是「一次登录会话」那个语义：它**每次启动都会被重新签发**，
+#: 且**只能从回环地址取到**（见 `local_session_allowed`），所以给它一个足够长的
+#: 有效期、把「用着用着突然卡住」这一整类问题消掉，是更合适的设计。
+LOCAL_TOKEN_TTL_SECONDS = 30 * 24 * 3600
+
 _LOOPBACK_HOSTNAMES = frozenset({"localhost", "localhost.localdomain"})
 
 
@@ -111,7 +123,7 @@ def issue_local_token(client_host: Optional[str]) -> Optional[str]:
         return None
     db = AnalyticsSession()
     try:
-        return create_access_token(ensure_local_user(db))
+        return create_access_token(ensure_local_user(db), LOCAL_TOKEN_TTL_SECONDS)
     except Exception as exc:  # noqa: BLE001
         logger.warning("单机形态：签发本机 token 失败（按未登录处理）：%s: %s",
                        type(exc).__name__, exc)

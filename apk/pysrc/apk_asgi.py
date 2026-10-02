@@ -52,6 +52,7 @@ __all__ = [
     "DEFAULT_PORT",
     "DEFAULT_HOST",
     "LLM_CONFIG_FILENAME",
+    "LLM_CONFIG_PATH_ENV_VAR",
     "JWT_SECRET_FILENAME",
     "home_dir",
     "llm_config_path",
@@ -69,6 +70,11 @@ DEFAULT_PORT = 8765
 DEFAULT_HOST = "127.0.0.1"
 
 LLM_CONFIG_FILENAME = "llm.json"
+
+#: 指向配置落点的环境变量名。**必须与 `backend/app/llm/local_config.py` 的
+#: `PATH_ENV_VAR` 逐字一致** —— 这是「两边读写同一个文件」的全部机制。
+LLM_CONFIG_PATH_ENV_VAR = "MINGLI_LLM_CONFIG_PATH"
+
 JWT_SECRET_FILENAME = "jwt_secret"
 WEB_DIRNAME = "web"
 DATA_DIRNAME = "data"
@@ -89,14 +95,41 @@ def _log(message: str) -> None:
 # ---------------------------------------------------------------------------
 
 def home_dir() -> Path:
-    """应用私有目录。Chaquopy 下 `HOME` = `context.getFilesDir()`；桌面调试时退化到 cwd。"""
+    """应用私有目录。Chaquopy 下 `HOME` = `context.getFilesDir()`；桌面调试时退化到 cwd。
+
+    ⚠️ **`HOME` 指了一个不存在的目录时，先试着建出来，而不是直接退回 cwd。**
+    为什么（2026-10-02 实测踩到）：退回 cwd 会把 `jwt_secret` / `llm.json` / 三库
+    **写进进程当前目录** —— 而安卓上 cwd 不可控、桌面上 cwd 可能是项目根，
+    结果是配置散落在意料之外的位置、排查极难（当时 `jwt_secret` 被写进了仓库根）。
+    建不出来才退回 cwd，且**大声告警**。
+    """
     home = os.environ.get("HOME")
-    if home and os.path.isdir(home):
-        return Path(home)
+    if home:
+        path = Path(home)
+        if path.is_dir():
+            return path
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+            _log("HOME 指向的目录不存在，已创建：%s" % path)
+            return path
+        except OSError as exc:
+            _log("⚠️ HOME=%s 不可用且建不出来（%s: %s）→ **退回 cwd=%s**；"
+                 "配置将落在当前目录，请检查！" % (home, type(exc).__name__, exc, Path.cwd()))
     return Path.cwd()
 
 
 def llm_config_path() -> Path:
+    """设备本地「大模型接入」配置的落点。
+
+    ⚠️ **后端必须读同一个文件**：`backend/app/llm/local_config.py` 的优先级是
+    「环境变量 `MINGLI_LLM_CONFIG_PATH` > `<数据目录>/llm.json`」，而本函数的默认是
+    `<HOME>/llm.json` —— **两者默认不是同一个路径**。故 `configure_environment()`
+    会主动把该环境变量设成本函数的返回值，后端据此对齐。
+    改文件名或字段时**必须同步改那边**，否则「设置页改完重启不生效」。
+    """
+    explicit = os.environ.get(LLM_CONFIG_PATH_ENV_VAR)
+    if explicit:
+        return Path(explicit)
     return home_dir() / LLM_CONFIG_FILENAME
 
 
@@ -189,6 +222,11 @@ def configure_environment(
         "MINGLI_FEEDBACK_DB_PATH": str(data_dir / "mingli_feedback.db"),
         "MINGLI_OPS_DB_PATH": str(data_dir / "mingli_ops.db"),
         "MINGLI_JWT_SECRET": _ensure_jwt_secret(),
+        # ⚠️ 必须设这一项：后端 `app/llm/local_config.py` 的默认落点是
+        #    `<数据目录>/llm.json`（= `<HOME>/data/llm.json`），而**本文件的**落点是
+        #    `<HOME>/llm.json` —— 不是同一个文件。把环境变量指过来，两边才读写同一份，
+        #    否则「设置页改完 → 重启 App」读到的还是旧值（改完不生效）。
+        LLM_CONFIG_PATH_ENV_VAR: str(llm_config_path()),
         # 安卓上没有 Node：排盘不走 Node 常驻服务（第三路见下方 TODO）
         "MINGLI_NODE_BIN": os.environ.get("MINGLI_NODE_BIN", ""),
     }

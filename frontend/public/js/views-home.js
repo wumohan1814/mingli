@@ -352,6 +352,14 @@ function ExplorePage({
 
 // —— 余额系统组件（沿用国学皮肤令牌，不新增配色）——
 
+/* 节166：**能力判定单点**。形态差异一律只从这里问，禁止在渲染里散写
+   `if (mode === 'apk-local')` 这类判断（docs/standards/08 §2.3 的硬纪律）。
+   取不到 ML_RUNTIME（极老浏览器 / 脚本被拦）时返回 false → 按「无该能力」降级，
+   最坏是不渲染某块 UI，不会白屏。 */
+function capHas(cap) {
+  return !!(window.ML_RUNTIME && window.ML_RUNTIME.has(cap));
+}
+
 // 余额胶囊：自拉数据，loading 骨架，余额≤0 红字警示；点击进明细页
 function CreditBalance({
   onClick
@@ -362,10 +370,11 @@ function CreditBalance({
     let alive = true;
     (async () => {
       try {
-        const res = await api('/credits/balance');
-        const b = res.data && res.data.balance != null ? res.data.balance : res.balance;
+        // 复用全局 fetchCreditBalance()（它自己已按 credits 能力做了门禁）——
+        // 原来这里另写了一份 /credits/balance 请求，属重复实现（铁律 8：优先删机制）。
+        const b = await fetchCreditBalance();
         if (alive) {
-          setBalance(b != null ? Number(b) : null);
+          setBalance(b);
           setLoading(false);
         }
       } catch (e) {
@@ -376,6 +385,8 @@ function CreditBalance({
       alive = false;
     };
   }, []);
+  // 节166：单机形态无余额概念 → 整块不渲染（放在 hooks 之后，不破坏 hooks 顺序）
+  if (!capHas('credits')) return null;
   if (loading) return /*#__PURE__*/React.createElement("div", {
     className: "credit-pill skeleton",
     "aria-label": ML_COPY.ui.balance.loading
@@ -508,6 +519,12 @@ function usePaySufficient() {
   return enough;
 }
 function payBadge(enabled) {
+  /* 节166：单机形态（无 credits 能力）→ **不渲染「¥ 消耗」角标**。
+     这是全站 20 处付费角标的**单点**（各视图都调本函数）：
+     单机形态用的是用户自己的 API key，余额与扣费概念不存在，角标留着只会误导。
+     返回 null 是安全的 —— 全部调用点都把它放在子元素数组里（如 `['发送', payBadge(x)]`），
+     React 会忽略 null 子元素。 */
+  if (!capHas('credits')) return null;
   const ok = enabled !== false;
   return React.createElement("span", {
     key: 'paybadge',
@@ -549,6 +566,9 @@ function MenuBalance({
       alive = false;
     };
   }, []);
+  // 节166：单机形态无余额概念 → 整块不渲染（放在 hooks 之后，不破坏 hooks 顺序）。
+  // 注意 fetchCreditBalance() 在无 credits 能力时返回 null，若不 gate 这里会显示「余额 --」。
+  if (!capHas('credits')) return null;
   const txt = failed ? '--' : yuan == null ? '…' : yuan.toFixed(2);
   const neg = yuan != null && yuan <= 0;
   return React.createElement("button", {
@@ -1245,12 +1265,18 @@ function TopbarMenu({
     }
     toast(UI_COPY.pwa.install_hint);
   };
-  if (!loggedIn) return /*#__PURE__*/React.createElement("div", {
-    className: "topbar-menu"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "menu-login-btn",
-    onClick: onAuth
-  }, ML_COPY.ui.menu['login-register']));
+  // 节166：单机形态（apk-local）**没有账号体系**（capabilities().auth 为假）→ 不渲染
+  // 「登录 / 注册」入口。本文件此时通常已拿到本机 token（loggedIn 为真）而走下面的分支；
+  // 但若 runtime 尚未返回 / 返回为空 token，落到这里也**不能**把用户引向一个不存在的登录页。
+  if (!loggedIn) {
+    if (!capHas('auth')) return null;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "topbar-menu"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "menu-login-btn",
+      onClick: onAuth
+    }, ML_COPY.ui.menu['login-register']));
+  }
   // REQ-087：已登录 → 余额（¥，余额÷汇率换算）不再直接显示在 Banner，移入右上角菜单面板最顶部；点击进余额明细
   return /*#__PURE__*/React.createElement("div", {
     className: "topbar-menu",
@@ -1322,9 +1348,11 @@ function TopbarMenu({
     className: "mi-dot install-dot"
   }), UI_COPY.pwa.install_app, pwaState !== 'plain' && /*#__PURE__*/React.createElement("span", {
     className: "mi-tag"
-  }, pwaState === 'ready' ? UI_COPY.pwa.state_ready : UI_COPY.pwa.state_installed)), /*#__PURE__*/React.createElement("div", {
+  }, pwaState === 'ready' ? UI_COPY.pwa.state_ready : UI_COPY.pwa.state_installed)), /* 节166：单机形态没有账号体系 → 「退出登录」与它的分隔线一并**不渲染**
+     （单机根本没登录过，也就无从退出；留着只会让用户困惑）。 */
+  capHas('auth') && /*#__PURE__*/React.createElement("div", {
     className: "menu-sep"
-  }), /*#__PURE__*/React.createElement("button", {
+  }), capHas('auth') && /*#__PURE__*/React.createElement("button", {
     className: "menu-item logout",
     role: "menuitem",
     onClick: () => {
@@ -1339,6 +1367,184 @@ function TopbarMenu({
 // ④分享表单命理 UI ⑤背景图显示 ⑥牌面图片显示 ⑦王先生 Agent（存值 + 暴露 agentEnabled
 // 钩子，入口待 REQ-076 接入）。改动即保存：props.onPatch 本地即时生效，App 防抖 PUT，
 // saveState 展示 已保存 / 保存中… / 失败回退。未登录（访客）只读展示前端默认值。
+/* ===== 节166：应用内「大模型接入」设置卡片（**只在单机形态渲染**） =====
+ *
+ * 为什么需要它：用户原话「胖 APK 中需要有一个地方可以让用户在本地调用 API 去连接大模型」。
+ * APK 不连任何官方服务器 → AI 解读必须走**用户自己的**大模型端点与 Key。
+ *
+ * 契约（后端 backend/app/api/llm_settings.py）：
+ *   GET  /api/llm/settings → {base_url, model, has_key}     ← **绝不回显 key**
+ *   PUT  /api/llm/settings ← {base_url?, api_key?, model?, clear_api_key?}
+ *                            api_key 留空/空串 = 保持不变；清空只走 clear_api_key:true
+ *   POST /api/llm/test     → {ok, detail, latency_ms}       ← 无论成败都 200（那是「结果」不是「错误」）
+ * 三个端点在**非单机形态返回 404**（本组件也不会被渲染，属双保险）。
+ *
+ * 纪律：文案 100% 走 ML_COPY（视图内零硬编码中文）；样式复用既有类（tc-set-* / input / btn），
+ *       不新增任何色值（precompile 有散色门禁）。
+ */
+function LlmSettingsCard() {
+  const C = ML_COPY.ui.llmSettings;
+  const [loaded, setLoaded] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [baseUrl, setBaseUrl] = useState('');
+  const [model, setModel] = useState('');
+  const [keyInput, setKeyInput] = useState('');
+  const [hasKey, setHasKey] = useState(false);
+  const [saveState, setSaveState] = useState('idle'); // idle | saving | ok | failed
+  const [saveMsg, setSaveMsg] = useState('');
+  const [testState, setTestState] = useState('idle'); // idle | testing | ok | failed
+  const [testMsg, setTestMsg] = useState('');
+
+  const applyData = function (d) {
+    const data = d || {};
+    setBaseUrl(data.base_url || '');
+    setModel(data.model || '');
+    setHasKey(!!data.has_key);
+  };
+  const load = function () {
+    setLoadFailed(false);
+    setLoaded(false);
+    api('/llm/settings', { method: 'GET' }).then(function (r) {
+      applyData(r && r.data);
+      setLoaded(true);
+    }).catch(function () {
+      setLoadFailed(true);
+      setLoaded(true);
+    });
+  };
+  useEffect(function () {
+    load();
+  }, []);
+
+  const save = function () {
+    setSaveState('saving');
+    setSaveMsg('');
+    const body = { base_url: baseUrl, model: model };
+    // 只有用户真填了才提交 api_key —— 留空表示「不修改已保存的 Key」（后端同语义）
+    if (keyInput) body.api_key = keyInput;
+    api('/llm/settings', { method: 'PUT', body: JSON.stringify(body) }).then(function (r) {
+      applyData(r && r.data);
+      setKeyInput('');
+      setSaveState('ok');
+      setSaveMsg(C['save-ok']);
+    }).catch(function (e) {
+      setSaveState('failed');
+      setSaveMsg(fmtTpl(C['save-fail'], { detail: (e && e.message) || '' }));
+    });
+  };
+
+  const test = function () {
+    setTestState('testing');
+    setTestMsg('');
+    api('/llm/test', { method: 'POST', timeout: 30000 }).then(function (r) {
+      const d = (r && r.data) || {};
+      setTestState(d.ok ? 'ok' : 'failed');
+      setTestMsg(fmtTpl(d.ok ? C['test-ok-tpl'] : C['test-fail-tpl'], {
+        ms: d.latency_ms != null ? d.latency_ms : 0,
+        detail: d.detail || ''
+      }));
+    }).catch(function (e) {
+      setTestState('failed');
+      setTestMsg(fmtTpl(C['test-fail-tpl'], { detail: (e && e.message) || '' }));
+    });
+  };
+
+  const clearKey = function () {
+    if (!window.confirm(C['clear-confirm'])) return;
+    api('/llm/settings', { method: 'PUT', body: JSON.stringify({ clear_api_key: true }) }).then(function (r) {
+      applyData(r && r.data);
+      setKeyInput('');
+      toast(C['clear-ok']);
+    }).catch(function (e) {
+      toast(fmtTpl(C['save-fail'], { detail: (e && e.message) || '' }));
+    });
+  };
+
+  // 字段行（label + 说明 + 控件）——结构对齐本页既有 tc-set-row
+  const fieldRow = function (name, desc, control) {
+    return React.createElement('div', { className: 'tc-set-row col' },
+      React.createElement('div', { className: 'tc-set-text' },
+        React.createElement('span', { className: 'tc-set-name' }, name),
+        desc ? React.createElement('span', { className: 'tc-set-desc' }, desc) : null),
+      control);
+  };
+  const textInput = function (type, value, placeholder, onChange) {
+    return React.createElement('input', {
+      className: 'input',
+      type: type,
+      value: value,
+      placeholder: placeholder,
+      autoComplete: 'off',
+      spellCheck: false,
+      onChange: function (e) { onChange(e.target.value); },
+      style: { marginBottom: 0 }
+    });
+  };
+
+  const statusCls = saveState === 'failed' ? 'failed' : saveState === 'saving' ? 'saving' : 'ok';
+  const testCls = testState === 'failed' ? 'failed' : testState === 'testing' ? 'saving' : 'ok';
+
+  let body;
+  if (!loaded) {
+    body = React.createElement('div', { className: 'tc-set-desc' }, ML_COPY.ui.balance.loading);
+  } else if (loadFailed) {
+    body = React.createElement('div', { className: 'tc-set-status failed' },
+      React.createElement('span', { className: 'ss-dot' }),
+      React.createElement('span', null, C['load-fail']),
+      React.createElement('button', {
+        className: 'btn btn-outline',
+        type: 'button',
+        style: { width: 'auto', marginLeft: 8 },
+        onClick: load
+      }, ML_COPY.buttons.retry));
+  } else {
+    body = React.createElement(React.Fragment, null,
+      // 配置状态一眼可见（这是「未配置 → AI 不可用」的唯一显式提示位）
+      React.createElement('div', { className: 'tc-set-status ' + (hasKey ? 'ok' : 'failed') },
+        React.createElement('span', { className: 'ss-dot' }),
+        React.createElement('span', null, hasKey ? C['configured'] : C['not-configured'])),
+      fieldRow(C['base-url'], C['base-url-desc'],
+        textInput('text', baseUrl, C['base-url-ph'], setBaseUrl)),
+      fieldRow(C['api-key'], hasKey ? C['api-key-set'] : C['api-key-unset'],
+        textInput('password', keyInput, C['api-key-ph'], setKeyInput)),
+      fieldRow(C['model'], C['model-desc'],
+        textInput('text', model, C['model-ph'], setModel)),
+      React.createElement('div', { className: 'tc-set-opts' },
+        React.createElement('button', {
+          className: 'btn',
+          type: 'button',
+          style: { width: 'auto' },
+          disabled: saveState === 'saving',
+          onClick: save
+        }, saveState === 'saving' ? C['saving'] : C['save']),
+        React.createElement('button', {
+          className: 'btn btn-outline',
+          type: 'button',
+          style: { width: 'auto' },
+          disabled: testState === 'testing',
+          onClick: test
+        }, testState === 'testing' ? C['testing'] : C['test']),
+        hasKey ? React.createElement('button', {
+          className: 'btn btn-outline',
+          type: 'button',
+          style: { width: 'auto' },
+          onClick: clearKey
+        }, C['clear']) : null),
+      saveMsg ? React.createElement('div', { className: 'tc-set-status ' + statusCls },
+        React.createElement('span', { className: 'ss-dot' }),
+        React.createElement('span', null, saveMsg)) : null,
+      testMsg ? React.createElement('div', { className: 'tc-set-status ' + testCls },
+        React.createElement('span', { className: 'ss-dot' }),
+        React.createElement('span', null, testMsg)) : null);
+  }
+
+  return React.createElement('div', { className: 'card tc-set-card' },
+    React.createElement('div', { className: 'hub-title' },
+      React.createElement(Icon, { name: 'spark', size: 22 }), ' ' + C.title),
+    React.createElement('div', { className: 'tc-set-sub' }, C.sub),
+    body);
+}
+
 function SettingsPage({
   settings,
   saveState,
@@ -1433,6 +1639,10 @@ function SettingsPage({
     React.createElement('div', { className: 'tc-set-status ' + saveCls },
       React.createElement('span', { className: 'ss-dot' }),
       React.createElement('span', null, saveTxt)),
+    // 节166：单机形态（apk-local）专属 —— 应用内「大模型接入」。
+    // 判定只走 capHas('byo_llm_key')（standards/08 §2.3：禁止散写形态判断）；
+    // web / apk-client 能力表里该键为假 → 这里不渲染，页面与改动前逐字一致。
+    capHas('byo_llm_key') ? React.createElement(LlmSettingsCard, { key: 'llm-settings' }) : null,
     !loggedIn ? React.createElement('div', { className: 'tc-set-guest' }, UI_COPY.home['guest-note']) : null,
     React.createElement('div', { className: 'back-row' },
       React.createElement('button', { className: 'btn btn-outline', style: { width: 'auto' }, onClick: goBack }, UI_COPY.buttons.back),

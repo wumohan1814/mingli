@@ -27,4 +27,8 @@ APP_VERSION = "0.1.0"
 # `GET /api/jobs/{id}` 响应新增 `label`/`methodKeys`/`reportTitles`（旧键一个未少）。
 # 判据（08 §3.2）：新增端点 / 新增响应字段 / 新增可选参数 → MINOR +1。
 # 无删字段、无改语义、无改响应形状 → 不 MAJOR。
-API_VERSION = "1.1"
+# 1.2：单机形态「大模型接入」（节166，向后兼容的新增）——新增端点
+# `GET/PUT /api/llm/settings` 与 `POST /api/llm/test`（三者在非单机形态返回 404）；
+# `GET /api/runtime` 响应在**单机形态 + 回环来源**下新增可选字段 `local_token`
+# （非单机形态**该键不存在**，响应形状与 1.1 一致）。同判据：新增端点 / 新增字段 → MINOR +1。
+API_VERSION = "1.2"

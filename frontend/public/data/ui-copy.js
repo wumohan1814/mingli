@@ -1278,6 +1278,41 @@ window.ML_COPY = {
       'credit-need-have-tpl': '本次推演约需 ¥{need}，当前余额 ¥{have}。',
       'credit-know-btn': '知道了'
     },
+    // 节166：应用内「大模型接入」设置页文案（**只有单机形态渲染**，见 ML_RUNTIME.has('byo_llm_key')）。
+    // 为什么单机形态需要它：APK 不连任何官方服务器，AI 解读要用户填自己的大模型端点与 Key；
+    // Key 只落设备本机、**永不回显**（界面只显示「已配置 / 未配置」）。
+    llmSettings: {
+      title: '大模型接入',
+      sub: 'AI 解读需要一个大模型（OpenAI 兼容接口）。填你自己的接口地址与 Key，' +
+           '解读就走你自己的账号计费 —— 配置只保存在本机，不上传任何地方。',
+      'not-configured': '尚未配置：AI 解读暂不可用（确定性排盘、起卦不受影响）。',
+      'configured': '已配置：AI 解读可用。',
+      'go-configure': '去配置',
+      // 三个字段
+      'base-url': '接口地址',
+      'base-url-ph': 'https://api.deepseek.com',
+      'base-url-desc': 'OpenAI 兼容端点；多数平台需要带版本路径（如 /v1）。',
+      'api-key': 'API Key',
+      'api-key-ph': '粘贴你的 Key',
+      'api-key-set': '已配置（出于安全不回显；留空 = 不修改）',
+      'api-key-unset': '未配置（留空 = 不修改）',
+      'model': '型号',
+      'model-ph': 'deepseek-v4-flash',
+      'model-desc': '填该平台实际可用的型号名。',
+      // 动作与状态
+      'save': '保存',
+      'saving': '保存中…',
+      'save-ok': '已保存，立即生效（无需重启）',
+      'save-fail': '保存失败：{detail}',
+      'load-fail': '配置读取失败，请重试。',
+      'test': '测试连通',
+      'testing': '测试中…',
+      'test-ok-tpl': '连通成功（{ms} ms）',
+      'test-fail-tpl': '连接失败：{detail}',
+      'clear': '清除 Key',
+      'clear-ok': '已清除 Key',
+      'clear-confirm': '确定要清除已保存的 API Key 吗？清除后 AI 解读将不可用。'
+    },
     // REQ-128 阶段4：AI 对话（agent）UI 文案（节105 阶段5：并入阶段1 框架字 name/talk/chat-title）
     agent: {
       // 框架层界面字（原阶段1 块，因同名键重复被覆盖失效，合并至此）

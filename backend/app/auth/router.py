@@ -60,8 +60,19 @@ class RefreshRequest(BaseModel):
 
 
 # --- JWT 工具函数 ---
-def create_access_token(user_id: int) -> str:
-    expire = datetime.utcnow() + timedelta(seconds=settings.access_token_ttl)
+def create_access_token(user_id: int, ttl_seconds: int | None = None) -> str:
+    """签发 access token。
+
+    `ttl_seconds` 省略时用 `settings.access_token_ttl`（默认 1800 秒 = 30 分钟），
+    **行为与改前逐字一致**。
+
+    **节166 新增该可选参数**：供单机形态（`apk-local`）签发**长期**本机 token 用 ——
+    单机形态没有登录页，token 一过期前端 `api()` 的 401 分支就会清 token 并跳登录页，
+    那是**死路**。调用方可传更长 TTL，而 **payload 形状 / 算法 / 密钥完全不变**，
+    因此 `verify_access_token` 与全部鉴权链路**无需任何改动**。
+    """
+    ttl = settings.access_token_ttl if ttl_seconds is None else int(ttl_seconds)
+    expire = datetime.utcnow() + timedelta(seconds=ttl)
     payload = {"sub": str(user_id), "exp": expire, "type": "access"}
     return jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
 

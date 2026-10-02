@@ -278,6 +278,10 @@ function openPairChooser() {
 
 // 读当前余额（兼容双信封：data.balance 或顶层 balance）—— 余额胶囊与余额明细页共用，保留
 async function fetchCreditBalance() {
+  // 节166：单机形态（apk-local）没有积分/余额这套（`capabilities().credits` 为假，
+  // 见 backend/app/runtime.py 的注释「整条摘除」）→ 直接返回 null，**不发请求**。
+  // 这是所有余额读取的**单点**：改这里就等于关掉全站的余额读取，不必逐处改。
+  if (window.ML_RUNTIME && !window.ML_RUNTIME.has('credits')) return null;
   const r = await api('/credits/balance');
   const b = r && r.data && r.data.balance != null ? r.data.balance : r ? r.balance : null;
   return b == null ? null : Number(b);
@@ -978,6 +982,60 @@ function App() {
         }
       });
     }
+  }, []);
+  // ===== 节166 · 单机形态（apk-local）的**时序补丁** —— 全屏最容易错的一条，写清为什么 =====
+  //
+  // 问题：上面那个 boot effect 只在挂载时**同步**跑一次，而 `data/runtime.js` 取「本机 token」
+  // （`/api/runtime` 的 `local_token`）是一次**异步 fetch**。启动那一刻 localStorage 里还没有
+  // token，于是有两个后果：
+  //   ① `AUTH_REQUIRED_PAGES ... && !token` 会把用户弹去**登录页**，而单机形态**没有登录页**
+  //      （能力表里 auth 为假）→ 用户卡在登录页出不来（看起来像白屏/死循环）；
+  //   ② boot 里那条「带 token 才做」的档案数校验不跑 → 单机用户永远不会被引导去建档。
+  //
+  // 为什么不能在 boot 里直接用 `ML_RUNTIME.has('auth')` 预判：boot 跑的时候 runtime 的
+  // fetch 还没回来，`ML_RUNTIME` 仍是**兜底值**（auth=true）→ 预判必然为真、拦不住重定向。
+  // 所以只能等**权威答案到达后补一次**。`onReady` 在已 settled 时会立即回调，两种时序都覆盖。
+  //
+  // web / apk-client 形态下这段是**空转**（`has('auth')` 为真 → 第一行就返回），
+  // 行为与改动前逐字一致。
+  useEffect(() => {
+    if (!window.ML_RUNTIME || typeof window.ML_RUNTIME.onReady !== 'function') return;
+    window.ML_RUNTIME.onReady(function () {
+      if (window.ML_RUNTIME.has('auth')) return;   // 有账号体系 → 不介入（web / apk-client）
+      if (!token) {
+        let saved = null;
+        try {
+          saved = localStorage.getItem('mingli_token');
+        } catch (e) {
+          saved = null;
+        }
+        if (!saved) return;                        // 单机形态下不该发生；真发生了就维持原样
+        token = saved;
+        try {
+          refreshToken = localStorage.getItem('mingli_refresh_token') || '';
+        } catch (e) {
+          refreshToken = '';
+        }
+      }
+      // ① 刚才「因缺 token 被弹到登录页」的，回到用户本来要去的页。
+      //    `authRedirect` 是模块作用域、只在「未登录撞受限页」时被置位，
+      //    所以用它判断比读组件 state 里的 page 更准（此处闭包里的 page 是挂载时的旧值）。
+      if (authRedirect) {
+        const target = authRedirect.p;
+        const targetParams = authRedirect.p2 || {};
+        authRedirect = null;
+        setPage(target);
+        setParams(targetParams);
+      }
+      // ② 补跑 boot 里那条「带 token 才做」的校验（0 档案 → 引导建档；这是单机用户的必经一步）
+      checkCaseGate().then(() => {
+        if (!token) return;                        // 会话已过期（api() 401 已跳登录页）→ 不覆盖
+        if (forceOnboarding === true) {
+          setPage('onboarding');
+          setParams({});
+        }
+      });
+    });
   }, []);
   useEffect(() => {
     document.documentElement.setAttribute('data-skin', skin);

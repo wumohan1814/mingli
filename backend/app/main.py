@@ -160,6 +160,7 @@ from app.api.cases import router as cases_router
 from app.api.combine import router as combine_router
 from app.api.divination import router as divination_router
 from app.api.jobs import router as jobs_router
+from app.api.llm_settings import router as llm_settings_router
 from app.api.mbti import router as mbti_router
 from app.api.memory import router as memory_router
 from app.api.namer import router as namer_router
@@ -207,6 +208,7 @@ app.include_router(mbti_router)
 app.include_router(pair_router)
 app.include_router(namer_router)
 app.include_router(runtime_router)   # 运行形态 + 版本契约（前端启动即读，无鉴权）
+app.include_router(llm_settings_router)  # 应用内「大模型接入」（节166；仅单机形态，非单机 404）
 app.include_router(settings_router)
 app.include_router(memory_router)
 app.include_router(credits_router)

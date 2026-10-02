@@ -82,8 +82,29 @@
     waiters.push(cb);
   }
 
+  /* 单机形态（apk-local）：后端在 /api/runtime 里顺带下发一个**本机 token**
+     （后端侧见 app/local_session.py：只在「auth 能力为假 + 请求来自回环」时签发）。
+     前端在单机形态下**没有登录入口**，不把它落盘就永远拿不到 token → 所有 /api/* 都会 400。
+
+     关键：写入的键与真实登录**完全同一个**（mingli_token），于是 index.html 的 api()、
+     401 处理、鉴权判断**一行都不用改** —— 这正是「免登录 ≠ 无 token」的落点。
+     非单机形态后端**不下发该键**，本函数直接返回。 */
+  function persistLocalToken(data) {
+    var token = data && data.local_token;
+    if (typeof token !== 'string' || !token) return;
+    try {
+      window.localStorage.setItem('mingli_token', token);
+    } catch (e) {
+      // 隐私模式 / 存储被禁：不阻断渲染（最坏退回「未登录」，由页面给出提示）
+      if (window.console && window.console.warn) {
+        window.console.warn('[ML_RUNTIME] 本机 token 落盘失败（localStorage 不可用）');
+      }
+    }
+  }
+
   function applyServerData(data) {
     if (!data || typeof data.mode !== 'string') return;
+    persistLocalToken(data);
     state.mode = data.mode;
     if (data.capabilities && typeof data.capabilities === 'object') {
       // 只覆盖后端**明确给出**的键：后端新增能力而前端旧版不认识时不丢能力

@@ -31,6 +31,7 @@ from app.database import AnalyticsSession, OpsSession
 from app.errors import ERR_BILLING, ERR_INSUFFICIENT_CREDIT, BizError
 from app.models import CreditAccount, CreditTransaction, SystemConfig
 from app.models.ops import AdminAuditLog
+from app.runtime import capabilities
 
 # 入账类流水允许的 type（recharge/manual/free/refund）
 _RECHARGE_TYPES = ("recharge", "manual", "free", "refund")
@@ -104,7 +105,21 @@ def balance(user_id: int) -> int:
 
 
 def check_balance(user_id: int) -> None:
-    """预检余额：余额 <= 0 抛 BizError(5002 余额不足)，detail 含当前余额。"""
+    """预检余额：余额 <= 0 抛 BizError(5002 余额不足)，detail 含当前余额。
+
+    **节166：单机形态（`apk-local`）下本预检直接放行。**
+    为什么：单机形态用的是**用户自己的大模型 API key**（`byo_llm_key`），
+    花费已在用户自己的账号上结算；再按本机余额拦一道，会让「第一次 AI 解读」
+    就撞 `余额不足` —— 那与「胖 APK 必须能独立运行」直接矛盾。
+    `app/runtime.py` 的 `capabilities()` 注释也写明了该形态「credits 整条摘除」。
+
+    ⚠️ 判定**只走 `capabilities()`**（`docs/standards/08` §2.3：禁止散写 `if mode == ...`）。
+    ⚠️ **只放行预检，不动 `consume`**：用量流水照记（埋点 / 审计不受影响），
+    只是不再有东西因余额而**阻断**流程。web / apk-client 下 `credits` 为真，
+    本函数行为与改动前**逐字一致**。
+    """
+    if not capabilities().get("credits"):
+        return
     session = AnalyticsSession()
     try:
         account = get_account(session, user_id)

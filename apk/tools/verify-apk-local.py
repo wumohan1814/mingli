@@ -36,6 +36,8 @@ Starlette 的 `TestClient` 默认把 ASGI 的 `client` 报成 `("testclient", 50
 from __future__ import annotations
 
 import argparse
+import base64
+import json
 import os
 import shutil
 import socket
@@ -63,6 +65,21 @@ def _free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(("127.0.0.1", 0))
         return int(sock.getsockname()[1])
+
+
+def _token_exp_days(token: str):
+    """只做 base64 解码读 `exp` 来判断**有效期还剩几天**。
+
+    ⚠️ **不验签、不做任何信任判断** —— 这是本地验证脚本，只为断言「有效期足够长」。
+    真正的校验在服务端 `verify_access_token`。
+    """
+    try:
+        payload_b64 = token.split(".")[1]
+        payload_b64 += "=" * (-len(payload_b64) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64))
+        return (float(payload["exp"]) - time.time()) / 86400.0
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def main() -> int:
@@ -143,6 +160,13 @@ def main() -> int:
         print("\n[7] 本机 token（回环来源）")
         token = data.get("local_token") or ""
         check(bool(token), "runtime.data.local_token 存在", "长度 %d" % len(token))
+        # 单机形态**没有登录页**：token 若很快过期，前端 api() 的 401 分支会清 token 并跳
+        # 一个不存在的登录页 = 死路。故断言有效期「远未来」（> 1 天），
+        # 防止有人无意把本机 token 改回 access_token_ttl（默认 30 分钟）。
+        exp_days = _token_exp_days(token)
+        check(exp_days is not None and exp_days > 1.0,
+              "token 有效期 > 1 天（短 TTL 在无登录页的单机形态会卡死）",
+              ("剩余 %.1f 天" % exp_days) if exp_days is not None else "无法解析 exp")
 
         print("\n[8] token 真能用（因果验证）")
         if token:
