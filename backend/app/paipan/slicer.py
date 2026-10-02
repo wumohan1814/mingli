@@ -24,9 +24,10 @@ key → 字段映射（= mingli-reference SKILL.md §0 注册表）：
     qimen-lifetime      → {"qimen_lifetime": chart.qimen_lifetime}
     wuyun-liuqi         → {"wuyun_liuqi": chart.wuyun_liuqi}
 
-节139：`xizhan` 切片已摘除（西占退出九法→八法综合流水线）。chart.json 仍由排盘
-生成 `western` 字段（供档案详情「占星盘」tab 只读展示 + 西式占卜独立链路），
-只是不再切片进 LLM。
+节139：`xizhan` 切片**已摘出缺省切片集**（西占退出九法→八法综合流水线）。chart.json 仍由排盘
+生成 `western` 字段（供档案详情「占星盘」tab 只读展示 + 西式占卜独立链路）。
+合参改造后：`build_fragment("xizhan")` 的映射**保留**，供命盘合参把西占当**可选第 9 法**
+显式点名切片（DEFAULT_METHODS 不含它 → 缺省行为与节139 之后完全一致）。
 """
 
 from __future__ import annotations
@@ -121,6 +122,11 @@ def build_fragment(key: str, chart: dict):
         return {"qimen_lifetime": chart.get("qimen_lifetime")}
     if key == "wuyun-liuqi":
         return {"wuyun_liuqi": chart.get("wuyun_liuqi")}
+    if key == "xizhan":
+        # 节139 把 xizhan 摘出**默认**切片集（DEFAULT_METHODS 里没有它 → 默认流水线
+        # 行为一字不变）；但它的切片映射必须留着：合参第 9 法会**显式点名**
+        # `slice_chart(chart, methods=["xizhan"])`，没有这条就会撞下面的「未知方法 key」。
+        return {"western": chart.get("western")}
     return None
 
 

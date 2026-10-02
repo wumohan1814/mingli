@@ -1236,7 +1236,7 @@ function ArchivePage({
     className: "btn btn-outline",
     onClick: () => onNavigate('landing')
   }, UI_COPY.buttons.back_home)), /* REQ-090 v2：第二行「国学预测 / 西式占卜 / MBTI」三键并列且颜色一致，
-      携带当前档案直达对应模块（八法合一 / 塔罗 / MBTI 均带 caseId 预选当前档案） */
+      携带当前档案直达对应模块（合参 / 塔罗 / MBTI 均带 caseId 预选当前档案） */
   /*#__PURE__*/React.createElement("div", {
     className: "flex-row",
     style: {
@@ -1245,7 +1245,7 @@ function ArchivePage({
     }
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
-    onClick: () => onNavigate('nine-pick', {
+    onClick: () => onNavigate('hecan', {
       caseId
     })
   }, UI_COPY.caseDetail['enter-guoxue']), /*#__PURE__*/React.createElement("button", {
@@ -1885,13 +1885,24 @@ function CasesPage({
 const POLL_MESSAGES = ['算命师傅正推演四柱干支…', '紫微星曜正在排布…', '大运流年逐一推敲…', '神煞纳音细细参详…', '奇门九宫正在起局…', '占星相位正在演算…', '七政躔次正在排定…', '五运六气正在推演…', '师傅正在斟酌格局喜忌…', '命盘已定，正在核验应期…'];
 function WaitingPage({
   caseId,
-  onNavigate
+  onNavigate,
+  methodNames,
+  methodKeys,
+  runLabel
 }) {
+  // 节161：合参页从 GET /api/combine/pools 读出的方法名 / 方法 key 与动态标题随跳转带入
+  // （前端不再写死方法名）；直落本页（无参数）时 names/keys 为空 → 不带方法集提交、
+  // 只画轨道与进度条不画节点，不白屏。
+  const names = Array.isArray(methodNames) ? methodNames.filter(Boolean) : [];
+  const keys = Array.isArray(methodKeys) ? methodKeys.filter(Boolean) : [];
   const [progress, setProgress] = useState(0);
-  const [total, setTotal] = useState(9);
+  const [total, setTotal] = useState(names.length || 0);
   const [status, setStatus] = useState('pending');
   const [errored, setErrored] = useState('');
   const [pollMsg, setPollMsg] = useState(POLL_MESSAGES[0]);
+  // 作业标题（后端 label 为准）+ 是否复用了旧结果（后端 202 的 reused）
+  const [label, setLabel] = useState(runLabel || '');
+  const [reused, setReused] = useState(false);
   const ref = useRef({
     timer: null,
     timeout: null,
@@ -1903,15 +1914,16 @@ function WaitingPage({
     clearTimeout(ref.current.timeout);
   };
 
-  // 轨道动画随真实进度点亮
+  // 轨道动画随真实进度点亮（无方法名清单时只画轨道，不画节点）
   useEffect(() => {
     if (errored) return;
     const svg = document.getElementById('dqcPlate');
     if (svg && !svg.dataset.built) {
-      buildOrbit('dqcPlate', DQC_METHODS);
+      buildOrbit('dqcPlate', names);
       svg.dataset.built = '1';
     }
-    setOrbitProgress('dqcPlate', DQC_METHODS, progress, total || 8);
+    setOrbitProgress('dqcPlate', names, progress, total || names.length || 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress, total, errored, caseId]);
   const start = async () => {
     stop();
@@ -1920,7 +1932,10 @@ function WaitingPage({
     setErrored('');
     setStatus('pending');
     setProgress(0);
-    setTotal(9);
+    setTotal(names.length || 0);
+    setReused(false);
+    // 本次作业标题：以 202 返回的 label 为准，请求前先用跳转带入的 label 兜底
+    let labelNow = runLabel || '';
     setPollMsg(POLL_MESSAGES[Math.floor(Math.random() * POLL_MESSAGES.length)]);
     // 超时按「单法进度」计：每完成一个 method（completed 变化）重新计时；
     // 只有某个 method 卡住超过 10 分钟（进度不动）才超时。
@@ -1935,10 +1950,18 @@ function WaitingPage({
       }, 600000);
     };
     try {
-      const res = await api('/cases/' + caseId + '/duan-qian-chen', {
-        method: 'POST'
-      });
+      // 节161：合参所选方法集随请求体提交（body 可空 —— 未带方法集时后端按默认方法集推演，
+      // 与旧行为一致；后端按方法集指纹判定「复用旧结果」还是「按新选择重开作业」）
+      const dqcBody = keys.length ? { methods: keys } : null;
+      const res = await api('/cases/' + caseId + '/duan-qian-chen',
+        dqcBody ? { method: 'POST', body: JSON.stringify(dqcBody) } : { method: 'POST' });
       const jobId = res.data && res.data.jobId || res.jobId;
+      const rdata = res.data || res;
+      if (rdata && rdata.label) {
+        labelNow = rdata.label;
+        setLabel(labelNow);
+      }
+      if (rdata && rdata.reused) setReused(true);
       resetTimeout();
       let pollDelay = 2000;
       const pollJob = async () => {
@@ -1947,7 +1970,7 @@ function WaitingPage({
           const job = await api('/jobs/' + jobId);
           const data = job.data || job;
           setProgress(data.completed);
-          setTotal(data.total);
+          setTotal(Number(data.total) || names.length || 0);
           setStatus(data.status);
           // 进度推进 → 重新计时 + 换一句等待短句
           if ((data.completed || 0) > (ref.current.lastCompleted || 0)) {
@@ -1959,8 +1982,10 @@ function WaitingPage({
           if (data.status === 'succeeded') {
             ref.current.done = true;
             stop();
+            // 节161：本次作业标题（label）随跳转带到校准/结果页（结果页卡题用动态方法集名）
             setTimeout(() => onNavigate('calibration', {
-              caseId
+              caseId,
+              runLabel: labelNow
             }), 500);
             return;
           } else if (data.status === 'failed') {
@@ -1993,7 +2018,9 @@ function WaitingPage({
     return stop;
   }, [caseId]);
   const pct = total > 0 ? Math.round(progress / total * 100) : 0;
-  const lit = Math.min(DQC_METHODS.length, Math.round(progress / (total || 8) * DQC_METHODS.length));
+  // 节161：节点数随所选方法集（names）变化；无清单时 lit=0（不点亮任何节点，也不除零）
+  const lit = names.length ? Math.min(names.length, Math.round(progress / (total || names.length) * names.length)) : 0;
+  const HC = UI_COPY.hecan;
   if (errored) {
     return /*#__PURE__*/React.createElement("div", {
       className: "container"
@@ -2026,7 +2053,9 @@ function WaitingPage({
     className: "dqc-progress"
   }, progress, " / ", total), /*#__PURE__*/React.createElement("div", {
     className: "dqc-method"
-  }, status === 'succeeded' ? '八法推演完成' : '正在综合八流派推演'), /*#__PURE__*/React.createElement("div", {
+  }, status === 'succeeded'
+    ? (label ? fmtTpl(HC['wait-done-tpl'], { label: label }) : HC['wait-done-generic'])
+    : (label ? fmtTpl(HC['wait-running-tpl'], { label: label }) : HC['wait-running-generic'])), /*#__PURE__*/React.createElement("div", {
     className: "dqc-bar"
   }, /*#__PURE__*/React.createElement("i", {
     style: {
@@ -2036,13 +2065,15 @@ function WaitingPage({
     className: "dqc-status"
   }, status === 'succeeded' ? '推演完成' : pollMsg), /*#__PURE__*/React.createElement("div", {
     className: "dqc-list"
-  }, DQC_METHODS.map((m, i) => {
+  }, names.map((m, i) => {
     const cls = i < lit ? 'done' : i === lit && progress < total ? 'active' : '';
     return /*#__PURE__*/React.createElement("span", {
       key: i,
       className: cls
     }, m);
-  }))), /*#__PURE__*/React.createElement("p", {
+  })), reused ? /*#__PURE__*/React.createElement("div", {
+    className: "dqc-status"
+  }, HC['wait-reused']) : null), /*#__PURE__*/React.createElement("p", {
     style: {
       textAlign: 'center',
       fontSize: 12,
@@ -2074,7 +2105,8 @@ function WaitingPage({
 }
 function CalibrationPage({
   caseId,
-  onNavigate
+  onNavigate,
+  runLabel
 }) {
   const [propositions, setPropositions] = useState([]);
   const [feedback, setFeedback] = useState([]);
@@ -2208,12 +2240,14 @@ function CalibrationPage({
           complete: !!(data && data.complete)
         });
         ref.current.navTimer = setTimeout(() => onNavigate('predict', {
-          caseId
+          caseId,
+          runLabel
         }), 1500);
       } else {
         // 兜底：返回无 fit 时沿用直接跳转行为
         onNavigate('predict', {
-          caseId
+          caseId,
+          runLabel
         });
       }
     } catch (e) {
@@ -2294,7 +2328,8 @@ function CalibrationPage({
     }, "暂无待校准断言，可直接查看预测"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-primary",
       onClick: () => onNavigate('predict', {
-        caseId
+        caseId,
+        runLabel
       })
     }, "跳过校准")));
   }
@@ -2445,7 +2480,7 @@ function CalibrationPage({
   }), "修正")))));
 }
 // REQ-126：8 法 method_key → 中文名（degraded 法仅有 key，无后端 name；映射对齐 backend/app/credits/labels.py METHOD_ZH）
-// 节139：xizhan 条目保留——仅作历史读数/degraded 键的兜底显示，xizhan 已不在八法注册表内
+// 节139：xizhan 条目保留——仅作历史读数/degraded 键的兜底显示，xizhan 已不在命盘合参方法表内
 const REQ126_METHOD_KEY_ZH = {
   'bazi-pattern': '八字格局',
   'bazi-dayun-liunian': '大运流年',
@@ -2459,7 +2494,8 @@ const REQ126_METHOD_KEY_ZH = {
 };
 function PredictPage({
   caseId,
-  onNavigate
+  onNavigate,
+  runLabel
 }) {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2467,7 +2503,7 @@ function PredictPage({
   const [history, setHistory] = useState([]);
   // REQ-086：付费角标余额充足态（共享单飞查询，驱动「¥ 消耗」角标警示色）
   const payEnough = usePaySufficient();
-  // REQ-126：8 法内部 tab（综合 / 八法解读，逐法数据源 GET /api/cases/{id}/readings，纯读库零 LLM）
+  // REQ-126 / 节161：综合 ↔ 逐法解读 内部 tab（逐法数据源 GET /api/cases/{id}/readings，纯读库零 LLM）
   const [tab, setTab] = useState('all');
   const [readings, setReadings] = useState(null);
   const [readingsLoading, setReadingsLoading] = useState(false);
@@ -2589,7 +2625,7 @@ function PredictPage({
       alive = false;
     };
   }, [caseId]);
-  // REQ-126：八法解读 tab —— 懒加载 readings（切到该 tab 才请求；纯读库零 LLM）
+  // REQ-126 / 节161：逐法解读 tab —— 懒加载 readings（切到该 tab 才请求；纯读库零 LLM）
   const loadReadings = async () => {
     if (readings || readingsLoading) return;
     setReadingsLoading(true);
@@ -2738,7 +2774,7 @@ function PredictPage({
       className: "card"
     }, /*#__PURE__*/React.createElement("div", {
       className: "section-title"
-    }, ML_COPY.ui.hub['readings-title']), body);
+    }, runLabel ? fmtTpl(ML_COPY.ui.hub['readings-title-tpl'], { label: runLabel }) : ML_COPY.ui.hub['readings-title']), body);
   };
   const tabBar = /*#__PURE__*/React.createElement("div", {
     className: "readings-tabs",

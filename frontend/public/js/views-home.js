@@ -107,7 +107,7 @@ function LandingPage({
   }, lastReport ? caseNm(lastReport) : ML_COPY.ui.intent['recall-continue-sub']))), el('button', {
     type: 'button',
     className: 'recall-item',
-    onClick: () => defCase ? onNavigate('nine-pick', {
+    onClick: () => defCase ? onNavigate('hecan', {
       caseId: defCase.caseId
     }) : onNavigate('onboarding', {
       returnTo: 'landing'

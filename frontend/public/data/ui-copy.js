@@ -519,16 +519,16 @@ window.ML_COPY = {
       relName: { love: '恋爱', friend: '朋友', boss: '上下级' },
       modalTitle: { love: '恋爱关系 · 生肖匹配', friend: '朋友关系 · 生肖匹配', boss: '上下级关系 · 生肖匹配' },
       modalSub: '以「{case} · 生肖{me}」为基准，查看与其余 11 生肖的{rel}关系匹配度。分值为生肖地支基础关系规则换算（六合=5、三合=4.5、相冲=2.0、相害=2.5、三刑=2.0、其余=3.0，越高表示地支气场越合），配趋势参考说明（静态轻内容、免费、不扣余额）。',
-      modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「八法合一 · 选择档案」页使用「配对解析 / 八字配对」。'
+      modalFoot: '说明：生肖地支关系（六合 / 三合 / 相冲 / 相害 / 三刑）仅为传统民俗视角下的固定分类，5 星制分值 + 趋势参考说明仅供娱乐与启发，不构成婚恋、交友或职场等方面的现实建议；如需基于双方完整八字排盘的深度合盘，请到「合参 · 命盘合参」页使用「配对解析 / 八字配对」。'
     },
     // REQ-128 阶段5：配对解析弹窗（PairModal，views-home）—— guoxue/xishi/mbti/bazi 四模块共用；
     // meta 四套按 module 取用；relations 数组同时作按钮文案与提交值（与 zodiac PAIR_REL_ICONS 键一致）
     pair: {
       meta: {
-        guoxue: { title: '国学 · 八法配对', dataTxt: '双方排盘信息（八法合一）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「国学预测 · 八法合一」为该档案完成排盘（确定性计算、免费）' },
+        guoxue: { title: '国学 · 八法配对', dataTxt: '双方排盘信息（合参所选命盘单法的排盘数据）', prepTxt: '档案需先生成排盘数据（未排盘的档案提交后将提示先生成）', guideTxt: '在「合参 · 命盘合参」为该档案完成排盘（确定性计算、免费）' },
         xishi: { title: '星座 · 配对解析', dataTxt: '双方星座本命星盘', prepTxt: '档案需先生成星座本命星盘（未生成星盘的档案提交后将提示先生成）', guideTxt: '在「星座」页选择该档案并点击「生成星盘」（免费；已生成过则直接复用、不重复计费）' },
         mbti: { title: '心理测试 · 配对解析', dataTxt: '双方大五人格维度信息', prepTxt: '档案需先完成心理测试（未测的档案提交后将提示先生成）', guideTxt: '在「心理测试」页选择该档案并完成测试判型（结果会写入档案）' },
-        bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「八法合一 · 选择档案」页为该档案完成排盘（确定性计算、免费）' }
+        bazi: { title: '八字 · 配对解析', dataTxt: '双方八字排盘信息', prepTxt: '档案需先生成八字排盘（未排盘的档案提交后将提示先生成）', guideTxt: '在「合参 · 命盘合参」页为该档案完成排盘（确定性计算、免费）' }
       },
       relations: ['恋爱', '朋友', '家人', '同事', '其他'],
       sub: '选择两份档案，基于{data}，让 AI 解析两人的关系契合、相处模式与建议。',
@@ -566,7 +566,7 @@ window.ML_COPY = {
         title: '配对解析',
         sub: '选一种配对方式，两份档案合参。',
         'opt-guoxue': '八法配对',
-        'opt-guoxue-sub': '双人合盘 · 八法综合看缘分与相处',
+        'opt-guoxue-sub': '双人合盘 · 多法综合看缘分与相处',
         'opt-bazi': '八字配对',
         'opt-bazi-sub': '双方八字排盘判相性',
         'opt-xishi': '星座配对',
@@ -583,15 +583,7 @@ window.ML_COPY = {
         'zod-result-title': '生肖配对 · {sign}（{branch}）'
       }
     },
-    // REQ-093UI：八法合一选档案页底部「配对解析 / 八字配对」双入口（原国学 HUB「配对解析」卡迁入本页，
-    // 作高亮主按钮置于页面最下方「返回选项」上方；八字配对为 bazi 模块双档案合盘）
-    ninePickPair: {
-      title: '双人合盘',
-      sub: '选择两份档案，由 AI 合参两人缘分与相处建议（付费 LLM，按实际用量扣余额 ¥）：「配对解析」基于双方排盘信息（八法合一数据）；「八字配对」基于双方八字排盘。',
-      btnGuoxue: '配对解析',
-      btnBazi: '八字配对'
-    },
-    // REQ-094UI：八法合一选档案页「起名」（选单一档案后可用 → POST /api/namer/name；
+    // REQ-094UI：起名（选单一档案后可用 → POST /api/namer/name；
     // 姓氏必填（≤2 字）+ 起名方向选填；未选档案 / 档案未排盘时按后端 400 detail 展示提示）
     namer: {
       btn: '起名',
@@ -675,8 +667,6 @@ window.ML_COPY = {
       'legal-privacy-href': '/legal/隐私政策.html'
     },
     hub: {
-      'guoxue-nine-name': '八法合一解读',
-      'guoxue-nine-sub': '选择档案 · 跑八法或查看/修改解读（八字·紫微·七政·奇门·五运六气等 8 法综合）',
       'guoxue-zodiac-name': '生肖流年',
       'guoxue-zodiac-sub': '犯太岁 · 值年星君 · 贵人',
       'guoxue-divination-name': '临时起卦',
@@ -693,9 +683,8 @@ window.ML_COPY = {
       'guoxue-bazi-sub': '双方八字排盘判相性（付费 LLM，按实际用量扣余额）',
       'guoxue-namer-name': '八字起名',
       'guoxue-namer-sub': '依档案八字五行喜用推荐名字（付费 LLM，按实际用量扣余额）',
-      /* REQ-126：国学 HUB 4 张场景大卡 + 择吉与时势新页 + 起卦分区 + 8 法解读 tab（节139：九法→八法） */
-      'guoxue-card-nine-name': '命盘·八法合一',
-      'guoxue-card-nine-sub': '看一生结构与阶段运势',
+      /* REQ-126：国学 HUB 4 张场景大卡 + 择吉与时势新页 + 起卦分区（节161：命盘合参卡改由首页意图卡 /
+         /explore 目录承载，HUB 卡文案键已删） */
       'guoxue-card-divination-name': '问事·即时起卦',
       'guoxue-card-divination-sub': '当下这件事的走向',
       'guoxue-card-tools-name': '择吉与时势',
@@ -716,13 +705,15 @@ window.ML_COPY = {
       'divin-group-shi': '时辰起局',
       'divin-group-su': '速断抽签',
       'readings-tab-all': '综合',
-      'readings-tab-methods': '八法解读',
-      'readings-title': '八法解读 · 逐法查看',
+      'readings-tab-methods': '逐法解读',
+      'readings-title': '各法解读 · 逐法查看',
+      // 节161：作业带 label（如「九法合一」）时用本模板替换卡题
+      'readings-title-tpl': '{label} · 逐法查看',
       'readings-phase-prediction': '预测',
       'readings-phase-dqc': '断前尘',
       'readings-degraded': '未生成',
       'readings-empty': '该档案暂无可展示的逐法解读内容',
-      'readings-load-fail': '八法解读加载失败',
+      'readings-load-fail': '逐法解读加载失败',
       'xishi-astrology-name': '星座',
       'xishi-astrology-sub': '本命盘 · 行运 · 日返 · 次限',
       'xishi-tarot-name': '塔罗牌',
@@ -750,7 +741,7 @@ window.ML_COPY = {
       guoxue: '国学预测',
       xishi: '西式占卜',
       mbti: '心理测试',
-      'item-nine-pick': '命盘·八法合一',
+      'item-hecan': '命盘·合参',
       'item-zodiac': '生肖流年',
       'item-divination': '问事·即时起卦',
       'item-tools': '择吉与时势',
@@ -1095,48 +1086,134 @@ window.ML_COPY = {
       // 配对解析入口（REQ-109）
       'pair-sub': '选择两份已完成人格测试的档案，基于双方大五人格维度信息解读两人相处与协作（付费 LLM，按实际用量扣余额 ¥）'
     },
-    // REQ-128 阶段3：国学工具页（八法合一入口）UI 文案
-    guoxueTools: {
-      // 状态标签
+    // 节161：合参页（页名 hecan / 路由 /hecan）UI 文案 —— 两标签同页：
+    //   标签①命盘合参（要生辰：选档案 + 方法多选 → 断前尘 → 问卷校准 → 综合预测）
+    //   标签②当下事合参（不要生辰：问事 + 方法多选 + 起卦参数 → 多法同断，无断前尘/无问卷校准）
+    // 单一事实源边界：**方法名、方法 key、方法总数、作业标题（label）与结果板块标题（reportTitles）
+    // 一律从后端读**（GET /api/combine/pools 与 GET /api/jobs/{id}），本表只放静态界面文案；
+    // 本表内的 {num}/{label}/{done}/{total} 等占位符由 fmtTpl 或字符串拼接填充。
+    hecan: {
+      // —— 页头与两标签 ——
+      'title': '合参',
+      'tab-natal': '命盘合参',
+      'tab-moment': '当下事合参',
+      'tab-natal-note': '要生辰：选档案与方法 → 断前尘 → 问卷校准 → 综合预测。',
+      'tab-moment-note': '不要生辰：只就你问的这一件事，多法各出一份解读后合成一份报告。',
+      'moment-scope-note': '当下事合参不含断前尘、不含问卷校准、不看前世与一生格局——那些属于「命盘合参」。',
+      // —— 方法多选（方法名与数量一律读后端方法清单）——
+      'methods-title': '参与合参的方法',
+      'methods-note': '默认全选。取消勾选即按所选方法集合参：方法集不同＝按新选择重开一次推演，不复用旧结果。',
+      'methods-loading': '正在读取可选方法…',
+      'methods-empty': '后端方法清单为空：暂无可选方法。',
+      'methods-fail': '方法清单读取失败（{msg}）。页面其余内容仍可正常使用；命盘合参可直接开始（按后端默认方法集），可点下方按钮重试读取。',
+      'methods-retry': '重试读取方法',
+      'methods-fallback-note': '方法清单暂不可用：命盘合参将按后端默认方法集（全部方法）推演，结果页标题以作业返回为准。',
+      'none-selected': '请至少勾选一个方法：合参至少要有一个法子。',
+      'label-tpl': '{num}法{kind}',
+      'kind-natal': '合一',
+      'kind-moment': '合参',
+      'num-1': '一',
+      'num-2': '二',
+      'num-3': '三',
+      'num-4': '四',
+      'num-5': '五',
+      'num-6': '六',
+      'num-7': '七',
+      'num-8': '八',
+      'num-9': '九',
+      'num-10': '十',
+      'label-generic': '合参',
+      // —— 标签①命盘合参：档案状态标签 ——
       'status-not-paipan': '未排盘',
-      'status-done': '八法已完成 · 已解读',
+      'status-done': '合参已完成 · 已解读',
       'status-generating': '预测生成中…',
       'status-calibrated': '已校准 · 待生成预测',
-      'status-duanqianchen': '八法已跑（断前尘完成）',
-      'status-running': '八法推演中…',
-      'status-progress-prefix': '八法进行中（',
-      'status-progress-suffix': '/8）',
-      'status-not-run': '未跑八法',
-      // 错误提示
+      'status-duanqianchen': '断前尘已完成',
+      'status-running': '合参推演中…',
+      'status-progress-tpl': '合参进行中（已出 {done} 法）',
+      'status-not-run': '未跑合参',
+      // —— 标签①错误提示 ——
       'case-list-fail': '读取档案列表失败，请重试。',
       'case-loading': '正在读取档案列表…',
       'case-load-fail': '档案加载失败',
-      // 操作按钮
+      // —— 标签①操作按钮（{label} 为动态方法集名，如「九法合一」）——
       'manage-case': '管理档案',
       'select-case-ph': '请选择档案',
-      'start-btn': '开始八法合一',
+      'start-btn-tpl': '开始{label}',
+      'start-btn-generic': '开始合参',
       'view-btn': '查看 / 修改结果',
-      // 标题
-      'title': '八法合一 · 选择档案',
+      // —— 标签①标题 ——
       'selected-label': '已选档案：',
-      // 空状态与说明
-      'no-case': '暂无档案：请先建立一份出生档案并排盘（确定性计算、零 LLM），再回到这里发起八法合一；八法合一只针对所选档案，建档本身不启动八法流程。',
-      'already-run': '该档案已跑过八法：可点「查看 / 修改结果」进入结果查看（综合解读 + 校准记录/追问/重跑修改）；如校准或档案信息有更新，可再点「跑八法合一开始预测」重跑，沿用现有异步编排、幂等与断点续跑。',
-      'ready-text': '命盘已备，八法待启。王先生将以此盘为基，综八家之言，解您所问',
-      'not-paipan': '该档案尚未排盘（无盘面数据）：请先到「管理档案」对该档案执行排盘（确定性计算、零 LLM）后，再回来发起八法合一。',
-      'select-first': '请先在上方选择一份档案：勾选后此处出现「查看 / 修改结果」（已跑八法）与「跑八法合一开始预测」（未跑 / 续跑）两个操作。',
-      'cost-note': '八法合一汇聚八术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
-      'case-note': '档案是独立数据实体，八法合一只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已跑过的八法解读结果。',
-      // REQ-128 阶段5：选档案页剩余结构文案（按钮 title / 步骤条 / 卡题 / 勾选说明）
+      // —— 标签①空状态与说明 ——
+      'no-case': '暂无档案：请先建立一份出生档案并排盘（确定性计算、零 LLM），再回到这里发起命盘合参；合参只针对所选档案，建档本身不启动流程。',
+      'already-run': '该档案已有合参结果：可点「查看 / 修改结果」进入结果查看（综合解读 + 校准记录/追问/重跑修改）；如校准或档案信息有更新，可再点「开始合参」重跑，沿用现有异步编排、幂等与断点续跑。',
+      'ready-text': '命盘已备，合参待启。王先生将以此盘为基，综诸家之言，解您所问',
+      'not-paipan': '该档案尚未排盘（无盘面数据）：请先到「管理档案」对该档案执行排盘（确定性计算、零 LLM）后，再回来发起命盘合参。',
+      'select-first': '请先在上方选择一份档案：选中后此处出现「查看 / 修改结果」（已有结果）与「开始合参」（未跑 / 续跑）两个操作。',
+      'cost-note-tpl': '{label}汇聚多术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
+      'cost-note-generic': '合参汇聚多术同参共断，所耗余额相应较多，将按实际用量从账户扣除。此为趋势参考，不作任何决策建议',
+      'case-note': '档案是独立数据实体，合参只是一种使用方式：选中档案后可发起「断前尘 → 问卷校准 → 综合预测」，或查看/修改已有解读结果。',
+      // 方法集与已有结果的比对（复用 / 重跑区分）
+      'set-loading': '正在核对该档案已跑过的方法集…',
+      'set-reuse-tpl': '已跑过的方法集与当前所选一致（{n} 法）：点「查看 / 修改结果」即复用旧结果，无需重跑；重跑也不会重复扣费式地多跑一遍。',
+      'set-diff-tpl': '该档案已跑过 {old} 法、当前所选 {cur} 法，方法集不同：点「开始合参」将按新选择重开一个作业推演（旧结果仍保留在档案逐法解读里）。',
+      'set-none': '该档案尚未跑过合参：点「开始合参」发起「断前尘 → 问卷校准 → 综合预测」。',
+      'set-none-methods': '该档案尚未跑过合参：当前选择 {cur} 法，点「开始合参」发起推演。',
+      'set-fail': '未能读取该档案已跑过的方法集（{msg}）：不确定是否复用旧结果，按「开始合参」发起即可，后端会按方法集指纹判定复用或重开。',
+      'selected-methods-tpl': '已选方法：{label}（{n} 法）',
+      'selected-methods-none': '尚未勾选方法',
+      // —— 标签①剩余结构文案（按钮 title / 步骤条 / 卡题 / 勾选说明）——
       'title-no-paipan': '该档案尚未排盘，请先执行排盘',
-      'title-not-run': '该档案尚未跑过八法，请先点击「跑八法合一开始预测」',
-      'step-1': '① 选择档案',
-      'step-2': '② 查看 / 修改结果 · 跑八法合一开始预测',
-      'pick-title': '选择档案 · 八法合一',
-      'pick-note': '勾选档案后不会自动启动八法流程：请在下方操作区选择「查看 / 修改结果」或「跑八法合一开始预测」。',
-      // 工具名
+      'title-not-run': '该档案尚未跑过合参，请先点击「开始合参」',
+      'title-no-methods': '请至少勾选一个方法',
+      'step-1': '① 选档案 · 选方法',
+      'step-2': '② 查看 / 修改结果 · 开始合参',
+      'pick-title': '选择档案 · 命盘合参',
+      'pick-note': '选中档案不会自动启动推演：请在下方操作区选择「查看 / 修改结果」或「开始合参」。',
+      // —— 标签②当下事合参 ——
+      'moment-q-title': '① 你要问的事',
+      'moment-q-label': '问什么事',
+      'moment-q-ph': '如：这份工作要不要接？下月出行顺不顺？',
+      'moment-q-required': '请先写下你要问的事（必填）',
+      'moment-methods-title': '② 参与合参的方法',
+      'moment-cast-title': '③ 起卦参数',
+      'moment-cast-now': '此刻',
+      'moment-cast-pick': '指定时刻',
+      'moment-cast-note': '时间是唯一需要你定的起卦参数：默认「此刻」，时家类方法（梅花 / 小六壬 / 大六壬 / 金口诀 / 奇门时家）以该时刻起课；抽签、掷筊、摇卦、抽牌一律沿用各法既有的「随手抽 / 摇卦 / 掷筊」口径，由后端确定性成卦，不需要你逐爻录入。',
+      'moment-date-label': '日期',
+      'moment-shichen-label': '时辰',
+      'moment-date-required': '请选择起卦日期（必填）',
+      'moment-shichen-required': '请选择起卦时辰（必填）',
+      'moment-submit-tpl': '开始{label}',
+      'moment-submit-generic': '开始合参',
+      'moment-submitting': '合参推演中…',
+      'moment-cost-tpl': '{label}逐法起卦（确定性计算、零 LLM、免费），再由 AI 汇总成一份统一解读（整轮只调 1 次 LLM，按实际用量从账户扣除）。此为趋势参考，不作任何决策建议',
+      'moment-cost-generic': '合参逐法起卦（确定性计算、零 LLM、免费），再由 AI 汇总成一份统一解读（整轮只调 1 次 LLM，按实际用量从账户扣除）。此为趋势参考，不作任何决策建议',
+      'moment-result-title-tpl': '{label} · 结果',
+      'moment-result-title-generic': '合参结果',
+      'moment-result-question-tpl': '所问：{q}',
+      'moment-result-methods-tpl': '参与方法：{names}',
+      'moment-result-failed-tpl': '本次未成功起卦：{names}（这几法没有卦面，报告里不含它们的依据）。',
+      'moment-result-empty': '作业已完成，但未返回可展示的板块（后端未给出板块标题或内容）。',
+      'moment-section-empty': '（本板块暂无内容）',
+      'moment-progress-tpl': '已完成 {done} / {total} 法',
+      'moment-running': '多法推演中，请稍候…',
+      'moment-ok': '合参完成',
+      'moment-run-fail': '合参作业失败：{msg}',
+      'moment-start-fail': '启动合参失败：{msg}',
+      'moment-job-fail': '读取作业状态失败：{msg}',
+      'moment-poll-timeout': '较长时间没有新进展（可能某法卡住），可稍后回档案查看，或重新发起。',
+      'moment-again': '再问一件',
+      'moment-result-note': '本结果为多法视角的趋势参考，由 AI 依各法盘面口径撰写，不构成任何决策建议。',
+      // —— 断前尘推演中页（WaitingPage；方法名与 label 均由合参页读后端方法清单后带入）——
+      'wait-done-tpl': '{label}推演完成',
+      'wait-done-generic': '推演完成',
+      'wait-running-tpl': '正在推演{label}',
+      'wait-running-generic': '正在推演多法合参',
+      'wait-reused': '已复用该档案上次的合参结果（方法集相同），直接进入下一步。',
+      // —— 通用 ——
       'case-prefix': '档案 ',
-      // REQ-128 阶段5：档案下拉选项出生年后缀（NinePickPage）
+      // 档案下拉选项出生年后缀
       'birth-year-tpl': '（{year} 年生）'
     },
     // REQ-128 阶段4：首页（home）UI 文案
@@ -1148,7 +1225,6 @@ window.ML_COPY = {
       'xishi-entry': '西式塔罗',
       'mbti-entry': '人格测试',
       'guoxue-entry': '国学工具',
-      'nine-methods': '八法合一',
       'agent-entry': '王先生',
       'zodiac-entry': '生肖星座',
       // 模块卡片
@@ -1397,7 +1473,7 @@ window.ML_COPY = {
       'name-fail-warn': '档案已保存，但命名失败，可稍后到档案管理重命名。',
       'save-ok-toast': '已保存，可继续新建',
       'chart-ok-toast': '盘面已生成，可入档案查看',
-      'free-note': '「开始排盘」仅作确定性计算生成盘面（免费、零 LLM，不进入断前尘/预测扣费链路）；盘面生成后可入档案查看，八法合一等深度解读请另行选择档案后启动。'
+      'free-note': '「开始排盘」仅作确定性计算生成盘面（免费、零 LLM，不进入断前尘/预测扣费链路）；盘面生成后可入档案查看，命盘合参等深度解读请另行选择档案后启动。'
     },
     // REQ-128 阶段2：盘面标签（八字/紫微/占星等盘面上的 UI 标签）
     // 仅含界面标签，不含盘面数据值（干支/行星度数等为数据，不入本表）

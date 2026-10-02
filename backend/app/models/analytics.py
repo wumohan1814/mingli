@@ -23,6 +23,8 @@ class CaseStatus(str, enum.Enum):
 class JobType(str, enum.Enum):
     duan_qian_chen = "duan-qian-chen"
     predict = "predict"
+    # 当下事合参：逐法确定性起卦 → 只调 1 次 LLM 出统一解读（无档案、无断前尘、无校准）
+    moment_combine = "moment-combine"
 
 
 class JobStatus(str, enum.Enum):
@@ -159,7 +161,9 @@ class Job(Base):
     __tablename__ = "jobs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    case_id = Column(Integer, ForeignKey("cases.id"), nullable=False, index=True)
+    # case_id 可空：命盘合参（断前尘/预测）挂在档案上，**当下事合参没有档案**
+    # （不要生辰、不落 case）。老库由迁移 v3 重建表放开 NOT NULL。
+    case_id = Column(Integer, ForeignKey("cases.id"), nullable=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     type = Column(SAEnum(JobType), nullable=False)
     status = Column(SAEnum(JobStatus), default=JobStatus.pending)
@@ -167,6 +171,13 @@ class Job(Base):
     completed = Column(Integer, default=0)
     error = Column(Text, nullable=True)
     result_json = Column(JSON, nullable=True)
+    # 本 job 实际使用的方法集（合参的事实来源：编排器只按它跑法，不再写死注册表）。
+    # NULL = 历史 job（合参上线前建的），语义是「未记录」而不是「全量」——
+    # 幂等指纹据此判定「无法证明同一批法 → 不复用」。
+    method_keys = Column(JSON, nullable=True)
+    # 合参模式：natal（命盘合参）/ moment（当下事合参）；NULL = 历史 job。
+    # 取值与语义见 app/combine/__init__.py。
+    combine_mode = Column(String(16), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

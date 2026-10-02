@@ -80,6 +80,66 @@ def _v2_migration_ledger(conn: sqlite3.Connection, app: str) -> None:
     )
 
 
+def _v3_jobs_combine_columns(conn: sqlite3.Connection, app: str) -> None:
+    """v3 · jobs 表：合参两列 + case_id 放开 NOT NULL（当下事合参没有档案）。
+
+    为什么必须动 case_id：`jobs.case_id` 原本 NOT NULL——命盘合参（断前尘/预测）挂在
+    档案上没问题，但「当下事合参」不需要生辰、不落 case，job 必须能没有 case_id。
+    SQLite 不能 ALTER 掉 NOT NULL，只能**重建表**（建新表 → 拷数据 → 换名 → 重建索引）。
+
+    幂等：
+    - 库无 jobs 表（feedback / ops 库）→ 直接返回；
+    - 表已可空且两列已存在（新库由 create_all 建全）→ 不做任何写入（一字不变）；
+    - 只缺列 → 只补列（不重建，避免无谓搬数据）。
+
+    注意：本步骤不吃 SQLAlchemy 模型（执行器纪律），DDL 与列清单全部字面写死。
+    """
+    cols = {row[1]: row for row in conn.execute("PRAGMA table_info(jobs)")}
+    if not cols:
+        return
+
+    new_columns = (("method_keys", "JSON"), ("combine_mode", "VARCHAR(16)"))
+
+    # case_id 可空（PRAGMA 第 4 位 = notnull）：只补缺列即可
+    if not cols["case_id"][3]:
+        for name, ddl in new_columns:
+            if name not in cols:
+                conn.execute(f"ALTER TABLE jobs ADD COLUMN {name} {ddl}")
+        return
+
+    # 老库：case_id NOT NULL → 重建表（目标结构 = 当前模型的列与顺序）
+    conn.execute(
+        "CREATE TABLE jobs__v3 ("
+        " id INTEGER NOT NULL,"
+        " case_id INTEGER,"
+        " user_id INTEGER NOT NULL,"
+        " type VARCHAR(14) NOT NULL,"
+        " status VARCHAR(9),"
+        " total INTEGER,"
+        " completed INTEGER,"
+        " error TEXT,"
+        " result_json JSON,"
+        " method_keys JSON,"
+        " combine_mode VARCHAR(16),"
+        " created_at DATETIME,"
+        " updated_at DATETIME,"
+        " PRIMARY KEY (id),"
+        " FOREIGN KEY(case_id) REFERENCES cases (id),"
+        " FOREIGN KEY(user_id) REFERENCES users (id))"
+    )
+    # 只拷新旧表都有的列（老库 result_json 由历史补列线加过，理论上必在；仍按交集拷贝，
+    # 少一列也不至于让整库迁移崩掉）
+    target = [r[1] for r in conn.execute("PRAGMA table_info(jobs__v3)")]
+    copy_cols = [c for c in target if c in cols]
+    col_list = ", ".join(copy_cols)
+    conn.execute(f"INSERT INTO jobs__v3 ({col_list}) SELECT {col_list} FROM jobs")
+    conn.execute("DROP TABLE jobs")
+    conn.execute("ALTER TABLE jobs__v3 RENAME TO jobs")
+    # 索引随旧表一起被删，按原样重建（列上的 index=True）
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_jobs_user_id ON jobs (user_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_jobs_case_id ON jobs (case_id)")
+
+
 #: 迁移链（顺序即执行顺序；新增一律 append，不插入、不修改）
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(
@@ -93,6 +153,12 @@ MIGRATIONS: tuple[Migration, ...] = (
         name="migration-ledger",
         summary="建立迁移记账表 schema_migrations 并回填 v1",
         fn=_v2_migration_ledger,
+    ),
+    Migration(
+        version=3,
+        name="jobs-combine-columns",
+        summary="jobs 补 method_keys/combine_mode 两列并把 case_id 放开为可空（当下事合参无档案）",
+        fn=_v3_jobs_combine_columns,
     ),
 )
 

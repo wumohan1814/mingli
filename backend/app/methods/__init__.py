@@ -22,6 +22,14 @@ METHOD_KEYS = [
     "wuyun-liuqi",
 ]
 
+# 不在默认流水线、但**可按 key 加载**的方法（可被显式点名运行，如合参第 9 法）。
+# 节139 把 xizhan 摘出默认八法注册表（METHOD_KEYS 语义不变），其 analyzer 与
+# prompt 一直保留；`app/combine` 的命盘合参池把它作为可选第 9 法重新放回，
+# 因此这里必须能按 key 加载它——「不默认跑」与「加载不到」是两件事。
+EXTRA_METHOD_KEYS = [
+    "xizhan",
+]
+
 
 def _load(key: str):
     """按文件路径加载 `<key>/analyzer.py`，返回其 `analyze` 协程。"""
@@ -32,6 +40,6 @@ def _load(key: str):
     return mod.analyze
 
 
-ANALYZERS = {k: _load(k) for k in METHOD_KEYS}
+ANALYZERS = {k: _load(k) for k in METHOD_KEYS + EXTRA_METHOD_KEYS}
 
-__all__ = ["ANALYZERS", "METHOD_KEYS"]
+__all__ = ["ANALYZERS", "METHOD_KEYS", "EXTRA_METHOD_KEYS"]

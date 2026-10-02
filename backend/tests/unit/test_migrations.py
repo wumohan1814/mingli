@@ -286,3 +286,121 @@ def test_registry_is_append_only_sorted_and_unique():
     assert SCHEMA_VERSION == versions[-1]
     # 每个步骤都必须有可读说明（写进 schema_migrations 供排障对账）
     assert all(m.summary.strip() for m in MIGRATIONS)
+
+
+# ---------- ⑥ v3：老库 jobs 表重建（合参两列 + case_id 放开） ----------
+
+# 合参改造前的生产结构（字面写死：老库真实 DDL，case_id NOT NULL，无 method_keys）
+_LEGACY_JOBS_DDL = (
+    "CREATE TABLE jobs ("
+    " id INTEGER NOT NULL,"
+    " case_id INTEGER NOT NULL,"
+    " user_id INTEGER NOT NULL,"
+    " type VARCHAR(14) NOT NULL,"
+    " status VARCHAR(9),"
+    " total INTEGER,"
+    " completed INTEGER,"
+    " error TEXT,"
+    " created_at DATETIME,"
+    " updated_at DATETIME, result_json JSON,"
+    " PRIMARY KEY (id),"
+    " FOREIGN KEY(case_id) REFERENCES cases (id),"
+    " FOREIGN KEY(user_id) REFERENCES users (id))"
+)
+
+
+def _build_legacy_jobs_db(path) -> None:
+    """造一个「合参改造前」的老库：老结构 jobs + 两行真实数据 + 两个索引。"""
+    conn = _connect(str(path))
+    try:
+        conn.execute("CREATE TABLE cases (id INTEGER NOT NULL PRIMARY KEY)")
+        conn.execute("CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY)")
+        conn.execute(_LEGACY_JOBS_DDL)
+        conn.execute("CREATE INDEX ix_jobs_user_id ON jobs (user_id)")
+        conn.execute("CREATE INDEX ix_jobs_case_id ON jobs (case_id)")
+        conn.execute("INSERT INTO cases (id) VALUES (1)")
+        conn.execute("INSERT INTO users (id) VALUES (7)")
+        conn.execute(
+            "INSERT INTO jobs (id, case_id, user_id, type, status, total, completed, error,"
+            " result_json) VALUES (1, 1, 7, 'duan_qian_chen', 'succeeded', 8, 8, NULL, '{\"a\":1}')"
+        )
+        conn.execute(
+            "INSERT INTO jobs (id, case_id, user_id, type, status, total, completed, error)"
+            " VALUES (2, 1, 7, 'predict', 'failed', 0, 0, '服务重启，任务中断，请重新触发')"
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def _jobs_columns(path) -> dict[str, tuple]:
+    conn = _connect(str(path))
+    try:
+        return {r[1]: r for r in conn.execute("PRAGMA table_info(jobs)")}
+    finally:
+        conn.close()
+
+
+def test_v3_rebuilds_legacy_jobs_table_and_keeps_data(tmp_path):
+    """老库 jobs.case_id NOT NULL → 重建放开为可空 + 补两列，数据/索引一字不丢。"""
+    path = tmp_path / "legacy_jobs.db"
+    _build_legacy_jobs_db(str(path))
+
+    before = _jobs_columns(str(path))
+    assert before["case_id"][3] == 1, "前置事实：老库 case_id 是 NOT NULL"
+    assert "method_keys" not in before and "combine_mode" not in before
+
+    report = migrate_db(str(path), "analytics")
+    assert report.to_version == SCHEMA_VERSION
+
+    after = _jobs_columns(str(path))
+    assert after["case_id"][3] == 0, "case_id 必须已放开为可空（当下事合参没有档案）"
+    assert after["method_keys"][1] == "method_keys" and after["combine_mode"][1] == "combine_mode"
+
+    # 数据一字不丢（含 result_json 与 error 文本）
+    conn = _connect(str(path))
+    try:
+        rows = conn.execute(
+            "SELECT id, case_id, user_id, type, status, total, completed, error, result_json"
+            " FROM jobs ORDER BY id"
+        ).fetchall()
+        assert [r[0] for r in rows] == [1, 2]
+        assert rows[0][1:] == (1, 7, "duan_qian_chen", "succeeded", 8, 8, None, '{"a":1}')
+        assert rows[1][8] is None and "服务重启" in rows[1][7]
+        # 新列对老行为 NULL（语义 = 未记录，不是「全量」）
+        assert all(r[0] is None for r in conn.execute("SELECT method_keys FROM jobs"))
+        assert all(r[0] is None for r in conn.execute("SELECT combine_mode FROM jobs"))
+        # 索引按原样重建
+        idx = [r[0] for r in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='jobs'"
+        )]
+        assert set(idx) >= {"ix_jobs_user_id", "ix_jobs_case_id"}
+        # 可空真的可空：没有档案的 job 能插进去
+        conn.execute(
+            "INSERT INTO jobs (case_id, user_id, type, status, total, completed, method_keys,"
+            " combine_mode) VALUES (NULL, 7, 'moment_combine', 'pending', 6, 0, '[\"ssgw\"]', 'moment')"
+        )
+        conn.commit()
+        assert conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0] == 3
+    finally:
+        conn.close()
+
+    # 幂等：二次迁移零写入、结构不变
+    struct = _struct_snapshot(str(path))
+    second = migrate_db(str(path), "analytics")
+    assert second.applied == [] and second.changed is False
+    assert _struct_snapshot(str(path)) == struct
+
+
+def test_v3_is_noop_on_current_schema_db(tmp_path):
+    """当前模型建的库（case_id 已可空 + 两列已在）→ 步骤什么都不改（一字不变）。"""
+    path = tmp_path / "current.db"
+    _build_real_db(path, Base)
+    before = _struct_snapshot(str(path))
+    before_counts = _row_counts(str(path))
+
+    migrate_db(str(path), "analytics")
+
+    assert _jobs_columns(str(path))["case_id"][3] == 0
+    assert _struct_snapshot(str(path), skip=(META_TABLE, LEDGER_TABLE)) == before
+    assert _row_counts(str(path), skip=(META_TABLE, LEDGER_TABLE)) == before_counts

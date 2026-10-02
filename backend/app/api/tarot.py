@@ -107,6 +107,36 @@ class TarotDrawRequest(BaseModel):
     options: Optional[dict] = Field(default=None, description="原样透传 Node /tarot（seed/replay/interactiveSamples 等）")
 
 
+def forward_node_tarot(spread_type: str, options: dict | None = None, *,
+                       user_id: int | None = None) -> dict:
+    """把一次抽牌转发给常驻排盘 Node 服务（`POST /tarot`），返回其结果 dict。
+
+    **抽牌的唯一实现**：`POST /api/tarot/draw` 与「当下事合参」（`app/api/combine.py`
+    把塔罗当池内一法）都走这里。options 原样透传（seed/replay/interactiveSamples 等）。
+    失败（连接异常 / 非 200 / 结构异常）一律 502，绝不吞成假结果。
+    """
+    payload = {"spreadType": spread_type, "options": options or {}}
+    try:
+        resp = httpx.post(f"{settings.paipan_node_url}/tarot", json=payload, timeout=60)
+    except Exception as exc:
+        # 连接失败 / 超时等 → 网关错误，不吞成假结果、不落库
+        logger.warning("塔罗抽牌 Node 转发失败 user_id=%s spread_type=%s error=%s",
+                       user_id, spread_type, exc)
+        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
+
+    if resp.status_code != 200:
+        logger.warning("塔罗抽牌 Node 非 200 user_id=%s spread_type=%s status=%s body=%s",
+                       user_id, spread_type, resp.status_code, resp.text[:200])
+        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
+
+    node_result = resp.json()
+    if not isinstance(node_result, dict):
+        logger.warning("塔罗抽牌 Node 返回结构异常 user_id=%s spread_type=%s body=%s",
+                       user_id, spread_type, str(node_result)[:200])
+        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
+    return node_result
+
+
 # --- 路由 ---
 @router.post("/tarot/draw")
 def draw_tarot(
@@ -118,25 +148,7 @@ def draw_tarot(
     user_id = get_user_id_from_token(authorization)
 
     # ① 转发常驻排盘 Node 服务（server.mjs /tarot）；options 原样透传
-    payload = {"spreadType": body.spread_type, "options": body.options or {}}
-    try:
-        resp = httpx.post(f"{settings.paipan_node_url}/tarot", json=payload, timeout=60)
-    except Exception as exc:
-        # 连接失败 / 超时等 → 网关错误，不吞成假结果、不落库
-        logger.warning("塔罗抽牌 Node 转发失败 user_id=%s spread_type=%s error=%s",
-                       user_id, body.spread_type, exc)
-        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
-
-    if resp.status_code != 200:
-        logger.warning("塔罗抽牌 Node 非 200 user_id=%s spread_type=%s status=%s body=%s",
-                       user_id, body.spread_type, resp.status_code, resp.text[:200])
-        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
-
-    node_result = resp.json()
-    if not isinstance(node_result, dict):
-        logger.warning("塔罗抽牌 Node 返回结构异常 user_id=%s spread_type=%s body=%s",
-                       user_id, body.spread_type, str(node_result)[:200])
-        raise _err(502, "塔罗抽牌服务暂不可用，请稍后重试")
+    node_result = forward_node_tarot(body.spread_type, body.options, user_id=user_id)
 
     # ② 落库（确定性牌面免费持久化，供 GET 只读与 interpret 付费解读复用）
     reading = TarotReading(

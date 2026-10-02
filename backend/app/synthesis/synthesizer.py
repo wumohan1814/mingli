@@ -7,7 +7,13 @@
 from app.paipan.scorer import apply_confidence_penalty
 
 # 解读内容页固定 8 个标题（顺序即展示顺序；前端按此渲染详情板块）。
+# ⚠️ 这是**缺省**骨架（命盘合参/预测沿用，一字未改）；调用方可传 report_titles 覆盖。
 REPORT_TITLES = ["综合趋势", "性格", "事业", "财运", "感情", "健康", "家庭", "大势"]
+
+# 当下事合参的报告骨架（5 板块）：只断「当下这件事」，不铺一生格局。
+# 与命盘合参的 8 领域骨架是两套东西，故各自一份、由调用方显式选择
+# （唯一事实源见 app/combine/__init__.py 的 REPORT_TITLES_BY_MODE）。
+MOMENT_REPORT_TITLES = ["综合判断", "事态走向", "关键节点", "阻力与助力", "行动建议"]
 
 # --------------------------------------------------------------------------- #
 # 节116 · 裁决层配置
@@ -35,19 +41,26 @@ CONSENSUS_DROP = -0.25       # 严重分歧时下调幅度
 MIN_CONCLUSIONS_FOR_BOOST = 3  # 至少几条结论才考虑"互证上调"
 
 
-async def synthesize(method_results: list[dict], route_decision: dict = None, vague_denials: dict = None) -> dict:
+async def synthesize(method_results: list[dict], route_decision: dict = None, vague_denials: dict = None,
+                     report_titles: list[str] | None = None) -> dict:
     """合成裁决
     
     Args:
         method_results: 各方法产出的 method-result v2 列表
         route_decision: 路由决策记录（含主/辅角色）
         vague_denials: 节116 第④步 · 方向级模糊否定摘要（vague_denial_summary 返回的结构）
+        report_titles: 报告板块骨架（顺序即展示顺序）。缺省 None = 既有 8 板块
+            `REPORT_TITLES`（**向后兼容零变化**）；当下事合参传 `MOMENT_REPORT_TITLES`。
     
     Returns:
         综合解读报告
     """
     if not method_results:
         return {"summary": "暂无分析结果", "trend": "平", "details": []}
+
+    titles = list(REPORT_TITLES if report_titles is None else report_titles)
+    if not titles:
+        titles = list(REPORT_TITLES)
 
     # 1. 按角色分组
     main_methods = (route_decision.get("main_methods", []) if route_decision else [])
@@ -64,13 +77,14 @@ async def synthesize(method_results: list[dict], route_decision: dict = None, va
     overall_verdict = _adjudicate(all_conclusions, main_methods=main_methods if main_methods else None)
     trend = overall_verdict["direction"]
 
-    # 4. 生成报告（固定 8 板块：综合趋势 + REPORT_TITLES[1:] 兜底齐全、顺序固定）
+    # 4. 生成报告（骨架 = titles：首块标题同样取自骨架，其余标题按序兜底齐全）
+    #    缺省 titles = REPORT_TITLES，故首块仍是「综合趋势」——与改动前逐字相同。
     overall_desc = f"基于{len(method_results)}个方法的综合分析，整体趋势为「{trend}」"
     if overall_verdict.get("divergence_detail"):
         overall_desc += f"；{overall_verdict['divergence_detail']}"
     details = [
         {
-            "title": "综合趋势",
+            "title": titles[0],
             "direction": trend,
             "description": overall_desc,
             "confidence": overall_verdict["confidence"],
@@ -111,8 +125,8 @@ async def synthesize(method_results: list[dict], route_decision: dict = None, va
             "vague_denial_applied": verdict.get("vague_denial_applied", False),
         }
 
-    # 固定标题按 REPORT_TITLES 顺序输出；grouped 中缺失的标题补兜底板块
-    for title in REPORT_TITLES[1:]:
+    # 骨架标题按 titles 顺序输出；grouped 中缺失的标题补兜底板块
+    for title in titles[1:]:
         group = grouped.get(title)
         if group:
             details.append(_section_detail(title, group))
@@ -123,9 +137,9 @@ async def synthesize(method_results: list[dict], route_decision: dict = None, va
                 "description": "该领域暂无可交叉印证的信息，待校准后补充。",
                 "confidence": "low",
             })
-    # grouped 中 REPORT_TITLES 之外的归一化 domain（如「迁移」）追加到末尾（保序），避免丢信息
+    # grouped 中 titles 之外的归一化 domain（如「迁移」）追加到末尾（保序），避免丢信息
     for domain, group in grouped.items():
-        if domain not in REPORT_TITLES:
+        if domain not in titles:
             details.append(_section_detail(domain, group))
 
     return {

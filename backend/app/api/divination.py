@@ -386,6 +386,44 @@ def _build_yao_texts(result: dict) -> dict:
     return texts
 
 
+def forward_node_divination(method: str, seed: dict | None = None, *,
+                            user_id: int | None = None) -> dict:
+    """把一次起卦转发给常驻排盘 Node 服务（`POST /divination`），返回其结果 dict。
+
+    **起卦的唯一实现**：`POST /api/divinations` 与「当下事合参」（`app/api/combine.py`
+    逐法起卦）都走这里——各写一份的话，两次起卦的 seed 口径/默认值迟早漂掉。
+    seed 键原样透传；lenormand 的 spreadType 由 seed 提供（server.mjs 约定读
+    input.spreadType，非 settings），缺省 'single'；Node 对非法值返回 400。
+
+    失败（连接异常 / 非 200 / 结构异常）一律 502，绝不吞成假结果或半成品。
+    """
+    payload = {"method": method}
+    seed = dict(seed or {})
+    if method == "lenormand":
+        spread_type = seed.pop("spreadType", None)
+        payload["spreadType"] = spread_type if isinstance(spread_type, str) and spread_type else "single"
+    payload.update(seed)
+    try:
+        resp = httpx.post(f"{settings.paipan_node_url}/divination", json=payload, timeout=60)
+    except Exception as exc:
+        # 连接失败 / 超时等 → 网关错误，不吞成假结果、不落库
+        logger.warning("临时起卦 Node 转发失败 user_id=%s method=%s error=%s",
+                       user_id, method, exc)
+        raise _err(502, "起卦服务暂不可用，请稍后重试")
+
+    if resp.status_code != 200:
+        logger.warning("临时起卦 Node 非 200 user_id=%s method=%s status=%s body=%s",
+                       user_id, method, resp.status_code, resp.text[:200])
+        raise _err(502, "起卦服务暂不可用，请稍后重试")
+
+    node_result = resp.json()
+    if not isinstance(node_result, dict):
+        logger.warning("临时起卦 Node 返回结构异常 user_id=%s method=%s body=%s",
+                       user_id, method, str(node_result)[:200])
+        raise _err(502, "起卦服务暂不可用，请稍后重试")
+    return node_result
+
+
 # --- 路由 ---
 @router.post("/divinations")
 def cast_divination(
@@ -403,33 +441,8 @@ def cast_divination(
         if case is None:
             raise _err(404, "case不存在")
 
-    # ① 转发常驻排盘 Node 服务（server.mjs /divination）；seed 键原样透传。
-    #    lenormand 的 spreadType 由 seed 提供（server.mjs 约定读 input.spreadType，
-    #    非 settings），缺省 'single'；Node /divination 对非法 spreadType 返回 400。
-    payload = {"method": body.method}
-    seed = dict(body.seed or {})
-    if body.method == "lenormand":
-        spread_type = seed.pop("spreadType", None)
-        payload["spreadType"] = spread_type if isinstance(spread_type, str) and spread_type else "single"
-    payload.update(seed)
-    try:
-        resp = httpx.post(f"{settings.paipan_node_url}/divination", json=payload, timeout=60)
-    except Exception as exc:
-        # 连接失败 / 超时等 → 网关错误，不吞成假结果、不落库
-        logger.warning("临时起卦 Node 转发失败 user_id=%s method=%s error=%s",
-                       user_id, body.method, exc)
-        raise _err(502, "起卦服务暂不可用，请稍后重试")
-
-    if resp.status_code != 200:
-        logger.warning("临时起卦 Node 非 200 user_id=%s method=%s status=%s body=%s",
-                       user_id, body.method, resp.status_code, resp.text[:200])
-        raise _err(502, "起卦服务暂不可用，请稍后重试")
-
-    node_result = resp.json()
-    if not isinstance(node_result, dict):
-        logger.warning("临时起卦 Node 返回结构异常 user_id=%s method=%s body=%s",
-                       user_id, body.method, str(node_result)[:200])
-        raise _err(502, "起卦服务暂不可用，请稍后重试")
+    # ① 转发常驻排盘 Node 服务（server.mjs /divination）
+    node_result = forward_node_divination(body.method, body.seed, user_id=user_id)
 
     # ② 落库（确定性卦象免费持久化，供 GET 只读与 interpret 付费断卦复用）
     div = Divination(

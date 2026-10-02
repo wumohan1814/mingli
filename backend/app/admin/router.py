@@ -78,7 +78,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # --- 提示词常量 ---
 # backend/prompts：router.py 位于 backend/app/admin/，parents[2] = backend
 PROMPT_BASE = Path(__file__).resolve().parents[2] / "prompts"
-# 33 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
+# 35 个文件类提示词 key（纯文件名、全局唯一）→ 相对 backend/prompts/ 的路径。
 # 只收录 .md 提示词本体；各目录 README.md / .gitkeep 不算 prompt，不收录。
 PROMPT_FILES = {
     # method-prompts（9）
@@ -124,6 +124,10 @@ PROMPT_FILES = {
     "agent_greeting": "agent/greeting.md",
     # namer（1，REQ-094：八字/八法起名 master）
     "namer_master": "namer/master.md",
+    # combine（2，合参改造）：命盘合参纪律段（注入每法 system prompt）+
+    # 当下事合参统一解读（唯一一次 LLM 调用的 system prompt）
+    "combine_natal": "combine/natal.md",
+    "combine_moment": "combine/moment.md",
 }
 # key → 中文分类（按所在目录；前端列表分组展示）
 _CATEGORY_BY_PROMPT_DIR = {
@@ -132,6 +136,7 @@ _CATEGORY_BY_PROMPT_DIR = {
     "interpret": "解读",
     "pair": "配对",
     "agent": "王先生",
+    "combine": "合参",
 }
 PROMPT_CATEGORY = {
     # divination_common 虽位于 shared/ 目录，但它是断卦解读公共段，后台分类归「解读」
@@ -581,7 +586,7 @@ def get_user_case_archive(
 # viewer 可读（列表 / 全文 / 版本历史 / 版本全文）；operator+ 可写（PUT / rollback）。
 @router.get("/prompts")
 def list_prompts(_admin: dict = Depends(require_role("viewer"))):
-    """列全部 33 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
+    """列全部 35 个文件类提示词：key + 中文分类 + 文件名 + 修改时间。"""
     if not PROMPT_BASE.is_dir():
         raise BizError(ERR_INTERNAL, "提示词目录不存在")
     items = []

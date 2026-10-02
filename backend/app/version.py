@@ -21,4 +21,10 @@ APK 客户端），而**服务器端与 APK 端今后各自独立更新**（用�
 APP_VERSION = "0.1.0"
 
 # 接口契约版本（MAJOR.MINOR；bump 纪律见 docs/standards/08）
-API_VERSION = "1.0"
+# 1.1：合参改造（向后兼容的新增）——新增端点 `GET /api/combine/pools`、
+# `POST /api/combine/moment`；`POST /api/cases/{id}/duan-qian-chen` 新增**可选** body
+# `{methods?}` 与响应字段 `label`；`POST /api/cases/{id}/predict` 响应新增 `label`；
+# `GET /api/jobs/{id}` 响应新增 `label`/`methodKeys`/`reportTitles`（旧键一个未少）。
+# 判据（08 §3.2）：新增端点 / 新增响应字段 / 新增可选参数 → MINOR +1。
+# 无删字段、无改语义、无改响应形状 → 不 MAJOR。
+API_VERSION = "1.1"

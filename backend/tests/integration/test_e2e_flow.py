@@ -4,14 +4,14 @@
 在真实 FastAPI app（app.main.app）+ 真实异步编排（端点内 asyncio.create_task
 后台任务，跑在 TestClient 的事件循环里）上串起完整主链路：
 
-    register → create case → paipan → duan-qian-chen(异步9法+逐法校验)
-    → calibration(真实打分) → predict(异步路由+扇出+合成) → revise(修正对话)
+    register → create case → paipan → duan-qian-chen(异步：命盘合参池全量 + 逐法校验)
+    → calibration(真实打分) → predict(异步：沿用断前尘方法集 + 扇出 + 合成) → revise(修正对话)
     → archive(归档聚合)
 
 最后直接查临时 analytics 库做落库断言（DB 为唯一事实源），覆盖端到端闭环。
 
 零真实 DeepSeek 调用：按 Phase 4 既定纪律，monkeypatch 三处模块级 `chat`：
-  - app.methods.base.chat            （8 法分析，analyze_method 内部调用点）
+  - app.methods.base.chat            （命盘合参各法分析，analyze_method 内部调用点）
   - app.validation.validator.chat     （断前尘逐法校验，validate 内部调用点）
   - app.api.cases.chat                （修正对话，revise 内部调用点）
 fake_chat 按最后一条 user 消息 JSON 的内容分派三条链路（分析/校验/对话），
@@ -29,6 +29,7 @@ import uuid
 import pytest
 from fastapi.testclient import TestClient
 
+from app.combine import NATAL_POOL_KEYS, degraded_method_keys
 from app.database import AnalyticsSession
 from app.main import app
 from app.models import (
@@ -40,6 +41,7 @@ from app.models import (
     MethodResult,
     Phase,
 )
+from app.synthesis.synthesizer import REPORT_TITLES
 
 # 测试生辰（虚构数据，与 tests/fixtures/chart.json 同源；含经纬度 ⇒ 完整盘零降级）
 CREATE_CASE_BODY = {
@@ -185,14 +187,20 @@ def test_full_main_flow(e2e_client):
     assert data["caseId"] == str(case_id)
     assert data["degradedMethods"] == [], f"完整盘不应降级: {data['degradedMethods']}"
     assert data["chart"]["dayMaster"], "chart.dayMaster 应存在"
+    degraded = degraded_method_keys(data["degradedMethods"])  # 本机盘面若缺数据，后面按它算期望
 
-    # 4) duan-qian-chen：202 + 后台 8 法串行分析 + 逐法校验；同步轮询到 succeeded
+    # 4) duan-qian-chen：202 + 后台按命盘合参池全量（9 法）分析 + 逐法校验；轮询到 succeeded
+    #    合参改造：缺省方法集 = 命盘合参池全量（九法合一），落库行数 = 池 - 盘面降级法
     resp = client.post(f"/api/cases/{case_id}/duan-qian-chen", headers=headers)
     assert resp.status_code == 202, resp.text
     dqc_job_id = resp.json()["data"]["jobId"]
     dqc_data = _wait_job(client, headers, dqc_job_id)
     assert dqc_data["status"] == "succeeded", f"断前尘任务失败: {dqc_data}"
-    assert dqc_data["total"] == 8
+    assert dqc_data["total"] == len(NATAL_POOL_KEYS) == 9
+    # 新增的三个键（合参契约）：label / methodKeys / reportTitles
+    assert dqc_data["label"] == "九法合一"
+    assert dqc_data["methodKeys"] == list(NATAL_POOL_KEYS)
+    assert dqc_data["reportTitles"] == REPORT_TITLES
     dqc_result = dqc_data["result"]
     assert dqc_result and dqc_result.get("propositions"), (
         f"断前尘问卷 propositions 应为非空: {dqc_result}"
@@ -213,15 +221,20 @@ def test_full_main_flow(e2e_client):
     assert cal_body["data"]["fit"] is not None, "calibration data.fit 应存在"
     assert len(cal_body["data"]["rows"]) >= 1
 
-    # 6) predict：202 + 后台 路由(事业财运) + 并行扇出；轮询到 succeeded 拿 report
+    # 6) predict：202 + 后台**沿用断前尘那一批法** + 并行扇出；轮询到 succeeded 拿 report
     resp = client.post(f"/api/cases/{case_id}/predict", headers=headers)
     assert resp.status_code == 202, resp.text
     pred_job_id = resp.json()["data"]["jobId"]
     pred_data = _wait_job(client, headers, pred_job_id)
     assert pred_data["status"] == "succeeded", f"预测任务失败: {pred_data}"
+    # 合参语义：预测的方法集 = 断前尘记录的那一批（不是路由表选的 5 法）
+    assert pred_data["methodKeys"] == dqc_data["methodKeys"]
+    assert pred_data["label"] == dqc_data["label"]
     assert pred_data["result"] and pred_data["result"].get("report"), (
         f"预测 report 应存在: {pred_data.get('result')}"
     )
+    # 报告骨架仍是既有 8 板块（命盘合参零变化）
+    assert [d["title"] for d in pred_data["result"]["report"]["details"]] == REPORT_TITLES
 
     # 7) revise：修正对话（真实历史 + chart 摘要 → chat → 落两行）
     resp = client.post(
@@ -264,7 +277,12 @@ def test_full_main_flow(e2e_client):
             .filter_by(case_id=case_id, user_id=user_id, phase=Phase.duan_qian_chen)
             .all()
         )
-        assert len(dqc_rows) == 8, f"断前尘 8 法结果应全部落库: {len(dqc_rows)}"
+        # 契约：断前尘跑的法 = 命盘合参池 - 盘面降级法（本机可能缺盘面数据 → 用真实降级
+        # 清单算期望，不写死 8 或 9，两种环境下都成立）
+        expected_keys = [k for k in NATAL_POOL_KEYS if k not in degraded]
+        assert len(dqc_rows) == len(expected_keys), (
+            f"断前尘落库 {len(dqc_rows)} 行，期望 {len(expected_keys)} 行（池全量 - 降级）"
+        )
         assert all(r.result_json for r in dqc_rows), "断前尘各行 result_json 不应为空"
         assert all(r.validation_json is not None for r in dqc_rows), (
             "断前尘各行 validation_json 不应为空"

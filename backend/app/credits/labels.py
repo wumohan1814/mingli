@@ -60,6 +60,8 @@ METHOD_ZH = {
 JOB_TYPE_ZH = {
     "duan-qian-chen": "断前尘",
     "predict": "预测",
+    # 合参改造：当下事合参（1 次 LLM 统一解读，ref = job:{id} 两段式，无逐法后缀）
+    "moment-combine": "当下事合参",
 }
 
 # divinations.method → 起卦解读中文（未列出者统一「起卦深度解读」；

@@ -1,7 +1,18 @@
 """任务编排器（Phase 4 · ADR-0005 异步编排）。
 
-- run_duan_qian_chen：8 法**并发**（每 job 3 并发限流）+ 每法真实校验，逐法扣费、原子推进度；
-- run_predict：路由选法后**并发扇出**（不校验，同样 3 并发限流 + 逐法扣费），合并合成 + 免责声明。
+- run_duan_qian_chen：**按 job 记录的方法集**并发执行各法（`asyncio.Semaphore` 限流，
+  默认 3）+ 每法真实校验，逐法扣费、原子推进度；
+- run_predict：合参模式下**沿用断前尘那一批方法**（不再路由选法）；job 未记录方法集时
+  回退到 `app/routing/router.py` 的路由（老 job / 直调编排的兼容路径），同样并发扇出 +
+  逐法扣费，合并合成 + 免责声明。
+
+**方法集从哪来**：`app/combine` 的两个池是唯一事实源，端点建 job 时把
+`job.method_keys` 落库；编排器只读它，不许再写死注册表。`job.method_keys` 为 NULL
+（合参上线前建的历史 job）时按 `METHOD_KEYS` 兜底——老 job 的续跑行为一字不变。
+
+**合参纪律**：命盘合参运行时把 `backend/prompts/combine/natal.md` 作为 discipline 段
+注入每法的 system prompt（插在方法 prompt 与输出格式指令之间），让「同参共断」的纪律
+（分歧并列、不许和稀泥、反巴纳姆、免责）落到每一法；单法直问不注入。
 
 每个函数在后台 task 内用独立 `AnalyticsSession()` 开/关，不依赖请求级 session。
 **并发方法协程各自用独立短 `AnalyticsSession()`**，绝不复用主 session（并发协程共享同一
@@ -34,6 +45,12 @@ import logging
 
 from sqlalchemy import update
 
+from app.combine import (
+    COMBINE_MODE_NATAL,
+    degraded_method_keys,
+    load_combine_prompt,
+    report_titles_for,
+)
 from app.compliance.guardrails import check_output
 from app.config import settings
 from app.credits.service import check_balance, consume
@@ -123,14 +140,18 @@ def _bump_completed(s, job_id: int) -> None:
     s.commit()
 
 
-def _build_slices(chart: dict) -> dict[str, dict]:
-    """缺省 8 片 + 补 bazi-hunyin-caiyun 第 9 片，合并成 key → fragment。
+def _build_slices(chart: dict, methods: list[str]) -> dict[str, dict]:
+    """按**本次要跑的方法集**切片，返回 key → fragment。
+
+    为什么要按方法集切（而不是每次都切缺省那 8 片）：合参可只选子集、也可选到
+    缺省切片集之外的 `xizhan`——若切片表里没有它，`slices.get(key)` 为 None，
+    `analyze_method` 会当「盘面为空」静默降级（法数悄悄少一个，用户看不出）。
+    按方法集切 = 「要跑的法一定有片」，缺映射就当场抛错（fail loud）。
 
     节117 · 预判标记层：切片后注入确定性标记（`_markers` 字段），
     供各方法模块在解读时参考，降低幻觉面。
     """
-    slices = slice_chart(chart)
-    slices.update(slice_chart(chart, methods=["bazi-hunyin-caiyun"]))
+    slices = slice_chart(chart, methods=list(methods)) if methods else {}
 
     # 节117 · 计算预判标记并注入到各方法切片
     markers_by_method = mark_chart(chart)
@@ -161,6 +182,19 @@ def _user_question(case: Case) -> str:
     return "事业运势"
 
 
+def _job_methods(job: Job) -> list[str]:
+    """本 job 要跑的方法集（**唯一读法**）。
+
+    - `job.method_keys` 非空 → 原样采用（建 job 时由端点用 `app/combine` 的池规范化过，
+      顺序即池顺序）；
+    - NULL / 空 → `METHOD_KEYS` 兜底（合参上线前建的历史 job、以及测试里直调编排的场景），
+      保持既有 8 法行为一字不变。
+    """
+    keys = job.method_keys if isinstance(job.method_keys, list) else None
+    methods = [str(k) for k in keys] if keys else list(METHOD_KEYS)
+    return list(dict.fromkeys(methods))
+
+
 # --------------------------------------------------------------------------- #
 # 断前尘：8 法并发（每 job 3 并发限流）+ 校验 + 逐法扣费
 # --------------------------------------------------------------------------- #
@@ -178,9 +212,17 @@ async def run_duan_qian_chen(job_id: int) -> None:
         session.commit()
 
         chart = chart_row.chart_json if isinstance(chart_row.chart_json, dict) else {}
-        slices = _build_slices(chart)
-        degraded = set(chart_row.degraded_methods or [])
+        degraded = degraded_method_keys(chart_row.degraded_methods)
         user_question = _user_question(case)
+
+        # 合参纪律（backend/prompts/combine/natal.md）：注入每法 system prompt。
+        # 文件缺失 → RuntimeError，由外层兜成 job failed（fail loud，不静默降级）。
+        discipline = load_combine_prompt("natal")
+
+        # 本 job 的方法集（下端点在 job 上记录；NULL = 历史 job → METHOD_KEYS 兜底）
+        methods = _job_methods(job)
+        # 切片按要跑的法给（降级法不切：它不跑，切片表里也就不该有它）
+        slices = _build_slices(chart, [k for k in methods if k not in degraded])
 
         reset_usage()
 
@@ -195,13 +237,13 @@ async def run_duan_qian_chen(job_id: int) -> None:
         done_count = sum(1 for r in done_rows if r.result_json)
         continuation = (
             "该档案之前的推演被服务器重启中断，请继续完成剩余方法的分析，不要重复已完成的结论。"
-            if 0 < done_count < (job.total or 9)
+            if 0 < done_count < (job.total or len(methods))
             else None
         )
 
         # 要并发跑的方法（排除降级/未注册）；跳过的方法只原子推进度、不调 LLM
-        pending = [k for k in METHOD_KEYS if k not in degraded and k in ANALYZERS]
-        skipped = [k for k in METHOD_KEYS if k not in pending]
+        pending = [k for k in methods if k not in degraded and k in ANALYZERS]
+        skipped = [k for k in methods if k not in pending]
         for k in skipped:
             _bump_completed(session, job_id)
             logger.info("断前尘跳过（降级/未注册）method_key=%s job_id=%s", k, job_id)
@@ -244,6 +286,7 @@ async def run_duan_qian_chen(job_id: int) -> None:
                         result = await ANALYZERS[key](
                             "duan-qian-chen", slices.get(key), user_question,
                             continuation=continuation,
+                            combine_discipline=discipline,
                         )
                         if not isinstance(result, dict):
                             # prompt 缺失 / slice 空 → 该方法降级，跳过落库（未调 LLM，无 token 消耗）
@@ -402,8 +445,9 @@ def _compose_questionnaire(session, job: Job, failed_methods: list[str]) -> dict
 # 预测：路由 + 并发扇出（每 job 3 并发限流，不校验）+ 逐法扣费 + 合成
 # --------------------------------------------------------------------------- #
 async def run_predict(job_id: int) -> None:
-    """预测编排：路由选法 → 并发 analyze（`asyncio.Semaphore(settings.llm_max_concurrency)`
-    限流，默认 3；不校验）→ 每法独立 session 落库 + 按差值逐法扣费 → synthesize + 合规。"""
+    """预测编排：**合参模式沿用断前尘的方法集**（无方法集可沿用才回退路由选法）→
+    并发 analyze（`asyncio.Semaphore(settings.llm_max_concurrency)` 限流，默认 3；不校验）
+    → 每法独立 session 落库 + 按差值逐法扣费 → synthesize（按模式选报告骨架）+ 合规。"""
     session = AnalyticsSession()
     try:
         job, case, chart_row = _query_common(session, job_id)
@@ -414,15 +458,31 @@ async def run_predict(job_id: int) -> None:
         session.commit()
 
         chart = chart_row.chart_json if isinstance(chart_row.chart_json, dict) else {}
-        slices = _build_slices(chart)
-        degraded = set(chart_row.degraded_methods or [])
+        degraded = degraded_method_keys(chart_row.degraded_methods)
         user_question = _user_question(case)
 
-        # 路由（零 LLM）：main + support 去重（保序）
-        decision = route(user_question, Phase.prediction, degraded_methods=list(degraded))
-        methods: list[str] = list(dict.fromkeys(decision["main_methods"] + decision["support_methods"]))
+        # 合参纪律（同断前尘，同一份 natal.md）
+        discipline = load_combine_prompt("natal")
+
+        # 选法（零 LLM）——两条路径：
+        # ① 合参：job 已记录方法集（端点从该 case 最近一次断前尘的方法集沿用）→ 原样用，
+        #    且**全部按主法等权**进裁决（合参没有主辅之分，谁都不比谁高一头）；
+        # ② 回退：job 没有方法集（历史 job / 直调编排）→ 走路由表选主辅法（老行为不变）。
+        job_methods = _job_methods(job) if job.method_keys else None
+        if job_methods:
+            decision = {
+                "main_methods": list(job_methods),
+                "support_methods": [],
+                "reasons": [f"合参：沿用断前尘的方法集（{len(job_methods)} 法）"],
+            }
+            methods: list[str] = list(job_methods)
+        else:
+            decision = route(user_question, Phase.prediction, degraded_methods=list(degraded))
+            methods = list(dict.fromkeys(decision["main_methods"] + decision["support_methods"]))
         job.total = len(methods)
         session.commit()
+        # 切片按要跑的法给（降级法不跑 → 不切）
+        slices = _build_slices(chart, [k for k in methods if k not in degraded])
 
         # 落路由决策
         session.add(
@@ -507,6 +567,7 @@ async def run_predict(job_id: int) -> None:
                             "prediction", slices.get(key), user_question,
                             calibration_feedback=calibration_feedback,
                             continuation=continuation,
+                            combine_discipline=discipline,
                         )
                     except (LLMError, ValueError) as exc:
                         # 单法失败：按差值扣费（ValueError 时 LLM 已消耗、差值>0）
@@ -577,8 +638,12 @@ async def run_predict(job_id: int) -> None:
             elif status in ("done", "cached") and isinstance(payload, dict):
                 results.append(payload)
 
-        # 合成 + 合规拦截（免责由前端全局 DisclaimerFooter 统一展示，不再追加进 report 文字）
-        report = await synthesize(results, decision, vague_denials=vague_denials_summary)
+        # 合成 + 合规拦截（免责由前端全局 DisclaimerFooter 统一展示，不再追加进 report 文字）。
+        # 报告骨架按 job 的合参模式选（命盘合参 = 既有 8 板块，与改动前逐字相同）。
+        report = await synthesize(
+            results, decision, vague_denials=vague_denials_summary,
+            report_titles=report_titles_for(job.combine_mode or COMBINE_MODE_NATAL),
+        )
         _apply_compliance(report)
 
         # _usage 用逐法 tokens 求和——主 task 的 contextvar 不含子协程的累计

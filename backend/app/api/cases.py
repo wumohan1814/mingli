@@ -32,6 +32,13 @@ from app.models import (
     RouteDecision,
 )
 from app.auth.router import get_user_id_from_token
+from app.combine import (
+    COMBINE_MODE_NATAL,
+    NATAL_POOL_KEYS,
+    combine_label,
+    normalize_methods,
+    same_method_set,
+)
 from app.compliance.guardrails import append_disclaimer, check_output
 from app.credits.labels import METHOD_ZH
 from app.credits.service import check_balance, consume
@@ -212,6 +219,16 @@ class CalibrationRequest(BaseModel):
     vague_denials: Optional[list[dict]] = None
 
 
+class DuanQianChenRequest(BaseModel):
+    """断前尘可选 body（合参改造）：`{"methods": [...]}`。
+
+    - 省略该字段 / 整个 body 不传 → 命盘合参池**全量**（九法合一）；
+    - 传了就得合法：池外 key、空数组、非字符串 → 400（见 `normalize_methods`）。
+    """
+
+    methods: Optional[list[str]] = None
+
+
 class ReviseRequest(BaseModel):
     message: str
     # 板块追问 topic（如 "事业"/"财运"/"婚姻"，或 report.details 里的 title）；
@@ -289,8 +306,19 @@ async def list_cases(
     has_report_ids: set[int] = set()
     method_counts: dict[int, int] = {}
     chart_by_case: dict[int, dict] = {}
+    dqc_totals: dict[int, int] = {}
     if cases:
         case_ids = [c.id for c in cases]
+        # 进度分母：该 case **最近一次断前尘 job 记录的方法集大小**（合参可选子集：选七法就是 7）；
+        # 没有记录（老 job / 还没跑过断前尘）→ 命盘合参池全量（缺省口径）。
+        for job_row in (
+            db.query(Job)
+            .filter(Job.case_id.in_(case_ids), Job.type == JobType.duan_qian_chen)
+            .order_by(Job.id.asc())
+            .all()
+        ):
+            keys = job_row.method_keys if isinstance(job_row.method_keys, list) else None
+            dqc_totals[job_row.case_id] = len(keys) if keys else len(NATAL_POOL_KEYS)
         result_rows = (
             db.query(MethodResult)
             .filter(MethodResult.case_id.in_(case_ids))
@@ -325,9 +353,10 @@ async def list_cases(
                 "status": case.status.value if case.status else None,
                 "createdAt": case.created_at.isoformat() if case.created_at else None,
                 "hasReport": case.id in has_report_ids,
-                # 断前尘共 8 法（节139：西占已退出），methodCount 为已产出非空结果的方法数（进度）
+                # 分母 = 该 case 最近一次断前尘的方法集大小（缺省 = 命盘合参池全量 9 法）；
+                # methodCount 为已产出非空结果的方法数（进度）
                 "methodCount": method_counts.get(case.id, 0),
-                "totalMethods": len(METHOD_KEYS),
+                "totalMethods": dqc_totals.get(case.id, len(NATAL_POOL_KEYS)),
                 "chartSummary": _list_chart_summary(chart_by_case.get(case.id)),
             }
         )
@@ -411,18 +440,33 @@ async def paipan(
 @router.post("/{case_id}/duan-qian-chen")
 async def duan_qian_chen(
     case_id: int,
+    req: Optional[DuanQianChenRequest] = None,
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """断前尘（异步：9法串行+校验）"""
+    """断前尘（异步：按所选方法集并发执行 + 逐法校验）。
+
+    body 可空：`{"methods": [...]}` 只跑命盘合参池的子集；省略/空 body = **池全量**
+    （九法合一）。非法 key / 空数组 → 400，不静默退回全量（选了七法却跑九法是事故）。
+    """
     user_id = get_user_id_from_token(authorization)
     case = db.query(Case).filter_by(id=case_id, user_id=user_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="case不存在")
 
-    # 幂等防重复：同一 case 已有 running/pending/succeeded 的断前尘 job 时复用，
-    # 避免刷新/重进导致重复跑+重复扣费。断前尘结果确定性（排盘不变、问卷不变），
-    # 已 succeeded 的最新 job 也复用（前端轮询 /jobs/{jobId} 立即拿到 questionnaire）
+    try:
+        methods = normalize_methods(req.methods if req is not None else None,
+                                    COMBINE_MODE_NATAL)
+    except ValueError as exc:
+        raise _err(400, str(exc))
+
+    label = combine_label(len(methods), COMBINE_MODE_NATAL)
+
+    # 幂等防重复：同一 case 已有 running/pending/succeeded 的断前尘 job、**且方法集相同**
+    # 时复用，避免刷新/重进导致重复跑+重复扣费。断前尘结果确定性（排盘不变、问卷不变），
+    # 已 succeeded 的最新 job 也复用（前端轮询 /jobs/{jobId} 立即拿到 questionnaire）。
+    # ⚠️ 方法集不同**不许复用**：否则用户选了七法却拿到九法结果（旧含 NULL 方法集的历史
+    # job 同样不复用——无法证明跑的是同一批法，宁可贵一次）。
     existing = (
         db.query(Job)
         .filter_by(case_id=case_id, user_id=user_id, type=JobType.duan_qian_chen)
@@ -430,10 +474,14 @@ async def duan_qian_chen(
         .order_by(Job.id.desc())
         .first()
     )
-    if existing is not None:
+    if existing is not None and same_method_set(existing.method_keys, methods):
         return JSONResponse(
             status_code=202,
-            content={"code": 0, "message": "ok", "data": {"jobId": str(existing.id), "total": existing.total, "reused": True}},
+            content={"code": 0, "message": "ok", "data": {
+                "jobId": str(existing.id), "total": existing.total,
+                "label": combine_label(len(existing.method_keys or methods), COMBINE_MODE_NATAL),
+                "reused": True,
+            }},
         )
 
     # 创建异步任务（后台编排器独立 session 执行，不占用本请求 session）
@@ -442,9 +490,11 @@ async def duan_qian_chen(
         user_id=user_id,
         type=JobType.duan_qian_chen,
         status=JobStatus.pending,
-        # 节139：进度分母改为注册表长度（西占退出后 9→8），不再硬编码
-        total=len(METHOD_KEYS),
+        # 进度分母 = 本次实际方法集大小（不再硬编码注册表长度）
+        total=len(methods),
         completed=0,
+        method_keys=methods,
+        combine_mode=COMBINE_MODE_NATAL,
     )
     db.add(job)
     db.commit()
@@ -456,7 +506,9 @@ async def duan_qian_chen(
 
     return JSONResponse(
         status_code=202,
-        content={"code": 0, "message": "ok", "data": {"jobId": str(job.id), "total": job.total}},
+        content={"code": 0, "message": "ok", "data": {
+            "jobId": str(job.id), "total": job.total, "label": label,
+        }},
     )
 
 
@@ -529,19 +581,49 @@ async def calibration(
     }
 
 
+def _latest_dqc_methods(db: Session, case_id: int, user_id: int) -> list[str]:
+    """预测要用的方法集 = **该 case 最近一次断前尘所用的方法集**（合参语义）。
+
+    - 最近一次断前尘 job 记了方法集 → 规范化后沿用（顺序即池顺序）；
+    - 没有断前尘 job / 老 job 没有记录 / 库里存了非法 key（人手改库）→ 命盘合参池全量。
+    """
+    row = (
+        db.query(Job)
+        .filter_by(case_id=case_id, user_id=user_id, type=JobType.duan_qian_chen)
+        .order_by(Job.id.desc())
+        .first()
+    )
+    keys = row.method_keys if row is not None and isinstance(row.method_keys, list) else None
+    if keys:
+        try:
+            return normalize_methods(keys, COMBINE_MODE_NATAL)
+        except ValueError:
+            logger.warning("断前尘 job 记录的方法集不合法，预测退回池全量 job_id=%s",
+                           getattr(row, "id", None))
+    return list(NATAL_POOL_KEYS)
+
+
 @router.post("/{case_id}/predict")
 async def predict(
     case_id: int,
     authorization: str = Header(...),
     db: Session = Depends(get_analytics_db),
 ):
-    """预测（异步：路由选法+并行扇出+合并裁决）"""
+    """预测（异步：沿用断前尘方法集 + 并发扇出 + 合并裁决）
+
+    合参语义：`body` 不变，方法集不再由路由表决定，而是**沿用该 case 最近一次断前尘
+    所用的那一批法**（见 `_latest_dqc_methods`）——用户选了七法，预测就是七法。
+    """
     user_id = get_user_id_from_token(authorization)
     case = db.query(Case).filter_by(id=case_id, user_id=user_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="case不存在")
 
-    # 幂等防重复：同一 case 已有 running/pending 的 predict job 时复用，避免刷新/重进导致重复跑+重复扣费
+    methods = _latest_dqc_methods(db, case_id, user_id)
+    label = combine_label(len(methods), COMBINE_MODE_NATAL)
+
+    # 幂等防重复：同一 case 已有 running/pending 的 predict job **且方法集相同**时复用，
+    # 避免刷新/重进导致重复跑+重复扣费；方法集不同（断前尘换过法）则另起一个 job。
     existing = (
         db.query(Job)
         .filter_by(case_id=case_id, user_id=user_id, type=JobType.predict)
@@ -549,20 +631,26 @@ async def predict(
         .order_by(Job.id.desc())
         .first()
     )
-    if existing is not None:
+    if existing is not None and same_method_set(existing.method_keys, methods):
         return JSONResponse(
             status_code=202,
-            content={"code": 0, "message": "ok", "data": {"jobId": str(existing.id), "total": existing.total, "reused": True}},
+            content={"code": 0, "message": "ok", "data": {
+                "jobId": str(existing.id), "total": existing.total,
+                "label": combine_label(len(existing.method_keys or methods), COMBINE_MODE_NATAL),
+                "reused": True,
+            }},
         )
 
-    # 建 job：total 先置 0，后台编排器路由后回填实际方法数
+    # 建 job：方法集与模式一并落库，编排器只按它跑（total 同步给出真实分母）
     job = Job(
         case_id=case_id,
         user_id=user_id,
         type=JobType.predict,
         status=JobStatus.pending,
-        total=0,
+        total=len(methods),
         completed=0,
+        method_keys=methods,
+        combine_mode=COMBINE_MODE_NATAL,
     )
     db.add(job)
     db.commit()
@@ -574,7 +662,9 @@ async def predict(
 
     return JSONResponse(
         status_code=202,
-        content={"code": 0, "message": "ok", "data": {"jobId": str(job.id), "total": job.total}},
+        content={"code": 0, "message": "ok", "data": {
+            "jobId": str(job.id), "total": job.total, "label": label,
+        }},
     )
 
 
@@ -761,16 +851,21 @@ async def archive(
     return {"code": 0, "message": "ok", "data": data}
 
 
-# --- 逐法解读（REQ-126；节139：九法→八法）---
-def _aggregate_method_readings(rows: list[MethodResult]) -> tuple[list[dict], list[str]]:
+# --- 逐法解读（REQ-126；节139：九法→八法；合参改造：按实际所选方法集）---
+def _aggregate_method_readings(rows: list[MethodResult],
+                               selected_keys: list[str] | None = None) -> tuple[list[dict], list[str]]:
     """把某 case 的 method_results 行按 method_key 聚合为逐法解读（纯读库，零 LLM）。
 
-    - 顺序按 METHOD_KEYS 注册表；同一 method_key 多行（重复 job）取最新（id 大者）。
+    - 展示哪些法 = **该 case 实际选过的方法集**（合参可选子集：选七法就只有七条，
+      选的第 9 法 `xizhan` 也会出现）；`selected_keys` 为空（老 case 没记录方法集）时
+      退回默认 8 法注册表 —— 老行为一字不变。
+    - 顺序按传入顺序（调用方按命盘合参池顺序排）；同 method_key 多行取最新（id 大者）。
     - phase 取该法「已有非空结果的最高级阶段」：prediction 优先，否则 duan-qian-chen；
       conclusions 只来自 prediction（断前尘阶段 v2 强制 conclusions=[]）。
     - past_propositions 优先取断前尘（前端 tab 结论为空时回退展示断前尘命题），
       仅预测结果时取 prediction 自身 past_propositions。
-    - 两阶段均无非空 result_json（未产出/降级）的 method_key 进 degraded。
+    - **所选但两阶段均无非空 result_json** 的 method_key 进 degraded（未产出/失败/降级）；
+      没被选过的法不进 degraded（它不是"没产出"，是"没跑"）。
     """
     latest_pred: dict[str, MethodResult] = {}
     latest_dqc: dict[str, MethodResult] = {}
@@ -780,9 +875,15 @@ def _aggregate_method_readings(rows: list[MethodResult]) -> tuple[list[dict], li
         elif row.phase == Phase.duan_qian_chen:
             latest_dqc[row.method_key] = row
 
+    ordered = list(selected_keys) if selected_keys else list(METHOD_KEYS)
+    # 有结果行但不在所选集内的法（历史 job / 人手改库）追加在末尾，避免数据有行却看不到
+    for key in list(latest_pred) + list(latest_dqc):
+        if key not in ordered:
+            ordered.append(key)
+
     methods: list[dict] = []
     degraded: list[str] = []
-    for key in METHOD_KEYS:
+    for key in ordered:
         pred = latest_pred.get(key)
         dqc = latest_dqc.get(key)
         pred_ok = pred is not None and bool(pred.result_json)
@@ -815,16 +916,17 @@ async def get_case_readings(
     db: Session = Depends(get_analytics_db),
 ):
     """逐法解读聚合（REQ-126，纯读库零 LLM）：返回该 case 全部 method_results
-    按 method_key 聚合的逐法解读，供逐法解读 tab 展示（节139 起为 8 法）。
+    按 method_key 聚合的逐法解读，供逐法解读 tab 展示（合参：按实际所选方法集，最多 9 法）。
 
     契约（data）：
-      methods[]：每法一条（顺序 = METHOD_KEYS 注册表）
+      methods[]：每法一条（顺序 = 命盘合参池顺序；未记录方法集的老 case = 默认 8 法注册表）
         { method_key, name(中文), phase, conclusions[], past_propositions[], cached }
         - phase = 该法已有非空结果的最高级阶段（"prediction" 优先，否则
           "duan-qian-chen"）；前端 tab 默认展示 prediction conclusions，
           若空则回退断前尘 past_propositions。
         - cached = 该法最新结果行的缓存命中标记。
-      degraded[]：两阶段均无非空 result_json（未产出/降级）的 method_key 列表。
+      degraded[]：**所选但**两阶段均无非空 result_json（未产出/失败/降级）的 method_key 列表
+        （没被选过的法不进 degraded——它不是「没产出」，是「没跑」）。
     中文名来源：app/credits/labels.METHOD_ZH（REQ-063 余额流水中文标签的权威映射）。
     """
     user_id = get_user_id_from_token(authorization)
@@ -836,7 +938,17 @@ async def get_case_readings(
         .order_by(MethodResult.id.asc())
         .all()
     )
-    methods, degraded = _aggregate_method_readings(rows)
+    # 该 case 实际选过的法（按 id 升序扫全部 job，后出现的顺序不乱；按池顺序归一）
+    picked: list[str] = []
+    for job_row in (
+        db.query(Job).filter_by(case_id=case.id, user_id=user_id).order_by(Job.id.asc()).all()
+    ):
+        for key in (job_row.method_keys if isinstance(job_row.method_keys, list) else []):
+            if key not in picked:
+                picked.append(str(key))
+    selected = [k for k in NATAL_POOL_KEYS if k in picked] + \
+               [k for k in picked if k not in NATAL_POOL_KEYS]
+    methods, degraded = _aggregate_method_readings(rows, selected)
 
     return {"code": 0, "message": "ok", "data": {"methods": methods, "degraded": degraded}}
 

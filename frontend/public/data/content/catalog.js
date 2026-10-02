@@ -12,7 +12,7 @@
 //   intents[].recs     意图 → 推荐方法（带理由），冷启动人工配置表（T3b 意图推荐页消费）
 //
 // 数据口径（2026-09-14 现场核对）：
-//   - 命盘单法（八字格局/紫微/七政/奇门终身/五运六气）暂无独立页，统一走 nine-pick（八法合一，
+//   - 命盘单法（八字格局/紫微/七政/奇门终身/五运六气）暂无独立页，统一走 hecan（合参页「命盘合参」标签，
 //     其中含该法）；single:true 标记「将来单飞」（节130 议题，已被标签方案吸收）时改 page。
 //   - 塔罗一条（单张/牌阵同一页面，L2 主口径；L1 快感由意图⑥随手抽体现）；雷诺曼同。
 //   - 时势推演拆 taiyi/huangji 两条（各自独立页）。
@@ -41,15 +41,17 @@
     { id: 'jinkoujue', name: '金口诀', blurb: '一诀断吉凶，起课快、断事直', culture: ['中华'], play: ['摇卦'], answer: ['问当下事'], level: 'L3', mins: '5–10 分钟', pay: 'freemium', needCase: 'none', page: 'divination', params: { method: 'jinkoujue' } },
     { id: 'qimen', name: '奇门时家', blurb: '用时家奇门看当下的天时地利人和', culture: ['中华'], play: ['摇卦'], answer: ['问当下事'], level: 'L3', mins: '5–10 分钟', pay: 'freemium', needCase: 'none', page: 'divination', params: { method: 'qimen' } },
     { id: 'astrology', name: '西洋占星', blurb: '本命星盘，看性格原型与人生格局', culture: ['西方'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'astrology' },
-    { id: 'bazi-pattern', name: '八字格局', blurb: '以生辰八字看命局格局与用神', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'nine-pick', single: true },
-    { id: 'ziwei', name: '紫微斗数', blurb: '十二宫星曜，看一生格局与流年', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'nine-pick', single: true },
-    { id: 'qizheng', name: '七政四余', blurb: '中西合璧的星命术，看格局与运势', culture: ['中华', '印度源流'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'nine-pick', single: true },
-    { id: 'qimen-lifetime', name: '奇门终身局', blurb: '奇门终身盘，看一生的大局走向', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'nine-pick', single: true },
-    { id: 'wuyun-liuqi', name: '五运六气', blurb: '中医运气学，看体质与天时相应', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'nine-pick', single: true },
+    { id: 'bazi-pattern', name: '八字格局', blurb: '以生辰八字看命局格局与用神', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'hecan', single: true },
+    { id: 'ziwei', name: '紫微斗数', blurb: '十二宫星曜，看一生格局与流年', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'hecan', single: true },
+    { id: 'qizheng', name: '七政四余', blurb: '中西合璧的星命术，看格局与运势', culture: ['中华', '印度源流'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'hecan', single: true },
+    { id: 'qimen-lifetime', name: '奇门终身局', blurb: '奇门终身盘，看一生的大局走向', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'hecan', single: true },
+    { id: 'wuyun-liuqi', name: '五运六气', blurb: '中医运气学，看体质与天时相应', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'case', page: 'hecan', single: true },
     { id: 'taiyi', name: '太乙神数', blurb: '古三式之一，推演国运大势', culture: ['中华'], play: ['择日'], answer: ['择吉取名'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'none', page: 'taiyi' },
     { id: 'huangji', name: '皇极经世', blurb: '以元会运世推演时代大势', culture: ['中华'], play: ['择日'], answer: ['择吉取名'], level: 'L3', mins: '即时', pay: 'freemium', needCase: 'none', page: 'huangji' },
     // ---- L4 · 多法合参（异步等待、消耗高、报告长）----
-    { id: 'nine-pick', name: '八法合一', blurb: '八种命术同参共断，看一生的综合报告', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L4', mins: '需等待（异步）', pay: 'freemium', needCase: 'case', page: 'nine-pick' }
+    // 节161：原命盘多法汇总条目（旧 id nine-pick）改为 hecan「合参」页（两标签：命盘合参 / 当下事合参；
+    // 方法名与数量一律由后端 /api/combine/pools 与作业 label 决定，此处不写死方法数）
+    { id: 'hecan', name: '合参', blurb: '命盘多法同参共断看一生，或就当下事多法同断', culture: ['中华'], play: ['排盘'], answer: ['看一生格局'], level: 'L4', mins: '需等待（异步）', pay: 'freemium', needCase: 'case', page: 'hecan' }
   ];
 
   // 6 意图（节140 2026-09-13 用户确认）→ 推荐带理由（冷启动人工配置表）
@@ -83,7 +85,7 @@
     { key: 'fortune', title: '看流运', sub: '今年运势·流年', icon: 'nine',
       recs: [
         { methodId: 'zodiac', why: '生肖流年，免费引流快速' },
-        { methodId: 'nine-pick', why: '八法合一深度看一年运势' },
+        { methodId: 'hecan', why: '命盘多法合参，深度看一年运势' },
         { methodId: 'tarot', why: '年运十二牌阵' }
       ] },
     { key: 'random', title: '随手抽', sub: '抽张牌·签随便玩', icon: 'bulb',

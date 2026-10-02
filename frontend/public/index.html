@@ -8,7 +8,7 @@
        资源一律根绝对路径（BUG-009 约定）：/manifest.webmanifest、/art/pwa/…。
        主题色取 --ink-900 #1A2138（墨蓝，与图标深底同族）；background_color 见 manifest。 hardcode-allow: PWA 主题色注释 -->
   <meta name="theme-color" content="#1A2138" /> <!-- hardcode-allow: PWA theme-color 必须是字面量 -->
-  <link rel="manifest" href="/manifest.webmanifest?v=161" />
+  <link rel="manifest" href="/manifest.webmanifest?v=162" />
   <link rel="apple-touch-icon" href="/art/pwa/apple-touch-icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -17,28 +17,28 @@
        分享链接直达页路径为 /mbti/share/{token}，相对路径会被浏览器解析为
        /mbti/share/vendor/... → SPA fallback 回退 index.html（text/html 被当 JS 执行）
        → React 加载失败 → 整页白屏。站点部署在域名根，根绝对路径在首页与深层路由都正确。 -->
-  <script src="/vendor/react.production.min.js?v=161"></script>
-  <script src="/vendor/react-dom.production.min.js?v=161"></script>
-  <script src="/vendor/regions.js?v=161"></script>
+  <script src="/vendor/react.production.min.js?v=162"></script>
+  <script src="/vendor/react-dom.production.min.js?v=162"></script>
+  <script src="/vendor/regions.js?v=162"></script>
   <!-- T1–T4 文案接入（REQ-083 / REQ-095 正式文案）：星座 / 生肖三关系匹配 792 对「分值 + 说明」数据。
        数据文件 frontend/public/data/pairs.js（文案轮次交付物，更新时只替换该文件；根绝对路径约定）。
        defer 延迟加载（节111：配对视图内懒访问 window.ML_PAIRS，首屏不再被它阻塞）。 -->
-  <script src="/data/pairs.js?v=161" defer></script>
+  <script src="/data/pairs.js?v=162" defer></script>
   <!-- REQ-128 阶段 0：6 套名词白话卡（大六壬/金口诀/奇门时家/黄历择日/太乙/皇极经世）。
        数据文件 frontend/public/data/term-cards.js（文案组第四轮交付物，后续文案轮次只替换该文件；根绝对路径约定）。
        必须在 React 组件主脚本之前引入（供 MLTermRow / MLTermPanel 查表）。 -->
-  <script src="/data/term-cards.js?v=161"></script>
+  <script src="/data/term-cards.js?v=162"></script>
   <!-- REQ-128 阶段1：全站界面文案总表（框架层 落地/登录注册/三Hub/Banner/菜单/页脚/通用）。
        数据文件 frontend/public/data/ui-copy.js（window.ML_COPY，key 规范见 docs/standards/01 §12：
        ui.<模块>.<动作|状态>，小写+连字符；既有 UI_COPY key 保持原名迁入，index.html 内以
        UI_COPY = ML_COPY.ui 兼容别名继续可用）。文案轮次只替换该文件；必须在 React 组件主脚本之前引入。 -->
-  <script src="/data/ui-copy.js?v=161"></script>
+  <script src="/data/ui-copy.js?v=162"></script>
   <!-- 2026-09-22：运行形态与能力读取入口（window.ML_RUNTIME；「同源构建」地基）。
        数据文件 frontend/public/data/runtime.js，启动时读 GET /api/runtime（无鉴权，
        登录前即可读）；**取不到就按 web 全能力兜底**（老部署/断网行为零变化）。
        必须在 React 组件主脚本之前引入（登录页等要按能力决定渲染哪块）。
        形态与版本兼容矩阵见 docs/standards/08-运行形态与版本契约.md。 -->
-  <script src="/data/runtime.js?v=161"></script>
+  <script src="/data/runtime.js?v=162"></script>
   <script>
   // 节135：UI_COPY 兼容别名必须在数据文件（content/*.js）与业务文件（/js/*.js）之前就绪——
   // 它们的顶层常量（DIVIN_METHODS、PAIR_REL_ICONS、CONTENT 计算键等）加载时即解引用 UI_COPY；
@@ -48,27 +48,28 @@
   <!-- 节135：正文数据总表（卦辞/牌义/类型描述等正文内容统一管理，i18n 就绪）。
        数据文件 frontend/public/data/content/，全局访问：window.CONTENT
        各领域模块按语言分文件；当前默认中文，同步加载 -->
-  <script src="/data/content/index.js?v=161"></script>
-  <script src="/data/content/tarot/cards-zh.js?v=161"></script>
-  <script src="/data/content/i-ching/hexagrams-zh.js?v=161"></script>
-  <script src="/data/content/divination/glossary-zh.js?v=161"></script>
-  <script src="/data/content/astrology/names-zh.js?v=161"></script>
-  <script src="/data/content/basics/names-zh.js?v=161"></script>
-  <script src="/data/content/catalog.js?v=161"></script>
-  <script src="/js/components.js?v=161"></script>
-  <script src="/js/views-guoxue.js?v=161"></script>
-  <script src="/js/views-xishi.js?v=161"></script>
-  <script src="/js/views-mbti.js?v=161"></script>
-  <script src="/js/views-zodiac.js?v=161"></script>
-  <script src="/js/views-cases.js?v=161"></script>
-  <script src="/js/views-divination.js?v=161"></script>
-  <script src="/js/views-onboarding.js?v=161"></script>
-  <script src="/js/views-home.js?v=161"></script>
-  <script src="/js/views-guoxue-tools.js?v=161"></script>
-  <script src="/js/views-agent.js?v=161"></script>
-  <link rel="stylesheet" href="/css/tokens.css?v=161">
-  <link rel="stylesheet" href="/css/components.css?v=161">
-  <link rel="stylesheet" href="/css/pages.css?v=161">
+  <script src="/data/content/index.js?v=162"></script>
+  <script src="/data/content/tarot/cards-zh.js?v=162"></script>
+  <script src="/data/content/i-ching/hexagrams-zh.js?v=162"></script>
+  <script src="/data/content/divination/glossary-zh.js?v=162"></script>
+  <script src="/data/content/astrology/names-zh.js?v=162"></script>
+  <script src="/data/content/basics/names-zh.js?v=162"></script>
+  <script src="/data/content/catalog.js?v=162"></script>
+  <script src="/js/components.js?v=162"></script>
+  <script src="/js/views-guoxue.js?v=162"></script>
+  <script src="/js/views-xishi.js?v=162"></script>
+  <script src="/js/views-mbti.js?v=162"></script>
+  <script src="/js/views-zodiac.js?v=162"></script>
+  <script src="/js/views-cases.js?v=162"></script>
+  <script src="/js/views-divination.js?v=162"></script>
+  <script src="/js/views-onboarding.js?v=162"></script>
+  <script src="/js/views-home.js?v=162"></script>
+  <script src="/js/views-guoxue-tools.js?v=162"></script>
+  <script src="/js/views-hecan.js?v=162"></script>
+  <script src="/js/views-agent.js?v=162"></script>
+  <link rel="stylesheet" href="/css/tokens.css?v=162">
+  <link rel="stylesheet" href="/css/components.css?v=162">
+  <link rel="stylesheet" href="/css/pages.css?v=162">
 </head>
 <body>
   <div id="root"></div>
@@ -93,7 +94,7 @@ let token = '';
 let refreshToken = '';
 // BUG-002: 需登录才能访问的页面白名单（landing/intent/explore 保持公开；节140 T3d 起旧 HUB 页名
 // 为 explore 别名，同样公开）
-const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','nine-pick','agent','guoxue-tools'];
+const AUTH_REQUIRED_PAGES = ['cases','onboarding','waiting','calibration','predict','revise','topic','archive','credits','zodiac','divination','tarot','lenormand','astrology','mbti','hecan','agent','guoxue-tools'];
 // 未登录访问受限页时记录的回跳目标 {p, p2}；登录/注册成功后优先回跳
 let authRedirect = null;
 let onUnauthorized = null;
@@ -283,8 +284,6 @@ async function fetchCreditBalance() {
 }
 
 
-// 断前尘八法（轨道动画节点；节139：西占退出，节点名改为真实八法，原为 9 条装饰性名称）
-const DQC_METHODS = ['八字格局', '大运流年', '神煞纳音', '婚姻财运', '紫微斗数', '七政四余', '奇门终身', '五运六气'];
 
 // 后端 report.trend / details[].direction 均为「吉/凶/平」，映射到现有 trend-* 样式、方向图标与文案
 const TREND_META = {
@@ -567,12 +566,14 @@ function logout() {
 //   /→landing  /explore→explore（节140 T3d 起 /guoxue·/xishi·/mbti 由后端 301 到 /explore?culture=…；
 //     页名 guoxue-hub/xishi-hub/mbti-hub 保留为 explore 别名，旧书签/工具页「返回」仍可达）
 //   /intent/:key→intent（节140 T3b 意图推荐页）
-//   /mbti/test→mbti（人格测试） /jiufa→nine-pick
+//   /mbti/test→mbti（人格测试） /hecan→hecan（合参页，旧 /jiufa 归一化重定向到此）
 //   /zodiac→zodiac  /divination→divination  /astrology→astrology  /tarot→tarot
 //   /lenormand→lenormand  /cases→cases  /cases/:id→archive  /agent→agent
 //   /settings→settings  /login|/register→auth  /mbti/share/:token→mbti-share
 //   /case/share/:token→case-share
-// 八法合一页实际名 nine-pick → /jiufa；auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
+// 合参页名 hecan → /hecan（节161；旧页名 nine-pick 与旧地址 /jiufa 见下方 req080ParsePath 别名，
+// 命中即 canon 归一化 replaceState 到 /hecan，与旧 HUB 地址「重定向不留双入口」同一口径）；
+// auth 页登录/注册同页（内部 tab 切换）→ 正向统一写 /login，
 // 反向 /register 亦反解为 auth。映射表外的工作流中间页（onboarding/waiting/calibration/predict/
 // revise/topic/credits）携带 caseId/topic/context 等长文本、刻意不做深链：pathFor 返回 null →
 // 只切换 React 视图、不写 URL 也不新增 history 条目（浏览器后退直达上一真实路径页）。
@@ -584,7 +585,7 @@ const REQ080_PAGE_PATH = {
   'mbti-hub': '/mbti',
   'explore': '/explore',
   mbti: '/mbti/test',
-  'nine-pick': '/jiufa',
+  hecan: '/hecan',
   zodiac: '/zodiac',
   divination: '/divination',
   almanac: '/almanac',
@@ -645,7 +646,7 @@ const REQ080_PAGE_THEME = {
     module: 'xishi',
     skin: 'xishi'
   },
-  'nine-pick': {
+  'hecan': {
     module: 'guoxue',
     skin: 'guoxue'
   },
@@ -738,6 +739,15 @@ function req080ParsePath(raw) {
       canon: REQ080_PAGE_PATH[pg]
     };
   }
+  // 节161：旧命盘多法页地址别名 —— /jiufa 与旧页名 nine-pick 一律归一化重定向到 /hecan
+  // （canon ≠ norm → 启动 effect 里 replaceState 校正 URL，旧书签/外链不出现死链或双入口；
+  //  与节140 T3d 旧 HUB「重定向」口径一致，只是那次落在后端 301、这次落在前端规范化这一步）
+  if (norm === '/jiufa' || norm === '/nine-pick') return {
+    page: 'hecan',
+    params: {},
+    norm: norm,
+    canon: '/hecan'
+  };
   if (norm === '/register') return {
     page: 'auth',
     params: {},
@@ -1113,15 +1123,22 @@ function App() {
     }),
     waiting: /*#__PURE__*/React.createElement(WaitingPage, {
       caseId: params.caseId,
-      onNavigate: navigate
+      onNavigate: navigate,
+      // 节161：合参所选方法集与动态标题（label）随跳转带入 —— 方法名由合参页读 /api/combine/pools 得到，
+      // 前端不再写死方法名；直落本页（无参数）时按空数组渲染（不画节点，不白屏）
+      methodNames: params.methodNames,
+      methodKeys: params.methods,
+      runLabel: params.runLabel
     }),
     calibration: /*#__PURE__*/React.createElement(CalibrationPage, {
       caseId: params.caseId,
-      onNavigate: navigate
+      onNavigate: navigate,
+      runLabel: params.runLabel
     }),
     predict: /*#__PURE__*/React.createElement(PredictPage, {
       caseId: params.caseId,
-      onNavigate: navigate
+      onNavigate: navigate,
+      runLabel: params.runLabel
     }),
     revise: /*#__PURE__*/React.createElement(RevisePage, {
       caseId: params.caseId,
@@ -1148,7 +1165,8 @@ function App() {
       onNavigate: navigate,
       applySkin: applySkin
     }),
-    'nine-pick': /*#__PURE__*/React.createElement(NinePickPage, {
+    // 节161：合参页（两标签：命盘合参 / 当下事合参）
+    'hecan': /*#__PURE__*/React.createElement(HecanPage, {
       caseId: params.caseId,
       onNavigate: navigate
     }),

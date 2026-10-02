@@ -138,8 +138,11 @@ async def analyze_method(
     user_question: str = "",
     calibration_feedback: dict | None = None,
     continuation: str = None,
+    combine_discipline: str | None = None,
 ) -> dict | None:
     """通用方法分析：加载 prompt → 组装 messages → 真实 LLM 调用 → 解析并规范化。
+
+    combine_discipline: 合参纪律段（`backend/prompts/combine/natal.md` 内容）；非空时插进 system prompt 的方法 prompt 与输出格式指令之间。缺省 None = 行为与改动前逐字一致。
 
     返回 method-result v2 dict；以下两种情况返回 None（调用方记 degraded）：
     - 方法 prompt 缺失（method-prompts/<key>.md 不存在或为空）；
@@ -170,8 +173,13 @@ async def analyze_method(
     if continuation:
         payload["continuation"] = continuation
 
+    # 合参纪律段（可选）：插在方法 prompt 与硬性输出格式指令之间——
+    # 输出格式段必须仍在最后（它声明「覆盖以上 prompt 中的任何格式说明」）。
+    discipline = combine_discipline.strip() if isinstance(combine_discipline, str) else ""
+    system_content = prompt + (("\n\n" + discipline) if discipline else "") + _OUTPUT_FORMAT_INSTRUCTIONS
+
     messages = [
-        {"role": "system", "content": prompt + _OUTPUT_FORMAT_INSTRUCTIONS},
+        {"role": "system", "content": system_content},
         {
             "role": "user",
             "content": json.dumps(payload, ensure_ascii=False),
