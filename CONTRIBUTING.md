@@ -1,6 +1,6 @@
 # 贡献指南
 
-> 简洁版协作约定。项目规则 / 红线 / 代码结构 / 启动方式的**权威来源**见 `00_根/导航.md`（每轮开工先读 `00_根/入口.md`）；详细工程规范见 `docs/standards/`（命名、技术栈、接口与数据字典、环境与部署、版本迭代）。
+> 简洁版协作约定。**权威来源**是 `docs/standards/`（命名、技术栈、接口与数据字典、环境与部署、运行形态与版本契约、数据迁移、版本迭代）与 `docs/Code-Wiki.md`（代码结构 / 契约 / 红线 / 启动方式），两者都随仓库提供。
 
 ## 项目结构
 
@@ -9,6 +9,7 @@
 | `backend/` | FastAPI 模块化单体后端（`app/` 下 9 个方法模块、异步任务、档案 / 反馈 / 合规等）；依赖声明于 `pyproject.toml`，测试在 `backend/tests/` |
 | `frontend/` | 前端：**实际生效**的是免构建的 `public/index.html`（CDN React + Babel Standalone，已本地化到 `public/vendor/`）；`src/` 为旧 Vite + TS 参考源码，不参与运行 |
 | `docs/` | 参考文档库：`standards/` 实例层规范、`adr/` 决策原文、`runbooks/` 运维手册（详见 `docs/README.md`） |
+| `apk/` | 单机 Android 工程（Chaquopy 打包 Python 运行时 + WebView 承载前端 + 排盘内核 bundle）；构建说明见 `apk/README.md` |
 | `reference/` | 参考仓库（mingli-reference skill、排盘引擎等第三方资料，只读不并入） |
 
 ## 跑测试

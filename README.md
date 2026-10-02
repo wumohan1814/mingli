@@ -30,7 +30,7 @@
   - 紫微 / 西洋占星 / 七政四余 / 奇门 / 五运六气 / 六爻 / 梅花 / 灵签等：Node.js 纯函数内核（`backend/paipan-node/paipan-core`，零 LLM、确定性、可对拍）
 - **前端**：免构建 CDN React（无需 npm install / Vite 构建）
 - **运行方式**：① **本地自用**——`start.bat`，或 `cd backend && python -m uvicorn app.main:app --port 8000`；② **单机 APK**——`apk/`（Android，Python 运行时随包，数据在设备本地）
-- **部署**：不做线上托管。历史上的 Docker Compose + Caddy 部署件已随线上实例下线，归档在 [`_archive/部署-已下线/`](./_archive/部署-已下线/README.md)（含恢复步骤）
+- **部署**：不做线上托管，仓库也不提供部署件。历史上用过 Docker Compose + Caddy 自托管，该线上实例已于 **2026-10-01** 永久下线，部署件随之从仓库移除
 
 ## 快速开始
 
@@ -97,9 +97,7 @@ frontend/public/          # 免构建前端（index.html + js/ + css/ + data/ + 
 data/                     # SQLite 数据库（git 忽略）与迁移脚本
 docs/                     # 工程文档 / 合规文书 / 标准规范
 apk/                      # 单机 Android 应用（Chaquopy 打包 Python 运行时 + 排盘内核）
-_archive/部署-已下线/      # 已下线的部署件（Dockerfile / compose / Caddy / ops）
 tools/                    # 本地开发辅助脚本
-00_根/ 40_节/ 99_状态/    # 破竹框架的治理层（需求 / 迭代 / 状态）
 ```
 
 ## 运行方式
@@ -109,7 +107,7 @@ tools/                    # 本地开发辅助脚本
 1. **本地自用**：见上方「快速开始」，`start.bat` 或 `uvicorn` → http://localhost:8000。
 2. **单机 APK**：`apk/` 工程（Chaquopy + 排盘内核 bundle，Python 与前端随包），或从 GitHub Actions 的 artifact 取已构建的 debug APK；数据落在设备本地，不连任何服务器。
 
-历史上的 Dockerfile / docker-compose.yml / Caddyfile / ops 已归档在 [`_archive/部署-已下线/`](./_archive/部署-已下线/README.md)——那里写了当初为什么下线、两个部署缺口、以及**三步恢复自部署**的方法。
+历史上的 Dockerfile / docker-compose.yml / Caddyfile / ops 已随下线一并从仓库移除；如需重新自托管，请自行按 FastAPI + Node 两个运行时的要求编写部署件（本项目不再附带）。
 
 ## 免责声明
 
