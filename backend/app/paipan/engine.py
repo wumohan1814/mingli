@@ -33,6 +33,7 @@ import httpx
 from lunar_python import Solar
 
 from app.config import settings
+from app.runtime import capabilities
 from app.paipan.birthtime import correct_birth_time
 from app.paipan.shensha import compute_shensha
 
@@ -258,16 +259,64 @@ def build_timeline_20y(da_yun, pillars, day_master, shensha_targets) -> list:
     return timeline
 
 
-def run_ziwei(year, month, day, hour, gender) -> dict | None:
-    """紫微排盘：先调常驻 HTTP 服务（server.mjs /ziwei），失败则静默降级 subprocess ziwei.cjs。
+# ---------------------------------------------------------------------------
+# 节166：排盘的**第三条路** —— APK 单机形态的本机 JS 内核（经 paipan_bridge）
+# ---------------------------------------------------------------------------
 
-    HTTP 与 subprocess 输出结构一致；两条路径都失败时返回 None。
+def _try_local_bridge(path: str, payload: dict) -> dict | None:
+    """APK 单机形态的排盘通道：Python → Java(`PaipanBridge`) → WebView(V8) → JS 内核 bundle。
+
+    **为什么需要第三条路**：原有两条在安卓上**都不存在** ——
+      ① `httpx` 打常驻 Node 服务（`server.mjs` :9317）→ **安卓上没有 Node**；
+      ② subprocess 跑 `paipan-node/*.cjs|mjs` → 同样没有 Node，且 Android 不允许这样起子进程。
+
+    **为什么放在最前面（先于 `exists()` 守卫）**：`backend/paipan-node/` **不会随 sync 脚本进包**，
+    所以那两个 `SCRIPT.exists()` 守卫在 APK 里恒为假 —— 若把桥放在它们**之后**，函数会直接返回 None，
+    桥**永远拿不到执行机会**（这是本函数必须在 `run_ziwei` / `run_extra` 最开头调用的原因）。
+
+    **为什么先试桥不会拖慢现有形态**：web / 本地自用下 `paipan_bridge` 这个模块**根本不存在**
+    （它随 `apk/pysrc` 才进包，平铺在 python 根），`import` 立即失败 → 本函数返回 None →
+    后续 HTTP / subprocess 路径逐字不变。**零行为变化、零额外开销**。
+
+    形态判断走 `capabilities()['paipan_local']` —— `standards/08` §2.3 的硬纪律：
+    形态判断只允许走能力清单，**禁止散写 `if mode == ...`**。
+
+    :return: 成功给排盘结果 dict；不可用 / 失败一律 **None**（不抛异常），由调用方继续降级。
     """
-    if not ZIWEI_SCRIPT.exists():
+    if not capabilities().get("paipan_local"):
         return None
+    try:
+        # 仅 APK 内存在（apk/pysrc/paipan_bridge.py → python 根，平铺）
+        import paipan_bridge  # type: ignore
+    except Exception:  # noqa: BLE001 - 非 APK 环境没有这个模块是**正常情况**
+        return None
+    try:
+        if not paipan_bridge.is_available():
+            return None
+        paipan_bridge.init()  # 幂等：注入 bundle + 固定时区 +480
+        result = paipan_bridge.call(path, payload)
+    except Exception:  # noqa: BLE001 - 桥内部异常一律化为降级
+        return None
+    # 桥的契约是「失败返回 {"error": ...}，永不抛异常」——这里按契约判定
+    if isinstance(result, dict) and "error" not in result:
+        return result
+    return None
+
+
+def run_ziwei(year, month, day, hour, gender) -> dict | None:
+    """紫微排盘：APK 走本机 JS 内核；否则先调常驻 HTTP 服务（server.mjs /ziwei），
+    失败则静默降级 subprocess ziwei.cjs。三条路径输出结构一致；全失败返回 None。
+    """
     time_idx = ((hour + 1) // 2) % 12
     payload = {"birthday": f"{year}-{month:02d}-{day:02d}",
                "time_idx": time_idx, "gender": gender}
+    # ⓪ APK 单机：本机 JS 内核（必须最先 —— 见 _try_local_bridge 的说明）
+    data = _try_local_bridge("/ziwei", payload)
+    if data is not None:
+        return data
+    # `paipan-node/` 不进 APK；web 形态下这一守卫与改前一致
+    if not ZIWEI_SCRIPT.exists():
+        return None
     # ① 优先：常驻 HTTP 服务（paipan-node/server.mjs）
     try:
         resp = httpx.post(f"{settings.paipan_node_url}/ziwei", json=payload, timeout=60)
@@ -291,16 +340,22 @@ def run_ziwei(year, month, day, hour, gender) -> dict | None:
 
 def run_extra(year, month, day, hour, gender, name, birthplace, longitude, latitude,
               true_solar) -> dict | None:
-    """占星/七政/五运六气/奇门终身局：先调常驻 HTTP 服务（server.mjs /extra），失败降级 subprocess extra.mjs。
+    """占星/七政/五运六气/奇门终身局：APK 走本机 JS 内核；否则先调常驻 HTTP 服务
+    （server.mjs /extra），失败降级 subprocess extra.mjs。
 
     调用方约定：仅当 longitude is not None 时才调用；失败返回 None。
     """
-    if not EXTRA_SCRIPT.exists():
-        return None
     payload = {"year": year, "month": month, "day": day, "hour": hour,
                "minute": 0, "gender": gender, "name": name,
                "birthplace": birthplace, "longitude": longitude,
                "latitude": latitude, "true_solar": true_solar}
+    # ⓪ APK 单机：本机 JS 内核（必须最先 —— 见 _try_local_bridge 的说明）
+    data = _try_local_bridge("/extra", payload)
+    if data is not None:
+        return data
+    # `paipan-node/` 不进 APK；web 形态下这一守卫与改前一致
+    if not EXTRA_SCRIPT.exists():
+        return None
     # ① 优先：常驻 HTTP 服务（paipan-node/server.mjs）
     try:
         resp = httpx.post(f"{settings.paipan_node_url}/extra", json=payload, timeout=180)
